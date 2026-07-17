@@ -187,63 +187,45 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "gene": {
               "type": "string",
-              "const": "success"
+              "description": "The queried gene symbol"
             },
-            "data": {
+            "num_libraries": {
+              "type": "integer",
+              "description": "Number of Enrichr libraries in which the gene appears in at least one term"
+            },
+            "total_gene_sets": {
+              "type": "integer",
+              "description": "Total number of term/gene-set memberships across all libraries"
+            },
+            "libraries": {
               "type": "object",
-              "properties": {
-                "gene": {
-                  "type": "string",
-                  "description": "The queried gene symbol"
-                },
-                "num_libraries": {
-                  "type": "integer",
-                  "description": "Number of Enrichr libraries in which the gene appears in at least one term"
-                },
-                "total_gene_sets": {
-                  "type": "integer",
-                  "description": "Total number of term/gene-set memberships across all libraries"
-                },
-                "libraries": {
-                  "type": "object",
-                  "description": "Map of library_name -> list of term/gene-set names in that library containing the gene"
-                },
-                "descriptions": {
-                  "type": "array",
-                  "description": "Per-library description metadata (only when include_metadata=true)"
-                },
-                "categories": {
-                  "description": "Library category metadata (only when include_metadata=true)"
-                }
-              },
-              "required": [
-                "gene",
-                "num_libraries",
-                "total_gene_sets",
-                "libraries"
-              ]
+              "description": "Map of library_name -> list of term/gene-set names in that library containing the gene"
+            },
+            "descriptions": {
+              "type": "array",
+              "description": "Per-library description metadata (only when include_metadata=true)"
+            },
+            "categories": {
+              "description": "Library category metadata (only when include_metadata=true)"
             }
           },
           "required": [
-            "status",
-            "data"
+            "gene",
+            "num_libraries",
+            "total_gene_sets",
+            "libraries"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

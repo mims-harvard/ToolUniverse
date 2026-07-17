@@ -101,8 +101,15 @@
     ],
     "return_schema": {
       "anyOf": [
-        {"type": "array", "items": {"type": "object"}},
-        {"type": "object"}
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object"
+        }
       ],
       "properties": {
         "error": {
@@ -346,8 +353,15 @@
     ],
     "return_schema": {
       "anyOf": [
-        {"type": "array", "items": {"type": "object"}},
-        {"type": "object"}
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object"
+        }
       ],
       "properties": {
         "error": {
@@ -725,8 +739,15 @@
     ],
     "return_schema": {
       "anyOf": [
-        {"type": "array", "items": {"type": "object"}},
-        {"type": "object"}
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object"
+        }
       ],
       "properties": {
         "error": {
@@ -930,8 +951,15 @@
     ],
     "return_schema": {
       "anyOf": [
-        {"type": "array", "items": {"type": "object"}},
-        {"type": "object"}
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object"
+        }
       ],
       "properties": {
         "error": {
@@ -1387,8 +1415,15 @@
     ],
     "return_schema": {
       "anyOf": [
-        {"type": "array", "items": {"type": "object"}},
-        {"type": "object"}
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object"
+        }
       ],
       "properties": {
         "error": {
@@ -1820,8 +1855,15 @@
     ],
     "return_schema": {
       "anyOf": [
-        {"type": "array", "items": {"type": "object"}},
-        {"type": "object"}
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object"
+        }
       ],
       "properties": {
         "error": {
@@ -2038,8 +2080,15 @@
     ],
     "return_schema": {
       "anyOf": [
-        {"type": "array", "items": {"type": "object"}},
-        {"type": "object"}
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object"
+        }
       ],
       "properties": {
         "error": {
@@ -2363,12 +2412,6 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string",
               "description": "Error message when the request fails or parameters are invalid."
@@ -2452,12 +2495,6 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string",
               "description": "Error message when the request fails or parameters are invalid."
@@ -2543,12 +2580,6 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string",
               "description": "Error message when the request fails or parameters are invalid."

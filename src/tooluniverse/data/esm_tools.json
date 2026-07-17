@@ -49,12 +49,6 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
             "model": {
               "type": "string"
             },
@@ -83,24 +77,17 @@
             }
           },
           "required": [
-            "status"
+            "model"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -161,12 +148,6 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
             "model": {
               "type": "string"
             },
@@ -187,24 +168,17 @@
             }
           },
           "required": [
-            "status"
+            "model"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -262,12 +236,6 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
             "model": {
               "type": "string"
             },
@@ -309,24 +277,17 @@
             }
           },
           "required": [
-            "status"
+            "model"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -379,12 +340,6 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
             "model": {
               "type": "string"
             },
@@ -410,24 +365,17 @@
             }
           },
           "required": [
-            "status"
+            "model"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -501,107 +449,74 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
+            "sequence_length": {
+              "type": "integer"
+            },
+            "model": {
+              "type": "string"
+            },
+            "sae_model": {
+              "type": "string"
+            },
+            "residues_returned": {
+              "type": "integer"
+            },
+            "position": {
+              "type": [
+                "integer",
+                "null"
               ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "sequence_length": {
-                  "type": "integer"
-                },
-                "model": {
-                  "type": "string"
-                },
-                "sae_model": {
-                  "type": "string"
-                },
-                "residues_returned": {
-                  "type": "integer"
-                },
-                "position": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "window": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "top_k_per_residue": {
-                  "type": "integer"
-                },
-                "activations": {
-                  "type": "array",
-                  "description": "Per-residue active SAE features. Sparse format: each entry has the residue position (1-indexed) and its top-K non-zero features.",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "residue_idx_1based": {
-                        "type": "integer"
-                      },
-                      "active_features": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "feature_id": {
-                              "type": "integer",
-                              "description": "SAE feature index 0-16383"
-                            },
-                            "activation": {
-                              "type": "number",
-                              "description": "Activation magnitude (normalized)"
-                            }
-                          }
+            "window": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "top_k_per_residue": {
+              "type": "integer"
+            },
+            "activations": {
+              "type": "array",
+              "description": "Per-residue active SAE features. Sparse format: each entry has the residue position (1-indexed) and its top-K non-zero features.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "residue_idx_1based": {
+                    "type": "integer"
+                  },
+                  "active_features": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "feature_id": {
+                          "type": "integer",
+                          "description": "SAE feature index 0-16383"
+                        },
+                        "activation": {
+                          "type": "number",
+                          "description": "Activation magnitude (normalized)"
                         }
                       }
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_features_in_codebook": {
-                  "type": "integer"
-                },
-                "sparsity_k": {
-                  "type": "integer"
-                },
-                "license": {
-                  "type": "string"
-                }
-              }
             }
           },
           "required": [
-            "status",
-            "data"
+            "sequence_length"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -684,114 +599,75 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "variant": {
               "type": "string",
-              "enum": [
-                "success"
-              ]
+              "description": "e.g. 'R175H'"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {
-                  "type": "string",
-                  "description": "e.g. 'R175H'"
-                },
-                "position": {
-                  "type": "integer"
-                },
-                "window": {
-                  "type": "integer"
-                },
-                "n_unique_features_touched": {
-                  "type": "integer"
-                },
-                "top_features_lost": {
-                  "type": "array",
-                  "description": "Features with most negative delta (strong in ref, weak/absent in mutant)",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "feature_id": {
-                        "type": "integer"
-                      },
-                      "delta": {
-                        "type": "number",
-                        "description": "mut_activation_sum - ref_activation_sum (negative)"
-                      },
-                      "ref_activation_sum": {
-                        "type": "number"
-                      },
-                      "mut_activation_sum": {
-                        "type": "number"
-                      }
-                    }
-                  }
-                },
-                "top_features_gained": {
-                  "type": "array",
-                  "description": "Features with most positive delta (absent/weak in ref, strong in mutant)",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "feature_id": {
-                        "type": "integer"
-                      },
-                      "delta": {
-                        "type": "number"
-                      },
-                      "ref_activation_sum": {
-                        "type": "number"
-                      },
-                      "mut_activation_sum": {
-                        "type": "number"
-                      }
-                    }
+            "position": {
+              "type": "integer"
+            },
+            "window": {
+              "type": "integer"
+            },
+            "n_unique_features_touched": {
+              "type": "integer"
+            },
+            "top_features_lost": {
+              "type": "array",
+              "description": "Features with most negative delta (strong in ref, weak/absent in mutant)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "feature_id": {
+                    "type": "integer"
+                  },
+                  "delta": {
+                    "type": "number",
+                    "description": "mut_activation_sum - ref_activation_sum (negative)"
+                  },
+                  "ref_activation_sum": {
+                    "type": "number"
+                  },
+                  "mut_activation_sum": {
+                    "type": "number"
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "method": {
-                  "type": "string"
-                },
-                "ref_residues_analyzed": {
-                  "type": "integer"
-                },
-                "mut_residues_analyzed": {
-                  "type": "integer"
-                },
-                "forge_calls_made": {
-                  "type": "integer"
-                },
-                "license": {
-                  "type": "string"
+            "top_features_gained": {
+              "type": "array",
+              "description": "Features with most positive delta (absent/weak in ref, strong in mutant)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "feature_id": {
+                    "type": "integer"
+                  },
+                  "delta": {
+                    "type": "number"
+                  },
+                  "ref_activation_sum": {
+                    "type": "number"
+                  },
+                  "mut_activation_sum": {
+                    "type": "number"
+                  }
                 }
               }
             }
           },
           "required": [
-            "status",
-            "data"
+            "variant"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -866,109 +742,73 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
+            "feature_id": {
+              "type": "integer"
             },
-            "data": {
+            "sae_model": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string",
+              "description": "Dominant high-level category derived from UniProt feature-type voting across the panel"
+            },
+            "confidence": {
+              "type": "number",
+              "description": "Fraction of votes for the dominant category (0-1)"
+            },
+            "n_proteins_with_activation": {
+              "type": "integer"
+            },
+            "n_proteins_analyzed": {
+              "type": "integer"
+            },
+            "category_vote_counts": {
               "type": "object",
-              "properties": {
-                "feature_id": {
-                  "type": "integer"
-                },
-                "sae_model": {
-                  "type": "string"
-                },
-                "category": {
-                  "type": "string",
-                  "description": "Dominant high-level category derived from UniProt feature-type voting across the panel"
-                },
-                "confidence": {
-                  "type": "number",
-                  "description": "Fraction of votes for the dominant category (0-1)"
-                },
-                "n_proteins_with_activation": {
-                  "type": "integer"
-                },
-                "n_proteins_analyzed": {
-                  "type": "integer"
-                },
-                "category_vote_counts": {
-                  "type": "object",
-                  "description": "Raw vote counts per category, useful for spotting ties / weak signals"
-                },
-                "supporting_evidence": {
-                  "type": "array",
-                  "description": "Per-residue evidence rows: which panel protein, which position, activation magnitude, which UniProt feature types overlapped",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "protein": {
-                        "type": "string"
-                      },
-                      "position_1based": {
-                        "type": "integer"
-                      },
-                      "activation": {
-                        "type": "number"
-                      },
-                      "uniprot_types": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "uniprot_categories": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
+              "description": "Raw vote counts per category, useful for spotting ties / weak signals"
+            },
+            "supporting_evidence": {
+              "type": "array",
+              "description": "Per-residue evidence rows: which panel protein, which position, activation magnitude, which UniProt feature types overlapped",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "protein": {
+                    "type": "string"
+                  },
+                  "position_1based": {
+                    "type": "integer"
+                  },
+                  "activation": {
+                    "type": "number"
+                  },
+                  "uniprot_types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "uniprot_categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "from_cache": {
-                  "type": "boolean"
-                },
-                "method": {
-                  "type": "string"
-                },
-                "forge_credits_used_first_call": {
-                  "type": "integer"
-                },
-                "license": {
-                  "type": "string"
                 }
               }
             }
           },
           "required": [
-            "status",
-            "data"
+            "feature_id"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1085,56 +925,34 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
+            "sequence_length": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "sequence_length": {
-                  "type": "integer"
-                },
-                "n_variants": {
-                  "type": "integer"
-                },
-                "n_succeeded": {
-                  "type": "integer"
-                },
-                "window": {
-                  "type": "integer"
-                },
-                "results": {
-                  "type": "array"
-                }
-              }
+            "n_variants": {
+              "type": "integer"
             },
-            "metadata": {
-              "type": "object"
+            "n_succeeded": {
+              "type": "integer"
+            },
+            "window": {
+              "type": "integer"
+            },
+            "results": {
+              "type": "array"
             }
           },
           "required": [
-            "status",
-            "data"
+            "sequence_length"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1207,56 +1025,34 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
+            "sequence_length": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "sequence_length": {
-                  "type": "integer"
-                },
-                "region": {
-                  "type": "array"
-                },
-                "region_length": {
-                  "type": "integer"
-                },
-                "n_features_active_in_region": {
-                  "type": "integer"
-                },
-                "top_features": {
-                  "type": "array"
-                }
-              }
+            "region": {
+              "type": "array"
             },
-            "metadata": {
-              "type": "object"
+            "region_length": {
+              "type": "integer"
+            },
+            "n_features_active_in_region": {
+              "type": "integer"
+            },
+            "top_features": {
+              "type": "array"
             }
           },
           "required": [
-            "status",
-            "data"
+            "sequence_length"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1346,65 +1142,43 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
+            "variant": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {
-                  "type": "string"
-                },
-                "position": {
-                  "type": "integer"
-                },
-                "window": {
-                  "type": "integer"
-                },
-                "mechanism_summary": {
-                  "type": "string"
-                },
-                "lost_feature_categories": {
-                  "type": "object"
-                },
-                "gained_feature_categories": {
-                  "type": "object"
-                },
-                "top_features_lost": {
-                  "type": "array"
-                },
-                "top_features_gained": {
-                  "type": "array"
-                }
-              }
+            "position": {
+              "type": "integer"
             },
-            "metadata": {
+            "window": {
+              "type": "integer"
+            },
+            "mechanism_summary": {
+              "type": "string"
+            },
+            "lost_feature_categories": {
               "type": "object"
+            },
+            "gained_feature_categories": {
+              "type": "object"
+            },
+            "top_features_lost": {
+              "type": "array"
+            },
+            "top_features_gained": {
+              "type": "array"
             }
           },
           "required": [
-            "status",
-            "data"
+            "variant"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

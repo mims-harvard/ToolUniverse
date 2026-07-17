@@ -407,7 +407,7 @@
   {
     "name": "GDC_get_mutation_frequency",
     "type": "GDCMutationFrequencyTool",
-    "description": "Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Returns total SSM occurrence count (no per-project breakdown — use GDC_get_ssm_by_gene with project_id for cancer-specific data). Answers 'How often is this gene mutated across all cancers?'",
+    "description": "Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Returns total SSM occurrence count (no per-project breakdown \u2014 use GDC_get_ssm_by_gene with project_id for cancer-specific data). Answers 'How often is this gene mutated across all cancers?'",
     "parameter": {
       "type": "object",
       "properties": {
@@ -474,7 +474,7 @@
         },
         "gene": {
           "type": "string",
-          "description": "Gene symbol alias — alternative to gene_symbol"
+          "description": "Gene symbol alias \u2014 alternative to gene_symbol"
         },
         "size": {
           "type": "integer",
@@ -491,40 +491,59 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "source": {"type": "string"},
-            "endpoint": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene": {"type": "string"},
-                "project_count": {"type": "integer"},
-                "total_mutated_cases": {"type": "integer"},
-                "total_cases": {"type": "integer"},
-                "projects": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "project_id": {"type": ["string", "null"]},
-                      "mutated_case_count": {"type": "integer"},
-                      "total_case_count": {"type": "integer"},
-                      "frequency": {"type": ["number", "null"]}
-                    }
+            "gene": {
+              "type": "string"
+            },
+            "project_count": {
+              "type": "integer"
+            },
+            "total_mutated_cases": {
+              "type": "integer"
+            },
+            "total_cases": {
+              "type": "integer"
+            },
+            "projects": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "project_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mutated_case_count": {
+                    "type": "integer"
+                  },
+                  "total_case_count": {
+                    "type": "integer"
+                  },
+                  "frequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -577,12 +596,18 @@
         "vital_status": {
           "type": "string",
           "description": "Vital status filter: 'Alive' or 'Dead'",
-          "enum": ["Alive", "Dead"]
+          "enum": [
+            "Alive",
+            "Dead"
+          ]
         },
         "gender": {
           "type": "string",
           "description": "Gender filter: 'female' or 'male'",
-          "enum": ["female", "male"]
+          "enum": [
+            "female",
+            "male"
+          ]
         },
         "size": {
           "type": "integer",
@@ -607,23 +632,57 @@
           "items": {
             "type": "object",
             "properties": {
-              "case_id": {"type": "string"},
-              "submitter_id": {"type": "string"},
-              "project_id": {"type": "string"},
-              "vital_status": {"type": ["string", "null"]},
-              "gender": {"type": ["string", "null"]},
-              "age_at_index": {"type": ["integer", "null"]},
-              "days_to_death": {"type": ["integer", "null"]},
-              "diagnoses": {"type": "array"},
-              "treatments": {"type": "array"}
+              "case_id": {
+                "type": "string"
+              },
+              "submitter_id": {
+                "type": "string"
+              },
+              "project_id": {
+                "type": "string"
+              },
+              "vital_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gender": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "age_at_index": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "days_to_death": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "diagnoses": {
+                "type": "array"
+              },
+              "treatments": {
+                "type": "array"
+              }
             }
           }
         },
         "pagination": {
           "type": "object",
           "properties": {
-            "total": {"type": "integer"},
-            "count": {"type": "integer"}
+            "total": {
+              "type": "integer"
+            },
+            "count": {
+              "type": "integer"
+            }
           }
         }
       }
@@ -678,28 +737,57 @@
           "description": "Optional: gene symbol to filter cases with mutations in this gene (e.g., 'TP53', 'KRAS')"
         }
       },
-      "required": ["project_id"]
+      "required": [
+        "project_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "project_id": {"type": "string"},
-        "gene_symbol": {"type": ["string", "null"]},
-        "total_donors": {"type": "integer"},
-        "alive_censored": {"type": "integer"},
-        "deceased": {"type": "integer"},
-        "max_follow_up_days": {"type": "number"},
-        "median_follow_up_days": {"type": "number"},
+        "project_id": {
+          "type": "string"
+        },
+        "gene_symbol": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "total_donors": {
+          "type": "integer"
+        },
+        "alive_censored": {
+          "type": "integer"
+        },
+        "deceased": {
+          "type": "integer"
+        },
+        "max_follow_up_days": {
+          "type": "number"
+        },
+        "median_follow_up_days": {
+          "type": "number"
+        },
         "donors": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "time": {"type": "number"},
-              "censored": {"type": "boolean"},
-              "survivalEstimate": {"type": "number"},
-              "id": {"type": "string"},
-              "submitter_id": {"type": "string"}
+              "time": {
+                "type": "number"
+              },
+              "censored": {
+                "type": "boolean"
+              },
+              "survivalEstimate": {
+                "type": "number"
+              },
+              "id": {
+                "type": "string"
+              },
+              "submitter_id": {
+                "type": "string"
+              }
             }
           }
         }

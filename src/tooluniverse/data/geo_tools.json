@@ -83,7 +83,11 @@
       "Search"
     ],
     "metadata": {
-      "tags": ["expression", "microarray", "search"],
+      "tags": [
+        "expression",
+        "microarray",
+        "search"
+      ],
       "difficulty_level": "easy",
       "estimated_execution_time": "< 3 seconds"
     }
@@ -100,7 +104,9 @@
           "description": "GEO dataset ID (e.g., 'GDS1234', 'GSE12345')"
         }
       },
-      "required": ["dataset_id"]
+      "required": [
+        "dataset_id"
+      ]
     },
     "fields": {
       "endpoint": "/esummary.fcgi",
@@ -156,7 +162,11 @@
       "Information"
     ],
     "metadata": {
-      "tags": ["dataset", "metadata", "expression"],
+      "tags": [
+        "dataset",
+        "metadata",
+        "expression"
+      ],
       "difficulty_level": "easy",
       "estimated_execution_time": "< 3 seconds"
     }
@@ -173,7 +183,9 @@
           "description": "GEO dataset ID (e.g., 'GDS1234', 'GSE12345')"
         }
       },
-      "required": ["dataset_id"]
+      "required": [
+        "dataset_id"
+      ]
     },
     "fields": {
       "endpoint": "/esummary.fcgi",
@@ -221,7 +233,11 @@
       "Information"
     ],
     "metadata": {
-      "tags": ["sample", "characteristics", "expression"],
+      "tags": [
+        "sample",
+        "characteristics",
+        "expression"
+      ],
       "difficulty_level": "easy",
       "estimated_execution_time": "< 3 seconds"
     }
@@ -238,7 +254,9 @@
           "description": "GEO Series (GSE...) or Sample (GSM...) accession. Examples: 'GSE42657', 'GSE1000', 'GSM1045442'."
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "mode": "supplementary_files"
@@ -261,71 +279,69 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "accession": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "suppl_url": {
-                  "type": "string"
-                },
-                "files": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "modified": {
-                        "type": "string"
-                      },
-                      "size": {
-                        "type": ["integer", "string"]
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "download_url": {
-                        "type": "string"
-                      }
-                    }
+            "suppl_url": {
+              "type": "string"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "modified": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": [
+                      "integer",
+                      "string"
+                    ]
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "download_url": {
+                    "type": "string"
                   }
-                },
-                "file_count": {
-                  "type": "integer"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "file_count": {
+              "type": "integer"
             }
           },
-          "required": ["data"]
+          "required": [
+            "accession"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "metadata": {
-      "tags": ["geo", "supplementary", "download", "raw-files"],
+      "tags": [
+        "geo",
+        "supplementary",
+        "download",
+        "raw-files"
+      ],
       "difficulty_level": "easy",
       "estimated_execution_time": "< 3 seconds"
     }

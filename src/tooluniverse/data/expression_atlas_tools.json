@@ -36,87 +36,72 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "gene": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "baseline_experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "experiment_accession": {
-                        "type": "string"
-                      },
-                      "experiment_type": {
-                        "type": "string"
-                      },
-                      "experiment_description": {
-                        "type": "string"
-                      },
-                      "species": {
-                        "type": "string"
-                      },
-                      "num_assays": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "gene_mentioned": {
-                        "type": "boolean"
-                      },
-                      "last_update": {
-                        "type": "string"
-                      }
-                    }
+            "species": {
+              "type": "string"
+            },
+            "baseline_experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "experiment_accession": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "experiment_description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "num_assays": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "gene_mentioned": {
+                    "type": "boolean"
+                  },
+                  "last_update": {
+                    "type": "string"
                   }
-                },
-                "total_baseline": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "gene_specific_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total_baseline": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "gene_specific_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -175,87 +160,72 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "gene": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene": {
-                  "type": "string"
-                },
-                "condition": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "experiment_accession": {
-                        "type": "string"
-                      },
-                      "experiment_type": {
-                        "type": "string"
-                      },
-                      "experiment_description": {
-                        "type": "string"
-                      },
-                      "species": {
-                        "type": "string"
-                      },
-                      "num_assays": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "gene_mentioned": {
-                        "type": "boolean"
-                      },
-                      "factors": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
+            "condition": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "experiment_accession": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "experiment_description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "num_assays": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "gene_mentioned": {
+                    "type": "boolean"
+                  },
+                  "factors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
-                },
-                "experiment_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "experiment_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -311,90 +281,75 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "gene": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene": {
-                  "type": "string"
-                },
-                "condition": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "experiment_accession": {
-                        "type": "string"
-                      },
-                      "experiment_type": {
-                        "type": "string"
-                      },
-                      "experiment_description": {
-                        "type": "string"
-                      },
-                      "species": {
-                        "type": "string"
-                      },
-                      "num_assays": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "gene_mentioned": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
-                      }
-                    }
+            "condition": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "experiment_accession": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "experiment_description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "num_assays": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "gene_mentioned": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
                   }
-                },
-                "total_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "gene_specific_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "gene_specific_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -439,67 +394,52 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "accession": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "factors": {
-                  "type": "array"
-                },
-                "technology": {
-                  "type": "array"
-                },
-                "contrasts": {
-                  "type": "array"
-                },
-                "assay_count": {
-                  "type": "null"
-                },
-                "last_update": {
-                  "type": "null"
-                },
-                "pubmed_ids": {
-                  "type": "array"
-                }
-              }
+            "type": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "description": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "factors": {
+              "type": "array"
+            },
+            "technology": {
+              "type": "array"
+            },
+            "contrasts": {
+              "type": "array"
+            },
+            "assay_count": {
+              "type": "null"
+            },
+            "last_update": {
+              "type": "null"
+            },
+            "pubmed_ids": {
+              "type": "array"
             }
-          }
+          },
+          "required": [
+            "accession"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

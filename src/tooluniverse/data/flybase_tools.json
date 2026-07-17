@@ -543,74 +543,52 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
+            "total_annotations": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "total_annotations": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "stage": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "location": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "data_provider": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "reference": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "returned": {
+              "type": "integer"
+            },
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stage": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data_provider": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "query_gene_id": {
-                  "type": "string"
-                },
-                "source": {
-                  "type": "string"
                 }
               }
             }
           },
           "required": [
-            "data"
+            "total_annotations"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }

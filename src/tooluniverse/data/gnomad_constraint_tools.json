@@ -32,87 +32,111 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful response with curated gene constraint metrics.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["success"]
+            "gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Resolved HGNC gene symbol."
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_symbol": {
-                  "type": ["string", "null"],
-                  "description": "Resolved HGNC gene symbol."
-                },
-                "gene_id": {
-                  "type": ["string", "null"],
-                  "description": "Ensembl gene ID."
-                },
-                "dataset": {
-                  "type": "string",
-                  "description": "Requested gnomAD dataset id."
-                },
-                "reference_genome": {
-                  "type": "string",
-                  "description": "Reference genome used for the constraint table (GRCh38 or GRCh37)."
-                },
-                "pLI": {
-                  "type": ["number", "null"],
-                  "description": "Probability of being loss-of-function intolerant (0-1); >=0.9 = highly constrained."
-                },
-                "oe_lof": {
-                  "type": ["number", "null"],
-                  "description": "Observed/expected loss-of-function ratio (point estimate)."
-                },
-                "oe_lof_lower": {
-                  "type": ["number", "null"],
-                  "description": "Lower bound of the oe_lof 90% confidence interval."
-                },
-                "oe_lof_upper": {
-                  "type": ["number", "null"],
-                  "description": "Upper bound of the oe_lof 90% confidence interval (= LOEUF)."
-                },
-                "loeuf": {
-                  "type": ["number", "null"],
-                  "description": "Loss-of-function observed/expected upper bound fraction (= oe_lof_upper); lower = more constrained."
-                },
-                "mis_z": {
-                  "type": ["number", "null"],
-                  "description": "Missense constraint Z-score (higher = more missense-constrained)."
-                },
-                "syn_z": {
-                  "type": ["number", "null"],
-                  "description": "Synonymous constraint Z-score (calibration metric; should be near 0)."
-                },
-                "exp_lof": {
-                  "type": ["number", "null"],
-                  "description": "Expected number of loss-of-function variants."
-                },
-                "obs_lof": {
-                  "type": ["number", "null"],
-                  "description": "Observed number of loss-of-function variants."
-                }
-              },
-              "required": ["gene_symbol", "gene_id", "dataset", "reference_genome"]
+            "gene_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Ensembl gene ID."
+            },
+            "dataset": {
+              "type": "string",
+              "description": "Requested gnomAD dataset id."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference genome used for the constraint table (GRCh38 or GRCh37)."
+            },
+            "pLI": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Probability of being loss-of-function intolerant (0-1); >=0.9 = highly constrained."
+            },
+            "oe_lof": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Observed/expected loss-of-function ratio (point estimate)."
+            },
+            "oe_lof_lower": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Lower bound of the oe_lof 90% confidence interval."
+            },
+            "oe_lof_upper": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Upper bound of the oe_lof 90% confidence interval (= LOEUF)."
+            },
+            "loeuf": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Loss-of-function observed/expected upper bound fraction (= oe_lof_upper); lower = more constrained."
+            },
+            "mis_z": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Missense constraint Z-score (higher = more missense-constrained)."
+            },
+            "syn_z": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Synonymous constraint Z-score (calibration metric; should be near 0)."
+            },
+            "exp_lof": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Expected number of loss-of-function variants."
+            },
+            "obs_lof": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Observed number of loss-of-function variants."
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "gene_symbol",
+            "gene_id",
+            "dataset",
+            "reference_genome"
+          ]
         },
         {
           "type": "object",
-          "description": "Error response.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["error"]
-            },
             "error": {
               "type": "string",
               "description": "Human-readable error message."
             }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

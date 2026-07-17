@@ -42,72 +42,58 @@
       "type": "object",
       "oneOf": [
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "notebook_path": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "notebook_path": {
-                  "type": "string"
-                },
-                "total_cells": {
-                  "type": "integer"
-                },
-                "cells": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "idx": {
-                        "type": "integer"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "source": {
-                        "type": "string"
-                      },
-                      "output": {
-                        "type": "string"
-                      }
-                    }
+            "total_cells": {
+              "type": "integer"
+            },
+            "cells": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "idx": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "output": {
+                    "type": "string"
                   }
-                },
-                "search": {
-                  "type": "string"
-                },
-                "matching_cells": {
-                  "type": "array"
-                },
-                "n_matches": {
-                  "type": "integer"
                 }
-              },
-              "required": [
-                "notebook_path",
-                "total_cells",
-                "cells"
-              ]
+              }
+            },
+            "search": {
+              "type": "string"
+            },
+            "matching_cells": {
+              "type": "array"
+            },
+            "n_matches": {
+              "type": "integer"
             }
           },
           "required": [
-            "status",
-            "data"
+            "notebook_path",
+            "total_cells",
+            "cells"
           ]
         },
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

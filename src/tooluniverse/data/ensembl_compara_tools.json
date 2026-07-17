@@ -410,127 +410,112 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "rooted": {
-                  "type": [
-                    "integer",
-                    "boolean",
-                    "null"
-                  ]
-                },
-                "pvalue_avg": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "lambda": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "root_n_members": {
-                  "type": [
-                    "integer",
-                    "number",
-                    "null"
-                  ]
-                },
-                "nodes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "scientific_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "taxon_id": {
-                        "type": [
-                          "integer",
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "n_members": {
-                        "type": [
-                          "integer",
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "pvalue": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "p_value_lim": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "lambda": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "rooted": {
+              "type": [
+                "integer",
+                "boolean",
+                "null"
+              ]
+            },
+            "pvalue_avg": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lambda": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "root_n_members": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ]
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "n_members": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "pvalue": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p_value_lim": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "lambda": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
-                },
-                "total_nodes": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total_nodes": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "nodes"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

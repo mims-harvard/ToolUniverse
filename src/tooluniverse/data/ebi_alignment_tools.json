@@ -20,40 +20,67 @@
           "default": "protein"
         }
       },
-      "required": ["sequences"]
+      "required": [
+        "sequences"
+      ]
     },
     "type": "EBIMSATool",
     "test_examples": [
-      {"sequences": ">s1\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHF\n>s2\nMVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLST\n>s3\nMVLSAADKNNVKGIFTKIAGHAEEYGAETLERMFITYPPTKTYFPHF", "method": "clustalo", "sequence_type": "protein"},
-      {"sequences": ">a\nATGGCGCTGTGGATGCGCCTG\n>b\nATGGCGCTGTGGATGCGTCTC\n>c\nATGGCACTGTGGATGCGCCTG", "method": "mafft", "sequence_type": "dna"}
+      {
+        "sequences": ">s1\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHF\n>s2\nMVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLST\n>s3\nMVLSAADKNNVKGIFTKIAGHAEEYGAETLERMFITYPPTKTYFPHF",
+        "method": "clustalo",
+        "sequence_type": "protein"
+      },
+      {
+        "sequences": ">a\nATGGCGCTGTGGATGCGCCTG\n>b\nATGGCGCTGTGGATGCGTCTC\n>c\nATGGCACTGTGGATGCGCCTG",
+        "method": "mafft",
+        "sequence_type": "dna"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "method": {"type": "string"},
-                "num_sequences": {"type": "integer"},
-                "aligned_fasta": {"type": ["string", "null"]},
-                "alignment_clustal": {"type": ["string", "null"]},
-                "guide_tree_newick": {"type": ["string", "null"]}
-              }
+            "method": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "num_sequences": {
+              "type": "integer"
+            },
+            "aligned_fasta": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "alignment_clustal": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "guide_tree_newick": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "method"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -84,37 +111,46 @@
           "default": false
         }
       },
-      "required": ["aligned_sequences"]
+      "required": [
+        "aligned_sequences"
+      ]
     },
     "type": "EBIPhylogenyTool",
     "test_examples": [
-      {"aligned_sequences": ">s1\n-MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHF-----\n>s2\nMVHLTPEEKSAVTALWGKVN--VDEVGGEALGRLLVVYPWTQRFFESFGDLST\n>s3\n-MVLSAADKNNVKGIFTKIAGHAEEYGAETLERMFITYPPTKTYFPHF-----", "clustering": "Neighbour-joining"}
+      {
+        "aligned_sequences": ">s1\n-MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHF-----\n>s2\nMVHLTPEEKSAVTALWGKVN--VDEVGGEALGRLLVVYPWTQRFFESFGDLST\n>s3\n-MVLSAADKNNVKGIFTKIAGHAEEYGAETLERMFITYPPTKTYFPHF-----",
+        "clustering": "Neighbour-joining"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "newick": {"type": "string"},
-                "num_taxa": {"type": "integer"},
-                "clustering": {"type": "string"}
-              }
+            "newick": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "num_taxa": {
+              "type": "integer"
+            },
+            "clustering": {
+              "type": "string"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "newick"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

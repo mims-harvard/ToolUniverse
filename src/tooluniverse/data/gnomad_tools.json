@@ -170,54 +170,39 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_search": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "ensembl_id": {
-                        "type": "string"
-                      },
-                      "ensembl_version": {
-                        "type": "string"
-                      },
-                      "symbol": {
-                        "type": "string"
-                      }
-                    }
+            "gene_search": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ensembl_id": {
+                    "type": "string"
+                  },
+                  "ensembl_version": {
+                    "type": "string"
+                  },
+                  "symbol": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "gene_search"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -283,72 +268,57 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "gene": {
               "type": "object",
               "properties": {
-                "gene": {
-                  "type": "object",
-                  "properties": {
-                    "gene_id": {
-                      "type": "string"
-                    },
-                    "symbol": {
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "chrom": {
-                      "type": "string"
-                    },
-                    "start": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "stop": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "strand": {
-                      "type": "string"
-                    },
-                    "canonical_transcript_id": {
-                      "type": "string"
-                    }
-                  }
+                "gene_id": {
+                  "type": "string"
+                },
+                "symbol": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "chrom": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "stop": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "strand": {
+                  "type": "string"
+                },
+                "canonical_transcript_id": {
+                  "type": "string"
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -400,77 +370,62 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "transcript": {
               "type": "object",
               "properties": {
-                "transcript": {
+                "transcript_id": {
+                  "type": "string"
+                },
+                "gene_id": {
+                  "type": "string"
+                },
+                "gene": {
                   "type": "object",
                   "properties": {
-                    "transcript_id": {
-                      "type": "string"
-                    },
                     "gene_id": {
                       "type": "string"
                     },
-                    "gene": {
-                      "type": "object",
-                      "properties": {
-                        "gene_id": {
-                          "type": "string"
-                        },
-                        "symbol": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "chrom": {
-                      "type": "string"
-                    },
-                    "start": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "stop": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "strand": {
+                    "symbol": {
                       "type": "string"
                     }
                   }
+                },
+                "chrom": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "stop": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "strand": {
+                  "type": "string"
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "transcript"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -514,48 +469,33 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant_search": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "variant_id": {
-                        "type": "string"
-                      }
-                    }
+            "variant_search": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "variant_id": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "variant_search"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -602,86 +542,71 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "variant": {
               "type": "object",
               "properties": {
-                "variant": {
+                "variant_id": {
+                  "type": "string"
+                },
+                "chrom": {
+                  "type": "string"
+                },
+                "pos": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "ref": {
+                  "type": "string"
+                },
+                "alt": {
+                  "type": "string"
+                },
+                "rsid": {
+                  "type": "string"
+                },
+                "genome": {
                   "type": "object",
                   "properties": {
-                    "variant_id": {
-                      "type": "string"
+                    "af": {
+                      "type": "number"
                     },
-                    "chrom": {
-                      "type": "string"
-                    },
-                    "pos": {
+                    "an": {
                       "type": [
                         "integer",
                         "number"
                       ]
                     },
-                    "ref": {
-                      "type": "string"
-                    },
-                    "alt": {
-                      "type": "string"
-                    },
-                    "rsid": {
-                      "type": "string"
-                    },
-                    "genome": {
-                      "type": "object",
-                      "properties": {
-                        "af": {
-                          "type": "number"
-                        },
-                        "an": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "ac": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        }
-                      }
-                    },
-                    "exome": {
-                      "type": "null"
+                    "ac": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
                     }
                   }
+                },
+                "exome": {
+                  "type": "null"
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "variant"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -722,182 +647,167 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "variant_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
+            "chrom": {
+              "type": "string"
+            },
+            "pos": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "ref": {
+              "type": "string"
+            },
+            "alt": {
+              "type": "string"
+            },
+            "rsid": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dataset": {
+              "type": "string"
+            },
+            "genome": {
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
-                "variant_id": {
-                  "type": "string"
-                },
-                "chrom": {
-                  "type": "string"
-                },
-                "pos": {
+                "ac": {
                   "type": [
                     "integer",
-                    "number"
-                  ]
-                },
-                "ref": {
-                  "type": "string"
-                },
-                "alt": {
-                  "type": "string"
-                },
-                "rsid": {
-                  "type": [
-                    "string",
+                    "number",
                     "null"
                   ]
                 },
-                "dataset": {
-                  "type": "string"
-                },
-                "genome": {
+                "an": {
                   "type": [
-                    "object",
+                    "integer",
+                    "number",
                     "null"
-                  ],
-                  "properties": {
-                    "ac": {
-                      "type": [
-                        "integer",
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "an": {
-                      "type": [
-                        "integer",
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "af": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "populations": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "ac": {
-                            "type": [
-                              "integer",
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "an": {
-                            "type": [
-                              "integer",
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "af": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
+                  ]
                 },
-                "exome": {
+                "af": {
                   "type": [
-                    "object",
+                    "number",
                     "null"
-                  ],
-                  "properties": {
-                    "ac": {
-                      "type": [
-                        "integer",
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "an": {
-                      "type": [
-                        "integer",
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "af": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "populations": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "ac": {
-                            "type": [
-                              "integer",
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "an": {
-                            "type": [
-                              "integer",
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "af": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          }
-                        }
+                  ]
+                },
+                "populations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "ac": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "an": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "af": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
                       }
                     }
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "exome": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "ac": {
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ]
+                },
+                "an": {
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ]
+                },
+                "af": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "populations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "ac": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "an": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "af": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "variant_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -975,82 +885,67 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "region": {
               "type": "object",
               "properties": {
-                "region": {
-                  "type": "object",
-                  "properties": {
-                    "chrom": {
-                      "type": "string"
-                    },
-                    "start": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "stop": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "genes": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "gene_id": {
-                            "type": "string"
-                          },
-                          "symbol": {
-                            "type": "string"
-                          }
-                        }
+                "chrom": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "stop": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gene_id": {
+                        "type": "string"
+                      },
+                      "symbol": {
+                        "type": "string"
                       }
-                    },
-                    "variants": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "variant_id": {
-                            "type": "string"
-                          }
-                        }
+                    }
+                  }
+                },
+                "variants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variant_id": {
+                        "type": "string"
                       }
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "region"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -1105,128 +1000,113 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "gene": {
               "type": "object",
               "properties": {
-                "gene": {
-                  "type": "object",
-                  "properties": {
-                    "symbol": {
-                      "type": "string"
-                    },
-                    "gene_id": {
-                      "type": "string"
-                    },
-                    "chrom": {
-                      "type": "string"
-                    },
-                    "start": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "stop": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "structural_variants": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "variant_id": {
-                            "type": "string"
-                          },
-                          "chrom": {
-                            "type": "string"
-                          },
-                          "pos": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "end": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "type": {
-                            "type": "string"
-                          },
-                          "length": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "ac": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "an": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "af": {
-                            "type": "number"
-                          },
-                          "homozygote_count": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "major_consequence": {
-                            "type": "string"
-                          },
-                          "filters": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
-                          }
+                "symbol": {
+                  "type": "string"
+                },
+                "gene_id": {
+                  "type": "string"
+                },
+                "chrom": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "stop": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "structural_variants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variant_id": {
+                        "type": "string"
+                      },
+                      "chrom": {
+                        "type": "string"
+                      },
+                      "pos": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "end": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "length": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "ac": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "an": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "af": {
+                        "type": "number"
+                      },
+                      "homozygote_count": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "major_consequence": {
+                        "type": "string"
+                      },
+                      "filters": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
                         }
                       }
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -1300,136 +1180,121 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "region": {
               "type": "object",
               "properties": {
-                "region": {
-                  "type": "object",
-                  "properties": {
-                    "chrom": {
-                      "type": "string"
-                    },
-                    "start": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "stop": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "genes": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "gene_id": {
-                            "type": "string"
-                          },
-                          "symbol": {
-                            "type": "string"
-                          }
-                        }
+                "chrom": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "stop": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gene_id": {
+                        "type": "string"
+                      },
+                      "symbol": {
+                        "type": "string"
                       }
-                    },
-                    "structural_variants": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "variant_id": {
-                            "type": "string"
-                          },
-                          "chrom": {
-                            "type": "string"
-                          },
-                          "pos": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "end": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "type": {
-                            "type": "string"
-                          },
-                          "length": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "ac": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "an": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "af": {
-                            "type": "number"
-                          },
-                          "homozygote_count": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "major_consequence": {
-                            "type": "string"
-                          },
-                          "filters": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
-                          }
+                    }
+                  }
+                },
+                "structural_variants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variant_id": {
+                        "type": "string"
+                      },
+                      "chrom": {
+                        "type": "string"
+                      },
+                      "pos": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "end": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "length": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "ac": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "an": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "af": {
+                        "type": "number"
+                      },
+                      "homozygote_count": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "major_consequence": {
+                        "type": "string"
+                      },
+                      "filters": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
                         }
                       }
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "region"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -1481,132 +1346,117 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "structural_variant": {
               "type": "object",
               "properties": {
-                "structural_variant": {
-                  "type": "object",
-                  "properties": {
-                    "variant_id": {
-                      "type": "string"
-                    },
-                    "chrom": {
-                      "type": "string"
-                    },
-                    "pos": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "end": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "type": {
-                      "type": "string"
-                    },
-                    "length": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "ac": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "an": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "af": {
-                      "type": "number"
-                    },
-                    "homozygote_count": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "hemizygote_count": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "major_consequence": {
-                      "type": "string"
-                    },
-                    "consequence": {
-                      "type": "string"
-                    },
-                    "reference_genome": {
-                      "type": "string"
-                    },
-                    "filters": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "chrom2": {
-                      "type": "string"
-                    },
-                    "pos2": {
-                      "type": "null"
-                    },
-                    "end2": {
-                      "type": "null"
-                    },
-                    "ac_hom": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "ac_hemi": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    }
+                "variant_id": {
+                  "type": "string"
+                },
+                "chrom": {
+                  "type": "string"
+                },
+                "pos": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "end": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "type": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "ac": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "an": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "af": {
+                  "type": "number"
+                },
+                "homozygote_count": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "hemizygote_count": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "major_consequence": {
+                  "type": "string"
+                },
+                "consequence": {
+                  "type": "string"
+                },
+                "reference_genome": {
+                  "type": "string"
+                },
+                "filters": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
+                },
+                "chrom2": {
+                  "type": "string"
+                },
+                "pos2": {
+                  "type": "null"
+                },
+                "end2": {
+                  "type": "null"
+                },
+                "ac_hom": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "ac_hemi": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "structural_variant"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
