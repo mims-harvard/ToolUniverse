@@ -167,49 +167,38 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
+          "description": "DBLP author search response",
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "result": {
               "type": "object",
-              "description": "DBLP author search response",
               "properties": {
-                "result": {
+                "query": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "object"
+                },
+                "hits": {
                   "type": "object",
+                  "description": "Matched author records",
                   "properties": {
-                    "query": {
+                    "@total": {
                       "type": "string"
                     },
-                    "status": {
-                      "type": "object"
-                    },
-                    "hits": {
-                      "type": "object",
-                      "description": "Matched author records",
-                      "properties": {
-                        "@total": {
-                          "type": "string"
-                        },
-                        "hit": {
-                          "type": "array",
-                          "items": {
+                    "hit": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "@id": {
+                            "type": "string"
+                          },
+                          "@score": {
+                            "type": "string"
+                          },
+                          "info": {
                             "type": "object",
-                            "properties": {
-                              "@id": {
-                                "type": "string"
-                              },
-                              "@score": {
-                                "type": "string"
-                              },
-                              "info": {
-                                "type": "object",
-                                "description": "Author info including 'author' name, 'url' (PID URL), optional 'aliases', 'notes' (affiliations/awards)"
-                              }
-                            }
+                            "description": "Author info including 'author' name, 'url' (PID URL), optional 'aliases', 'notes' (affiliations/awards)"
                           }
                         }
                       }
@@ -217,26 +206,22 @@
                   }
                 }
               }
-            },
-            "url": {
-              "type": "string"
             }
-          }
+          },
+          "required": [
+            "result"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -286,49 +271,38 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
+          "description": "DBLP venue search response",
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "result": {
               "type": "object",
-              "description": "DBLP venue search response",
               "properties": {
-                "result": {
+                "query": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "object"
+                },
+                "hits": {
                   "type": "object",
+                  "description": "Matched venue records",
                   "properties": {
-                    "query": {
+                    "@total": {
                       "type": "string"
                     },
-                    "status": {
-                      "type": "object"
-                    },
-                    "hits": {
-                      "type": "object",
-                      "description": "Matched venue records",
-                      "properties": {
-                        "@total": {
-                          "type": "string"
-                        },
-                        "hit": {
-                          "type": "array",
-                          "items": {
+                    "hit": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "@id": {
+                            "type": "string"
+                          },
+                          "@score": {
+                            "type": "string"
+                          },
+                          "info": {
                             "type": "object",
-                            "properties": {
-                              "@id": {
-                                "type": "string"
-                              },
-                              "@score": {
-                                "type": "string"
-                              },
-                              "info": {
-                                "type": "object",
-                                "description": "Venue info including 'venue' name, optional 'acronym', 'type' (Conference/Journal), and 'url'"
-                              }
-                            }
+                            "description": "Venue info including 'venue' name, optional 'acronym', 'type' (Conference/Journal), and 'url'"
                           }
                         }
                       }
@@ -336,26 +310,22 @@
                   }
                 }
               }
-            },
-            "url": {
-              "type": "string"
             }
-          }
+          },
+          "required": [
+            "result"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

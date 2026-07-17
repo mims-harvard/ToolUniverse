@@ -586,115 +586,95 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Per-structure quantified expression values for the ISH dataset",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "StructureUnionize record ID"
+              },
+              "section_data_set_id": {
+                "type": "integer",
+                "description": "Source ISH experiment (SectionDataSet) ID"
+              },
+              "structure_id": {
+                "type": "integer",
+                "description": "Allen Brain Atlas structure (brain region) ID"
+              },
+              "expression_energy": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Expression energy = sum of expressing pixel intensity / total pixels (intensity x density)"
+              },
+              "expression_density": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Fraction of pixels in the structure that express the gene"
+              },
+              "sum_expressing_pixels": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Total number of expressing pixels in the structure"
+              },
+              "sum_expressing_pixel_intensity": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "sum_pixels": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "sum_pixel_intensity": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "voxel_energy_mean": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "voxel_energy_cv": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "structure": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Linked brain structure record (present when include_structure=true)",
                 "properties": {
                   "id": {
-                    "type": "integer",
-                    "description": "StructureUnionize record ID"
+                    "type": "integer"
                   },
-                  "section_data_set_id": {
-                    "type": "integer",
-                    "description": "Source ISH experiment (SectionDataSet) ID"
-                  },
-                  "structure_id": {
-                    "type": "integer",
-                    "description": "Allen Brain Atlas structure (brain region) ID"
-                  },
-                  "expression_energy": {
+                  "acronym": {
                     "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Expression energy = sum of expressing pixel intensity / total pixels (intensity x density)"
-                  },
-                  "expression_density": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Fraction of pixels in the structure that express the gene"
-                  },
-                  "sum_expressing_pixels": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Total number of expressing pixels in the structure"
-                  },
-                  "sum_expressing_pixel_intensity": {
-                    "type": [
-                      "number",
+                      "string",
                       "null"
                     ]
                   },
-                  "sum_pixels": {
+                  "name": {
                     "type": [
-                      "number",
+                      "string",
                       "null"
                     ]
-                  },
-                  "sum_pixel_intensity": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "voxel_energy_mean": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "voxel_energy_cv": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "structure": {
-                    "type": [
-                      "object",
-                      "null"
-                    ],
-                    "description": "Linked brain structure record (present when include_structure=true)",
-                    "properties": {
-                      "id": {
-                        "type": "integer"
-                      },
-                      "acronym": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
                   }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "section_data_set_id": {
-                  "type": "integer"
                 }
               }
             }
@@ -703,9 +683,6 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }

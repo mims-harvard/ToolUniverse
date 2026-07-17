@@ -474,22 +474,21 @@
             "coverage": {
               "type": "object"
             }
-          }
+          },
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

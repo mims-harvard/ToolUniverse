@@ -52,94 +52,80 @@
       "type": "object",
       "oneOf": [
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "n_subjects": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "n_subjects": {
-                  "type": "integer"
-                },
-                "group_col": {
-                  "type": "string"
-                },
-                "subgroup": {
-                  "type": "string"
-                },
-                "aesev_distribution": {
-                  "type": "object"
-                },
-                "test": {
-                  "type": "string"
-                },
-                "test_statistic": {
-                  "type": "number"
-                },
-                "p_value": {
-                  "type": "number"
-                },
-                "dof": {
-                  "type": "integer"
-                },
-                "contingency_table": {
-                  "type": "object"
-                },
-                "or": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "ci_lower": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "ci_upper": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "odds_ratios": {
-                  "type": "object"
-                },
-                "covariates": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "model_summary": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "n_subjects",
-                "group_col",
-                "aesev_distribution"
+            "group_col": {
+              "type": "string"
+            },
+            "subgroup": {
+              "type": "string"
+            },
+            "aesev_distribution": {
+              "type": "object"
+            },
+            "test": {
+              "type": "string"
+            },
+            "test_statistic": {
+              "type": "number"
+            },
+            "p_value": {
+              "type": "number"
+            },
+            "dof": {
+              "type": "integer"
+            },
+            "contingency_table": {
+              "type": "object"
+            },
+            "or": {
+              "type": [
+                "number",
+                "null"
               ]
+            },
+            "ci_lower": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "ci_upper": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "odds_ratios": {
+              "type": "object"
+            },
+            "covariates": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "model_summary": {
+              "type": "string"
             }
           },
           "required": [
-            "status",
-            "data"
+            "n_subjects",
+            "group_col",
+            "aesev_distribution"
           ]
         },
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

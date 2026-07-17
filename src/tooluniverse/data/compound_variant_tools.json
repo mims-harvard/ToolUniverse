@@ -34,40 +34,31 @@
       "type": "object",
       "oneOf": [
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "query": {
+              "type": "object"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "query": {
-                  "type": "object"
-                },
-                "sources_queried": {
-                  "type": "array"
-                },
-                "sources_failed": {
-                  "type": "array"
-                },
-                "summary": {
-                  "type": "object"
-                },
-                "annotations": {
-                  "type": "object"
-                }
-              }
+            "sources_queried": {
+              "type": "array"
+            },
+            "sources_failed": {
+              "type": "array"
+            },
+            "summary": {
+              "type": "object"
+            },
+            "annotations": {
+              "type": "object"
             }
           },
           "required": [
-            "data"
+            "query"
           ]
         },
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }

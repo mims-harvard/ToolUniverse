@@ -95,23 +95,17 @@
       "type": "object",
       "oneOf": [
         {
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "data"
-          ]
+          "type": "object",
+          "not": {
+            "type": "object",
+            "required": [
+              "error"
+            ]
+          }
         },
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }

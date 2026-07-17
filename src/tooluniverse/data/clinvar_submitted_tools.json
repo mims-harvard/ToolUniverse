@@ -11,109 +11,121 @@
           "description": "ClinVar variant identifier. Accepts a VCV accession (e.g. 'VCV000013961') OR a bare ClinVar variation id (e.g. '13961'); a numeric id is normalized to VCV%09d. Example: 'VCV000013961' (BRAF V600E)."
         }
       },
-      "required": ["variant_id"]
+      "required": [
+        "variant_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful retrieval of per-submitter ClinVar records.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["success"],
-              "description": "Indicates the request succeeded."
+            "variation_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ClinVar numeric variation id."
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "variation_id": {
-                  "type": ["string", "null"],
-                  "description": "ClinVar numeric variation id."
-                },
-                "vcv_accession": {
-                  "type": ["string", "null"],
-                  "description": "VCV accession for the variant."
-                },
-                "name": {
-                  "type": ["string", "null"],
-                  "description": "ClinVar preferred variant name (e.g. HGVS expression)."
-                },
-                "aggregate_classification": {
-                  "type": ["string", "null"],
-                  "description": "Record-level aggregate germline classification description (e.g. 'Pathogenic', 'Conflicting classifications of pathogenicity')."
-                },
-                "aggregate_review_status": {
-                  "type": ["string", "null"],
-                  "description": "Record-level aggregate review status."
-                },
-                "total_submissions": {
-                  "type": "integer",
-                  "description": "Number of per-submitter assertions parsed."
-                },
-                "submissions": {
-                  "type": "array",
-                  "description": "Per-submitter (SCV) assertions.",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "scv_accession": {
-                        "type": ["string", "null"],
-                        "description": "Submitter assertion accession with version (e.g. 'SCV001450230.1')."
-                      },
-                      "classification": {
-                        "type": ["string", "null"],
-                        "description": "This submitter's classification value (e.g. 'Pathogenic' for germline, 'Tier I - Strong' for somatic clinical impact, 'Oncogenic' for oncogenicity)."
-                      },
-                      "classification_type": {
-                        "type": ["string", "null"],
-                        "description": "Which classification axis the value belongs to: 'germline', 'somatic_clinical_impact', or 'oncogenicity'."
-                      },
-                      "review_status": {
-                        "type": ["string", "null"],
-                        "description": "This submitter's review status (e.g. 'criteria provided, single submitter')."
-                      },
-                      "submitter": {
-                        "type": ["string", "null"],
-                        "description": "Submitting organization name."
-                      },
-                      "condition": {
-                        "type": ["string", "null"],
-                        "description": "Condition / phenotype the submitter classified against."
-                      },
-                      "last_evaluated": {
-                        "type": ["string", "null"],
-                        "description": "Date the submitter last evaluated the classification (YYYY-MM-DD)."
-                      }
-                    }
+            "vcv_accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "VCV accession for the variant."
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ClinVar preferred variant name (e.g. HGVS expression)."
+            },
+            "aggregate_classification": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Record-level aggregate germline classification description (e.g. 'Pathogenic', 'Conflicting classifications of pathogenicity')."
+            },
+            "aggregate_review_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Record-level aggregate review status."
+            },
+            "total_submissions": {
+              "type": "integer",
+              "description": "Number of per-submitter assertions parsed."
+            },
+            "submissions": {
+              "type": "array",
+              "description": "Per-submitter (SCV) assertions.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scv_accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Submitter assertion accession with version (e.g. 'SCV001450230.1')."
+                  },
+                  "classification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "This submitter's classification value (e.g. 'Pathogenic' for germline, 'Tier I - Strong' for somatic clinical impact, 'Oncogenic' for oncogenicity)."
+                  },
+                  "classification_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which classification axis the value belongs to: 'germline', 'somatic_clinical_impact', or 'oncogenicity'."
+                  },
+                  "review_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "This submitter's review status (e.g. 'criteria provided, single submitter')."
+                  },
+                  "submitter": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Submitting organization name."
+                  },
+                  "condition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Condition / phenotype the submitter classified against."
+                  },
+                  "last_evaluated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Date the submitter last evaluated the classification (YYYY-MM-DD)."
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "description": "Provenance and counts reported by ClinVar.",
-              "properties": {
-                "source": {"type": "string"},
-                "endpoint": {"type": "string"},
-                "queried_id": {"type": "string"},
-                "number_of_submissions_reported": {"type": ["string", "null"]},
-                "number_of_submitters_reported": {"type": ["string", "null"]},
-                "date_last_updated": {"type": ["string", "null"]}
-              }
             }
           },
-          "required": ["status", "data", "metadata"]
+          "required": [
+            "total_submissions"
+          ]
         },
         {
           "type": "object",
           "description": "Error response.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["error"],
-              "description": "Indicates the request failed."
-            },
             "error": {
               "type": "string",
               "description": "Human-readable error message."
@@ -123,7 +135,9 @@
               "description": "Normalized VCV accession that was queried, when available."
             }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -135,7 +149,13 @@
         "variant_id": "13961"
       }
     ],
-    "label": ["clinvar", "variant", "clinical_significance", "submitter", "scv"],
+    "label": [
+      "clinvar",
+      "variant",
+      "clinical_significance",
+      "submitter",
+      "scv"
+    ],
     "metadata": {
       "data_source": "NCBI ClinVar (eutils efetch, rettype=vcv)",
       "requires_api_key": false

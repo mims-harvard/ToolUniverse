@@ -78,37 +78,26 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "variant": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {
-                  "type": "string"
-                },
-                "output_type": {
-                  "type": "string"
-                },
-                "scores": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
+            "output_type": {
+              "type": "string"
+            },
+            "scores": {
+              "type": "array",
+              "items": {
+                "type": "object"
               }
             }
           },
           "required": [
-            "data"
+            "variant"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
@@ -209,34 +198,23 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "interval": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "interval": {
-                  "type": "string"
-                },
-                "tracks": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
+            "tracks": {
+              "type": "array",
+              "items": {
+                "type": "object"
               }
             }
           },
           "required": [
-            "data"
+            "interval"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }

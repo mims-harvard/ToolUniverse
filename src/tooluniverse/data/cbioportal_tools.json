@@ -6,7 +6,11 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "limit": {"type": "integer", "default": 20, "description": "Number of studies to return"}
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "description": "Number of studies to return"
+        }
       }
     },
     "fields": {
@@ -18,23 +22,62 @@
       "items": {
         "type": "object",
         "properties": {
-          "studyId": {"type": "string"},
-          "name": {"type": "string"},
-          "description": {"type": "string"},
-          "cancerTypeId": {"type": "string"},
-          "publicStudy": {"type": "boolean"},
-          "pmid": {"type": "string"},
-          "citation": {"type": "string"},
-          "groups": {"type": ["array", "string"]},
-          "status": {"type": ["string", "integer"]},
-          "importDate": {"type": "string"},
-          "allSampleCount": {"type": "integer"},
-          "readPermission": {"type": "boolean"},
-          "referenceGenome": {"type": "string"}
+          "studyId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "cancerTypeId": {
+            "type": "string"
+          },
+          "publicStudy": {
+            "type": "boolean"
+          },
+          "pmid": {
+            "type": "string"
+          },
+          "citation": {
+            "type": "string"
+          },
+          "groups": {
+            "type": [
+              "array",
+              "string"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "integer"
+            ]
+          },
+          "importDate": {
+            "type": "string"
+          },
+          "allSampleCount": {
+            "type": "integer"
+          },
+          "readPermission": {
+            "type": "boolean"
+          },
+          "referenceGenome": {
+            "type": "string"
+          }
         }
       }
     },
-    "test_examples": [{"limit": 5}, {"limit": 10}]
+    "test_examples": [
+      {
+        "limit": 5
+      },
+      {
+        "limit": 10
+      }
+    ]
   },
   {
     "type": "CBioPortalRESTTool",
@@ -43,11 +86,23 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "study_id": {"type": "string", "description": "Cancer study ID (e.g., 'brca_tcga')"},
-        "gene_list": {"type": "string", "description": "Comma-separated gene symbols (e.g., 'BRCA1,BRCA2')"},
-        "sample_list_id": {"type": "string", "description": "Optional sample list ID. If not provided, uses all samples in the study."}
+        "study_id": {
+          "type": "string",
+          "description": "Cancer study ID (e.g., 'brca_tcga')"
+        },
+        "gene_list": {
+          "type": "string",
+          "description": "Comma-separated gene symbols (e.g., 'BRCA1,BRCA2')"
+        },
+        "sample_list_id": {
+          "type": "string",
+          "description": "Optional sample list ID. If not provided, uses all samples in the study."
+        }
       },
-      "required": ["study_id", "gene_list"]
+      "required": [
+        "study_id",
+        "gene_list"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/molecular-profiles/{study_id}_mutations/mutations/fetch",
@@ -59,35 +114,78 @@
       "items": {
         "type": "object",
         "properties": {
-          "molecularProfileId": {"type": "string"},
-          "sampleId": {"type": "string"},
-          "patientId": {"type": "string"},
-          "studyId": {"type": "string"},
-          "entrezGeneId": {"type": "integer"},
+          "molecularProfileId": {
+            "type": "string"
+          },
+          "sampleId": {
+            "type": "string"
+          },
+          "patientId": {
+            "type": "string"
+          },
+          "studyId": {
+            "type": "string"
+          },
+          "entrezGeneId": {
+            "type": "integer"
+          },
           "gene": {
             "type": "object",
             "properties": {
-              "entrezGeneId": {"type": "integer"},
-              "hugoGeneSymbol": {"type": "string"},
-              "type": {"type": "string"}
+              "entrezGeneId": {
+                "type": "integer"
+              },
+              "hugoGeneSymbol": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
             }
           },
-          "mutationType": {"type": "string"},
-          "proteinChange": {"type": "string"},
-          "mutationStatus": {"type": "string"},
-          "validationStatus": {"type": "string"},
-          "startPosition": {"type": "integer"},
-          "endPosition": {"type": "integer"},
-          "referenceAllele": {"type": "string"},
-          "variantAllele": {"type": "string"},
-          "keyword": {"type": "string"}
+          "mutationType": {
+            "type": "string"
+          },
+          "proteinChange": {
+            "type": "string"
+          },
+          "mutationStatus": {
+            "type": "string"
+          },
+          "validationStatus": {
+            "type": "string"
+          },
+          "startPosition": {
+            "type": "integer"
+          },
+          "endPosition": {
+            "type": "integer"
+          },
+          "referenceAllele": {
+            "type": "string"
+          },
+          "variantAllele": {
+            "type": "string"
+          },
+          "keyword": {
+            "type": "string"
+          }
         }
       }
     },
     "test_examples": [
-      {"study_id": "brca_tcga", "gene_list": "BRCA2"},
-      {"study_id": "brca_tcga", "gene_list": "BRCA1,BRCA2"},
-      {"study_id": "luad_tcga", "gene_list": "EGFR,KRAS"}
+      {
+        "study_id": "brca_tcga",
+        "gene_list": "BRCA2"
+      },
+      {
+        "study_id": "brca_tcga",
+        "gene_list": "BRCA1,BRCA2"
+      },
+      {
+        "study_id": "luad_tcga",
+        "gene_list": "EGFR,KRAS"
+      }
     ]
   },
   {
@@ -97,14 +195,44 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "study_id": {"type": "string", "description": "Cancer study ID (e.g., 'brca_tcga_pan_can_atlas_2018'). The discrete GISTIC profile is resolved automatically."},
-        "gene_list": {"type": "string", "description": "Comma-separated gene symbols (e.g., 'ERBB2' or 'TP53,ERBB2')"},
-        "gene": {"type": "string", "description": "Alias for gene_list: comma-separated gene symbols"},
-        "alteration_type": {"type": "string", "description": "CNA category filter: 'AMP' (amplification), 'GAIN', 'DIPLOID', 'HETLOSS' (shallow loss), 'HOMDEL' (deep deletion), or 'ALL' for every altered sample (default 'ALL').", "enum": ["AMP", "GAIN", "DIPLOID", "HETLOSS", "HOMDEL", "ALL"], "default": "ALL"},
-        "sample_list_id": {"type": "string", "description": "Optional sample list ID. Defaults to '{study_id}_all'."},
-        "molecular_profile_id": {"type": "string", "description": "Optional explicit GISTIC molecular profile ID (overrides auto-resolution)."}
+        "study_id": {
+          "type": "string",
+          "description": "Cancer study ID (e.g., 'brca_tcga_pan_can_atlas_2018'). The discrete GISTIC profile is resolved automatically."
+        },
+        "gene_list": {
+          "type": "string",
+          "description": "Comma-separated gene symbols (e.g., 'ERBB2' or 'TP53,ERBB2')"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for gene_list: comma-separated gene symbols"
+        },
+        "alteration_type": {
+          "type": "string",
+          "description": "CNA category filter: 'AMP' (amplification), 'GAIN', 'DIPLOID', 'HETLOSS' (shallow loss), 'HOMDEL' (deep deletion), or 'ALL' for every altered sample (default 'ALL').",
+          "enum": [
+            "AMP",
+            "GAIN",
+            "DIPLOID",
+            "HETLOSS",
+            "HOMDEL",
+            "ALL"
+          ],
+          "default": "ALL"
+        },
+        "sample_list_id": {
+          "type": "string",
+          "description": "Optional sample list ID. Defaults to '{study_id}_all'."
+        },
+        "molecular_profile_id": {
+          "type": "string",
+          "description": "Optional explicit GISTIC molecular profile ID (overrides auto-resolution)."
+        }
       },
-      "required": ["study_id", "gene_list"]
+      "required": [
+        "study_id",
+        "gene_list"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/molecular-profiles/{study_id}_gistic/discrete-copy-number/fetch",
@@ -114,44 +242,55 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "count": {"type": "integer"},
-            "molecular_profile_id": {"type": "string"},
-            "entrez_gene_ids": {"type": "array", "items": {"type": "integer"}},
-            "alteration_type": {"type": "string"},
-            "alteration_counts": {"type": "object"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "sampleId": {"type": "string"},
-                  "patientId": {"type": "string"},
-                  "entrezGeneId": {"type": "integer"},
-                  "studyId": {"type": "string"},
-                  "molecularProfileId": {"type": "string"},
-                  "alteration": {"type": "integer"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sampleId": {
+                "type": "string"
+              },
+              "patientId": {
+                "type": "string"
+              },
+              "entrezGeneId": {
+                "type": "integer"
+              },
+              "studyId": {
+                "type": "string"
+              },
+              "molecularProfileId": {
+                "type": "string"
+              },
+              "alteration": {
+                "type": "integer"
               }
             }
-          },
-          "required": ["status", "data", "count"]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"study_id": "brca_tcga_pan_can_atlas_2018", "gene_list": "ERBB2", "alteration_type": "AMP"},
-      {"study_id": "brca_tcga_pan_can_atlas_2018", "gene_list": "TP53", "alteration_type": "ALL"}
+      {
+        "study_id": "brca_tcga_pan_can_atlas_2018",
+        "gene_list": "ERBB2",
+        "alteration_type": "AMP"
+      },
+      {
+        "study_id": "brca_tcga_pan_can_atlas_2018",
+        "gene_list": "TP53",
+        "alteration_type": "ALL"
+      }
     ]
   },
   {
@@ -161,9 +300,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "study_id": {"type": "string", "description": "Cancer study ID"}
+        "study_id": {
+          "type": "string",
+          "description": "Cancer study ID"
+        }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/molecular-profiles",
@@ -174,18 +318,34 @@
       "items": {
         "type": "object",
         "properties": {
-          "molecularProfileId": {"type": "string"},
-          "molecularAlterationType": {"type": "string"},
-          "datatype": {"type": "string"},
-          "name": {"type": "string"},
-          "description": {"type": "string"},
-          "showProfileInAnalysisTab": {"type": "boolean"}
+          "molecularProfileId": {
+            "type": "string"
+          },
+          "molecularAlterationType": {
+            "type": "string"
+          },
+          "datatype": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "showProfileInAnalysisTab": {
+            "type": "boolean"
+          }
         }
       }
     },
     "test_examples": [
-      {"study_id": "brca_tcga"},
-      {"study_id": "luad_tcga"}
+      {
+        "study_id": "brca_tcga"
+      },
+      {
+        "study_id": "luad_tcga"
+      }
     ]
   },
   {
@@ -195,10 +355,19 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "study_id": {"type": "string", "description": "Cancer study ID"},
-        "page_size": {"type": "integer", "default": 100, "description": "Number of samples to return"}
+        "study_id": {
+          "type": "string",
+          "description": "Cancer study ID"
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 100,
+          "description": "Number of samples to return"
+        }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/samples?pageSize={page_size}",
@@ -209,16 +378,30 @@
       "items": {
         "type": "object",
         "properties": {
-          "sampleId": {"type": "string"},
-          "sampleType": {"type": "string"},
-          "patientId": {"type": "string"},
-          "studyId": {"type": "string"}
+          "sampleId": {
+            "type": "string"
+          },
+          "sampleType": {
+            "type": "string"
+          },
+          "patientId": {
+            "type": "string"
+          },
+          "studyId": {
+            "type": "string"
+          }
         }
       }
     },
     "test_examples": [
-      {"study_id": "brca_tcga", "page_size": 10},
-      {"study_id": "luad_tcga", "page_size": 20}
+      {
+        "study_id": "brca_tcga",
+        "page_size": 10
+      },
+      {
+        "study_id": "luad_tcga",
+        "page_size": 20
+      }
     ]
   },
   {
@@ -228,10 +411,19 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "study_id": {"type": "string", "description": "Cancer study ID"},
-        "page_size": {"type": "integer", "default": 100, "description": "Number of patients to return"}
+        "study_id": {
+          "type": "string",
+          "description": "Cancer study ID"
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 100,
+          "description": "Number of patients to return"
+        }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/patients?pageSize={page_size}",
@@ -242,13 +434,20 @@
       "items": {
         "type": "object",
         "properties": {
-          "patientId": {"type": "string"},
-          "studyId": {"type": "string"}
+          "patientId": {
+            "type": "string"
+          },
+          "studyId": {
+            "type": "string"
+          }
         }
       }
     },
     "test_examples": [
-      {"study_id": "brca_tcga", "page_size": 10}
+      {
+        "study_id": "brca_tcga",
+        "page_size": 10
+      }
     ]
   },
   {
@@ -258,8 +457,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "keyword": {"type": "string", "description": "Gene symbol or alias to search for (e.g., 'BRCA1', 'TP53')"},
-        "query": {"type": "string", "description": "Alias for keyword: gene symbol or alias to search for"}
+        "keyword": {
+          "type": "string",
+          "description": "Gene symbol or alias to search for (e.g., 'BRCA1', 'TP53')"
+        },
+        "query": {
+          "type": "string",
+          "description": "Alias for keyword: gene symbol or alias to search for"
+        }
       }
     },
     "fields": {
@@ -271,17 +476,29 @@
       "items": {
         "type": "object",
         "properties": {
-          "entrezGeneId": {"type": "integer"},
-          "hugoGeneSymbol": {"type": "string"},
-          "type": {"type": "string"}
+          "entrezGeneId": {
+            "type": "integer"
+          },
+          "hugoGeneSymbol": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
         }
       }
     },
     "test_examples": [
-      {"keyword": "BRCA2"},
-      {"keyword": "TP53"}
+      {
+        "keyword": "BRCA2"
+      },
+      {
+        "keyword": "TP53"
+      }
     ],
-    "aliases": ["cBioPortal_search"]
+    "aliases": [
+      "cBioPortal_search"
+    ]
   },
   {
     "type": "CBioPortalRESTTool",
@@ -300,15 +517,27 @@
       "items": {
         "type": "object",
         "properties": {
-          "cancerTypeId": {"type": "string"},
-          "name": {"type": "string"},
-          "dedicatedColor": {"type": "string"},
-          "shortName": {"type": "string"},
-          "parent": {"type": "string"}
+          "cancerTypeId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "dedicatedColor": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "parent": {
+            "type": "string"
+          }
         }
       }
     },
-    "test_examples": [{}]
+    "test_examples": [
+      {}
+    ]
   },
   {
     "type": "CBioPortalRESTTool",
@@ -317,7 +546,11 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "page_size": {"type": "integer", "default": 50, "description": "Number of panels to return"}
+        "page_size": {
+          "type": "integer",
+          "default": 50,
+          "description": "Number of panels to return"
+        }
       }
     },
     "fields": {
@@ -329,12 +562,20 @@
       "items": {
         "type": "object",
         "properties": {
-          "genePanelId": {"type": "string"},
-          "description": {"type": "string"}
+          "genePanelId": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
         }
       }
     },
-    "test_examples": [{"page_size": 10}]
+    "test_examples": [
+      {
+        "page_size": 10
+      }
+    ]
   },
   {
     "type": "CBioPortalRESTTool",
@@ -343,9 +584,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "gene_panel_id": {"type": "string", "description": "Gene panel ID (e.g., 'IMPACT468')"}
+        "gene_panel_id": {
+          "type": "string",
+          "description": "Gene panel ID (e.g., 'IMPACT468')"
+        }
       },
-      "required": ["gene_panel_id"]
+      "required": [
+        "gene_panel_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/gene-panels/{gene_panel_id}",
@@ -354,21 +600,36 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "genePanelId": {"type": "string"},
-        "description": {"type": "string"},
+        "genePanelId": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
         "genes": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "entrezGeneId": {"type": "integer"},
-              "hugoGeneSymbol": {"type": "string"}
+              "entrezGeneId": {
+                "type": "integer"
+              },
+              "hugoGeneSymbol": {
+                "type": "string"
+              }
             }
           }
         }
       }
     },
-    "test_examples": [{"gene_panel_id": "IMPACT468"}, {"gene_panel_id": "IMPACT341"}]
+    "test_examples": [
+      {
+        "gene_panel_id": "IMPACT468"
+      },
+      {
+        "gene_panel_id": "IMPACT341"
+      }
+    ]
   },
   {
     "type": "CBioPortalRESTTool",
@@ -377,9 +638,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "study_id": {"type": "string", "description": "Cancer study ID (e.g., 'brca_tcga')"}
+        "study_id": {
+          "type": "string",
+          "description": "Cancer study ID (e.g., 'brca_tcga')"
+        }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/clinical-attributes",
@@ -390,16 +656,35 @@
       "items": {
         "type": "object",
         "properties": {
-          "clinicalAttributeId": {"type": "string"},
-          "displayName": {"type": "string"},
-          "description": {"type": "string"},
-          "datatype": {"type": "string"},
-          "patientAttribute": {"type": "boolean"},
-          "priority": {"type": "string"}
+          "clinicalAttributeId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "datatype": {
+            "type": "string"
+          },
+          "patientAttribute": {
+            "type": "boolean"
+          },
+          "priority": {
+            "type": "string"
+          }
         }
       }
     },
-    "test_examples": [{"study_id": "brca_tcga"}, {"study_id": "luad_tcga"}]
+    "test_examples": [
+      {
+        "study_id": "brca_tcga"
+      },
+      {
+        "study_id": "luad_tcga"
+      }
+    ]
   },
   {
     "type": "CBioPortalRESTTool",
@@ -408,11 +693,23 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "study_id": {"type": "string", "description": "Cancer study ID"},
-        "clinical_attribute_id": {"type": "string", "description": "Optional clinical attribute ID to filter by"},
-        "page_size": {"type": "integer", "default": 100, "description": "Number of records to return"}
+        "study_id": {
+          "type": "string",
+          "description": "Cancer study ID"
+        },
+        "clinical_attribute_id": {
+          "type": "string",
+          "description": "Optional clinical attribute ID to filter by"
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 100,
+          "description": "Number of records to return"
+        }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/clinical-data?pageSize={page_size}&clinicalDataType=SAMPLE",
@@ -423,17 +720,33 @@
       "items": {
         "type": "object",
         "properties": {
-          "clinicalAttributeId": {"type": "string"},
-          "value": {"type": "string"},
-          "sampleId": {"type": "string"},
-          "patientId": {"type": "string"},
-          "studyId": {"type": "string"}
+          "clinicalAttributeId": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "sampleId": {
+            "type": "string"
+          },
+          "patientId": {
+            "type": "string"
+          },
+          "studyId": {
+            "type": "string"
+          }
         }
       }
     },
     "test_examples": [
-      {"study_id": "brca_tcga", "page_size": 50},
-      {"study_id": "luad_tcga", "page_size": 50}
+      {
+        "study_id": "brca_tcga",
+        "page_size": 50
+      },
+      {
+        "study_id": "luad_tcga",
+        "page_size": 50
+      }
     ]
   },
   {
@@ -443,9 +756,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "study_id": {"type": "string", "description": "Cancer study ID"}
+        "study_id": {
+          "type": "string",
+          "description": "Cancer study ID"
+        }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/sample-lists",
@@ -456,16 +774,35 @@
       "items": {
         "type": "object",
         "properties": {
-          "sampleListId": {"type": "string"},
-          "name": {"type": "string"},
-          "description": {"type": "string"},
-          "category": {"type": "string"},
-          "sampleCount": {"type": "integer"},
-          "studyId": {"type": "string"}
+          "sampleListId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "sampleCount": {
+            "type": "integer"
+          },
+          "studyId": {
+            "type": "string"
+          }
         }
       }
     },
-    "test_examples": [{"study_id": "brca_tcga"}, {"study_id": "luad_tcga"}]
+    "test_examples": [
+      {
+        "study_id": "brca_tcga"
+      },
+      {
+        "study_id": "luad_tcga"
+      }
+    ]
   },
   {
     "type": "CBioPortalRESTTool",
@@ -474,9 +811,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "entrez_gene_id": {"type": "integer", "description": "Entrez Gene ID (e.g., 672 for BRCA1)"}
+        "entrez_gene_id": {
+          "type": "integer",
+          "description": "Entrez Gene ID (e.g., 672 for BRCA1)"
+        }
       },
-      "required": ["entrez_gene_id"]
+      "required": [
+        "entrez_gene_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/genes/{entrez_gene_id}",
@@ -485,13 +827,30 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "entrezGeneId": {"type": "integer"},
-        "hugoGeneSymbol": {"type": "string"},
-        "type": {"type": "string"},
-        "cytoband": {"type": "string"},
-        "length": {"type": "integer"}
+        "entrezGeneId": {
+          "type": "integer"
+        },
+        "hugoGeneSymbol": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "cytoband": {
+          "type": "string"
+        },
+        "length": {
+          "type": "integer"
+        }
       }
     },
-    "test_examples": [{"entrez_gene_id": 672}, {"entrez_gene_id": 7157}]
+    "test_examples": [
+      {
+        "entrez_gene_id": 672
+      },
+      {
+        "entrez_gene_id": 7157
+      }
+    ]
   }
 ]

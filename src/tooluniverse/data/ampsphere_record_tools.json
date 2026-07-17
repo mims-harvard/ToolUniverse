@@ -11,80 +11,188 @@
           "description": "AMPSphere AMP accession of the form 'AMP10.XXX_XXX'. Example: 'AMP10.000_000' (sequence KKVKSIFKKALAMMGENEVKAWGIGIK, family SPHERE-III.001_493)."
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful AMP lookup.",
+          "description": "Full AMPSphere AMP record.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "description": "Full AMPSphere AMP record.",
+            "accession": {
+              "type": "string"
+            },
+            "sequence": {
+              "type": "string"
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "length": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "molecular_weight": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "isoelectric_point": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "charge": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "aromaticity": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "instability_index": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "gravy": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "Antifam": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "RNAcode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "metaproteomes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "metatranscriptomes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "coordinates": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "num_genes": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "secondary_structure": {
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
-                "accession": {"type": "string"},
-                "sequence": {"type": "string"},
-                "family": {"type": ["string", "null"]},
-                "length": {"type": ["integer", "null"]},
-                "molecular_weight": {"type": ["number", "null"]},
-                "isoelectric_point": {"type": ["number", "null"]},
-                "charge": {"type": ["number", "null"]},
-                "aromaticity": {"type": ["number", "null"]},
-                "instability_index": {"type": ["number", "null"]},
-                "gravy": {"type": ["number", "null"]},
-                "Antifam": {"type": ["string", "null"]},
-                "RNAcode": {"type": ["string", "null"]},
-                "metaproteomes": {"type": ["string", "null"]},
-                "metatranscriptomes": {"type": ["string", "null"]},
-                "coordinates": {"type": ["string", "null"]},
-                "num_genes": {"type": ["integer", "null"]},
-                "secondary_structure": {
-                  "type": ["object", "null"],
-                  "properties": {
-                    "helix": {"type": ["number", "null"]},
-                    "turn": {"type": ["number", "null"]},
-                    "sheet": {"type": ["number", "null"]}
-                  }
+                "helix": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
-                "metadata": {"type": ["object", "null"]}
+                "turn": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "sheet": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "accession": {"type": "string"},
-                "family": {"type": ["string", "null"]},
-                "length": {"type": ["integer", "null"]},
-                "gene_count": {"type": "integer"}
-              }
+              "type": [
+                "object",
+                "null"
+              ]
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "accession"
+          ]
         },
         {
           "type": "object",
           "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "response_snippet": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"accession": "AMP10.000_000"},
-      {"accession": "AMP10.000_001"}
+      {
+        "accession": "AMP10.000_000"
+      },
+      {
+        "accession": "AMP10.000_001"
+      }
     ],
-    "label": ["AMPSphere", "Antimicrobial Peptide", "AMP", "Metagenome", "Peptide"],
+    "label": [
+      "AMPSphere",
+      "Antimicrobial Peptide",
+      "AMP",
+      "Metagenome",
+      "Peptide"
+    ],
     "metadata": {
-      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "metagenome", "metaproteome", "physicochemical", "peptide"],
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "AMPSphere",
+        "metagenome",
+        "metaproteome",
+        "physicochemical",
+        "peptide"
+      ],
       "estimated_execution_time": "1-3 seconds"
     }
   },
@@ -100,54 +208,76 @@
           "description": "Amino-acid sequence (single-letter code) to test for exact membership. Example: 'KKVKSIFKKALAMMGENEVKAWGIGIK' -> AMP10.000_000."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful exact-match test.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "query": {"type": "string"},
-                "result": {"type": ["string", "null"]},
-                "matched": {"type": "boolean"}
-              }
+            "query": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "accession": {"type": ["string", "null"]}
-              }
+            "result": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "matched": {
+              "type": "boolean"
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "query"
+          ]
         },
         {
           "type": "object",
           "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "response_snippet": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "KKVKSIFKKALAMMGENEVKAWGIGIK"},
-      {"query": "ACDEFGHIKLMNPQRSTVWYACDEFG"}
+      {
+        "query": "KKVKSIFKKALAMMGENEVKAWGIGIK"
+      },
+      {
+        "query": "ACDEFGHIKLMNPQRSTVWYACDEFG"
+      }
     ],
-    "label": ["AMPSphere", "Antimicrobial Peptide", "AMP", "Sequence", "Peptide"],
+    "label": [
+      "AMPSphere",
+      "Antimicrobial Peptide",
+      "AMP",
+      "Sequence",
+      "Peptide"
+    ],
     "metadata": {
-      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "sequence match", "exact match", "peptide"],
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "AMPSphere",
+        "sequence match",
+        "exact match",
+        "peptide"
+      ],
       "estimated_execution_time": "1-3 seconds"
     }
   }

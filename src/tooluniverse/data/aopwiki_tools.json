@@ -12,18 +12,38 @@
       "items": {
         "type": "object",
         "properties": {
-          "id": {"type": "integer"},
-          "title": {"type": ["string", "null"]},
-          "short_name": {"type": ["string", "null"]}
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "short_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
       {}
     ],
-    "label": ["AOPWiki", "Toxicology", "Adverse Outcome Pathway"],
+    "label": [
+      "AOPWiki",
+      "Toxicology",
+      "Adverse Outcome Pathway"
+    ],
     "metadata": {
-      "tags": ["toxicology", "adverse outcome pathway", "regulatory"],
+      "tags": [
+        "toxicology",
+        "adverse outcome pathway",
+        "regulatory"
+      ],
       "estimated_execution_time": "2-3 seconds"
     }
   },
@@ -39,23 +59,57 @@
           "description": "AOP numeric identifier. Find IDs using AOPWiki_list_aops. Example: 3 (mitochondrial complex I inhibition leading to parkinsonian motor deficits)."
         }
       },
-      "required": ["aop_id"]
+      "required": [
+        "aop_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "id": {"type": "integer"},
-        "title": {"type": ["string", "null"]},
-        "short_name": {"type": ["string", "null"]},
-        "created_at": {"type": ["string", "null"]},
-        "updated_at": {"type": ["string", "null"]},
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "short_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "updated_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "stressors": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": ["integer", "null"]},
-              "name": {"type": ["string", "null"]}
+              "id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
@@ -64,8 +118,18 @@
           "items": {
             "type": "object",
             "properties": {
-              "event_id": {"type": ["integer", "null"]},
-              "event": {"type": ["string", "null"]}
+              "event_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "event": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
@@ -74,8 +138,18 @@
           "items": {
             "type": "object",
             "properties": {
-              "event_id": {"type": ["integer", "null"]},
-              "event": {"type": ["string", "null"]}
+              "event_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "event": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
@@ -84,8 +158,18 @@
           "items": {
             "type": "object",
             "properties": {
-              "event_id": {"type": ["integer", "null"]},
-              "event": {"type": ["string", "null"]}
+              "event_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "event": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
@@ -94,22 +178,55 @@
           "items": {
             "type": "object",
             "properties": {
-              "upstream_event_id": {"type": ["integer", "null"]},
-              "upstream_event": {"type": ["string", "null"]},
-              "downstream_event_id": {"type": ["integer", "null"]},
-              "downstream_event": {"type": ["string", "null"]}
+              "upstream_event_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "upstream_event": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "downstream_event_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "downstream_event": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         }
       }
     },
     "test_examples": [
-      {"aop_id": 3},
-      {"aop_id": 12}
+      {
+        "aop_id": 3
+      },
+      {
+        "aop_id": 12
+      }
     ],
-    "label": ["AOPWiki", "Toxicology", "Adverse Outcome Pathway"],
+    "label": [
+      "AOPWiki",
+      "Toxicology",
+      "Adverse Outcome Pathway"
+    ],
     "metadata": {
-      "tags": ["toxicology", "adverse outcome pathway", "regulatory", "stressor"],
+      "tags": [
+        "toxicology",
+        "adverse outcome pathway",
+        "regulatory",
+        "stressor"
+      ],
       "estimated_execution_time": "2-3 seconds"
     }
   },
@@ -125,53 +242,113 @@
           "description": "AOP-Wiki Key Event numeric id, e.g. 18 ('Activation, AhR'). Obtain ids from AOPWiki_get_aop."
         }
       },
-      "required": ["event_id"]
+      "required": [
+        "event_id"
+      ]
     },
-    "settings": {"base_url": "https://aopwiki.org", "timeout": 30, "endpoint_kind": "event"},
+    "settings": {
+      "base_url": "https://aopwiki.org",
+      "timeout": 30,
+      "endpoint_kind": "event"
+    },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Key Event with ontology-annotated event components",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "id": {"type": ["integer", "null"]},
-                "title": {"type": ["string", "null"]},
-                "short_name": {"type": ["string", "null"]},
-                "biological_organization": {"type": ["string", "null"]},
-                "event_components": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {"type": ["integer", "null"]},
-                      "process": {"type": ["object", "null"]},
-                      "object": {"type": ["object", "null"]},
-                      "action": {"type": ["object", "null"]}
-                    }
+            "id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "short_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "biological_organization": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "event_components": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "process": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "object": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "action": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "event_components"
+          ]
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"event_id": 18}
+      {
+        "event_id": 18
+      }
     ],
-    "label": ["AOPWiki", "Toxicology", "Key Event", "Ontology"],
+    "label": [
+      "AOPWiki",
+      "Toxicology",
+      "Key Event",
+      "Ontology"
+    ],
     "metadata": {
-      "tags": ["toxicology", "adverse outcome pathway", "key event", "ontology", "regulatory"],
+      "tags": [
+        "toxicology",
+        "adverse outcome pathway",
+        "key event",
+        "ontology",
+        "regulatory"
+      ],
       "estimated_execution_time": "2-3 seconds"
     }
   }

@@ -41,68 +41,50 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "title": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "length": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "repeat_type": {
-                    "type": "string"
-                  },
-                  "repeat_subtype": {
-                    "type": "string"
-                  },
-                  "classification": {
-                    "type": "string"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "length": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "repeat_type": {
+                "type": "string"
+              },
+              "repeat_subtype": {
+                "type": "string"
+              },
+              "classification": {
+                "type": "string"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -138,119 +120,104 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "accession": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "length": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "classification": {
-                  "type": "string"
-                },
-                "repeat_type": {
-                  "type": "string"
-                },
-                "repeat_subtype": {
-                  "type": "string"
-                },
-                "consensus_sequence": {
-                  "type": "string"
-                },
-                "author": {
-                  "type": "string"
-                },
-                "date_created": {
-                  "type": "string"
-                },
-                "date_modified": {
-                  "type": "string"
-                },
-                "curation_state": {
-                  "type": "string"
-                },
-                "clades": {
-                  "type": "array",
-                  "items": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "length": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "classification": {
+              "type": "string"
+            },
+            "repeat_type": {
+              "type": "string"
+            },
+            "repeat_subtype": {
+              "type": "string"
+            },
+            "consensus_sequence": {
+              "type": "string"
+            },
+            "author": {
+              "type": "string"
+            },
+            "date_created": {
+              "type": "string"
+            },
+            "date_modified": {
+              "type": "string"
+            },
+            "curation_state": {
+              "type": "string"
+            },
+            "clades": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pmid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "title": {
                     "type": "string"
-                  }
-                },
-                "citations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pmid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "authors": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "aliases": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "database": {
-                        "type": "string"
-                      },
-                      "alias": {
-                        "type": "string"
-                      }
-                    }
+                  },
+                  "authors": {
+                    "type": "string"
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "aliases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": "string"
+                  },
+                  "alias": {
+                    "type": "string"
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "accession"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -310,98 +277,80 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": "string"
-                  },
-                  "query": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "string"
-                  },
-                  "strand": {
-                    "type": "string"
-                  },
-                  "bit_score": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "e_value": {
-                    "type": "string"
-                  },
-                  "seq_start": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "seq_end": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "ali_start": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "ali_end": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "model_start": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "model_end": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "query": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "strand": {
+                "type": "string"
+              },
+              "bit_score": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "e_value": {
+                "type": "string"
+              },
+              "seq_start": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "seq_end": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "ali_start": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "ali_end": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "model_start": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "model_end": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

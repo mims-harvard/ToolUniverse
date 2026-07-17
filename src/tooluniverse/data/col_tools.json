@@ -182,9 +182,6 @@
             "id": {
               "type": "string"
             },
-            "status": {
-              "type": "string"
-            },
             "origin": {
               "type": "string"
             },
@@ -215,7 +212,10 @@
             "parentId": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",

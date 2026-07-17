@@ -7,80 +7,153 @@
       "type": "object",
       "properties": {
         "peptideId": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "DBAASP numeric peptide ID. Example: 107 (Dermaseptin S4 (1-16)[M4K], sequence ALWKTLLKKVLKAAAK). Accepts a bare integer or a 'DBAASPR_107'-style ID (digits are extracted)."
         }
       },
-      "required": ["peptideId"]
+      "required": [
+        "peptideId"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful peptide lookup.",
+          "description": "Full DBAASP peptide record.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "description": "Full DBAASP peptide record.",
-              "properties": {
-                "id": {"type": "integer"},
-                "dbaaspId": {"type": "string"},
-                "name": {"type": "string"},
-                "sequence": {"type": "string"},
-                "sequenceLength": {"type": "integer"},
-                "nTerminus": {"type": ["string", "object", "null"]},
-                "cTerminus": {"type": ["string", "object", "null"]},
-                "synthesisType": {"type": ["string", "object", "null"]},
-                "complexity": {"type": ["string", "object", "null"]},
-                "pdbs": {"type": "array"},
-                "structureModel": {"type": ["object", "null"]},
-                "targetGroups": {"type": "array"},
-                "targetActivities": {"type": "array"},
-                "hemoliticCytotoxicActivities": {"type": "array"},
-                "antibiofilmActivities": {"type": "array"},
-                "uniprots": {"type": "array"},
-                "sourceGenes": {"type": "array"},
-                "smiles": {"type": ["string", "array", "null"]},
-                "articles": {"type": "array"}
-              }
+            "id": {
+              "type": "integer"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "peptide_id": {"type": "integer"},
-                "dbaasp_id": {"type": "string"},
-                "name": {"type": "string"},
-                "sequence": {"type": "string"},
-                "sequence_length": {"type": "integer"},
-                "target_activity_count": {"type": "integer"}
-              }
+            "dbaaspId": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "sequence": {
+              "type": "string"
+            },
+            "sequenceLength": {
+              "type": "integer"
+            },
+            "nTerminus": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ]
+            },
+            "cTerminus": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ]
+            },
+            "synthesisType": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ]
+            },
+            "complexity": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ]
+            },
+            "pdbs": {
+              "type": "array"
+            },
+            "structureModel": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "targetGroups": {
+              "type": "array"
+            },
+            "targetActivities": {
+              "type": "array"
+            },
+            "hemoliticCytotoxicActivities": {
+              "type": "array"
+            },
+            "antibiofilmActivities": {
+              "type": "array"
+            },
+            "uniprots": {
+              "type": "array"
+            },
+            "sourceGenes": {
+              "type": "array"
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ]
+            },
+            "articles": {
+              "type": "array"
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",
           "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "response_snippet": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"peptideId": 107},
-      {"peptideId": "2975"}
+      {
+        "peptideId": 107
+      },
+      {
+        "peptideId": "2975"
+      }
     ],
-    "label": ["DBAASP", "Antimicrobial Peptide", "AMP", "MIC", "Peptide"],
+    "label": [
+      "DBAASP",
+      "Antimicrobial Peptide",
+      "AMP",
+      "MIC",
+      "Peptide"
+    ],
     "metadata": {
-      "tags": ["antimicrobial peptide", "AMP", "DBAASP", "MIC", "hemolytic", "antibiofilm", "peptide"],
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "DBAASP",
+        "MIC",
+        "hemolytic",
+        "antibiofilm",
+        "peptide"
+      ],
       "estimated_execution_time": "1-3 seconds"
     }
   },
@@ -112,7 +185,10 @@
           "description": "Target group (e.g. 'Gram+', 'Gram-'). Maps to targetGroup.value."
         },
         "sequence_length": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "Exact peptide length filter. Maps to sequenceLength.value."
         },
         "synthesis_type": {
@@ -128,7 +204,10 @@
           "description": "UniProt accession cross-reference. Maps to uniprot.value."
         },
         "dbaasp_id": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "DBAASP numeric ID filter. Maps to id.value."
         },
         "limit": {
@@ -145,65 +224,131 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Successful search.",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "array",
-              "description": "List of matching peptide summaries.",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {"type": "integer"},
-                  "dbaaspId": {"type": "string"},
-                  "name": {"type": ["string", "null"]},
-                  "sequence": {"type": ["string", "null"]},
-                  "sequenceLength": {"type": ["integer", "null"]},
-                  "nTerminus": {"type": ["string", "object", "null"]},
-                  "cTerminus": {"type": ["string", "object", "null"]},
-                  "complexity": {"type": ["string", "object", "null"]},
-                  "synthesisType": {"type": ["string", "object", "null"]},
-                  "pdb": {"type": ["string", "null"]},
-                  "pubchemCid": {"type": ["integer", "string", "null"]}
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "total_count": {"type": "integer"},
-                "returned_count": {"type": "integer"},
-                "limit": {"type": "integer"},
-                "offset": {"type": "integer"}
+          "type": "array",
+          "description": "List of matching peptide summaries.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "dbaaspId": {
+                "type": "string"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sequence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sequenceLength": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "nTerminus": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ]
+              },
+              "cTerminus": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ]
+              },
+              "complexity": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ]
+              },
+              "synthesisType": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ]
+              },
+              "pdb": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pubchemCid": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": ["status", "data"]
+          }
         },
         {
           "type": "object",
           "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "response_snippet": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"sequence": "GLFDIVKKVVGALGSL", "sequence_option": "full", "limit": 3},
-      {"name": "Magainin", "limit": 3},
-      {"target_species": "Staphylococcus aureus", "limit": 2}
+      {
+        "sequence": "GLFDIVKKVVGALGSL",
+        "sequence_option": "full",
+        "limit": 3
+      },
+      {
+        "name": "Magainin",
+        "limit": 3
+      },
+      {
+        "target_species": "Staphylococcus aureus",
+        "limit": 2
+      }
     ],
-    "label": ["DBAASP", "Antimicrobial Peptide", "AMP", "Search", "Peptide"],
+    "label": [
+      "DBAASP",
+      "Antimicrobial Peptide",
+      "AMP",
+      "Search",
+      "Peptide"
+    ],
     "metadata": {
-      "tags": ["antimicrobial peptide", "AMP", "DBAASP", "search", "sequence", "target organism", "peptide"],
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "DBAASP",
+        "search",
+        "sequence",
+        "target organism",
+        "peptide"
+      ],
       "estimated_execution_time": "1-3 seconds"
     }
   }
