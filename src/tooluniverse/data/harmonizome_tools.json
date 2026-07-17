@@ -445,8 +445,17 @@
               }
             }
           },
-          "required": [
-            "members"
+          "anyOf": [
+            {
+              "required": [
+                "members"
+              ]
+            },
+            {
+              "required": [
+                "associations"
+              ]
+            }
           ]
         },
         {
