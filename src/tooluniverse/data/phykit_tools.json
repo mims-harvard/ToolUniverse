@@ -73,43 +73,34 @@
       "type": "object",
       "oneOf": [
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "function": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "function": {
-                  "type": "string"
-                },
-                "n_files": {
-                  "type": "integer"
-                },
-                "mean": {
-                  "type": "number"
-                },
-                "median": {
-                  "type": "number"
-                },
-                "min": {
-                  "type": "number"
-                },
-                "max": {
-                  "type": "number"
-                }
-              }
+            "n_files": {
+              "type": "integer"
+            },
+            "mean": {
+              "type": "number"
+            },
+            "median": {
+              "type": "number"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
             }
           },
           "required": [
-            "data"
+            "function"
           ]
         },
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }

@@ -22,127 +22,100 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Success: full structured reaction record.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
+            "rhea_id": {
+              "type": "string"
+            },
+            "equation": {
+              "type": "string"
+            },
+            "status_curation": {
+              "type": "string"
+            },
+            "balanced": {
+              "type": "boolean"
+            },
+            "transport": {
+              "type": "boolean"
+            },
+            "comment": {
+              "type": [
+                "string",
+                "null"
               ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "rhea_id": {
-                  "type": "string"
-                },
-                "equation": {
-                  "type": "string"
-                },
-                "status_curation": {
-                  "type": "string"
-                },
-                "balanced": {
-                  "type": "boolean"
-                },
-                "transport": {
-                  "type": "boolean"
-                },
-                "comment": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "reactants": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "chebi_id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "products": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "chebi_id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "ec_numbers": {
-                  "type": "array",
-                  "items": {
+            "reactants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chebi_id": {
                     "type": "string"
-                  }
-                },
-                "enzyme_count": {
-                  "type": "integer"
-                },
-                "pubmed_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "kegg_xrefs": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "metacyc_xrefs": {
-                  "type": "array",
-                  "items": {
+                  },
+                  "name": {
                     "type": "string"
                   }
                 }
-              },
-              "required": [
-                "rhea_id",
-                "equation",
-                "reactants",
-                "products",
-                "ec_numbers"
-              ]
+              }
             },
-            "metadata": {
-              "type": "object"
+            "products": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chebi_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "ec_numbers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "enzyme_count": {
+              "type": "integer"
+            },
+            "pubmed_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "kegg_xrefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "metacyc_xrefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "required": [
-            "status",
-            "data"
+            "rhea_id",
+            "equation",
+            "reactants",
+            "products",
+            "ec_numbers"
           ]
         },
         {
           "type": "object",
-          "description": "Error: reaction not found or invalid input.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -183,89 +156,62 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Success: reactant and product ChEBI participant lists.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
+            "rhea_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "rhea_id": {
-                  "type": "string"
-                },
-                "equation": {
-                  "type": "string"
-                },
-                "reactants": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "chebi_id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
+            "equation": {
+              "type": "string"
+            },
+            "reactants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chebi_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
                   }
-                },
-                "products": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "chebi_id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "n_reactants": {
-                  "type": "integer"
-                },
-                "n_products": {
-                  "type": "integer"
                 }
-              },
-              "required": [
-                "rhea_id",
-                "reactants",
-                "products"
-              ]
+              }
             },
-            "metadata": {
-              "type": "object"
+            "products": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chebi_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "n_reactants": {
+              "type": "integer"
+            },
+            "n_products": {
+              "type": "integer"
             }
           },
           "required": [
-            "status",
-            "data"
+            "rhea_id",
+            "reactants",
+            "products"
           ]
         },
         {
           "type": "object",
-          "description": "Error: reaction not found or invalid input.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

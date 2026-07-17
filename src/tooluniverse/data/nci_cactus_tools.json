@@ -13,7 +13,19 @@
         "representation": {
           "type": "string",
           "description": "Target representation to return. Options: 'smiles' (canonical SMILES), 'iupac_name' (IUPAC systematic name), 'formula' (molecular formula), 'mw' (molecular weight), 'cas' (CAS registry number(s)), 'stdinchi' (standard InChI), 'stdinchikey' (standard InChIKey), 'inchi', 'inchikey', 'names' (all synonyms), 'sdf' (structure data file). Default: 'smiles'.",
-          "enum": ["smiles", "iupac_name", "formula", "mw", "cas", "stdinchi", "stdinchikey", "inchi", "inchikey", "names", "sdf"],
+          "enum": [
+            "smiles",
+            "iupac_name",
+            "formula",
+            "mw",
+            "cas",
+            "stdinchi",
+            "stdinchikey",
+            "inchi",
+            "inchikey",
+            "names",
+            "sdf"
+          ],
           "default": "smiles"
         },
         "resolve_all": {
@@ -22,52 +34,120 @@
           "default": false
         }
       },
-      "required": ["identifier"]
+      "required": [
+        "identifier"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "identifier": {"type": "string"},
-                "representation": {"type": "string"},
-                "result": {"type": ["string", "array", "null"]},
-                "smiles": {"type": ["string", "null"]},
-                "iupac_name": {"type": ["string", "null"]},
-                "formula": {"type": ["string", "null"]},
-                "mw": {"type": ["string", "null"]},
-                "cas": {"type": ["string", "array", "null"]},
-                "stdinchikey": {"type": ["string", "null"]}
-              }
+            "identifier": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "representation": {
+              "type": "string"
+            },
+            "result": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ]
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "iupac_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mw": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "cas": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ]
+            },
+            "stdinchikey": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "identifier"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "retryable": {"type": "boolean"}
+            "error": {
+              "type": "string"
+            },
+            "retryable": {
+              "type": "boolean"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"identifier": "aspirin", "representation": "smiles"},
-      {"identifier": "ibuprofen", "resolve_all": true},
-      {"identifier": "50-78-2", "representation": "iupac_name"},
-      {"identifier": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N", "representation": "formula"}
+      {
+        "identifier": "aspirin",
+        "representation": "smiles"
+      },
+      {
+        "identifier": "ibuprofen",
+        "resolve_all": true
+      },
+      {
+        "identifier": "50-78-2",
+        "representation": "iupac_name"
+      },
+      {
+        "identifier": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+        "representation": "formula"
+      }
     ],
-    "label": ["NCI", "CACTUS", "Chemistry", "Chemical Identifier"],
+    "label": [
+      "NCI",
+      "CACTUS",
+      "Chemistry",
+      "Chemical Identifier"
+    ],
     "metadata": {
-      "tags": ["chemistry", "chemical structure", "SMILES", "InChI", "CAS", "identifier conversion", "NCI"],
+      "tags": [
+        "chemistry",
+        "chemical structure",
+        "SMILES",
+        "InChI",
+        "CAS",
+        "identifier conversion",
+        "NCI"
+      ],
       "estimated_execution_time": "1-3 seconds"
     }
   }

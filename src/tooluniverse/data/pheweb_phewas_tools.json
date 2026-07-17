@@ -19,7 +19,10 @@
           "default": 20
         },
         "max_pval": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Optional: only return associations with p-value <= this threshold (e.g. 5e-8 for genome-wide significance)."
         }
       },
@@ -30,51 +33,112 @@
     },
     "type": "PheWebPheWASTool",
     "test_examples": [
-      {"rsid": "rs7903146", "max_pval": 5e-8},
-      {"variant": "10:114758349:C:T", "limit": 10}
+      {
+        "rsid": "rs7903146",
+        "max_pval": 5e-08
+      },
+      {
+        "variant": "10:114758349:C:T",
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {"type": "string"},
-                "rsids": {"type": ["string", "null"]},
-                "nearest_genes": {"type": ["string", "null"]},
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "phenocode": {"type": ["string", "null"]},
-                      "phenostring": {"type": ["string", "null"]},
-                      "category": {"type": ["string", "null"]},
-                      "pval": {"type": ["number", "null"]},
-                      "beta": {"type": ["number", "null"]},
-                      "sebeta": {"type": ["number", "null"]},
-                      "af": {"type": ["number", "null"]},
-                      "num_cases": {"type": ["number", "null"]},
-                      "num_controls": {"type": ["number", "null"]}
-                    }
+            "variant": {
+              "type": "string"
+            },
+            "rsids": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "nearest_genes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenocode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenostring": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sebeta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "af": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_cases": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_controls": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "variant"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -99,7 +163,10 @@
           "default": 20
         },
         "max_pval": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Optional: only return associations with p-value <= this threshold (e.g. 5e-8 for genome-wide significance)."
         }
       },
@@ -110,51 +177,112 @@
     },
     "type": "PheWebPheWASTool",
     "test_examples": [
-      {"rsid": "rs7903146", "max_pval": 5e-8},
-      {"variant": "10:112998590:C:T", "limit": 10}
+      {
+        "rsid": "rs7903146",
+        "max_pval": 5e-08
+      },
+      {
+        "variant": "10:112998590:C:T",
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {"type": "string"},
-                "rsids": {"type": ["string", "null"]},
-                "nearest_genes": {"type": ["string", "null"]},
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "phenocode": {"type": ["string", "null"]},
-                      "phenostring": {"type": ["string", "null"]},
-                      "category": {"type": ["string", "null"]},
-                      "pval": {"type": ["number", "null"]},
-                      "beta": {"type": ["number", "null"]},
-                      "sebeta": {"type": ["number", "null"]},
-                      "af": {"type": ["number", "null"]},
-                      "num_cases": {"type": ["number", "null"]},
-                      "num_controls": {"type": ["number", "null"]}
-                    }
+            "variant": {
+              "type": "string"
+            },
+            "rsids": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "nearest_genes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenocode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenostring": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sebeta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "af": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_cases": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_controls": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "variant"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -179,7 +307,10 @@
           "default": 20
         },
         "max_pval": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Optional: only return associations with p-value <= this threshold (e.g. 5e-8 for genome-wide significance)."
         }
       },
@@ -190,51 +321,112 @@
     },
     "type": "PheWebPheWASTool",
     "test_examples": [
-      {"rsid": "rs7903146", "limit": 10},
-      {"variant": "10:112998590:C:T", "limit": 10}
+      {
+        "rsid": "rs7903146",
+        "limit": 10
+      },
+      {
+        "variant": "10:112998590:C:T",
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {"type": "string"},
-                "rsids": {"type": ["string", "null"]},
-                "nearest_genes": {"type": ["string", "null"]},
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "phenocode": {"type": ["string", "null"]},
-                      "phenostring": {"type": ["string", "null"]},
-                      "category": {"type": ["string", "null"]},
-                      "pval": {"type": ["number", "null"]},
-                      "beta": {"type": ["number", "null"]},
-                      "sebeta": {"type": ["number", "null"]},
-                      "af": {"type": ["number", "null"]},
-                      "num_cases": {"type": ["number", "null"]},
-                      "num_controls": {"type": ["number", "null"]}
-                    }
+            "variant": {
+              "type": "string"
+            },
+            "rsids": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "nearest_genes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenocode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenostring": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sebeta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "af": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_cases": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_controls": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "variant"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -260,57 +452,112 @@
           "default": 25
         },
         "max_pval": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Optional: only return associations with burden p-value <= this threshold (e.g. 2.5e-6 for exome-wide significance)."
         }
       },
-      "required": ["gene"]
+      "required": [
+        "gene"
+      ]
     },
     "type": "GenebassTool",
     "test_examples": [
-      {"gene": "TCF7L2", "burden_set": "pLoF", "limit": 10},
-      {"gene": "ENSG00000148737", "burden_set": "missense|LC", "max_pval": 2.5e-6}
+      {
+        "gene": "TCF7L2",
+        "burden_set": "pLoF",
+        "limit": 10
+      },
+      {
+        "gene": "ENSG00000148737",
+        "burden_set": "missense|LC",
+        "max_pval": 2.5e-06
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_id": {"type": "string"},
-                "gene_symbol": {"type": ["string", "null"]},
-                "burden_set": {"type": "string"},
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "phenocode": {"type": ["string", "null"]},
-                      "description": {"type": ["string", "null"]},
-                      "trait_type": {"type": ["string", "null"]},
-                      "pval": {"type": ["number", "null"]},
-                      "pval_skat": {"type": ["number", "null"]},
-                      "beta": {"type": ["number", "null"]},
-                      "total_variants": {"type": ["number", "null"]}
-                    }
+            "gene_id": {
+              "type": "string"
+            },
+            "gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "burden_set": {
+              "type": "string"
+            },
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenocode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "trait_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "pval_skat": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "total_variants": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "gene_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

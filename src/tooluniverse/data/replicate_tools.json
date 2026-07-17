@@ -45,12 +45,6 @@
                 "null"
               ]
             },
-            "status": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
             "model": {
               "type": [
                 "string",
@@ -93,7 +87,7 @@
             }
           },
           "required": [
-            "status"
+            "id"
           ]
         },
         {
@@ -170,12 +164,6 @@
                 "null"
               ]
             },
-            "status": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
             "model": {
               "type": [
                 "string",
@@ -218,7 +206,7 @@
             }
           },
           "required": [
-            "status"
+            "id"
           ]
         },
         {

@@ -452,172 +452,150 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "pdb_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "pdb_id": {
-                  "type": "string"
-                },
-                "scop_domains": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "scop_sunid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP sunid (stable unique identifier) for the domain"
-                      },
-                      "sccs": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP Concise Classification String (e.g., 'b.60.1.2')"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "identifier": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "class": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP class (e.g., 'All beta proteins')"
-                      },
-                      "class_sunid": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "fold": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP fold (e.g., 'Lipocalins')"
-                      },
-                      "fold_sunid": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "superfamily": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP superfamily"
-                      },
-                      "superfamily_sunid": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "mappings": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "chain_id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "struct_asym_id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "entity_id": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "scop_id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "start_residue": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "end_residue": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "start_author_residue": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "end_author_residue": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            }
-                          }
+            "scop_domains": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scop_sunid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP sunid (stable unique identifier) for the domain"
+                  },
+                  "sccs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP Concise Classification String (e.g., 'b.60.1.2')"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "identifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "class": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP class (e.g., 'All beta proteins')"
+                  },
+                  "class_sunid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "fold": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP fold (e.g., 'Lipocalins')"
+                  },
+                  "fold_sunid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "superfamily": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP superfamily"
+                  },
+                  "superfamily_sunid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "mappings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "chain_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
-                        "description": "Per-chain residue-range mappings for this SCOP domain"
+                        "struct_asym_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "entity_id": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "scop_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "start_residue": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end_residue": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "start_author_residue": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end_author_residue": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
                       }
-                    }
+                    },
+                    "description": "Per-chain residue-range mappings for this SCOP domain"
                   }
-                },
-                "total_domains": {
-                  "type": "integer"
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "pdb_id": {
-                  "type": "string"
-                }
-              }
+            "total_domains": {
+              "type": "integer"
             }
           },
           "required": [
-            "data"
+            "pdb_id"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }

@@ -44,7 +44,10 @@
         },
         "sort": {
           "type": "string",
-          "enum": ["relevance", "pub_date"],
+          "enum": [
+            "relevance",
+            "pub_date"
+          ],
           "description": "Sort order for results (default: relevance)",
           "default": "relevance"
         }
@@ -55,14 +58,19 @@
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["success", "error"]
+          "enum": [
+            "success",
+            "error"
+          ]
         },
         "data": {
           "type": "object",
           "properties": {
             "uids": {
               "type": "array",
-              "items": {"type": "string"},
+              "items": {
+                "type": "string"
+              },
               "description": "List of SRA UIDs (internal NCBI IDs)"
             },
             "count": {
@@ -86,14 +94,18 @@
           "type": "string"
         }
       },
-      "required": ["status"]
+      "required": [
+        "status"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
         "uids": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "List of SRA UIDs"
         },
         "count": {
@@ -137,7 +149,9 @@
     "description": "Get detailed metadata for SRA run accessions including sequencing platform (ILLUMINA, Oxford Nanopore), instrument model, library strategy (RNA-Seq, WGS), library source (genomic, transcriptomic), library layout (paired/single), sample information, study details, organism, and data statistics (total spots, bases). Essential for understanding experimental design and data characteristics before downloading large FASTQ files. Use SRA run accessions (SRR000001, ERR000001, DRR000001) from NCBI_SRA_search_runs or known accessions.",
     "parameter": {
       "type": "object",
-      "required": ["accessions"],
+      "required": [
+        "accessions"
+      ],
       "properties": {
         "operation": {
           "const": "get_run_info",
@@ -147,7 +161,9 @@
           "oneOf": [
             {
               "type": "array",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             {
               "type": "string"
@@ -162,28 +178,61 @@
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["success", "error"]
+          "enum": [
+            "success",
+            "error"
+          ]
         },
         "data": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "run_accession": {"type": "string"},
-              "experiment_accession": {"type": "string"},
-              "study_accession": {"type": "string"},
-              "study_title": {"type": "string"},
-              "sample_accession": {"type": "string"},
-              "organism": {"type": "string"},
-              "platform": {"type": "string"},
-              "instrument": {"type": "string"},
-              "library_strategy": {"type": "string"},
-              "library_source": {"type": "string"},
-              "library_selection": {"type": "string"},
-              "library_layout": {"type": "string"},
-              "total_spots": {"type": "string"},
-              "total_bases": {"type": "string"},
-              "published": {"type": "string"}
+              "run_accession": {
+                "type": "string"
+              },
+              "experiment_accession": {
+                "type": "string"
+              },
+              "study_accession": {
+                "type": "string"
+              },
+              "study_title": {
+                "type": "string"
+              },
+              "sample_accession": {
+                "type": "string"
+              },
+              "organism": {
+                "type": "string"
+              },
+              "platform": {
+                "type": "string"
+              },
+              "instrument": {
+                "type": "string"
+              },
+              "library_strategy": {
+                "type": "string"
+              },
+              "library_source": {
+                "type": "string"
+              },
+              "library_selection": {
+                "type": "string"
+              },
+              "library_layout": {
+                "type": "string"
+              },
+              "total_spots": {
+                "type": "string"
+              },
+              "total_bases": {
+                "type": "string"
+              },
+              "published": {
+                "type": "string"
+              }
             }
           },
           "description": "Array of run metadata objects"
@@ -196,28 +245,60 @@
           "type": "string"
         }
       },
-      "required": ["status"]
+      "required": [
+        "status"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "run_accession": {"type": "string"},
-          "experiment_accession": {"type": "string"},
-          "study_accession": {"type": "string"},
-          "study_title": {"type": "string"},
-          "sample_accession": {"type": "string"},
-          "organism": {"type": "string"},
-          "platform": {"type": "string"},
-          "instrument": {"type": "string"},
-          "library_strategy": {"type": "string"},
-          "library_source": {"type": "string"},
-          "library_selection": {"type": "string"},
-          "library_layout": {"type": "string"},
-          "total_spots": {"type": "string"},
-          "total_bases": {"type": "string"},
-          "published": {"type": "string"}
+          "run_accession": {
+            "type": "string"
+          },
+          "experiment_accession": {
+            "type": "string"
+          },
+          "study_accession": {
+            "type": "string"
+          },
+          "study_title": {
+            "type": "string"
+          },
+          "sample_accession": {
+            "type": "string"
+          },
+          "organism": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "instrument": {
+            "type": "string"
+          },
+          "library_strategy": {
+            "type": "string"
+          },
+          "library_source": {
+            "type": "string"
+          },
+          "library_selection": {
+            "type": "string"
+          },
+          "library_layout": {
+            "type": "string"
+          },
+          "total_spots": {
+            "type": "string"
+          },
+          "total_bases": {
+            "type": "string"
+          },
+          "published": {
+            "type": "string"
+          }
         }
       },
       "description": "Array of run metadata objects"
@@ -229,7 +310,10 @@
       },
       {
         "operation": "get_run_info",
-        "accessions": ["SRR000001", "SRR000002"]
+        "accessions": [
+          "SRR000001",
+          "SRR000002"
+        ]
       },
       {
         "operation": "get_run_info",
@@ -243,7 +327,9 @@
     "description": "Get FTP and cloud storage URLs for downloading FASTQ sequencing data from SRA runs. Returns multiple access methods: NCBI FTP URLs for direct .sra file download, AWS S3 URLs for cloud-based access (faster for large-scale analysis), and NCBI web URLs for browser access. Note: Downloaded .sra files require SRA Toolkit (fastq-dump or fasterq-dump) to convert to standard FASTQ format. Essential for programmatic access to petabytes of public sequencing data. Works with SRR (NCBI), ERR (ENA), and DRR (DDBJ) accessions.",
     "parameter": {
       "type": "object",
-      "required": ["accessions"],
+      "required": [
+        "accessions"
+      ],
       "properties": {
         "operation": {
           "const": "get_download_urls",
@@ -253,7 +339,9 @@
           "oneOf": [
             {
               "type": "array",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             {
               "type": "string"
@@ -268,14 +356,19 @@
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["success", "error"]
+          "enum": [
+            "success",
+            "error"
+          ]
         },
         "data": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "accession": {"type": "string"},
+              "accession": {
+                "type": "string"
+              },
               "ftp_url": {
                 "type": "string",
                 "description": "FTP URL for .sra file download"
@@ -292,7 +385,9 @@
                 "type": "string",
                 "description": "Instructions for file conversion"
               },
-              "error": {"type": "string"}
+              "error": {
+                "type": "string"
+              }
             }
           },
           "description": "Array of download URL objects"
@@ -305,19 +400,37 @@
           "type": "string"
         }
       },
-      "required": ["status"]
+      "required": [
+        "status"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "accession": {"type": "string"},
-          "ftp_url": {"type": "string", "description": "FTP URL for .sra file download"},
-          "s3_url": {"type": "string", "description": "AWS S3 URL for cloud access"},
-          "ncbi_url": {"type": "string", "description": "NCBI web interface URL"},
-          "note": {"type": "string", "description": "Instructions for file conversion"},
-          "error": {"type": "string"}
+          "accession": {
+            "type": "string"
+          },
+          "ftp_url": {
+            "type": "string",
+            "description": "FTP URL for .sra file download"
+          },
+          "s3_url": {
+            "type": "string",
+            "description": "AWS S3 URL for cloud access"
+          },
+          "ncbi_url": {
+            "type": "string",
+            "description": "NCBI web interface URL"
+          },
+          "note": {
+            "type": "string",
+            "description": "Instructions for file conversion"
+          },
+          "error": {
+            "type": "string"
+          }
         }
       },
       "description": "Array of download URL objects"
@@ -329,7 +442,11 @@
       },
       {
         "operation": "get_download_urls",
-        "accessions": ["SRR000001", "SRR000002", "ERR000001"]
+        "accessions": [
+          "SRR000001",
+          "SRR000002",
+          "ERR000001"
+        ]
       }
     ]
   },
@@ -339,7 +456,9 @@
     "description": "Link SRA sequencing runs to their associated BioSample records to access biological sample metadata including sample attributes, tissue type, cell line, treatment conditions, donor information, and collection details. BioSample provides rich contextual information about the biological specimens used in sequencing experiments. Essential for understanding experimental context and sample provenance. Returns BioSample UIDs which can be used with NCBI BioSample API to retrieve detailed sample metadata. Works with SRA UIDs from NCBI_SRA_search_runs.",
     "parameter": {
       "type": "object",
-      "required": ["accessions"],
+      "required": [
+        "accessions"
+      ],
       "properties": {
         "operation": {
           "const": "link_to_biosample",
@@ -349,7 +468,9 @@
           "oneOf": [
             {
               "type": "array",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             {
               "type": "string"
@@ -364,7 +485,10 @@
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["success", "error"]
+          "enum": [
+            "success",
+            "error"
+          ]
         },
         "data": {
           "type": "array",
@@ -377,7 +501,9 @@
               },
               "biosample_uids": {
                 "type": "array",
-                "items": {"type": "string"},
+                "items": {
+                  "type": "string"
+                },
                 "description": "Array of linked BioSample UIDs"
               },
               "biosample_count": {
@@ -396,20 +522,30 @@
           "type": "string"
         }
       },
-      "required": ["status"]
+      "required": [
+        "status"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "sra_uid": {"type": "string", "description": "SRA UID"},
+          "sra_uid": {
+            "type": "string",
+            "description": "SRA UID"
+          },
           "biosample_uids": {
             "type": "array",
-            "items": {"type": "string"},
+            "items": {
+              "type": "string"
+            },
             "description": "Array of linked BioSample UIDs"
           },
-          "biosample_count": {"type": "integer", "description": "Number of linked BioSample records"}
+          "biosample_count": {
+            "type": "integer",
+            "description": "Number of linked BioSample records"
+          }
         }
       },
       "description": "Array of SRA-to-BioSample link objects"
@@ -421,7 +557,11 @@
       },
       {
         "operation": "link_to_biosample",
-        "accessions": ["1", "2", "3"]
+        "accessions": [
+          "1",
+          "2",
+          "3"
+        ]
       }
     ]
   },
@@ -431,7 +571,9 @@
     "description": "Resolve the current, verified cloud download location(s) plus authoritative file size and md5 checksum for an SRA run via the NCBI SRA Data Locator (SDL) service. Unlike NCBI_SRA_get_download_urls (which builds a guessed legacy ftp-trace ByRun path that now returns HTTP 404, and an S3 path with no size/md5/region), this returns the real object: https S3/GCP link, exact byte size, md5, storage region, and modification date. Use SRR/ERR/DRR run accessions. Example: SRR390728 returns size=195174182, md5=29a6a1a0dd0702f45225f2eb93c958b5, location s3:us-east-1 https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR390728/SRR390728. Keyless; no NCBI API key required.",
     "parameter": {
       "type": "object",
-      "required": ["accessions"],
+      "required": [
+        "accessions"
+      ],
       "properties": {
         "operation": {
           "const": "locate_run_files",
@@ -441,7 +583,9 @@
           "oneOf": [
             {
               "type": "array",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             {
               "type": "string"
@@ -456,7 +600,10 @@
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["success", "error"]
+          "enum": [
+            "success",
+            "error"
+          ]
         },
         "data": {
           "type": "array",
@@ -465,63 +612,98 @@
           },
           "description": "Array of per-run file location objects"
         },
-        "count": {"type": "integer"},
-        "error": {"type": "string"}
+        "count": {
+          "type": "integer"
+        },
+        "error": {
+          "type": "string"
+        }
       },
-      "required": ["status"]
+      "required": [
+        "status"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {"type": "string"},
-                  "file_count": {"type": "integer"},
-                  "files": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {"type": "string"},
-                        "type": {"type": "string"},
-                        "size": {"type": ["integer", "null"]},
-                        "md5": {"type": ["string", "null"]},
-                        "modification_date": {"type": ["string", "null"]},
-                        "locations": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "service": {"type": "string"},
-                              "region": {"type": ["string", "null"]},
-                              "link": {"type": "string"}
-                            }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "file_count": {
+                "type": "integer"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "size": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "md5": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "modification_date": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "locations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "service": {
+                            "type": "string"
+                          },
+                          "region": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "link": {
+                            "type": "string"
                           }
                         }
                       }
                     }
-                  },
-                  "error": {"type": "string"}
+                  }
                 }
+              },
+              "error": {
+                "type": "string"
               }
-            },
-            "count": {"type": "integer"}
-          },
-          "required": ["data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -532,7 +714,10 @@
       },
       {
         "operation": "locate_run_files",
-        "accessions": ["SRR390728", "SRR000001"]
+        "accessions": [
+          "SRR390728",
+          "SRR000001"
+        ]
       }
     ]
   }

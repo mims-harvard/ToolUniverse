@@ -1,455 +1,687 @@
 [
-    {
-        "name": "Pharos_get_target",
-        "description": "Get detailed drug target information from Pharos/TCRD by gene symbol or UniProt ID. Returns Target Development Level (Tdark/Tbio/Tchem/Tclin), protein family, diseases, ligands, and druggability data. Essential for identifying understudied proteins.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "gene": {
-                    "type": "string",
-                    "description": "Gene symbol (e.g., 'EGFR', 'TP53', 'BRCA1'). Use either gene or uniprot."
-                },
-                "uniprot": {
-                    "type": "string",
-                    "description": "UniProt accession (e.g., 'P00533'). Use either gene or uniprot."
-                }
-            }
+  {
+    "name": "Pharos_get_target",
+    "description": "Get detailed drug target information from Pharos/TCRD by gene symbol or UniProt ID. Returns Target Development Level (Tdark/Tbio/Tchem/Tclin), protein family, diseases, ligands, and druggability data. Essential for identifying understudied proteins.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'EGFR', 'TP53', 'BRCA1'). Use either gene or uniprot."
         },
-        "fields": {
-            "operation": "get_target"
-        },
-        "type": "PharosTool",
-        "test_examples": [
-            {
-                "gene": "EGFR"
-            },
-            {
-                "uniprot": "P00533"
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "name": {"type": "string"},
-                        "gene": {"type": "string"},
-                        "accession": {"type": "string"},
-                        "idgFamily": {"type": "string"},
-                        "idgTDL": {"type": "string"},
-                        "novelty": {"type": "number"},
-                        "diseases": {"type": "array"},
-                        "ligands": {"type": "array"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["Pharos", "TCRD", "IDG", "Druggability"],
-        "metadata": {
-            "tags": ["drug_target", "understudied_proteins", "tdl"],
-            "estimated_execution_time": "< 3 seconds"
+        "uniprot": {
+          "type": "string",
+          "description": "UniProt accession (e.g., 'P00533'). Use either gene or uniprot."
         }
+      }
     },
-    {
-        "name": "Pharos_search_targets",
-        "description": "Search drug targets in Pharos database by keyword. Supports filtering by Target Development Level (Tdark for understudied, Tchem for chemically tractable, Tclin for approved drugs). Returns TDL, protein family, and novelty scores.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search query (gene name, protein name, or keyword)"
-                },
-                "tdl": {
-                    "type": "string",
-                    "enum": ["Tdark", "Tbio", "Tchem", "Tclin"],
-                    "description": "Filter by Target Development Level. Tdark=understudied, Tbio=biological annotations, Tchem=chemical probes, Tclin=approved drugs."
-                },
-                "top": {
-                    "type": "integer",
-                    "default": 10,
-                    "minimum": 1,
-                    "maximum": 100,
-                    "description": "Maximum number of results (1-100)"
-                }
-            },
-            "required": ["query"]
-        },
-        "fields": {
-            "operation": "search_targets"
-        },
-        "type": "PharosTool",
-        "test_examples": [
-            {
-                "query": "kinase",
-                "top": 5
-            },
-            {
-                "query": "GPCR",
-                "tdl": "Tdark",
-                "top": 10
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "count": {"type": "integer"},
-                        "targets": {"type": "array"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["Pharos", "Search", "IDG"],
-        "metadata": {
-            "tags": ["search", "drug_target", "tdl"],
-            "estimated_execution_time": "< 3 seconds"
-        }
+    "fields": {
+      "operation": "get_target"
     },
-    {
-        "name": "Pharos_get_tdl_summary",
-        "description": "Get Target Development Level statistics from Pharos. Returns counts of human proteome targets at each TDL: Tclin (approved drugs), Tchem (chemical probes), Tbio (biological annotations), Tdark (understudied). Use to understand druggable genome coverage.",
-        "parameter": {
-            "type": "object",
-            "properties": {}
+    "type": "PharosTool",
+    "test_examples": [
+      {
+        "gene": "EGFR"
+      },
+      {
+        "uniprot": "P00533"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
         },
-        "fields": {
-            "operation": "get_tdl_summary"
-        },
-        "type": "PharosTool",
-        "test_examples": [
-            {}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "tdl_summary": {"type": "object"},
-                        "total_targets": {"type": "integer"},
-                        "description": {"type": "object"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["Pharos", "Statistics", "IDG"],
-        "metadata": {
-            "tags": ["statistics", "tdl", "druggable_genome"],
-            "estimated_execution_time": "< 3 seconds"
-        }
-    },
-    {
-        "name": "Pharos_get_disease_targets",
-        "description": "Get drug targets associated with a disease from Pharos. Returns targets with TDL classification to identify druggable vs understudied proteins for the disease. Supports TDL filtering to find Tdark opportunities.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "disease": {
-                    "type": "string",
-                    "description": "Disease name (e.g., 'breast cancer', 'Alzheimer disease', 'diabetes mellitus')"
-                },
-                "tdl": {
-                    "type": "string",
-                    "enum": ["Tdark", "Tbio", "Tchem", "Tclin"],
-                    "description": "Optional filter by Target Development Level"
-                },
-                "top": {
-                    "type": "integer",
-                    "default": 20,
-                    "minimum": 1,
-                    "maximum": 100,
-                    "description": "Maximum number of results (1-100)"
-                }
+        "data": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
             },
-            "required": ["disease"]
-        },
-        "fields": {
-            "operation": "get_disease_targets"
-        },
-        "type": "PharosTool",
-        "test_examples": [
-            {
-                "disease": "sickle cell anemia",
-                "top": 5
+            "gene": {
+              "type": "string"
             },
-            {
-                "disease": "cystic fibrosis",
-                "top": 5
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "disease": {"type": "string"},
-                        "count": {"type": "integer"},
-                        "targets": {"type": "array"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["Pharos", "Disease", "IDG"],
-        "metadata": {
-            "tags": ["disease", "drug_target", "tdl"],
-            "estimated_execution_time": "< 5 seconds"
-        }
-    },
-    {
-        "name": "Pharos_get_target_ligands",
-        "description": "Get per-target ligand and drug bioactivities from Pharos/TCRD for a drug target (by gene symbol or UniProt ID). Returns ligandCounts (total ligand and approved-drug counts) plus the top ligands with synonyms (ChEMBL etc.) and measured bioactivities: activity type (IC50/Ki/EC50/Kd), value (typically -log10 molar / pActivity), and mechanism of action. Use to assess chemical tractability and known chemistry of a target.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "gene": {
-                    "type": "string",
-                    "description": "Gene symbol (e.g., 'DRD2', 'EGFR'). Use either gene or uniprot."
-                },
-                "uniprot": {
-                    "type": "string",
-                    "description": "UniProt accession (e.g., 'P14416'). Use either gene or uniprot."
-                },
-                "top": {
-                    "type": "integer",
-                    "default": 3,
-                    "minimum": 1,
-                    "maximum": 50,
-                    "description": "Maximum number of ligands to return (1-50)."
-                }
-            }
-        },
-        "fields": {
-            "operation": "get_target_ligands"
-        },
-        "type": "PharosTool",
-        "test_examples": [
-            {
-                "gene": "DRD2",
-                "top": 3
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": ["object", "null"],
-                            "properties": {
-                                "sym": {"type": "string"},
-                                "tdl": {"type": "string"},
-                                "fam": {"type": ["string", "null"]},
-                                "ligandCounts": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "name": {"type": "string"},
-                                            "value": {"type": "integer"}
-                                        }
-                                    }
-                                },
-                                "ligands": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "name": {"type": "string"},
-                                            "isdrug": {"type": "boolean"},
-                                            "synonyms": {"type": "array"},
-                                            "activities": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "type": {"type": ["string", "null"]},
-                                                        "moa": {"type": ["string", "null"]},
-                                                        "value": {"type": ["number", "null"]}
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "message": {"type": "string"}
-                    },
-                    "required": ["status"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
-                }
-            ]
-        },
-        "label": ["Pharos", "Ligands", "Bioactivity", "IDG"],
-        "metadata": {
-            "tags": ["drug_target", "ligands", "bioactivity", "ic50", "tractability"],
-            "estimated_execution_time": "< 5 seconds"
-        }
-    },
-    {
-        "name": "Pharos_get_ligand_targets",
-        "description": "Get all protein targets for a drug or ligand from Pharos/TCRD (reverse polypharmacology). Given one drug/ligand (by name or Pharos ligand ID), returns its SMILES, total targetCount, and every recorded bioactivity with the target (gene symbol, Target Development Level Tclin/Tchem/Tbio/Tdark, protein family), activity type, value, and mechanism of action. Use to map a drug's full target landscape and off-targets.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "ligid": {
-                    "type": "string",
-                    "description": "Ligand name or Pharos ligand ID (e.g., 'Haloperidol', 'Imatinib')."
-                }
+            "accession": {
+              "type": "string"
             },
-            "required": ["ligid"]
-        },
-        "fields": {
-            "operation": "get_ligand_targets"
-        },
-        "type": "PharosTool",
-        "test_examples": [
-            {
-                "ligid": "Haloperidol"
+            "idgFamily": {
+              "type": "string"
+            },
+            "idgTDL": {
+              "type": "string"
+            },
+            "novelty": {
+              "type": "number"
+            },
+            "diseases": {
+              "type": "array"
+            },
+            "ligands": {
+              "type": "array"
             }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": ["object", "null"],
-                            "properties": {
-                                "name": {"type": "string"},
-                                "isdrug": {"type": "boolean"},
-                                "smiles": {"type": ["string", "null"]},
-                                "targetCount": {"type": "integer"},
-                                "activities": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "target": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "sym": {"type": "string"},
-                                                    "tdl": {"type": "string"},
-                                                    "fam": {"type": ["string", "null"]}
-                                                }
-                                            },
-                                            "type": {"type": ["string", "null"]},
-                                            "value": {"type": ["number", "null"]},
-                                            "moa": {"type": ["string", "null"]}
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "message": {"type": "string"}
-                    },
-                    "required": ["status"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
-                }
-            ]
+          }
         },
-        "label": ["Pharos", "Ligand", "Polypharmacology", "IDG"],
-        "metadata": {
-            "tags": ["drug", "polypharmacology", "off_target", "bioactivity"],
-            "estimated_execution_time": "< 5 seconds"
+        "error": {
+          "type": "string"
         }
+      }
     },
-    {
-        "name": "Pharos_get_target_expression",
-        "description": "Get GTEx baseline tissue RNA expression (per-tissue TPM) for a drug target from Pharos/TCRD (by gene symbol or UniProt ID). Returns one record per GTEx tissue with tissue name, TPM value, and gender stratification when available. Use to assess where a target is naturally expressed (e.g., for on-target tissue-toxicity reasoning).",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "gene": {
-                    "type": "string",
-                    "description": "Gene symbol (e.g., 'DRD2', 'EGFR'). Use either gene or uniprot."
-                },
-                "uniprot": {
-                    "type": "string",
-                    "description": "UniProt accession (e.g., 'P14416'). Use either gene or uniprot."
-                }
-            }
-        },
-        "fields": {
-            "operation": "get_target_expression"
-        },
-        "type": "PharosTool",
-        "test_examples": [
-            {
-                "gene": "DRD2"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": ["object", "null"],
-                            "properties": {
-                                "sym": {"type": "string"},
-                                "count": {"type": "integer"},
-                                "gtex": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "tissue": {"type": "string"},
-                                            "tpm": {"type": ["number", "null"]},
-                                            "gender": {"type": ["string", "null"]}
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "message": {"type": "string"}
-                    },
-                    "required": ["status"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
-                }
-            ]
-        },
-        "label": ["Pharos", "Expression", "GTEx", "IDG"],
-        "metadata": {
-            "tags": ["expression", "gtex", "tissue", "tpm"],
-            "estimated_execution_time": "< 5 seconds"
-        }
+    "label": [
+      "Pharos",
+      "TCRD",
+      "IDG",
+      "Druggability"
+    ],
+    "metadata": {
+      "tags": [
+        "drug_target",
+        "understudied_proteins",
+        "tdl"
+      ],
+      "estimated_execution_time": "< 3 seconds"
     }
+  },
+  {
+    "name": "Pharos_search_targets",
+    "description": "Search drug targets in Pharos database by keyword. Supports filtering by Target Development Level (Tdark for understudied, Tchem for chemically tractable, Tclin for approved drugs). Returns TDL, protein family, and novelty scores.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (gene name, protein name, or keyword)"
+        },
+        "tdl": {
+          "type": "string",
+          "enum": [
+            "Tdark",
+            "Tbio",
+            "Tchem",
+            "Tclin"
+          ],
+          "description": "Filter by Target Development Level. Tdark=understudied, Tbio=biological annotations, Tchem=chemical probes, Tclin=approved drugs."
+        },
+        "top": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results (1-100)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "search_targets"
+    },
+    "type": "PharosTool",
+    "test_examples": [
+      {
+        "query": "kinase",
+        "top": 5
+      },
+      {
+        "query": "GPCR",
+        "tdl": "Tdark",
+        "top": 10
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer"
+            },
+            "targets": {
+              "type": "array"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "label": [
+      "Pharos",
+      "Search",
+      "IDG"
+    ],
+    "metadata": {
+      "tags": [
+        "search",
+        "drug_target",
+        "tdl"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "Pharos_get_tdl_summary",
+    "description": "Get Target Development Level statistics from Pharos. Returns counts of human proteome targets at each TDL: Tclin (approved drugs), Tchem (chemical probes), Tbio (biological annotations), Tdark (understudied). Use to understand druggable genome coverage.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "fields": {
+      "operation": "get_tdl_summary"
+    },
+    "type": "PharosTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "tdl_summary": {
+              "type": "object"
+            },
+            "total_targets": {
+              "type": "integer"
+            },
+            "description": {
+              "type": "object"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "label": [
+      "Pharos",
+      "Statistics",
+      "IDG"
+    ],
+    "metadata": {
+      "tags": [
+        "statistics",
+        "tdl",
+        "druggable_genome"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "Pharos_get_disease_targets",
+    "description": "Get drug targets associated with a disease from Pharos. Returns targets with TDL classification to identify druggable vs understudied proteins for the disease. Supports TDL filtering to find Tdark opportunities.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "disease": {
+          "type": "string",
+          "description": "Disease name (e.g., 'breast cancer', 'Alzheimer disease', 'diabetes mellitus')"
+        },
+        "tdl": {
+          "type": "string",
+          "enum": [
+            "Tdark",
+            "Tbio",
+            "Tchem",
+            "Tclin"
+          ],
+          "description": "Optional filter by Target Development Level"
+        },
+        "top": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results (1-100)"
+        }
+      },
+      "required": [
+        "disease"
+      ]
+    },
+    "fields": {
+      "operation": "get_disease_targets"
+    },
+    "type": "PharosTool",
+    "test_examples": [
+      {
+        "disease": "sickle cell anemia",
+        "top": 5
+      },
+      {
+        "disease": "cystic fibrosis",
+        "top": 5
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "targets": {
+              "type": "array"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "label": [
+      "Pharos",
+      "Disease",
+      "IDG"
+    ],
+    "metadata": {
+      "tags": [
+        "disease",
+        "drug_target",
+        "tdl"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "Pharos_get_target_ligands",
+    "description": "Get per-target ligand and drug bioactivities from Pharos/TCRD for a drug target (by gene symbol or UniProt ID). Returns ligandCounts (total ligand and approved-drug counts) plus the top ligands with synonyms (ChEMBL etc.) and measured bioactivities: activity type (IC50/Ki/EC50/Kd), value (typically -log10 molar / pActivity), and mechanism of action. Use to assess chemical tractability and known chemistry of a target.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'DRD2', 'EGFR'). Use either gene or uniprot."
+        },
+        "uniprot": {
+          "type": "string",
+          "description": "UniProt accession (e.g., 'P14416'). Use either gene or uniprot."
+        },
+        "top": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum number of ligands to return (1-50)."
+        }
+      }
+    },
+    "fields": {
+      "operation": "get_target_ligands"
+    },
+    "type": "PharosTool",
+    "test_examples": [
+      {
+        "gene": "DRD2",
+        "top": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "sym": {
+              "type": "string"
+            },
+            "tdl": {
+              "type": "string"
+            },
+            "fam": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ligandCounts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "ligands": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "isdrug": {
+                    "type": "boolean"
+                  },
+                  "synonyms": {
+                    "type": "array"
+                  },
+                  "activities": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "moa": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "value": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "sym"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "Pharos",
+      "Ligands",
+      "Bioactivity",
+      "IDG"
+    ],
+    "metadata": {
+      "tags": [
+        "drug_target",
+        "ligands",
+        "bioactivity",
+        "ic50",
+        "tractability"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "Pharos_get_ligand_targets",
+    "description": "Get all protein targets for a drug or ligand from Pharos/TCRD (reverse polypharmacology). Given one drug/ligand (by name or Pharos ligand ID), returns its SMILES, total targetCount, and every recorded bioactivity with the target (gene symbol, Target Development Level Tclin/Tchem/Tbio/Tdark, protein family), activity type, value, and mechanism of action. Use to map a drug's full target landscape and off-targets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ligid": {
+          "type": "string",
+          "description": "Ligand name or Pharos ligand ID (e.g., 'Haloperidol', 'Imatinib')."
+        }
+      },
+      "required": [
+        "ligid"
+      ]
+    },
+    "fields": {
+      "operation": "get_ligand_targets"
+    },
+    "type": "PharosTool",
+    "test_examples": [
+      {
+        "ligid": "Haloperidol"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "isdrug": {
+              "type": "boolean"
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "targetCount": {
+              "type": "integer"
+            },
+            "activities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "type": "object",
+                    "properties": {
+                      "sym": {
+                        "type": "string"
+                      },
+                      "tdl": {
+                        "type": "string"
+                      },
+                      "fam": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "moa": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "Pharos",
+      "Ligand",
+      "Polypharmacology",
+      "IDG"
+    ],
+    "metadata": {
+      "tags": [
+        "drug",
+        "polypharmacology",
+        "off_target",
+        "bioactivity"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "Pharos_get_target_expression",
+    "description": "Get GTEx baseline tissue RNA expression (per-tissue TPM) for a drug target from Pharos/TCRD (by gene symbol or UniProt ID). Returns one record per GTEx tissue with tissue name, TPM value, and gender stratification when available. Use to assess where a target is naturally expressed (e.g., for on-target tissue-toxicity reasoning).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'DRD2', 'EGFR'). Use either gene or uniprot."
+        },
+        "uniprot": {
+          "type": "string",
+          "description": "UniProt accession (e.g., 'P14416'). Use either gene or uniprot."
+        }
+      }
+    },
+    "fields": {
+      "operation": "get_target_expression"
+    },
+    "type": "PharosTool",
+    "test_examples": [
+      {
+        "gene": "DRD2"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "sym": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "gtex": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tissue": {
+                    "type": "string"
+                  },
+                  "tpm": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "gender": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "sym"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "Pharos",
+      "Expression",
+      "GTEx",
+      "IDG"
+    ],
+    "metadata": {
+      "tags": [
+        "expression",
+        "gtex",
+        "tissue",
+        "tpm"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  }
 ]

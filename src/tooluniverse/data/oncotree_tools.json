@@ -39,79 +39,55 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "main_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "tissue": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "parent": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "level": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "external_references": {
-                    "type": "object"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "main_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "tissue": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "parent": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "level": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "external_references": {
+                "type": "object"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             },
@@ -120,7 +96,6 @@
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -186,83 +161,62 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
+            "code": {
+              "type": [
+                "string",
+                "null"
               ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "main_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "tissue": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "color": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "parent": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "level": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "history": {
-                  "type": "array"
-                },
-                "external_references": {
-                  "type": "object"
-                }
-              }
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "metadata": {
+            "main_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "tissue": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "color": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "parent": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "level": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "history": {
+              "type": "array"
+            },
+            "external_references": {
               "type": "object"
             }
           },
           "required": [
-            "status",
-            "data"
+            "history"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             },
@@ -271,7 +225,6 @@
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -321,38 +274,14 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "metadata": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             },
@@ -361,7 +290,6 @@
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

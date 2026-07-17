@@ -30,106 +30,91 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "entry_nr": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "entry_nr": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "oma_id": {
-                  "type": "string"
-                },
-                "canonical_id": {
-                  "type": "string"
-                },
-                "sequence_length": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "species_code": {
-                  "type": "string"
-                },
-                "species_name": {
-                  "type": "string"
-                },
-                "taxon_id": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "oma_group": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "oma_hog_id": {
-                  "type": "string"
-                },
-                "chromosome": {
-                  "type": "string"
-                },
-                "locus_start": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "locus_end": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "locus_strand": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "is_main_isoform": {
-                  "type": "boolean"
-                },
-                "roothog_id": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                }
-              }
+            "oma_id": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "canonical_id": {
+              "type": "string"
+            },
+            "sequence_length": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "species_code": {
+              "type": "string"
+            },
+            "species_name": {
+              "type": "string"
+            },
+            "taxon_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "oma_group": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "oma_hog_id": {
+              "type": "string"
+            },
+            "chromosome": {
+              "type": "string"
+            },
+            "locus_start": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "locus_end": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "locus_strand": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "is_main_isoform": {
+              "type": "boolean"
+            },
+            "roothog_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "entry_nr"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -181,77 +166,59 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "oma_id": {
-                    "type": "string"
-                  },
-                  "canonical_id": {
-                    "type": "string"
-                  },
-                  "species_name": {
-                    "type": "string"
-                  },
-                  "species_code": {
-                    "type": "string"
-                  },
-                  "taxon_id": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "rel_type": {
-                    "type": "string"
-                  },
-                  "distance": {
-                    "type": "number"
-                  },
-                  "score": {
-                    "type": "number"
-                  },
-                  "sequence_length": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "chromosome": {
-                    "type": "string"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "oma_id": {
+                "type": "string"
+              },
+              "canonical_id": {
+                "type": "string"
+              },
+              "species_name": {
+                "type": "string"
+              },
+              "species_code": {
+                "type": "string"
+              },
+              "taxon_id": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "rel_type": {
+                "type": "string"
+              },
+              "distance": {
+                "type": "number"
+              },
+              "score": {
+                "type": "number"
+              },
+              "sequence_length": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "chromosome": {
+                "type": "string"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -286,85 +253,67 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "hog_id": {
-                    "type": "string"
-                  },
-                  "level": {
-                    "type": "string"
-                  },
-                  "roothog_id": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "completeness_score": {
-                    "type": "number"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "parent_hogs": {
-                    "type": "array"
-                  },
-                  "children_hogs": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "hog_id": {
-                          "type": "string"
-                        },
-                        "alternative_levels": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "alternative_levels": {
-                    "type": "array",
-                    "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hog_id": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string"
+              },
+              "roothog_id": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "completeness_score": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              },
+              "parent_hogs": {
+                "type": "array"
+              },
+              "children_hogs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "hog_id": {
                       "type": "string"
+                    },
+                    "alternative_levels": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
+              },
+              "alternative_levels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -400,84 +349,69 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "group_nr": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "group_nr": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "fingerprint": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "members": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "oma_id": {
-                        "type": "string"
-                      },
-                      "canonical_id": {
-                        "type": "string"
-                      },
-                      "species_name": {
-                        "type": "string"
-                      },
-                      "species_code": {
-                        "type": "string"
-                      },
-                      "taxon_id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "sequence_length": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "chromosome": {
-                        "type": "string"
-                      }
-                    }
+            "fingerprint": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "members": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "oma_id": {
+                    "type": "string"
+                  },
+                  "canonical_id": {
+                    "type": "string"
+                  },
+                  "species_name": {
+                    "type": "string"
+                  },
+                  "species_code": {
+                    "type": "string"
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "sequence_length": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "chromosome": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "group_nr"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -519,71 +453,53 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "xref": {
-                    "type": "string"
-                  },
-                  "source": {
-                    "type": "string"
-                  },
-                  "seq_match": {
-                    "type": "string"
-                  },
-                  "entry_nr": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "oma_id": {
-                    "type": "string"
-                  },
-                  "species_code": {
-                    "type": "string"
-                  },
-                  "species_name": {
-                    "type": "string"
-                  },
-                  "taxon_id": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "xref": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "seq_match": {
+                "type": "string"
+              },
+              "entry_nr": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "oma_id": {
+                "type": "string"
+              },
+              "species_code": {
+                "type": "string"
+              },
+              "species_name": {
+                "type": "string"
+              },
+              "taxon_id": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -641,64 +557,46 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "entry_1": {
-                    "type": "object"
-                  },
-                  "entry_2": {
-                    "type": "object"
-                  },
-                  "rel_type": {
-                    "type": "string"
-                  },
-                  "distance": {
-                    "type": "number"
-                  },
-                  "score": {
-                    "type": "number"
-                  },
-                  "oma_group": {
-                    "type": [
-                      "integer",
-                      "number",
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entry_1": {
+                "type": "object"
+              },
+              "entry_2": {
+                "type": "object"
+              },
+              "rel_type": {
+                "type": "string"
+              },
+              "distance": {
+                "type": "number"
+              },
+              "score": {
+                "type": "number"
+              },
+              "oma_group": {
+                "type": [
+                  "integer",
+                  "number",
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -740,65 +638,47 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "go_term": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "aspect": {
-                    "type": "string"
-                  },
-                  "information_content": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "evidence": {
-                    "type": "string"
-                  },
-                  "reference": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "go_term": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "aspect": {
+                "type": "string"
+              },
+              "information_content": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "evidence": {
+                "type": "string"
+              },
+              "reference": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

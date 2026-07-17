@@ -476,97 +476,78 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "description": "A single label annotation object (when label_id is given) or an array of {objCls, id, name} listings.",
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "objCls": {
-                      "type": "string"
-                    },
-                    "id": {
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "biomarkerStatus": {
-                      "type": "string"
-                    },
-                    "alternateDrugAvailable": {
-                      "type": "boolean"
-                    },
-                    "dosingInformation": {
-                      "type": "boolean"
-                    },
-                    "cancerGenome": {
-                      "type": "boolean"
-                    },
-                    "indication": {
-                      "type": "boolean"
-                    },
-                    "labelDocumentAvailable": {
-                      "type": "boolean"
-                    },
-                    "literature": {
-                      "type": "array"
-                    }
-                  },
-                  "additionalProperties": true
+          "description": "A single label annotation object (when label_id is given) or an array of {objCls, id, name} listings.",
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "objCls": {
+                  "type": "string"
                 },
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "objCls": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    },
-                    "additionalProperties": true
-                  }
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "biomarkerStatus": {
+                  "type": "string"
+                },
+                "alternateDrugAvailable": {
+                  "type": "boolean"
+                },
+                "dosingInformation": {
+                  "type": "boolean"
+                },
+                "cancerGenome": {
+                  "type": "boolean"
+                },
+                "indication": {
+                  "type": "boolean"
+                },
+                "labelDocumentAvailable": {
+                  "type": "boolean"
+                },
+                "literature": {
+                  "type": "array"
                 }
-              ]
+              },
+              "additionalProperties": true
             },
-            "note": {
-              "type": "string"
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "objCls": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          ],
+          "not": {
+            "type": "object",
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -606,61 +587,39 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "objCls": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "authors": {
-                  "type": "string"
-                },
-                "biopaxLink": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "object",
-                  "additionalProperties": true
-                }
-              },
-              "additionalProperties": true
-            },
-            "note": {
+            "objCls": {
               "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "authors": {
+              "type": "string"
+            },
+            "biopaxLink": {
+              "type": "string"
+            },
+            "description": {
+              "type": "object",
+              "additionalProperties": true
             }
           },
+          "additionalProperties": true,
           "required": [
-            "status",
-            "data"
+            "objCls"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -709,81 +668,56 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "objCls": {
-                    "type": "string"
-                  },
-                  "id": {
-                    "type": "integer"
-                  },
-                  "accessionId": {
-                    "type": "string"
-                  },
-                  "alleleGenotype": {
-                    "type": "string"
-                  },
-                  "comparison": {
-                    "type": "string"
-                  },
-                  "significance": {
-                    "type": [
-                      "object",
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "sentence": {
-                    "type": "string"
-                  },
-                  "phenotypeCategories": {
-                    "type": "array"
-                  },
-                  "relatedChemicals": {
-                    "type": "array"
-                  },
-                  "literature": {
-                    "type": "object"
-                  }
-                },
-                "additionalProperties": true
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objCls": {
+                "type": "string"
+              },
+              "id": {
+                "type": "integer"
+              },
+              "accessionId": {
+                "type": "string"
+              },
+              "alleleGenotype": {
+                "type": "string"
+              },
+              "comparison": {
+                "type": "string"
+              },
+              "significance": {
+                "type": [
+                  "object",
+                  "string",
+                  "null"
+                ]
+              },
+              "sentence": {
+                "type": "string"
+              },
+              "phenotypeCategories": {
+                "type": "array"
+              },
+              "relatedChemicals": {
+                "type": "array"
+              },
+              "literature": {
+                "type": "object"
               }
             },
-            "note": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+            "additionalProperties": true
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

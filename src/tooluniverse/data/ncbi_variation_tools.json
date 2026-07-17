@@ -10,20 +10,28 @@
           "description": "Variant in SPDI notation (SeqID:Position:Deleted:Inserted). Examples: 'NC_000001.11:230710047:A:G' (AGT M259T), 'NC_000017.11:7674220:G:C' (TP53 region), 'NM_000059.4:266:AT:' (BRCA2 c.68_69del)"
         }
       },
-      "required": ["spdi"]
+      "required": [
+        "spdi"
+      ]
     },
     "fields": {
       "endpoint_type": "spdi_to_hgvs"
     },
     "type": "NCBIVariationTool",
     "test_examples": [
-      {"spdi": "NC_000001.11:230710047:A:G"},
-      {"spdi": "NC_000017.11:7674220:G:C"}
+      {
+        "spdi": "NC_000001.11:230710047:A:G"
+      },
+      {
+        "spdi": "NC_000017.11:7674220:G:C"
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "hgvs": {"type": "string"}
+        "hgvs": {
+          "type": "string"
+        }
       }
     }
   },
@@ -38,15 +46,21 @@
           "description": "HGVS variant description. Examples: 'NC_000001.11:g.230710048A>G' (genomic), 'NM_000059.4:c.68_69del' (coding deletion in BRCA2), 'NM_000546.6:c.215C>G' (TP53 Pro72Arg)"
         }
       },
-      "required": ["hgvs"]
+      "required": [
+        "hgvs"
+      ]
     },
     "fields": {
       "endpoint_type": "hgvs_to_spdi"
     },
     "type": "NCBIVariationTool",
     "test_examples": [
-      {"hgvs": "NC_000001.11:g.230710048A>G"},
-      {"hgvs": "NM_000059.4:c.68_69del"}
+      {
+        "hgvs": "NC_000001.11:g.230710048A>G"
+      },
+      {
+        "hgvs": "NM_000059.4:c.68_69del"
+      }
     ],
     "return_schema": {
       "type": "object",
@@ -56,14 +70,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "seq_id": {"type": "string"},
-              "position": {"type": "integer"},
-              "deleted_sequence": {"type": "string"},
-              "inserted_sequence": {"type": "string"}
+              "seq_id": {
+                "type": "string"
+              },
+              "position": {
+                "type": "integer"
+              },
+              "deleted_sequence": {
+                "type": "string"
+              },
+              "inserted_sequence": {
+                "type": "string"
+              }
             }
           }
         },
-        "input_hgvs_validity": {"type": "string"}
+        "input_hgvs_validity": {
+          "type": "string"
+        }
       }
     }
   },
@@ -78,14 +102,18 @@
           "description": "Variant in SPDI notation. Examples: 'NC_000001.11:230710047:A:G' (GRCh38 AGT variant), 'NM_000059.4:266:AT:' (BRCA2 transcript-level)"
         }
       },
-      "required": ["spdi"]
+      "required": [
+        "spdi"
+      ]
     },
     "fields": {
       "endpoint_type": "spdi_equivalents"
     },
     "type": "NCBIVariationTool",
     "test_examples": [
-      {"spdi": "NC_000001.11:230710047:A:G"}
+      {
+        "spdi": "NC_000001.11:230710047:A:G"
+      }
     ],
     "return_schema": {
       "type": "object",
@@ -95,14 +123,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "seq_id": {"type": "string"},
-              "position": {"type": "integer"},
-              "deleted_sequence": {"type": "string"},
-              "inserted_sequence": {"type": "string"}
+              "seq_id": {
+                "type": "string"
+              },
+              "position": {
+                "type": "integer"
+              },
+              "deleted_sequence": {
+                "type": "string"
+              },
+              "inserted_sequence": {
+                "type": "string"
+              }
             }
           }
         },
-        "count": {"type": "integer"}
+        "count": {
+          "type": "integer"
+        }
       }
     }
   },
@@ -117,23 +155,37 @@
           "description": "Variant in SPDI notation to normalize. Examples: 'NC_000001.11:230710047:A:G', 'NM_000546.6:214:C:G' (TP53)"
         }
       },
-      "required": ["spdi"]
+      "required": [
+        "spdi"
+      ]
     },
     "fields": {
       "endpoint_type": "spdi_canonical"
     },
     "type": "NCBIVariationTool",
     "test_examples": [
-      {"spdi": "NC_000001.11:230710047:A:G"},
-      {"spdi": "NM_000546.6:214:C:G"}
+      {
+        "spdi": "NC_000001.11:230710047:A:G"
+      },
+      {
+        "spdi": "NM_000546.6:214:C:G"
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "seq_id": {"type": "string"},
-        "position": {"type": "integer"},
-        "deleted_sequence": {"type": "string"},
-        "inserted_sequence": {"type": "string"}
+        "seq_id": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "deleted_sequence": {
+          "type": "string"
+        },
+        "inserted_sequence": {
+          "type": "string"
+        }
       }
     }
   },
@@ -148,29 +200,61 @@
           "description": "dbSNP reference SNP ID. Examples: 'rs429358' (APOE epsilon-4 allele), 'rs7412' (APOE epsilon-2), 'rs699' (AGT M235T), 'rs1801133' (MTHFR C677T)"
         }
       },
-      "required": ["rsid"]
+      "required": [
+        "rsid"
+      ]
     },
     "fields": {
       "endpoint_type": "rsid_lookup"
     },
     "type": "NCBIVariationTool",
     "test_examples": [
-      {"rsid": "rs429358"},
-      {"rsid": "rs699"}
+      {
+        "rsid": "rs429358"
+      },
+      {
+        "rsid": "rs699"
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "refsnp_id": {"type": "string"},
-        "create_date": {"type": "string"},
-        "last_update_date": {"type": "string"},
-        "variant_type": {"type": ["string", "null"]},
-        "organism": {"type": ["string", "null"]},
-        "citations": {"type": "array"},
-        "mane_select_ids": {"type": "array"},
-        "grch38_placements": {"type": "array"},
-        "genes": {"type": "array"},
-        "clinical_significance": {"type": "array"}
+        "refsnp_id": {
+          "type": "string"
+        },
+        "create_date": {
+          "type": "string"
+        },
+        "last_update_date": {
+          "type": "string"
+        },
+        "variant_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "citations": {
+          "type": "array"
+        },
+        "mane_select_ids": {
+          "type": "array"
+        },
+        "grch38_placements": {
+          "type": "array"
+        },
+        "genes": {
+          "type": "array"
+        },
+        "clinical_significance": {
+          "type": "array"
+        }
       }
     }
   },
@@ -185,52 +269,77 @@
           "description": "dbSNP reference SNP ID. Examples: 'rs429358' (APOE, per-ancestry C allele frequency), 'rs334' (sickle-cell HBB, per-ancestry A/T counts), 'rs7412' (APOE epsilon-2)"
         }
       },
-      "required": ["rsid"]
+      "required": [
+        "rsid"
+      ]
     },
     "fields": {
       "endpoint_type": "alfa_frequencies"
     },
     "type": "NCBIVariationTool",
     "test_examples": [
-      {"rsid": "rs429358"},
-      {"rsid": "rs334"}
+      {
+        "rsid": "rs429358"
+      },
+      {
+        "rsid": "rs334"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Per-ancestry ALFA allele frequencies for the variant",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "refsnp_id": {"type": "string"},
-                "build_id": {"type": ["string", "null"]},
-                "positions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "position_key": {"type": "string"},
-                      "reference_allele": {"type": ["string", "null"]},
-                      "studies": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "study": {"type": "string"},
-                            "populations": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "biosample_id": {"type": "string"},
-                                  "population": {"type": "string"},
-                                  "total_alleles": {"type": "integer"},
-                                  "allele_counts": {"type": "object"},
-                                  "allele_frequencies": {"type": "object"}
-                                }
+            "refsnp_id": {
+              "type": "string"
+            },
+            "build_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "positions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "position_key": {
+                    "type": "string"
+                  },
+                  "reference_allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "studies": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "study": {
+                          "type": "string"
+                        },
+                        "populations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "biosample_id": {
+                                "type": "string"
+                              },
+                              "population": {
+                                "type": "string"
+                              },
+                              "total_alleles": {
+                                "type": "integer"
+                              },
+                              "allele_counts": {
+                                "type": "object"
+                              },
+                              "allele_frequencies": {
+                                "type": "object"
                               }
                             }
                           }
@@ -242,15 +351,20 @@
               }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "refsnp_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -266,40 +380,51 @@
           "description": "Variant in SPDI notation (SeqID:Position:Deleted:Inserted). Examples: 'NC_000019.10:44908683:T:C' (recovers rs429358 APOE), 'NC_000001.11:230710047:A:G' (AGT)"
         }
       },
-      "required": ["spdi"]
+      "required": [
+        "spdi"
+      ]
     },
     "fields": {
       "endpoint_type": "spdi_to_rsids"
     },
     "type": "NCBIVariationTool",
     "test_examples": [
-      {"spdi": "NC_000019.10:44908683:T:C"}
+      {
+        "spdi": "NC_000019.10:44908683:T:C"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "dbSNP rsIDs co-located with the SPDI variant",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "spdi": {"type": "string"},
-                "rsids": {"type": "array", "items": {"type": "integer"}},
-                "count": {"type": "integer"}
+            "spdi": {
+              "type": "string"
+            },
+            "rsids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
               }
+            },
+            "count": {
+              "type": "integer"
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "spdi"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -327,51 +452,74 @@
           "description": "Alternate allele (e.g., 'T', 'C'). Single allele; comma-separated alts also accepted by the API."
         }
       },
-      "required": ["chrom", "pos", "ref", "alt"]
+      "required": [
+        "chrom",
+        "pos",
+        "ref",
+        "alt"
+      ]
     },
     "fields": {
       "endpoint_type": "vcf_to_spdi"
     },
     "type": "NCBIVariationTool",
     "test_examples": [
-      {"chrom": "NC_000007.14", "pos": "140753336", "ref": "A", "alt": "T"},
-      {"chrom": "NC_000019.10", "pos": "44908684", "ref": "T", "alt": "C"}
+      {
+        "chrom": "NC_000007.14",
+        "pos": "140753336",
+        "ref": "A",
+        "alt": "T"
+      },
+      {
+        "chrom": "NC_000019.10",
+        "pos": "44908684",
+        "ref": "T",
+        "alt": "C"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Normalized contextual SPDI(s) for the VCF variant",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "spdis": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "seq_id": {"type": "string"},
-                      "position": {"type": "integer"},
-                      "deleted_sequence": {"type": "string"},
-                      "inserted_sequence": {"type": "string"}
-                    }
+            "spdis": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "seq_id": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "deleted_sequence": {
+                    "type": "string"
+                  },
+                  "inserted_sequence": {
+                    "type": "string"
                   }
-                },
-                "count": {"type": "integer"}
+                }
               }
+            },
+            "count": {
+              "type": "integer"
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "spdis"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

@@ -427,7 +427,7 @@
     "fields": {
       "endpoint": "/compound/fastsimilarity_2d/smiles/{smiles}/cids/JSON",
       "use_pugview": false,
-      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity ≥ threshold.",
+      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity \u2265 threshold.",
       "output_description": "Returns a JSON object with structure example:\n{\n  \"IdentifierList\": {\n    \"CID\": [2244, 2245, ...]\n  }\n}\n\nWhere: CID array contains compound IDs with similarity above specified threshold to target molecule. LLM can use this for chemical similarity analysis.",
       "property_list": []
     },
@@ -559,7 +559,7 @@
         },
         "xref_types": {
           "type": "array",
-          "description": "List of PubChem XRef types to query. Allowed values ONLY: RegistryID, RN, PubMedID, MMDBID, ProteinGI, NucleotideGI, TaxonomyID, MIMID, GeneID, ProbeID, PatentID, SourceName, SourceCategory, DBURL, SBURL. Database cross-references such as ChEBI, KEGG, ChEMBL and InChIKey are NOT xref types — they are listed inside the 'RegistryID' values, so use [\"RegistryID\"] to retrieve them.",
+          "description": "List of PubChem XRef types to query. Allowed values ONLY: RegistryID, RN, PubMedID, MMDBID, ProteinGI, NucleotideGI, TaxonomyID, MIMID, GeneID, ProbeID, PatentID, SourceName, SourceCategory, DBURL, SBURL. Database cross-references such as ChEBI, KEGG, ChEMBL and InChIKey are NOT xref types \u2014 they are listed inside the 'RegistryID' values, so use [\"RegistryID\"] to retrieve them.",
           "items": {
             "type": "string",
             "enum": [
@@ -1069,91 +1069,65 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful substance lookup.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
+            "sid": {
+              "type": [
+                "integer",
+                "string"
               ]
             },
-            "found": {
-              "type": "boolean"
+            "source_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "sid": {
-                  "type": [
-                    "integer",
-                    "string"
-                  ]
-                },
-                "source_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "source_id": {
-                  "type": [
-                    "string",
-                    "integer",
-                    "null"
-                  ]
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "comment": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "registry_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "xrefs": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                },
-                "linked_cids": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer"
-                  }
-                }
+            "source_id": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object"
+            "comment": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "registry_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "xrefs": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "linked_cids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           },
           "required": [
-            "status",
-            "found",
-            "data"
+            "sid"
           ]
         },
         {
           "type": "object",
           "description": "Error during substance lookup.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             },
@@ -1162,7 +1136,6 @@
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1202,46 +1175,27 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful reverse-sourcing lookup.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
+            "IdentifierList": {
               "type": "object",
               "properties": {
-                "IdentifierList": {
-                  "type": "object",
-                  "properties": {
-                    "SID": {
-                      "type": "array",
-                      "items": {
-                        "type": "integer"
-                      }
-                    }
+                "SID": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
                   }
                 }
               }
             }
           },
           "required": [
-            "status",
-            "data"
+            "IdentifierList"
           ]
         },
         {
           "type": "object",
           "description": "Error (e.g., unknown source name -> HTTP 404).",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             },
@@ -1250,7 +1204,6 @@
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1279,46 +1232,27 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful source directory listing.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
+            "InformationList": {
               "type": "object",
               "properties": {
-                "InformationList": {
-                  "type": "object",
-                  "properties": {
-                    "SourceName": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
+                "SourceName": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
                 }
               }
             }
           },
           "required": [
-            "status",
-            "data"
+            "InformationList"
           ]
         },
         {
           "type": "object",
           "description": "Error retrieving the source directory.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             },
@@ -1327,7 +1261,6 @@
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

@@ -8,7 +8,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_profile"],
+          "enum": [
+            "get_profile"
+          ],
           "description": "Operation type"
         },
         "orcid": {
@@ -16,19 +18,28 @@
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0002-1825-0097')"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "operation",
+        "orcid"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "orcid": {"type": "string"},
+        "orcid": {
+          "type": "string"
+        },
         "name": {},
         "biography": {},
         "emails": {},
         "keywords": {},
         "urls": {},
-        "works_count": {"type": "integer"},
-        "employments_count": {"type": "integer"}
+        "works_count": {
+          "type": "integer"
+        },
+        "employments_count": {
+          "type": "integer"
+        }
       }
     },
     "test_examples": [
@@ -47,7 +58,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_works"],
+          "enum": [
+            "get_works"
+          ],
           "description": "Operation type"
         },
         "orcid": {
@@ -55,11 +68,16 @@
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "operation",
+        "orcid"
+      ]
     },
     "return_schema": {
       "type": "array",
-      "items": {"type": "object"}
+      "items": {
+        "type": "object"
+      }
     },
     "test_examples": [
       {
@@ -77,7 +95,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_researchers"],
+          "enum": [
+            "search_researchers"
+          ],
           "description": "Operation type"
         },
         "query": {
@@ -98,11 +118,16 @@
           "description": "Number of results to return"
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "operation",
+        "query"
+      ]
     },
     "return_schema": {
       "type": "array",
-      "items": {"type": "object"}
+      "items": {
+        "type": "object"
+      }
     },
     "test_examples": [
       {
@@ -121,7 +146,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_employments"],
+          "enum": [
+            "get_employments"
+          ],
           "description": "Operation type"
         },
         "orcid": {
@@ -129,11 +156,16 @@
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "operation",
+        "orcid"
+      ]
     },
     "return_schema": {
       "type": "array",
-      "items": {"type": "object"}
+      "items": {
+        "type": "object"
+      }
     },
     "test_examples": [
       {
@@ -151,7 +183,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_fundings"],
+          "enum": [
+            "get_fundings"
+          ],
           "description": "Operation type"
         },
         "orcid": {
@@ -159,42 +193,83 @@
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-5109-3700')"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "operation",
+        "orcid"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": ["status", "data"],
-          "properties": {
-            "status": {"const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "put_code": {"type": ["integer", "string", "null"]},
-                  "title": {"type": ["string", "null"]},
-                  "type": {"type": ["string", "null"]},
-                  "organization": {"type": ["string", "null"]},
-                  "organization_country": {"type": ["string", "null"]},
-                  "start_date": {"type": ["object", "null"]},
-                  "end_date": {"type": ["object", "null"]},
-                  "url": {"type": ["string", "null"]},
-                  "external_ids": {"type": "array"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "put_code": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "organization": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "organization_country": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "start_date": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "end_date": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "external_ids": {
+                "type": "array"
               }
-            },
-            "num_fundings": {"type": "integer"}
+            }
           }
         },
         {
           "type": "object",
-          "required": ["status", "error"],
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -214,7 +289,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_peer_reviews"],
+          "enum": [
+            "get_peer_reviews"
+          ],
           "description": "Operation type"
         },
         "orcid": {
@@ -222,41 +299,80 @@
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-5109-3700')"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "operation",
+        "orcid"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": ["status", "data"],
-          "properties": {
-            "status": {"const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "put_code": {"type": ["integer", "string", "null"]},
-                  "reviewer_role": {"type": ["string", "null"]},
-                  "review_type": {"type": ["string", "null"]},
-                  "review_group_id": {"type": ["string", "null"]},
-                  "convening_organization": {"type": ["string", "null"]},
-                  "convening_organization_country": {"type": ["string", "null"]},
-                  "completion_date": {"type": ["object", "null"]},
-                  "review_url": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "put_code": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "reviewer_role": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "review_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "review_group_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "convening_organization": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "convening_organization_country": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "completion_date": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "review_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "num_peer_reviews": {"type": "integer"}
+            }
           }
         },
         {
           "type": "object",
-          "required": ["status", "error"],
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

@@ -22,37 +22,88 @@
           "description": "Number of results to skip for pagination (default: 0)."
         }
       },
-      "required": ["filters"]
+      "required": [
+        "filters"
+      ]
     },
     "fields": {
       "endpoint": "biosamples"
     },
     "type": "ProgenetixTool",
     "test_examples": [
-      {"filters": "NCIT:C3058", "limit": 3},
-      {"filters": "NCIT:C4017", "limit": 3}
+      {
+        "filters": "NCIT:C3058",
+        "limit": 3
+      },
+      {
+        "filters": "NCIT:C4017",
+        "limit": 3
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "filters": {"type": "string"},
-        "total_count": {"type": "integer"},
-        "returned_count": {"type": "integer"},
+        "filters": {
+          "type": "string"
+        },
+        "total_count": {
+          "type": "integer"
+        },
+        "returned_count": {
+          "type": "integer"
+        },
         "biosamples": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": ["string", "null"]},
-              "biosample_status": {"type": ["string", "null"]},
-              "histological_diagnosis": {"type": ["string", "null"]},
-              "histological_diagnosis_id": {"type": ["string", "null"]},
-              "pathological_stage": {"type": ["string", "null"]},
-              "pathological_tnm": {"type": ["string", "null"]},
-              "sample_origin_type": {"type": ["string", "null"]},
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "biosample_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "histological_diagnosis": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "histological_diagnosis_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pathological_stage": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pathological_tnm": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sample_origin_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "external_references": {
                 "type": "array",
-                "items": {"type": "object"}
+                "items": {
+                  "type": "object"
+                }
               }
             }
           }
@@ -78,35 +129,76 @@
           "description": "Maximum number of individuals to return (default: 10)."
         }
       },
-      "required": ["filters"]
+      "required": [
+        "filters"
+      ]
     },
     "fields": {
       "endpoint": "individuals"
     },
     "type": "ProgenetixTool",
     "test_examples": [
-      {"filters": "NCIT:C3058", "limit": 3},
-      {"filters": "NCIT:C9145", "limit": 3}
+      {
+        "filters": "NCIT:C3058",
+        "limit": 3
+      },
+      {
+        "filters": "NCIT:C9145",
+        "limit": 3
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "filters": {"type": "string"},
-        "total_count": {"type": "integer"},
-        "returned_count": {"type": "integer"},
+        "filters": {
+          "type": "string"
+        },
+        "total_count": {
+          "type": "integer"
+        },
+        "returned_count": {
+          "type": "integer"
+        },
         "individuals": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": ["string", "null"]},
-              "sex": {"type": ["string", "null"]},
-              "index_disease": {"type": ["string", "null"]},
-              "index_disease_id": {"type": ["string", "null"]},
-              "onset_age": {"type": ["string", "null"]},
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sex": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "index_disease": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "index_disease_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "onset_age": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "external_references": {
                 "type": "array",
-                "items": {"type": "object"}
+                "items": {
+                  "type": "object"
+                }
               }
             }
           }
@@ -140,23 +232,52 @@
     },
     "type": "ProgenetixTool",
     "test_examples": [
-      {"prefixes": "NCIT", "limit": 10},
-      {"limit": 5}
+      {
+        "prefixes": "NCIT",
+        "limit": 10
+      },
+      {
+        "limit": 5
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "prefixes": {"type": "string"},
-        "total_terms": {"type": "integer"},
+        "prefixes": {
+          "type": "string"
+        },
+        "total_terms": {
+          "type": "integer"
+        },
         "terms": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": ["string", "null"]},
-              "label": {"type": ["string", "null"]},
-              "count": {"type": ["integer", "null"]},
-              "type": {"type": ["string", "null"]}
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         }
@@ -184,25 +305,51 @@
     },
     "type": "ProgenetixTool",
     "test_examples": [
-      {"limit": 5},
+      {
+        "limit": 5
+      },
       {}
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "total_cohorts": {"type": "integer"},
+        "total_cohorts": {
+          "type": "integer"
+        },
         "cohorts": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": ["string", "null"]},
-              "name": {"type": ["string", "null"]},
-              "cohort_size": {"type": ["integer", "null"]},
-              "cohort_type": {"type": ["string", "null"]},
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cohort_size": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "cohort_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "data_types": {
                 "type": "array",
-                "items": {"type": "string"}
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -246,7 +393,11 @@
           "description": "Maximum number of biosamples to return (default: 10)."
         }
       },
-      "required": ["reference_name", "start", "end"]
+      "required": [
+        "reference_name",
+        "start",
+        "end"
+      ]
     },
     "fields": {
       "endpoint": "cnv_search"
@@ -272,23 +423,55 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "region": {"type": "string"},
-        "variant_type": {"type": "string"},
-        "filters": {"type": "string"},
-        "total_count": {"type": "integer"},
-        "returned_count": {"type": "integer"},
+        "region": {
+          "type": "string"
+        },
+        "variant_type": {
+          "type": "string"
+        },
+        "filters": {
+          "type": "string"
+        },
+        "total_count": {
+          "type": "integer"
+        },
+        "returned_count": {
+          "type": "integer"
+        },
         "biosamples": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": ["string", "null"]},
-              "biosample_status": {"type": ["string", "null"]},
-              "histological_diagnosis": {"type": ["string", "null"]},
-              "histological_diagnosis_id": {"type": ["string", "null"]},
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "biosample_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "histological_diagnosis": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "histological_diagnosis_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "external_references": {
                 "type": "array",
-                "items": {"type": "object"}
+                "items": {
+                  "type": "object"
+                }
               }
             }
           }
@@ -298,7 +481,7 @@
   },
   {
     "name": "Progenetix_get_cnv_frequencies",
-    "description": "Get the genome-wide aggregate CNV frequency profile for a cancer type from Progenetix — the signature Progenetix output. For each genomic interval bin (cytoband), returns the gain frequency and loss frequency aggregated across all samples of a Progenetix collation, selected by NCIt code. Example: NCIT:C4017 (Breast Ductal Carcinoma) returns sampleCount 13869 across 3106 interval bins; NCIT:C3058 (Glioblastoma) bin 1p36.33 has gain_frequency 4.258 and loss_frequency 5.278.",
+    "description": "Get the genome-wide aggregate CNV frequency profile for a cancer type from Progenetix \u2014 the signature Progenetix output. For each genomic interval bin (cytoband), returns the gain frequency and loss frequency aggregated across all samples of a Progenetix collation, selected by NCIt code. Example: NCIT:C4017 (Breast Ductal Carcinoma) returns sampleCount 13869 across 3106 interval bins; NCIT:C3058 (Glioblastoma) bin 1p36.33 has gain_frequency 4.258 and loss_frequency 5.278.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -317,62 +500,142 @@
           "description": "Optional cap on the number of interval bins returned (default: all ~3000 bins)."
         }
       },
-      "required": ["filters"]
+      "required": [
+        "filters"
+      ]
     },
     "fields": {
       "endpoint": "interval_frequencies"
     },
     "type": "ProgenetixTool",
     "test_examples": [
-      {"filters": "NCIT:C4017", "max_intervals": 5},
-      {"filters": "NCIT:C3058", "max_intervals": 5}
+      {
+        "filters": "NCIT:C4017",
+        "max_intervals": 5
+      },
+      {
+        "filters": "NCIT:C3058",
+        "max_intervals": 5
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "filters": {"type": "string"},
-                "label": {"type": ["string", "null"]},
-                "group_id": {"type": ["string", "null"]},
-                "dataset_id": {"type": ["string", "null"]},
-                "sample_count": {"type": "integer"},
-                "interval_count": {"type": "integer"},
-                "returned_interval_count": {"type": "integer"},
-                "intervals": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "no": {"type": ["integer", "null"]},
-                      "reference_name": {"type": ["string", "null"]},
-                      "cytobands": {"type": ["string", "null"]},
-                      "start": {"type": ["integer", "null"]},
-                      "end": {"type": ["integer", "null"]},
-                      "size": {"type": ["integer", "null"]},
-                      "gain_frequency": {"type": ["number", "null"]},
-                      "loss_frequency": {"type": ["number", "null"]},
-                      "gain_hlfrequency": {"type": ["number", "null"]},
-                      "loss_hlfrequency": {"type": ["number", "null"]}
-                    }
+            "filters": {
+              "type": "string"
+            },
+            "label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "group_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dataset_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sample_count": {
+              "type": "integer"
+            },
+            "interval_count": {
+              "type": "integer"
+            },
+            "returned_interval_count": {
+              "type": "integer"
+            },
+            "intervals": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "no": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "reference_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cytobands": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "size": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "gain_frequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "loss_frequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "gain_hlfrequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "loss_hlfrequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "filters"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

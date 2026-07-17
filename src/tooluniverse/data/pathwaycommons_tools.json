@@ -364,104 +364,62 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Cleaned, de-duplicated input gene set"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "genes": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+            "edges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "description": "Entity A (left side of SIF triple)"
                   },
-                  "description": "Cleaned, de-duplicated input gene set"
-                },
-                "edges": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "source": {
-                        "type": "string",
-                        "description": "Entity A (left side of SIF triple)"
-                      },
-                      "relation": {
-                        "type": "string",
-                        "description": "Interaction relation, e.g. in-complex-with"
-                      },
-                      "target": {
-                        "type": "string",
-                        "description": "Entity B (right side of SIF triple)"
-                      }
-                    }
+                  "relation": {
+                    "type": "string",
+                    "description": "Interaction relation, e.g. in-complex-with"
                   },
-                  "description": "Mechanistic interaction edges connecting the gene set"
-                },
-                "relation_counts": {
-                  "type": "object",
-                  "description": "Count of each relation type among returned edges"
-                },
-                "entity_count": {
-                  "type": "integer",
-                  "description": "Number of distinct entities across all edges"
-                },
-                "note": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Explanatory note when no paths are found, else null"
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "genes": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+                  "target": {
+                    "type": "string",
+                    "description": "Entity B (right side of SIF triple)"
                   }
-                },
-                "total_edges": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "limit": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
                 }
-              }
+              },
+              "description": "Mechanistic interaction edges connecting the gene set"
+            },
+            "relation_counts": {
+              "type": "object",
+              "description": "Count of each relation type among returned edges"
+            },
+            "entity_count": {
+              "type": "integer",
+              "description": "Number of distinct entities across all edges"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Explanatory note when no paths are found, else null"
             }
           },
           "required": [
-            "status",
-            "data"
+            "genes"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

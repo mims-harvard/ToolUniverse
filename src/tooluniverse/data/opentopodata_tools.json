@@ -81,12 +81,11 @@
                   }
                 }
               }
-            },
-            "status": {
-              "type": "string",
-              "description": "OK or error message"
             }
-          }
+          },
+          "required": [
+            "results"
+          ]
         },
         {
           "type": "object",
