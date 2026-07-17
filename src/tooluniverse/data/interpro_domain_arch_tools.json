@@ -30,87 +30,72 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "accession": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "protein_length": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "domain_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "domains": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pfam_accession": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "integrated_interpro": {
-                        "type": "string"
-                      },
-                      "start": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "end": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "score": {
-                        "type": "number"
-                      }
-                    }
+            "protein_length": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "domain_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pfam_accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "integrated_interpro": {
+                    "type": "string"
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "score": {
+                    "type": "number"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "accession"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -153,72 +138,57 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "pfam_accession": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "pfam_accession": {
-                  "type": "string"
-                },
-                "total_structures": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "returned": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "structures": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pdb_id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "experiment_type": {
-                        "type": "string"
-                      },
-                      "resolution": {
-                        "type": "number"
-                      }
-                    }
+            "total_structures": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "structures": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pdb_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "resolution": {
+                    "type": "number"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "pfam_accession"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -260,75 +230,60 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "clan_accession": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "clan_accession": {
-                  "type": "string"
-                },
-                "clan_name": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "member_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "members": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "short_name": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "score": {
-                        "type": "number"
-                      }
-                    }
+            "clan_name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "member_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "members": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "short_name": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "number"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "clan_accession"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

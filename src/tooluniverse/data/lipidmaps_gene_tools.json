@@ -53,112 +53,93 @@
       "type": "object",
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "lmp_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_symbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_synonyms": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "alt_names": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "chromosome": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "map_location": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "summary": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "taxid": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "species": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "species_long": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "lmp_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_synonyms": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "alt_names": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "chromosome": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "map_location": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "summary": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species_long": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
-          "description": "Error envelope returned when the request fails.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -223,130 +204,111 @@
       "type": "object",
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "lmp_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_symbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "uniprot_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "protein_entry": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "protein_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "refseq_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "mrna_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "protein_gi": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "seqlength": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "seq": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "taxid": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "species": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "species_long": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "lmp_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "uniprot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "protein_entry": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "protein_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "refseq_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mrna_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "protein_gi": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "seqlength": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "seq": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species_long": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
-          "description": "Error envelope returned when the request fails.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

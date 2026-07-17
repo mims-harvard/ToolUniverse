@@ -528,92 +528,64 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "description": "Full HGNC record for every member gene of the family",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "hgnc_id": {
-                    "type": "string"
-                  },
-                  "symbol": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "locus_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "location": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_group": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  },
-                  "gene_group_id": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  },
-                  "ensembl_gene_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "entrez_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "uniprot_ids": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query_field": {
-                  "type": "string"
-                },
-                "query_value": {
-                  "type": "string"
-                },
-                "num_found": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "description": "Full HGNC record for every member gene of the family",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hgnc_id": {
+                "type": "string"
+              },
+              "symbol": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "locus_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "location": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_group": {
+                "type": [
+                  "array",
+                  "null"
+                ]
+              },
+              "gene_group_id": {
+                "type": [
+                  "array",
+                  "null"
+                ]
+              },
+              "ensembl_gene_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "entrez_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "uniprot_ids": {
+                "type": [
+                  "array",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

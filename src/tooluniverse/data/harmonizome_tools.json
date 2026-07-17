@@ -349,131 +349,116 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "attribute": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "attribute": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "dataset": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "symbol": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "ncbi_entrez_gene_id": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "members": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "gene": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "gene_href": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "threshold_value": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "standardized_value": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "gene_set": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "gene_set_href": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "threshold_value": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "standardized_value": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "dataset": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "symbol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ncbi_entrez_gene_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "members": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_href": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "threshold_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "standardized_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_set": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_set_href": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "threshold_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "standardized_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "members"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

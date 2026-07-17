@@ -286,56 +286,55 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "peptide": {
-                    "type": "string"
-                  },
-                  "proteasome_score": {
-                    "type": ["number", "string"]
-                  },
-                  "tap_score": {
-                    "type": ["number", "string"]
-                  },
-                  "mhc_score": {
-                    "type": ["number", "string"]
-                  },
-                  "processing_score": {
-                    "type": ["number", "string"]
-                  },
-                  "total_score": {
-                    "type": ["number", "string"]
-                  },
-                  "ic50_score": {
-                    "type": ["number", "string"]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "peptide": {
+                "type": "string"
+              },
+              "proteasome_score": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "tap_score": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "mhc_score": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "processing_score": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "total_score": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "ic50_score": {
+                "type": [
+                  "number",
+                  "string"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }

@@ -1,195 +1,346 @@
 [
-    {
-        "name": "MassIVE_search_datasets",
-        "description": "Search the MassIVE proteomics repository for mass spectrometry datasets. MassIVE hosts thousands of proteomics datasets accessible via the ProXI standard API. Returns dataset accessions, titles, species, instruments, and keywords. Optionally filter by NCBI taxonomy ID for species.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "page_size": {
-                    "type": "integer",
-                    "default": 10,
-                    "description": "Number of results to return (max 100)"
-                },
-                "species": {
-                    "type": ["string", "null"],
-                    "description": "NCBI taxonomy ID to filter by species (e.g., '9606' for human, '10090' for mouse)"
-                }
-            },
-            "required": []
+  {
+    "name": "MassIVE_search_datasets",
+    "description": "Search the MassIVE proteomics repository for mass spectrometry datasets. MassIVE hosts thousands of proteomics datasets accessible via the ProXI standard API. Returns dataset accessions, titles, species, instruments, and keywords. Optionally filter by NCBI taxonomy ID for species.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "page_size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (max 100)"
         },
-        "fields": {
-            "operation": "search_datasets"
-        },
-        "type": "MassIVETool",
-        "test_examples": [
-            {
-                "page_size": 3
-            },
-            {
-                "page_size": 3,
-                "species": "9606"
-            }
-        ],
-        "return_schema": {
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "NCBI taxonomy ID to filter by species (e.g., '9606' for human, '10090' for mouse)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search_datasets"
+    },
+    "type": "MassIVETool",
+    "test_examples": [
+      {
+        "page_size": 3
+      },
+      {
+        "page_size": 3,
+        "species": "9606"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accessions": {
             "type": "array",
             "items": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "species": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "instruments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "label": [
+      "MassIVE",
+      "Proteomics",
+      "Datasets"
+    ],
+    "metadata": {
+      "tags": [
+        "proteomics",
+        "mass_spectrometry",
+        "datasets",
+        "repository"
+      ],
+      "estimated_execution_time": "3-5 seconds"
+    }
+  },
+  {
+    "name": "MassIVE_get_dataset",
+    "description": "Get detailed information about a specific MassIVE proteomics dataset by its accession number (MSV or PXD format). Returns title, summary, species, instruments, keywords, contacts, publications, and post-translational modifications.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "MassIVE dataset accession (e.g., 'MSV000079514') or ProteomeXchange accession (e.g., 'PXD003971')"
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "operation": "get_dataset"
+    },
+    "type": "MassIVETool",
+    "test_examples": [
+      {
+        "accession": "MSV000079514"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "accessions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "species": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "instruments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "publications": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "modifications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "label": [
+      "MassIVE",
+      "Proteomics",
+      "Dataset Detail"
+    ],
+    "metadata": {
+      "tags": [
+        "proteomics",
+        "mass_spectrometry",
+        "dataset_detail",
+        "repository"
+      ],
+      "estimated_execution_time": "3-5 seconds"
+    }
+  },
+  {
+    "name": "MassIVE_get_protein_identifications",
+    "description": "Identification-level access to MassIVE datasets via the ProXI standard API. MassIVE's other tools return only dataset metadata; this tool exposes the actual protein identifications. Three modes: (1) per-dataset protein summaries - pass 'accession' (e.g. 'PXD000561') to get identified proteins with countPSM/countPeptides/countPeptidoforms/countDatasets; (2) cross-dataset protein lookup - pass 'protein_accession' (e.g. 'A2M_MOUSE') to find how many MassIVE datasets identified a protein; (3) peptide-spectrum matches - set result_type='psms' with a dataset 'accession' to get PSMs (peptide sequence + charge). Returns a structured success/error envelope.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Dataset accession (ProteomeXchange PXD or MassIVE MSV, e.g. 'PXD000561'). Required for per-dataset protein summaries and for PSM lookups."
+        },
+        "protein_accession": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Protein accession for a cross-dataset lookup (e.g. 'A2M_MOUSE', 'A2MP_MOUSE'). Returns the count of MassIVE datasets that identified this protein."
+        },
+        "result_type": {
+          "type": "string",
+          "enum": [
+            "proteins",
+            "psms"
+          ],
+          "default": "proteins",
+          "description": "'proteins' (default) for protein identification summaries, or 'psms' for peptide-spectrum matches (use with a dataset 'accession')."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_protein_identifications"
+    },
+    "type": "MassIVETool",
+    "test_examples": [
+      {
+        "accession": "PXD000561"
+      },
+      {
+        "protein_accession": "A2M_MOUSE"
+      },
+      {
+        "accession": "PXD000561",
+        "result_type": "psms"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "result_type": {
+              "type": "string",
+              "enum": [
+                "proteins",
+                "psms"
+              ]
+            },
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "protein_accession": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "count": {
+              "type": "integer"
+            },
+            "proteins": {
+              "type": "array",
+              "items": {
                 "type": "object",
                 "properties": {
-                    "accessions": {"type": "array", "items": {"type": "string"}},
-                    "title": {"type": "string"},
-                    "summary": {"type": "string"},
-                    "species": {"type": "array", "items": {"type": "string"}},
-                    "instruments": {"type": "array", "items": {"type": "string"}},
-                    "keywords": {"type": "array", "items": {"type": "string"}}
+                  "proteinAccession": {
+                    "type": "string"
+                  },
+                  "countPSM": {
+                    "type": [
+                      "integer",
+                      "string"
+                    ]
+                  },
+                  "countPeptides": {
+                    "type": [
+                      "integer",
+                      "string"
+                    ]
+                  },
+                  "countPeptidoforms": {
+                    "type": [
+                      "integer",
+                      "string"
+                    ]
+                  },
+                  "countDatasets": {
+                    "type": [
+                      "integer",
+                      "string"
+                    ]
+                  }
                 }
+              }
+            },
+            "psms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "peptideSequence": {
+                    "type": "string"
+                  },
+                  "charge": {
+                    "type": [
+                      "integer",
+                      "string"
+                    ]
+                  },
+                  "usi": {
+                    "type": "string"
+                  }
+                }
+              }
             }
+          },
+          "required": [
+            "result_type",
+            "count"
+          ]
         },
-        "label": ["MassIVE", "Proteomics", "Datasets"],
-        "metadata": {
-            "tags": ["proteomics", "mass_spectrometry", "datasets", "repository"],
-            "estimated_execution_time": "3-5 seconds"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
     },
-    {
-        "name": "MassIVE_get_dataset",
-        "description": "Get detailed information about a specific MassIVE proteomics dataset by its accession number (MSV or PXD format). Returns title, summary, species, instruments, keywords, contacts, publications, and post-translational modifications.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "accession": {
-                    "type": "string",
-                    "description": "MassIVE dataset accession (e.g., 'MSV000079514') or ProteomeXchange accession (e.g., 'PXD003971')"
-                }
-            },
-            "required": ["accession"]
-        },
-        "fields": {
-            "operation": "get_dataset"
-        },
-        "type": "MassIVETool",
-        "test_examples": [
-            {
-                "accession": "MSV000079514"
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "accessions": {"type": "array", "items": {"type": "string"}},
-                "title": {"type": "string"},
-                "summary": {"type": "string"},
-                "species": {"type": "array", "items": {"type": "string"}},
-                "instruments": {"type": "array", "items": {"type": "string"}},
-                "keywords": {"type": "array", "items": {"type": "string"}},
-                "contacts": {"type": "array", "items": {"type": "object"}},
-                "publications": {"type": "array", "items": {"type": "object"}},
-                "modifications": {"type": "array", "items": {"type": "string"}}
-            }
-        },
-        "label": ["MassIVE", "Proteomics", "Dataset Detail"],
-        "metadata": {
-            "tags": ["proteomics", "mass_spectrometry", "dataset_detail", "repository"],
-            "estimated_execution_time": "3-5 seconds"
-        }
-    },
-    {
-        "name": "MassIVE_get_protein_identifications",
-        "description": "Identification-level access to MassIVE datasets via the ProXI standard API. MassIVE's other tools return only dataset metadata; this tool exposes the actual protein identifications. Three modes: (1) per-dataset protein summaries - pass 'accession' (e.g. 'PXD000561') to get identified proteins with countPSM/countPeptides/countPeptidoforms/countDatasets; (2) cross-dataset protein lookup - pass 'protein_accession' (e.g. 'A2M_MOUSE') to find how many MassIVE datasets identified a protein; (3) peptide-spectrum matches - set result_type='psms' with a dataset 'accession' to get PSMs (peptide sequence + charge). Returns a structured success/error envelope.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "accession": {
-                    "type": ["string", "null"],
-                    "description": "Dataset accession (ProteomeXchange PXD or MassIVE MSV, e.g. 'PXD000561'). Required for per-dataset protein summaries and for PSM lookups."
-                },
-                "protein_accession": {
-                    "type": ["string", "null"],
-                    "description": "Protein accession for a cross-dataset lookup (e.g. 'A2M_MOUSE', 'A2MP_MOUSE'). Returns the count of MassIVE datasets that identified this protein."
-                },
-                "result_type": {
-                    "type": "string",
-                    "enum": ["proteins", "psms"],
-                    "default": "proteins",
-                    "description": "'proteins' (default) for protein identification summaries, or 'psms' for peptide-spectrum matches (use with a dataset 'accession')."
-                }
-            },
-            "required": []
-        },
-        "fields": {
-            "operation": "get_protein_identifications"
-        },
-        "type": "MassIVETool",
-        "test_examples": [
-            {
-                "accession": "PXD000561"
-            },
-            {
-                "protein_accession": "A2M_MOUSE"
-            },
-            {
-                "accession": "PXD000561",
-                "result_type": "psms"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Successful identification-level lookup.",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "result_type": {"type": "string", "enum": ["proteins", "psms"]},
-                                "accession": {"type": ["string", "null"]},
-                                "protein_accession": {"type": ["string", "null"]},
-                                "count": {"type": "integer"},
-                                "proteins": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "proteinAccession": {"type": "string"},
-                                            "countPSM": {"type": ["integer", "string"]},
-                                            "countPeptides": {"type": ["integer", "string"]},
-                                            "countPeptidoforms": {"type": ["integer", "string"]},
-                                            "countDatasets": {"type": ["integer", "string"]}
-                                        }
-                                    }
-                                },
-                                "psms": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "peptideSequence": {"type": "string"},
-                                            "charge": {"type": ["integer", "string"]},
-                                            "usi": {"type": "string"}
-                                        }
-                                    }
-                                }
-                            },
-                            "required": ["result_type", "count"]
-                        }
-                    },
-                    "required": ["status", "data"]
-                },
-                {
-                    "type": "object",
-                    "description": "Error envelope returned on failure.",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
-                }
-            ]
-        },
-        "label": ["MassIVE", "Proteomics", "Protein Identifications"],
-        "metadata": {
-            "tags": ["proteomics", "mass_spectrometry", "protein_identification", "psm", "repository"],
-            "estimated_execution_time": "3-5 seconds"
-        }
+    "label": [
+      "MassIVE",
+      "Proteomics",
+      "Protein Identifications"
+    ],
+    "metadata": {
+      "tags": [
+        "proteomics",
+        "mass_spectrometry",
+        "protein_identification",
+        "psm",
+        "repository"
+      ],
+      "estimated_execution_time": "3-5 seconds"
     }
+  }
 ]

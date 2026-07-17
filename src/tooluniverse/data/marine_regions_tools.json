@@ -218,16 +218,16 @@
             "preferredGazetteerNameLang": {
               "type": "string"
             },
-            "status": {
-              "type": "string"
-            },
             "accepted": {
               "type": [
                 "integer",
                 "null"
               ]
             }
-          }
+          },
+          "required": [
+            "MRGID"
+          ]
         },
         {
           "type": "object",

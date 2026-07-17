@@ -28,113 +28,101 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Member-database signature detail.",
           "properties": {
-            "status": {
-              "const": "success"
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "description": "Member-database signature detail.",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "source_database": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "integrated_interpro": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "description": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "go_terms": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "identifier": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "category": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "counters": {
-                  "type": "object",
-                  "properties": {
-                    "proteins": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "structures": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "taxa": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    }
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source_database": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "integrated_interpro": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "go_terms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "identifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": [
-                "accession",
-                "source_database"
-              ]
+              }
+            },
+            "counters": {
+              "type": "object",
+              "properties": {
+                "proteins": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "structures": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "taxa": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              }
             }
           },
           "required": [
-            "data"
+            "accession",
+            "source_database"
           ]
         },
         {
           "type": "object",
-          "description": "Error response.",
           "properties": {
             "error": {
               "type": "string"
@@ -193,72 +181,60 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "A page of member-database signatures.",
           "properties": {
-            "status": {
-              "const": "success"
+            "member_database": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "description": "A page of member-database signatures.",
-              "properties": {
-                "member_database": {
-                  "type": "string"
-                },
-                "total_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "entries": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "integrated_interpro": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "integrated_interpro": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": [
-                "member_database",
-                "entries"
-              ]
+              }
             }
           },
           "required": [
-            "data"
+            "member_database",
+            "entries"
           ]
         },
         {
           "type": "object",
-          "description": "Error response.",
           "properties": {
             "error": {
               "type": "string"
@@ -314,72 +290,60 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "PDB structures containing the InterPro domain.",
           "properties": {
-            "status": {
-              "const": "success"
+            "interpro_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "description": "PDB structures containing the InterPro domain.",
-              "properties": {
-                "interpro_id": {
-                  "type": "string"
-                },
-                "total_structures": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "structures": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pdb_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "experiment_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "resolution": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "total_structures": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "structures": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pdb_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "experiment_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "resolution": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": [
-                "interpro_id",
-                "structures"
-              ]
+              }
             }
           },
           "required": [
-            "data"
+            "interpro_id",
+            "structures"
           ]
         },
         {
           "type": "object",
-          "description": "Error response.",
           "properties": {
             "error": {
               "type": "string"
@@ -419,68 +383,56 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Member-database catalog with counts.",
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "description": "Member-database catalog with counts.",
-              "properties": {
-                "databases": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "member_database": {
-                        "type": "string"
-                      },
-                      "entry_count": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "databases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "member_database": {
+                    "type": "string"
+                  },
+                  "entry_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
-                },
-                "integrated_total": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "unintegrated_total": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "interpro_total": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "all_total": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
                 }
-              },
-              "required": [
-                "databases"
+              }
+            },
+            "integrated_total": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "unintegrated_total": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "interpro_total": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "all_total": {
+              "type": [
+                "integer",
+                "null"
               ]
             }
           },
           "required": [
-            "data"
+            "databases"
           ]
         },
         {
           "type": "object",
-          "description": "Error response.",
           "properties": {
             "error": {
               "type": "string"

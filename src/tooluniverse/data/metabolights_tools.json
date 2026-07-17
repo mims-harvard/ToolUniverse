@@ -42,7 +42,7 @@
   {
     "type": "MetaboLightsRESTTool",
     "name": "metabolights_search_studies",
-    "description": "List MetaboLights study IDs. NOTE: The MetaboLights API does not support keyword filtering — the query parameter is accepted but has no effect; all public study IDs are returned regardless of query. To find studies on a specific topic, use metabolights_get_study on individual IDs. Returns all public MetaboLights study accessions (MTBLS###).",
+    "description": "List MetaboLights study IDs. NOTE: The MetaboLights API does not support keyword filtering \u2014 the query parameter is accepted but has no effect; all public study IDs are returned regardless of query. To find studies on a specific topic, use metabolights_get_study on individual IDs. Returns all public MetaboLights study accessions (MTBLS###).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -62,7 +62,9 @@
           "default": 0
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies",
@@ -98,7 +100,9 @@
           "description": "MetaboLights study ID (e.g., 'MTBLS1')"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}",
@@ -134,7 +138,9 @@
           "description": "MetaboLights study ID"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}/assays",
@@ -165,7 +171,9 @@
           "description": "MetaboLights study ID"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}/samples",
@@ -196,7 +204,9 @@
           "description": "MetaboLights study ID"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}/files",
@@ -367,25 +377,28 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": ["object", "array"],
-              "description": "Reference compound record (object) with name, formula, inchi, inchikey, chebiId, metSpecies, hasNMR, hasMS, hasPathways flags; or the full list of MTBLC* accessions (array) when list=true."
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+          "type": [
+            "object",
+            "array"
+          ],
+          "description": "Reference compound record (object) with name, formula, inchi, inchikey, chebiId, metSpecies, hasNMR, hasMS, hasPathways flags; or the full list of MTBLC* accessions (array) when list=true.",
+          "not": {
+            "type": "object",
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

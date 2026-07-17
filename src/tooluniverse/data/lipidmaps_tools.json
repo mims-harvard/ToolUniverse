@@ -37,68 +37,119 @@
       "type": "object",
       "properties": {
         "lm_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "name": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "sys_name": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "formula": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "exactmass": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "smiles": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "inchi_key": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "core": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "main_class": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "sub_class": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "kegg_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "hmdb_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "chebi_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "pubchem_cid": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "input": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "regno": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "abbrev": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     }
   },
   {
     "name": "LipidMaps_search_by_name",
-    "description": "Search for lipids by exact abbreviation in LIPID MAPS Structure Database. IMPORTANT: Only exact lipidomics abbreviations work (e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names like 'ceramide' or 'sphingomyelin' will NOT match — use LipidMaps_search_by_formula for class-level searches. Returns matching lipid records with structures and classification.",
+    "description": "Search for lipids by exact abbreviation in LIPID MAPS Structure Database. IMPORTANT: Only exact lipidomics abbreviations work (e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names like 'ceramide' or 'sphingomyelin' will NOT match \u2014 use LipidMaps_search_by_formula for class-level searches. Returns matching lipid records with structures and classification.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_value": {
           "type": "string",
-          "description": "Exact lipid abbreviation used in lipidomics (e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names like 'ceramide' will not match — use exact abbreviations only."
+          "description": "Exact lipid abbreviation used in lipidomics (e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names like 'ceramide' will not match \u2014 use exact abbreviations only."
         },
         "output_item": {
           "type": "string",
@@ -129,13 +180,48 @@
         {
           "type": "object",
           "properties": {
-            "lm_id": {"type": ["string", "null"]},
-            "name": {"type": ["string", "null"]},
-            "formula": {"type": ["string", "null"]},
-            "exactmass": {"type": ["string", "null"]},
-            "smiles": {"type": ["string", "null"]},
-            "core": {"type": ["string", "null"]},
-            "abbrev": {"type": ["string", "null"]}
+            "lm_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "exactmass": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "core": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "abbrev": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           }
         },
         {
@@ -143,10 +229,30 @@
           "items": {
             "type": "object",
             "properties": {
-              "lm_id": {"type": ["string", "null"]},
-              "name": {"type": ["string", "null"]},
-              "formula": {"type": ["string", "null"]},
-              "abbrev": {"type": ["string", "null"]}
+              "lm_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "formula": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "abbrev": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         }
@@ -302,7 +408,14 @@
         "xref_type": {
           "type": "string",
           "description": "Namespace of input_value. One of: 'kegg_id', 'hmdb_id', 'chebi_id', 'pubchem_cid', 'inchi_key', 'abbrev_chains'.",
-          "enum": ["kegg_id", "hmdb_id", "chebi_id", "pubchem_cid", "inchi_key", "abbrev_chains"],
+          "enum": [
+            "kegg_id",
+            "hmdb_id",
+            "chebi_id",
+            "pubchem_cid",
+            "inchi_key",
+            "abbrev_chains"
+          ],
           "default": "kegg_id"
         },
         "output_item": {
@@ -311,7 +424,9 @@
           "default": "all"
         }
       },
-      "required": ["input_value"]
+      "required": [
+        "input_value"
+      ]
     },
     "fields": {
       "context": "compound",
@@ -335,24 +450,28 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": ["object", "array"],
-              "description": "LMSD record (single object) or list of records with lm_id, name, formula, exactmass, and cross-references (kegg_id, hmdb_id, chebi_id, pubchem_cid)."
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+          "type": [
+            "object",
+            "array"
+          ],
+          "description": "LMSD record (single object) or list of records with lm_id, name, formula, exactmass, and cross-references (kegg_id, hmdb_id, chebi_id, pubchem_cid).",
+          "not": {
+            "type": "object",
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

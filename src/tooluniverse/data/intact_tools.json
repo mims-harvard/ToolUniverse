@@ -248,43 +248,11 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array"
-            },
-            "count": {
-              "type": "integer"
-            },
-            "hitCount": {
-              "type": "integer"
-            },
-            "interaction_ids": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
+          "type": "array"
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }

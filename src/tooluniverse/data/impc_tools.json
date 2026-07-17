@@ -31,91 +31,76 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "mgi_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "mgi_id": {
-                  "type": "string"
-                },
-                "symbol": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "human_ortholog": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "marker_type": {
-                  "type": "string"
-                },
-                "phenotype_status": {
-                  "type": "null"
-                },
-                "production_status": {
-                  "type": "null"
-                },
-                "phenotyping_centre": {
-                  "type": "null"
-                },
-                "production_centre": {
-                  "type": "null"
-                },
-                "has_phenotype_data": {
-                  "type": "boolean"
-                },
-                "mp_terms": {
-                  "type": "array"
-                },
-                "mp_ids": {
-                  "type": "array"
-                },
-                "top_level_mp_terms": {
-                  "type": "array"
-                },
-                "hp_terms": {
-                  "type": "array"
-                },
-                "disease_associations": {
-                  "type": "array"
-                }
+            "symbol": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object"
+            "human_ortholog": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "marker_type": {
+              "type": "string"
+            },
+            "phenotype_status": {
+              "type": "null"
+            },
+            "production_status": {
+              "type": "null"
+            },
+            "phenotyping_centre": {
+              "type": "null"
+            },
+            "production_centre": {
+              "type": "null"
+            },
+            "has_phenotype_data": {
+              "type": "boolean"
+            },
+            "mp_terms": {
+              "type": "array"
+            },
+            "mp_ids": {
+              "type": "array"
+            },
+            "top_level_mp_terms": {
+              "type": "array"
+            },
+            "hp_terms": {
+              "type": "array"
+            },
+            "disease_associations": {
+              "type": "array"
             }
-          }
+          },
+          "required": [
+            "mgi_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -178,140 +163,125 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "gene_symbol": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_symbol": {
-                  "type": "string"
-                },
-                "mgi_id": {
-                  "type": "string"
-                },
-                "total_phenotype_calls": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "unique_phenotypes": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "phenotypes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "mp_term_id": {
-                        "type": "string"
-                      },
-                      "mp_term_name": {
-                        "type": "string"
-                      },
-                      "top_level_mp_term_id": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "top_level_mp_term_name": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "zygosity": {
-                        "type": "string"
-                      },
-                      "sex": {
-                        "type": "string"
-                      },
-                      "life_stage": {
-                        "type": "string"
-                      },
-                      "procedure": {
-                        "type": "string"
-                      },
-                      "parameter": {
-                        "type": "string"
-                      },
-                      "p_value": {
-                        "type": "number"
-                      },
-                      "effect_size": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
-                      },
-                      "phenotyping_center": {
-                        "type": "string"
-                      },
-                      "allele_symbol": {
-                        "type": "string"
-                      }
+            "mgi_id": {
+              "type": "string"
+            },
+            "total_phenotype_calls": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "unique_phenotypes": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "phenotypes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mp_term_id": {
+                    "type": "string"
+                  },
+                  "mp_term_name": {
+                    "type": "string"
+                  },
+                  "top_level_mp_term_id": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
-                  }
-                },
-                "phenotype_summary_by_system": {
-                  "type": "object",
-                  "properties": {
-                    "behavior/neurological phenotype": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "homeostasis/metabolism phenotype": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "mortality/aging": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "vision/eye phenotype": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
+                  },
+                  "top_level_mp_term_name": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "zygosity": {
+                    "type": "string"
+                  },
+                  "sex": {
+                    "type": "string"
+                  },
+                  "life_stage": {
+                    "type": "string"
+                  },
+                  "procedure": {
+                    "type": "string"
+                  },
+                  "parameter": {
+                    "type": "string"
+                  },
+                  "p_value": {
+                    "type": "number"
+                  },
+                  "effect_size": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "phenotyping_center": {
+                    "type": "string"
+                  },
+                  "allele_symbol": {
+                    "type": "string"
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "phenotype_summary_by_system": {
+              "type": "object",
+              "properties": {
+                "behavior/neurological phenotype": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "homeostasis/metabolism phenotype": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "mortality/aging": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "vision/eye phenotype": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "gene_symbol"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -370,87 +340,72 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "query": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "query": {
-                  "type": "string"
-                },
-                "genes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "mgi_id": {
-                        "type": "string"
-                      },
-                      "symbol": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "synonyms": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "human_ortholog": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "phenotype_status": {
-                        "type": "null"
-                      },
-                      "production_status": {
-                        "type": "null"
-                      }
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mgi_id": {
+                    "type": "string"
+                  },
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "synonyms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "human_ortholog": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "phenotype_status": {
+                    "type": "null"
+                  },
+                  "production_status": {
+                    "type": "null"
                   }
-                },
-                "count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "total_found": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "total_found": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "query"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -514,126 +469,111 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "gene_symbol": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_symbol": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "results_returned": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "significant_only": {
-                  "type": "boolean"
-                },
-                "hits": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "parameter": {
-                        "type": "string"
-                      },
-                      "procedure": {
-                        "type": "string"
-                      },
-                      "mp_term_id": {
-                        "type": "string"
-                      },
-                      "mp_term_name": {
-                        "type": "string"
-                      },
-                      "top_level_mp_term": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "p_value": {
-                        "type": "number"
-                      },
-                      "effect_size": {
-                        "type": "number"
-                      },
-                      "significant": {
-                        "type": "boolean"
-                      },
-                      "zygosity": {
-                        "type": "string"
-                      },
-                      "sex": {
-                        "type": "string"
-                      },
-                      "life_stage": {
-                        "type": "string"
-                      },
-                      "statistical_method": {
-                        "type": "string"
-                      },
-                      "classification_tag": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "female_ko_estimate": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
-                      },
-                      "male_ko_estimate": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
-                      },
-                      "phenotyping_center": {
-                        "type": "string"
-                      },
-                      "allele_symbol": {
-                        "type": "string"
-                      }
+            "total_results": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results_returned": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "significant_only": {
+              "type": "boolean"
+            },
+            "hits": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "parameter": {
+                    "type": "string"
+                  },
+                  "procedure": {
+                    "type": "string"
+                  },
+                  "mp_term_id": {
+                    "type": "string"
+                  },
+                  "mp_term_name": {
+                    "type": "string"
+                  },
+                  "top_level_mp_term": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "p_value": {
+                    "type": "number"
+                  },
+                  "effect_size": {
+                    "type": "number"
+                  },
+                  "significant": {
+                    "type": "boolean"
+                  },
+                  "zygosity": {
+                    "type": "string"
+                  },
+                  "sex": {
+                    "type": "string"
+                  },
+                  "life_stage": {
+                    "type": "string"
+                  },
+                  "statistical_method": {
+                    "type": "string"
+                  },
+                  "classification_tag": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "female_ko_estimate": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "male_ko_estimate": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "phenotyping_center": {
+                    "type": "string"
+                  },
+                  "allele_symbol": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "gene_symbol"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

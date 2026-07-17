@@ -38,46 +38,38 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "top_label": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "labels": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "top_label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "labels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {
@@ -148,35 +140,27 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "dimension": {
-                  "type": "integer"
-                },
-                "embedding": {
-                  "type": "array",
-                  "items": {
-                    "type": "number"
-                  }
-                },
-                "preview": {
-                  "type": "array",
-                  "items": {
-                    "type": "number"
-                  }
-                }
+            "dimension": {
+              "type": "integer"
+            },
+            "embedding": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "preview": {
+              "type": "array",
+              "items": {
+                "type": "number"
               }
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {
@@ -254,52 +238,44 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "top_token": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "predictions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "token_str": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "sequence": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "top_token": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "predictions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "token_str": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sequence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {
@@ -385,23 +361,15 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "summary_text": {
-                  "type": "string"
-                }
-              }
+            "summary_text": {
+              "type": "string"
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {
@@ -484,46 +452,38 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "top_label": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "labels": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "top_label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "labels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {
@@ -595,61 +555,53 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "entity_count": {
-                  "type": "integer"
-                },
-                "entities": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "entity_group": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "word": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "start": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "end": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "entity_count": {
+              "type": "integer"
+            },
+            "entities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity_group": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "word": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {
@@ -720,44 +672,36 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "answer": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "score": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "start": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "end": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                }
-              }
+            "answer": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "score": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "start": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "end": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {
@@ -824,23 +768,15 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "translation_text": {
-                  "type": "string"
-                }
-              }
+            "translation_text": {
+              "type": "string"
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {
@@ -915,46 +851,38 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "top_label": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "labels": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "top_label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "labels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {
@@ -1029,63 +957,55 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "model_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model_id": {
-                  "type": "string"
-                },
-                "object_count": {
-                  "type": "integer"
-                },
-                "objects": {
-                  "type": "array",
-                  "items": {
+            "object_count": {
+              "type": "integer"
+            },
+            "objects": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "box": {
                     "type": "object",
                     "properties": {
-                      "label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "score": {
+                      "xmin": {
                         "type": [
                           "number",
                           "null"
                         ]
                       },
-                      "box": {
-                        "type": "object",
-                        "properties": {
-                          "xmin": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "ymin": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "xmax": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "ymax": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          }
-                        }
+                      "ymin": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "xmax": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "ymax": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
                       }
                     }
                   }
@@ -1094,7 +1014,7 @@
             }
           },
           "required": [
-            "data"
+            "model_id"
           ]
         },
         {

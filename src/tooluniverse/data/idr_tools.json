@@ -39,300 +39,285 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
             "data": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "@type": {
+                    "type": "string"
+                  },
+                  "@id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "omero:details": {
                     "type": "object",
                     "properties": {
                       "@type": {
                         "type": "string"
                       },
-                      "@id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "omero:details": {
+                      "owner": {
                         "type": "object",
                         "properties": {
                           "@type": {
                             "type": "string"
                           },
-                          "owner": {
+                          "@id": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "omero:details": {
                             "type": "object",
                             "properties": {
                               "@type": {
                                 "type": "string"
                               },
-                              "@id": {
-                                "type": [
-                                  "integer",
-                                  "number"
-                                ]
-                              },
-                              "omero:details": {
+                              "permissions": {
                                 "type": "object",
                                 "properties": {
                                   "@type": {
                                     "type": "string"
                                   },
-                                  "permissions": {
-                                    "type": "object",
-                                    "properties": {
-                                      "@type": {
-                                        "type": "string"
-                                      },
-                                      "perm": {
-                                        "type": "string"
-                                      },
-                                      "canAnnotate": {
-                                        "type": "boolean"
-                                      },
-                                      "canDelete": {
-                                        "type": "boolean"
-                                      },
-                                      "canEdit": {
-                                        "type": "boolean"
-                                      },
-                                      "canLink": {
-                                        "type": "boolean"
-                                      },
-                                      "isWorldWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isWorldRead": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupRead": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupAnnotate": {
-                                        "type": "boolean"
-                                      },
-                                      "isUserWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isUserRead": {
-                                        "type": "boolean"
-                                      }
-                                    }
-                                  }
-                                }
-                              },
-                              "FirstName": {
-                                "type": "string"
-                              },
-                              "MiddleName": {
-                                "type": "string"
-                              },
-                              "LastName": {
-                                "type": "string"
-                              },
-                              "Email": {
-                                "type": "string"
-                              },
-                              "Institution": {
-                                "type": "string"
-                              },
-                              "UserName": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "group": {
-                            "type": "object",
-                            "properties": {
-                              "@type": {
-                                "type": "string"
-                              },
-                              "@id": {
-                                "type": [
-                                  "integer",
-                                  "number"
-                                ]
-                              },
-                              "omero:details": {
-                                "type": "object",
-                                "properties": {
-                                  "@type": {
+                                  "perm": {
                                     "type": "string"
                                   },
-                                  "permissions": {
-                                    "type": "object",
-                                    "properties": {
-                                      "@type": {
-                                        "type": "string"
-                                      },
-                                      "perm": {
-                                        "type": "string"
-                                      },
-                                      "canAnnotate": {
-                                        "type": "boolean"
-                                      },
-                                      "canDelete": {
-                                        "type": "boolean"
-                                      },
-                                      "canEdit": {
-                                        "type": "boolean"
-                                      },
-                                      "canLink": {
-                                        "type": "boolean"
-                                      },
-                                      "isWorldWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isWorldRead": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupRead": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupAnnotate": {
-                                        "type": "boolean"
-                                      },
-                                      "isUserWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isUserRead": {
-                                        "type": "boolean"
-                                      }
-                                    }
+                                  "canAnnotate": {
+                                    "type": "boolean"
+                                  },
+                                  "canDelete": {
+                                    "type": "boolean"
+                                  },
+                                  "canEdit": {
+                                    "type": "boolean"
+                                  },
+                                  "canLink": {
+                                    "type": "boolean"
+                                  },
+                                  "isWorldWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isWorldRead": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupRead": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupAnnotate": {
+                                    "type": "boolean"
+                                  },
+                                  "isUserWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isUserRead": {
+                                    "type": "boolean"
                                   }
                                 }
-                              },
-                              "Name": {
-                                "type": "string"
                               }
                             }
                           },
-                          "permissions": {
-                            "type": "object",
-                            "properties": {
-                              "@type": {
-                                "type": "string"
-                              },
-                              "perm": {
-                                "type": "string"
-                              },
-                              "canAnnotate": {
-                                "type": "boolean"
-                              },
-                              "canDelete": {
-                                "type": "boolean"
-                              },
-                              "canEdit": {
-                                "type": "boolean"
-                              },
-                              "canLink": {
-                                "type": "boolean"
-                              },
-                              "isWorldWrite": {
-                                "type": "boolean"
-                              },
-                              "isWorldRead": {
-                                "type": "boolean"
-                              },
-                              "isGroupWrite": {
-                                "type": "boolean"
-                              },
-                              "isGroupRead": {
-                                "type": "boolean"
-                              },
-                              "isGroupAnnotate": {
-                                "type": "boolean"
-                              },
-                              "isUserWrite": {
-                                "type": "boolean"
-                              },
-                              "isUserRead": {
-                                "type": "boolean"
-                              }
-                            }
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "MiddleName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "Email": {
+                            "type": "string"
+                          },
+                          "Institution": {
+                            "type": "string"
+                          },
+                          "UserName": {
+                            "type": "string"
                           }
                         }
                       },
-                      "Name": {
-                        "type": "string"
+                      "group": {
+                        "type": "object",
+                        "properties": {
+                          "@type": {
+                            "type": "string"
+                          },
+                          "@id": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "omero:details": {
+                            "type": "object",
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "permissions": {
+                                "type": "object",
+                                "properties": {
+                                  "@type": {
+                                    "type": "string"
+                                  },
+                                  "perm": {
+                                    "type": "string"
+                                  },
+                                  "canAnnotate": {
+                                    "type": "boolean"
+                                  },
+                                  "canDelete": {
+                                    "type": "boolean"
+                                  },
+                                  "canEdit": {
+                                    "type": "boolean"
+                                  },
+                                  "canLink": {
+                                    "type": "boolean"
+                                  },
+                                  "isWorldWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isWorldRead": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupRead": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupAnnotate": {
+                                    "type": "boolean"
+                                  },
+                                  "isUserWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isUserRead": {
+                                    "type": "boolean"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Name": {
+                            "type": "string"
+                          }
+                        }
                       },
-                      "Description": {
-                        "type": "string"
-                      },
-                      "url:datasets": {
-                        "type": "string"
-                      },
-                      "url:project": {
-                        "type": "string"
+                      "permissions": {
+                        "type": "object",
+                        "properties": {
+                          "@type": {
+                            "type": "string"
+                          },
+                          "perm": {
+                            "type": "string"
+                          },
+                          "canAnnotate": {
+                            "type": "boolean"
+                          },
+                          "canDelete": {
+                            "type": "boolean"
+                          },
+                          "canEdit": {
+                            "type": "boolean"
+                          },
+                          "canLink": {
+                            "type": "boolean"
+                          },
+                          "isWorldWrite": {
+                            "type": "boolean"
+                          },
+                          "isWorldRead": {
+                            "type": "boolean"
+                          },
+                          "isGroupWrite": {
+                            "type": "boolean"
+                          },
+                          "isGroupRead": {
+                            "type": "boolean"
+                          },
+                          "isGroupAnnotate": {
+                            "type": "boolean"
+                          },
+                          "isUserWrite": {
+                            "type": "boolean"
+                          },
+                          "isUserRead": {
+                            "type": "boolean"
+                          }
+                        }
                       }
                     }
-                  }
-                },
-                "meta": {
-                  "type": "object",
-                  "properties": {
-                    "offset": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "limit": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "maxLimit": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "totalCount": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    }
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "url:datasets": {
+                    "type": "string"
+                  },
+                  "url:project": {
+                    "type": "string"
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "meta": {
+              "type": "object",
+              "properties": {
+                "offset": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "limit": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "maxLimit": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "totalCount": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -368,265 +353,250 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
             "data": {
               "type": "object",
               "properties": {
-                "data": {
+                "@type": {
+                  "type": "string"
+                },
+                "@id": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "omero:details": {
                   "type": "object",
                   "properties": {
                     "@type": {
                       "type": "string"
                     },
-                    "@id": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "omero:details": {
+                    "owner": {
                       "type": "object",
                       "properties": {
                         "@type": {
                           "type": "string"
                         },
-                        "owner": {
+                        "@id": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "omero:details": {
                           "type": "object",
                           "properties": {
                             "@type": {
                               "type": "string"
                             },
-                            "@id": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "omero:details": {
+                            "permissions": {
                               "type": "object",
                               "properties": {
                                 "@type": {
                                   "type": "string"
                                 },
-                                "permissions": {
-                                  "type": "object",
-                                  "properties": {
-                                    "@type": {
-                                      "type": "string"
-                                    },
-                                    "perm": {
-                                      "type": "string"
-                                    },
-                                    "canAnnotate": {
-                                      "type": "boolean"
-                                    },
-                                    "canDelete": {
-                                      "type": "boolean"
-                                    },
-                                    "canEdit": {
-                                      "type": "boolean"
-                                    },
-                                    "canLink": {
-                                      "type": "boolean"
-                                    },
-                                    "isWorldWrite": {
-                                      "type": "boolean"
-                                    },
-                                    "isWorldRead": {
-                                      "type": "boolean"
-                                    },
-                                    "isGroupWrite": {
-                                      "type": "boolean"
-                                    },
-                                    "isGroupRead": {
-                                      "type": "boolean"
-                                    },
-                                    "isGroupAnnotate": {
-                                      "type": "boolean"
-                                    },
-                                    "isUserWrite": {
-                                      "type": "boolean"
-                                    },
-                                    "isUserRead": {
-                                      "type": "boolean"
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                            "FirstName": {
-                              "type": "string"
-                            },
-                            "MiddleName": {
-                              "type": "string"
-                            },
-                            "LastName": {
-                              "type": "string"
-                            },
-                            "Email": {
-                              "type": "string"
-                            },
-                            "Institution": {
-                              "type": "string"
-                            },
-                            "UserName": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "group": {
-                          "type": "object",
-                          "properties": {
-                            "@type": {
-                              "type": "string"
-                            },
-                            "@id": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "omero:details": {
-                              "type": "object",
-                              "properties": {
-                                "@type": {
+                                "perm": {
                                   "type": "string"
                                 },
-                                "permissions": {
-                                  "type": "object",
-                                  "properties": {
-                                    "@type": {
-                                      "type": "string"
-                                    },
-                                    "perm": {
-                                      "type": "string"
-                                    },
-                                    "canAnnotate": {
-                                      "type": "boolean"
-                                    },
-                                    "canDelete": {
-                                      "type": "boolean"
-                                    },
-                                    "canEdit": {
-                                      "type": "boolean"
-                                    },
-                                    "canLink": {
-                                      "type": "boolean"
-                                    },
-                                    "isWorldWrite": {
-                                      "type": "boolean"
-                                    },
-                                    "isWorldRead": {
-                                      "type": "boolean"
-                                    },
-                                    "isGroupWrite": {
-                                      "type": "boolean"
-                                    },
-                                    "isGroupRead": {
-                                      "type": "boolean"
-                                    },
-                                    "isGroupAnnotate": {
-                                      "type": "boolean"
-                                    },
-                                    "isUserWrite": {
-                                      "type": "boolean"
-                                    },
-                                    "isUserRead": {
-                                      "type": "boolean"
-                                    }
-                                  }
+                                "canAnnotate": {
+                                  "type": "boolean"
+                                },
+                                "canDelete": {
+                                  "type": "boolean"
+                                },
+                                "canEdit": {
+                                  "type": "boolean"
+                                },
+                                "canLink": {
+                                  "type": "boolean"
+                                },
+                                "isWorldWrite": {
+                                  "type": "boolean"
+                                },
+                                "isWorldRead": {
+                                  "type": "boolean"
+                                },
+                                "isGroupWrite": {
+                                  "type": "boolean"
+                                },
+                                "isGroupRead": {
+                                  "type": "boolean"
+                                },
+                                "isGroupAnnotate": {
+                                  "type": "boolean"
+                                },
+                                "isUserWrite": {
+                                  "type": "boolean"
+                                },
+                                "isUserRead": {
+                                  "type": "boolean"
                                 }
                               }
-                            },
-                            "Name": {
-                              "type": "string"
                             }
                           }
                         },
-                        "permissions": {
-                          "type": "object",
-                          "properties": {
-                            "@type": {
-                              "type": "string"
-                            },
-                            "perm": {
-                              "type": "string"
-                            },
-                            "canAnnotate": {
-                              "type": "boolean"
-                            },
-                            "canDelete": {
-                              "type": "boolean"
-                            },
-                            "canEdit": {
-                              "type": "boolean"
-                            },
-                            "canLink": {
-                              "type": "boolean"
-                            },
-                            "isWorldWrite": {
-                              "type": "boolean"
-                            },
-                            "isWorldRead": {
-                              "type": "boolean"
-                            },
-                            "isGroupWrite": {
-                              "type": "boolean"
-                            },
-                            "isGroupRead": {
-                              "type": "boolean"
-                            },
-                            "isGroupAnnotate": {
-                              "type": "boolean"
-                            },
-                            "isUserWrite": {
-                              "type": "boolean"
-                            },
-                            "isUserRead": {
-                              "type": "boolean"
-                            }
-                          }
+                        "FirstName": {
+                          "type": "string"
+                        },
+                        "MiddleName": {
+                          "type": "string"
+                        },
+                        "LastName": {
+                          "type": "string"
+                        },
+                        "Email": {
+                          "type": "string"
+                        },
+                        "Institution": {
+                          "type": "string"
+                        },
+                        "UserName": {
+                          "type": "string"
                         }
                       }
                     },
-                    "Name": {
-                      "type": "string"
+                    "group": {
+                      "type": "object",
+                      "properties": {
+                        "@type": {
+                          "type": "string"
+                        },
+                        "@id": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "omero:details": {
+                          "type": "object",
+                          "properties": {
+                            "@type": {
+                              "type": "string"
+                            },
+                            "permissions": {
+                              "type": "object",
+                              "properties": {
+                                "@type": {
+                                  "type": "string"
+                                },
+                                "perm": {
+                                  "type": "string"
+                                },
+                                "canAnnotate": {
+                                  "type": "boolean"
+                                },
+                                "canDelete": {
+                                  "type": "boolean"
+                                },
+                                "canEdit": {
+                                  "type": "boolean"
+                                },
+                                "canLink": {
+                                  "type": "boolean"
+                                },
+                                "isWorldWrite": {
+                                  "type": "boolean"
+                                },
+                                "isWorldRead": {
+                                  "type": "boolean"
+                                },
+                                "isGroupWrite": {
+                                  "type": "boolean"
+                                },
+                                "isGroupRead": {
+                                  "type": "boolean"
+                                },
+                                "isGroupAnnotate": {
+                                  "type": "boolean"
+                                },
+                                "isUserWrite": {
+                                  "type": "boolean"
+                                },
+                                "isUserRead": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "Name": {
+                          "type": "string"
+                        }
+                      }
                     },
-                    "Description": {
-                      "type": "string"
-                    },
-                    "url:datasets": {
-                      "type": "string"
+                    "permissions": {
+                      "type": "object",
+                      "properties": {
+                        "@type": {
+                          "type": "string"
+                        },
+                        "perm": {
+                          "type": "string"
+                        },
+                        "canAnnotate": {
+                          "type": "boolean"
+                        },
+                        "canDelete": {
+                          "type": "boolean"
+                        },
+                        "canEdit": {
+                          "type": "boolean"
+                        },
+                        "canLink": {
+                          "type": "boolean"
+                        },
+                        "isWorldWrite": {
+                          "type": "boolean"
+                        },
+                        "isWorldRead": {
+                          "type": "boolean"
+                        },
+                        "isGroupWrite": {
+                          "type": "boolean"
+                        },
+                        "isGroupRead": {
+                          "type": "boolean"
+                        },
+                        "isGroupAnnotate": {
+                          "type": "boolean"
+                        },
+                        "isUserWrite": {
+                          "type": "boolean"
+                        },
+                        "isUserRead": {
+                          "type": "boolean"
+                        }
+                      }
                     }
                   }
+                },
+                "Name": {
+                  "type": "string"
+                },
+                "Description": {
+                  "type": "string"
+                },
+                "url:datasets": {
+                  "type": "string"
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -678,300 +648,285 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
             "data": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "@type": {
+                    "type": "string"
+                  },
+                  "@id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "omero:details": {
                     "type": "object",
                     "properties": {
                       "@type": {
                         "type": "string"
                       },
-                      "@id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "omero:details": {
+                      "owner": {
                         "type": "object",
                         "properties": {
                           "@type": {
                             "type": "string"
                           },
-                          "owner": {
+                          "@id": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "omero:details": {
                             "type": "object",
                             "properties": {
                               "@type": {
                                 "type": "string"
                               },
-                              "@id": {
-                                "type": [
-                                  "integer",
-                                  "number"
-                                ]
-                              },
-                              "omero:details": {
+                              "permissions": {
                                 "type": "object",
                                 "properties": {
                                   "@type": {
                                     "type": "string"
                                   },
-                                  "permissions": {
-                                    "type": "object",
-                                    "properties": {
-                                      "@type": {
-                                        "type": "string"
-                                      },
-                                      "perm": {
-                                        "type": "string"
-                                      },
-                                      "canAnnotate": {
-                                        "type": "boolean"
-                                      },
-                                      "canDelete": {
-                                        "type": "boolean"
-                                      },
-                                      "canEdit": {
-                                        "type": "boolean"
-                                      },
-                                      "canLink": {
-                                        "type": "boolean"
-                                      },
-                                      "isWorldWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isWorldRead": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupRead": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupAnnotate": {
-                                        "type": "boolean"
-                                      },
-                                      "isUserWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isUserRead": {
-                                        "type": "boolean"
-                                      }
-                                    }
-                                  }
-                                }
-                              },
-                              "FirstName": {
-                                "type": "string"
-                              },
-                              "MiddleName": {
-                                "type": "string"
-                              },
-                              "LastName": {
-                                "type": "string"
-                              },
-                              "Email": {
-                                "type": "string"
-                              },
-                              "Institution": {
-                                "type": "string"
-                              },
-                              "UserName": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "group": {
-                            "type": "object",
-                            "properties": {
-                              "@type": {
-                                "type": "string"
-                              },
-                              "@id": {
-                                "type": [
-                                  "integer",
-                                  "number"
-                                ]
-                              },
-                              "omero:details": {
-                                "type": "object",
-                                "properties": {
-                                  "@type": {
+                                  "perm": {
                                     "type": "string"
                                   },
-                                  "permissions": {
-                                    "type": "object",
-                                    "properties": {
-                                      "@type": {
-                                        "type": "string"
-                                      },
-                                      "perm": {
-                                        "type": "string"
-                                      },
-                                      "canAnnotate": {
-                                        "type": "boolean"
-                                      },
-                                      "canDelete": {
-                                        "type": "boolean"
-                                      },
-                                      "canEdit": {
-                                        "type": "boolean"
-                                      },
-                                      "canLink": {
-                                        "type": "boolean"
-                                      },
-                                      "isWorldWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isWorldRead": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupRead": {
-                                        "type": "boolean"
-                                      },
-                                      "isGroupAnnotate": {
-                                        "type": "boolean"
-                                      },
-                                      "isUserWrite": {
-                                        "type": "boolean"
-                                      },
-                                      "isUserRead": {
-                                        "type": "boolean"
-                                      }
-                                    }
+                                  "canAnnotate": {
+                                    "type": "boolean"
+                                  },
+                                  "canDelete": {
+                                    "type": "boolean"
+                                  },
+                                  "canEdit": {
+                                    "type": "boolean"
+                                  },
+                                  "canLink": {
+                                    "type": "boolean"
+                                  },
+                                  "isWorldWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isWorldRead": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupRead": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupAnnotate": {
+                                    "type": "boolean"
+                                  },
+                                  "isUserWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isUserRead": {
+                                    "type": "boolean"
                                   }
                                 }
-                              },
-                              "Name": {
-                                "type": "string"
                               }
                             }
                           },
-                          "permissions": {
-                            "type": "object",
-                            "properties": {
-                              "@type": {
-                                "type": "string"
-                              },
-                              "perm": {
-                                "type": "string"
-                              },
-                              "canAnnotate": {
-                                "type": "boolean"
-                              },
-                              "canDelete": {
-                                "type": "boolean"
-                              },
-                              "canEdit": {
-                                "type": "boolean"
-                              },
-                              "canLink": {
-                                "type": "boolean"
-                              },
-                              "isWorldWrite": {
-                                "type": "boolean"
-                              },
-                              "isWorldRead": {
-                                "type": "boolean"
-                              },
-                              "isGroupWrite": {
-                                "type": "boolean"
-                              },
-                              "isGroupRead": {
-                                "type": "boolean"
-                              },
-                              "isGroupAnnotate": {
-                                "type": "boolean"
-                              },
-                              "isUserWrite": {
-                                "type": "boolean"
-                              },
-                              "isUserRead": {
-                                "type": "boolean"
-                              }
-                            }
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "MiddleName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "Email": {
+                            "type": "string"
+                          },
+                          "Institution": {
+                            "type": "string"
+                          },
+                          "UserName": {
+                            "type": "string"
                           }
                         }
                       },
-                      "Name": {
-                        "type": "string"
+                      "group": {
+                        "type": "object",
+                        "properties": {
+                          "@type": {
+                            "type": "string"
+                          },
+                          "@id": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "omero:details": {
+                            "type": "object",
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "permissions": {
+                                "type": "object",
+                                "properties": {
+                                  "@type": {
+                                    "type": "string"
+                                  },
+                                  "perm": {
+                                    "type": "string"
+                                  },
+                                  "canAnnotate": {
+                                    "type": "boolean"
+                                  },
+                                  "canDelete": {
+                                    "type": "boolean"
+                                  },
+                                  "canEdit": {
+                                    "type": "boolean"
+                                  },
+                                  "canLink": {
+                                    "type": "boolean"
+                                  },
+                                  "isWorldWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isWorldRead": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupRead": {
+                                    "type": "boolean"
+                                  },
+                                  "isGroupAnnotate": {
+                                    "type": "boolean"
+                                  },
+                                  "isUserWrite": {
+                                    "type": "boolean"
+                                  },
+                                  "isUserRead": {
+                                    "type": "boolean"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Name": {
+                            "type": "string"
+                          }
+                        }
                       },
-                      "url:images": {
-                        "type": "string"
-                      },
-                      "url:dataset": {
-                        "type": "string"
-                      },
-                      "url:projects": {
-                        "type": "string"
+                      "permissions": {
+                        "type": "object",
+                        "properties": {
+                          "@type": {
+                            "type": "string"
+                          },
+                          "perm": {
+                            "type": "string"
+                          },
+                          "canAnnotate": {
+                            "type": "boolean"
+                          },
+                          "canDelete": {
+                            "type": "boolean"
+                          },
+                          "canEdit": {
+                            "type": "boolean"
+                          },
+                          "canLink": {
+                            "type": "boolean"
+                          },
+                          "isWorldWrite": {
+                            "type": "boolean"
+                          },
+                          "isWorldRead": {
+                            "type": "boolean"
+                          },
+                          "isGroupWrite": {
+                            "type": "boolean"
+                          },
+                          "isGroupRead": {
+                            "type": "boolean"
+                          },
+                          "isGroupAnnotate": {
+                            "type": "boolean"
+                          },
+                          "isUserWrite": {
+                            "type": "boolean"
+                          },
+                          "isUserRead": {
+                            "type": "boolean"
+                          }
+                        }
                       }
                     }
-                  }
-                },
-                "meta": {
-                  "type": "object",
-                  "properties": {
-                    "offset": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "limit": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "maxLimit": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "totalCount": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    }
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "url:images": {
+                    "type": "string"
+                  },
+                  "url:dataset": {
+                    "type": "string"
+                  },
+                  "url:projects": {
+                    "type": "string"
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "meta": {
+              "type": "object",
+              "properties": {
+                "offset": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "limit": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "maxLimit": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "totalCount": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -1024,86 +979,71 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
             "data": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "@type": {
-                        "type": "string"
-                      },
-                      "@id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "Name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "meta": {
-                  "type": "object",
-                  "properties": {
-                    "offset": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "limit": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "maxLimit": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "totalCount": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    }
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "@type": {
+                    "type": "string"
+                  },
+                  "@id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "Name": {
+                    "type": "string"
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "meta": {
+              "type": "object",
+              "properties": {
+                "offset": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "limit": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "maxLimit": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "totalCount": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -1142,69 +1082,54 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "ns": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "values": {
-                        "type": "array",
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        }
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "ns": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "values": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
                       }
                     }
                   }
-                },
-                "experimenters": {
-                  "type": "array"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "experimenters": {
+              "type": "array"
             }
-          }
+          },
+          "required": [
+            "annotations"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
