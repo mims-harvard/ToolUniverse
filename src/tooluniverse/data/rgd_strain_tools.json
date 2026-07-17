@@ -34,7 +34,6 @@
       "operation": "search_strains"
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
           "type": "array",
@@ -298,7 +297,6 @@
       "operation": "get_strain_annotations"
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
           "type": "array",
