@@ -47,7 +47,6 @@
       "operation": "annotate"
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
           "type": "array",
@@ -169,7 +168,6 @@
       "operation": "list_datasources"
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
           "type": "array",

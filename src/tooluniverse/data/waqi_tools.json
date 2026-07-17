@@ -1,7 +1,7 @@
 [
   {
     "name": "WAQI_get_air_quality",
-    "description": "Get real-time Air Quality Index (AQI) data for a city or monitoring station using the World Air Quality Index API. Returns AQI values, dominant pollutant, and individual pollutant readings (PM2.5, PM10, NO2, O3, SO2, CO). IMPORTANT: without a personal token the public 'demo' token is used, which returns a fixed sample station (Shanghai) regardless of the requested city \u2014 do NOT treat demo results as the requested city's air quality. Set the free WAQI_API_KEY environment variable (register at https://aqicn.org/data-platform/token/) to get real per-city data.",
+    "description": "Get real-time Air Quality Index (AQI) data for a city or monitoring station using the World Air Quality Index API. Returns AQI values, dominant pollutant, and individual pollutant readings (PM2.5, PM10, NO2, O3, SO2, CO). IMPORTANT: without a personal token the public 'demo' token is used, which returns a fixed sample station (Shanghai) regardless of the requested city — do NOT treat demo results as the requested city's air quality. Set the free WAQI_API_KEY environment variable (register at https://aqicn.org/data-platform/token/) to get real per-city data.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -34,103 +34,110 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Air quality data for the location",
           "properties": {
-            "aqi": {
-              "type": "integer",
-              "description": "AQI value (0-500+). 0-50=Good, 51-100=Moderate, 101-150=Unhealthy for Sensitive, 151-200=Unhealthy, 201-300=Very Unhealthy, 300+=Hazardous"
-            },
-            "dominentpol": {
+            "status": {
               "type": "string",
-              "description": "Dominant pollutant: pm25, pm10, o3, no2, so2, co"
+              "description": "API status: ok or error"
             },
-            "city": {
+            "data": {
               "type": "object",
               "properties": {
-                "name": {
+                "aqi": {
+                  "type": "integer",
+                  "description": "AQI value (0-500+). 0-50=Good, 51-100=Moderate, 101-150=Unhealthy for Sensitive, 151-200=Unhealthy, 201-300=Very Unhealthy, 300+=Hazardous"
+                },
+                "dominentpol": {
                   "type": "string",
-                  "description": "Station/city name"
+                  "description": "Dominant pollutant: pm25, pm10, o3, no2, so2, co"
                 },
-                "geo": {
-                  "type": "array",
-                  "items": {
-                    "type": "number"
-                  },
-                  "description": "[latitude, longitude]"
-                },
-                "url": {
-                  "type": "string"
-                }
-              }
-            },
-            "iaqi": {
-              "type": "object",
-              "description": "Individual pollutant AQI values",
-              "properties": {
-                "pm25": {
+                "city": {
                   "type": "object",
                   "properties": {
-                    "v": {
-                      "type": "number",
-                      "description": "PM2.5 AQI value"
+                    "name": {
+                      "type": "string",
+                      "description": "Station/city name"
+                    },
+                    "geo": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "description": "[latitude, longitude]"
+                    },
+                    "url": {
+                      "type": "string"
                     }
                   }
                 },
-                "pm10": {
+                "iaqi": {
                   "type": "object",
+                  "description": "Individual pollutant AQI values",
                   "properties": {
-                    "v": {
-                      "type": "number",
-                      "description": "PM10 AQI value"
+                    "pm25": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number",
+                          "description": "PM2.5 AQI value"
+                        }
+                      }
+                    },
+                    "pm10": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number",
+                          "description": "PM10 AQI value"
+                        }
+                      }
+                    },
+                    "no2": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "o3": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "so2": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "co": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number"
+                        }
+                      }
                     }
                   }
                 },
-                "no2": {
+                "time": {
                   "type": "object",
                   "properties": {
-                    "v": {
-                      "type": "number"
+                    "s": {
+                      "type": "string",
+                      "description": "Timestamp of the measurement"
                     }
                   }
-                },
-                "o3": {
-                  "type": "object",
-                  "properties": {
-                    "v": {
-                      "type": "number"
-                    }
-                  }
-                },
-                "so2": {
-                  "type": "object",
-                  "properties": {
-                    "v": {
-                      "type": "number"
-                    }
-                  }
-                },
-                "co": {
-                  "type": "object",
-                  "properties": {
-                    "v": {
-                      "type": "number"
-                    }
-                  }
-                }
-              }
-            },
-            "time": {
-              "type": "object",
-              "properties": {
-                "s": {
-                  "type": "string",
-                  "description": "Timestamp of the measurement"
                 }
               }
             }
-          },
-          "required": [
-            "aqi"
-          ]
+          }
         },
         {
           "type": "object",
