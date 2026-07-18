@@ -47,6 +47,19 @@ class RfamTool(BaseTool):
 
         operation = arguments.get("operation")
         if not operation:
+            # Fix-R17C-2: every Rfam_* tool config constrains `operation`
+            # to a single-value enum (each ToolUniverse tool name maps to
+            # exactly one Rfam operation) -- confirmed live this was still
+            # required on every call, forcing a caller to look up and pass
+            # back a fixed value the tool config itself already pins.
+            # Fall back to that sole enum value when omitted.
+            enum_values = (
+                self.parameter.get("properties", {}).get("operation", {}).get("enum")
+                or []
+            )
+            if len(enum_values) == 1:
+                operation = enum_values[0]
+        if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
 
         # Route to appropriate operation handler
