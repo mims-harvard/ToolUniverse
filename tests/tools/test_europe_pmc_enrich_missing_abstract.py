@@ -45,6 +45,7 @@ def test_europe_pmc_enrich_missing_abstract_fills_from_fulltext_xml(monkeypatch)
                     "id": "123",
                     "pmcid": "PMC123",
                     "authorList": {"author": [{"fullName": "Author A"}]},
+                    "isOpenAccess": "Y",
                 }
             ]
         }
@@ -81,6 +82,8 @@ def test_europe_pmc_enrich_missing_abstract_fills_from_fulltext_xml(monkeypatch)
 
     result = tool.run({"query": "x", "limit": 1, "enrich_missing_abstract": True})
 
+    assert result["status"] == "success"
+    result = result["data"]
     assert isinstance(result, list)
     assert len(result) == 1
     assert result[0]["abstract"] == "Filled abstract."
@@ -147,6 +150,8 @@ def test_europe_pmc_enrich_missing_abstract_falls_back_to_pmc_oai(monkeypatch):
 
     result = tool.run({"query": "x", "limit": 1, "enrich_missing_abstract": True})
 
+    assert result["status"] == "success"
+    result = result["data"]
     assert isinstance(result, list)
     assert len(result) == 1
     assert result[0]["abstract"] == "Filled abstract from OAI."

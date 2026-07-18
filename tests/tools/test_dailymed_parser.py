@@ -45,10 +45,9 @@ class TestDailyMedSPLParser:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "adverse_reactions" in result
         assert "adverse_reactions" in result["data"]
-        assert isinstance(result["adverse_reactions"], list)
-        print(f"\n✅ Parsed {result.get('count', 0)} adverse reaction entries")
+        assert isinstance(result["data"]["adverse_reactions"], list)
+        print(f"\n✅ Parsed {len(result['data']['adverse_reactions'])} adverse reaction entries")
     
     @pytest.mark.skipif(not LXML_AVAILABLE, reason="lxml not installed")
     def test_parse_dosing_real_api(self, tu):
@@ -60,10 +59,9 @@ class TestDailyMedSPLParser:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "dosing_info" in result
         assert "dosing_info" in result["data"]
-        assert isinstance(result["dosing_info"], list)
-        print(f"\n✅ Parsed {result.get('count', 0)} dosing entries")
+        assert isinstance(result["data"]["dosing_info"], list)
+        print(f"\n✅ Parsed {len(result['data']['dosing_info'])} dosing entries")
     
     @pytest.mark.skipif(not LXML_AVAILABLE, reason="lxml not installed")
     def test_parse_contraindications_real_api(self, tu):
@@ -75,10 +73,9 @@ class TestDailyMedSPLParser:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "contraindications" in result
         assert "contraindications" in result["data"]
-        assert isinstance(result["contraindications"], list)
-        print(f"\n✅ Parsed {result.get('count', 0)} contraindications")
+        assert isinstance(result["data"]["contraindications"], list)
+        print(f"\n✅ Parsed {len(result['data']['contraindications'])} contraindications")
     
     @pytest.mark.skipif(not LXML_AVAILABLE, reason="lxml not installed")
     def test_parse_drug_interactions_real_api(self, tu):
@@ -90,10 +87,9 @@ class TestDailyMedSPLParser:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "interactions" in result
         assert "interactions" in result["data"]
-        assert isinstance(result["interactions"], list)
-        print(f"\n✅ Parsed {result.get('count', 0)} drug interactions")
+        assert isinstance(result["data"]["interactions"], list)
+        print(f"\n✅ Parsed {len(result['data']['interactions'])} drug interactions")
     
     @pytest.mark.skipif(not LXML_AVAILABLE, reason="lxml not installed")
     def test_parse_clinical_pharmacology_real_api(self, tu):
@@ -105,10 +101,9 @@ class TestDailyMedSPLParser:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "pharmacology" in result
         assert "pharmacology" in result["data"]
-        assert isinstance(result["pharmacology"], list)
-        print(f"\n✅ Parsed {result.get('count', 0)} pharmacology entries")
+        assert isinstance(result["data"]["pharmacology"], list)
+        print(f"\n✅ Parsed {len(result['data']['pharmacology'])} pharmacology entries")
     
     def test_error_handling_missing_setid(self, tu):
         """Test error handling when setid is missing."""
@@ -175,7 +170,6 @@ class TestDailyMedParserDirectClass:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "adverse_reactions" in result
         assert "adverse_reactions" in result["data"]
 
 

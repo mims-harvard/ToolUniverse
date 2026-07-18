@@ -171,12 +171,12 @@ class ChEMBLRESTTool(BaseTool):
         # Map target_chembl_id and assay_chembl_id to __exact API params
         # when used as query filters (not as URL path components)
         target_id = args.get("target_chembl_id")
-        # Feature-120B-001: only exclude ChEMBL_get_target (single lookup), not
-        # ChEMBL_get_target_activities or ChEMBL_get_target_assays which need the filter
-        if target_id is not None and tool_name_local not in (
-            "ChEMBL_get_target",
-            "ChEMBL_search_targets",
-        ):
+        # Feature-120B-001: only exclude ChEMBL_get_target (single lookup via URL path
+        # template {target_chembl_id}, substituted in _build_url). Every other tool,
+        # including ChEMBL_search_targets, queries /target.json with no path template,
+        # so target_chembl_id must be mapped to the __exact query filter or it is
+        # silently dropped entirely (Fix-T2A-004).
+        if target_id is not None and tool_name_local != "ChEMBL_get_target":
             params["target_chembl_id__exact"] = target_id
 
         assay_id = args.get("assay_chembl_id")

@@ -1,7 +1,20 @@
 """Regression test: DNA_virtual_digest resolves uncommon enzymes via Biopython
 fallback (not just the ~25 hardcoded NEB enzymes) while keeping NEB behavior."""
 import os
+import pytest
 from tooluniverse.dna_tools import DNATool, _resolve_enzyme, _site_to_regex
+
+try:
+    import Bio  # noqa: F401
+
+    BIOPYTHON_AVAILABLE = True
+except ImportError:
+    BIOPYTHON_AVAILABLE = False
+
+_requires_biopython = pytest.mark.skipif(
+    not BIOPYTHON_AVAILABLE, reason="biopython required for isoschizomer fallback tests"
+)
+
 
 def _tool():
     cfg = {"name": "DNA_virtual_digest", "parameter": {}}
@@ -17,6 +30,7 @@ def test_site_to_regex_iupac():
     assert _site_to_regex("AGCT") == "AGCT"
     assert _site_to_regex("GANTC") == "GA[ACGT]TC"
 
+@_requires_biopython
 def test_resolve_neb_and_biopython():
     assert _resolve_enzyme("EcoRI")[1] == "GAATTC"           # built-in
     r = _resolve_enzyme("AluBI")                              # biopython fallback
@@ -26,6 +40,7 @@ def test_resolve_neb_and_biopython():
 def test_common_enzymes_unchanged():
     assert _nfrag("AAAGAATTCAAAGGATCCAAA", ["EcoRI", "BamHI"]) == 3
 
+@_requires_biopython
 def test_uncommon_enzymes_resolved():
     # AluBI (AG^CT) is an AluI isoschizomer absent from the hardcoded NEB table.
     n = _nfrag("AAAGAATTCAGCTAAAGCTAA", ["AluBI"])
