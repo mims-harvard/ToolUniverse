@@ -2,7 +2,7 @@
   {
     "type": "CrossrefRESTTool",
     "name": "Crossref_search_works",
-    "description": "Search Crossref Works API for scholarly articles, publications, and research outputs by keyword. Returns metadata including title, abstract, journal, authors, publication year, DOI, URL, citations, and publisher. Supports filtering by publication type (journal article, conference paper, etc.) and date range. Use this to discover academic literature, verify citations, or build bibliographies. Find DOIs to use with Crossref_get_work for complete metadata.",
+    "description": "Search Crossref Works API for scholarly articles, publications, and research outputs by keyword. Returns metadata including title, abstract, journal, authors, publication year, DOI, URL, citations, and publisher. Supports filtering by publication type (journal article, conference paper, etc.) and date range. Use this to discover academic literature, verify citations, or build bibliographies. Find DOIs to use with Crossref_get_work for complete metadata. Note: Crossref's own API weakens keyword relevance-matching whenever a non-default 'sort' query param is combined with 'query' (e.g. sort=is-referenced-by-count), returning globally top-cited works largely unrelated to the search term -- omit 'sort' (the default relevance ranking) unless you have separately verified the combination for your query.",
     "parameter": {
       "type": "object",
       "properties": {

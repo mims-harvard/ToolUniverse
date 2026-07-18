@@ -119,6 +119,10 @@
       "endpoint": "https://ghoapi.azureedge.net/api/{indicator_code}",
       "params": {
         "$top": 20
+      },
+      "param_mapping": {
+        "filter": "$filter",
+        "top": "$top"
       }
     },
     "type": "BaseRESTTool",
