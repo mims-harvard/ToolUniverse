@@ -258,6 +258,21 @@ def _render_grep(d: dict) -> str:
             if d.get("limit") == 0:
                 return f"0 of {total} matches (limit=0, no results shown)"
             return f"0 of {total} matches (offset past end — use --offset < {total})"
+        # Fix-R13D-1: surface tools that exist but are hidden because a
+        # required API key is unset -- without this, `tu grep uspto` looked
+        # identical to "no such tools exist" (confirmed live), when in fact
+        # the tools are real and just need a key set.
+        gated = d.get("gated_matches")
+        if gated:
+            lines = [
+                f"0 loaded matches, but {len(gated)} gated tool(s) matched by name:"
+            ]
+            for g in gated:
+                lines.append(
+                    f"  {g['name']}  (requires: {', '.join(g['missing_api_keys'])})"
+                )
+            lines.append("  Set the API key(s) as environment variables, then retry.")
+            return "\n".join(lines)
         # Feature-R13A-01 / R21B-03: context-sensitive hints for 0 name-field matches.
         if d.get("field") == "name":
             pattern = d.get("pattern", "")
@@ -377,7 +392,16 @@ def _render_info(d: dict) -> str:
     """Render get_tool_info result as human-readable tool card."""
     if "error" in d:
         name = d.get("name", "")
+        error_msg = d.get("error", "")
         suggestions = d.get("suggestions", [])
+        # Fix-R13D-1: this used to hardcode "not found" for every error here,
+        # discarding a more specific message like "requires API key(s) not
+        # set: X" (confirmed live this contradicted `tu run`'s own error for
+        # the exact same tool name, which does surface the real reason).
+        # Only fall back to the generic not-found/"did you mean" framing when
+        # the tool is genuinely absent from the registry.
+        if name and error_msg and "not found" not in error_msg:
+            return f"Error: Tool '{name}' {error_msg}"
         # R22B-04: append "Did you mean?" hint when suggestions are available.
         if name:
             hint = ""
@@ -989,10 +1013,13 @@ def cmd_info(args: argparse.Namespace) -> None:
         )
     # R22B-04: inject "did you mean" suggestions into each not-found error entry so
     # _render_info can display them without needing direct access to `tu`.
+    # Fix-R13D-1: skip this for a gated tool (error != "not found") -- the
+    # tool name is already exact, so suggesting near-miss alternatives is
+    # noise, not help.
     if isinstance(result, dict) and "tools" in result:
         all_names = list(tu.all_tool_dict.keys())
         for tool in result["tools"]:
-            if isinstance(tool, dict) and "error" in tool:
+            if isinstance(tool, dict) and tool.get("error") == "not found":
                 name = tool.get("name", "")
                 if name:
                     # Feature-23B-04: raised cutoff from 0.5 → 0.62 to avoid spurious
