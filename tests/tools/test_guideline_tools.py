@@ -287,9 +287,13 @@ class TestGuidelineToolsIntegration:
             tool = tool_class(config)
             result = tool.run({"query": "diabetes", "limit": 1})
             
-            # All should return list (or error dict)
+            # All should return list, a {"status": "success", "data": [...]}
+            # envelope (Fix-R9E-1), or an error dict.
             assert isinstance(result, (list, dict))
-            
+
+            if isinstance(result, dict) and result.get("status") == "success":
+                result = result["data"]
+
             if isinstance(result, list):
                 # Check it's a list of guidelines
                 assert len(result) <= 1

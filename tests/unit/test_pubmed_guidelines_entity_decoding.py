@@ -50,8 +50,12 @@ def test_abstract_entities_are_decoded():
         "get",
         side_effect=[search_resp, summary_resp, abstract_resp],
     ), patch("tooluniverse.unified_guideline_tools.time.sleep"):
-        results = tool.run({"query": "sepsis vasopressor"})
+        response = tool.run({"query": "sepsis vasopressor"})
 
+    # Fix-R9E-1 wraps the bare-list success case in a
+    # {"status": "success", "data": [...]} envelope.
+    assert response["status"] == "success"
+    results = response["data"]
     assert len(results) == 1
     abstract = results[0]["abstract"]
     assert "≥" in abstract

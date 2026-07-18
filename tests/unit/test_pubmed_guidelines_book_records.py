@@ -51,8 +51,12 @@ def test_book_record_falls_back_to_booktitle_and_publishername():
     with patch.object(
         tool.session, "get", side_effect=[search_resp, summary_resp, abstract_resp]
     ), patch("tooluniverse.unified_guideline_tools.time.sleep"):
-        result = tool.run({"query": "lead exposure"})
+        response = tool.run({"query": "lead exposure"})
 
+    # Fix-R9E-1 wraps the bare-list success case in a
+    # {"status": "success", "data": [...]} envelope.
+    assert response["status"] == "success"
+    result = response["data"]
     assert len(result) == 1
     record = result[0]
     assert record["title"] == "WHO guideline for clinical management of exposure to lead"
@@ -83,8 +87,11 @@ def test_regular_article_authors_unaffected():
     with patch.object(
         tool.session, "get", side_effect=[search_resp, summary_resp, abstract_resp]
     ), patch("tooluniverse.unified_guideline_tools.time.sleep"):
-        result = tool.run({"query": "normal article"})
+        response = tool.run({"query": "normal article"})
 
-    record = result[0]
+    # Fix-R9E-1 wraps the bare-list success case in a
+    # {"status": "success", "data": [...]} envelope.
+    assert response["status"] == "success"
+    record = response["data"][0]
     assert record["title"] == "A normal article"
     assert record["authors"] == "Doe J, Smith A"

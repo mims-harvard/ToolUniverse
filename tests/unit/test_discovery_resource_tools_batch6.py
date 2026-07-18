@@ -47,8 +47,11 @@ def test_epa_tri_curates_and_builds_city_filter():
 
 
 def test_epa_frs_curates():
+    # Fix-R3D-002: parent_registry_id is null for nearly every row in the
+    # real API; registry_id (the field the query filters by) is the
+    # reliable FRS identifier, so the curated output reads from there.
     rows = [{"std_name": "BOSTON COLLEGE", "std_full_address": "140 COMMONWEALTH AVE",
-             "std_city_name": "CHESTNUT HILL", "state_name": "MA", "parent_registry_id": "110000123456"}]
+             "std_city_name": "CHESTNUT HILL", "state_code": "MA", "registry_id": "110000123456"}]
     with patch("tooluniverse.epa_envirofacts_tool.requests.get", return_value=_resp(200, rows)):
         out = EPAFRSFacilitiesTool(_cfg("EPA_search_frs_facilities", "EPAFRSFacilitiesTool")).run({"state": "MA"})
     assert out["data"][0]["facility_name"] == "BOSTON COLLEGE"
