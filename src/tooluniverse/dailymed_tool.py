@@ -390,29 +390,9 @@ class DailyMedSPLParserTool(BaseTool):
             for section in sections:
                 text_elements = section.xpath(".//hl7:text", namespaces=self.ns)
                 for text_el in text_elements:
-                    # Extract tables
-                    tables = text_el.xpath(".//hl7:table", namespaces=self.ns)
-                    for table in tables:
-                        table_data = self._extract_table_data(table)
-                        if table_data:
-                            dosing_info.extend(table_data)
-
-                    # Extract paragraphs
-                    paragraphs = text_el.xpath(".//hl7:paragraph", namespaces=self.ns)
-                    for para in paragraphs:
-                        text_content = "".join(para.itertext()).strip()
-                        if text_content and len(text_content) > 10:
-                            dosing_info.append(
-                                {"type": "dosing_text", "content": text_content}
-                            )
-
-                    # Extract list items (some drugs encode dosing as <list><item> elements)
-                    for item in text_el.xpath(".//hl7:item", namespaces=self.ns):
-                        text_content = "".join(item.itertext()).strip()
-                        if text_content and len(text_content) > 5:
-                            dosing_info.append(
-                                {"type": "dosing_text", "content": text_content}
-                            )
+                    dosing_info.extend(
+                        self._extract_ordered_content(text_el, "dosing_text")
+                    )
 
             return {
                 "status": "success",
@@ -500,21 +480,9 @@ class DailyMedSPLParserTool(BaseTool):
             for section in sections:
                 text_elements = section.xpath(".//hl7:text", namespaces=self.ns)
                 for text_el in text_elements:
-                    # Extract tables
-                    tables = text_el.xpath(".//hl7:table", namespaces=self.ns)
-                    for table in tables:
-                        table_data = self._extract_table_data(table)
-                        if table_data:
-                            interactions.extend(table_data)
-
-                    # Extract paragraphs
-                    paragraphs = text_el.xpath(".//hl7:paragraph", namespaces=self.ns)
-                    for para in paragraphs:
-                        text_content = "".join(para.itertext()).strip()
-                        if text_content and len(text_content) > 10:
-                            interactions.append(
-                                {"type": "interaction_text", "content": text_content}
-                            )
+                    interactions.extend(
+                        self._extract_ordered_content(text_el, "interaction_text")
+                    )
 
             return {
                 "status": "success",
@@ -547,21 +515,9 @@ class DailyMedSPLParserTool(BaseTool):
             for section in sections:
                 text_elements = section.xpath(".//hl7:text", namespaces=self.ns)
                 for text_el in text_elements:
-                    # Extract tables
-                    tables = text_el.xpath(".//hl7:table", namespaces=self.ns)
-                    for table in tables:
-                        table_data = self._extract_table_data(table)
-                        if table_data:
-                            pharmacology.extend(table_data)
-
-                    # Extract paragraphs
-                    paragraphs = text_el.xpath(".//hl7:paragraph", namespaces=self.ns)
-                    for para in paragraphs:
-                        text_content = "".join(para.itertext()).strip()
-                        if text_content and len(text_content) > 10:
-                            pharmacology.append(
-                                {"type": "pharmacology_text", "content": text_content}
-                            )
+                    pharmacology.extend(
+                        self._extract_ordered_content(text_el, "pharmacology_text")
+                    )
 
             return {
                 "status": "success",
@@ -574,6 +530,36 @@ class DailyMedSPLParserTool(BaseTool):
                 "status": "error",
                 "error": f"Failed to parse clinical pharmacology: {str(e)}",
             }
+
+    def _extract_ordered_content(
+        self, text_el, text_type: str, min_len: int = 10
+    ) -> List[Dict[str, Any]]:
+        """Fix-R5B-1: walk a <text> element's direct children (paragraph/
+        list/table) in document order instead of the old approach of
+        extracting all tables, then all paragraphs, then all list items in
+        three separate passes. SPL sections routinely interleave a heading
+        paragraph immediately before the table or list it introduces (e.g.
+        "Juvenile Idiopathic Arthritis (2.3):" followed by its dosing
+        table), and the three-pass extraction destroyed that association by
+        grouping every table before every paragraph regardless of where
+        each actually appeared in the source document."""
+        items: List[Dict[str, Any]] = []
+        for child in text_el.iterchildren():
+            tag = etree.QName(child).localname
+            if tag == "table":
+                # _extract_table_data always returns a list, so extend()
+                # handles the empty case without a separate guard.
+                items.extend(self._extract_table_data(child))
+            elif tag == "paragraph":
+                text_content = "".join(child.itertext()).strip()
+                if text_content and len(text_content) > min_len:
+                    items.append({"type": text_type, "content": text_content})
+            elif tag == "list":
+                for item_el in child.xpath(".//hl7:item", namespaces=self.ns):
+                    text_content = "".join(item_el.itertext()).strip()
+                    if text_content and len(text_content) > 5:
+                        items.append({"type": text_type, "content": text_content})
+        return items
 
     def _extract_table_data(self, table_element) -> List[Dict[str, Any]]:
         """Extract structured data from table element."""

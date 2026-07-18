@@ -212,6 +212,34 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             query_parts.append(f'"clinsig {clnsig}"[Filter]')
 
         if not query_parts:
+            # Fix-R5D-1: a caller-supplied param that doesn't match any
+            # recognized name/alias (e.g. "gene_name" instead of "gene" or
+            # "gene_symbol") was silently dropped, producing a generic
+            # "at least one search parameter is required" error that gave
+            # no hint the parameter itself was misnamed. Name the actual
+            # unrecognized keys so the caller can fix the typo directly.
+            recognized = {
+                "gene",
+                "gene_symbol",
+                "condition",
+                "query",
+                "variant_id",
+                "clinical_significance",
+                "significance",
+                "max_results",
+                "limit",
+            }
+            unrecognized = sorted(set(arguments) - recognized)
+            if unrecognized:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Unrecognized parameter(s): {', '.join(unrecognized)}. "
+                        "Valid search parameters: gene (or gene_symbol), "
+                        "condition (or query), variant_id, "
+                        "clinical_significance (or significance)."
+                    ),
+                }
             return {
                 "status": "error",
                 "error": "At least one search parameter is required",
