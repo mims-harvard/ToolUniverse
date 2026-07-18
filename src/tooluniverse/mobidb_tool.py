@@ -12,7 +12,7 @@ No authentication required.
 """
 
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -62,6 +62,43 @@ class MobiDBTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
+    def _fetch_protein_json(self, accession: str) -> Optional[Dict[str, Any]]:
+        """GET the MobiDB download endpoint for an accession and parse JSON.
+
+        Returns None if MobiDB has no data for this accession.
+
+        Fix-R16C-1: for an unrecognized identifier MobiDB returns HTTP 200
+        with a completely empty body (confirmed live, e.g. a UniProt entry
+        name like "SNCA_HUMAN" instead of an accession like "P37840") rather
+        than a 404 -- so raise_for_status() never fires, and the previous
+        code called response.json() directly, letting a raw
+        json.JSONDecodeError ("Expecting value: line 1 column 1") leak
+        through as an opaque "Unexpected error" instead of an actionable
+        not-found message.
+        """
+        response = requests.get(
+            MOBIDB_BASE_URL,
+            params={"acc": accession, "format": "json"},
+            allow_redirects=True,
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        if not response.text.strip():
+            return None
+        return response.json()
+
+    @staticmethod
+    def _not_found_error(accession: str) -> Dict[str, Any]:
+        """Standard error for an accession MobiDB has no data for."""
+        return {
+            "status": "error",
+            "error": (
+                f"No MobiDB data found for accession '{accession}'. "
+                "MobiDB expects a UniProt accession (e.g. 'P37840'), "
+                "not a UniProt entry name (e.g. 'SNCA_HUMAN')."
+            ),
+        }
+
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
         if self.endpoint == "get_protein":
@@ -80,13 +117,9 @@ class MobiDBTool(BaseTool):
                 "error": "accession is required (UniProt ID, e.g., 'P04637' for TP53).",
             }
 
-        url = MOBIDB_BASE_URL
-        params = {"acc": accession, "format": "json"}
-        response = requests.get(
-            url, params=params, allow_redirects=True, timeout=self.timeout
-        )
-        response.raise_for_status()
-        data = response.json()
+        data = self._fetch_protein_json(accession)
+        if data is None:
+            return self._not_found_error(accession)
 
         # Extract key disorder data
         prediction = data.get("prediction-disorder-mobidb_lite", {})
@@ -144,13 +177,9 @@ class MobiDBTool(BaseTool):
                 "error": "accession is required (UniProt ID, e.g., 'P04637' for TP53).",
             }
 
-        url = MOBIDB_BASE_URL
-        params = {"acc": accession, "format": "json"}
-        response = requests.get(
-            url, params=params, allow_redirects=True, timeout=self.timeout
-        )
-        response.raise_for_status()
-        data = response.json()
+        data = self._fetch_protein_json(accession)
+        if data is None:
+            return self._not_found_error(accession)
 
         # Extract consensus disorder data
         consensus_disorder = data.get("prediction-disorder-mobidb_lite", {})
