@@ -979,6 +979,7 @@
     "description": "Search ClinicalTrials.gov for clinical trial studies by condition, intervention, sponsor, or other criteria. Returns NCT IDs, titles, status, phase, enrollment, and key trial metadata. Example: search for 'breast cancer' trials with 'pembrolizumab' that are RECRUITING in Phase 3.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "query_cond": {
           "type": [
