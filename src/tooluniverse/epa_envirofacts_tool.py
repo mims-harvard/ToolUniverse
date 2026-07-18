@@ -77,6 +77,20 @@ class _EnvirofactsBase(BaseTool):
                 "status": "error",
                 "error": "'state' (2-letter code, e.g. 'CA') is required",
             }
+        # Fix-R15C-2: a full state name (e.g. "Louisiana") doesn't match
+        # any row in Envirofacts' 2-letter state_code column, so it
+        # silently returns an empty result set indistinguishable from "this
+        # state genuinely has zero facilities" -- confirmed live the same
+        # state has hundreds of real rows under its actual 2-letter code
+        # ("LA"). Reject non-2-letter input instead of querying it.
+        if len(state) != 2 or not state.isalpha():
+            return {
+                "status": "error",
+                "error": (
+                    f"'state' must be a 2-letter US state code (e.g. 'CA', 'TX'), "
+                    f"got {arguments.get('state')!r}"
+                ),
+            }
         city = (arguments.get("city") or "").strip()
         try:
             limit = max(1, min(int(arguments.get("limit") or 10), 100))
