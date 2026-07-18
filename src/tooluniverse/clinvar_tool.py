@@ -5,6 +5,7 @@ This tool provides access to the ClinVar database for clinical variant informati
 disease associations, and clinical significance data.
 """
 
+import re
 import requests
 import time
 from typing import Dict, Any, Optional
@@ -195,7 +196,26 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             # canonical unhyphenated form, so a hyphenated query silently
             # returned 0 results (confirmed live and via raw NCBI E-utils:
             # "BRCA-2[gene]" -> 0 hits, "BRCA2[gene]" -> 21879 hits).
-            gene = arguments["gene"].strip().replace("-", "")
+            #
+            # Fix-R10D-1: ClinVar's [gene] index only matches a bare HGNC
+            # symbol, but a natural clinical phrasing like "NF2 gene" (used
+            # verbatim in real research questions -- e.g. "look up the NF2
+            # gene") silently returns 0 results, since the literal trailing
+            # word "gene" becomes part of the queried string (confirmed
+            # live and via raw NCBI E-utils curl: "Nf2 gene[gene]" -> 0
+            # hits, "NF2[gene]" -> 2612 hits). Strip a trailing/leading
+            # "gene"/"protein" qualifier word before querying, then strip
+            # hyphens from what remains.
+            gene = (
+                re.sub(
+                    r"^\s*(?:gene|protein)\s+|\s+(?:gene|protein)\s*$",
+                    "",
+                    arguments["gene"],
+                    flags=re.IGNORECASE,
+                )
+                .strip()
+                .replace("-", "")
+            )
             query_parts.append(f"{gene}[gene]")
 
         if "condition" in arguments:

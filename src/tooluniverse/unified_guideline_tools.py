@@ -376,6 +376,18 @@ class PubMedGuidelinesTool(BaseTool):
                     author_str = ", ".join(authors)
                     if len(article.get("authors", [])) > 3:
                         author_str += ", et al."
+                    # Fix-R10E-3: NCBI Bookshelf-type records (e.g. WHO
+                    # monographs/guidelines, doctype="book") store their
+                    # title under `booktitle` instead of `title`, and have
+                    # no individual `authors` list -- confirmed live via
+                    # raw esummary for PMID 34787987 ("WHO guideline for
+                    # clinical management of exposure to lead"), whose
+                    # `title`/`authors` were both empty while `booktitle`
+                    # and `publishername` had the real values. Fall back to
+                    # those fields instead of silently returning blanks.
+                    title = article.get("title") or article.get("booktitle") or ""
+                    if not author_str:
+                        author_str = article.get("publishername", "")
 
                     # Check publication types
                     pub_types = article.get("pubtype", [])
@@ -383,11 +395,7 @@ class PubMedGuidelinesTool(BaseTool):
 
                     abstract_text = abstracts.get(pmid, "")
                     searchable_text = " ".join(
-                        [
-                            article.get("title", ""),
-                            abstract_text or "",
-                            " ".join(pub_types),
-                        ]
+                        [title, abstract_text or "", " ".join(pub_types)]
                     ).lower()
 
                     if query_terms and not any(
@@ -397,7 +405,7 @@ class PubMedGuidelinesTool(BaseTool):
 
                     result = {
                         "pmid": pmid,
-                        "title": article.get("title", ""),
+                        "title": title,
                         "abstract": abstract_text,
                         "content": abstract_text,  # Copy abstract to content field
                         "authors": author_str,
