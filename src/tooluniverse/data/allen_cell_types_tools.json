@@ -6,7 +6,7 @@
             "species": {"type": ["string", "null"], "description": "Donor species: 'Homo Sapiens' or 'Mus musculus'."},
             "structure": {"type": ["string", "null"], "description": "Brain structure name substring, e.g. 'frontal gyrus', 'visual cortex'."},
             "limit": {"type": ["integer", "null"], "description": "Max specimens (default 20, max 100)."}
-        }, "required": []},
+        }, "required": [], "additionalProperties": false},
         "fields": {"timeout": 30},
         "type": "AllenCellTypesSpecimensTool",
         "test_examples": [{"species": "Homo Sapiens", "limit": 5}, {"species": "Mus musculus", "limit": 3}, {"structure": "frontal gyrus", "limit": 3}],

@@ -1,7 +1,7 @@
 [
   {
     "name": "CATH_get_superfamily",
-    "description": "Get CATH protein structure superfamily information by CATH ID. CATH classifies protein domain structures into a four-level hierarchy: Class, Architecture, Topology, Homologous superfamily. Superfamilies group evolutionarily related domains. Returns classification name, number of families, and domain counts. Example: 2.40.50.140 returns 'Nucleic acid-binding proteins' with 227 S35 families and 2,879 total domains.",
+    "description": "Get CATH protein structure superfamily information by CATH ID. CATH classifies protein domain structures into a four-level hierarchy: Class, Architecture, Topology, Homologous superfamily. Superfamilies group evolutionarily related domains. Returns classification name, number of families, and domain counts. Example: 2.40.50.140 returns 'Nucleic acid-binding proteins' with 227 S35 families and 2,879 total domains. Note: 'classification_name'/'classification_description' are null for some superfamilies (e.g. 1.10.530.10, the lysozyme-like fold) -- this is missing curation in CATH's own API, not a query error; family/domain counts and example_domain_id are still populated in that case.",
     "parameter": {
       "type": "object",
       "properties": {
