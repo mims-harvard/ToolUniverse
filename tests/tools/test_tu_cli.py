@@ -4927,6 +4927,29 @@ class TestRound23BRemainingFixes:
         assert len(rendered) < 300
 
     @pytest.mark.unit
+    def test_render_run_surfaces_detail_field(self):
+        """Fix-R3B-007/R3E-002: BaseRESTTool errors put the actionable upstream
+        message in `detail`, not `error` — the CLI must not drop it."""
+        from tooluniverse.cli import _render_run
+
+        result = {
+            "status": "error",
+            "error": "OpenFDA_search_food_enforcement API error",
+            "status_code": 500,
+            "detail": '{"error": {"details": "use a .exact keyword field"}}',
+        }
+        rendered = _render_run(result)
+        assert "Detail:" in rendered
+        assert ".exact keyword field" in rendered
+
+    @pytest.mark.unit
+    def test_render_run_no_detail_line_when_absent(self):
+        from tooluniverse.cli import _render_run
+
+        rendered = _render_run({"status": "error", "error": "boom"})
+        assert "Detail:" not in rendered
+
+    @pytest.mark.unit
     def test_render_run_success_returns_json(self):
         """Feature-23B-02: _render_run passes through success results as JSON."""
         from tooluniverse.cli import _render_run
