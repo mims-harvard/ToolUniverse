@@ -4203,6 +4203,21 @@ class TestRound20Fixes:
         d = json.loads(out)
         assert "error" in d
 
+    # Fix-R4E-2: `tu grep -i` used to error with "unrecognized arguments: -i"
+    # since users reflexively type grep's -i flag even though text mode (the
+    # default) is already case-insensitive.
+    @pytest.mark.unit
+    def test_grep_accepts_ignore_case_flag(self, capsys):
+        """-i is accepted (as a no-op) instead of an argparse error."""
+        import sys as _sys
+        from tooluniverse.cli import main
+
+        _sys.argv = ["tu", "grep", "-i", "protein", "--json", "--limit", "3"]
+        main()
+        out = capsys.readouterr().out
+        d = json.loads(out)
+        assert "error" not in d
+
 
 class TestRound21PreFixes:
     """Tests for Feature-20A-07 and Feature-20A-08 fixed before Round 21 agents launched."""
