@@ -1703,6 +1703,15 @@ def main() -> None:
     p.add_argument(
         "--categories", nargs="+", metavar="CAT", help="Filter by category names"
     )
+    # Fix-R4E-2: users reflexively type grep's -i flag; accept it instead of
+    # an unrecognized-arguments error. text mode (the default) already does
+    # case-insensitive matching, so this is a no-op rather than a real toggle.
+    p.add_argument(
+        "-i",
+        "--ignore-case",
+        action="store_true",
+        help="No-op: text mode (the default) is already case-insensitive",
+    )
     p.set_defaults(func=cmd_grep)
 
     # ── info ──────────────────────────────────────────────────────────────────

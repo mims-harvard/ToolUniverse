@@ -1,5 +1,6 @@
 # dailymed_tool.py
 
+import json
 import requests
 from typing import Dict, Any, List
 from .base_tool import BaseTool
@@ -193,6 +194,23 @@ class GetSPLBySetIDTool(BaseTool):
         return {"status": "success", "xml": resp.text}
 
 
+def _dedupe_items(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Fix-R4C-1: SPL documents often expose the same section content
+    through multiple matching <section> elements (e.g. a Highlights summary
+    plus the Full Prescribing Information), so a parser can walk the
+    identical paragraph/table text more than once. Dedupe by content,
+    preserving first-seen order, so the same statement never appears twice
+    in one response. A no-op when there's no duplication to begin with."""
+    seen = set()
+    deduped = []
+    for item in items:
+        key = json.dumps(item, sort_keys=True)
+        if key not in seen:
+            seen.add(key)
+            deduped.append(item)
+    return deduped
+
+
 @register_tool("DailyMedSPLParserTool")
 class DailyMedSPLParserTool(BaseTool):
     """
@@ -238,6 +256,19 @@ class DailyMedSPLParserTool(BaseTool):
                     pass
 
         if not setid:
+            if arguments.get("drug_name"):
+                # Fix-R4C-2: drug_name WAS provided but the lookup above found
+                # no matching SPL (or the lookup call itself failed) -- the old
+                # generic "setid missing" message told the user to do exactly
+                # what they already did, instead of reporting the real problem.
+                return {
+                    "status": "error",
+                    "error": (
+                        f"No DailyMed SPL found for drug_name="
+                        f"'{arguments['drug_name']}'. Check the spelling, or "
+                        "supply an exact `setid` (DailyMed Set ID UUID) instead."
+                    ),
+                }
             return {
                 "status": "error",
                 "error": (
@@ -359,6 +390,8 @@ class DailyMedSPLParserTool(BaseTool):
                                     {"type": "text", "content": text_content}
                                 )
 
+            adverse_reactions = _dedupe_items(adverse_reactions)
+
             return {
                 "status": "success",
                 "adverse_reactions": adverse_reactions,
@@ -413,6 +446,8 @@ class DailyMedSPLParserTool(BaseTool):
                             dosing_info.append(
                                 {"type": "dosing_text", "content": text_content}
                             )
+
+            dosing_info = _dedupe_items(dosing_info)
 
             return {
                 "status": "success",
@@ -469,6 +504,8 @@ class DailyMedSPLParserTool(BaseTool):
                                     }
                                 )
 
+            contraindications = _dedupe_items(contraindications)
+
             return {
                 "status": "success",
                 "contraindications": contraindications,
@@ -516,6 +553,8 @@ class DailyMedSPLParserTool(BaseTool):
                                 {"type": "interaction_text", "content": text_content}
                             )
 
+            interactions = _dedupe_items(interactions)
+
             return {
                 "status": "success",
                 "interactions": interactions,
@@ -562,6 +601,8 @@ class DailyMedSPLParserTool(BaseTool):
                             pharmacology.append(
                                 {"type": "pharmacology_text", "content": text_content}
                             )
+
+            pharmacology = _dedupe_items(pharmacology)
 
             return {
                 "status": "success",

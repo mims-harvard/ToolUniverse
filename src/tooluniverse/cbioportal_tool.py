@@ -151,6 +151,21 @@ class CBioPortalRESTTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         try:
+            # Fix-R4A-001: _build_url only substitutes {placeholder} for keys
+            # actually present in `arguments`, so an omitted optional param
+            # (e.g. `limit`) left its literal "{limit}" placeholder unfilled
+            # in the endpoint template, sending a broken query string to the
+            # live API instead of falling back to the schema's declared
+            # default value.
+            schema_props = self.tool_config.get("parameter", {}).get("properties", {})
+            defaults = {
+                name: prop["default"]
+                for name, prop in schema_props.items()
+                if "default" in prop and name not in arguments
+            }
+            if defaults:
+                arguments = {**arguments, **defaults}
+
             if "query" in arguments and "keyword" not in arguments:
                 arguments = {**arguments, "keyword": arguments["query"]}
             if (
