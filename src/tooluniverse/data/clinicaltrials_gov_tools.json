@@ -1062,6 +1062,20 @@
             "null"
           ],
           "description": "Maximum number of results to return. Alias for page_size."
+        },
+        "intervention": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Intervention or drug to search for. Alias for query_intr. E.g., \"pembrolizumab\", \"metformin\"."
+        },
+        "sponsor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Lead sponsor or collaborator name to search for. E.g., \"National Cancer Institute\"."
         }
       },
       "required": []

@@ -280,10 +280,25 @@ class DailyMedSPLParserTool(BaseTool):
 
         result = self._with_data_payload(operation_result)
         if result.get("status") == "success":
+            # Fix-R9A-2/R9D-3: metadata.drug_name was only ever populated
+            # from the caller's own `drug_name` argument, so it was always
+            # null for the common case of calling with `setid` directly
+            # (e.g. after a prior search_spls call) -- even though the SPL
+            # itself already names the product. Fall back to the SPL's own
+            # manufacturedProduct name, which is already available on the
+            # parsed XML at no extra network cost.
+            drug_name = arguments.get("drug_name")
+            if not drug_name:
+                name_el = root.xpath(
+                    "//hl7:manufacturedProduct/hl7:manufacturedProduct/hl7:name",
+                    namespaces=self.ns,
+                )
+                if name_el and name_el[0].text:
+                    drug_name = name_el[0].text.strip()
             result["metadata"] = {
                 "source": "DailyMed",
                 "setid": setid,
-                "drug_name": arguments.get("drug_name"),
+                "drug_name": drug_name,
                 "operation": operation,
             }
         return result
