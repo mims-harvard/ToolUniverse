@@ -5,11 +5,18 @@ This tool provides access to the EBI Proteins API for comprehensive protein
 annotations, variation data, proteomics, and reference genome mappings.
 """
 
+import re
 import requests
 from typing import Any, Dict, Optional, List, Union
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+
+# Canonical UniProtKB accession format (6 or 10 characters), per UniProt's own spec:
+# https://www.uniprot.org/help/accession_numbers
+_UNIPROT_ACCESSION_RE = re.compile(
+    r"^([A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})$" r"|^([OPQ][0-9][A-Z0-9]{3}[0-9])$"
+)
 
 
 @register_tool("ProteinsAPIRESTTool")
@@ -79,11 +86,17 @@ class ProteinsAPIRESTTool(BaseTool):
             # gene, protein, accession, organism, taxid, etc.
             if "query" in args:
                 query = args["query"]
+                # Fix-T3A-008: match the canonical UniProt accession format (e.g.
+                # 'P05067') before falling back to the Feature-81B-007 gene-name
+                # heuristic below. Without this, accessions were indistinguishable
+                # from short gene names like 'CYP2D6' and always misrouted to
+                # gene=, contradicting this tool's own documented behavior.
+                if query and _UNIPROT_ACCESSION_RE.match(query.strip().upper()):
+                    params["accession"] = query.strip().upper()
                 # Feature-81B-007: always use gene param for short queries —
                 # gene names like CYP2D6 are 6 chars and were incorrectly
-                # classified as UniProt accessions. For accession lookup,
-                # use proteins_api_get_protein with an explicit accession.
-                if query and len(query) <= 10 and any(c.isalpha() for c in query):
+                # classified as UniProt accessions.
+                elif query and len(query) <= 10 and any(c.isalpha() for c in query):
                     params["gene"] = query
                 else:
                     # For longer queries, try protein parameter

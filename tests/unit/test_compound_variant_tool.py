@@ -64,6 +64,46 @@ def test_parse_clinvar_falls_back_to_gene_context_when_no_exact_match():
     assert len(out["variants"]) == 2  # gene-level context, not empty
 
 
+def test_summary_does_not_misattribute_unmatched_clinvar_context():
+    """Fix-T2A-001: when clinvar has no exact match, `variants` holds unrelated
+    gene-level fallback context (see test_parse_clinvar_falls_back_...). The
+    summary must not report classifications[0] as if it were the queried
+    variant's classification."""
+    t = _tool()
+    annotations = {
+        "clinvar": {
+            "total_gene_variants": 73,
+            "matched": 0,
+            "exact_match": False,
+            "variants": [
+                {"name": "NM_004333.6(BRAF):c.2209G>A (p.Gly737Ser)",
+                 "classification": "Uncertain significance"},
+            ],
+        }
+    }
+    s = t._build_summary(annotations, variant="BRAF V600E")
+    assert s["clinvar_classification"] is None
+    assert "clinvar_note" in s
+
+
+def test_summary_reports_classification_for_exact_clinvar_match():
+    t = _tool()
+    annotations = {
+        "clinvar": {
+            "total_gene_variants": 5,
+            "matched": 1,
+            "exact_match": True,
+            "variants": [
+                {"name": "NM_004333.6(BRAF):c.1799T>A (p.Val600Glu)",
+                 "classification": "Pathogenic"},
+            ],
+        }
+    }
+    s = t._build_summary(annotations, variant="BRAF V600E")
+    assert s["clinvar_classification"] == "Pathogenic"
+    assert "clinvar_note" not in s
+
+
 def test_sources_with_data_is_honest():
     t = _tool()
     # gnomAD has a gene, CIViC matched one, ClinVar empty, UniProt empty

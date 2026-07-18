@@ -405,7 +405,15 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
                 # "HasResults",
             ],  # NOTE: Can change this one
             "countTotal": True,  # NOTE: Can change this one
-            "filter.advanced": "AREA[HasResults]true AND (AREA[Phase]PHASE2 OR AREA[Phase]PHASE3 OR AREA[Phase]PHASE4)",
+            # Fix-T1A-002/T3A-004: this used to also require AREA[HasResults]true,
+            # which silently restricted every search to trials with *posted
+            # results* — undocumented, and it made the tool return "no studies
+            # found" for real, findable trials that simply haven't reported
+            # results yet (e.g. rivaroxaban + renal impairment, which has 11
+            # matching trials on ClinicalTrials.gov, none surfaced by this
+            # filter). The phase>=2 restriction stays; it matches the tool's
+            # documented "Limited to trials beyond phase 1" behavior.
+            "filter.advanced": "(AREA[Phase]PHASE2 OR AREA[Phase]PHASE3 OR AREA[Phase]PHASE4)",
             # TODO: Consider adding a YEAR filter for the query to remove trials that are too early? E.g., "AREA[LastUpdatePostDate]RANGE[2000-01-01,MAX]"
         }
         # "title": {

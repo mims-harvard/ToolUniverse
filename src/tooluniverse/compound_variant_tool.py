@@ -286,7 +286,11 @@ class CompoundVariantAnnotationTool(BaseTool):
                 summary["sources_with_data"].append(source)
 
         clinvar = annotations.get("clinvar", {})
-        if clinvar.get("variants"):
+        # Fix-T2A-001: when the queried variant has no exact ClinVar match,
+        # `variants` holds unrelated gene-level context (see _parse_clinvar's
+        # fallback). Summarizing classifications[0] in that case silently
+        # attributes an unrelated variant's classification to the query.
+        if clinvar.get("exact_match") and clinvar.get("variants"):
             classifications = [
                 v["classification"]
                 for v in clinvar["variants"]
@@ -294,6 +298,12 @@ class CompoundVariantAnnotationTool(BaseTool):
             ]
             if classifications:
                 summary["clinvar_classification"] = classifications[0]
+        elif clinvar.get("variants"):
+            summary["clinvar_classification"] = None
+            summary["clinvar_note"] = (
+                "No exact ClinVar match for the queried variant; "
+                "see annotations.clinvar.variants for unmatched gene-level context."
+            )
 
         gnomad = annotations.get("gnomad", {})
         if gnomad.get("gene_id"):
