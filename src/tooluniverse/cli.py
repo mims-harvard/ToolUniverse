@@ -475,6 +475,14 @@ def _render_run(d: dict) -> str:
         or "unknown error"
     )
     lines = [f"Error: {short_err}"]
+    # Fix-R3B-007/R3E-002: BaseRESTTool-backed tools (openFDA, EPA, etc.) put
+    # the raw upstream HTTP response body in `detail` on non-2xx responses.
+    # That's often the only place the *actionable* explanation lives (e.g.
+    # openFDA's "use a .exact keyword field" hint) — short_err is usually
+    # just a generic "<Tool> API error". Surface it instead of dropping it.
+    detail = d.get("detail")
+    if isinstance(detail, str) and detail.strip() and detail.strip() not in short_err:
+        lines.append(f"Detail: {detail.strip()[:300]}")
     details = d.get("error_details") or {}
 
     # Feature-25B-02: for "tool not found" errors, replace generic network tips
