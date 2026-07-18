@@ -466,6 +466,7 @@ class BRENDATool(BaseTool):
 
         sources_used = []
         result: Dict[str, Any] = {"ec_number": ec_number}
+        sabiork_error: Optional[str] = None
 
         # 1. ExPASy ENZYME: enzyme identity and catalytic activity
         try:
@@ -480,6 +481,13 @@ class BRENDATool(BaseTool):
             pass  # Non-fatal, continue with kinetics
 
         # 2. SABIO-RK: kinetic parameters (Km, kcat, Ki, Vmax)
+        # Fix-R14D-1: this whole block used to be one bare `except Exception:
+        # pass`, so any failure here (confirmed live: sabiork.h-its.org
+        # connection timeouts) silently dropped "kinetic_parameters" from
+        # the response entirely -- the tool's own headline capability --
+        # while still returning status:"success" with no indication that
+        # SABIO-RK was even attempted, let alone that it failed. Record the
+        # failure instead of erasing all trace of it.
         try:
             sabio = self._fetch_sabiork_kinetics(ec_number, organism, limit)
             result["kinetic_parameters"] = sabio.get("kinetic_laws", [])
@@ -516,8 +524,14 @@ class BRENDATool(BaseTool):
                     summary[ptype] = entry
                 if summary:
                     result["parameter_summary"] = summary
-        except Exception:
-            pass  # Non-fatal
+        except Exception as e:
+            result.setdefault("kinetic_parameters", [])
+            result.setdefault("sabiork_total_entries", 0)
+            sabiork_error = (
+                "SABIO-RK kinetics fetch timed out"
+                if isinstance(e, requests.exceptions.Timeout)
+                else f"SABIO-RK kinetics fetch failed: {type(e).__name__}: {e}"
+            )
 
         # 3. Optional BRENDA SOAP enrichment (if credentials available)
         creds = self._credentials()
@@ -621,15 +635,18 @@ class BRENDATool(BaseTool):
                 "error": f"No data found for EC {ec_number}. Verify the EC number is correct.",
             }
 
+        metadata: Dict[str, Any] = {
+            "sources": sources_used,
+            "note": (
+                "ExPASy ENZYME and SABIO-RK data require no authentication. "
+                "Set BRENDA_EMAIL/BRENDA_PASSWORD for additional pH, temperature, "
+                "and specific activity data from BRENDA."
+            ),
+        }
+        if sabiork_error:
+            metadata["sabiork_error"] = sabiork_error
         return {
             "status": "success",
             "data": result,
-            "metadata": {
-                "sources": sources_used,
-                "note": (
-                    "ExPASy ENZYME and SABIO-RK data require no authentication. "
-                    "Set BRENDA_EMAIL/BRENDA_PASSWORD for additional pH, temperature, "
-                    "and specific activity data from BRENDA."
-                ),
-            },
+            "metadata": metadata,
         }

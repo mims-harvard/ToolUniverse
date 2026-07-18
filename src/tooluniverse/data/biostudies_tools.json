@@ -2,7 +2,7 @@
   {
     "type": "BioStudiesRESTTool",
     "name": "biostudies_search",
-    "description": "Search BioStudies repository for biological studies across all collections. BioStudies is a comprehensive repository at EMBL-EBI that hosts diverse study types including genomics, transcriptomics, proteomics, imaging data, and more. Supports full-text search with pagination and sorting. HTML responses are automatically converted to Markdown using markitdown.",
+    "description": "Search BioStudies repository for biological studies across all collections. BioStudies is a comprehensive repository at EMBL-EBI that hosts diverse study types including genomics, transcriptomics, proteomics, imaging data, and more. Supports full-text search with pagination and sorting. HTML responses are automatically converted to Markdown using markitdown. Note: common biomedical phrases are frequently dominated by 'S-EPMC*' hits (full-text literature indexed via the EuropePMC collection) rather than actual datasets -- to search datasets specifically (e.g. ArrayExpress expression data), use biostudies_search_by_collection with collection='arrayexpress' instead.",
     "parameter": {
       "type": "object",
       "properties": {
