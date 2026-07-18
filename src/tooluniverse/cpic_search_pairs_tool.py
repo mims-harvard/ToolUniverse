@@ -67,11 +67,19 @@ class CPICGetRecommendationsTool(BaseTool):
                 }
             result = _resolve_drug_to_guideline_id(drug)
             if result is None:
+                # Fix-R5C-2: CPIC's /drug table only has generic names (no
+                # brand-name field), so a brand name like "zoloft" never
+                # matches. The old message sent callers to browse guideline
+                # IDs, which doesn't actually solve "I don't know the
+                # generic name" -- name the real constraint instead.
                 return {
                     "status": "error",
                     "error": (
                         f"No CPIC guideline found for drug '{drug}'. "
-                        "Use CPIC_list_guidelines to find valid guideline IDs."
+                        "CPIC only indexes generic drug names (e.g. "
+                        "'sertraline', not 'Zoloft') -- try the generic "
+                        "name, or use CPIC_list_guidelines to browse "
+                        "available guidelines."
                     ),
                 }
             guideline_id, rxnorm_id = result

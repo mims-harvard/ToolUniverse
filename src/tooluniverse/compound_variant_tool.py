@@ -6,7 +6,7 @@ pathogenicity classification, population frequencies, and clinical evidence.
 """
 
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -104,7 +104,11 @@ class CompoundVariantAnnotationTool(BaseTool):
                         "arguments": {"query": clinvar_query, "limit": 20},
                     }
                 )
-                annotations["clinvar"] = self._parse_clinvar(r, variant_token)
+                error = self._sub_call_error(r)
+                if error:
+                    sources_failed.append(f"ClinVar: {error[:100]}")
+                else:
+                    annotations["clinvar"] = self._parse_clinvar(r, variant_token)
             except Exception as e:
                 sources_failed.append(f"ClinVar: {str(e)[:100]}")
 
@@ -117,7 +121,11 @@ class CompoundVariantAnnotationTool(BaseTool):
                         "arguments": {"gene_symbol": gene_for_gnomad},
                     }
                 )
-                annotations["gnomad"] = self._parse_gnomad(r)
+                error = self._sub_call_error(r)
+                if error:
+                    sources_failed.append(f"gnomAD: {error[:100]}")
+                else:
+                    annotations["gnomad"] = self._parse_gnomad(r)
             except Exception as e:
                 sources_failed.append(f"gnomAD: {str(e)[:100]}")
 
@@ -130,7 +138,11 @@ class CompoundVariantAnnotationTool(BaseTool):
                         "arguments": {"gene_symbol": gene_for_gnomad},
                     }
                 )
-                annotations["civic"] = self._parse_civic(r, variant_token)
+                error = self._sub_call_error(r)
+                if error:
+                    sources_failed.append(f"CIViC: {error[:100]}")
+                else:
+                    annotations["civic"] = self._parse_civic(r, variant_token)
             except Exception as e:
                 sources_failed.append(f"CIViC: {str(e)[:100]}")
 
@@ -147,7 +159,11 @@ class CompoundVariantAnnotationTool(BaseTool):
                         },
                     }
                 )
-                annotations["uniprot"] = self._parse_uniprot(r)
+                error = self._sub_call_error(r)
+                if error:
+                    sources_failed.append(f"UniProt: {error[:100]}")
+                else:
+                    annotations["uniprot"] = self._parse_uniprot(r)
             except Exception as e:
                 sources_failed.append(f"UniProt: {str(e)[:100]}")
 
@@ -164,6 +180,17 @@ class CompoundVariantAnnotationTool(BaseTool):
                 "annotations": annotations,
             },
         }
+
+    def _sub_call_error(self, result: Any) -> Optional[str]:
+        """Fix-R2B-003: sub-tool calls signal failure by returning a
+        {"status": "error", ...} dict, not by raising — the try/except around
+        each call only catches raised exceptions, so an upstream failure was
+        silently parsed as "zero variants found" instead of being recorded in
+        sources_failed. Detect that shape here so callers can distinguish a
+        genuine empty result from a failed call."""
+        if isinstance(result, dict) and result.get("status") == "error":
+            return str(result.get("error", "unknown error"))
+        return None
 
     def _parse_clinvar(self, result: Any, variant_token: str = None) -> Dict[str, Any]:
         if not isinstance(result, dict):
@@ -286,7 +313,11 @@ class CompoundVariantAnnotationTool(BaseTool):
                 summary["sources_with_data"].append(source)
 
         clinvar = annotations.get("clinvar", {})
-        if clinvar.get("variants"):
+        # Fix-T2A-001: when the queried variant has no exact ClinVar match,
+        # `variants` holds unrelated gene-level context (see _parse_clinvar's
+        # fallback). Summarizing classifications[0] in that case silently
+        # attributes an unrelated variant's classification to the query.
+        if clinvar.get("exact_match") and clinvar.get("variants"):
             classifications = [
                 v["classification"]
                 for v in clinvar["variants"]
@@ -294,6 +325,12 @@ class CompoundVariantAnnotationTool(BaseTool):
             ]
             if classifications:
                 summary["clinvar_classification"] = classifications[0]
+        elif clinvar.get("variants"):
+            summary["clinvar_classification"] = None
+            summary["clinvar_note"] = (
+                "No exact ClinVar match for the queried variant; "
+                "see annotations.clinvar.variants for unmatched gene-level context."
+            )
 
         gnomad = annotations.get("gnomad", {})
         if gnomad.get("gene_id"):

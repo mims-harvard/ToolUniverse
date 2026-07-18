@@ -38,11 +38,10 @@ class TestFDAOrangeBookTool:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "drugs" in result
         assert "drugs" in result["data"]
-        assert isinstance(result["drugs"], list)
-        assert result["count"] > 0
-        print(f"\n✅ Found {result['count']} products for ADVIL")
+        assert isinstance(result["data"]["drugs"], list)
+        assert result["data"]["count"] > 0
+        print(f"\n✅ Found {result['data']['count']} products for ADVIL")
     
     def test_search_drug_by_application_number(self, tu):
         """Test searching by application number."""
@@ -54,8 +53,8 @@ class TestFDAOrangeBookTool:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "drugs" in result
-        if result["count"] > 0:
+        assert "drugs" in result["data"]
+        if result["data"]["count"] > 0:
             print(f"\n✅ Found application NDA020402")
     
     def test_get_approval_history(self, tu):
@@ -67,13 +66,12 @@ class TestFDAOrangeBookTool:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "application_number" in result
         assert "application_number" in result["data"]
-        assert "submissions" in result
-        assert isinstance(result["submissions"], list)
-        print(f"\n✅ Retrieved {result.get('submission_count', 0)} submissions")
-        if result.get("original_approval_date"):
-            print(f"   Original approval: {result['original_approval_date']}")
+        assert "submissions" in result["data"]
+        assert isinstance(result["data"]["submissions"], list)
+        print(f"\n✅ Retrieved {result['data'].get('submission_count', 0)} submissions")
+        if result["data"].get("original_approval_date"):
+            print(f"   Original approval: {result['data']['original_approval_date']}")
     
     def test_check_generic_availability(self, tu):
         """Test checking for generic versions."""
@@ -84,13 +82,12 @@ class TestFDAOrangeBookTool:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "generics_available" in result
         assert "generics_available" in result["data"]
-        assert "reference_count" in result
-        assert "generic_count" in result
-        print(f"\n✅ Reference drugs: {result['reference_count']}")
-        print(f"   Generic drugs: {result['generic_count']}")
-        print(f"   Generics available: {result['generics_available']}")
+        assert "reference_count" in result["data"]
+        assert "generic_count" in result["data"]
+        print(f"\n✅ Reference drugs: {result['data']['reference_count']}")
+        print(f"   Generic drugs: {result['data']['generic_count']}")
+        print(f"   Generics available: {result['data']['generics_available']}")
     
     def test_get_te_code(self, tu):
         """Test getting therapeutic equivalence codes."""
@@ -101,11 +98,10 @@ class TestFDAOrangeBookTool:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "te_codes" in result
         assert "te_codes" in result["data"]
-        assert "te_code_guide" in result
-        print(f"\n✅ Found {result.get('count', 0)} TE codes")
-        for te in result.get("te_codes", [])[:3]:
+        assert "te_code_guide" in result["data"]
+        print(f"\n✅ Found {result['data'].get('count', 0)} TE codes")
+        for te in result["data"].get("te_codes", [])[:3]:
             print(f"   {te.get('brand_name')}: {te.get('te_code')} - {te.get('interpretation')}")
     
     def test_get_patent_info(self, tu):
@@ -117,10 +113,9 @@ class TestFDAOrangeBookTool:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "download_url" in result
         assert "download_url" in result["data"]
         print(f"\n✅ Patent info guidance provided")
-        print(f"   Download URL: {result.get('download_url')}")
+        print(f"   Download URL: {result['data'].get('download_url')}")
     
     def test_get_exclusivity(self, tu):
         """Test getting exclusivity information."""
@@ -131,10 +126,9 @@ class TestFDAOrangeBookTool:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "exclusivity_types" in result
         assert "exclusivity_types" in result["data"]
         print(f"\n✅ Exclusivity types:")
-        for exc_type in result.get("exclusivity_types", []):
+        for exc_type in result["data"].get("exclusivity_types", []):
             print(f"   - {exc_type}")
     
     def test_error_handling_missing_params(self, tu):
@@ -196,9 +190,8 @@ class TestFDAOrangeBookDirectClass:
         
         assert result.get("status") == "success"
         assert isinstance(result.get("data"), dict)
-        assert "drugs" in result
         assert "drugs" in result["data"]
-    
+
     def test_te_code_interpretation(self, orange_book_tool):
         """Test TE code interpretation helper."""
         assert "therapeutically equivalent" in orange_book_tool._interpret_te_code("AB").lower()

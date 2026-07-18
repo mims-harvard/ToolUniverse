@@ -1340,7 +1340,7 @@
   {
     "type": "ChEMBLRESTTool",
     "name": "ChEMBL_search_mechanisms",
-    "description": "Search mechanisms of action by drug, target, or mechanism type. To find drug or target IDs, use ChEMBL_search_drugs or ChEMBL_search_targets.",
+    "description": "Search mechanisms of action by drug or mechanism type. To find mechanisms for a target, use ChEMBL_search_activities with target_chembl_id to find drugs acting on it, then pass each drug_chembl_id here (the /mechanism.json endpoint does not support filtering by target). To find drug IDs, use ChEMBL_search_drugs or ChEMBL_search_molecules.",
     "fields": {
       "endpoint": "/mechanism.json"
     },
@@ -1353,7 +1353,7 @@
         },
         "target_chembl_id": {
           "type": "string",
-          "description": "Filter by target ChEMBL ID"
+          "description": "NOT SUPPORTED: the /mechanism.json endpoint ignores target-based filters, so passing this always returns an error. Use ChEMBL_search_activities with target_chembl_id to find drugs for a target, then query this tool by drug_chembl_id instead."
         },
         "mechanism_of_action__contains": {
           "type": "string",

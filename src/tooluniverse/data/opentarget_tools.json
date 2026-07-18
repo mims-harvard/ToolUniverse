@@ -5151,7 +5151,7 @@
     },
     {
         "name": "OpenTargets_get_target_expression_by_ensemblID",
-        "description": "Retrieve baseline RNA and protein expression for a target across ~119 tissues and cell types (Human Protein Atlas / GTEx / FANTOM5 consensus) by Ensembl gene ID. Each record gives the tissue (label + parent organs), RNA value/zscore/level, and protein level. Levels of -1 mean no data. Use to profile where a target is normally expressed.",
+        "description": "Retrieve baseline expression summary statistics for a target across tissues and cell types (GTEx, Tabula Sapiens, and other bulk/single-cell sources) by Ensembl gene ID. Each row gives the data source, tissue (and cell type for single-cell data), value unit, and min/q1/median/q3/max distribution stats plus specificity/distribution scores. Well-studied targets can return hundreds to thousands of rows across sources; filter client-side by datasourceId if needed. Use to profile where a target is normally expressed.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -5164,7 +5164,7 @@
                 "ensemblId"
             ]
         },
-        "query_schema": "\n      query targetExpression($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          expressions {\n            tissue { label organs anatomicalSystems }\n            rna { value zscore level unit }\n            protein { level reliability }\n          }\n        }\n      }\n    ",
+        "query_schema": "\n      query targetExpression($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          baselineExpression {\n            count\n            rows {\n              datasourceId\n              datatypeId\n              unit\n              min\n              q1\n              median\n              q3\n              max\n              specificity_score\n              distribution_score\n              tissueBiosample { biosampleId biosampleName }\n              celltypeBiosample { biosampleId biosampleName }\n            }\n          }\n        }\n      }\n    ",
         "label": [
             "Target",
             "Expression",
@@ -5202,19 +5202,60 @@
                                         "approvedSymbol": {
                                             "type": "string"
                                         },
-                                        "expressions": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "tissue": {
-                                                        "type": "object"
-                                                    },
-                                                    "rna": {
-                                                        "type": "object"
-                                                    },
-                                                    "protein": {
-                                                        "type": "object"
+                                        "baselineExpression": {
+                                            "type": "object",
+                                            "properties": {
+                                                "count": {
+                                                    "type": "integer"
+                                                },
+                                                "rows": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "datasourceId": {
+                                                                "type": "string"
+                                                            },
+                                                            "datatypeId": {
+                                                                "type": "string"
+                                                            },
+                                                            "unit": {
+                                                                "type": "string"
+                                                            },
+                                                            "min": {
+                                                                "type": "number"
+                                                            },
+                                                            "q1": {
+                                                                "type": "number"
+                                                            },
+                                                            "median": {
+                                                                "type": "number"
+                                                            },
+                                                            "q3": {
+                                                                "type": "number"
+                                                            },
+                                                            "max": {
+                                                                "type": "number"
+                                                            },
+                                                            "specificity_score": {
+                                                                "type": "number"
+                                                            },
+                                                            "distribution_score": {
+                                                                "type": "number"
+                                                            },
+                                                            "tissueBiosample": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "celltypeBiosample": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ]
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }

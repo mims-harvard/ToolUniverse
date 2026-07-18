@@ -208,10 +208,53 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             # Feature-82A-002: NCBI silently translates [clnsig] to [All Fields],
             # returning unrelated variants. The correct syntax is the [Filter] field:
             # "clinsig pathogenic"[Filter] which properly restricts to the clinsig index.
+            #
+            # Fix-R6C-1: that [Filter] form only indexes single-word clinsig
+            # values -- confirmed live that "clinsig risk factor"[Filter] and
+            # "clinsig likely pathogenic"[Filter] both silently return 0
+            # results even though matching variants exist (e.g. HFE C282Y,
+            # whose own classification literally contains "risk factor").
+            # ClinVar separately indexes compound values via clinsig_<value
+            # with underscores>[prop] (confirmed live for risk_factor and
+            # likely_pathogenic). OR both forms so single-word values keep
+            # using the already-verified [Filter] path while compound values
+            # fall through to the [prop] path -- this can only add matches
+            # the old query missed, never drop ones it already found.
             clnsig = arguments["clinical_significance"].lower().replace("_", " ")
-            query_parts.append(f'"clinsig {clnsig}"[Filter]')
+            clnsig_prop = clnsig.replace(" ", "_")
+            query_parts.append(
+                f'("clinsig {clnsig}"[Filter] OR clinsig_{clnsig_prop}[prop])'
+            )
 
         if not query_parts:
+            # Fix-R5D-1: a caller-supplied param that doesn't match any
+            # recognized name/alias (e.g. "gene_name" instead of "gene" or
+            # "gene_symbol") was silently dropped, producing a generic
+            # "at least one search parameter is required" error that gave
+            # no hint the parameter itself was misnamed. Name the actual
+            # unrecognized keys so the caller can fix the typo directly.
+            recognized = {
+                "gene",
+                "gene_symbol",
+                "condition",
+                "query",
+                "variant_id",
+                "clinical_significance",
+                "significance",
+                "max_results",
+                "limit",
+            }
+            unrecognized = sorted(set(arguments) - recognized)
+            if unrecognized:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Unrecognized parameter(s): {', '.join(unrecognized)}. "
+                        "Valid search parameters: gene (or gene_symbol), "
+                        "condition (or query), variant_id, "
+                        "clinical_significance (or significance)."
+                    ),
+                }
             return {
                 "status": "error",
                 "error": "At least one search parameter is required",
