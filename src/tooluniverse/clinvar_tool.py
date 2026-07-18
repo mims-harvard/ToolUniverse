@@ -208,8 +208,23 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             # Feature-82A-002: NCBI silently translates [clnsig] to [All Fields],
             # returning unrelated variants. The correct syntax is the [Filter] field:
             # "clinsig pathogenic"[Filter] which properly restricts to the clinsig index.
+            #
+            # Fix-R6C-1: that [Filter] form only indexes single-word clinsig
+            # values -- confirmed live that "clinsig risk factor"[Filter] and
+            # "clinsig likely pathogenic"[Filter] both silently return 0
+            # results even though matching variants exist (e.g. HFE C282Y,
+            # whose own classification literally contains "risk factor").
+            # ClinVar separately indexes compound values via clinsig_<value
+            # with underscores>[prop] (confirmed live for risk_factor and
+            # likely_pathogenic). OR both forms so single-word values keep
+            # using the already-verified [Filter] path while compound values
+            # fall through to the [prop] path -- this can only add matches
+            # the old query missed, never drop ones it already found.
             clnsig = arguments["clinical_significance"].lower().replace("_", " ")
-            query_parts.append(f'"clinsig {clnsig}"[Filter]')
+            clnsig_prop = clnsig.replace(" ", "_")
+            query_parts.append(
+                f'("clinsig {clnsig}"[Filter] OR clinsig_{clnsig_prop}[prop])'
+            )
 
         if not query_parts:
             return {
