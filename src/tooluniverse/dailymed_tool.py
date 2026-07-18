@@ -337,27 +337,11 @@ class DailyMedSPLParserTool(BaseTool):
 
             adverse_reactions = []
             for section in sections:
-                # Extract text content
                 text_elements = section.xpath(".//hl7:text", namespaces=self.ns)
                 for text_el in text_elements:
-                    # Look for tables
-                    tables = text_el.xpath(".//hl7:table", namespaces=self.ns)
-                    for table in tables:
-                        table_data = self._extract_table_data(table)
-                        if table_data:
-                            adverse_reactions.extend(table_data)
-
-                    # If no tables, extract paragraph text
-                    if not tables:
-                        paragraphs = text_el.xpath(
-                            ".//hl7:paragraph", namespaces=self.ns
-                        )
-                        for para in paragraphs:
-                            text_content = "".join(para.itertext()).strip()
-                            if text_content and len(text_content) > 10:
-                                adverse_reactions.append(
-                                    {"type": "text", "content": text_content}
-                                )
+                    adverse_reactions.extend(
+                        self._extract_ordered_content(text_el, "text")
+                    )
 
             return {
                 "status": "success",
@@ -574,6 +558,34 @@ class DailyMedSPLParserTool(BaseTool):
                 "status": "error",
                 "error": f"Failed to parse clinical pharmacology: {str(e)}",
             }
+
+    def _extract_ordered_content(
+        self, text_el, text_type: str, min_len: int = 10
+    ) -> List[Dict[str, Any]]:
+        """Fix-R7A-1: walk a <text> element's direct children (paragraph/
+        list/table) in document order instead of the old "extract tables;
+        if no tables, extract paragraphs" logic, which had no handling for
+        <list>/<item> elements at all. Confirmed live that warfarin's
+        adverse-reactions section encodes its actual reaction list as
+        <list><item> blocks alongside intro <paragraph> sentences -- the
+        old code silently dropped every list item, leaving only the two
+        generic intro sentences and none of the clinically relevant
+        content."""
+        items: List[Dict[str, Any]] = []
+        for child in text_el.iterchildren():
+            tag = etree.QName(child).localname
+            if tag == "table":
+                items.extend(self._extract_table_data(child))
+            elif tag == "paragraph":
+                text_content = "".join(child.itertext()).strip()
+                if text_content and len(text_content) > min_len:
+                    items.append({"type": text_type, "content": text_content})
+            elif tag == "list":
+                for item_el in child.xpath(".//hl7:item", namespaces=self.ns):
+                    text_content = "".join(item_el.itertext()).strip()
+                    if text_content and len(text_content) > 5:
+                        items.append({"type": text_type, "content": text_content})
+        return items
 
     def _extract_table_data(self, table_element) -> List[Dict[str, Any]]:
         """Extract structured data from table element."""
