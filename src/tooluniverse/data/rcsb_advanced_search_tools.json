@@ -56,7 +56,7 @@
             "string",
             "null"
           ],
-          "description": "Sort results by: 'resolution' (best resolution first, default), 'date' (newest first), 'weight' (smallest first)."
+          "description": "Sort results by: 'resolution' (best resolution first, default), 'date' (newest first), 'weight' (smallest first), 'score' (best full-text relevance match first)."
         }
       },
       "required": []
