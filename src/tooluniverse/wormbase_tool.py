@@ -16,7 +16,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 WORMBASE_BASE_URL = "https://rest.wormbase.org/rest"
-ALLIANCE_SEARCH_URL = "https://www.alliancegenome.org/api/search"
+ALLIANCE_AUTOCOMPLETE_URL = "https://www.alliancegenome.org/api/search_autocomplete"
 
 # Module-level cache: gene name (lower) -> WBGene ID, avoids repeated lookups
 _WBGENE_CACHE: dict = {}
@@ -25,33 +25,41 @@ _WBGENE_CACHE: dict = {}
 def _resolve_wbgene_id(gene_input: str) -> str:
     """Resolve a gene name (e.g. 'unc-86') to a WBGene ID via the Alliance API.
 
-    If the input already looks like a WBGene ID, return it unchanged.
+    If the input already looks like a WBGene ID (with or without a "WB:"
+    CURIE prefix -- exactly what a sibling tool like Alliance_search_genes
+    returns for the same gene), return it with the prefix stripped.
     Returns the resolved WBGene ID or the original input if resolution fails.
     """
-    if gene_input.upper().startswith("WBGENE"):
-        return gene_input
+    # Fix-R13B-1: WormBase's own REST API 500s on a "WB:"-prefixed ID
+    # because the old check below didn't strip it, so the colon-containing
+    # string was passed straight into the URL path unchanged.
+    unprefixed = gene_input.split(":", 1)[-1]
+    if unprefixed.upper().startswith("WBGENE"):
+        return unprefixed
 
     cache_key = gene_input.lower()
     if cache_key in _WBGENE_CACHE:
         return _WBGENE_CACHE[cache_key]
 
     try:
-        params = {
-            "category": "gene",
-            "q": gene_input,
-            "species": "Caenorhabditis elegans",
-            "limit": 5,
-        }
-        resp = requests.get(ALLIANCE_SEARCH_URL, params=params, timeout=10)
+        # Fix-R13B-2: /api/search with `category`/`species` params returns
+        # zero results for any real gene symbol (confirmed live) -- Alliance
+        # no longer honours those params on that endpoint. The endpoint that
+        # actually resolves symbols is /api/search_autocomplete, which mixes
+        # gene/disease/dataset hits and has no `id` field, so gene hits must
+        # be filtered client-side by category and the gene id read from
+        # `curie` (e.g. "WB:WBGene00006746").
+        params = {"q": gene_input, "limit": 25}
+        resp = requests.get(ALLIANCE_AUTOCOMPLETE_URL, params=params, timeout=10)
         if resp.status_code != 200:
             return gene_input
         results = resp.json().get("results", [])
         for r in results:
-            symbol = r.get("symbol", "")
-            if symbol.lower() == cache_key:
-                raw_id = r.get("id", "")
-                # Alliance returns "WB:WBGene00006818" — strip the "WB:" prefix
-                resolved = raw_id.split(":")[-1] if ":" in raw_id else raw_id
+            if r.get("category") != "gene_search_result":
+                continue
+            raw_id = r.get("curie", "")
+            if r.get("symbol", "").lower() == cache_key and raw_id.startswith("WB:"):
+                resolved = raw_id.split(":", 1)[-1]
                 _WBGENE_CACHE[cache_key] = resolved
                 return resolved
         return gene_input

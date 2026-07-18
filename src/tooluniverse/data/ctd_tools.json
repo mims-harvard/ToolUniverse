@@ -176,7 +176,7 @@
   },
   {
     "name": "CTD_get_chemical_diseases",
-    "description": "Get curated chemical-disease associations from CTD. Given a chemical name, returns diseases it is associated with, including direct evidence type (therapeutic, marker/mechanism) and disease categories. Example: 'bisphenol A' returns associations with cancer, reproductive disorders, etc. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
+    "description": "Get curated chemical-disease associations from CTD. Given a chemical name, returns diseases it is associated with, and disease categories. Example: 'bisphenol A' returns associations with cancer, reproductive disorders, etc. Note: unlike the sibling CTD_get_chemical_gene_interactions tool, the RENCI mirror's chemical-disease edges do not carry a direct evidence type (predicate/qualified_predicate) -- those fields are consistently null here, not a query error. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
     "parameter": {
       "type": "object",
       "properties": {
