@@ -4,6 +4,7 @@ Unified Guideline Tools
 Consolidated clinical guidelines search tools from multiple sources.
 """
 
+import html
 import requests
 import time
 import re
@@ -340,7 +341,13 @@ class PubMedGuidelinesTool(BaseTool):
                 if abstract_match:
                     # Clean HTML tags from abstract
                     abstract = re.sub(r"<[^>]+>", "", abstract_match.group(1))
-                    abstracts[pmid] = abstract.strip()
+                    # Fix-R7B-2/R7E-1: this regex-based extraction never
+                    # actually parses the XML, so entity references like
+                    # "&#x2265;" (confirmed present verbatim in PubMed's raw
+                    # efetch XML for "&#x2265;" / "&#xe7;" etc.) were left
+                    # undecoded, unlike PubMed_search_articles which uses a
+                    # real XML parser that resolves them automatically.
+                    abstracts[pmid] = html.unescape(abstract).strip()
                 else:
                     abstracts[pmid] = ""
 

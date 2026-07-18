@@ -378,27 +378,11 @@ class DailyMedSPLParserTool(BaseTool):
 
             adverse_reactions = []
             for section in sections:
-                # Extract text content
                 text_elements = section.xpath(".//hl7:text", namespaces=self.ns)
                 for text_el in text_elements:
-                    # Look for tables
-                    tables = text_el.xpath(".//hl7:table", namespaces=self.ns)
-                    for table in tables:
-                        table_data = self._extract_table_data(table)
-                        if table_data:
-                            adverse_reactions.extend(table_data)
-
-                    # If no tables, extract paragraph text
-                    if not tables:
-                        paragraphs = text_el.xpath(
-                            ".//hl7:paragraph", namespaces=self.ns
-                        )
-                        for para in paragraphs:
-                            text_content = "".join(para.itertext()).strip()
-                            if text_content and len(text_content) > 10:
-                                adverse_reactions.append(
-                                    {"type": "text", "content": text_content}
-                                )
+                    adverse_reactions.extend(
+                        self._extract_ordered_content(text_el, "text")
+                    )
 
             adverse_reactions = _dedupe_items(adverse_reactions)
 
@@ -585,15 +569,19 @@ class DailyMedSPLParserTool(BaseTool):
     def _extract_ordered_content(
         self, text_el, text_type: str, min_len: int = 10
     ) -> List[Dict[str, Any]]:
-        """Fix-R5B-1: walk a <text> element's direct children (paragraph/
-        list/table) in document order instead of the old approach of
-        extracting all tables, then all paragraphs, then all list items in
-        three separate passes. SPL sections routinely interleave a heading
-        paragraph immediately before the table or list it introduces (e.g.
-        "Juvenile Idiopathic Arthritis (2.3):" followed by its dosing
-        table), and the three-pass extraction destroyed that association by
-        grouping every table before every paragraph regardless of where
-        each actually appeared in the source document."""
+        """Fix-R5B-1/R7A-1: walk a <text> element's direct children
+        (paragraph/list/table) in document order instead of the old
+        approach of extracting all tables, then all paragraphs, then all
+        list items in three separate passes. That old approach broke in
+        two independent ways: (1) SPL sections routinely interleave a
+        heading paragraph immediately before the table or list it
+        introduces (e.g. "Juvenile Idiopathic Arthritis (2.3):" followed
+        by its dosing table), and grouping every table before every
+        paragraph destroyed that association; (2) some methods had no
+        <list>/<item> handling at all, so e.g. warfarin's adverse-reactions
+        section -- whose actual reaction list is encoded as <list><item>
+        blocks alongside intro <paragraph> sentences -- silently dropped
+        every list item, leaving only the generic intro sentences."""
         items: List[Dict[str, Any]] = []
         for child in text_el.iterchildren():
             tag = etree.QName(child).localname
