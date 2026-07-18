@@ -151,6 +151,17 @@ class GTDBTool(BaseTool):
         if not species:
             return {"status": "error", "error": "species parameter is required"}
 
+        # Fix-R15E-1: GTDB's own /species/search endpoint rejects the
+        # "s__" rank prefix outright (confirmed live: HTTP 400 "No genomes
+        # found for species s__..." with the prefix, HTTP 200 without it) --
+        # but GTDB_search_taxon, the natural upstream discovery tool for
+        # finding a species name, returns names WITH that exact prefix
+        # (e.g. "s__Faecalibacterium prausnitzii"), breaking the natural
+        # search -> get_species chaining workflow. Strip it here so output
+        # from the sibling tool can be passed straight in.
+        if species.startswith("s__"):
+            species = species[3:]
+
         result = self._make_request("species/search/{}".format(species))
         if not result["ok"]:
             return {"status": "error", "error": result["error"]}
