@@ -474,7 +474,7 @@
     },
     {
         "name": "NCBIDatasets_get_taxonomy",
-        "description": "Get detailed taxonomy information from NCBI by taxonomy ID. Returns organism name, rank, full lineage, counts of genes/assemblies/RNA types, and child taxa. Covers all organisms in NCBI Taxonomy including bacteria, archaea, eukaryotes, and viruses. Example: tax_id 9606 returns Homo sapiens with 20,625 protein-coding genes.",
+        "description": "Get detailed taxonomy information from NCBI by taxonomy ID. Returns organism name, rank, full lineage (as bare ancestor tax_ids in `lineage`, and as resolved organism_name/rank pairs in `lineage_names`), counts of genes/assemblies/RNA types, and child taxa. Covers all organisms in NCBI Taxonomy including bacteria, archaea, eukaryotes, and viruses. Example: tax_id 9606 returns Homo sapiens with 20,625 protein-coding genes.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -541,6 +541,30 @@
                                     "type": "array",
                                     "items": {
                                         "type": "integer"
+                                    }
+                                },
+                                "lineage_names": {
+                                    "type": "array",
+                                    "description": "Ancestor tax_ids from `lineage`, resolved to organism_name/rank (root-first). Entries fall back to null names/ranks if the resolution lookup failed.",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "tax_id": {
+                                                "type": "integer"
+                                            },
+                                            "organism_name": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ]
+                                            },
+                                            "rank": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ]
+                                            }
+                                        }
                                     }
                                 },
                                 "children": {

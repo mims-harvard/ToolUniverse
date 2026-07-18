@@ -111,28 +111,34 @@ class SemanticScholarTool(BaseTool):
     def _search(
         self, query, limit, *, year=None, sort=None, include_abstract: bool = False
     ):
+        # Include identifiers and lightweight impact signals for better downstream utility.
+        fields = [
+            "paperId",
+            "externalIds",
+            "title",
+            "abstract",
+            "tldr",
+            "year",
+            "venue",
+            "url",
+            "authors",
+            "citationCount",
+            "referenceCount",
+            "isOpenAccess",
+            "openAccessPdf",
+            "fieldsOfStudy",
+        ]
+        # Fix-R12A-1: /paper/search/bulk (used below whenever sort is set)
+        # rejects the "tldr" field with a 400 ("Unrecognized or unsupported
+        # fields: [tldr]") -- confirmed live via raw curl -- even though the
+        # regular /paper/search endpoint supports it fine. Drop it only for
+        # the bulk path rather than losing TLDR summaries on every search.
+        if sort:
+            fields = [f for f in fields if f != "tldr"]
         params = {
             "query": query,
             "limit": limit,
-            # Include identifiers and lightweight impact signals for better downstream utility.
-            "fields": ",".join(
-                [
-                    "paperId",
-                    "externalIds",
-                    "title",
-                    "abstract",
-                    "tldr",
-                    "year",
-                    "venue",
-                    "url",
-                    "authors",
-                    "citationCount",
-                    "referenceCount",
-                    "isOpenAccess",
-                    "openAccessPdf",
-                    "fieldsOfStudy",
-                ]
-            ),
+            "fields": ",".join(fields),
         }
         if year:
             params["year"] = str(year)
@@ -177,6 +183,14 @@ class SemanticScholarTool(BaseTool):
             ]
 
         results = payload.get("data", []) if isinstance(payload, dict) else []
+        if sort:
+            # /paper/search/bulk has no `limit` concept of its own (only
+            # token-based pagination over its full result set), so the
+            # `limit` param above is silently ignored server-side -- slice
+            # here instead of returning however many the page happened to
+            # contain (and instead of unnecessarily paying the N+1
+            # missing-abstract lookup cost below for rows beyond `limit`).
+            results = results[:limit]
         papers = []
         for p in results:
             # Extract basic information
