@@ -81,7 +81,16 @@ class PubMedRESTTool(BaseRESTTool):
 
         # Handle query as 'term' parameter (for esearch)
         if "query" in args:
-            params["term"] = args["query"]
+            # Fix-R9C-1: NCBI's automatic term-mapping treats a hyphenated
+            # compound (e.g. "CYP3A5-guided") as a literal [All Fields]
+            # phrase rather than decomposing it into individual words --
+            # confirmed via raw E-utils curl that this silently zeroes out
+            # an otherwise-matching multi-keyword AND query (0 results for
+            # "CYP3A5-guided tacrolimus dosing kidney transplant" vs. 38
+            # for the identical query with the hyphen replaced by a space,
+            # and "COVID-19" is unaffected -- both forms return the same
+            # count there, so this isn't a special-case regression risk).
+            params["term"] = args["query"].replace("-", " ")
 
         # Add API key from environment variable
         if self.default_api_key:

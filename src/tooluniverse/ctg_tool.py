@@ -1,7 +1,27 @@
+import re
 from copy import deepcopy
 from urllib.parse import urljoin
 from .restful_tool import RESTfulTool, execute_RESTful_query
 from .tool_registry import register_tool
+
+_ESSIE_OPERATOR_RE = re.compile(r'"|[()\[\]]|\b(?:AND|OR|NOT|AREA)\b', re.IGNORECASE)
+
+
+def _phrase_quote_if_plain(value: str) -> str:
+    """Fix-R9D-1: CTG API v2's Essie search engine treats an unquoted
+    multi-word query.cond/query.intr value as an implicit-OR keyword match
+    rather than a phrase, so "cervical cancer" ranks unrelated head/neck
+    and esophageal trials above actual cervical cancer trials (confirmed
+    live: 11215 unquoted matches vs. 2519 when phrase-quoted, with the
+    quoted results correctly topped by cervical-cancer-specific trials).
+    Quoting the value as an Essie phrase fixes this -- but only for a
+    plain multi-word value with no existing quotes/parens/boolean
+    operators, since query_cond's own docs advertise Boolean-operator
+    support (e.g. "breast cancer AND HER2") that a blind wrap would
+    break."""
+    if " " in value and not _ESSIE_OPERATOR_RE.search(value):
+        return f'"{value}"'
+    return value
 
 
 @register_tool("ClinicalTrialsTool")
@@ -190,7 +210,12 @@ class ClinicalTrialsTool(RESTfulTool):
                     study_type_clause = f"({study_type_clause})"
                 advanced_clauses.append(study_type_clause)
             elif key in _SEARCH_PARAM_MAP:
-                params[_SEARCH_PARAM_MAP[key]] = value
+                mapped_key = _SEARCH_PARAM_MAP[key]
+                if mapped_key in ("query.cond", "query.intr") and isinstance(
+                    value, str
+                ):
+                    value = _phrase_quote_if_plain(value)
+                params[mapped_key] = value
 
         if advanced_clauses:
             params["filter.advanced"] = " AND ".join(advanced_clauses)

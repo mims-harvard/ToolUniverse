@@ -269,7 +269,17 @@ class PubMedGuidelinesTool(BaseTool):
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
 
-        return self._search_pubmed_guidelines(query, limit, api_key)
+        result = self._search_pubmed_guidelines(query, limit, api_key)
+        # Fix-R9E-1: _search_pubmed_guidelines returns either a bare list of
+        # results or an {"status": "error", ...} dict on failure. The
+        # bare-list success case was never wrapped in the standard
+        # {"status": "success", "data": [...]} envelope every sibling tool
+        # (e.g. PubMed_search_articles) uses -- independently reported by
+        # personas across 4 separate rounds, since callers writing generic
+        # status-checking code broke specifically on this tool.
+        if isinstance(result, list):
+            return {"status": "success", "data": result}
+        return result
 
     def _search_pubmed_guidelines(self, query, limit, api_key):
         """Search PubMed for guideline publications."""
