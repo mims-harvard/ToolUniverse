@@ -70,11 +70,21 @@ class SearchSPLTool(BaseTool):
                 "content": resp.text,
             }
 
+        # Fix-R6A-2/R6D-3/R6E-3: DailyMed's own API literally serializes
+        # absent pagination links as the JSON string "null" rather than a
+        # real null, so a caller's `if metadata["next_page_url"]:` truthy
+        # check treats a missing next page as present. Normalize before
+        # returning instead of passing the upstream quirk straight through.
+        metadata = {
+            k: (None if v == "null" else v)
+            for k, v in result.get("metadata", {}).items()
+        }
+
         # Return with standard status envelope
         return {
             "status": "success",
             "data": result.get("data", []),
-            "metadata": result.get("metadata", {}),
+            "metadata": metadata,
         }
 
 
@@ -602,6 +612,28 @@ class DailyMedSPLParserTool(BaseTool):
                         items.append({"type": text_type, "content": text_content})
         return items
 
+    def _cell_text(self, element) -> str:
+        """Fix-R6E-2: SPL table cells use <br/> as an in-cell line break
+        (e.g. "TRIKAFTA" on one line, "N=202" on the next, "n (%)" on a
+        third), but joining itertext() with no separator collapsed these
+        into a single run like "TRIKAFTAN=202n (%)". Walk the cell's mixed
+        content and insert a space at each <br/> boundary instead."""
+        parts: List[str] = []
+
+        def walk(el) -> None:
+            if el.text:
+                parts.append(el.text)
+            for child in el:
+                if etree.QName(child).localname == "br":
+                    parts.append(" ")
+                else:
+                    walk(child)
+                if child.tail:
+                    parts.append(child.tail)
+
+        walk(element)
+        return " ".join("".join(parts).split())
+
     def _extract_table_data(self, table_element) -> List[Dict[str, Any]]:
         """Extract structured data from table element."""
         try:
@@ -612,7 +644,7 @@ class DailyMedSPLParserTool(BaseTool):
             thead = table_element.xpath(".//hl7:thead", namespaces=self.ns)
             if thead:
                 header_cells = thead[0].xpath(".//hl7:th", namespaces=self.ns)
-                headers = ["".join(cell.itertext()).strip() for cell in header_cells]
+                headers = [self._cell_text(cell) for cell in header_cells]
 
             # Get table rows
             tbody = table_element.xpath(".//hl7:tbody", namespaces=self.ns)
@@ -620,7 +652,7 @@ class DailyMedSPLParserTool(BaseTool):
                 rows = tbody[0].xpath(".//hl7:tr", namespaces=self.ns)
                 for row in rows:
                     cells = row.xpath(".//hl7:td", namespaces=self.ns)
-                    cell_data = ["".join(cell.itertext()).strip() for cell in cells]
+                    cell_data = [self._cell_text(cell) for cell in cells]
 
                     if cell_data:
                         # Create dict if we have headers
