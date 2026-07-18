@@ -106,10 +106,26 @@ class PubMedRESTTool(BaseRESTTool):
         if limit_val is not None:
             params["retmax"] = max(0, int(limit_val))
 
-        # Forward date-range parameters for esearch
+        # Forward date-range parameters for esearch.
+        # Fix-R16E-1: NCBI's esearch silently ignores mindate/maxdate
+        # entirely unless BOTH are present -- confirmed live that
+        # mindate alone (an open-ended "from this date on" range, the
+        # natural way a caller would use it) returns the exact same
+        # unfiltered count as no date params at all, while mindate+maxdate
+        # together correctly filters. Backfill whichever bound is missing
+        # with a placeholder outside PubMed's real date range so an
+        # open-ended query still filters as the caller intends. Also
+        # confirmed omitting datetype (even with both dates set) silently
+        # changes NCBI's filter basis from publication date to Entrez
+        # date, so default it to "pdat" per this tool's own documented
+        # default whenever any date bound is supplied.
         for date_key in ("mindate", "maxdate", "datetype"):
             if date_key in args and args[date_key]:
                 params[date_key] = args[date_key]
+        if "mindate" in params or "maxdate" in params:
+            params.setdefault("mindate", "1000")
+            params.setdefault("maxdate", "3000")
+            params.setdefault("datetype", "pdat")
 
         # Forward sort parameter for esearch
         # Valid values: pub_date, Author, JournalName, relevance
