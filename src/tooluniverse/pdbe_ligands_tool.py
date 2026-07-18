@@ -60,6 +60,16 @@ class PDBeLigandsTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
+    def _entry_exists(self, pdb_id: str) -> bool:
+        """Check whether a PDB entry exists via the (near-universally populated) summary endpoint."""
+        try:
+            resp = requests.get(
+                f"{PDBE_API_BASE_URL}/summary/{pdb_id}", timeout=self.timeout
+            )
+            return resp.status_code == 200
+        except requests.exceptions.RequestException:
+            return False
+
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
         if self.endpoint == "ligand_monomers":
@@ -81,6 +91,30 @@ class PDBeLigandsTool(BaseTool):
         pdb_id = pdb_id.lower().strip()
         url = f"{PDBE_API_BASE_URL}/ligand_monomers/{pdb_id}"
         response = requests.get(url, timeout=self.timeout)
+        if response.status_code == 404:
+            # Fix-R2A-003: this endpoint 404s whenever an entry has no
+            # non-polymer ligand data — including well-known entries whose
+            # only "ligand" (e.g. a peptidomimetic inhibitor) is modeled as a
+            # polymer chain, not just when the entry itself doesn't exist.
+            # Disambiguate via the summary endpoint instead of reporting a
+            # real, well-known entry as "not found".
+            if self._entry_exists(pdb_id):
+                return {
+                    "status": "success",
+                    "data": {"pdb_id": pdb_id, "ligands": [], "total_ligands": 0},
+                    "metadata": {"source": "PDBe REST API (ebi.ac.uk/pdbe)"},
+                    "note": (
+                        f"PDB entry '{pdb_id}' exists but has no non-polymer "
+                        "ligand data. This commonly means the entry's "
+                        "inhibitor/ligand is modeled as a polymer or peptide "
+                        "chain rather than a discrete non-polymer ligand; "
+                        "check the entry's polymer entities instead."
+                    ),
+                }
+            return {
+                "status": "error",
+                "error": f"PDB entry '{pdb_id}' not found. Provide a valid 4-character PDB ID (e.g., '4hhb', '3ert').",
+            }
         response.raise_for_status()
         data = response.json()
 
@@ -146,6 +180,24 @@ class PDBeLigandsTool(BaseTool):
             url = f"{PDBE_API_BASE_URL}/residue_listing/{pdb_id}"
 
         response = requests.get(url, timeout=self.timeout)
+        if response.status_code == 404:
+            # Fix-R2A-003: see _get_ligand_monomers — a 404 here can mean "no
+            # data for this specific chain/entry at this endpoint" rather than
+            # "entry does not exist". Disambiguate via the summary endpoint.
+            if self._entry_exists(pdb_id):
+                return {
+                    "status": "success",
+                    "data": {"pdb_id": pdb_id, "molecules": []},
+                    "metadata": {"source": "PDBe REST API (ebi.ac.uk/pdbe)"},
+                    "note": (
+                        f"PDB entry '{pdb_id}' exists but has no residue data "
+                        f"at this endpoint{f' for chain {chain_id}' if chain_id else ''}."
+                    ),
+                }
+            return {
+                "status": "error",
+                "error": f"PDB entry '{pdb_id}' not found. Provide a valid 4-character PDB ID (e.g., '4hhb', '3ert').",
+            }
         response.raise_for_status()
         data = response.json()
 

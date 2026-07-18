@@ -7,15 +7,15 @@
       "properties": {
         "pdb_id": {
           "type": "string",
-          "description": "PDB ID to search (e.g., '4HHB', '1CRN'). The structure will be fetched from RCSB PDB."
+          "description": "PDB ID to search (e.g., '4HHB', '1CRN'). The structure will be fetched from RCSB PDB. Required: this API only accepts structure-based (3D coordinate) search, not a raw sequence."
         },
         "sequence": {
           "type": "string",
-          "description": "Amino acid sequence to search (alternative to pdb_id). For sequence-based structure search. Alias: 'query'."
+          "description": "NOT SUPPORTED as a standalone input: the Foldseek search API requires a 3D structure, so submitting a raw sequence without pdb_id always fails. Provide pdb_id instead. Alias: 'query'."
         },
         "query": {
           "type": "string",
-          "description": "Amino acid sequence to search (alias for sequence)."
+          "description": "NOT SUPPORTED as a standalone input: see 'sequence'. Provide pdb_id instead."
         },
         "database": {
           "type": "string",
@@ -24,7 +24,7 @@
         },
         "mode": {
           "type": "string",
-          "description": "Search mode: 'tmalign' (fast 3Di+AA, default), 'tmalign' (TM-align, slower but more sensitive).",
+          "description": "Search mode: '3diaa' (fast 3Di+AA, default), 'tmalign' (TM-align, slower but more sensitive).",
           "default": "3diaa"
         },
         "max_results": {

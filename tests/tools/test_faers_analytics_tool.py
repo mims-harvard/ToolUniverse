@@ -40,15 +40,16 @@ class TestFAERSAnalyticsTool:
         assert result.get("status") in ["success", "error"]
         
         if result.get("status") == "success":
-            assert "metrics" in result
-            assert "ROR" in result["metrics"]
-            assert "PRR" in result["metrics"]
-            assert "IC" in result["metrics"]
-            assert "signal_detection" in result
-            
-            print(f"\n✅ ROR: {result['metrics']['ROR']['value']} "
-                  f"[{result['metrics']['ROR']['ci_95_lower']}-{result['metrics']['ROR']['ci_95_upper']}]")
-            print(f"   Signal: {result['signal_detection']['signal_strength']}")
+            data = result["data"]
+            assert "metrics" in data
+            assert "ROR" in data["metrics"]
+            assert "PRR" in data["metrics"]
+            assert "IC" in data["metrics"]
+            assert "signal_detection" in data
+
+            print(f"\n✅ ROR: {data['metrics']['ROR']['value']} "
+                  f"[{data['metrics']['ROR']['ci_95_lower']}-{data['metrics']['ROR']['ci_95_upper']}]")
+            print(f"   Signal: {data['signal_detection']['signal_strength']}")
         else:
             print(f"\n⚠️  API error (expected for some queries): {result.get('error')}")
     
@@ -65,10 +66,11 @@ class TestFAERSAnalyticsTool:
         assert result.get("status") in ["success", "error"]
         
         if result.get("status") == "success":
-            assert "stratification" in result
-            assert isinstance(result["stratification"], list)
-            print(f"\n✅ Total reports: {result['total_reports']}")
-            for strata in result["stratification"][:3]:
+            data = result["data"]
+            assert "stratification" in data
+            assert isinstance(data["stratification"], list)
+            print(f"\n✅ Total reports: {data['total_reports']}")
+            for strata in data["stratification"][:3]:
                 print(f"   {strata['group']}: {strata['count']} ({strata['percentage']}%)")
         else:
             print(f"\n⚠️  Stratification error: {result.get('error')}")
@@ -85,10 +87,11 @@ class TestFAERSAnalyticsTool:
         assert result.get("status") in ["success", "error"]
         
         if result.get("status") == "success":
-            assert "total_serious_events" in result
-            assert "top_serious_reactions" in result
-            print(f"\n✅ Total serious events: {result['total_serious_events']}")
-            for reaction in result["top_serious_reactions"][:5]:
+            data = result["data"]
+            assert "total_serious_events" in data
+            assert "top_serious_reactions" in data
+            print(f"\n✅ Total serious events: {data['total_serious_events']}")
+            for reaction in data["top_serious_reactions"][:5]:
                 print(f"   {reaction['reaction']}: {reaction['count']}")
         else:
             print(f"\n⚠️  Serious event filtering error: {result.get('error')}")
@@ -106,14 +109,15 @@ class TestFAERSAnalyticsTool:
         assert result.get("status") in ["success", "error"]
         
         if result.get("status") == "success":
-            assert "drug1" in result
-            assert "drug2" in result
-            assert "comparison" in result
-            print(f"\n✅ Comparison: {result['comparison']}")
-            if result["drug1"].get("metrics"):
-                print(f"   {result['drug1']['name']} ROR: {result['drug1']['metrics']['ROR']['value']}")
-            if result["drug2"].get("metrics"):
-                print(f"   {result['drug2']['name']} ROR: {result['drug2']['metrics']['ROR']['value']}")
+            data = result["data"]
+            assert "drug1" in data
+            assert "drug2" in data
+            assert "comparison" in data
+            print(f"\n✅ Comparison: {data['comparison']}")
+            if data["drug1"].get("metrics"):
+                print(f"   {data['drug1']['name']} ROR: {data['drug1']['metrics']['ROR']['value']}")
+            if data["drug2"].get("metrics"):
+                print(f"   {data['drug2']['name']} ROR: {data['drug2']['metrics']['ROR']['value']}")
         else:
             print(f"\n⚠️  Drug comparison error: {result.get('error')}")
     
@@ -129,11 +133,12 @@ class TestFAERSAnalyticsTool:
         assert result.get("status") in ["success", "error"]
         
         if result.get("status") == "success":
-            assert "temporal_data" in result
-            assert "trend_analysis" in result
-            print(f"\n✅ Trend: {result['trend_analysis']['trend']}")
-            print(f"   Percent change: {result['trend_analysis']['percent_change']}%")
-            print(f"   Years analyzed: {result['trend_analysis']['years_analyzed']}")
+            data = result["data"]
+            assert "temporal_data" in data
+            assert "trend_analysis" in data
+            print(f"\n✅ Trend: {data['trend_analysis']['trend']}")
+            print(f"   Percent change: {data['trend_analysis']['percent_change']}%")
+            print(f"   Years analyzed: {data['trend_analysis']['years_analyzed']}")
         else:
             print(f"\n⚠️  Temporal analysis error: {result.get('error')}")
     
@@ -148,10 +153,11 @@ class TestFAERSAnalyticsTool:
         assert result.get("status") in ["success", "error"]
         
         if result.get("status") == "success":
-            assert "meddra_hierarchy" in result
-            assert "PT_level" in result["meddra_hierarchy"]
-            print(f"\n✅ Unique PTs: {result['meddra_hierarchy']['total_unique_PTs']}")
-            for pt in result["meddra_hierarchy"]["PT_level"][:5]:
+            data = result["data"]
+            assert "meddra_hierarchy" in data
+            assert "PT_level" in data["meddra_hierarchy"]
+            print(f"\n✅ Unique PTs: {data['meddra_hierarchy']['total_unique_PTs']}")
+            for pt in data["meddra_hierarchy"]["PT_level"][:5]:
                 print(f"   {pt['preferred_term']}: {pt['count']}")
         else:
             print(f"\n⚠️  MedDRA rollup error: {result.get('error')}")
