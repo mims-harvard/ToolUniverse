@@ -5,6 +5,8 @@ Regression guard for Feature-KRAS-001: the parsers read the WRONG nested paths
 back empty, and sources_with_data falsely listed sources that returned nothing.
 """
 
+from unittest.mock import patch
+
 from tooluniverse.compound_variant_tool import (
     CompoundVariantAnnotationTool,
     _variant_match_forms,
@@ -62,6 +64,41 @@ def test_parse_clinvar_falls_back_to_gene_context_when_no_exact_match():
     assert out["matched"] == 0
     assert out["exact_match"] is False
     assert len(out["variants"]) == 2  # gene-level context, not empty
+
+
+def test_sub_call_error_detects_error_status_dict():
+    """Fix-R2B-003: sub-tools signal failure by returning
+    {"status": "error", ...}, not by raising."""
+    t = _tool()
+    assert t._sub_call_error({"status": "error", "error": "boom"}) == "boom"
+    assert t._sub_call_error({"status": "success", "data": {}}) is None
+    assert t._sub_call_error(None) is None
+
+
+def test_run_records_sub_call_failures_instead_of_empty_success():
+    """Fix-R2B-003: when every underlying source call fails (returns an
+    error dict, e.g. a network outage), the aggregator must report those
+    failures in sources_failed rather than silently treating them as
+    "gene has zero known variants" (a dangerous false negative for a
+    clinically significant gene like BRCA1)."""
+    t = _tool()
+
+    def fake_run_one_function(call):
+        return {"status": "error", "error": "Could not find a suitable TLS CA certificate bundle"}
+
+    with patch(
+        "tooluniverse.execute_function.ToolUniverse.run_one_function",
+        side_effect=fake_run_one_function,
+    ), patch(
+        "tooluniverse.execute_function.ToolUniverse.load_tools", return_value=None
+    ):
+        result = t.run({"gene": "BRCA1", "rsid": "rs80357906"})
+
+    data = result["data"]
+    assert data["annotations"] == {}
+    assert len(data["sources_failed"]) == 4
+    assert all("TLS" in msg for msg in data["sources_failed"])
+    assert data["sources_queried"] == []
 
 
 def test_sources_with_data_is_honest():
