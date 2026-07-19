@@ -47,9 +47,26 @@ class PDBeSIFTSTool(BaseTool):
         except requests.exceptions.ConnectionError:
             return {"status": "error", "error": "Failed to connect to PDBe SIFTS API"}
         except requests.exceptions.HTTPError as e:
+            status_code = e.response.status_code if e.response is not None else None
+            if status_code == 404:
+                # Fix-R18A-3: a bare "HTTP error: 404" doesn't distinguish
+                # a genuinely broken request from PDBe simply having no
+                # mapping data of this type for an otherwise-valid entry
+                # (confirmed live: PDBeSIFTS_get_scop_mapping 404s for
+                # 3k34, which has real PDB/ligand data elsewhere -- SCOP
+                # classification just doesn't cover it).
+                return {
+                    "status": "error",
+                    "error": (
+                        f"PDBe SIFTS API returned no {self.endpoint} mapping "
+                        "for this entry (HTTP 404). This usually means the "
+                        "entry exists but has no data of this specific type "
+                        "in SIFTS, not that the request itself is invalid."
+                    ),
+                }
             return {
                 "status": "error",
-                "error": f"PDBe SIFTS API HTTP error: {e.response.status_code}",
+                "error": f"PDBe SIFTS API HTTP error: {status_code}",
             }
         except Exception as e:
             return {
