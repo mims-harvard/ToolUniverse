@@ -42,7 +42,7 @@
   {
     "name": "GMrepo_get_phenotypes",
     "type": "GmrepoTool",
-    "description": "List phenotypes and health conditions with gut microbiome data in the GMrepo database. Returns MeSH disease IDs, sample counts, and species/genus diversity for each phenotype. Optionally filter by keyword (e.g., 'diabetes', 'obesity', 'cancer'). GMrepo covers 350+ phenotypes including healthy controls. Use this to find what conditions have microbiome data available.",
+    "description": "List phenotypes and health conditions with gut microbiome data in the GMrepo database. Returns MeSH disease IDs, sample counts, and species/genus diversity for each phenotype. Optionally filter with the `query` parameter (e.g., 'diabetes', 'obesity', 'cancer'). GMrepo covers 350+ phenotypes including healthy controls. Use this to find what conditions have microbiome data available.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -57,7 +57,8 @@
           "default": 20
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint_type": "get_phenotypes"
