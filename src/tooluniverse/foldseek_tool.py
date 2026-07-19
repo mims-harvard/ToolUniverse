@@ -74,7 +74,11 @@ class FoldseekTool(BaseRESTTool):
         # Accept 'query' as alias for 'sequence'
         sequence = (arguments.get("sequence") or arguments.get("query") or "").strip()
         database = arguments.get("database", "afdb50")
-        mode = arguments.get("mode", "tmalign")
+        # Match the JSON schema's documented default -- this previously
+        # disagreed with it ("tmalign" here vs "3diaa" in the schema),
+        # so an omitted mode silently ran the slower TM-align mode instead
+        # of the documented fast 3diaa default.
+        mode = arguments.get("mode", "3diaa")
         max_results = min(int(arguments.get("max_results", 10)), 50)
 
         if not pdb_id and not sequence:

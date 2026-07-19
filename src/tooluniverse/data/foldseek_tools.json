@@ -24,7 +24,7 @@
         },
         "mode": {
           "type": "string",
-          "description": "Search mode: 'tmalign' (fast 3Di+AA, default), 'tmalign' (TM-align, slower but more sensitive).",
+          "description": "Search mode: '3diaa' (fast 3Di+AA, default), 'tmalign' (TM-align, slower but more sensitive).",
           "default": "3diaa"
         },
         "max_results": {

@@ -1078,7 +1078,8 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of alleles to return (default 50)"
+          "description": "Maximum number of alleles to return (default 50)",
+          "default": 50
         }
       },
       "required": [

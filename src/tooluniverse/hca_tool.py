@@ -62,7 +62,10 @@ class HCATool(BaseTool):
             filters["organ"] = {"is": [organ]}
 
         if disease:
-            filters["disease"] = {"is": [disease]}
+            # Azul's facet is "donorDisease", not "disease" -- the latter is
+            # rejected outright with a 400 "Additional properties are not
+            # allowed" error (confirmed live).
+            filters["donorDisease"] = {"is": [disease]}
 
         params = {"size": limit, "filters": json.dumps(filters) if filters else "{}"}
 
@@ -73,17 +76,21 @@ class HCATool(BaseTool):
 
             projects = []
             for hit in data.get("hits", []):
-                # Extract relevant info to make it cleaner
+                # organ/disease live under the nested specimens/donorOrganisms
+                # arrays as plain string lists, not top-level "modelOrgan"/
+                # "donorDisease" dict keys (confirmed live) -- those top-level
+                # keys don't exist in the hit at all, so reading them always
+                # silently returned None.
+                specimens = hit.get("specimens") or [{}]
+                donors = hit.get("donorOrganisms") or [{}]
                 projects.append(
                     {
                         "entryId": hit.get("entryId"),
                         "projectTitle": hit.get("projects", [{}])[0].get(
                             "projectTitle"
                         ),
-                        "organ": hit.get("modelOrgan", {}).get(
-                            "terms"
-                        ),  # Inspect structure showed modelOrgan
-                        "donorDisease": hit.get("donorDisease", {}).get("terms"),
+                        "organ": specimens[0].get("organ"),
+                        "donorDisease": donors[0].get("disease"),
                     }
                 )
 
