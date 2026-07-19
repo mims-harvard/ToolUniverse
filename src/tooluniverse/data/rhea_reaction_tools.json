@@ -60,10 +60,22 @@
                     "type": "object",
                     "properties": {
                       "chebi_id": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChEBI compound id, e.g. \"CHEBI:30616\". Null for generic/polymer participants (see rhea_comp_id)."
                       },
                       "name": {
                         "type": "string"
+                      },
+                      "is_generic": {
+                        "type": "boolean",
+                        "description": "True if this participant is a generic/polymer reactive part (e.g. a protein residue like \"L-tyrosyl-[protein]\") rather than a discrete ChEBI compound."
+                      },
+                      "rhea_comp_id": {
+                        "type": "string",
+                        "description": "Rhea generic-compound id, e.g. \"RHEA-COMP:10136\". Present only when is_generic is true."
                       }
                     }
                   }
@@ -74,10 +86,22 @@
                     "type": "object",
                     "properties": {
                       "chebi_id": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChEBI compound id, e.g. \"CHEBI:30616\". Null for generic/polymer participants (see rhea_comp_id)."
                       },
                       "name": {
                         "type": "string"
+                      },
+                      "is_generic": {
+                        "type": "boolean",
+                        "description": "True if this participant is a generic/polymer reactive part (e.g. a protein residue like \"L-tyrosyl-[protein]\") rather than a discrete ChEBI compound."
+                      },
+                      "rhea_comp_id": {
+                        "type": "string",
+                        "description": "Rhea generic-compound id, e.g. \"RHEA-COMP:10136\". Present only when is_generic is true."
                       }
                     }
                   }
@@ -206,10 +230,22 @@
                     "type": "object",
                     "properties": {
                       "chebi_id": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChEBI compound id, e.g. \"CHEBI:30616\". Null for generic/polymer participants (see rhea_comp_id)."
                       },
                       "name": {
                         "type": "string"
+                      },
+                      "is_generic": {
+                        "type": "boolean",
+                        "description": "True if this participant is a generic/polymer reactive part (e.g. a protein residue like \"L-tyrosyl-[protein]\") rather than a discrete ChEBI compound."
+                      },
+                      "rhea_comp_id": {
+                        "type": "string",
+                        "description": "Rhea generic-compound id, e.g. \"RHEA-COMP:10136\". Present only when is_generic is true."
                       }
                     }
                   }
@@ -220,10 +256,22 @@
                     "type": "object",
                     "properties": {
                       "chebi_id": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChEBI compound id, e.g. \"CHEBI:30616\". Null for generic/polymer participants (see rhea_comp_id)."
                       },
                       "name": {
                         "type": "string"
+                      },
+                      "is_generic": {
+                        "type": "boolean",
+                        "description": "True if this participant is a generic/polymer reactive part (e.g. a protein residue like \"L-tyrosyl-[protein]\") rather than a discrete ChEBI compound."
+                      },
+                      "rhea_comp_id": {
+                        "type": "string",
+                        "description": "Rhea generic-compound id, e.g. \"RHEA-COMP:10136\". Present only when is_generic is true."
                       }
                     }
                   }

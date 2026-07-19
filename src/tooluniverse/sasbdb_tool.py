@@ -86,12 +86,22 @@ class SASBDBTextSearchTool(BaseTool):
                     "error": f"SASBDB API error: HTTP {resp.status_code}",
                 }
             entries = resp.json()
+            # This "list everything" fallback previously returned all
+            # ~5432 entries unbounded (~350KB) with no way to cap it --
+            # confirmed live. Apply the same client-side cap pattern used
+            # elsewhere in the project (e.g. HPA_search_genes_by_query).
+            max_results = arguments.get("max_results") or 50
+            total = len(entries)
+            truncated_entries = entries[:max_results]
             return {
                 "status": "success",
-                "data": entries,
+                "data": truncated_entries,
+                "total_entries": total,
+                "truncated": total > len(truncated_entries),
                 "note": (
                     f"SASBDB does not support free-text search. "
-                    f"Returned all {len(entries)} published entries. "
+                    f"Returned {len(truncated_entries)} of {total} published entries "
+                    f"(pass max_results to change the cap). "
                     f"To search by protein, provide a UniProt accession (e.g., 'P02769' for BSA). "
                     f"Use SASBDB_get_entry with a specific code (e.g., 'SASDCZ9') for details."
                 ),

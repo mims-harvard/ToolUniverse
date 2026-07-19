@@ -182,6 +182,20 @@ class MassIVETool(BaseTool):
             )
             resp.raise_for_status()
             return {"ok": True, "data": resp.json()}
+        except requests.exceptions.HTTPError as e:
+            # ProXI 4xx/5xx responses carry a real, more useful reason in
+            # their JSON body (confirmed live:
+            # {"code":404,"title":"Not Found","message":"No data found for
+            # the specified parameters."}) that plain str(e) discards,
+            # leaving only the generic "404 Client Error: ..." text.
+            message = None
+            if e.response is not None:
+                try:
+                    message = e.response.json().get("message")
+                except ValueError:
+                    pass
+            base = f"MassIVE API error: {e}"
+            return {"ok": False, "error": f"{base} ({message})" if message else base}
         except requests.exceptions.RequestException as e:
             return {"ok": False, "error": f"MassIVE API error: {e}"}
         except ValueError:

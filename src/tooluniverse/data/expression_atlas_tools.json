@@ -1,7 +1,7 @@
 [
   {
     "name": "ExpressionAtlas_get_baseline",
-    "description": "Get baseline gene expression experiments from EBI Expression Atlas. Shows which tissues/cell types express a gene under normal conditions. Complements GTEx and HPA. No API key needed. Query by gene symbol or Ensembl ID.",
+    "description": "List baseline (normal-condition) expression EXPERIMENTS in EBI Expression Atlas for a species, with any experiments whose description happens to mention the queried gene sorted first. Complements GTEx and HPA. No API key needed. Caveat: this does not return actual per-gene expression values, and the 'mentions the gene' tagging is a text-search coincidence that almost never matches for baseline experiments -- for real tissue-level expression values for a specific gene, use GTEx or HPA tools instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -138,7 +138,7 @@
   },
   {
     "name": "ExpressionAtlas_search_differential",
-    "description": "Search for differential expression experiments from EBI Expression Atlas. Find experiments where a gene is differentially expressed in disease vs. normal, treated vs. untreated, etc. Supports disease-context expression analysis.",
+    "description": "Search for differential expression EXPERIMENTS from EBI Expression Atlas by condition text and/or a gene mentioned in the experiment description. Supports disease-context expression analysis. Caveat: `condition` does real text filtering, but `gene` is a text-search coincidence (experiment descriptions rarely name individual genes) and does not return actual per-gene differential-expression values -- treat gene-tagged results as a starting point for manual review, not a validated gene-specific result set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -275,7 +275,7 @@
   },
   {
     "name": "ExpressionAtlas_search_experiments",
-    "description": "Search all EBI Expression Atlas experiments (baseline + differential) by gene and/or condition. Returns experiment accessions, types, descriptions, and assay counts. Use to find relevant expression datasets.",
+    "description": "Search all EBI Expression Atlas experiments (baseline + differential) by condition text and/or a gene mentioned in the experiment description. Returns experiment accessions, types, descriptions, and assay counts. Caveat: `condition` does real text filtering, but `gene` is a text-search coincidence (experiment descriptions rarely name individual genes), so a gene-only query effectively returns the unfiltered catalog -- use to find relevant expression datasets, not as a validated per-gene result set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -413,7 +413,7 @@
   },
   {
     "name": "ExpressionAtlas_get_experiment",
-    "description": "Get detailed metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836). Returns experiment design, species, technology, contrasts, PubMed references, and number of assays.",
+    "description": "Get metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836): accession, type, species, and description/URLs. Caveat: the underlying GXA API does not expose per-experiment design/technology/contrasts/PubMed/assay-count data through this endpoint (confirmed live: those fields are always empty) -- for that level of detail, visit the experiment's page on https://www.ebi.ac.uk/gxa directly.",
     "parameter": {
       "type": "object",
       "properties": {

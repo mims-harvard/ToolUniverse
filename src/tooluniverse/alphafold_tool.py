@@ -123,6 +123,25 @@ class AlphaFoldRESTTool(BaseTool):
 
         return {"response": resp}
 
+    @staticmethod
+    def _response_count(data: Any) -> int:
+        """Best-effort result count across this tool's many differently-
+        shaped AlphaFold endpoints. Several (e.g. /uniprot/summary, which
+        wraps its real payload as {"uniprot_entry": ..., "structures":
+        [...]}, or /annotations, which wraps it as {..., "annotation":
+        [...]}) return a dict whose only list-valued field is the actual
+        result list -- report that list's length instead of a hardcoded 1,
+        which was always wrong for these shapes (confirmed live: P69905's
+        /uniprot/summary carries 16 structures, not the 1 the old code
+        reported)."""
+        if isinstance(data, list):
+            return len(data)
+        if isinstance(data, dict):
+            for value in data.values():
+                if isinstance(value, list):
+                    return len(value)
+        return 1
+
     def run(self, arguments: Dict[str, Any]):
         """Execute the tool with provided arguments."""
         # Normalize uniprot_id / uniprot_accession → qualifier
@@ -172,7 +191,7 @@ class AlphaFoldRESTTool(BaseTool):
                     "status": "success",
                     "data": data,
                     "metadata": {
-                        "count": len(data) if isinstance(data, list) else 1,
+                        "count": self._response_count(data),
                         "source": "AlphaFold Protein Structure DB",
                         "endpoint": url,
                         "query": arguments,

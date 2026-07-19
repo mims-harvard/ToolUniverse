@@ -87,12 +87,13 @@ class TestPharosToolDirect:
         config = tool_config["Pharos_search_targets"]
         tool = PharosTool(config)
         result = tool.run({"query": "GPCR", "tdl": "Tdark", "top": 5})
-        
+
         assert result["status"] == "success"
-        # Results should be Tdark targets
+        # Fix-R20E-2: the tdl filter is applied via Pharos' facets
+        # mechanism; every returned target must actually be Tdark.
+        assert len(result["data"]["targets"]) > 0
         for target in result["data"]["targets"]:
-            if "idgTDL" in target:
-                assert target["idgTDL"] == "Tdark"
+            assert target["tdl"] == "Tdark"
 
     def test_search_targets_missing_query(self, tool_config):
         """Test error when query is missing."""
@@ -121,6 +122,11 @@ class TestPharosToolDirect:
         assert "Tchem" in result["data"]["tdl_levels"]
         assert "Tbio" in result["data"]["tdl_levels"]
         assert "Tdark" in result["data"]["tdl_levels"]
+        # Fix-R20E-3: the tool's own description promises real counts by
+        # TDL -- verify they're actually populated, not just static labels.
+        counts = result["data"]["counts"]
+        assert all(counts[level] > 0 for level in result["data"]["tdl_levels"])
+        assert result["data"]["total_targets"] == sum(counts.values())
 
     def test_get_disease_targets(self, tool_config):
         """Test getting targets for a disease."""
