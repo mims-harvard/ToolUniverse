@@ -122,11 +122,40 @@ class MetabolomicsWorkbenchTool(BaseTool):
 
                 return {"status": "success", "data": data}
             except ValueError:
-                # Return as text if not JSON (though we requested JSON)
+                # Some endpoints (confirmed live: moverz/REFMET exact-mass
+                # search, and study "metabolites" output) ignore the
+                # requested "/json" suffix and return plain tab-separated
+                # text instead. Parse that into structured rows rather
+                # than handing back one giant string with literal \t/\n
+                # characters embedded -- harder for any downstream
+                # consumer to use than the JSON every sibling endpoint
+                # returns.
+                parsed = self._parse_tsv_text(response.text)
+                if parsed is not None:
+                    return {"status": "success", "data": parsed}
                 return {"status": "success", "data": response.text}
 
         except requests.RequestException as e:
             raise self.handle_error(e)
+
+    @staticmethod
+    def _parse_tsv_text(text: str):
+        """Parse a tab-separated response body into a list of row dicts.
+
+        Returns None (caller falls back to the raw string) if the text
+        doesn't actually look like a tab-delimited table.
+        """
+        lines = [ln for ln in text.strip().split("\n") if ln]
+        if len(lines) < 2 or "\t" not in lines[0]:
+            return None
+        headers = lines[0].split("\t")
+        rows = []
+        for line in lines[1:]:
+            values = line.split("\t")
+            rows.append(
+                {h: values[i] if i < len(values) else "" for i, h in enumerate(headers)}
+            )
+        return rows
 
     def _normalize_numeric_fields(self, data: Any) -> Any:
         """Convert numeric string fields to actual numbers."""

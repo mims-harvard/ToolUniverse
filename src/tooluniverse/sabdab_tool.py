@@ -150,6 +150,35 @@ class SAbDabTool(BaseTool):
 
             # Extract metadata from PDB REMARK lines
             pdb_content = response.text
+
+            # SAbDab migrated to a React SPA that serves the same generic
+            # HTML app shell for every route including this download
+            # endpoint (confirmed live: /pdb/<id>/ 200s with
+            # "<!doctype html>..." instead of PDB coordinate records) --
+            # detect that before claiming success, rather than reporting
+            # the HTML page's byte count/preview as if it were structure
+            # data.
+            first_line = pdb_content.lstrip().splitlines()[0] if pdb_content else ""
+            looks_like_pdb = first_line[:6].strip() in (
+                "HEADER",
+                "ATOM",
+                "HETATM",
+                "TITLE",
+                "REMARK",
+                "COMPND",
+            )
+            if not looks_like_pdb:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"SAbDab did not return PDB structure data for {pdb_id} "
+                        "(got non-PDB content, likely an HTML page from "
+                        "SAbDab's current site). The structure/site layout "
+                        "may have changed; try downloading directly from "
+                        f"{pdb_url}."
+                    ),
+                }
+
             metadata = {"pdb_id": pdb_id}
 
             # Parse REMARK 5 lines which contain SAbDab annotations
@@ -274,7 +303,10 @@ class SAbDabTool(BaseTool):
                     "status": "error",
                     "error": (
                         f"SAbDab did not return tabular data for {pdb_id} "
-                        "(structure may not be an antibody complex)."
+                        "(got non-tabular content, likely an HTML page from "
+                        "SAbDab's current site, rather than 'structure may "
+                        "not be an antibody complex' -- confirmed live this "
+                        "now happens even for known antibody structures)."
                     ),
                 }
 

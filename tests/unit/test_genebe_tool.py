@@ -36,6 +36,26 @@ _BRAF = {
     "curate_time": "internal",  # not in _USEFUL_FIELDS -> trimmed away
 }
 
+# Real shape confirmed live: hgvs_c/hgvs_p/effects live nested under
+# acmg_by_gene[0], not at the variant's own top level.
+_CFTR_G551D = {
+    "gene_symbol": "CFTR",
+    "transcript": "NM_000492.4",
+    "acmg_classification": "Pathogenic",
+    "acmg_score": 21,
+    "dbsnp": "rs75527207",
+    "alphamissense_score": 0.9897,
+    "acmg_by_gene": [
+        {
+            "gene_symbol": "CFTR",
+            "transcript": "NM_000492.4",
+            "hgvs_c": "c.1652G>A",
+            "hgvs_p": "p.Gly551Asp",
+            "effects": ["missense_variant"],
+        }
+    ],
+}
+
 
 class TestGeneBe(unittest.TestCase):
     def test_missing_params_rejected(self):
@@ -84,6 +104,39 @@ class TestGeneBe(unittest.TestCase):
             result = tool.run({"chr": "7", "pos": 1, "ref": "A", "alt": "T"})
         self.assertEqual(result["status"], "error")
         self.assertIn("rate limit", result["error"].lower())
+
+    def test_hgvs_and_effects_pulled_from_nested_acmg_by_gene(self):
+        """Fix-R22D-2: hgvs_c/hgvs_p/effects were silently dropped because
+        the tool looked for them at the variant's own top level, but
+        GeneBe's real API only puts them under acmg_by_gene[0] -- confirmed
+        live for CFTR G551D (rs75527207)."""
+        tool = _make_tool()
+        with patch("tooluniverse.genebe_tool.requests.get") as get:
+            get.return_value = _resp(200, [_CFTR_G551D])
+            result = tool.run(
+                {"chr": "7", "pos": 117587806, "ref": "G", "alt": "A", "genome": "hg38"}
+            )
+
+        d = result["data"]
+        self.assertEqual(d["hgvs_c"], "c.1652G>A")
+        self.assertEqual(d["hgvs_p"], "p.Gly551Asp")
+        self.assertEqual(d["effects"], ["missense_variant"])
+        # top-level fields still extracted as before
+        self.assertEqual(d["gene_symbol"], "CFTR")
+        self.assertEqual(d["transcript"], "NM_000492.4")
+
+    def test_missing_acmg_by_gene_does_not_crash(self):
+        """A variant response without an acmg_by_gene block (e.g. no gene
+        overlap) must not raise -- hgvs_c/hgvs_p/effects are simply absent."""
+        tool = _make_tool()
+        with patch("tooluniverse.genebe_tool.requests.get") as get:
+            get.return_value = _resp(200, [_BRAF])  # no acmg_by_gene key
+            result = tool.run({"chr": "7", "pos": 140753336, "ref": "A", "alt": "T"})
+
+        self.assertEqual(result["status"], "success")
+        self.assertNotIn("hgvs_c", result["data"])
+        self.assertNotIn("hgvs_p", result["data"])
+        self.assertNotIn("effects", result["data"])
 
 
 if __name__ == "__main__":

@@ -602,7 +602,7 @@
       "properties": {
         "paper_id": {
           "type": "string",
-          "description": "Paper identifier whose CITING papers to list. Semantic Scholar ID (e.g., '649def34f8be52c8b66281af98ae884c09aef38b' for 'Attention Is All You Need'), or DOI:/PMID:/ArXiv:/CorpusId: prefixed identifier."
+          "description": "Paper identifier whose CITING papers to list. Semantic Scholar ID (e.g., '204e3073870fae3d05bcbc2f6a8e263d9b72e776' for 'Attention Is All You Need'), or DOI:/PMID:/ArXiv:/CorpusId: prefixed identifier."
         },
         "fields": {
           "type": "string",
@@ -629,11 +629,11 @@
     "type": "BaseRESTTool",
     "test_examples": [
       {
-        "paper_id": "649def34f8be52c8b66281af98ae884c09aef38b",
+        "paper_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
         "limit": 2
       },
       {
-        "paper_id": "649def34f8be52c8b66281af98ae884c09aef38b",
+        "paper_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
         "fields": "intents,isInfluential,contexts,title,year",
         "limit": 3
       }
@@ -734,7 +734,7 @@
       "properties": {
         "paper_id": {
           "type": "string",
-          "description": "Paper identifier whose REFERENCES (cited papers) to list. Semantic Scholar ID (e.g., '649def34f8be52c8b66281af98ae884c09aef38b' for 'Attention Is All You Need'), or DOI:/PMID:/ArXiv:/CorpusId: prefixed identifier."
+          "description": "Paper identifier whose REFERENCES (cited papers) to list. Semantic Scholar ID (e.g., '204e3073870fae3d05bcbc2f6a8e263d9b72e776' for 'Attention Is All You Need'), or DOI:/PMID:/ArXiv:/CorpusId: prefixed identifier."
         },
         "fields": {
           "type": "string",
@@ -761,11 +761,11 @@
     "type": "BaseRESTTool",
     "test_examples": [
       {
-        "paper_id": "649def34f8be52c8b66281af98ae884c09aef38b",
+        "paper_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
         "limit": 2
       },
       {
-        "paper_id": "649def34f8be52c8b66281af98ae884c09aef38b",
+        "paper_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
         "fields": "intents,isInfluential,title,year",
         "limit": 3
       }

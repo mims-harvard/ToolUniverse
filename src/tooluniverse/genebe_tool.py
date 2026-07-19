@@ -41,12 +41,15 @@ _BUILD_MAP = {
 }
 
 # The raw record has ~54 fields; surface the clinically useful subset.
+# hgvs_c/hgvs_p/effects are NOT among the variant's own top-level fields
+# despite living in this same "useful" tier -- they only exist nested one
+# level down, per gene, under acmg_by_gene[*] (see _GENE_LEVEL_FIELDS
+# below and where it's applied in run()). Confirmed live: the top-level
+# lookup `v.get("hgvs_c")` always misses and these fields were silently
+# dropped from every response.
 _USEFUL_FIELDS = (
     "gene_symbol",
     "transcript",
-    "effects",
-    "hgvs_c",
-    "hgvs_p",
     "acmg_classification",
     "acmg_score",
     "acmg_criteria",
@@ -57,6 +60,10 @@ _USEFUL_FIELDS = (
     "gnomad_exomes_af",
     "frequency_reference_population",
 )
+
+# Present only under variant["acmg_by_gene"][0], not at the variant's own
+# top level -- pulled in separately in run().
+_GENE_LEVEL_FIELDS = ("hgvs_c", "hgvs_p", "effects")
 
 
 @register_tool("GeneBeTool")
@@ -142,6 +149,11 @@ class GeneBeTool(BaseTool):
 
         v = variants[0]
         data = {k: v[k] for k in _USEFUL_FIELDS if v.get(k) not in (None, "")}
+        by_gene = (v.get("acmg_by_gene") or [{}])[0]
+        for key in _GENE_LEVEL_FIELDS:
+            val = by_gene.get(key)
+            if val not in (None, "", []):
+                data[key] = val
         data["variant"] = f"{params['chr']}-{pos}-{ref}-{alt}"
         return {
             "status": "success",

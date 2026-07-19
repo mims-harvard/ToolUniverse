@@ -15,7 +15,8 @@ and the adduct-m/z table that LIPID MAPS does not provide.
 API: https://www.swisslipids.org/api/index.php (public, no key).
 """
 
-from typing import Any, Dict, List
+import re
+from typing import Any, Dict, List, Optional
 
 import requests
 
@@ -23,6 +24,17 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 SWISSLIPIDS_API = "https://www.swisslipids.org/api/index.php"
+
+# SwissLipids embeds pseudo-XML markup for stereodescriptors in entity names,
+# e.g. "6-(<greek>alpha</greek>-<stereo>D</stereo>-glucosaminyl)..." -- strip
+# the tags but keep their text content so names stay readable.
+_NAME_MARKUP_RE = re.compile(r"</?(?:greek|stereo)>")
+
+
+def _clean_lipid_name(name: Optional[str]) -> Optional[str]:
+    if not name:
+        return name
+    return _NAME_MARKUP_RE.sub("", name)
 
 
 @register_tool("SwissLipidsTool")
@@ -95,10 +107,20 @@ class SwissLipidsTool(BaseTool):
         if err:
             return err
         hits = body if isinstance(body, list) else []
+        # The API's own ordering buries an exact-name match under derivative
+        # entries (e.g. searching "cholesterol" returns 87 cholesteryl-ester
+        # derivatives before the "cholesterol" entry itself) -- boost an exact
+        # case-insensitive name match to the front so it survives truncation
+        # to `limit`. Sort is stable, so relative order is otherwise unchanged.
+        term_lower = str(term).strip().lower()
+        hits = sorted(
+            hits,
+            key=lambda h: (h.get("entity_name") or "").strip().lower() != term_lower,
+        )
         results = [
             {
                 "entity_id": h.get("entity_id"),
-                "entity_name": h.get("entity_name"),
+                "entity_name": _clean_lipid_name(h.get("entity_name")),
                 "entity_type": h.get("entity_type"),
                 "classification_level": h.get("classification_level"),
             }
@@ -163,7 +185,7 @@ class SwissLipidsTool(BaseTool):
             "status": "success",
             "data": {
                 "entity_id": entry.get("entity_id"),
-                "entity_name": entry.get("entity_name"),
+                "entity_name": _clean_lipid_name(entry.get("entity_name")),
                 "entity_type": entry.get("entity_type"),
                 "formula": chem.get("formula"),
                 "mass": chem.get("mass"),
@@ -216,7 +238,7 @@ class SwissLipidsTool(BaseTool):
                     children.append(
                         {
                             "entity_id": child.get("entity_id"),
-                            "entity_name": child.get("entity_name"),
+                            "entity_name": _clean_lipid_name(child.get("entity_name")),
                             "entity_type": child.get("entity_type"),
                             "formula": child.get("formula"),
                             "mass": child.get("mass"),

@@ -57,6 +57,20 @@ class TestAnnotations404:
         assert result["data"]["annotation_count"] == 1
         assert result["data"]["annotations"][0]["type"] == "DOMAIN"
 
+    def test_missing_type_gives_clear_error_not_raw_422(self):
+        """Fix-R22A-3: the upstream 3D Beacons annotations endpoint 422s
+        with "type: Field required" when `type` is omitted -- confirmed
+        live it is not actually optional, contradicting this tool's old
+        "omit to return all annotation types" description. run() itself
+        (bypassing JSON-schema validation, which now also independently
+        rejects a missing `type`) must give a clear, actionable error
+        rather than ever reaching the upstream request."""
+        with patch("tooluniverse.three_d_beacons_tool.requests.get") as mock_get:
+            result = _tool().run({"accession": "P04626"})
+        assert result["status"] == "error"
+        assert "type parameter is required" in result["error"]
+        mock_get.assert_not_called()
+
     def test_non_404_http_error_still_errors(self):
         import requests
 
