@@ -77,8 +77,23 @@ class NeuroMorphoTool(BaseTool):
                 "error": "Failed to connect to NeuroMorpho API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
-            status = e.response.status_code if e.response else "unknown"
-            return {"status": "error", "error": f"NeuroMorpho API HTTP error: {status}"}
+            # `bool(e.response)` is `requests.Response.ok`, which is False for
+            # every 4xx/5xx response -- so `e.response else "unknown"` always
+            # discarded the real status code on an actual HTTP error. Use an
+            # explicit None check, and surface the upstream JSON body's own
+            # "message" field (e.g. "Requested neuron not found") when present.
+            status = e.response.status_code if e.response is not None else "unknown"
+            detail = None
+            if e.response is not None:
+                try:
+                    detail = e.response.json().get("message")
+                except ValueError:
+                    pass
+            base = f"NeuroMorpho API HTTP error: {status}"
+            return {
+                "status": "error",
+                "error": f"{base} ({detail})" if detail else base,
+            }
         except Exception as e:
             return {
                 "status": "error",

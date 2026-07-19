@@ -43,6 +43,26 @@ COLUMN_NAMES = [
     "vdjdb.score",
 ]
 
+# VDJdb's `species` column is an exact-match filter restricted to these 3
+# CamelCase values -- common plain-language aliases (confirmed live:
+# "human" silently matched zero of the 20,139 real HomoSapiens records)
+# are normalized here rather than left to fail silently.
+_SPECIES_ALIASES = {
+    "human": "HomoSapiens",
+    "homosapiens": "HomoSapiens",
+    "mouse": "MusMusculus",
+    "musmusculus": "MusMusculus",
+    "macaque": "MacacaMulatta",
+    "monkey": "MacacaMulatta",
+    "macacamulatta": "MacacaMulatta",
+}
+
+
+def _normalize_species(species: Optional[str]) -> Optional[str]:
+    if not species:
+        return species
+    return _SPECIES_ALIASES.get(species.strip().lower(), species)
+
 
 def _parse_row(entries: List[str], metadata: Dict) -> Dict[str, Any]:
     """Parse a raw VDJdb search row into a structured dictionary."""
@@ -168,7 +188,7 @@ class VDJDBTool(BaseTool):
         if not cdr3:
             return {"status": "error", "error": "cdr3 parameter is required"}
 
-        species = arguments.get("species")
+        species = _normalize_species(arguments.get("species"))
         gene = arguments.get("gene")
         match_type = arguments.get("match_type", "exact")
         page = arguments.get("page", 0)
@@ -258,7 +278,7 @@ class VDJDBTool(BaseTool):
         if not epitope:
             return {"status": "error", "error": "epitope parameter is required"}
 
-        species = arguments.get("species")
+        species = _normalize_species(arguments.get("species"))
         gene = arguments.get("gene")
         mhc_class = arguments.get("mhc_class")
         min_score = arguments.get("min_score")

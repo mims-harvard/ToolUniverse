@@ -113,6 +113,15 @@ class IPDIMGTHLATool(BaseTool):
         if not name:
             return {"status": "error", "error": "name parameter is required"}
 
+        # The IPD-IMGT/HLA `name` field is stored without the "HLA-" locus
+        # prefix (e.g. "A*02:01:01:01"), but that prefixed form is exactly
+        # what sibling HLA tools like VDJDB return (mhc.a: "HLA-A*02:01")
+        # -- confirmed live that passing it straight through silently
+        # matched zero alleles. Strip it so a natural cross-tool chain
+        # (VDJDB output -> this tool's input) works.
+        if name.upper().startswith("HLA-"):
+            name = name[4:]
+
         match = self._resolve_match(arguments, "startsWith")
         if self._is_api_error(match):
             return match

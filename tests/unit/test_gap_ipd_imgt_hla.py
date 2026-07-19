@@ -119,6 +119,28 @@ def test_search_alleles_invalid_match_mode_errors():
     assert "match" in result["error"].lower()
 
 
+def test_search_alleles_strips_hla_prefix():
+    """Fix-R21B-1: sibling HLA tools (e.g. VDJDB) return allele names with
+    an "HLA-" locus prefix (mhc.a: "HLA-A*02:01"), which the IPD-IMGT/HLA
+    `name` field itself doesn't carry -- confirmed live this silently
+    matched zero alleles before the prefix was stripped."""
+    tool = _make_tool("IPD_search_hla_alleles")
+    with patch("tooluniverse.ipd_imgt_hla_tool.requests.get") as mock_get:
+        mock_get.return_value = _mock_response(json_data={"data": [], "meta": {}})
+        tool.run({"name": "HLA-A*02:01"})
+    _, kwargs = mock_get.call_args
+    assert kwargs["params"]["query"] == 'startsWith(name,"A*02:01")'
+
+
+def test_search_alleles_hla_prefix_case_insensitive():
+    tool = _make_tool("IPD_search_hla_alleles")
+    with patch("tooluniverse.ipd_imgt_hla_tool.requests.get") as mock_get:
+        mock_get.return_value = _mock_response(json_data={"data": [], "meta": {}})
+        tool.run({"name": "hla-A*02:01"})
+    _, kwargs = mock_get.call_args
+    assert kwargs["params"]["query"] == 'startsWith(name,"A*02:01")'
+
+
 def test_search_alleles_limit_clamped():
     tool = _make_tool("IPD_search_hla_alleles")
     with patch("tooluniverse.ipd_imgt_hla_tool.requests.get") as mock_get:
