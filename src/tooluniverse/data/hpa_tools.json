@@ -96,6 +96,10 @@
         "search_query": {
           "type": "string",
           "description": "Gene name, alias, keyword, or cell line name to search for, e.g., 'EGFR', 'TP53', or 'MCF7'."
+        },
+        "max_results": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of gene matches to return (default: 50). This search does a broad full-text match with no server-side limit, so a short/common query can otherwise return thousands of results; exact gene-symbol matches are ranked first."
         }
       },
       "required": [

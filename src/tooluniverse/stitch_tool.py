@@ -14,8 +14,38 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 # Base URL for STITCH REST API (chemical-protein interactions)
-# NOTE: stitch.embl.de API endpoints have moved to string-db.org (same API format)
-STITCH_BASE_URL = "https://string-db.org/api"
+# Fix-R19E-3: this previously pointed at string-db.org, STRING's own
+# PROTEIN-ONLY network API -- confirmed live it silently returns real but
+# entirely protein-protein data (e.g. resolving "aspirin" returned the gene
+# SLC17A4) with zero chemicals anywhere in the response, since STRING has
+# no concept of a chemical CID. stitch.embl.de (STITCH's real, historical
+# domain) 301-redirects to stitch-db.org, which correctly resolves
+# chemical names/CIDs to STITCH-format stringIds (confirmed live: aspirin
+# -> "-1.CID100002244"). Note: the network/interactions sub-endpoints
+# still 404 on the new domain even with a correctly-resolved identifier
+# (confirmed live) -- see the honest error messages in
+# _get_interactions/_get_interactors below.
+STITCH_BASE_URL = "https://stitch-db.org/api"
+
+
+def _endpoint_unavailable_error(endpoint_path: str, identifiers: Any) -> Dict[str, Any]:
+    """Fix-R19E-3: STITCH's /json interaction sub-endpoints 404 on the
+    migrated stitch-db.org site even for a correctly-resolved identifier
+    (confirmed live) -- the endpoint path itself appears unavailable, not a
+    bad identifier. Return an error saying so honestly instead of implying
+    the identifier format is the problem."""
+    return {
+        "status": "error",
+        "error": (
+            f"STITCH's {endpoint_path} endpoint returned 404 for "
+            f"{identifiers}. This endpoint appears unavailable on "
+            "STITCH's current site (stitch-db.org) even for a "
+            "correctly-resolved identifier -- not necessarily a bad "
+            "identifier. Use STITCH_resolve_identifier to confirm the "
+            "identifier resolves, or browse interactions directly at "
+            "https://stitch-db.org/."
+        ),
+    }
 
 
 @register_tool("STITCHTool")
@@ -100,12 +130,7 @@ class STITCHTool(BaseTool):
                 timeout=self.timeout,
             )
             if response.status_code == 404:
-                return {
-                    "status": "error",
-                    "error": f"No interactions found for {identifiers} in STITCH. "
-                    "Try using CID identifiers (e.g., 'CIDm00002244' for aspirin) "
-                    "or check compound names at http://stitch.embl.de/",
-                }
+                return _endpoint_unavailable_error("/json/interactions", identifiers)
             response.raise_for_status()
             return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
@@ -138,11 +163,7 @@ class STITCHTool(BaseTool):
                 timeout=self.timeout,
             )
             if response.status_code == 404:
-                return {
-                    "status": "error",
-                    "error": f"No interactors found for {identifiers} in STITCH. "
-                    "Try using CID identifiers or check compound names at http://stitch.embl.de/",
-                }
+                return _endpoint_unavailable_error("/json/network", identifiers)
             response.raise_for_status()
             return {"status": "success", "data": response.json()}
         except requests.RequestException as e:

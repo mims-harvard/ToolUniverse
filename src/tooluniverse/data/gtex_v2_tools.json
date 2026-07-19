@@ -2,7 +2,7 @@
   {
     "name": "GTEx_get_median_gene_expression",
     "type": "GTExV2Tool",
-    "description": "Get median gene expression levels across GTEx tissues. Returns median expression in TPM (Transcripts Per Million) for one or more genes across 54 tissue sites. Filter by specific tissues or get expression across all tissues. Based on Adult GTEx V11 (January 2026). Use for: tissue-specific expression profiling, identifying highly expressed genes, comparing expression patterns across tissues. Example: Get brain vs liver expression for TP53 gene.",
+    "description": "Get median gene expression levels across GTEx tissues. Returns median expression in TPM (Transcripts Per Million) for one or more genes across 54 tissue sites. Filter by specific tissues or get expression across all tissues. Defaults to GTEx V8 (2020) -- confirmed live no V11 dataset is queryable via this API (dataset_id only accepts gtex_v7/gtex_v8/gtex_v10; v10 returns empty for most endpoints, so v8 is the most complete option). Use for: tissue-specific expression profiling, identifying highly expressed genes, comparing expression patterns across tissues. Example: Get brain vs liver expression for TP53 gene.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -955,7 +955,7 @@
   {
     "name": "GTEx_get_dataset_info",
     "type": "GTExV2Tool",
-    "description": "Get GTEx dataset metadata and version information. Returns dataset details including GENCODE version, genome build (GRCh38/hg38), dbSNP build, sample counts, tissue counts, and release information. Shows Adult GTEx V11 details (January 2026) by default. Use for: understanding data versions, checking sample sizes, verifying genome builds, documentation. Check this first to understand what data is available.",
+    "description": "Get GTEx dataset metadata and version information. Returns dataset details including GENCODE version, genome build (GRCh38/hg38), dbSNP build, sample counts, tissue counts, and release information. Lists the actual queryable datasets (gtex_v7, gtex_v8, gtex_v10, kids_first_harmonization -- confirmed live no V11 exists via this API); shows GTEx V8 (2020) details by default. Use for: understanding data versions, checking sample sizes, verifying genome builds, documentation. Check this first to understand what data is available.",
     "parameter": {
       "type": "object",
       "properties": {
