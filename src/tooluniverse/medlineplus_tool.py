@@ -9,6 +9,8 @@ import json
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
+_HTML_TAG_RE = re.compile(r"<[^>]+>")
+
 
 @register_tool("MedlinePlusRESTTool")
 class MedlinePlusRESTTool(BaseTool):
@@ -38,6 +40,26 @@ class MedlinePlusRESTTool(BaseTool):
 
         return url_path
 
+    @staticmethod
+    def _paragraph_text(p) -> str:
+        """A <html:p> paragraph from xmltodict is a bare string when it has
+        no nested inline tag, or a dict when it does (e.g. <html:i>FMR1</html:i>
+        splits into {"html:i": "FMR1", "#text": "The  gene provides..."} --
+        xmltodict keeps the surrounding text but drops the inline tag's own
+        text from "#text", leaving a double-space gap where it belongs).
+        Reinsert the inline text into that gap instead of losing the word."""
+        if isinstance(p, str):
+            return p
+        if not isinstance(p, dict):
+            return ""
+        text = p.get("#text", "")
+        inline = next(
+            (v for k, v in p.items() if k != "#text" and isinstance(v, str)), None
+        )
+        if inline and "  " in text:
+            text = text.replace("  ", f" {inline} ", 1)
+        return text
+
     def _extract_text_content(self, text_item: dict) -> str:
         """Extract content from text item"""
         if not isinstance(text_item, dict):
@@ -50,15 +72,16 @@ class MedlinePlusRESTTool(BaseTool):
         html = text.get("html", "")
         if isinstance(html, dict) and "html:p" in html:
             paragraphs = html["html:p"]
-            if isinstance(paragraphs, list):
-                return "\n".join(
-                    [
-                        p.get("#text", "")
-                        for p in paragraphs
-                        if isinstance(p, dict) and "#text" in p
-                    ]
-                )
-        return html.replace("<p>", "").replace("</p>", "\n")
+            if not isinstance(paragraphs, list):
+                paragraphs = [paragraphs]
+            # Confirmed live: paragraphs without a nested inline tag parse as
+            # bare strings, not dicts -- the previous `isinstance(p, dict)`
+            # filter silently dropped every such paragraph (e.g. lost the
+            # entire middle paragraph of FMR1's "function" description).
+            return "\n".join(self._paragraph_text(p) for p in paragraphs)
+        if isinstance(html, str):
+            return _HTML_TAG_RE.sub("", html.replace("</p>", "\n")).strip()
+        return ""
 
     def _format_response(self, response: Any, tool_name: str) -> Dict[str, Any]:
         """Format response content"""

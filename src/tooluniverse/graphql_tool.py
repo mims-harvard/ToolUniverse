@@ -44,11 +44,18 @@ def remove_none_and_empty_values(json_obj):
             if v is not None and v != []
         }
     elif isinstance(json_obj, list):
-        return [
+        # Filter on the *recursed* item, not the original: a list entry
+        # like {"disease": None} isn't empty pre-recursion, but stripping
+        # its null "disease" key turns it into {} -- confirmed live in
+        # OpenTargets_get_associated_drugs_by_target_ensemblID's "diseases"
+        # list, which was leaving bare {} placeholders interleaved with
+        # real entries instead of dropping them like every other null.
+        cleaned = [
             remove_none_and_empty_values(item)
             for item in json_obj
             if item is not None and item != []
         ]
+        return [item for item in cleaned if item != {}]
     else:
         return json_obj
 
@@ -248,6 +255,27 @@ class OpentargetTool(GraphQLTool):
                     "it has no data for non-cancer diseases or non-driver genes. "
                     "For non-oncology phenotypes, use OpenTargets_get_evidence_by_datasource instead."
                 )
+
+        # A diseaseIds-filtered list query (e.g. studies(diseaseIds: ...))
+        # has no single entity to resolve to null, so the EFO->MONDO
+        # not-found detection above never fires for it -- it just returns a
+        # normal, misleadingly-empty count: 0 (confirmed live: EFO_0000676
+        # for psoriasis silently returns 0 studies, while the current
+        # MONDO_0005083 ID returns 79). Flag legacy EFO IDs specifically.
+        if result.get("status") == "success":
+            disease_ids = arguments.get("diseaseIds")
+            if isinstance(disease_ids, list) and any(
+                isinstance(d, str) and d.upper().startswith("EFO_") for d in disease_ids
+            ):
+                studies = result.get("data", {}).get("studies")
+                if isinstance(studies, dict) and studies.get("count") == 0:
+                    result.setdefault("metadata", {})["note"] = (
+                        "0 studies found for a legacy EFO disease ID. OpenTargets "
+                        "migrated most disease IDs from EFO to MONDO, so this may "
+                        "be a stale ID rather than a genuine zero-studies result. "
+                        "Look up the current MONDO ID with "
+                        "OpenTargets_multi_entity_search_by_query_string."
+                    )
 
         # If no results AND an argument contains '-', retry once with '-'
         # replaced by ' ' (rescues hyphenated names). The hyphen guard keeps a

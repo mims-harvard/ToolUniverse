@@ -96,30 +96,31 @@ class OrthoDBTool(BaseTool):
 
         group_ids = data.get("data", [])
 
-        # Get basic info for top groups via tab endpoint
+        # /search only returns bare group ids -- name/level_taxid require a
+        # separate per-group /tab lookup (confirmed live: OrthoDB has no
+        # batch/comma-separated id support for /tab). Enrich every returned
+        # group, not just the first -- confirmed live this previously left
+        # 9 of 10 results as bare {"group_id": ...} with no way to tell
+        # them apart without a follow-up call per group.
         groups = []
         for gid in group_ids[:limit]:
-            groups.append({"group_id": gid})
-
-        # Enrich with group names using the tab endpoint for first few
-        if group_ids:
+            group = {"group_id": gid}
             try:
-                tab_url = f"{ORTHODB_BASE_URL}/tab"
-                tab_params = {"id": group_ids[0], "limit": 1}
                 tab_resp = requests.get(
-                    tab_url, params=tab_params, timeout=self.timeout
+                    f"{ORTHODB_BASE_URL}/tab",
+                    params={"id": gid, "limit": 1},
+                    timeout=self.timeout,
                 )
                 if tab_resp.status_code == 200:
                     lines = tab_resp.text.strip().split("\n")
                     if len(lines) > 1:
                         cols = lines[1].split("\t")
                         if len(cols) >= 2:
-                            groups[0]["name"] = cols[1]
-                            groups[0]["level_taxid"] = (
-                                cols[2] if len(cols) > 2 else None
-                            )
+                            group["name"] = cols[1]
+                            group["level_taxid"] = cols[2] if len(cols) > 2 else None
             except Exception:
                 pass
+            groups.append(group)
 
         return {
             "status": "success",

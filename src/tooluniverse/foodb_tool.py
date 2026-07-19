@@ -54,6 +54,27 @@ class FooDBCompoundTool(BaseTool):
                 }
             resp.raise_for_status()
             c = resp.json()
+
+            # Retired/renumbered FDB ids 302-redirect to a *different*
+            # compound's current page instead of 404ing (confirmed live:
+            # FDB012199 -> FDB004133, an unrelated compound). `requests`
+            # follows redirects transparently, so without this check the
+            # substituted compound's data would silently be returned as
+            # if it were the one requested.
+            if resp.history and isinstance(c, dict) and c.get("public_id") != fdb_id:
+                return {
+                    "status": "success",
+                    "data": {},
+                    "metadata": {
+                        "query_fdb_id": fdb_id,
+                        "note": (
+                            f"'{fdb_id}' is not a current FooDB compound id "
+                            f"(it redirects to unrelated compound '{c.get('public_id')}', "
+                            "likely a retired/renumbered id). Not returning that "
+                            "compound's data since it does not match the request."
+                        ),
+                    },
+                }
         except requests.exceptions.Timeout:
             return {
                 "status": "error",

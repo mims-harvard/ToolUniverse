@@ -83,14 +83,15 @@
     },
     {
         "name": "OpenTargets_get_diseases_phenotypes_by_target_ensembl",
-        "description": "Find diseases or phenotypes associated with a specific target using ensemblId.",
+        "description": "Find diseases or phenotypes associated with a specific target using ensemblId. `associatedDiseases.count` is the total number of associations; `rows` returns only one page of them (25 by default) -- pass `page` to retrieve more (e.g. page 2 of a target with thousands of associations like SIRT1's 3432).",
         "label": [
             "Target",
             "Disease",
             "Phenotype",
             "Association",
             "OpenTarget",
-            "GraphQL"
+            "GraphQL",
+            "Pagination"
         ],
         "parameter": {
             "type": "object",
@@ -98,17 +99,38 @@
                 "ensemblId": {
                     "type": "string",
                     "description": "The ensemblId of a target."
+                },
+                "page": {
+                    "type": "object",
+                    "properties": {
+                        "index": {
+                            "type": "integer",
+                            "description": "The index of the page to retrieve (0-based)."
+                        },
+                        "size": {
+                            "type": "integer",
+                            "description": "The number of associations per page."
+                        }
+                    },
+                    "description": "Pagination parameters. `count` in the response is the total across all pages; omit this to get the first page only."
                 }
             },
             "required": [
                 "ensemblId"
             ]
         },
-        "query_schema": "\nquery associatedDiseases($ensemblId: String!) {\n  target(ensemblId: $ensemblId) {\n    id\n    approvedSymbol\n    associatedDiseases {\n      count\n      rows {\n        disease {\n          id\n          name\n        }\n        datasourceScores {\n          id\n          score\n        }\n      }\n    }\n  }\n}\n",
+        "query_schema": "\nquery associatedDiseases($ensemblId: String!, $page: Pagination) {\n  target(ensemblId: $ensemblId) {\n    id\n    approvedSymbol\n    associatedDiseases(page: $page) {\n      count\n      rows {\n        disease {\n          id\n          name\n        }\n        datasourceScores {\n          id\n          score\n        }\n      }\n    }\n  }\n}\n",
         "type": "OpenTarget",
         "test_examples": [
             {
                 "ensemblId": "ENSG00000141510"
+            },
+            {
+                "ensemblId": "ENSG00000141510",
+                "page": {
+                    "index": 1,
+                    "size": 25
+                }
             }
         ],
         "return_schema": {
