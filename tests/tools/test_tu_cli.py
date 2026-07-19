@@ -1895,6 +1895,88 @@ class TestRenderFunctions:
         out = _render_run({"status": "error", "data": {"error": "HTTP Error: 500"}})
         assert "Tips:" not in out
 
+    @pytest.mark.unit
+    def test_render_run_surfaces_json_string_detail_as_tip(self):
+        """Fix-R20B-2: many tools set detail to a raw (often JSON-encoded)
+        response-body string rather than a dict -- confirmed live for
+        SASBDB 404s. The useful nested message must reach default output,
+        not just --json."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run(
+            {
+                "status": "error",
+                "error": "SASBDB API error",
+                "detail": '{"code": "404", "status": "The Uniprot code p00698 does not exist in the SASBDB"}',
+            }
+        )
+        assert "Tips:" in out
+        assert "The Uniprot code p00698 does not exist in the SASBDB" in out
+
+    @pytest.mark.unit
+    def test_render_run_surfaces_json_string_detail_error_key(self):
+        """A JSON-string detail using an "error" key (not "status") is also
+        extracted -- confirmed live for AlphaFold 400s."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run(
+            {
+                "status": "error",
+                "error": "AlphaFold API returned 400",
+                "detail": '{"error":"Invalid identifier format. Please use a UniProt accession."}',
+            }
+        )
+        assert "Tips:" in out
+        assert "Invalid identifier format" in out
+
+    @pytest.mark.unit
+    def test_render_run_non_json_string_detail_shown_raw(self):
+        """A plain-text (non-JSON) detail string still surfaces as-is
+        rather than being silently dropped."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run(
+            {
+                "status": "error",
+                "error": "Upstream error",
+                "detail": "Service temporarily unavailable, try again later",
+            }
+        )
+        assert "Tips:" in out
+        assert "Service temporarily unavailable, try again later" in out
+
+    @pytest.mark.unit
+    def test_render_run_dict_detail_hint_still_works(self):
+        """A dict-shaped detail with a hint/message key is still handled
+        (pre-existing shape, not a regression)."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run(
+            {
+                "status": "error",
+                "error": "boom",
+                "detail": {"message": "Retry with a smaller page size."},
+            }
+        )
+        assert "Tips:" in out
+        assert "Retry with a smaller page size." in out
+
+    @pytest.mark.unit
+    def test_render_run_no_duplicate_when_detail_matches_hint(self):
+        """If detail's extracted hint is identical to an existing hint,
+        it isn't repeated as a second, redundant Tips line."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run(
+            {
+                "status": "error",
+                "error": "boom",
+                "hint": "Do the thing.",
+                "detail": {"hint": "Do the thing."},
+            }
+        )
+        assert out.count("Do the thing.") == 1
+
 
 class TestResolveCategories:
     """Tests for _resolve_categories — case-insensitive category name mapping.

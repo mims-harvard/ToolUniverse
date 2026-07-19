@@ -88,6 +88,10 @@
                     }
                   }
                 },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True if more than 500 mapped results exist and were cut off from the results array (result_count still reflects the true total)."
+                },
                 "failed_ids": {
                   "type": "array"
                 }
@@ -179,6 +183,10 @@
                       }
                     }
                   }
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True if more than 500 mapped results exist and were cut off from the results array (result_count still reflects the true total)."
                 }
               }
             },
@@ -289,6 +297,10 @@
                       }
                     }
                   }
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True if more than 500 mapped results exist and were cut off from the results array (result_count still reflects the true total)."
                 }
               }
             },

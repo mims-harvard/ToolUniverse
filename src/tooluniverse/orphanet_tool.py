@@ -266,6 +266,33 @@ class OrphanetTool(BaseTool):
             },
         }
 
+    def _orpha_code_exists(self, orpha_code: str) -> bool:
+        """True unless the RDcode Name endpoint definitively 404s for this
+        ORPHA code -- i.e. the code itself doesn't exist, as opposed to a
+        real disease that simply has no records for the data type being
+        requested (genes/epidemiology/classification/etc. legitimately can
+        be empty for a valid code). Network errors don't block the caller;
+        they're treated as "can't tell, proceed" so a transient
+        existence-check failure doesn't mask an otherwise-working request.
+        """
+        try:
+            response = requests.get(
+                f"{RDCODE_API_URL}/EN/ClinicalEntity/orphacode/{orpha_code}/Name",
+                timeout=self.timeout,
+                headers=get_rdcode_headers(),
+            )
+        except requests.exceptions.RequestException:
+            return True
+        return response.status_code != 404
+
+    def _orpha_not_found_error(self, orpha_code: str) -> Optional[Dict[str, Any]]:
+        """Standard "Disease not found" error payload if `orpha_code`
+        doesn't exist, else None. Callers should `return` the result when
+        it's not None."""
+        if self._orpha_code_exists(orpha_code):
+            return None
+        return {"status": "error", "error": f"Disease not found: ORPHA:{orpha_code}"}
+
     def _extract_genes_from_associations(self, associations):
         """Extract gene info dicts from DisorderGeneAssociation list."""
         genes = []
@@ -352,7 +379,10 @@ class OrphanetTool(BaseTool):
         )
 
         try:
-            # Get disease name from RDcode API
+            # Get disease name from RDcode API. This also serves as the
+            # existence check: a 404 here means orpha_code itself is
+            # invalid (not just "no genes for this disease"), so surface a
+            # clear error instead of silently returning an empty gene list.
             disease_name = ""
             try:
                 name_response = requests.get(
@@ -360,14 +390,22 @@ class OrphanetTool(BaseTool):
                     timeout=self.timeout,
                     headers=get_rdcode_headers(),
                 )
-                name_response.raise_for_status()
-                name_data = name_response.json()
-                if isinstance(name_data, dict):
-                    disease_name = name_data.get(
-                        "Preferred term", name_data.get("Name", "")
-                    )
-            except Exception:
-                pass
+            except requests.exceptions.RequestException:
+                name_response = None
+            if name_response is not None and name_response.status_code == 404:
+                return {
+                    "status": "error",
+                    "error": f"Disease not found: ORPHA:{orpha_code}",
+                }
+            if name_response is not None and name_response.status_code == 200:
+                try:
+                    name_data = name_response.json()
+                    if isinstance(name_data, dict):
+                        disease_name = name_data.get(
+                            "Preferred term", name_data.get("Name", "")
+                        )
+                except ValueError:
+                    pass
 
             subtype_sources = []
             orphadata_headers = {
@@ -434,6 +472,29 @@ class OrphanetTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
+    def _fetch_hierarchy_relation(self, orpha_code: str, relation: str) -> Any:
+        """Fetch PreferentialParent or PreferentialChildren for an ORPHA
+        code. The API returns a plain string message (not a dict/list) for
+        "no such relation" cases (e.g. a leaf disease has no children, a
+        top-level category has no parent) on both 200 and 404 responses --
+        normalize all of those to None so callers don't have to special-
+        case string payloads."""
+        try:
+            response = requests.get(
+                f"{RDCODE_API_URL}/EN/ClinicalEntity/orphacode/{orpha_code}/{relation}",
+                timeout=self.timeout,
+                headers=get_rdcode_headers(),
+            )
+        except requests.exceptions.RequestException:
+            return None
+        if response.status_code not in (200, 404):
+            return None
+        try:
+            payload = response.json()
+        except ValueError:
+            return None
+        return payload if isinstance(payload, (dict, list)) else None
+
     def _get_classification(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         Get disease classification hierarchy.
@@ -455,8 +516,20 @@ class OrphanetTool(BaseTool):
         )
         lang = normalize_lang(arguments.get("lang", "en"))
 
+        not_found = self._orpha_not_found_error(orpha_code)
+        if not_found:
+            return not_found
+
         try:
             # Use RDcode API: /{lang}/ClinicalEntity/orphacode/{orphacode}/Classification
+            # This endpoint only lists which Orphanet classification SYSTEMS
+            # the disease is filed under (e.g. "Orphanet classification of
+            # rare respiratory diseases") -- it is NOT the parent/child
+            # taxonomy tree the tool's own description promises. The real
+            # hierarchy lives on two separate RDcode endpoints (confirmed
+            # live via its OpenAPI spec: PreferentialParent /
+            # PreferentialChildren), fetched here too so parent/child
+            # relationships are actually returned.
             response = requests.get(
                 f"{RDCODE_API_URL}/{lang}/ClinicalEntity/orphacode/{orpha_code}/Classification",
                 timeout=self.timeout,
@@ -465,11 +538,18 @@ class OrphanetTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
+            parent = self._fetch_hierarchy_relation(orpha_code, "PreferentialParent")
+            children = self._fetch_hierarchy_relation(
+                orpha_code, "PreferentialChildren"
+            )
+
             return {
                 "status": "success",
                 "data": {
                     "orpha_code": orpha_code,
-                    "classification": data,
+                    "parent": parent,
+                    "children": children if isinstance(children, list) else [],
+                    "member_of_classifications": data,
                 },
                 "metadata": {
                     "source": "Orphanet RDcode API",
@@ -481,7 +561,12 @@ class OrphanetTool(BaseTool):
             if e.response.status_code == 404:
                 return {
                     "status": "success",
-                    "data": {"orpha_code": orpha_code, "classification": []},
+                    "data": {
+                        "orpha_code": orpha_code,
+                        "parent": None,
+                        "children": [],
+                        "member_of_classifications": [],
+                    },
                     "metadata": {"note": "No classification found"},
                 }
             return {"status": "error", "error": f"HTTP error: {e.response.status_code}"}
@@ -674,6 +759,10 @@ class OrphanetTool(BaseTool):
             str(orpha_code).replace("ORPHA:", "").replace("Orphanet:", "").strip()
         )
 
+        not_found = self._orpha_not_found_error(orpha_code)
+        if not_found:
+            return not_found
+
         try:
             response = requests.get(
                 f"{ORPHADATA_API_URL}/rd-epidemiology/orphacodes/{orpha_code}",
@@ -753,6 +842,10 @@ class OrphanetTool(BaseTool):
         orpha_code = (
             str(orpha_code).replace("ORPHA:", "").replace("Orphanet:", "").strip()
         )
+
+        not_found = self._orpha_not_found_error(orpha_code)
+        if not_found:
+            return not_found
 
         try:
             response = requests.get(
@@ -985,6 +1078,10 @@ class OrphanetTool(BaseTool):
                 "status": "error",
                 "error": f"Unknown coding_system: {coding_system}. Supported: all, icd10, icd11, omim, snomed",
             }
+
+        not_found = self._orpha_not_found_error(orpha_code)
+        if not_found:
+            return not_found
 
         for system in systems_to_query:
             try:

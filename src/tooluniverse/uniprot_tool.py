@@ -591,8 +591,28 @@ class UniProtRESTTool(BaseTool):
                 "retryable": True,
             }
 
-        # If extract_path is configured, extract the corresponding subset
+        # If extract_path is configured, extract the corresponding subset.
+        # Inactive/deleted entries (confirmed live for Q9ZZZ9: entryType
+        # "Inactive") carry none of the normal fields a JSONPath extractor
+        # looks for, which previously surfaced as a confusing raw
+        # "No data found for JSONPath: ..." error instead of explaining
+        # *why* -- give the same clear reason _compact_entry already does.
         if self.extract_path:
+            if str(data.get("entryType", "")).lower().startswith("inactive"):
+                reason = data.get("inactiveReason", {}) or {}
+                detail = (
+                    reason.get("deletedReason")
+                    or reason.get("mergeDemergeTo", [None])[0]
+                )
+                reason_type = reason.get("inactiveReasonType", "unknown reason")
+                reason_text = f"{reason_type}: {detail}" if detail else reason_type
+                return {
+                    "status": "error",
+                    "error": (
+                        f"UniProt entry {arguments.get('accession', '')} is "
+                        f"inactive/deleted ({reason_text})."
+                    ),
+                }
             result = self._extract_data(data, self.extract_path)
 
             # Handle empty results

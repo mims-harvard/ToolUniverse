@@ -477,6 +477,38 @@ def _render_info(d: dict) -> str:
     return "\n".join(lines)
 
 
+def _extract_detail_hint(raw_detail: Any) -> str | None:
+    """Pull a human-readable hint out of an error envelope's `detail` field.
+
+    Different tools populate `detail` inconsistently: a dict with hint/
+    message keys, or (very commonly, since many tools just pass through
+    `resp.text`) a raw response-body string that is often itself a
+    JSON-encoded object, e.g. '{"code": "404", "status": "The Uniprot code
+    p00698 does not exist in the SASBDB"}'. The default (non---json) CLI
+    output previously dropped this entirely, showing only the generic
+    top-level error string and leaving the actually-useful upstream
+    message discoverable only via --json (confirmed live for SASBDB 404s
+    and AlphaFold 400s).
+    """
+    if isinstance(raw_detail, dict):
+        return raw_detail.get("hint") or raw_detail.get("message")
+    if isinstance(raw_detail, str) and raw_detail.strip():
+        try:
+            parsed = json.loads(raw_detail)
+        except (json.JSONDecodeError, TypeError):
+            parsed = None
+        if isinstance(parsed, dict):
+            for key in ("message", "error", "status", "detail", "reason"):
+                val = parsed.get(key)
+                if isinstance(val, str) and val.strip():
+                    return val
+        # Not JSON, or no usable field inside it -- fall back to the raw
+        # string, capped so a huge HTML error page doesn't flood the
+        # terminal.
+        return raw_detail if len(raw_detail) <= 300 else raw_detail[:297] + "..."
+    return None
+
+
 def _render_run(d: dict) -> str:
     """Feature-23B-02: human-friendly renderer for `tu run` errors.
 
@@ -555,16 +587,17 @@ def _render_run(d: dict) -> str:
         suggestion = d.get("suggestion")
         if suggestion:
             cli_steps = [*cli_steps, suggestion]
-        # Fix-R18D-3: BaseRESTTool-backed tools put the actionable upstream
-        # error in a top-level "detail" dict (PostgREST-style hint/message,
-        # e.g. IEDB's shared query tool), distinct from error_details --
-        # confirmed live this was silently dropped, leaving only the generic
-        # "Error: HTTP request failed" with no indication of the real cause.
-        raw_detail = d.get("detail")
-        if isinstance(raw_detail, dict):
-            detail_hint = raw_detail.get("hint") or raw_detail.get("message")
-            if detail_hint:
-                cli_steps = [*cli_steps, detail_hint]
+        # Fix-R18D-3/R20: BaseRESTTool-backed tools put the actionable
+        # upstream error in a top-level (or nested) "detail" field, distinct
+        # from error_details -- confirmed live this was silently dropped,
+        # leaving only the generic "Error: HTTP request failed" with no
+        # indication of the real cause.
+        raw_detail = d.get("detail") or (
+            nested.get("detail") if isinstance(nested, dict) else None
+        )
+        detail_hint = _extract_detail_hint(raw_detail)
+        if detail_hint and detail_hint != hint:
+            cli_steps = [*cli_steps, f"Upstream detail: {detail_hint}"]
         if cli_steps:
             lines.append("Tips:")
             for step in cli_steps:

@@ -173,14 +173,21 @@ class PharosTool(BaseTool):
         """
         query_term = arguments.get("query")
         top = arguments.get("top", 10)
+        tdl = arguments.get("tdl")
 
         if not query_term:
             return {"status": "error", "error": "query parameter is required"}
 
-        # Simple term-based search
+        # Simple term-based search. Pharos' IFilter input has no direct
+        # "tdl" scalar field -- TDL filtering is expressed through its
+        # generic facets mechanism instead (confirmed live via GraphQL
+        # introspection: IFilter.facets: [IFilterFacet], and the "Target
+        # Development Level" facet on the targets query returns exactly
+        # Tclin/Tchem/Tbio/Tdark). Passing tdl straight into the filter
+        # object (or ignoring it, as before) both silently fail to filter.
         query = """
-        query SearchTargets($term: String!, $top: Int!) {
-            targets(filter: {term: $term}, top: $top) {
+        query SearchTargets($term: String!, $top: Int!, $facets: [IFilterFacet!]) {
+            targets(filter: {term: $term, facets: $facets}, top: $top) {
                 count
                 targets {
                     name
@@ -195,9 +202,13 @@ class PharosTool(BaseTool):
         }
         """
 
+        facets = (
+            [{"facet": "Target Development Level", "values": [tdl]}] if tdl else None
+        )
         variables = {
             "term": query_term,
             "top": min(top, 100),  # Cap at 100
+            "facets": facets,
         }
 
         result = self._execute_graphql(query, variables)
@@ -221,17 +232,37 @@ class PharosTool(BaseTool):
         - Tbio: Targets with biological annotations
         - Tdark: Understudied targets with minimal information
         """
-        # Return a static description since aggregation queries are slow
-        # We can query individual TDL counts if needed
+        # An unfiltered targets query's own facet breakdown gives exact,
+        # whole-proteome TDL counts in a single request (confirmed live:
+        # {Tbio: 12303, Tdark: 5501, Tchem: 1904, Tclin: 704}). Pharos'
+        # IFilter has no way to request only the "Target Development
+        # Level" facet, so a minimal top:1 targets query is used purely to
+        # reach its facets field -- the single returned target itself is
+        # discarded.
         query = """
         query {
             dbVersion
+            targets(top: 1) {
+                facets {
+                    facet
+                    values { name value }
+                }
+            }
         }
         """
 
         result = self._execute_graphql(query)
 
         if result["status"] == "success":
+            counts = {"Tclin": 0, "Tchem": 0, "Tbio": 0, "Tdark": 0}
+            facets = result["data"].get("targets", {}).get("facets", [])
+            for facet in facets:
+                if facet.get("facet") == "Target Development Level":
+                    for v in facet.get("values", []):
+                        if v.get("name") in counts:
+                            counts[v["name"]] = v.get("value", 0)
+                    break
+
             result["data"] = {
                 "tdl_levels": ["Tclin", "Tchem", "Tbio", "Tdark"],
                 "description": {
@@ -240,8 +271,9 @@ class PharosTool(BaseTool):
                     "Tbio": "Targets with GO annotations, OMIM phenotypes, or publications",
                     "Tdark": "Understudied targets with minimal information",
                 },
+                "counts": counts,
+                "total_targets": sum(counts.values()),
                 "db_version": result["data"].get("dbVersion"),
-                "note": "For target counts by TDL, use search_targets with specific TDL filter or visit https://pharos.nih.gov",
             }
 
         return result

@@ -9,6 +9,10 @@
         "query": {
           "type": "string",
           "description": "Search query: UniProt accession (e.g., 'P02769' for BSA) or free-text term. Note: SASBDB has no full-text search API; UniProt accessions are resolved directly."
+        },
+        "max_results": {
+          "type": ["integer", "null"],
+          "description": "Cap on entries returned when query is free-text and falls back to listing all published SASBDB entries (~5432). Default 50."
         }
       },
       "required": ["query"]
