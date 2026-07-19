@@ -161,12 +161,40 @@ class ReactomeContentTool(BaseTool):
         response.raise_for_status()
         events = response.json()
 
-        # Count event types (some elements may be plain integer DB IDs, skip those)
+        # Fix-R18B-1: Reactome's containedEvents endpoint mixes full event
+        # dicts with plain integer DB IDs for some sub-pathways -- confirmed
+        # live for R-HSA-2219528 ("PI3K/AKT Signaling in Cancer"), where 2 of
+        # its 3 real sub-pathways (R-HSA-5674400, R-HSA-2219530) came back as
+        # bare ints. Silently skipping them (as before) both dropped real
+        # sub-pathways from the hierarchy and made total_events disagree with
+        # pathway_count + reaction_count. Batch-resolve any bare IDs via the
+        # /data/query/ids endpoint (confirmed live it accepts a comma-joined
+        # list and returns full records with schemaClass) instead of
+        # discarding them.
+        bare_ids = [e for e in events if not isinstance(e, dict)]
+        resolved_by_id = {}
+        if bare_ids:
+            ids_response = requests.post(
+                f"{REACTOME_CS_BASE_URL}/data/query/ids",
+                headers={
+                    "Accept": "application/json",
+                    "Content-Type": "text/plain",
+                },
+                data=",".join(str(i) for i in bare_ids),
+                timeout=self.timeout,
+            )
+            if ids_response.ok:
+                for item in ids_response.json():
+                    if isinstance(item, dict) and item.get("dbId") is not None:
+                        resolved_by_id[item["dbId"]] = item
+
         pathways = []
         reactions = []
         for e in events:
             if not isinstance(e, dict):
-                continue
+                e = resolved_by_id.get(e)
+                if e is None:
+                    continue
             schema = e.get("schemaClass", "")
             entry = {
                 "stId": e.get("stId"),

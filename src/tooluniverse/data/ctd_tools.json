@@ -1,13 +1,13 @@
 [
   {
     "name": "CTD_get_chemical_gene_interactions",
-    "description": "Get curated chemical-gene interactions from CTD (Comparative Toxicogenomics Database). Given a chemical name, returns genes it interacts with, including organism, PubMed references, and interaction types. Example: 'bisphenol A' returns thousands of gene interactions across species. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
+    "description": "Get curated chemical-gene interactions from CTD (Comparative Toxicogenomics Database). Given a chemical name, returns genes it interacts with, including organism, PubMed references, and interaction types. Example: 'bisphenol A' returns thousands of gene interactions across species. Note: the result's top-level 'predicate' field is always null for this edge type -- the real interaction-type signal is in 'qualified_predicate' (e.g. 'biolink:causes') and 'object_direction_qualifier'. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_terms": {
           "type": "string",
-          "description": "Chemical name, MeSH name, synonym, CAS RN, or MeSH ID. Examples: 'bisphenol A', 'acetaminophen', 'D000082' (MeSH ID for acetaminophen)."
+          "description": "Chemical name, CAS RN, or MeSH ID. Examples: 'bisphenol A', 'paracetamol' (the RENCI mirror's canonical name -- common synonyms like 'acetaminophen' may not resolve), 'D000082' (MeSH ID, prefix optional). CAS RN and MeSH/NCBI Gene IDs are matched by exact string against the graph's canonical name/synonym list, not fuzzy-matched, so an uncommon synonym can fail even when the substance is covered."
         }
       },
       "required": [
@@ -700,13 +700,13 @@
   },
   {
     "name": "CTD_get_disease_chemicals",
-    "description": "Get curated disease-chemical associations from CTD. Given a disease name, returns chemicals associated with it, including evidence type. Example: 'Breast Neoplasms' returns chemicals linked to breast cancer including both therapeutic agents and toxicants. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
+    "description": "Get curated disease-chemical associations from CTD. Given a disease name, returns chemicals associated with it, including evidence type. Example: 'breast neoplasm' returns chemicals linked to breast cancer including both therapeutic agents and toxicants. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_terms": {
           "type": "string",
-          "description": "Disease name, MeSH name, synonym, or MeSH/OMIM ID. Examples: 'Breast Neoplasms', 'asthma', 'MESH:D001249'."
+          "description": "Disease name, MeSH/OMIM ID. Examples: 'breast neoplasm' (singular -- the plural 'Breast Neoplasms' does not resolve), 'asthma', 'MESH:D001249'. Matched by exact string against the graph's canonical name, not fuzzy-matched, so an uncommon phrasing can fail even when the disease is covered."
         }
       },
       "required": [

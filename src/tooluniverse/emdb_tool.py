@@ -1,5 +1,5 @@
 import requests
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 from .base_tool import BaseTool
 from .http_utils import request_with_retry
 from .tool_registry import register_tool
@@ -14,18 +14,38 @@ class EMDBRESTTool(BaseTool):
         self.session.headers.update({"Accept": "application/json"})
         self.timeout = 30
 
-    def _build_url(self, args: Dict[str, Any]) -> str:
+    def _build_url(self, args: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
+        """Substitute `{placeholder}` tokens in the endpoint template.
+
+        Fix-R18A-1: args with no matching `{placeholder}` (e.g.
+        EMDB_search_structures's `rows`) were silently dropped -- there was
+        no query-string fallback, so `rows` had zero effect on the request
+        regardless of value (confirmed live: rows=2 and rows=10 both
+        returned the same 10 results; the raw EMDB API honors `?rows=N` as
+        a query param). Return them separately so the caller can pass them
+        through as query params instead.
+        """
         url = self.tool_config["fields"]["endpoint"]
+        query_params = {}
         for k, v in args.items():
-            url = url.replace(f"{{{k}}}", str(v))
-        return url
+            token = f"{{{k}}}"
+            if token in url:
+                url = url.replace(token, str(v))
+            else:
+                query_params[k] = v
+        return url, query_params
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         url = None
         try:
-            url = self._build_url(arguments)
+            url, query_params = self._build_url(arguments)
             response = request_with_retry(
-                self.session, "GET", url, timeout=self.timeout, max_attempts=3
+                self.session,
+                "GET",
+                url,
+                params=query_params,
+                timeout=self.timeout,
+                max_attempts=3,
             )
             if response.status_code != 200:
                 return {

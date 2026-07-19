@@ -479,7 +479,15 @@ def _render_run(d: dict) -> str:
 
     # Feature-25B-02: for "tool not found" errors, replace generic network tips
     # with tool-discovery tips and include fuzzy suggestions when available.
-    is_not_found = "not found" in short_err.lower()
+    # Fix-R18A-2/R18C-6: a plain "not found" substring match also fires on a
+    # tool's own HTTP-404-shaped error message (e.g. "PDBe API error: 404
+    # Client Error: Not Found for url: ..." or CTD's "'cadmium' was not found
+    # in the RENCI CTD mirror") -- confirmed live these produced misleading
+    # "check tool name spelling" tips for a perfectly valid tool call with a
+    # bad parameter VALUE, not a bad tool name. A genuine unknown-tool-name
+    # error is reliably tagged error_details.type == "ToolUnavailableError"
+    # (confirmed live); use that structured signal instead of the message text.
+    is_not_found = details.get("type") == "ToolUnavailableError"
     is_api_key_error = "requires api key" in short_err.lower()
     suggestions = d.get("suggestions") or details.get("suggestions") or []
     if is_api_key_error:
@@ -507,6 +515,24 @@ def _render_run(d: dict) -> str:
         )
         if hint:
             cli_steps = [*cli_steps, hint]
+        # Fix-R18C-1: some tools put a single actionable redirect at the
+        # top-level "suggestion" key (e.g. CTD_get_gene_diseases pointing
+        # callers at OpenTargets) -- confirmed live this was silently
+        # dropped since only the plural "suggestions" (fuzzy tool-name
+        # matches) and error_details.next_steps were ever surfaced.
+        suggestion = d.get("suggestion")
+        if suggestion:
+            cli_steps = [*cli_steps, suggestion]
+        # Fix-R18D-3: BaseRESTTool-backed tools put the actionable upstream
+        # error in a top-level "detail" dict (PostgREST-style hint/message,
+        # e.g. IEDB's shared query tool), distinct from error_details --
+        # confirmed live this was silently dropped, leaving only the generic
+        # "Error: HTTP request failed" with no indication of the real cause.
+        raw_detail = d.get("detail")
+        if isinstance(raw_detail, dict):
+            detail_hint = raw_detail.get("hint") or raw_detail.get("message")
+            if detail_hint:
+                cli_steps = [*cli_steps, detail_hint]
         if cli_steps:
             lines.append("Tips:")
             for step in cli_steps:

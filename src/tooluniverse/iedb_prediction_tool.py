@@ -58,7 +58,24 @@ class IEDBPredictionTool(BaseTool):
             return {"status": "error", "error": f"IEDB prediction error: {str(e)}"}
 
     def _parse_tsv(self, text: str) -> List[Dict[str, str]]:
-        reader = csv.DictReader(io.StringIO(text.strip()), delimiter="\t")
+        text = text.strip()
+        # Fix-R18D-1: IEDB's prediction endpoints return HTTP 200 with a
+        # plain-text validation error (e.g. "The length of input sequence
+        # is less than the input/default length 15.") instead of TSV data
+        # for invalid input like a too-short sequence -- confirmed live.
+        # csv.DictReader silently treated the error's first line as a
+        # single-column header and the second as one data row, and the
+        # caller's `.get("percentile_rank", 100)` fallback then made this
+        # look like a real (if suspicious) successful prediction. Detect
+        # the non-tabular response before parsing and raise instead, so
+        # `run()`'s exception handler reports it as the error it is.
+        if not text or "\t" not in text.splitlines()[0]:
+            raise ValueError(
+                f"IEDB tool returned a non-tabular response, likely an "
+                f"input validation error rather than prediction data: "
+                f"{text[:300]!r}"
+            )
+        reader = csv.DictReader(io.StringIO(text), delimiter="\t")
         return [dict(row) for row in reader]
 
     def _predict_bcell(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -294,8 +311,14 @@ class IEDBPredictionTool(BaseTool):
 
         results = self._parse_tsv(resp.text)
         for r in results:
+            # Fix-R18D-2: the mhcii endpoint's real TSV column is named
+            # "rank", not "percentile_rank" (unlike the mhci endpoint,
+            # confirmed live to genuinely have a "percentile_rank" column)
+            # -- so this always hit the `100` default, making the field
+            # silently and completely wrong for every successful call
+            # regardless of the actual binding rank.
             try:
-                r["percentile_rank"] = float(r.get("percentile_rank", 100))
+                r["percentile_rank"] = float(r.get("rank", 100))
             except (ValueError, TypeError):
                 pass
 
