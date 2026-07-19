@@ -245,6 +245,28 @@ class ClinGenTool(BaseTool):
         """Get clinical actionability curations for pediatric context."""
         return self._get_actionability(arguments, "Pediatric")
 
+    @staticmethod
+    def _actionability_rows_to_dicts(data: Any) -> list:
+        """The ?flavor=flat actionability API returns a columnar table --
+        {"columns": [...], "rows": [[...], ...]} -- not a list of record
+        dicts (confirmed live). Neither older code path recognized this
+        shape (isinstance(data, list) is False and there's no "data" key),
+        so the gene filter silently matched nothing and the raw un-parsed
+        table was returned as-is. Zip columns with each row into dicts.
+        """
+        if isinstance(data, list):
+            return data
+        if isinstance(data, dict) and isinstance(data.get("columns"), list):
+            columns = data["columns"]
+            return [
+                dict(zip(columns, row))
+                for row in data.get("rows", [])
+                if isinstance(row, list)
+            ]
+        if isinstance(data, dict) and isinstance(data.get("data"), list):
+            return data["data"]
+        return []
+
     def _get_actionability(
         self, arguments: Dict[str, Any], context: str
     ) -> Dict[str, Any]:
@@ -263,27 +285,27 @@ class ClinGenTool(BaseTool):
             response = requests.get(url, headers=headers, timeout=self.timeout)
             response.raise_for_status()
 
-            data = response.json()
+            curations = self._actionability_rows_to_dicts(response.json())
 
-            # Extract curations from the response
-            curations = data if isinstance(data, list) else data.get("data", data)
-
-            # Optional filtering by gene
+            # Optional filtering by gene. geneOrVariant is a comma-joined
+            # multi-gene field for panel curations (e.g. "BRCA1,BRCA2"), so
+            # substring match rather than exact-match the whole field.
             gene = arguments.get("gene")
-            if gene and isinstance(curations, list):
+            if gene:
                 gene_upper = gene.upper()
                 curations = [
                     c
                     for c in curations
-                    if gene_upper in str(c.get("gene", "")).upper()
+                    if gene_upper in str(c.get("geneOrVariant", "")).upper()
+                    or gene_upper in str(c.get("gene", "")).upper()
                     or gene_upper in str(c.get("Gene", "")).upper()
                     or gene_upper in str(c.get("hgncId", "")).upper()
                 ]
 
             return {
                 "status": "success",
-                "data": curations[:100] if isinstance(curations, list) else curations,
-                "total": len(curations) if isinstance(curations, list) else 1,
+                "data": curations[:100],
+                "total": len(curations),
                 "context": context,
                 "source": f"ClinGen Clinical Actionability ({context})",
             }
@@ -316,21 +338,20 @@ class ClinGenTool(BaseTool):
                     response = requests.get(url, headers=headers, timeout=self.timeout)
                     response.raise_for_status()
 
-                    data = response.json()
-                    curations = (
-                        data if isinstance(data, list) else data.get("data", data)
-                    )
+                    curations = self._actionability_rows_to_dicts(response.json())
 
-                    # Filter by gene
+                    # Filter by gene. geneOrVariant is a comma-joined
+                    # multi-gene field for panel curations, so substring
+                    # match rather than exact-match the whole field.
                     gene_upper = gene.upper()
-                    if isinstance(curations, list):
-                        matches = [
-                            c
-                            for c in curations
-                            if gene_upper in str(c.get("gene", "")).upper()
-                            or gene_upper in str(c.get("Gene", "")).upper()
-                        ]
-                        results[context] = matches
+                    matches = [
+                        c
+                        for c in curations
+                        if gene_upper in str(c.get("geneOrVariant", "")).upper()
+                        or gene_upper in str(c.get("gene", "")).upper()
+                        or gene_upper in str(c.get("Gene", "")).upper()
+                    ]
+                    results[context] = matches
                 except Exception:
                     # Continue with other context if one fails
                     pass

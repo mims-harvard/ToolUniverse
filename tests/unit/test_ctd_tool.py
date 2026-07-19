@@ -103,6 +103,55 @@ def test_ctd_gene_disease_returns_redirect_error():
 
 @pytest.mark.unit
 @patch("tooluniverse.ctd_tool.requests.post")
+@patch("tooluniverse.ctd_tool.requests.get")
+def test_ctd_bare_cas_number_falls_back_to_curie_prefix(mock_get, mock_post):
+    """Fix-R28-1: the graph stores CAS RNs as CURIEs ("CAS:335-67-1"), not
+    bare -- confirmed live that "335-67-1" alone doesn't match while
+    "CAS:335-67-1" does. A bare CAS RN (exactly how the tool's own
+    description tells callers to pass one) must still resolve."""
+
+    mock_post.side_effect = [_empty_cypher_response(), make_cypher_response("CHEBI:35549")]
+    mock_get.return_value = make_edge_response([])
+
+    tool = make_ctd_tool()
+    result = tool.run({"input_terms": "335-67-1"})
+
+    assert result["status"] == "success"
+    assert result["metadata"]["canonical_curie"] == "CHEBI:35549"
+    # First call is the bare-term lookup, second is the CAS:-prefixed retry.
+    assert mock_post.call_count == 2
+    assert "CAS:335-67-1" in mock_post.call_args.kwargs["json"]["query"]
+
+
+@pytest.mark.unit
+@patch("tooluniverse.ctd_tool.requests.post")
+@patch("tooluniverse.ctd_tool.requests.get")
+def test_ctd_bare_mesh_scr_id_falls_back_to_curie_prefix(mock_get, mock_post):
+    """Same fallback for bare MeSH Supplementary Concept ids (e.g.
+    "C006780", the tool's own docstring example) -- confirmed live these
+    also only resolve with a "MESH:" prefix."""
+
+    mock_post.side_effect = [_empty_cypher_response(), make_cypher_response("CHEBI:33216")]
+    mock_get.return_value = make_edge_response([])
+
+    tool = make_ctd_tool()
+    result = tool.run({"input_terms": "C006780"})
+
+    assert result["status"] == "success"
+    assert result["metadata"]["canonical_curie"] == "CHEBI:33216"
+    assert "MESH:C006780" in mock_post.call_args.kwargs["json"]["query"]
+
+
+def _empty_cypher_response():
+    response = Mock()
+    response.status_code = 200
+    response.raise_for_status.return_value = None
+    response.json.return_value = {"results": [{"data": []}], "errors": []}
+    return response
+
+
+@pytest.mark.unit
+@patch("tooluniverse.ctd_tool.requests.post")
 def test_ctd_unresolvable_input_returns_error(mock_post):
     """If cypher can't find the term, return a clear not-found error."""
 

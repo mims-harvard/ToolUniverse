@@ -10,6 +10,7 @@ chemical↔disease cleanly, but does NOT contain CTD's gene-disease inferred
 edges. Gene→disease queries return an honest error pointing at OpenTargets.
 """
 
+import re
 import requests
 from typing import Any, Dict, Optional
 
@@ -19,6 +20,15 @@ from .tool_registry import register_tool
 RENCI_BASE = "https://automat.renci.org/ctd"
 RENCI_HEADERS = {"Accept": "application/json", "User-Agent": "ToolUniverse CTDTool"}
 DATA_AS_OF = "2024-06"  # RENCI snapshot version
+
+# The RENCI graph stores CAS RNs and MeSH ids as CURIEs ("CAS:335-67-1",
+# "MESH:C006780"), not bare -- confirmed live that "335-67-1" and "C006780"
+# (the tool's own docstring example) both fail to resolve while the
+# prefixed forms succeed. Bare CAS/MeSH input is exactly how the tool's own
+# description tells callers to pass them, so try the CURIE-prefixed form as
+# a fallback.
+_CAS_RE = re.compile(r"^\d{2,7}-\d{2}-\d$")
+_MESH_SCR_RE = re.compile(r"^[CD]\d{6,9}$")
 
 # Maps the existing tool configs' (input_type, report_type) to RENCI
 # (source_category, target_category). The gene→disease entry is None
@@ -156,6 +166,16 @@ class CTDTool(BaseTool):
         Uses RENCI's /cypher endpoint to search by `id`, `equivalent_identifiers`,
         or case-insensitive `name`. Returns the canonical `id` or None.
         """
+        canonical = self._cypher_lookup(term)
+        if canonical:
+            return canonical
+        if _CAS_RE.match(term):
+            return self._cypher_lookup(f"CAS:{term}")
+        if _MESH_SCR_RE.match(term):
+            return self._cypher_lookup(f"MESH:{term}")
+        return None
+
+    def _cypher_lookup(self, term: str) -> Optional[str]:
         safe = term.replace('"', "").replace("\\", "")
         query = (
             'MATCH (n) WHERE n.id = "' + safe + '" OR "' + safe + '" IN '

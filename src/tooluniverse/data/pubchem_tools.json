@@ -480,7 +480,7 @@
       "endpoint": "/compound/cid/{cid}/PNG?image_size={image_size}",
       "use_pugview": false,
       "input_description": "Input is:\n- cid: compound ID;\n- image_size: desired image pixel size, format is \"widthxheight\" (e.g., \"150x150\").",
-      "output_description": "Returns binary PNG image data, conforming to PNG file header format. LLM can save this binary as image file, or provide to downstream visualization.",
+      "output_description": "Returns {status, data: {image_base64, encoding: 'base64', format: 'png'}}. Decode image_base64 to get the raw PNG bytes (conforming to PNG file header format).",
       "return_format": "PNG"
     },
     "type": "PubChemRESTTool",

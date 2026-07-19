@@ -5,7 +5,7 @@ STITCH (Search Tool for Interacting Chemicals) API tool for ToolUniverse.
 STITCH is a database of known and predicted interactions between
 chemicals and proteins, combining data from various sources.
 
-API Documentation: http://stitch.embl.de/
+API Documentation: https://stitch-db.org/
 """
 
 import requests
@@ -13,9 +13,18 @@ from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-# Base URL for STITCH REST API (chemical-protein interactions)
-# NOTE: stitch.embl.de API endpoints have moved to string-db.org (same API format)
-STITCH_BASE_URL = "https://string-db.org/api"
+# Base URL for STITCH REST API (chemical-protein interactions).
+# STITCH and STRING are separate sister databases sharing the same API
+# software, NOT the same database -- confirmed live that string-db.org
+# genuinely doesn't recognize chemical identifiers (its own /resolve fuzzy-
+# matched "aspirin" to an unrelated protein, SLC17A4, and /interaction_
+# partners rejected the real STITCH chemical id "-1.CID100002244" as "not
+# found"), so pointing STITCH queries at string-db.org was silently
+# returning wrong, mislabeled protein-protein data as chemical-protein
+# interactions. stitch.embl.de now redirects to stitch-db.org (the correct
+# current STITCH host per the shared API docs' own "List of databases"
+# table); use that instead.
+STITCH_BASE_URL = "https://stitch-db.org/api"
 
 
 @register_tool("STITCHTool")
@@ -104,7 +113,7 @@ class STITCHTool(BaseTool):
                     "status": "error",
                     "error": f"No interactions found for {identifiers} in STITCH. "
                     "Try using CID identifiers (e.g., 'CIDm00002244' for aspirin) "
-                    "or check compound names at http://stitch.embl.de/",
+                    "or check compound names at https://stitch-db.org/",
                 }
             response.raise_for_status()
             return {"status": "success", "data": response.json()}
@@ -141,7 +150,7 @@ class STITCHTool(BaseTool):
                 return {
                     "status": "error",
                     "error": f"No interactors found for {identifiers} in STITCH. "
-                    "Try using CID identifiers or check compound names at http://stitch.embl.de/",
+                    "Try using CID identifiers or check compound names at https://stitch-db.org/",
                 }
             response.raise_for_status()
             return {"status": "success", "data": response.json()}
@@ -171,7 +180,7 @@ class STITCHTool(BaseTool):
                 return {
                     "status": "error",
                     "error": f"Identifier '{identifier}' not found in STITCH. "
-                    "Try using CID identifiers or check at http://stitch.embl.de/",
+                    "Try using CID identifiers or check at https://stitch-db.org/",
                 }
             response.raise_for_status()
             return {"status": "success", "data": response.json()}
