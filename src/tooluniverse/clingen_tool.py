@@ -27,6 +27,38 @@ ACTIONABILITY_PEDIATRIC_URL = (
 EREPO_BASE_URL = "https://erepo.clinicalgenome.org/evrepo/api"
 
 
+def _actionability_rows_to_dicts(data: Any) -> List[Dict[str, Any]]:
+    """Fix-R19B-1/2: the actionability API's `?flavor=flat` response is a
+    JSON table -- {"columns": [...26 names...], "rows": [[...26 values...],
+    ...]} -- confirmed live, not a list of per-curation dicts. The gene
+    filter's `isinstance(curations, list)` guard was always False against
+    this dict, silently skipping the filter entirely in
+    _get_actionability_adult/_pediatric (returning everything, unfiltered)
+    and silently zeroing out `matches` in _search_actionability (returning
+    nothing). Zip columns with each row into real dicts so both a
+    downstream isinstance(list) check and dict-style field access work.
+    """
+    if isinstance(data, list):
+        return data
+    columns = data.get("columns")
+    rows = data.get("rows")
+    if not isinstance(columns, list) or not isinstance(rows, list):
+        return []
+    return [dict(zip(columns, row)) for row in rows]
+
+
+def _filter_curations_by_gene(
+    curations: List[Dict[str, Any]], gene: str
+) -> List[Dict[str, Any]]:
+    """Keep only actionability curations whose `geneOrVariant` field contains
+    `gene` (case-insensitive substring; the field holds comma-separated gene
+    lists, e.g. "BRCA1,BRCA2")."""
+    gene_upper = gene.upper()
+    return [
+        c for c in curations if gene_upper in str(c.get("geneOrVariant", "")).upper()
+    ]
+
+
 @register_tool("ClinGenTool")
 class ClinGenTool(BaseTool):
     """
@@ -266,24 +298,17 @@ class ClinGenTool(BaseTool):
             data = response.json()
 
             # Extract curations from the response
-            curations = data if isinstance(data, list) else data.get("data", data)
+            curations = _actionability_rows_to_dicts(data)
 
             # Optional filtering by gene
             gene = arguments.get("gene")
-            if gene and isinstance(curations, list):
-                gene_upper = gene.upper()
-                curations = [
-                    c
-                    for c in curations
-                    if gene_upper in str(c.get("gene", "")).upper()
-                    or gene_upper in str(c.get("Gene", "")).upper()
-                    or gene_upper in str(c.get("hgncId", "")).upper()
-                ]
+            if gene:
+                curations = _filter_curations_by_gene(curations, gene)
 
             return {
                 "status": "success",
-                "data": curations[:100] if isinstance(curations, list) else curations,
-                "total": len(curations) if isinstance(curations, list) else 1,
+                "data": curations[:100],
+                "total": len(curations),
                 "context": context,
                 "source": f"ClinGen Clinical Actionability ({context})",
             }
@@ -317,20 +342,8 @@ class ClinGenTool(BaseTool):
                     response.raise_for_status()
 
                     data = response.json()
-                    curations = (
-                        data if isinstance(data, list) else data.get("data", data)
-                    )
-
-                    # Filter by gene
-                    gene_upper = gene.upper()
-                    if isinstance(curations, list):
-                        matches = [
-                            c
-                            for c in curations
-                            if gene_upper in str(c.get("gene", "")).upper()
-                            or gene_upper in str(c.get("Gene", "")).upper()
-                        ]
-                        results[context] = matches
+                    curations = _actionability_rows_to_dicts(data)
+                    results[context] = _filter_curations_by_gene(curations, gene)
                 except Exception:
                     # Continue with other context if one fails
                     pass
@@ -348,47 +361,64 @@ class ClinGenTool(BaseTool):
 
     def _get_variant_classifications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get variant pathogenicity classifications from ClinGen Evidence Repository."""
-        try:
-            url = f"{EREPO_BASE_URL}/classifications/all"
+        gene = arguments.get("gene")
+        if not gene:
+            # Fix-R19B-3: `/classifications/all` is the entire, unpaginated
+            # Evidence Repository -- confirmed live it's 28+MB and still
+            # streaming after 200s, well past this tool's declared 120s
+            # timeout, with no way to bound the transfer client-side once
+            # started. There's no way to safely serve an unfiltered
+            # request; require a gene to use the fast, filtered endpoint
+            # below instead.
+            return {
+                "status": "error",
+                "error": (
+                    "gene parameter is required. The ClinGen Evidence "
+                    "Repository has no working unfiltered listing endpoint "
+                    "(the bulk /classifications/all download is 28+MB and "
+                    "unbounded) -- query by gene instead."
+                ),
+            }
 
-            response = requests.get(url, timeout=self.timeout)
+        try:
+            # Fix-R19B-3: /classifications?gene={gene} is a fast (~1s),
+            # already-filtered JSON endpoint -- confirmed live, unlike
+            # /classifications/all's unbounded TSV dump this tool
+            # previously used and filtered client-side after the full
+            # download completed.
+            url = f"{EREPO_BASE_URL}/classifications"
+            response = requests.get(url, params={"gene": gene}, timeout=self.timeout)
             response.raise_for_status()
 
-            # API returns TSV (tab-separated) with first line starting with #
-            tsv_text = response.text
-            lines = tsv_text.strip().split("\n")
-
-            # Strip leading # from header line
-            if lines and lines[0].startswith("#"):
-                lines[0] = lines[0][1:]
-
+            raw = response.json()
             data = []
-            if len(lines) > 1:
-                reader = csv.DictReader(io.StringIO("\n".join(lines)), delimiter="\t")
-                for row in reader:
-                    cleaned = {k.strip(): v.strip() for k, v in row.items() if k and v}
-                    if cleaned:
-                        data.append(cleaned)
+            for item in raw.get("variantInterpretations", []):
+                guidelines = item.get("guidelines") or []
+                classification = (
+                    guidelines[0].get("outcome", {}).get("label")
+                    if guidelines
+                    else None
+                )
+                data.append(
+                    {
+                        "caid": item.get("caid"),
+                        "gene": (item.get("gene") or {}).get("label"),
+                        "condition": (item.get("condition") or {}).get("label"),
+                        "classification": classification,
+                        "published_date": item.get("publishedDate"),
+                        "hgvs": item.get("hgvs") or [],
+                    }
+                )
 
-            # Optional filtering by gene
-            gene = arguments.get("gene")
-            if gene:
-                gene_upper = gene.upper()
-                data = [
-                    v
-                    for v in data
-                    if gene_upper in str(v.get("HGNC Gene Symbol", "")).upper()
-                ]
-
-            # Optional filtering by variant
+            # Optional filtering by variant (HGVS or CAID substring match)
             variant = arguments.get("variant")
             if variant:
                 variant_str = str(variant).upper()
                 data = [
                     v
                     for v in data
-                    if variant_str in str(v.get("Variation", "")).upper()
-                    or variant_str in str(v.get("HGVS Expressions", "")).upper()
+                    if variant_str in str(v.get("caid", "")).upper()
+                    or any(variant_str in h.upper() for h in v.get("hgvs", []))
                 ]
 
             result = {
@@ -397,7 +427,7 @@ class ClinGenTool(BaseTool):
                 "total": len(data),
                 "source": "ClinGen Evidence Repository",
             }
-            if not data and gene:
+            if not data:
                 result["note"] = (
                     f"No variant classifications found for {gene}. "
                     "The ClinGen Evidence Repository only contains variants "

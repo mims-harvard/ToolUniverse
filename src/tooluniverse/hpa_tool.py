@@ -664,12 +664,29 @@ class HPASearchGenesTool(HPASearchApiTool):
                 }
             )
 
+        # Fix-R19D-1: HPA's search_download.php does a broad full-text
+        # match with no server-side limit param (confirmed live: a
+        # "limit" query param has no effect) -- a short, valid gene
+        # symbol like "INS" returned 8,441 genes (1.4MB), many not even
+        # containing the query as a substring. Rank exact gene-symbol
+        # matches first and cap the response client-side; the caller can
+        # raise max_results for a deliberately broad search.
+        query_upper = search_query.upper()
+        formatted_results.sort(
+            key=lambda g: (g.get("gene_name") or "").upper() != query_upper
+        )
+        total_matches = len(formatted_results)
+        max_results = arguments.get("max_results") or 50
+        truncated_results = formatted_results[:max_results]
+
         return {
             "status": "success",
             "data": {
                 "search_query": search_query,
-                "match_count": len(formatted_results),
-                "genes": formatted_results,
+                "match_count": len(truncated_results),
+                "total_matches": total_matches,
+                "truncated": total_matches > len(truncated_results),
+                "genes": truncated_results,
             },
         }
 
