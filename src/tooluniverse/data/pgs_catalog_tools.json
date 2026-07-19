@@ -9,7 +9,7 @@
       "properties": {
         "query": {
           "type": "string",
-          "description": "Trait or phenotype term, e.g. 'coronary artery disease', 'type 2 diabetes', 'breast cancer'."
+          "description": "Trait or phenotype term, e.g. 'coronary artery disease', 'type 2 diabetes', 'breast cancer'. PGS Catalog's own search can return zero results for some multi-word phrases that don't exactly match an indexed label even when a near-identical trait exists (e.g. 'familial hypercholesterolemia' finds nothing while 'hypercholesterolemia' alone does) -- if a natural-language query returns no results, retry with a shorter or more generic core term."
         }
       },
       "required": ["query"]

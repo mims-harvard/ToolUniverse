@@ -151,6 +151,18 @@ class GTDBTool(BaseTool):
         if not species:
             return {"status": "error", "error": "species parameter is required"}
 
+        # GTDB's species/search endpoint is case-sensitive on binomial
+        # capitalization (confirmed live: lowercase "akkermansia muciniphila"
+        # 404s while "Akkermansia muciniphila" succeeds), unlike the sibling
+        # genomes/search endpoint which is case-insensitive. Normalize to the
+        # standard Genus-capitalized/species-lowercase convention so callers
+        # aren't tripped up by an inconsistency within this same tool family.
+        parts = species.split()
+        if parts:
+            parts[0] = parts[0].capitalize()
+            parts[1:] = [p.lower() for p in parts[1:]]
+            species = " ".join(parts)
+
         result = self._make_request("species/search/{}".format(species))
         if not result["ok"]:
             return {"status": "error", "error": result["error"]}
@@ -238,6 +250,24 @@ class GTDBTool(BaseTool):
         data = result["data"]
         rows = data.get("rows", [])
         total = data.get("totalRows", len(rows))
+
+        # GTDB's search matches against the whole taxonomic clade, not just
+        # organism-name substrings (confirmed live: querying "Akkermansia
+        # muciniphila" returns unrelated family-mates like "Roseibacillus sp.
+        # TMED18" ranked above the exact species) -- boost rows whose own
+        # ncbiOrgName actually matches the query so the requested organism
+        # isn't buried under broader clade results within this page.
+        query_lower = query.strip().lower()
+
+        def _relevance(row):
+            name = (row.get("ncbiOrgName") or "").lower()
+            if name == query_lower:
+                return 0
+            if name.startswith(query_lower):
+                return 1
+            return 2
+
+        rows = sorted(rows, key=_relevance)
 
         return {
             "status": "success",

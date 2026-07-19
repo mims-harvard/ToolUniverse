@@ -5151,7 +5151,7 @@
     },
     {
         "name": "OpenTargets_get_target_expression_by_ensemblID",
-        "description": "Retrieve baseline RNA and protein expression for a target across ~119 tissues and cell types (Human Protein Atlas / GTEx / FANTOM5 consensus) by Ensembl gene ID. Each record gives the tissue (label + parent organs), RNA value/zscore/level, and protein level. Levels of -1 mean no data. Use to profile where a target is normally expressed.",
+        "description": "Retrieve baseline expression for a target across tissues and cell types (GTEx, Human Protein Atlas, Tabula Sapiens, and other data sources) by Ensembl gene ID. Each record gives the source tissue/biosample, the originating datasource, and median/min/max expression values in that datasource's native unit (e.g. TPM for GTEx, PPB/iBAQ for PRIDE proteomics). Use to profile where a target is normally expressed.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -5164,7 +5164,7 @@
                 "ensemblId"
             ]
         },
-        "query_schema": "\n      query targetExpression($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          expressions {\n            tissue { label organs anatomicalSystems }\n            rna { value zscore level unit }\n            protein { level reliability }\n          }\n        }\n      }\n    ",
+        "query_schema": "\n      query targetExpression($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          baselineExpression {\n            count\n            rows {\n              datasourceId\n              tissueBiosample { biosampleId biosampleName }\n              median\n              min\n              max\n              unit\n            }\n          }\n        }\n      }\n    ",
         "label": [
             "Target",
             "Expression",
@@ -5202,19 +5202,45 @@
                                         "approvedSymbol": {
                                             "type": "string"
                                         },
-                                        "expressions": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "tissue": {
-                                                        "type": "object"
-                                                    },
-                                                    "rna": {
-                                                        "type": "object"
-                                                    },
-                                                    "protein": {
-                                                        "type": "object"
+                                        "baselineExpression": {
+                                            "type": "object",
+                                            "properties": {
+                                                "count": {
+                                                    "type": "integer"
+                                                },
+                                                "rows": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "datasourceId": {
+                                                                "type": "string"
+                                                            },
+                                                            "tissueBiosample": {
+                                                                "type": "object"
+                                                            },
+                                                            "median": {
+                                                                "type": [
+                                                                    "number",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "min": {
+                                                                "type": [
+                                                                    "number",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "max": {
+                                                                "type": [
+                                                                    "number",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "unit": {
+                                                                "type": "string"
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }

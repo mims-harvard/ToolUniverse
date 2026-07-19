@@ -255,7 +255,7 @@
   },
   {
     "name": "GTDB_search_genomes",
-    "description": "Search for prokaryotic genomes in GTDB by organism name. Returns genome accessions with both NCBI and GTDB taxonomy classifications, allowing comparison between the two taxonomic systems. Each result shows the genome accession (GCA/GCF), NCBI organism name, NCBI taxonomy, GTDB taxonomy, and whether the genome is a GTDB species representative. Supports pagination. Useful for finding genome accessions, exploring taxonomic reclassifications, and linking genomes to the GTDB taxonomy.",
+    "description": "Search for prokaryotic genomes in GTDB by organism name. This matches against the whole taxonomic clade, not just the organism-name text, so results can include other members of the same family/genus alongside genomes whose own name matches the query (exact/prefix name matches are ranked first). Returns genome accessions with both NCBI and GTDB taxonomy classifications, allowing comparison between the two taxonomic systems. Each result shows the genome accession (GCA/GCF), NCBI organism name, NCBI taxonomy, GTDB taxonomy, and whether the genome is a GTDB species representative. Supports pagination. Useful for finding genome accessions, exploring taxonomic reclassifications, and linking genomes to the GTDB taxonomy.",
     "parameter": {
       "type": "object",
       "properties": {
