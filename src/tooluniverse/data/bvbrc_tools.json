@@ -1717,6 +1717,34 @@
                       "integer",
                       "null"
                     ]
+                  },
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene symbol for this pathway/EC record, e.g. \"fadD15\". Distinguishes genuinely different genes sharing the same EC number/pathway from true duplicate rows."
+                  },
+                  "feature_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "BV-BRC feature id for this record, e.g. \"RefSeq.83332.12.NC_000962.CDS.2448160.2449962.fwd\"."
+                  },
+                  "product": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene product/protein description."
+                  },
+                  "annotation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Annotation source, e.g. \"RefSeq\" or \"PATRIC\" -- the same EC/pathway is often independently annotated by multiple sources."
                   }
                 }
               }

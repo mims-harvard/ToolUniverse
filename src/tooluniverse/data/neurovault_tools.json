@@ -1,7 +1,7 @@
 [
   {
     "name": "NeuroVault_list_collections",
-    "description": "List and browse neuroimaging statistical map collections from NeuroVault. Returns collections of brain images (fMRI, PET, EEG) contributed by researchers worldwide. Each collection contains metadata about the study, DOI, authors, and imaging parameters. NeuroVault hosts over 16,000 collections with 650,000+ brain images. Use limit and offset for pagination. Use this to discover available neuroimaging datasets for meta-analysis or to find specific studies.",
+    "description": "List and browse neuroimaging statistical map collections from NeuroVault. Returns collections of brain images (fMRI, PET, EEG) contributed by researchers worldwide. Each collection contains metadata about the study, DOI, authors, and imaging parameters. NeuroVault hosts over 16,000 collections with 650,000+ brain images. Use limit and offset for pagination. Caveat: NeuroVault's public API has no working keyword/name search or filter parameter (confirmed live -- name/search/q/keywords all return the full unfiltered catalog) -- this only returns pages of the full, unfiltered collection catalog, which must be paged through client-side to find specific studies.",
     "parameter": {
       "type": "object",
       "properties": {

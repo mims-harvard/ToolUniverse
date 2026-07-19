@@ -55,7 +55,12 @@ class AllenBrainTool(BaseTool):
                 "error": "Failed to connect to Allen Brain Atlas API.",
             }
         except requests.exceptions.HTTPError as e:
-            status = e.response.status_code if e.response else "unknown"
+            # `bool(e.response)` is `requests.Response.ok`, which is False for
+            # every 4xx/5xx response -- so `e.response else "unknown"` always
+            # discarded the real status code on an actual HTTP error (same bug
+            # confirmed live in the sibling NeuroMorpho tool). Use an explicit
+            # None check instead.
+            status = e.response.status_code if e.response is not None else "unknown"
             return {
                 "status": "error",
                 "error": f"Allen Brain Atlas API HTTP error: {status}",

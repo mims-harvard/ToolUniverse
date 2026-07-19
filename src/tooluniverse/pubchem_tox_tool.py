@@ -98,6 +98,15 @@ class PubChemToxTool(BaseTool):
 
         url = f"{PUG_BASE_URL}/name/{compound_name}/cids/JSON"
         response = requests.get(url, timeout=self.timeout)
+        # PubChem's name->CID lookup itself 404s when the name doesn't
+        # resolve at all (confirmed live) -- raise that as a distinct
+        # ValueError here, before it can reach run()'s generic
+        # HTTPError(404) handler, which otherwise conflates "compound name
+        # never resolved" with "compound resolved fine but this specific
+        # toxicity heading is absent for it" into the identical misleading
+        # "This heading may not exist for this compound" message.
+        if response.status_code == 404:
+            raise ValueError(f"No compound found for name: {compound_name}")
         response.raise_for_status()
         data = response.json()
         cids = data.get("IdentifierList", {}).get("CID", [])

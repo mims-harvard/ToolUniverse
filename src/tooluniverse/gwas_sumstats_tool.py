@@ -113,10 +113,21 @@ class GWASSumStatsTool(BaseTool):
         url = f"{GWAS_SS_BASE_URL}/traits/{trait_id}/studies"
         resp = requests.get(url, timeout=self.timeout)
         if resp.status_code == 404:
-            return {
-                "status": "error",
-                "error": f"No summary statistics found for trait '{trait_id}'",
-            }
+            error = f"No summary statistics found for trait '{trait_id}'"
+            # This API only recognizes EFO ids. A disease looked up in a
+            # different ontology (e.g. PGS Catalog's MONDO/HP ids) 404s
+            # identically to a genuinely nonexistent EFO id, which silently
+            # sends the caller down the wrong path -- confirmed live for
+            # MONDO_0004975 (Alzheimer disease's MONDO id; EFO_0000249
+            # works for the same disease). Name the likely cause when the
+            # id doesn't look like an EFO id.
+            if not trait_id.upper().startswith("EFO_"):
+                error += (
+                    ". This API only accepts EFO trait ids -- if this id "
+                    "came from another ontology (e.g. MONDO, HP, DOID), "
+                    "look up the equivalent EFO id instead."
+                )
+            return {"status": "error", "error": error}
         resp.raise_for_status()
         data = resp.json()
 

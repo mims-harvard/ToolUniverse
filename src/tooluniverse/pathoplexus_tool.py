@@ -19,6 +19,12 @@ from .tool_registry import register_tool
 
 LAPIS_BASE = "https://lapis.pathoplexus.org"
 
+# Confirmed live: an unsupported organism slug 404s with a bare LAPIS error
+# that doesn't name the actual valid slugs, forcing the caller back to the
+# tool description. Surface this list directly in the error message too.
+KNOWN_ORGANISMS = ["west-nile", "ebola-zaire", "ebola-sudan", "cchf", "mpox"]
+_ORGS = ", ".join(KNOWN_ORGANISMS)
+
 
 def _organism(arguments: Dict[str, Any]) -> str:
     return (arguments.get("organism") or "").strip().lower()
@@ -52,6 +58,15 @@ class _PathoplexusBase(BaseTool):
         )
         resp.raise_for_status()
         return resp.text
+
+    @staticmethod
+    def _http_error_response(
+        e: requests.exceptions.HTTPError, hint: str
+    ) -> Dict[str, Any]:
+        return {
+            "status": "error",
+            "error": f"Pathoplexus HTTP {e.response.status_code} — check the organism slug (known organisms: {_ORGS}) and {hint}",
+        }
 
     @staticmethod
     def _common_filters(arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -109,10 +124,7 @@ class PathoplexusCountTool(_PathoplexusBase):
                 "error": f"Pathoplexus request timed out after {self.timeout}s",
             }
         except requests.exceptions.HTTPError as e:
-            return {
-                "status": "error",
-                "error": f"Pathoplexus HTTP {e.response.status_code} — check the organism slug and filter fields",
-            }
+            return self._http_error_response(e, "filter fields")
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Pathoplexus request failed: {e}"}
         except ValueError:
@@ -167,10 +179,7 @@ class PathoplexusCountTool(_PathoplexusBase):
                 "error": f"Pathoplexus request timed out after {self.timeout}s",
             }
         except requests.exceptions.HTTPError as e:
-            return {
-                "status": "error",
-                "error": f"Pathoplexus HTTP {e.response.status_code} — check the organism slug and field names",
-            }
+            return self._http_error_response(e, "field names")
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Pathoplexus request failed: {e}"}
         except ValueError:
@@ -231,10 +240,7 @@ class PathoplexusCountTool(_PathoplexusBase):
                 "error": f"Pathoplexus request timed out after {self.timeout}s",
             }
         except requests.exceptions.HTTPError as e:
-            return {
-                "status": "error",
-                "error": f"Pathoplexus HTTP {e.response.status_code} — check the organism slug and filter fields",
-            }
+            return self._http_error_response(e, "filter fields")
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Pathoplexus request failed: {e}"}
 
@@ -295,10 +301,7 @@ class PathoplexusMutationsTool(_PathoplexusBase):
                 "error": f"Pathoplexus request timed out after {self.timeout}s",
             }
         except requests.exceptions.HTTPError as e:
-            return {
-                "status": "error",
-                "error": f"Pathoplexus HTTP {e.response.status_code} — check the organism slug and filter fields",
-            }
+            return self._http_error_response(e, "filter fields")
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Pathoplexus request failed: {e}"}
         except ValueError:
