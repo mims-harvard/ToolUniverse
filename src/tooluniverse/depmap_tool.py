@@ -64,6 +64,21 @@ class DepMapTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown operation: {operation}"}
 
+    @staticmethod
+    def _parse_model_list(data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Map a JSON:API /models response's ``data`` array to
+        [{model_id, model_name}] rows (model_name is ``names[0]``, a list)."""
+        models = []
+        for item in data.get("data", []):
+            names = item.get("attributes", {}).get("names")
+            models.append(
+                {
+                    "model_id": item.get("id"),
+                    "model_name": names[0] if names else None,
+                }
+            )
+        return models
+
     def _get_cell_lines(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         Get list of cancer cell lines with metadata.
@@ -77,45 +92,43 @@ class DepMapTool(BaseTool):
         try:
             url = f"{DEPMAP_BASE_URL}/models"
             params = {"page[size]": min(page_size, 100)}
-
-            # Add filters if provided
-            filters = []
-            if tissue:
-                filters.append(f"tissue:{tissue}")
-            if cancer_type:
-                filters.append(f"cancer_type:{cancer_type}")
-
-            if filters:
-                params["filter[model]"] = ",".join(filters)
-
             response = requests.get(url, params=params, timeout=self.timeout)
             response.raise_for_status()
             data = response.json()
 
-            # Parse cell line data
-            cell_lines = []
-            for item in data.get("data", []):
-                attrs = item.get("attributes", {})
-                cell_lines.append(
-                    {
-                        "model_id": item.get("id"),
-                        "model_name": attrs.get("model_name"),
-                        "tissue": attrs.get("tissue"),
-                        "cancer_type": attrs.get("cancer_type"),
-                        "sample_site": attrs.get("sample_site"),
-                        "gender": attrs.get("gender"),
-                        "ethnicity": attrs.get("ethnicity"),
-                    }
-                )
+            # Parse cell line data. tissue/cancer_type/sample_site/gender/
+            # ethnicity are not attributes on /models list items at all
+            # (they live on each item's related sample/patient resources,
+            # only resolvable one model at a time via DepMap_get_cell_line)
+            # -- left unset here rather than reading nonexistent keys.
+            cell_lines = self._parse_model_list(data)
 
-            return {
+            result = {
                 "status": "success",
                 "data": {
                     "cell_lines": cell_lines,
                     "count": len(cell_lines),
-                    "total": data.get("meta", {}).get("total", len(cell_lines)),
+                    "total": data.get("meta", {}).get("count", len(cell_lines)),
                 },
             }
+            # The Cell Model Passports /models endpoint does not support
+            # server-side tissue/cancer_type filtering (confirmed live:
+            # every filter[...] syntax tried -- filter[model], filter[
+            # tissue.name], filter[sample.tissue.name], bare tissue=/
+            # cancer_type= -- returned the identical unfiltered page).
+            # Say so explicitly instead of silently ignoring the filter.
+            if tissue or cancer_type:
+                result["metadata"] = {
+                    "note": (
+                        "The upstream API does not support server-side "
+                        "tissue/cancer_type filtering on this endpoint; "
+                        "results above are unfiltered. Use "
+                        "DepMap_search_cell_lines by name, or "
+                        "DepMap_get_cell_line per model_id to check its "
+                        "tissue/cancer_type."
+                    )
+                }
+            return result
         except requests.exceptions.Timeout:
             return {
                 "status": "error",
@@ -159,7 +172,17 @@ class DepMapTool(BaseTool):
                 model_id = search_result["data"]["cell_lines"][0]["model_id"]
                 url = f"{DEPMAP_BASE_URL}/models/{model_id}"
 
-            response = requests.get(url, timeout=self.timeout)
+            # tissue/cancer_type/sample_site/tissue_status/age_at_sampling/
+            # gender/ethnicity/msi_status are not attributes on the model
+            # resource itself -- they live on related sample/patient/
+            # model_msi_status resources (confirmed live via the API's own
+            # /models/{id} response, which has none of these fields).
+            # `include` pulls all of them in with this one request instead
+            # of a separate round-trip per relationship.
+            params = {
+                "include": "sample,sample.tissue,sample.cancer_type,sample.patient,model_msi_status"
+            }
+            response = requests.get(url, params=params, timeout=self.timeout)
 
             if response.status_code == 404:
                 return {
@@ -173,23 +196,50 @@ class DepMapTool(BaseTool):
 
             item = data.get("data", {})
             attrs = item.get("attributes", {})
+            # `id` comes back as a string for most included types (e.g.
+            # sample, patient) but as an int for lookup-table types like
+            # tissue/cancer_type (confirmed live) -- normalize to str so
+            # the two sides of the (type, id) key always match.
+            included_by_key = {
+                (inc.get("type"), str(inc.get("id"))): inc
+                for inc in data.get("included", [])
+                if isinstance(inc, dict)
+            }
+
+            def _resolve(node: Dict[str, Any], rel_name: str) -> Dict[str, Any]:
+                """Follow a to-one relationship from a JSON:API resource
+                object to its included resource object (or {} if absent)."""
+                rel = (node.get("relationships") or {}).get(rel_name, {}).get("data")
+                if isinstance(rel, list):
+                    rel = rel[0] if rel else None
+                if not isinstance(rel, dict):
+                    return {}
+                return included_by_key.get((rel.get("type"), str(rel.get("id"))), {})
+
+            sample = _resolve(item, "sample")
+            sample_attrs = sample.get("attributes", {})
+            tissue_attrs = _resolve(sample, "tissue").get("attributes", {})
+            cancer_type_attrs = _resolve(sample, "cancer_type").get("attributes", {})
+            patient_attrs = _resolve(sample, "patient").get("attributes", {})
+            msi_attrs = _resolve(item, "model_msi_status").get("attributes", {})
+            names = attrs.get("names")
 
             return {
                 "status": "success",
                 "data": {
                     "model_id": item.get("id"),
-                    "model_name": attrs.get("model_name"),
-                    "tissue": attrs.get("tissue"),
-                    "cancer_type": attrs.get("cancer_type"),
-                    "tissue_status": attrs.get("tissue_status"),
-                    "sample_site": attrs.get("sample_site"),
-                    "gender": attrs.get("gender"),
-                    "ethnicity": attrs.get("ethnicity"),
-                    "age_at_sampling": attrs.get("age_at_sampling"),
+                    "model_name": names[0] if names else None,
+                    "tissue": tissue_attrs.get("name"),
+                    "cancer_type": cancer_type_attrs.get("name"),
+                    "tissue_status": sample_attrs.get("tissue_status"),
+                    "sample_site": sample_attrs.get("sample_site"),
+                    "gender": patient_attrs.get("gender"),
+                    "ethnicity": patient_attrs.get("ethnicity"),
+                    "age_at_sampling": sample_attrs.get("age_at_sampling"),
                     "growth_properties": attrs.get("growth_properties"),
-                    "msi_status": attrs.get("msi_status"),
+                    "msi_status": msi_attrs.get("msi_status"),
                     "ploidy": attrs.get("ploidy"),
-                    "mutational_burden": attrs.get("mutational_burden"),
+                    "mutational_burden": attrs.get("mutations_per_mb"),
                 },
             }
         except requests.exceptions.Timeout:
@@ -212,24 +262,18 @@ class DepMapTool(BaseTool):
             return {"status": "error", "error": "query parameter is required"}
 
         try:
-            url = f"{DEPMAP_BASE_URL}/models"
-            params = {"filter[model]": f"model_name:{query}", "page[size]": 20}
+            # The Cell Model Passports API silently ignores filter[model]
+            # on /models (confirmed live: any query, including nonsense
+            # strings, returned the same unfiltered first page). The real
+            # name-search endpoint is /search/models?q=... .
+            url = f"{DEPMAP_BASE_URL}/search/models"
+            params = {"q": query, "page[size]": 20}
 
             response = requests.get(url, params=params, timeout=self.timeout)
             response.raise_for_status()
             data = response.json()
 
-            cell_lines = []
-            for item in data.get("data", []):
-                attrs = item.get("attributes", {})
-                cell_lines.append(
-                    {
-                        "model_id": item.get("id"),
-                        "model_name": attrs.get("model_name"),
-                        "tissue": attrs.get("tissue"),
-                        "cancer_type": attrs.get("cancer_type"),
-                    }
-                )
+            cell_lines = self._parse_model_list(data)
 
             return {
                 "status": "success",

@@ -134,7 +134,7 @@
   },
   {
     "name": "Metabolite_get_diseases",
-    "description": "Get curated disease associations for a metabolite using CTD (Comparative Toxicogenomics Database). Accepts HMDB ID, compound name, or PubChem CID. Resolves the identifier to PubChem to get the canonical compound name, then queries CTD for chemical-disease associations with direct evidence. Returns disease name, disease ID (MeSH), disease categories, direct evidence type (marker/mechanism), and supporting PubMed IDs.",
+    "description": "Get curated disease associations for a metabolite using CTD (Comparative Toxicogenomics Database), served via the RENCI Automat CTD mirror since CTD's own batchQuery.go endpoint is CAPTCHA-blocked. Accepts HMDB ID, compound name, or PubChem CID. Resolves the identifier to PubChem to get the canonical compound name, then queries the mirror for chemical-disease associations. Returns disease name, disease ID (MONDO), and supporting PubMed IDs. Note: direct_evidence (CTD's own therapeutic/marker-mechanism classification) and disease_categories are always null -- the mirror's edge data does not carry either field, only the disease link and its citations.",
     "type": "MetaboliteTool",
     "parameter": {
       "type": "object",

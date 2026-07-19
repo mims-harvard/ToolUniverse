@@ -286,7 +286,15 @@ class CompoundVariantAnnotationTool(BaseTool):
                 summary["sources_with_data"].append(source)
 
         clinvar = annotations.get("clinvar", {})
-        if clinvar.get("variants"):
+        # _parse_clinvar's "variants" list falls back to unrelated top-10
+        # gene-level context variants when the specific change isn't found
+        # (exact_match: False) rather than being empty -- confirmed live
+        # this previously let clinvar_classification silently report an
+        # unrelated variant's classification (e.g. EGFR L858R -- a
+        # ClinVar-Oncogenic, Tier I-Strong variant -- summarized as
+        # "Uncertain significance" from an unrelated p.Leu828Ser record)
+        # whenever exact_match was False. Only derive it from a real match.
+        if clinvar.get("exact_match") and clinvar.get("variants"):
             classifications = [
                 v["classification"]
                 for v in clinvar["variants"]
