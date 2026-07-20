@@ -435,9 +435,7 @@
           "default": 500
         }
       },
-      "required": [
-        "field_name"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint_type": "neuron",
