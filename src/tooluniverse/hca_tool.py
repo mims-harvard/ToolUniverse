@@ -30,7 +30,17 @@ class HCATool(BaseTool):
         Returns:
             Dict[str, Any]: The results of the action.
         """
-        action = arguments.get("action")
+        # Fix-R39A-3: "action" is optional in the schema (each config
+        # exposes exactly one valid value via enum+default), so a caller
+        # who omits it must still resolve to that tool instance's own
+        # action -- there was previously no fallback at all, so an omitted
+        # action fell straight through to "Unknown action: None".
+        action = arguments.get("action") or (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("action", {})
+            .get("default", "")
+        )
 
         if action == "search_projects":
             return self.search_projects(

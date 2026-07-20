@@ -50,7 +50,14 @@ class FourDNTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
         try:
-            operation = arguments.get("operation", "search")
+            # Fix-R39A-2: "operation" is optional in the schema (each config
+            # exposes exactly one valid value via enum+default), so a caller
+            # who omits it must still resolve to that tool instance's own
+            # operation -- the old bare "search" literal fallback was only
+            # coincidentally correct for FourDN_search_data and would
+            # silently mis-route the other 3 tools to a search instead of
+            # their own operation.
+            operation = arguments.get("operation") or self.get_schema_const_operation()
 
             if operation == "search":
                 return self._search(arguments)

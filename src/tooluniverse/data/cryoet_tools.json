@@ -42,9 +42,7 @@
           "default": 0
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -175,7 +173,6 @@
         }
       },
       "required": [
-        "operation",
         "dataset_id"
       ]
     },
@@ -338,7 +335,6 @@
         }
       },
       "required": [
-        "operation",
         "dataset_id"
       ]
     },
@@ -463,7 +459,6 @@
         }
       },
       "required": [
-        "operation",
         "run_id"
       ]
     },
@@ -646,7 +641,6 @@
         }
       },
       "required": [
-        "operation",
         "run_id"
       ]
     },
@@ -808,9 +802,7 @@
           "default": 0
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -1040,9 +1032,7 @@
           "default": 0
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
