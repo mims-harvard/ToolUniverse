@@ -269,7 +269,7 @@
     },
     {
         "name": "OpenTargets_get_evidence_by_datasource",
-        "description": "Get target-disease evidence from Open Targets filtered by configurable data sources. Unlike OpenTargets_target_disease_evidence (intogen-only), this tool accepts any datasourceIds. Valid sources include: ot_genetics_portal, eva, eva_somatic, gene_burden, genomics_england, intogen, cancer_gene_census, chembl, crispr, europepmc, expression_atlas, gene2phenotype, orphanet, uniprot_literature, uniprot_variants, clingen, phewas_catalog, reactome, progeny, slapenrich, sysbio. Returns evidence rows with scores, literature references, and source attribution.",
+        "description": "Get target-disease evidence from Open Targets filtered by configurable data sources. Unlike OpenTargets_target_disease_evidence (intogen-only), this tool accepts any datasourceIds. Valid sources include: ot_genetics_portal, eva, eva_somatic, gene_burden, genomics_england, intogen, cancer_gene_census, clinical_precedence, crispr, europepmc, expression_atlas, gene2phenotype, orphanet, uniprot_literature, uniprot_variants, clingen, phewas_catalog, reactome, progeny, slapenrich, sysbio. Note: 'chembl' was renamed to 'clinical_precedence' upstream (confirmed live: 'chembl' now returns 0 rows even for well-documented drug-target-disease evidence). Returns evidence rows with scores, literature references, and source attribution.",
         "label": [
             "Target",
             "Disease",

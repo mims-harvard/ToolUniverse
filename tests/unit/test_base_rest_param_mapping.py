@@ -48,6 +48,36 @@ def test_mapped_value_overrides_default_param():
 
 
 @pytest.mark.unit
+def test_path_alias_is_consumed_not_leaked_into_query_params():
+    """Fix-R31B-3: an alias key (e.g. "gene" -> "symbol") left in args after
+    _build_url resolves it used to leak into _build_params as an
+    unrecognized query param -- confirmed live this isn't harmless:
+    PostgREST-backed APIs (e.g. CPIC) try to parse every query key as a
+    filter expression and 400 with "failed to parse filter" on it, breaking
+    the whole request."""
+    tool = _make_tool({"path_aliases": {"gene": "symbol"}})
+    args = {"gene": "CYP2D6"}
+    url = tool._build_url(args)
+    assert url == "https://example.org/api"  # endpoint has no {symbol} placeholder here
+    assert "gene" not in args
+    assert args["symbol"] == "CYP2D6"
+    params = tool._build_params(args)
+    assert "gene" not in params
+    assert params["symbol"] == "CYP2D6"
+
+
+@pytest.mark.unit
+def test_path_alias_consumed_even_when_canonical_already_present():
+    # Both the alias and the canonical name are supplied -- the alias must
+    # still be dropped so it doesn't leak as a stray query param.
+    tool = _make_tool({"path_aliases": {"gene": "symbol"}})
+    args = {"gene": "CYP2D6", "symbol": "CYP2D6"}
+    tool._build_url(args)
+    assert "gene" not in args
+    assert args["symbol"] == "CYP2D6"
+
+
+@pytest.mark.unit
 def test_no_param_mapping_is_unchanged():
     # Tools without a param_mapping field keep the previous behaviour.
     tool = _make_tool({})

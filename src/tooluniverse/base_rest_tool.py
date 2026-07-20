@@ -66,11 +66,18 @@ class BaseRESTTool(BaseTool):
         """
         url = self.tool_config["fields"]["endpoint"]
 
-        # Apply path_aliases: map alias → canonical name before substitution
+        # Apply path_aliases: map alias → canonical name before substitution.
+        # Fix-R31B-3: an alias key left in `args` after this point leaked into
+        # _build_params as an unrecognized query param -- confirmed live this
+        # isn't just harmless noise: PostgREST-backed APIs (e.g. CPIC) try to
+        # parse every query key as a filter expression and 400 on it
+        # ("failed to parse filter"), breaking the whole request. Always pop
+        # the alias key once consulted, whether or not the canonical name was
+        # already present.
         path_aliases = self.tool_config.get("fields", {}).get("path_aliases", {})
         for alias, canonical in path_aliases.items():
-            if alias in args and canonical not in args:
-                args[canonical] = args[alias]
+            if alias in args:
+                args.setdefault(canonical, args.pop(alias))
 
         # Replace all path parameters from user args
         for key, value in args.items():

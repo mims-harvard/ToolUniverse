@@ -48,10 +48,11 @@ class TestRemoveNoneAndEmptyValues:
         assert cleaned == {"c": "keep", "d": [1, 2]}
 
 
-def _tool():
+def _tool(name="OpenTargets_get_associated_diseases_by_target_ensemblID"):
     tool = OpentargetTool.__new__(OpentargetTool)
     tool.endpoint_url = "https://api.platform.opentargets.org/api/v4/graphql"
     tool.query_schema = "query searchStudies($diseaseIds: [String!]) { studies { count } }"
+    tool.tool_config = {"name": name}
     return tool
 
 
@@ -86,5 +87,43 @@ class TestLegacyEfoStudiesNote:
             return_value={"status": "success", "data": {"studies": {"count": 0}}},
         ):
             result = tool.run({"diseaseIds": ["MONDO_9999999"]})
+
+        assert "metadata" not in result or "note" not in result.get("metadata", {})
+
+
+class TestIntOGenNoteNotMisattributed:
+    """Regression guard for Fix-R31D-3: the IntOGen "0 evidence rows" note
+    (Feature-122B-002, above) was applied to EVERY OpentargetTool-based tool
+    whenever evidences.count == 0, not just the actual IntOGen-only tool
+    (OpenTargets_target_disease_evidence). Confirmed live: querying
+    OpenTargets_get_evidence_by_datasource with datasourceIds=["chembl"]
+    (a datasource IntOGen never touches) got the note blaming IntOGen for
+    the zero count -- even telling the caller to "use
+    OpenTargets_get_evidence_by_datasource instead" while that IS the tool
+    being called."""
+
+    def _zero_evidence_result(self):
+        return {
+            "status": "success",
+            "data": {"disease": {"id": "MONDO_0005233", "evidences": {"count": 0}}},
+        }
+
+    def test_note_fires_for_the_real_intogen_tool(self):
+        tool = _tool(name="OpenTargets_target_disease_evidence")
+        with patch(
+            "tooluniverse.graphql_tool.GraphQLTool.run",
+            return_value=self._zero_evidence_result(),
+        ):
+            result = tool.run({"efoId": "EFO_0001360"})
+
+        assert "IntOGen" in result["metadata"]["note"]
+
+    def test_note_does_not_fire_for_other_evidence_tools(self):
+        tool = _tool(name="OpenTargets_get_evidence_by_datasource")
+        with patch(
+            "tooluniverse.graphql_tool.GraphQLTool.run",
+            return_value=self._zero_evidence_result(),
+        ):
+            result = tool.run({"efoId": "MONDO_0005233", "datasourceIds": ["chembl"]})
 
         assert "metadata" not in result or "note" not in result.get("metadata", {})

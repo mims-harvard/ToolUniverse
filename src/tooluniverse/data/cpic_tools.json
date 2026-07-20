@@ -6,17 +6,29 @@
       "type": "object",
       "properties": {
         "symbol": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD')"
+        },
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Gene symbol alias -- alternative to symbol."
+        },
+        "gene_symbol": {
+          "type": ["string", "null"],
+          "description": "Gene symbol alias -- alternative to symbol."
         }
       },
-      "required": [
-        "symbol"
+      "required": [],
+      "anyOf": [
+        {"required": ["symbol"]},
+        {"required": ["gene"]},
+        {"required": ["gene_symbol"]}
       ]
     },
     "fields": {
       "endpoint": "https://api.cpicpgx.org/v1/gene?symbol=eq.{symbol}",
-      "uppercase_params": ["symbol"]
+      "path_aliases": {"gene": "symbol", "gene_symbol": "symbol"},
+      "uppercase_params": ["symbol", "gene", "gene_symbol"]
     },
     "type": "BaseRESTTool",
     "test_examples": [

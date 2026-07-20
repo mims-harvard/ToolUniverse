@@ -245,8 +245,18 @@ class OpentargetTool(GraphQLTool):
 
         result = super().run(arguments)
 
-        # Add note when IntOGen evidence count is 0 (Feature-122B-002)
-        if result.get("status") == "success":
+        # Add note when IntOGen evidence count is 0 (Feature-122B-002).
+        # Fix-R31D-3: this note is IntOGen-specific but was applied to every
+        # tool built on this shared base class whenever evidences.count == 0
+        # -- confirmed live it fired for OpenTargets_get_evidence_by_datasource
+        # queried with datasourceIds=["chembl"], blaming IntOGen (never
+        # queried at all) for a zero count and even telling the caller to
+        # "use OpenTargets_get_evidence_by_datasource instead" while that IS
+        # the tool being called. Gate it to the actual IntOGen-only tool.
+        if (
+            result.get("status") == "success"
+            and self.tool_config.get("name") == "OpenTargets_target_disease_evidence"
+        ):
             evidences = result.get("data", {}).get("disease", {}).get("evidences", {})
             if isinstance(evidences, dict) and evidences.get("count") == 0:
                 result.setdefault("metadata", {})["note"] = (
