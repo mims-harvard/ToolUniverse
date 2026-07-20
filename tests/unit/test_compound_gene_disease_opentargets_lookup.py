@@ -187,7 +187,6 @@ class TestOpenTargetsGeneOnlyLookup:
             "status": "success",
             "data": {"search": {"hits": [{"name": "progeria"}]}},
         }
-        sources_failed = []
 
         # run() itself dispatches this, but exercising just the extraction
         # helper's untouched branch is enough to confirm no regression.
