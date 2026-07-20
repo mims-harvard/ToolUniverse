@@ -112,7 +112,6 @@
         }
       },
       "required": [
-        "operation",
         "obs_value_filter"
       ]
     },
@@ -209,9 +208,7 @@
           "default": "stable"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": [
@@ -310,9 +307,7 @@
           "default": "stable"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": [
@@ -385,9 +380,7 @@
           "default": "stable"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -480,9 +473,7 @@
           "default": "stable"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -568,7 +559,6 @@
         }
       },
       "required": [
-        "operation",
         "dataset_id"
       ]
     },
