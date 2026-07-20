@@ -51,6 +51,25 @@ class ChEMBLRESTTool(BaseTool):
             # Replace placeholders in URL
             for k, v in args.items():
                 url = url.replace(f"{{{k}}}", str(v))
+            # Fix-R40A-1: ChEMBL_search_similarity's endpoint template
+            # (/similarity/{smiles}/{threshold}.json) has a path placeholder
+            # that this loop never fills unless the caller explicitly
+            # supplies it -- confirmed live a caller omitting "threshold"
+            # (relying on its own schema "default": 80) got a literal
+            # "{threshold}" left in the URL and a 404, unlike BaseRESTTool's
+            # _build_url which already falls back to schema defaults for
+            # unfilled placeholders. Mirror that behavior here.
+            for key, prop in (
+                self.tool_config.get("parameter", {}).get("properties", {}).items()
+            ):
+                placeholder = f"{{{key}}}"
+                if (
+                    placeholder in url
+                    and isinstance(prop, dict)
+                    and "default" in prop
+                    and prop["default"] is not None
+                ):
+                    url = url.replace(placeholder, str(prop["default"]))
             # Feature-31A-03 fix: /drug.json does not support pref_name__icontains filtering
             # (ChEMBL server silently ignores it). When a name query is given, route to
             # /molecule.json which supports full text filtering.
