@@ -420,8 +420,7 @@
         }
       },
       "required": [
-        "smiles",
-        "threshold"
+        "smiles"
       ]
     },
     "fields": {
@@ -472,8 +471,7 @@
         }
       },
       "required": [
-        "cid",
-        "image_size"
+        "cid"
       ]
     },
     "fields": {

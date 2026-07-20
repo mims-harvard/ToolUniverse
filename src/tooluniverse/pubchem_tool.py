@@ -97,10 +97,26 @@ class PubChemRESTTool(BaseTool):
         placeholders = re.findall(r"\{([^{}]+)\}", url_path)
         for ph in placeholders:
             if ph not in arguments:
-                # If a placeholder cannot find corresponding value in arguments, report error
-                raise ValueError(
-                    f"Missing required parameter '{ph}' to replace placeholder in URL."
+                # Fix-R41A-1: a caller who omits a placeholder that has its
+                # own schema "default" (e.g. image_size) is relying on the
+                # documented default, not making an error -- confirmed live
+                # PubChem_get_compound_2D_image_by_CID({"cid": 2244}) used
+                # to raise here even though image_size's schema default
+                # ("200x200") is exactly the value the tool's own docs
+                # promise. Fall back to it before treating this as missing.
+                default = (
+                    self.tool_config.get("parameter", {})
+                    .get("properties", {})
+                    .get(ph, {})
+                    .get("default")
                 )
+                if default is not None:
+                    arguments = dict(arguments, **{ph: default})
+                else:
+                    # If a placeholder cannot find corresponding value in arguments, report error
+                    raise ValueError(
+                        f"Missing required parameter '{ph}' to replace placeholder in URL."
+                    )
             val = arguments[ph]
             # If input value is a list, join with commas
             if isinstance(val, list):
