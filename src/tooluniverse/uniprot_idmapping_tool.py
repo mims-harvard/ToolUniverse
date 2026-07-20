@@ -126,6 +126,13 @@ class UniProtIDMappingTool(BaseTool):
             )
             status_data = status_resp.json()
 
+            # For jobs that complete almost instantly, the status endpoint can
+            # return results embedded directly instead of a "FINISHED"
+            # jobStatus (confirmed live) -- either way, treat it as done and
+            # fall through to the paginated results fetch below (size=500).
+            # Returning this embedded copy directly previously silently
+            # truncated to UniProt's unpaginated default page size (25),
+            # even when the job actually had hundreds of matches.
             if status_data.get("jobStatus") == "FINISHED" or "results" in status_data:
                 break
             if status_data.get("jobStatus") == "ERROR":

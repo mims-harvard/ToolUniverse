@@ -81,9 +81,14 @@ def test_get_baseline_gene_and_nonsense_gene_return_same_catalog_but_gene_warns(
 
     assert real_gene["status"] == "success"
     assert real_gene["data"]["total_baseline"] == nonsense_gene["data"]["total_baseline"]
-    assert "warning" in real_gene["data"]
-    assert "text-search coincidence" in real_gene["data"]["warning"]
-    assert "HK1" in real_gene["data"]["warning"]
+    # Fix-R24: get_baseline_expression's gene_mentioned/warning fields were
+    # removed entirely (confirmed live the underlying text-match signal was
+    # false for every real gene, not just a weak heuristic) in favor of a
+    # top-level `note` pointing callers at the tool that actually supports
+    # per-gene filtering.
+    assert "warning" not in real_gene["data"]
+    assert "gene_mentioned" not in str(real_gene["data"].get("baseline_experiments"))
+    assert "HK1" in real_gene["note"]
 
 
 def test_search_differential_gene_query_warns_but_condition_only_does_not():

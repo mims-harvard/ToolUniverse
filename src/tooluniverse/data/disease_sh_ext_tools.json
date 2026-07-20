@@ -10,7 +10,8 @@
             "string",
             "null"
           ],
-          "description": "Country name or ISO code. Use 'all' for global data. Examples: 'usa', 'china', 'india', 'uk', 'germany', 'all'"
+          "description": "Country name or ISO code. Use 'all' for global data. Examples: 'usa', 'china', 'india', 'uk', 'germany', 'all'",
+          "default": "all"
         },
         "lastdays": {
           "type": [
@@ -103,16 +104,13 @@
   },
   {
     "name": "DiseaseSH_get_vaccine_coverage",
-    "description": "Get COVID-19 vaccine coverage data for a country or globally using the Disease.sh API. Returns timeline of total vaccination doses administered and percentage of population vaccinated. No authentication required.",
+    "description": "Get COVID-19 vaccine coverage data for a specific country using the Disease.sh API. Returns timeline of total vaccination doses administered and percentage of population vaccinated. Global data is not available through this tool -- the upstream API serves it from a differently-shaped endpoint this tool does not call; pass a real country name/ISO code. No authentication required.",
     "parameter": {
       "type": "object",
       "properties": {
         "country": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Country name or 'all' for global. Examples: 'usa', 'uk', 'germany', 'india', 'all'"
+          "type": "string",
+          "description": "Country name or ISO code (a real one -- 'all' is not supported by this endpoint and 404s). Examples: 'usa', 'uk', 'germany', 'india'"
         },
         "lastdays": {
           "type": [
@@ -122,7 +120,7 @@
           "description": "Number of past days to include. Default: 30. Examples: 7, 30, 90"
         }
       },
-      "required": []
+      "required": ["country"]
     },
     "fields": {
       "endpoint": "https://disease.sh/v3/covid-19/vaccine/coverage/countries/{country}",

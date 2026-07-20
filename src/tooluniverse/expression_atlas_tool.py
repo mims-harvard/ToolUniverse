@@ -94,11 +94,13 @@ class ExpressionAtlasTool(BaseTool):
 
     def _get_baseline_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Get baseline expression experiments for a gene.
+        List baseline expression experiments for a species.
 
-        Uses EBI Search to find experiments mentioning the gene,
-        then filters the Expression Atlas experiment catalog for
-        baseline experiments in the specified species.
+        Fetches the Expression Atlas experiment catalog and returns its
+        baseline experiments for the requested species. The list is not
+        filtered by gene -- the underlying API has no reliable way to do so
+        (see the inline note below), so ``gene`` only labels the request and
+        drives the follow-up suggestion.
         """
         gene = arguments.get("gene", "")
         species = arguments.get("species", "homo sapiens")
@@ -126,32 +128,34 @@ class ExpressionAtlasTool(BaseTool):
                 and e.get("species", "").lower() == species_lower
             ]
 
-            # Step 2: Search EBI Search for gene-specific experiments
-            gene_experiment_ids = self._gene_experiment_ids(gene)
-
-            # Combine: tag baseline experiments that mention the gene
-            results = []
-            for exp in baseline_exps:
-                acc = exp.get("experimentAccession", "")
-                results.append(
-                    {
-                        "experiment_accession": acc,
-                        "experiment_type": exp.get("rawExperimentType"),
-                        "experiment_description": exp.get("experimentDescription"),
-                        "species": exp.get("species"),
-                        "num_assays": exp.get("numberOfAssays"),
-                        "gene_mentioned": acc in gene_experiment_ids,
-                        "last_update": exp.get("lastUpdate"),
-                    }
-                )
-
-            # Sort: gene-mentioned first, then by assay count
-            results.sort(
-                key=lambda x: (
-                    not x.get("gene_mentioned", False),
-                    -(x.get("num_assays") or 0),
-                )
-            )
+            # NOTE: this used to also tag each experiment with a
+            # "gene_mentioned" flag by full-text-searching EBI Search's
+            # experiment *description* field for the gene symbol. Confirmed
+            # live that this never works as intended: descriptions are
+            # one-line study summaries that essentially never contain a bare
+            # gene symbol, so gene_mentioned was false for every real gene
+            # (and could false-positive on short symbols that happen to
+            # substring-match unrelated words). The GXA API itself also
+            # silently ignores a geneQuery filter on /json/experiments
+            # (confirmed live: identical result count with and without it),
+            # so there's no cheap way to filter this list by gene. Listing
+            # species-level baseline experiments honestly, without a broken
+            # per-gene relevance signal, and pointing to
+            # GxA_get_experiment_expression (which does support per-gene
+            # filtering, against one already-known experiment) for the
+            # actual per-gene lookup.
+            results = [
+                {
+                    "experiment_accession": exp.get("experimentAccession", ""),
+                    "experiment_type": exp.get("rawExperimentType"),
+                    "experiment_description": exp.get("experimentDescription"),
+                    "species": exp.get("species"),
+                    "num_assays": exp.get("numberOfAssays"),
+                    "last_update": exp.get("lastUpdate"),
+                }
+                for exp in baseline_exps
+            ]
+            results.sort(key=lambda x: -(x.get("num_assays") or 0))
 
             return {
                 "status": "success",
@@ -160,11 +164,15 @@ class ExpressionAtlasTool(BaseTool):
                     "species": species,
                     "baseline_experiments": results[:50],
                     "total_baseline": len(baseline_exps),
-                    "gene_specific_count": len(
-                        [r for r in results if r["gene_mentioned"]]
-                    ),
-                    "warning": self._gene_filter_warning(gene),
                 },
+                "note": (
+                    f"This lists baseline experiments for '{species}'; it does "
+                    "not filter by gene (the underlying API has no reliable way "
+                    "to do so). Use GxA_get_experiment_expression with an "
+                    "experiment_accession from this list and gene_id="
+                    f"'{gene}' to check whether that specific experiment has "
+                    "data for the gene."
+                ),
                 "source": ("EBI Expression Atlas - Baseline Expression"),
             }
 
