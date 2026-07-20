@@ -90,6 +90,14 @@ class EBIProteinsEpitopeTool(BaseTool):
                     pmids.append(src.get("id"))
                 if src.get("name") == "IEDB":
                     iedb_ids.append(src.get("id"))
+            # The IEDB epitope ID actually lives under "xrefs", not
+            # "evidences.source" (confirmed live: every EPITOPE feature's
+            # own description names an epitope ID, e.g. "epitope ID 1220",
+            # sourced from an xrefs entry {"name": "IEDB", "id": "1220"}),
+            # so the evidences-only check above never matched anything.
+            for xref in f.get("xrefs", []) or []:
+                if xref.get("name") == "IEDB" and xref.get("id"):
+                    iedb_ids.append(xref.get("id"))
 
             begin_val = f.get("begin")
             end_val = f.get("end")

@@ -4,9 +4,9 @@ had two bugs, both confirmed live --
 1. A too-short input sequence gets a plain-text validation error back with
    HTTP 200 (not real TSV data). csv.DictReader silently misparsed the
    error's first line as a single-column header, producing a fabricated
-   "successful" result with `percentile_rank: 100.0`. _parse_tsv now
-   detects a non-tabular response (no tab in the first line) and raises,
-   so it surfaces as a real error instead.
+   "successful" result with `percentile_rank: 100.0`. _iedb_error_response
+   now detects a non-tabular response (no tab in the first line) before
+   parsing and returns a real error instead.
 2. Even on a genuine successful response, the real TSV column is named
    "rank" (unlike the sibling MHC-I endpoint, which really does use
    "percentile_rank"), so `r.get("percentile_rank", 100)` always hit the
@@ -55,7 +55,7 @@ def test_short_sequence_error_text_is_reported_as_error_not_success():
         result = tool.run({"sequence": "PKYVKQNTLKLAT", "allele": "HLA-DRB1*01:01"})
 
     assert result["status"] == "error"
-    assert "non-tabular" in result["error"]
+    assert "length of input sequence" in result["error"]
 
 
 def test_percentile_rank_reads_from_real_rank_column():

@@ -78,6 +78,22 @@ class IEDBPredictionTool(BaseTool):
         reader = csv.DictReader(io.StringIO(text), delimiter="\t")
         return [dict(row) for row in reader]
 
+    @staticmethod
+    def _iedb_error_response(text: str) -> Dict[str, Any] | None:
+        """Detect IEDB's plain-text error responses (e.g. an invalid allele
+        name), which return HTTP 200 with prose instead of a TSV table --
+        parsing that as TSV silently produces bogus rows keyed on the error
+        message itself. Returns an error dict if `text` isn't real TSV data,
+        else None.
+        """
+        first_line = text.strip().split("\n", 1)[0]
+        if "\t" in first_line:
+            return None
+        return {
+            "status": "error",
+            "error": f"IEDB API error: {first_line}",
+        }
+
     def _predict_bcell(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Predict linear B-cell epitopes along a protein sequence.
 
@@ -95,6 +111,9 @@ class IEDBPredictionTool(BaseTool):
             timeout=self.timeout,
         )
         resp.raise_for_status()
+        err = self._iedb_error_response(resp.text)
+        if err:
+            return err
         rows = self._parse_tsv(resp.text)
 
         residues = []
@@ -191,6 +210,9 @@ class IEDBPredictionTool(BaseTool):
         )
         resp.raise_for_status()
 
+        err = self._iedb_error_response(resp.text)
+        if err:
+            return err
         results = self._parse_tsv(resp.text)
 
         # Cast numeric columns; sort by total_score descending (higher = more
@@ -260,6 +282,9 @@ class IEDBPredictionTool(BaseTool):
         )
         resp.raise_for_status()
 
+        err = self._iedb_error_response(resp.text)
+        if err:
+            return err
         results = self._parse_tsv(resp.text)
 
         # Sort by score (descending for EL, ascending for BA)
@@ -309,7 +334,13 @@ class IEDBPredictionTool(BaseTool):
         )
         resp.raise_for_status()
 
+        err = self._iedb_error_response(resp.text)
+        if err:
+            return err
         results = self._parse_tsv(resp.text)
+        # The mhcii/ endpoint's TSV column is "rank", not "percentile_rank"
+        # (confirmed live) -- reading the wrong key silently defaulted every
+        # result to 100.0, masking real binder rankings.
         for r in results:
             # Fix-R18D-2: the mhcii endpoint's real TSV column is named
             # "rank", not "percentile_rank" (unlike the mhci endpoint,
@@ -318,7 +349,9 @@ class IEDBPredictionTool(BaseTool):
             # silently and completely wrong for every successful call
             # regardless of the actual binding rank.
             try:
-                r["percentile_rank"] = float(r.get("rank", 100))
+                r["percentile_rank"] = float(
+                    r.get("rank", r.get("percentile_rank", 100))
+                )
             except (ValueError, TypeError):
                 pass
 
@@ -332,5 +365,9 @@ class IEDBPredictionTool(BaseTool):
                 "allele": allele,
                 "n_peptides": len(results),
                 "source": "IEDB Analysis Resource",
+                "interpretation": (
+                    "percentile_rank < 2% = strong binder, "
+                    "2-10% = weak binder, >10% = non-binder (NetMHCIIpan convention)"
+                ),
             },
         }

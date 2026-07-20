@@ -398,9 +398,19 @@ class AHAACCGuidelineTool(BaseTool):
                 f' AND ("{year_from}"[Date - Publication] : "3000"[Date - Publication])'
             )
 
+        # Many recent AHA/ACC joint-committee guidelines (e.g. the 2024 HCM
+        # guideline, PMID 38718139) carry no Corporate Author field at all --
+        # confirmed live via PubMed E-utilities -- only named individual
+        # authors, with the sponsoring societies appearing solely in the
+        # title ("... A Report of the American Heart Association/American
+        # College of Cardiology Joint Committee..."). Also match on title
+        # text so the Corporate Author-only filter doesn't silently exclude
+        # current guidelines that follow this newer authorship convention.
         pubmed_query = (
             f'(("American Heart Association"[Corporate Author] OR '
-            f'"American College of Cardiology"[Corporate Author]) AND '
+            f'"American College of Cardiology"[Corporate Author] OR '
+            f'"American Heart Association"[Title] OR '
+            f'"American College of Cardiology"[Title]) AND '
             f'("guideline"[Title] OR "practice guideline"[Publication Type])) '
             f"AND ({query_text}){date_filter}"
         )
