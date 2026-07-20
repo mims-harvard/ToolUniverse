@@ -301,7 +301,8 @@
      "description": "Name/keyword to search for. Alias for the \"name\" parameter."
     }
    },
-   "required": []
+   "required": [],
+   "additionalProperties": false
   },
   "fields": {
    "endpoint": "https://www.guidetopharmacology.org/services/diseases",

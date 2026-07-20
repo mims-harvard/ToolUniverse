@@ -368,67 +368,88 @@ class ClinGenTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    @staticmethod
+    def _flatten_classification(item: Dict[str, Any]) -> Dict[str, Any]:
+        """Map one classifications?gene=/variant= JSON record to the tool's
+        declared 7-field return_schema (Variation, ClinVar Variation Id,
+        HGNC Gene Symbol, Disease, Mondo Id, Assertion, Expert Panel)."""
+        hgvs = item.get("hgvs") or []
+        gene = item.get("gene") or {}
+        condition = item.get("condition") or {}
+        guidelines = item.get("guidelines") or []
+        first_guideline = guidelines[0] if guidelines else {}
+        agents = first_guideline.get("agents") or []
+        first_agent = agents[0] if agents else {}
+        return {
+            # The last hgvs entry is the gene-and-protein-notation form,
+            # e.g. "NM_000277.2(PAH):c.1A>G (p.Met1Val)" -- matches the old
+            # TSV "Variation" column's format.
+            "Variation": hgvs[-1] if hgvs else None,
+            "ClinVar Variation Id": item.get("variationId"),
+            "HGNC Gene Symbol": gene.get("label"),
+            "Disease": condition.get("label"),
+            "Mondo Id": condition.get("@id"),
+            "Assertion": (first_guideline.get("outcome") or {}).get("label"),
+            "Expert Panel": first_agent.get("affiliation"),
+        }
+
     def _get_variant_classifications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get variant pathogenicity classifications from ClinGen Evidence Repository."""
+        """Get variant pathogenicity classifications from ClinGen Evidence Repository.
+
+        classifications/all fetches the *entire* ~22MB, ~10k-row repository
+        with no server-side filter and filters client-side -- confirmed live
+        this routinely took 2-5+ minutes (and sometimes hung past a 300s
+        client timeout) even for a gene with zero curated variants. The
+        classifications endpoint (no /all) supports server-side gene=/
+        variant= filtering and returns in ~1s -- confirmed live for both a
+        curated gene (PAH) and an uncurated one (empty result, still ~1s).
+        Calling it with neither gene nor variant set is just as unbounded as
+        classifications/all (confirmed live: also hangs past 30s with no
+        params), so require at least one.
+        """
         gene = arguments.get("gene")
-        if not gene:
-            # Fix-R19B-3: `/classifications/all` is the entire, unpaginated
-            # Evidence Repository -- confirmed live it's 28+MB and still
-            # streaming after 200s, well past this tool's declared 120s
-            # timeout, with no way to bound the transfer client-side once
-            # started. There's no way to safely serve an unfiltered
-            # request; require a gene to use the fast, filtered endpoint
-            # below instead.
+        variant = arguments.get("variant")
+        if not gene and not variant:
             return {
                 "status": "error",
                 "error": (
-                    "gene parameter is required. The ClinGen Evidence "
-                    "Repository has no working unfiltered listing endpoint "
-                    "(the bulk /classifications/all download is 28+MB and "
-                    "unbounded) -- query by gene instead."
+                    "gene or variant parameter is required. The ClinGen "
+                    "Evidence Repository's classifications endpoint has no "
+                    "working unfiltered listing (an unfiltered request is "
+                    "just as unbounded as the bulk classifications/all "
+                    "download) -- query by gene and/or variant instead."
                 ),
             }
-
         try:
-            # Fix-R19B-3: /classifications?gene={gene} is a fast (~1s),
-            # already-filtered JSON endpoint -- confirmed live, unlike
-            # /classifications/all's unbounded TSV dump this tool
-            # previously used and filtered client-side after the full
-            # download completed.
-            url = f"{EREPO_BASE_URL}/classifications"
-            response = requests.get(url, params={"gene": gene}, timeout=self.timeout)
+            params = {}
+            if gene:
+                params["gene"] = gene
+            if variant:
+                params["variant"] = variant
+
+            response = requests.get(
+                f"{EREPO_BASE_URL}/classifications", params=params, timeout=self.timeout
+            )
             response.raise_for_status()
+            payload = response.json()
+            items = payload.get("variantInterpretations", [])
 
-            raw = response.json()
-            data = []
-            for item in raw.get("variantInterpretations", []):
-                guidelines = item.get("guidelines") or []
-                classification = (
-                    guidelines[0].get("outcome", {}).get("label")
-                    if guidelines
-                    else None
-                )
-                data.append(
-                    {
-                        "caid": item.get("caid"),
-                        "gene": (item.get("gene") or {}).get("label"),
-                        "condition": (item.get("condition") or {}).get("label"),
-                        "classification": classification,
-                        "published_date": item.get("publishedDate"),
-                        "hgvs": item.get("hgvs") or [],
-                    }
-                )
-
-            # Optional filtering by variant (HGVS or CAID substring match)
-            variant = arguments.get("variant")
+            # The upstream `variant=` param resolves to that variant's gene
+            # and returns every variant for the gene, not just the one
+            # requested (confirmed live: variant=CA114360 returns 25 PAH
+            # rows, not 1) -- narrow back down to an exact match on the
+            # variant's own identifiers/HGVS forms.
             if variant:
                 variant_str = str(variant).upper()
-                data = [
-                    v
-                    for v in data
-                    if variant_str in str(v.get("caid", "")).upper()
-                    or any(variant_str in h.upper() for h in v.get("hgvs", []))
+                items = [
+                    item
+                    for item in items
+                    if variant_str in str(item.get("caid", "")).upper()
+                    or variant_str == str(item.get("variationId", "")).upper()
+                    or any(variant_str in h.upper() for h in item.get("hgvs") or [])
                 ]
+
+            data = [self._flatten_classification(item) for item in items]
 
             result = {
                 "status": "success",
