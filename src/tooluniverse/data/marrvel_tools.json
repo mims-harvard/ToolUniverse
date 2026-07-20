@@ -3,8 +3,12 @@
         "name": "MARRVEL_get_gene",
         "description": "Get aggregated identity and annotation for a human gene by symbol from MARRVEL: cross-references (OMIM, HGNC, Ensembl, Entrez, UniProt), chromosome/cytogenetic location, gene type, aliases, previous symbols, and the Entrez gene summary. Use as a one-call gene-identity resolver in rare-disease / Mendelian variant triage workflows. No API key required.",
         "parameter": {"type": "object", "properties": {
-            "symbol": {"type": "string", "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'."}
-        }, "required": ["symbol"]},
+            "symbol": {"type": ["string", "null"], "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'."},
+            "gene_symbol": {"type": ["string", "null"], "description": "Alias for symbol."},
+            "gene": {"type": ["string", "null"], "description": "Alias for symbol."}
+        }, "required": [], "anyOf": [
+            {"required": ["symbol"]}, {"required": ["gene_symbol"]}, {"required": ["gene"]}
+        ]},
         "fields": {"timeout": 30},
         "type": "MARRVELGeneTool",
         "test_examples": [{"symbol": "CFTR"}, {"symbol": "BRCA1"}, {"symbol": "TP53"}],
@@ -19,8 +23,12 @@
         "name": "MARRVEL_get_omim_phenotypes",
         "description": "Get OMIM phenotype/disease associations for a human gene by symbol via MARRVEL: each association's phenotype name, gene and phenotype MIM numbers, mode of inheritance, and phenotypic series. Use to enumerate the Mendelian diseases linked to a gene and their inheritance patterns. No API key required.",
         "parameter": {"type": "object", "properties": {
-            "symbol": {"type": "string", "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'."}
-        }, "required": ["symbol"]},
+            "symbol": {"type": ["string", "null"], "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'."},
+            "gene_symbol": {"type": ["string", "null"], "description": "Alias for symbol."},
+            "gene": {"type": ["string", "null"], "description": "Alias for symbol."}
+        }, "required": [], "anyOf": [
+            {"required": ["symbol"]}, {"required": ["gene_symbol"]}, {"required": ["gene"]}
+        ]},
         "fields": {"timeout": 30},
         "type": "MARRVELOmimTool",
         "test_examples": [{"symbol": "CFTR"}, {"symbol": "FBN1"}, {"symbol": "LMNA"}],

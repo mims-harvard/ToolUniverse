@@ -111,3 +111,77 @@ def test_auth_param_keeps_default_token_when_env_unset(monkeypatch):
     monkeypatch.delenv("WAQI_API_KEY", raising=False)
     params = tool._build_params({"city": "Boston"})
     assert params["token"] == "demo"
+
+
+@pytest.mark.unit
+def test_empty_result_note_added_when_data_is_empty_list(monkeypatch):
+    """Fix-R32C-4/5: an exact-match backend (e.g. CPIC's PostgREST
+    name=eq.{name}) silently returns status:success with an empty list for
+    any name not spelled/named exactly as the database stores it --
+    confirmed live for well-known aliases ("FK506" for tacrolimus) and
+    spelling variants ("cyclosporin" vs the indexed "cyclosporine"),
+    indistinguishable from "no PGx data exists for this drug".
+    `fields.empty_result_note` surfaces the real constraint."""
+    import unittest.mock as mock
+
+    tool = _make_tool({"empty_result_note": "No exact match; try the canonical name."})
+
+    def fake_request(session, method, url, **kwargs):
+        resp = mock.MagicMock()
+        resp.status_code = 200
+        resp.json.return_value = []
+        resp.headers = {"content-type": "application/json"}
+        resp.text = "[]"
+        return resp
+
+    with mock.patch(
+        "tooluniverse.base_rest_tool.request_with_retry", side_effect=fake_request
+    ):
+        result = tool.run({"name": "FK506"})
+
+    assert result["note"] == "No exact match; try the canonical name."
+
+
+@pytest.mark.unit
+def test_empty_result_note_absent_when_data_is_non_empty(monkeypatch):
+    import unittest.mock as mock
+
+    tool = _make_tool({"empty_result_note": "No exact match; try the canonical name."})
+
+    def fake_request(session, method, url, **kwargs):
+        resp = mock.MagicMock()
+        resp.status_code = 200
+        resp.json.return_value = [{"name": "cyclosporine"}]
+        resp.headers = {"content-type": "application/json"}
+        resp.text = '[{"name": "cyclosporine"}]'
+        return resp
+
+    with mock.patch(
+        "tooluniverse.base_rest_tool.request_with_retry", side_effect=fake_request
+    ):
+        result = tool.run({"name": "cyclosporine"})
+
+    assert "note" not in result
+
+
+@pytest.mark.unit
+def test_no_empty_result_note_configured_is_unchanged():
+    # Tools without empty_result_note keep the previous behaviour (no note).
+    import unittest.mock as mock
+
+    tool = _make_tool({})
+
+    def fake_request(session, method, url, **kwargs):
+        resp = mock.MagicMock()
+        resp.status_code = 200
+        resp.json.return_value = []
+        resp.headers = {"content-type": "application/json"}
+        resp.text = "[]"
+        return resp
+
+    with mock.patch(
+        "tooluniverse.base_rest_tool.request_with_retry", side_effect=fake_request
+    ):
+        result = tool.run({"name": "whatever"})
+
+    assert "note" not in result

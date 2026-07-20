@@ -20,6 +20,20 @@ MARRVEL_BASE = "http://api.marrvel.org/data"
 HUMAN_TAXON = "9606"
 
 
+def _resolve_symbol(arguments: Dict[str, Any]) -> str:
+    # Fix-R32B-4: unlike most other gene-input tools in this codebase
+    # (DGIdb, OpenTargets, ensembl_lookup_gene, ...), these tools only
+    # accepted the bare "symbol" param with no gene/gene_symbol alias --
+    # confirmed live that the natural-language guess {"gene_symbol":
+    # "PTPN22"} failed schema validation entirely.
+    return (
+        arguments.get("symbol")
+        or arguments.get("gene_symbol")
+        or arguments.get("gene")
+        or ""
+    ).strip()
+
+
 @register_tool("MARRVELGeneTool")
 class MARRVELGeneTool(BaseTool):
     """Aggregated identity/annotation for a human gene by symbol."""
@@ -29,7 +43,7 @@ class MARRVELGeneTool(BaseTool):
         self.timeout = tool_config.get("fields", {}).get("timeout", 30)
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        symbol = (arguments.get("symbol") or "").strip()
+        symbol = _resolve_symbol(arguments)
         if not symbol:
             return {"status": "error", "error": "'symbol' (e.g. 'CFTR') is required"}
 
@@ -101,7 +115,7 @@ class MARRVELOmimTool(BaseTool):
         self.timeout = tool_config.get("fields", {}).get("timeout", 30)
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        symbol = (arguments.get("symbol") or "").strip()
+        symbol = _resolve_symbol(arguments)
         if not symbol:
             return {"status": "error", "error": "'symbol' (e.g. 'CFTR') is required"}
 

@@ -103,6 +103,42 @@ def test_marrvel_omim_curates_phenotypes():
     assert out["data"][0]["phenotype_mim_number"] == 219700
 
 
+# Fix-R32B-4: unlike DGIdb/OpenTargets/ensembl_lookup_gene/etc., these two
+# MARRVEL tools only accepted the bare "symbol" param with no gene/
+# gene_symbol alias -- confirmed live the natural-language guess
+# {"gene_symbol": "PTPN22"} failed schema validation entirely.
+def test_marrvel_gene_accepts_gene_symbol_alias():
+    rec = {"symbol": "CFTR", "xref": {}}
+    with patch("tooluniverse.marrvel_tool.requests.get", return_value=_resp(200, rec)):
+        out = MARRVELGeneTool(_cfg("MARRVEL_get_gene", "MARRVELGeneTool")).run(
+            {"gene_symbol": "CFTR"}
+        )
+    assert out["status"] == "success"
+
+
+def test_marrvel_gene_accepts_gene_alias():
+    rec = {"symbol": "CFTR", "xref": {}}
+    with patch("tooluniverse.marrvel_tool.requests.get", return_value=_resp(200, rec)):
+        out = MARRVELGeneTool(_cfg("MARRVEL_get_gene", "MARRVELGeneTool")).run(
+            {"gene": "CFTR"}
+        )
+    assert out["status"] == "success"
+
+
+def test_marrvel_omim_accepts_gene_symbol_alias():
+    body = {"phenotypes": []}
+    with patch("tooluniverse.marrvel_tool.requests.get", return_value=_resp(200, body)):
+        out = MARRVELOmimTool(_cfg("MARRVEL_get_omim_phenotypes", "MARRVELOmimTool")).run(
+            {"gene_symbol": "PTPN22"}
+        )
+    assert out["status"] == "success"
+
+
+def test_marrvel_omim_still_requires_some_gene_identifier():
+    out = MARRVELOmimTool(_cfg("MARRVEL_get_omim_phenotypes", "MARRVELOmimTool")).run({})
+    assert out["status"] == "error"
+
+
 # --------------------------- CTIS --------------------------- #
 def test_ctis_search_requires_query():
     out = CTISSearchTrialsTool(_cfg("CTIS_search_trials", "CTISSearchTrialsTool")).run({})

@@ -304,7 +304,8 @@
     },
     "fields": {
       "endpoint": "https://api.cpicpgx.org/v1/drug?name=eq.{name}",
-      "lowercase_params": ["name"]
+      "lowercase_params": ["name"],
+      "empty_result_note": "No exact match for this name in CPIC. CPIC indexes one canonical spelling/name per drug (e.g. 'cyclosporine' not 'cyclosporin', 'tacrolimus' not the alternate name 'FK506') -- try CPIC_list_drugs or CPIC_search_gene_drug_pairs to browse indexed names."
     },
     "type": "BaseRESTTool",
     "test_examples": [

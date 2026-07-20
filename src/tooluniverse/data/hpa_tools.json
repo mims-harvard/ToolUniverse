@@ -847,7 +847,7 @@
       ]
     },
     "input_description": "Input Ensembl Gene ID (e.g., ENSG00000134057). This enhanced tool now uses HPA's direct JSON API for more comprehensive and faster data retrieval.",
-    "output_description": "Returns gene information in compatible JSON format including Ensembl ID, gene name, gene synonyms, Uniprot ID, biological process annotations, and comprehensive RNA tissue-specific expression data.",
+    "output_description": "Returns gene information in compatible JSON format including Ensembl ID, gene name, gene synonyms, Uniprot ID, biological process annotations, and RNA tissue-specific expression data. Note: 'RNA tissue specific nTPM' only lists tissues HPA classifies as tissue-enriched/-enhanced for this gene (confirmed live, e.g. only 3 tissues for CFTR: gallbladder, intestine, pancreas) -- it is NOT a full per-tissue expression panel, so a tissue's absence does not mean zero expression there. Use HPA_get_comprehensive_gene_details_by_ensembl_id or GTEx tools for a complete tissue expression profile.",
     "test_examples": [
       {
         "ensembl_id": "ENSG00000141510"

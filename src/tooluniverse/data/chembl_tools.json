@@ -1231,7 +1231,7 @@
         },
         "molecule_chembl_id": {
           "type": "string",
-          "description": "Filter by ChEMBL molecule ID (e.g., \"CHEMBL1201581\" for adalimumab)."
+          "description": "Filter by ChEMBL molecule ID (e.g., \"CHEMBL1201580\" for adalimumab)."
         }
       },
       "required": []
@@ -1286,7 +1286,7 @@
         },
         "drug_chembl_id": {
           "type": "string",
-          "description": "ChEMBL drug/molecule ID (e.g., \"CHEMBL1201581\" for adalimumab, \"CHEMBL4535757\" for sotorasib)."
+          "description": "ChEMBL drug/molecule ID (e.g., \"CHEMBL1201580\" for adalimumab, \"CHEMBL4535757\" for sotorasib)."
         },
         "drug_name": {
           "type": "string",

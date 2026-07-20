@@ -371,6 +371,22 @@ class BaseRESTTool(BaseTool):
                     result["data"] = data[: int(limit)]
                     result["count"] = int(limit)
 
+            # Fix-R32C-4/5: an exact-match backend (e.g. CPIC's PostgREST
+            # name=eq.{name}) silently returns status:success with an empty
+            # list for any name that isn't spelled/named exactly as the
+            # database stores it -- confirmed live for well-known aliases
+            # ("FK506" for tacrolimus) and spelling variants ("cyclosporin"
+            # vs the indexed "cyclosporine"), indistinguishable from "no PGx
+            # data exists for this drug". `fields.empty_result_note` lets a
+            # config surface the real constraint instead of a bare empty list.
+            empty_note = self.tool_config.get("fields", {}).get("empty_result_note")
+            if (
+                empty_note
+                and isinstance(result.get("data"), list)
+                and not result["data"]
+            ):
+                result["note"] = empty_note
+
             return result
 
         except Exception as e:
