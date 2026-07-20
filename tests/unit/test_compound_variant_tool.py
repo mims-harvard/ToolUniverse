@@ -265,7 +265,7 @@ def test_clinvar_sub_call_uses_gene_param_not_query_alias():
         result = t.run({"gene": "HOXB13"})
 
     clinvar_call = next(c for c in calls if c["name"] == "ClinVar_search_variants")
-    assert clinvar_call["arguments"] == {"gene": "HOXB13", "limit": 20}
+    assert clinvar_call["arguments"] == {"gene": "HOXB13", "limit": 100}
     assert result["data"]["annotations"]["clinvar"]["total_gene_variants"] == 1943
 
 
@@ -316,8 +316,9 @@ def test_resolve_gene_from_rsid_extracts_symbol_from_hgvs_notation():
             return tu_mock_result
 
     sources_failed = []
-    gene = t._resolve_gene_from_rsid(_FakeTU(), "rs671", sources_failed)
+    gene, variant_tokens = t._resolve_gene_from_rsid(_FakeTU(), "rs671", sources_failed)
     assert gene == "ALDH2"
+    assert variant_tokens is None
     assert sources_failed == []
 
 
@@ -329,6 +330,100 @@ def test_resolve_gene_from_rsid_records_failure_when_gene_not_found():
             return {"status": "success", "data": {"hgvs_notation": "no gene marker here"}}
 
     sources_failed = []
-    gene = t._resolve_gene_from_rsid(_FakeTU(), "rs9999999", sources_failed)
+    gene, variant_tokens = t._resolve_gene_from_rsid(_FakeTU(), "rs9999999", sources_failed)
     assert gene is None
+    assert variant_tokens is None
     assert len(sources_failed) == 1
+
+
+def test_resolve_gene_from_rsid_extracts_protein_change_tokens():
+    """Fix-R48A-1: dbSNP's hgvs_notation already carries protein-change
+    annotations (p.Lys329Glu etc.), but the resolver previously discarded
+    everything except the gene symbol -- so an rsid-only query could NEVER
+    produce a ClinVar/CIViC exact_match, even when the exact variant was
+    present in the fetched results, because variant_token was only ever
+    derived from an explicit 'variant' argument. Confirmed live for
+    rs77931234 (ACADM, a real MCAD-deficiency founder variant, ClinVar
+    VCV000003586 Pathogenic/Likely pathogenic) and rs113488022 (BRAF V600E,
+    CIViC id 12) -- both now correctly extract p.Lys329Glu / p.Val600Glu."""
+    t = _tool()
+
+    class _FakeTU:
+        def run_one_function(self, call):
+            return {
+                "status": "success",
+                "data": {
+                    "hgvs_notation": (
+                        "HGVS=NM_000016.6:c.985A>C,NM_000016.6:c.985A>G,"
+                        "NP_000007.1:p.Lys329Gln,NP_000007.1:p.Lys329Glu"
+                        "|SEQ=[A/C/G]|LEN=1|GENE=ACADM:34"
+                    )
+                },
+            }
+
+    sources_failed = []
+    gene, variant_tokens = t._resolve_gene_from_rsid(_FakeTU(), "rs77931234", sources_failed)
+    assert gene == "ACADM"
+    assert variant_tokens == ["Lys329Gln", "Lys329Glu"]
+    # A multi-allelic site (this one has both A>C and A>G alternates) yields
+    # multiple candidates; only the one matching the real record should hit.
+    assert _title_matches("NM_000016.6(ACADM):c.985A>G (p.Lys329Glu)", variant_tokens)
+    assert not _title_matches("NM_000016.6(ACADM):c.1184A>T (p.Lys395Ile)", variant_tokens)
+
+
+def test_variant_match_forms_reverse_converts_3letter_to_short_form():
+    """The 3-letter form dbSNP's hgvs_notation produces ('Lys329Glu') must
+    also match short-form records like CIViC's ('K329E' / 'V600E'), not just
+    ClinVar's own 3-letter-style titles -- confirmed live this was previously
+    one-directional (short -> 3-letter only), so an rsid-derived token could
+    resolve a ClinVar match but never a CIViC one."""
+    forms = _variant_match_forms("Val600Glu")
+    assert "val600glu" in forms
+    assert "v600e" in forms
+    assert _title_matches("V600E", "Val600Glu")
+    assert _title_matches("V600E", ["Val600Gly", "Val600Glu"])
+
+
+def test_rsid_only_query_derives_variant_token_for_exact_matching():
+    """End-to-end: an rsid-only call must be able to reach exact_match=True
+    against ClinVar when the variant is among the fetched rows -- previously
+    impossible for ANY rsid-only query regardless of what ClinVar returned,
+    since variant_token stayed None whenever 'variant' wasn't explicitly
+    supplied."""
+    t = _tool()
+    calls = []
+
+    def fake_run_one_function(call):
+        calls.append(call)
+        if call["name"] == "dbsnp_get_variant_by_rsid":
+            return {
+                "status": "success",
+                "data": {
+                    "hgvs_notation": "HGVS=...|NP_000007.1:p.Lys329Glu|GENE=ACADM:34"
+                },
+            }
+        if call["name"] == "ClinVar_search_variants":
+            return {
+                "status": "success",
+                "data": {
+                    "total_count": 1127,
+                    "variants": [
+                        {
+                            "title": "NM_000016.6(ACADM):c.985A>G (p.Lys329Glu)",
+                            "clinical_significance": "Pathogenic/Likely pathogenic",
+                        }
+                    ],
+                },
+            }
+        return {"status": "success", "data": {}}
+
+    with patch(
+        "tooluniverse.execute_function.ToolUniverse.run_one_function",
+        side_effect=fake_run_one_function,
+    ), patch("tooluniverse.execute_function.ToolUniverse.load_tools", return_value=None):
+        result = t.run({"rsid": "rs77931234"})
+
+    clinvar = result["data"]["annotations"]["clinvar"]
+    assert clinvar["exact_match"] is True
+    assert clinvar["matched"] == 1
+    assert result["data"]["summary"]["clinvar_classification"] == "Pathogenic/Likely pathogenic"

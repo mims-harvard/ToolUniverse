@@ -35,23 +35,40 @@ _AA_1TO3 = {
     "X": "Ter",
     "*": "Ter",
 }
+_AA_3TO1 = {v.upper(): k for k, v in _AA_1TO3.items()}
 
 
 def _variant_match_forms(token: str) -> List[str]:
-    """Expand a protein change like 'V600E' to the forms that appear in records:
-    the short form plus the HGVS 3-letter form ('Val600Glu') ClinVar titles use."""
+    """Expand a protein change to every form that appears in records: 1-letter
+    short form ('V600E', CIViC's convention) and HGVS 3-letter form
+    ('Val600Glu', ClinVar's convention) -- converting whichever form the input
+    is in to the other, so a token derived from either source (an explicit
+    'variant' arg, typically short-form, or dbSNP's hgvs_notation, always
+    3-letter form) matches titles in both conventions."""
     forms = [token.lower()]
-    m = re.fullmatch(r"([A-Za-z])(\d+)([A-Za-z*])", token.strip())
-    if m:
-        ref, pos, alt = m.group(1).upper(), m.group(2), m.group(3).upper()
+    stripped = token.strip()
+    m1 = re.fullmatch(r"([A-Za-z])(\d+)([A-Za-z*])", stripped)
+    if m1:
+        ref, pos, alt = m1.group(1).upper(), m1.group(2), m1.group(3).upper()
         if ref in _AA_1TO3 and alt in _AA_1TO3:
             forms.append(f"{_AA_1TO3[ref]}{pos}{_AA_1TO3[alt]}".lower())
+    m3 = re.fullmatch(r"([A-Za-z]{3})(\d+)([A-Za-z]{3})", stripped)
+    if m3:
+        ref, pos, alt = m3.group(1).upper(), m3.group(2), m3.group(3).upper()
+        if ref in _AA_3TO1 and alt in _AA_3TO1:
+            forms.append(f"{_AA_3TO1[ref]}{pos}{_AA_3TO1[alt]}".lower())
     return forms
 
 
-def _title_matches(name: str, token: str) -> bool:
+def _title_matches(name: str, token) -> bool:
+    """token may be a single string or a list of candidate strings -- a
+    multi-allelic rsid (e.g. a SNP with both A>C and A>G alternates at the
+    same position) yields several distinct protein-change candidates from
+    dbSNP's hgvs_notation, only one of which is the actual queried allele, so
+    every candidate must be tried rather than assuming the first is right."""
+    tokens = token if isinstance(token, list) else [token]
     low = str(name).lower()
-    return any(f in low for f in _variant_match_forms(token))
+    return any(f in low for t in tokens for f in _variant_match_forms(t))
 
 
 @register_tool("CompoundVariantAnnotationTool")
@@ -93,13 +110,17 @@ class CompoundVariantAnnotationTool(BaseTool):
             parts = variant.split()
             if parts:
                 gene_for_gnomad = parts[0]
-        if not gene_for_gnomad and rsid:
-            gene_for_gnomad = self._resolve_gene_from_rsid(tu, rsid, sources_failed)
         # The protein-change token (e.g. "V600E") used to filter gene-level hits.
         variant_token = None
         if variant:
             toks = variant.split()
             variant_token = toks[-1] if toks else variant
+        if not gene_for_gnomad and rsid:
+            gene_for_gnomad, rsid_variant_token = self._resolve_gene_from_rsid(
+                tu, rsid, sources_failed
+            )
+            if not variant_token:
+                variant_token = rsid_variant_token
 
         # 1. ClinVar -- Fix-R31D-4/R31A-3: "query" is documented as an alias for
         # "condition" (a disease/phenotype free-text search), not a gene or rsid
@@ -110,10 +131,20 @@ class CompoundVariantAnnotationTool(BaseTool):
         # gene still can't be searched and is skipped, same as before.
         if gene_for_gnomad:
             try:
+                # limit=100 (ClinVar_search_variants' own max) rather than 20:
+                # ClinVar_search_variants has no HGVS/protein-change search
+                # parameter, only gene/condition/clinical_significance, so an
+                # exact-match lookup for a specific variant can only work by
+                # fetching as many gene-level rows as possible and filtering
+                # client-side in _parse_clinvar -- confirmed live that even
+                # 100 isn't always enough for variant-dense genes (ACADM has
+                # 1127 ClinVar entries; a known Pathogenic founder variant
+                # still wasn't within the first 100), but it materially
+                # improves the hit rate for smaller genes versus 20.
                 r = tu.run_one_function(
                     {
                         "name": "ClinVar_search_variants",
-                        "arguments": {"gene": gene_for_gnomad, "limit": 20},
+                        "arguments": {"gene": gene_for_gnomad, "limit": 100},
                     }
                 )
                 error = self._sub_call_error(r)
@@ -206,12 +237,27 @@ class CompoundVariantAnnotationTool(BaseTool):
 
     def _resolve_gene_from_rsid(
         self, tu, rsid: str, sources_failed: List[str]
-    ) -> Optional[str]:
+    ) -> "tuple[Optional[str], Optional[List[str]]]":
         """Resolve an rsid to its gene symbol via dbSNP, so ClinVar/CIViC/gnomAD/
         UniProt (all gene-keyed, none rsid-keyed) can still be queried for an
         rsid-only request. dbSNP's esummary response has no dedicated gene field --
         the symbol is embedded in hgvs_notation as "...|GENE=SYMBOL:geneid" -- so
-        extract it from there."""
+        extract it from there.
+
+        Also extracts protein-change token candidates (e.g. "Lys329Glu") from
+        the same hgvs_notation string when present -- without this, an
+        rsid-only query's ClinVar cross-reference could never report
+        exact_match=True even when the exact variant IS in ClinVar's results,
+        since variant_token (used by _parse_clinvar/_parse_civic's substring
+        match) was previously only ever derived from an explicit 'variant'
+        argument, never from 'rsid'. Confirmed live for rs77931234 (ACADM
+        p.Lys329Glu, a ClinVar Pathogenic/Likely pathogenic MCAD-deficiency
+        founder variant): without this, exact_match stayed False and the
+        summary reported "no exact ClinVar match" despite the variant being
+        VCV000003586 in ClinVar's own database. Returns a list, not a single
+        token: a multi-allelic site (like this one, which also has an A>C
+        alternate at the same position) lists one protein change per allele,
+        and only the one matching the actually-queried allele will hit."""
         try:
             r = tu.run_one_function(
                 {"name": "dbsnp_get_variant_by_rsid", "arguments": {"rsid": rsid}}
@@ -219,18 +265,26 @@ class CompoundVariantAnnotationTool(BaseTool):
             error = self._sub_call_error(r)
             if error:
                 sources_failed.append(f"dbSNP (rsid->gene): {error[:100]}")
-                return None
+                return None, None
             hgvs = str((r.get("data") or {}).get("hgvs_notation", ""))
             m = re.search(r"GENE=([A-Za-z0-9\-]+):", hgvs)
             if not m:
                 sources_failed.append(
                     f"dbSNP (rsid->gene): no gene found in hgvs_notation for {rsid}"
                 )
-                return None
-            return m.group(1)
+                return None, None
+            gene = m.group(1)
+            # A multi-allelic position (this rsid's site has both A>C and A>G
+            # alternates) lists a protein change per allele -- collect every
+            # distinct one; only the one matching the actual queried allele
+            # will hit in ClinVar/CIViC's title text, the rest are no-ops.
+            variant_tokens = list(
+                dict.fromkeys(re.findall(r"p\.([A-Za-z]{3}\d+[A-Za-z]{3})", hgvs))
+            )
+            return gene, (variant_tokens or None)
         except Exception as e:
             sources_failed.append(f"dbSNP (rsid->gene): {str(e)[:100]}")
-            return None
+            return None, None
 
     def _parse_clinvar(self, result: Any, variant_token: str = None) -> Dict[str, Any]:
         if not isinstance(result, dict):
