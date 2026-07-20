@@ -188,15 +188,8 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         # Build search query
         query_parts = []
 
+        gene_hyphen_variant = None
         if "gene" in arguments:
-            # Fix-R8B-1: HGNC gene symbols don't contain hyphens (modern
-            # nomenclature phased them out decades ago), but older
-            # literature/informal usage still writes them hyphenated (e.g.
-            # "BRCA-2", "HER-2") -- ClinVar's [gene] index only matches the
-            # canonical unhyphenated form, so a hyphenated query silently
-            # returned 0 results (confirmed live and via raw NCBI E-utils:
-            # "BRCA-2[gene]" -> 0 hits, "BRCA2[gene]" -> 21879 hits).
-            #
             # Fix-R10D-1: ClinVar's [gene] index only matches a bare HGNC
             # symbol, but a natural clinical phrasing like "NF2 gene" (used
             # verbatim in real research questions -- e.g. "look up the NF2
@@ -204,18 +197,33 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             # word "gene" becomes part of the queried string (confirmed
             # live and via raw NCBI E-utils curl: "Nf2 gene[gene]" -> 0
             # hits, "NF2[gene]" -> 2612 hits). Strip a trailing/leading
-            # "gene"/"protein" qualifier word before querying, then strip
-            # hyphens from what remains.
-            gene = (
-                re.sub(
-                    r"^\s*(?:gene|protein)\s+|\s+(?:gene|protein)\s*$",
-                    "",
-                    arguments["gene"],
-                    flags=re.IGNORECASE,
-                )
-                .strip()
-                .replace("-", "")
-            )
+            # "gene"/"protein" qualifier word before querying.
+            gene = re.sub(
+                r"^\s*(?:gene|protein)\s+|\s+(?:gene|protein)\s*$",
+                "",
+                arguments["gene"],
+                flags=re.IGNORECASE,
+            ).strip()
+
+            # Fix-R8B-1 (revised, Fix-R49A-1): some genes are informally
+            # hyphenated even though their current HGNC symbol has none (e.g.
+            # "BRCA-2" for "BRCA2", "HER-2" for "HER2" -- confirmed live via
+            # raw NCBI E-utils: "BRCA-2[gene]" -> 0 hits, "BRCA2[gene]" ->
+            # 21879 hits). R8B-1 originally handled this by unconditionally
+            # stripping every hyphen, but that silently broke every gene
+            # whose CURRENT official HGNC symbol genuinely contains one --
+            # confirmed live for the entire HLA family (HLA-B[gene] -> 130
+            # hits, HLAB[gene] -> 0), the NKX homeobox family (NKX2-5[gene]
+            # -> real hits, NKX25[gene] -> 0), and MT- mitochondrial genes
+            # (MT-ND1[gene] -> 194 hits, MTND1[gene] -> 0) -- all clinically
+            # significant gene families (HLA pharmacogenomics/transplant,
+            # NKX cardiac/pancreatic development, MT- mitochondrial disease).
+            # Query with the hyphen preserved first; only fall back to the
+            # stripped form if that returns zero results, so both the old
+            # informally-hyphenated-name case and genuinely-hyphenated
+            # official symbols work.
+            if "-" in gene:
+                gene_hyphen_variant = gene.replace("-", "")
             query_parts.append(f"{gene}[gene]")
 
         if "condition" in arguments:
@@ -304,6 +312,22 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         data = result.get("data", {})
         if "esearchresult" not in data:
             return result
+
+        # Fix-R49A-1: the hyphen-preserved gene query above found nothing --
+        # retry once with the hyphen stripped, for the informally-hyphenated
+        # BRCA-2/HER-2-style names ClinVar's index doesn't recognize.
+        if gene_hyphen_variant and int(data["esearchresult"].get("count", 0)) == 0:
+            # "gene" is always the first query part appended when present.
+            fallback_query_parts = [f"{gene_hyphen_variant}[gene]"] + query_parts[1:]
+            fallback_params = dict(params, term=" AND ".join(fallback_query_parts))
+            fallback_result = self._make_request(self.endpoint, fallback_params)
+            if (
+                fallback_result.get("status") == "success"
+                and "esearchresult" in fallback_result.get("data", {})
+                and int(fallback_result["data"]["esearchresult"].get("count", 0)) > 0
+            ):
+                result = fallback_result
+                data = result["data"]
 
         esearch = data["esearchresult"]
         ids = esearch.get("idlist", [])
