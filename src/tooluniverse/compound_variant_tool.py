@@ -282,7 +282,7 @@ class CompoundVariantAnnotationTool(BaseTool):
             }
         return {}
 
-    def _parse_civic(self, result: Any, variant_token: str = None) -> Dict[str, Any]:
+    def _parse_civic(self, result: Any, variant_token=None) -> Dict[str, Any]:
         if not isinstance(result, dict):
             return {"raw": str(result)[:200]}
         # civic_get_variants_by_gene returns data.gene.variants.nodes (a list).
@@ -290,26 +290,39 @@ class CompoundVariantAnnotationTool(BaseTool):
         nodes = ((gene.get("variants") or {}) if isinstance(gene, dict) else {}).get(
             "nodes", []
         )
-        parsed = []
-        for v in nodes if isinstance(nodes, list) else []:
-            if not isinstance(v, dict):
-                continue
-            name = v.get("name", v.get("variant_name", ""))
-            if variant_token and not _title_matches(name, variant_token):
-                continue
-            parsed.append(
-                {
-                    "name": name,
-                    "civic_id": v.get("id"),
-                    "feature": (v.get("feature") or {}).get("name")
-                    if isinstance(v.get("feature"), dict)
-                    else v.get("feature"),
-                }
-            )
+        nodes = nodes if isinstance(nodes, list) else []
+        rows = [v for v in nodes if isinstance(v, dict)]
+
+        def _row(v: Dict[str, Any]) -> Dict[str, Any]:
+            return {
+                "name": v.get("name", v.get("variant_name", "")),
+                "civic_id": v.get("id"),
+                "feature": (v.get("feature") or {}).get("name")
+                if isinstance(v.get("feature"), dict)
+                else v.get("feature"),
+            }
+
+        # Fix-R51A-1: when variant_token is falsy (a gene-only query with no
+        # specific variant to look for), the old "if variant_token and not
+        # _title_matches(...): continue" filter never triggered a skip --
+        # so EVERY gene-level variant silently counted as "matched" (e.g.
+        # matched=8 out of 8 total for a bare {"gene": "MSH2"} call, wrongly
+        # implying 8 real matches when no filtering criterion was even
+        # applied). ClinVar's parser already got this right elsewhere in
+        # this file (matched=0, gene-level rows shown separately as
+        # unmatched context) -- mirror that same, correct shape here.
+        matched = [
+            _row(v)
+            for v in rows
+            if variant_token
+            and _title_matches(v.get("name", v.get("variant_name", "")), variant_token)
+        ]
+        variants_out = matched if matched else [_row(v) for v in rows[:20]]
         return {
-            "total_gene_variants": len(nodes) if isinstance(nodes, list) else 0,
-            "matched": len(parsed),
-            "variants": parsed[:20],
+            "total_gene_variants": len(nodes),
+            "matched": len(matched),
+            "exact_match": bool(matched),
+            "variants": variants_out[:20],
         }
 
     def _parse_uniprot(self, result: Any) -> Dict[str, Any]:

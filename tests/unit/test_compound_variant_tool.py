@@ -50,8 +50,32 @@ def test_parse_civic_reads_nested_nodes_and_filters():
     out = t._parse_civic(real, "V600E")
     assert out["total_gene_variants"] == 2
     assert out["matched"] == 1
+    assert out["exact_match"] is True
     assert out["variants"][0]["name"] == "V600E"
     assert out["variants"][0]["civic_id"] == 12
+
+
+def test_parse_civic_gene_only_query_reports_zero_matched_not_all():
+    """Fix-R51A-1: a gene-only query (variant_token=None) previously counted
+    EVERY gene-level CIViC variant as "matched" -- the filter's
+    "if variant_token and not _title_matches(...): continue" never actually
+    skipped anything when variant_token was falsy, so matched silently
+    equaled total_gene_variants, wrongly implying real matches against a
+    filter that was never applied. Confirmed live for MSH2 (gene-only):
+    matched=8 out of 8 total before the fix. ClinVar's parser already gets
+    this right (matched=0, gene-level rows shown as unmatched context) --
+    CIViC's must mirror that same shape."""
+    t = _tool()
+    real = {"data": {"gene": {"id": 5, "name": "MSH2", "variants": {"nodes": [
+        {"id": 1, "name": "A1"}, {"id": 2, "name": "A2"}, {"id": 3, "name": "A3"}]}}}}
+
+    out = t._parse_civic(real, None)
+
+    assert out["total_gene_variants"] == 3
+    assert out["matched"] == 0
+    assert out["exact_match"] is False
+    # Still surfaces gene-level context, just not mislabeled as a match.
+    assert len(out["variants"]) == 3
 
 
 def test_parse_clinvar_falls_back_to_gene_context_when_no_exact_match():
