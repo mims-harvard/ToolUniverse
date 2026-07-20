@@ -2,7 +2,7 @@
   {
     "type": "MPDRESTTool",
     "name": "MPD_get_phenotype_data",
-    "description": "Get mouse phenotype data from Mouse Phenome Database for specific strains and phenotypes",
+    "description": "Search ENCODE experiment records mentioning a given mouse strain (used as a Mouse Phenome Database alternative -- MPD's own REST API has no simple strain+category phenotype search; see https://phenome.jax.org/api for genuine curated MPD phenotype data). 'phenotype_category' is not applied -- ENCODE has no equivalent concept.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,7 +13,7 @@
         },
         "phenotype_category": {
           "type": "string",
-          "description": "Phenotype category (behavior, physiology, morphology)",
+          "description": "Not currently applied to the query -- ENCODE (this tool's data source) has no phenotype-category concept. Retained for forward compatibility with a future genuine MPD-backed implementation.",
           "default": "behavior"
         },
         "limit": {
@@ -24,12 +24,10 @@
           "maximum": 50
         }
       },
-      "required": [
-        "strain"
-      ]
+      "required": []
     },
     "fields": {
-      "endpoint": "https://www.encodeproject.org/search/?type=Experiment&biosample_ontology.term_name={strain}&biosample_ontology.classification=primary_cell&format=json&limit={limit}",
+      "endpoint": "https://www.encodeproject.org/search/?type=Experiment&searchTerm={strain}&format=json&limit={limit}",
       "return_format": "JSON"
     },
     "return_schema": {
