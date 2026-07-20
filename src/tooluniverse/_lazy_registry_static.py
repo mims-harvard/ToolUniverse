@@ -504,6 +504,7 @@ STATIC_LAZY_REGISTRY = {
     "OMIMTool": "omim_tool",
     "ORCIDTool": "orcid_tool",
     "OSFPreprintsTool": "osf_preprints_tool",
+    "OmicsDITool": "omicsdi_tool",
     "OmniPathTool": "omnipath_tool",
     "OncoKBTool": "oncokb_tool",
     "OncoTreeBaseTool": "oncotree_tool",

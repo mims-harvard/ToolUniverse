@@ -23,6 +23,15 @@ class MedlinePlusRESTTool(BaseTool):
         self.endpoint_template = tool_config["fields"]["endpoint"]
         self.param_schema = tool_config["parameter"]["properties"]
 
+    # MedlinePlus's genetics download endpoints are case-sensitive on the
+    # identifier segment: an uppercase gene symbol (e.g. "FBN1.json") 200s
+    # but silently serves XML instead of the requested JSON, forcing a much
+    # buggier XML-fallback parse path (confirmed live). Lowercasing matches
+    # the convention already used for condition names (e.g.
+    # "marfan-syndrome") and routes both endpoints through the same
+    # reliably-correct real-JSON response shape.
+    _LOWERCASE_URL_PARAMS = {"gene", "condition"}
+
     def _build_url(self, arguments: dict) -> str:
         """Build complete URL"""
         url_path = self.endpoint_template
@@ -34,7 +43,10 @@ class MedlinePlusRESTTool(BaseTool):
                     "status": "error",
                     "error": f"Missing required parameter '{ph}'",
                 }
-            url_path = url_path.replace(f"{{{ph}}}", str(arguments[ph]))
+            value = str(arguments[ph])
+            if ph in self._LOWERCASE_URL_PARAMS:
+                value = value.lower()
+            url_path = url_path.replace(f"{{{ph}}}", value)
 
         return url_path
 
@@ -77,22 +89,38 @@ class MedlinePlusRESTTool(BaseTool):
                         return self._extract_text_content(item)
             return ""
 
-        # Extract list items
+        # MedlinePlus genetics list fields arrive in two shapes depending on
+        # the parse path (confirmed live): real JSON gives a top-level *list*
+        # of single-key wrapper dicts (e.g. [{"related-gene": {...}}, ...]),
+        # while the XML fallback (xmltodict) collapses the same data to a
+        # *dict* ({"related-gene": [...] or {...}}). Normalize both to a flat
+        # list of entries.
+        def unwrap_entries(data, list_key, item_key):
+            raw = data.get(list_key, [])
+            if isinstance(raw, dict):
+                entries = raw.get(item_key, [])
+                return entries if isinstance(entries, list) else [entries]
+            if isinstance(raw, list):
+                return [w.get(item_key) if isinstance(w, dict) else w for w in raw]
+            return []
+
         def get_list_items(
             data, list_key, item_key, name_key="name", url_key="ghr-page"
         ):
-            items = []
-            list_data = data.get(list_key, {})
-            if isinstance(list_data, dict):
-                items = list_data.get(item_key, [])
-                if not isinstance(items, list):
-                    items = [items]
-            for item in items:
+            formatted = []
+            for item in unwrap_entries(data, list_key, item_key):
                 if isinstance(item, dict):
                     name = item.get(name_key, "")
                     url = item.get(url_key, "")
-                    items.append(f"{name} ({url})" if url else name)
-            return items
+                    formatted.append(f"{name} ({url})" if url else name)
+            return formatted
+
+        def get_synonyms(data):
+            return [
+                s
+                for s in unwrap_entries(data, "synonym-list", "synonym")
+                if isinstance(s, str)
+            ]
 
         # Format response based on tool type
         if tool_name == "MedlinePlus_search_topics_by_keyword":
@@ -182,20 +210,31 @@ class MedlinePlusRESTTool(BaseTool):
             )
 
         elif tool_name == "MedlinePlus_get_genetics_condition_by_name":
+            inheritance = [
+                p.get("memo", "")
+                for p in unwrap_entries(
+                    response, "inheritance-pattern-list", "inheritance-pattern"
+                )
+                if isinstance(p, dict)
+            ]
+
             return {
                 "name": response.get("name", ""),
                 "description": get_text_content(response, "description"),
                 "genes": get_list_items(
                     response, "related-gene-list", "related-gene", "gene-symbol"
                 ),
-                "synonyms": [
-                    s.get("synonym", "") for s in response.get("synonym-list", [])
-                ],
+                "inheritance": inheritance,
+                "synonyms": get_synonyms(response),
                 "ghr_page": response.get("ghr_page", ""),
             }
 
         elif tool_name == "MedlinePlus_get_genetics_gene_by_name":
-            gene_summary = response.get("gene-summary", {})
+            # Real JSON responses have the gene's fields at the top level
+            # (no "gene-summary" wrapper) -- that wrapper only exists in the
+            # XML-parsed shape. Fall back to `response` itself so both
+            # shapes work.
+            gene_summary = response.get("gene-summary", response)
             return {
                 "name": gene_summary.get("name", ""),
                 "function": get_text_content(gene_summary, "function"),
@@ -204,7 +243,7 @@ class MedlinePlusRESTTool(BaseTool):
                     "related-health-condition-list",
                     "related-health-condition",
                 ),
-                "synonyms": gene_summary.get("synonym-list", {}).get("synonym", []),
+                "synonyms": get_synonyms(gene_summary),
                 "ghr_page": gene_summary.get("ghr-page", ""),
             }
 
