@@ -46,9 +46,12 @@ def test_expression_query_uses_current_fields():
 
 def test_expression_return_schema_matches_query_shape():
     tool = _tool("OpenTargets_get_target_expression_by_ensemblID")
-    target_props = tool["return_schema"]["oneOf"][0]["properties"]["data"][
+    # Fix #288: return_schema.oneOf[0] is the promoted data sub-schema itself
+    # now, not a {status, data} envelope wrapping it -- "target" is a direct
+    # property, not nested under an extra "data" key.
+    target_props = tool["return_schema"]["oneOf"][0]["properties"]["target"][
         "properties"
-    ]["target"]["properties"]
+    ]
     assert "baselineExpression" in target_props
     assert "expressions" not in target_props
     row_props = target_props["baselineExpression"]["properties"]["rows"]["items"][
