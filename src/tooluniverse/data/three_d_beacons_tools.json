@@ -207,8 +207,8 @@
                     "description": "UniProt protein accession. Examples: 'P38398' (BRCA1), 'P04637' (TP53), 'P00533' (EGFR)."
                 },
                 "type": {
-                    "type": ["string", "null"],
-                    "description": "Filter to one annotation type. Valid values: CARBOHYD, DOMAIN, ACT_SITE, METAL, BINDING, NON_STD, MOD_RES, DISULFID, MUTAGEN, HELIX, STRAND, DISORDERED, INTERFACE, CHANNEL. Omit to return all annotation types."
+                    "type": "string",
+                    "description": "Annotation type to filter to -- required by the upstream 3D Beacons API (it 422s without it, confirmed live). Valid values: CARBOHYD, DOMAIN, ACT_SITE, METAL, BINDING, NON_STD, MOD_RES, DISULFID, MUTAGEN, HELIX, STRAND, DISORDERED, INTERFACE, CHANNEL."
                 },
                 "provider": {
                     "type": ["string", "null"],
@@ -216,7 +216,8 @@
                 }
             },
             "required": [
-                "accession"
+                "accession",
+                "type"
             ]
         },
         "fields": {

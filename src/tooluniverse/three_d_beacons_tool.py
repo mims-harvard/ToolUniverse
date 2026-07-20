@@ -229,10 +229,21 @@ class ThreeDBeaconsTool(BaseTool):
         annotation_type = arguments.get("type")
         provider = arguments.get("provider")
 
-        if (
-            annotation_type
-            and annotation_type.upper() not in self.VALID_ANNOTATION_TYPES
-        ):
+        # Confirmed live: the upstream endpoint 422s with "Field required"
+        # when `type` is omitted -- it is not actually optional, despite
+        # this tool's own schema previously claiming "omit to return all
+        # annotation types". Give a clear, actionable error instead of
+        # letting the raw 422 through.
+        if not annotation_type:
+            return {
+                "status": "error",
+                "error": (
+                    "type parameter is required by the 3D Beacons annotations "
+                    f"endpoint. Valid types: {', '.join(sorted(self.VALID_ANNOTATION_TYPES))}"
+                ),
+            }
+
+        if annotation_type.upper() not in self.VALID_ANNOTATION_TYPES:
             return {
                 "status": "error",
                 "error": (
@@ -242,9 +253,7 @@ class ThreeDBeaconsTool(BaseTool):
             }
 
         url = f"{BEACONS_BASE_URL}/annotations/{accession}.json"
-        params: Dict[str, Any] = {}
-        if annotation_type:
-            params["type"] = annotation_type.upper()
+        params: Dict[str, Any] = {"type": annotation_type.upper()}
         if provider:
             params["provider"] = provider
 

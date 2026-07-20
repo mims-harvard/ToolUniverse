@@ -519,9 +519,21 @@ NEB_CUT_OFFSETS: Dict[str, int] = {
 # IUPAC ambiguity codes → regex character classes, so recognition sites with
 # degenerate bases (N and any of R/Y/S/W/K/M/B/D/H/V) match correctly.
 _IUPAC_RE: Dict[str, str] = {
-    "A": "A", "C": "C", "G": "G", "T": "T",
-    "R": "[AG]", "Y": "[CT]", "S": "[GC]", "W": "[AT]", "K": "[GT]", "M": "[AC]",
-    "B": "[CGT]", "D": "[AGT]", "H": "[ACT]", "V": "[ACG]", "N": "[ACGT]",
+    "A": "A",
+    "C": "C",
+    "G": "G",
+    "T": "T",
+    "R": "[AG]",
+    "Y": "[CT]",
+    "S": "[GC]",
+    "W": "[AT]",
+    "K": "[GT]",
+    "M": "[AC]",
+    "B": "[CGT]",
+    "D": "[AGT]",
+    "H": "[ACT]",
+    "V": "[ACG]",
+    "N": "[ACGT]",
 }
 
 
@@ -540,8 +552,10 @@ def _resolve_enzyme(name: str):
     exact cut offset is non-critical (it shifts boundaries, not the count).
     """
     if name in NEB_ENZYMES:
-        return name, NEB_ENZYMES[name], NEB_CUT_OFFSETS.get(
-            name, len(NEB_ENZYMES[name]) // 2
+        return (
+            name,
+            NEB_ENZYMES[name],
+            NEB_CUT_OFFSETS.get(name, len(NEB_ENZYMES[name]) // 2),
         )
     _lower = {n.lower(): n for n in NEB_ENZYMES}
     if name.lower() in _lower:
@@ -1764,9 +1778,20 @@ class DNATool(BaseTool):
             }
 
         if product_size < product_size_min or product_size > product_size_max:
+            hint = ""
+            if product_size < product_size_min and seq_len < 200:
+                hint = (
+                    f" The input sequence is only {seq_len} bp; templates under "
+                    "200 bp (this tool's documented minimum for good primer "
+                    "design) often don't leave enough flanking sequence to reach "
+                    "product_size_min."
+                )
             return {
                 "status": "error",
-                "error": f"Designed product size ({product_size} bp) is outside the range [{product_size_min}, {product_size_max}] bp",
+                "error": (
+                    f"Designed product size ({product_size} bp) is outside the "
+                    f"range [{product_size_min}, {product_size_max}] bp.{hint}"
+                ),
             }
 
         # Verify the product actually spans the requested target region.

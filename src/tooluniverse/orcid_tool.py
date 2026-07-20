@@ -168,7 +168,10 @@ class ORCIDTool(BaseTool):
         rows = arguments.get("rows", 10)
 
         params = {"q": query, "start": start, "rows": rows}
-        result = self._make_request("search", params)
+        # expanded-search (vs. plain search) returns names/institutions inline,
+        # so callers can disambiguate same-named candidates without a
+        # separate get_profile call per result.
+        result = self._make_request("expanded-search", params)
         if not result["ok"]:
             return {
                 "status": "error",
@@ -177,15 +180,18 @@ class ORCIDTool(BaseTool):
             }
 
         data = result["data"]
-        results = data.get("result", [])
+        results = data.get("expanded-result") or []
 
         researchers = []
         for r in results:
-            orcid_id = r.get("orcid-identifier", {})
             researchers.append(
                 {
-                    "orcid": orcid_id.get("path"),
-                    "uri": orcid_id.get("uri"),
+                    "orcid": r.get("orcid-id"),
+                    "given_names": r.get("given-names"),
+                    "family_names": r.get("family-names"),
+                    "credit_name": r.get("credit-name"),
+                    "other_names": r.get("other-name") or [],
+                    "institutions": r.get("institution-name") or [],
                 }
             )
 

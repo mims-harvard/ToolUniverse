@@ -375,7 +375,7 @@
       "properties": {
         "query": {
           "type": "string",
-          "description": "Publisher / member name to search (e.g., 'plos', 'elsevier', 'springer', 'wiley')."
+          "description": "Publisher / member name to search (e.g., 'plos', 'elsevier', 'springer', 'wiley'). Prefer a single distinctive word: Crossref's own search can return zero results for multi-word brand names (e.g. 'springer nature' finds nothing even though 'springer' alone matches)."
         },
         "limit": {
           "type": "integer",

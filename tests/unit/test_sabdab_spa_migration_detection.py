@@ -50,8 +50,7 @@ def test_get_structure_detects_spa_html(monkeypatch):
     result = tool._get_structure({"pdb_id": "5jxe"})
 
     assert result["status"] == "error"
-    assert "migrated" in result["error"]
-    assert "SAbDab2" in result["error"]
+    assert "non-PDB content" in result["error"]
 
 
 def test_get_structure_still_parses_real_pdb_content(monkeypatch):

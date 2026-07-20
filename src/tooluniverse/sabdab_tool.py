@@ -157,17 +157,36 @@ class SAbDabTool(BaseTool):
             # coordinate data, and used to be reported as a successful
             # download of that HTML. Detect and report it honestly instead.
             pdb_content = response.text
-            if self._looks_like_html(pdb_content):
+            # SAbDab migrated to a React SPA that serves the same generic
+            # HTML app shell for every route including this download
+            # endpoint (confirmed live: /pdb/<id>/ 200s with
+            # "<!doctype html>..." instead of PDB coordinate records) --
+            # detect that before claiming success, rather than reporting
+            # the HTML page's byte count/preview as if it were structure
+            # data. A positive check against known PDB record prefixes
+            # (rather than an HTML-only negative check) also catches any
+            # other non-PDB content the endpoint might return.
+            first_line = pdb_content.lstrip().splitlines()[0] if pdb_content else ""
+            looks_like_pdb = first_line[:6].strip() in (
+                "HEADER",
+                "ATOM",
+                "HETATM",
+                "TITLE",
+                "REMARK",
+                "COMPND",
+            )
+            if not looks_like_pdb:
                 return {
                     "status": "error",
                     "error": (
-                        "SAbDab appears to have migrated to a new site "
-                        "(SAbDab2) with no public structure-download API "
-                        "currently reachable at this URL -- got an HTML "
-                        "page instead of PDB coordinate data. This is an "
-                        "upstream issue, not a query problem."
+                        f"SAbDab did not return PDB structure data for {pdb_id} "
+                        "(got non-PDB content, likely an HTML page from "
+                        "SAbDab's current site). The structure/site layout "
+                        "may have changed; try downloading directly from "
+                        f"{pdb_url}."
                     ),
                 }
+
             metadata = {"pdb_id": pdb_id}
 
             # Parse REMARK 5 lines which contain SAbDab annotations
@@ -316,7 +335,10 @@ class SAbDabTool(BaseTool):
                     "status": "error",
                     "error": (
                         f"SAbDab did not return tabular data for {pdb_id} "
-                        "(structure may not be an antibody complex)."
+                        "(got non-tabular content, likely an HTML page from "
+                        "SAbDab's current site, rather than 'structure may "
+                        "not be an antibody complex' -- confirmed live this "
+                        "now happens even for known antibody structures)."
                     ),
                 }
 

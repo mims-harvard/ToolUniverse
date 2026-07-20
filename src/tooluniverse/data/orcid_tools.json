@@ -71,7 +71,7 @@
   {
     "name": "ORCID_search_researchers",
     "type": "ORCIDTool",
-    "description": "Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Supports full-text search across names, affiliations, publications, and keywords. Use for: finding researchers working on specific topics, identifying collaborators, disambiguating authors.",
+    "description": "Search ORCID registry for researchers by keyword query. Returns each match's ORCID iD along with given/family/credit names, other names, and institution affiliations, so same-named candidates can be disambiguated without a separate profile lookup. Supports full-text search across names, affiliations, publications, and keywords. Use for: finding researchers working on specific topics, identifying collaborators, disambiguating authors.",
     "parameter": {
       "type": "object",
       "properties": {

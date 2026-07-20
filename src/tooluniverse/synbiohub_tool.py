@@ -9,9 +9,16 @@ characterized genetic parts (promoters, coding sequences, terminators,
 ribosome binding sites, reporters, etc.).
 
 API: https://synbiohub.org/
-No authentication required for public collections.
+Note: synbiohub.org now requires a logged-in session for /search,
+/rootCollections, and per-part /sbol requests (confirmed live: all three
+return HTTP 401 or an HTML login redirect for unauthenticated requests as
+of this writing), despite this having been a public, keyless API
+previously. This tool does not support authentication, so these calls
+will currently fail until synbiohub.org's policy changes or auth support
+is added.
 """
 
+import os
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -33,7 +40,13 @@ class SynBioHubTool(BaseTool):
 
     Supports: search parts by keyword, list collections, get part SBOL data.
 
-    No authentication required for public collections.
+    Note: synbiohub.org now requires a logged-in session for /search,
+    /rootCollections, and per-part /sbol requests (confirmed live: all
+    three return HTTP 401 or an HTML login redirect for unauthenticated
+    requests as of this writing), despite this having been a public,
+    keyless API previously. This tool does not support authentication, so
+    these calls will currently fail until synbiohub.org's policy changes
+    or auth support is added.
     """
 
     def __init__(self, tool_config: Dict[str, Any]):
@@ -41,6 +54,19 @@ class SynBioHubTool(BaseTool):
         self.timeout = tool_config.get("timeout", 30)
         fields = tool_config.get("fields", {})
         self.endpoint = fields.get("endpoint", "search")
+        # Each tool's own description already documents this env var as
+        # the workaround for synbiohub.org's login wall, but nothing in
+        # this module previously read it -- the documented capability
+        # didn't exist. SynBioHub's REST API accepts a prior /login
+        # session token via the "X-authorization" header.
+        self.api_token = os.environ.get("SYNBIOHUB_API_TOKEN")
+
+    def _token_header(self) -> Dict[str, str]:
+        """X-authorization header carrying the SynBioHub session token, if set."""
+        return {"X-authorization": self.api_token} if self.api_token else {}
+
+    def _auth_headers(self) -> Dict[str, str]:
+        return {"Accept": "application/json", **self._token_header()}
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the SynBioHub API call."""
@@ -54,9 +80,29 @@ class SynBioHubTool(BaseTool):
         except requests.exceptions.ConnectionError:
             return {"status": "error", "error": "Failed to connect to SynBioHub API"}
         except requests.exceptions.HTTPError as e:
+            code = e.response.status_code if e.response is not None else "unknown"
+            if code == 401:
+                # Confirmed live: synbiohub.org now requires login for
+                # /search, /rootCollections, and per-part /sbol requests,
+                # contradicting this family's original "no authentication
+                # required for public collections" premise.
+                hint = (
+                    "no SYNBIOHUB_API_TOKEN is set"
+                    if not self.api_token
+                    else "the configured SYNBIOHUB_API_TOKEN may be invalid or expired"
+                )
+                return {
+                    "status": "error",
+                    "error": (
+                        "SynBioHub API HTTP error: 401 (login required). "
+                        "synbiohub.org now requires an authenticated session for "
+                        f"this endpoint ({hint}). Log in at synbiohub.org, then "
+                        "set SYNBIOHUB_API_TOKEN to the session token to retry."
+                    ),
+                }
             return {
                 "status": "error",
-                "error": f"SynBioHub API HTTP error: {e.response.status_code}",
+                "error": f"SynBioHub API HTTP error: {code}",
             }
         except Exception as e:
             return {
@@ -86,10 +132,9 @@ class SynBioHubTool(BaseTool):
 
         url = f"{SYNBIOHUB_BASE_URL}/search/{query}"
         params = {"offset": offset, "limit": min(limit, 50)}
-        headers = {"Accept": "application/json"}
 
         response = requests.get(
-            url, params=params, headers=headers, timeout=self.timeout
+            url, params=params, headers=self._auth_headers(), timeout=self.timeout
         )
         response.raise_for_status()
         data = response.json()
@@ -138,9 +183,8 @@ class SynBioHubTool(BaseTool):
     def _get_collections(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List public collections available on SynBioHub."""
         url = f"{SYNBIOHUB_BASE_URL}/rootCollections"
-        headers = {"Accept": "application/json"}
 
-        response = requests.get(url, headers=headers, timeout=self.timeout)
+        response = requests.get(url, headers=self._auth_headers(), timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
@@ -181,16 +225,43 @@ class SynBioHubTool(BaseTool):
             # Construct URI from display_id (assume iGEM collection)
             part_uri = f"{SYNBIOHUB_BASE_URL}/public/igem/{display_id}/1"
 
-        # Get SBOL XML data
+        # Get SBOL XML data (no Accept: application/json here -- this
+        # endpoint returns XML, not JSON).
         url = f"{part_uri}/sbol"
-        response = requests.get(url, timeout=self.timeout)
+        response = requests.get(url, headers=self._token_header(), timeout=self.timeout)
         response.raise_for_status()
         xml_content = response.text
+
+        # SynBioHub now requires login for some/all part-detail requests
+        # (confirmed live: an unauthenticated /sbol request lands on an
+        # HTML login page, served as a plain 200 OK -- raise_for_status()
+        # above doesn't catch this). Detect non-XML content before
+        # attempting to parse it, since ET.fromstring() on an HTML page
+        # otherwise raises an opaque "mismatched tag: line N, column M"
+        # with no indication of the real cause.
+        content_type = response.headers.get("Content-Type", "")
+        looks_like_xml = xml_content.lstrip().startswith(("<?xml", "<rdf:RDF"))
+        if "xml" not in content_type.lower() and not looks_like_xml:
+            return {
+                "status": "error",
+                "error": (
+                    f"SynBioHub did not return SBOL/XML data for '{part_uri}' "
+                    "(got non-XML content, likely an HTML login or error page). "
+                    "The part may not exist, or SynBioHub may now require "
+                    "authentication for this request."
+                ),
+            }
 
         # Parse XML to extract key information
         import xml.etree.ElementTree as ET
 
-        root = ET.fromstring(xml_content)
+        try:
+            root = ET.fromstring(xml_content)
+        except ET.ParseError as e:
+            return {
+                "status": "error",
+                "error": f"Failed to parse SBOL/XML response for '{part_uri}': {e}",
+            }
 
         # Define namespaces
         ns = {
