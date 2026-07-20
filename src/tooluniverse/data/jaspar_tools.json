@@ -609,7 +609,8 @@
           "default": 20,
           "description": "Results per page."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://jaspar.elixir.no/api/v1/matrix/",

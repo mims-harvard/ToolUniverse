@@ -336,6 +336,17 @@ class MGnifyExpandedTool(BaseTool):
     def _format_sample(item: Dict[str, Any]) -> Dict[str, Any]:
         """Flatten a MGnify sample JSON:API record into a metadata row."""
         attrs = item.get("attributes", {}) if isinstance(item, dict) else {}
+        # attributes["environment-biome"] is null for most samples (confirmed
+        # live); the real per-sample biome path lives in the sample's own
+        # "biome" relationship instead (e.g. "root:Host-associated:Human:
+        # Digestive system:Large intestine"), which the list endpoint already
+        # includes per item -- fall back to it rather than dropping the tag
+        # entirely.
+        biome_rel = (
+            (item.get("relationships") or {}).get("biome", {}).get("data") or {}
+            if isinstance(item, dict)
+            else {}
+        )
         return {
             "sample_accession": item.get("id"),
             "biosample": attrs.get("biosample"),
@@ -348,7 +359,7 @@ class MGnifyExpandedTool(BaseTool):
             "collection_date": attrs.get("collection-date"),
             "host_tax_id": attrs.get("host-tax-id"),
             "species": attrs.get("species"),
-            "environment_biome": attrs.get("environment-biome"),
+            "environment_biome": attrs.get("environment-biome") or biome_rel.get("id"),
             "environment_feature": attrs.get("environment-feature"),
             "environment_material": attrs.get("environment-material"),
             "last_update": attrs.get("last-update"),

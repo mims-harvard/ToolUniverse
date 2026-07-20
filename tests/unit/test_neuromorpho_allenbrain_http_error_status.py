@@ -35,12 +35,17 @@ pytestmark = pytest.mark.unit
 
 
 def _http_error_response(status_code, json_body=None, raise_on_json=False):
-    r = MagicMock()
+    # A real requests.Response (not a bare MagicMock) so `bool(r)` reflects
+    # the actual `.ok` property (False for 4xx/5xx) -- a plain MagicMock's
+    # __bool__ defaults to True regardless of status_code, which would let
+    # the truthiness bug this test guards against (`e.response else
+    # "unknown"`) pass silently even when reintroduced.
+    r = requests.Response()
     r.status_code = status_code
     if raise_on_json:
-        r.json.side_effect = ValueError("not json")
+        r.json = MagicMock(side_effect=ValueError("not json"))
     else:
-        r.json.return_value = json_body or {}
+        r.json = MagicMock(return_value=json_body or {})
     err = requests.exceptions.HTTPError(response=r)
     r.raise_for_status = MagicMock(side_effect=err)
     return r, err

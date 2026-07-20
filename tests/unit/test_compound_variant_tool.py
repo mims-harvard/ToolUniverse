@@ -154,3 +154,44 @@ def test_sources_with_data_is_honest():
     assert set(s["sources_with_data"]) == {"gnomad", "civic"}  # NOT clinvar/uniprot
     assert s["gnomad_gene_id"] == "ENSG00000157764"
     assert s["civic_variants_matched"] == 1
+
+
+def test_clinvar_classification_not_derived_from_unmatched_fallback():
+    # Fix-R27A-1/T2A-001: confirmed live for EGFR L858R -- _parse_clinvar's
+    # fallback context list (returned when exact_match is False) was
+    # being blindly summarized as clinvar_classification, e.g. reporting
+    # "Uncertain significance" (an unrelated p.Leu828Ser record) for a
+    # variant that is actually ClinVar Oncogenic/Tier I-Strong. When
+    # exact_match is False, clinvar_classification must be explicitly None
+    # (not derived from the unrelated fallback record) and a clinvar_note
+    # must explain why, rather than silently omitting the field.
+    t = _tool()
+    annotations = {
+        "clinvar": {
+            "total_gene_variants": 3167,
+            "matched": 0,
+            "exact_match": False,
+            "variants": [
+                {"name": "p.Leu828Ser", "classification": "Uncertain significance"},
+            ],
+        },
+    }
+    s = t._build_summary(annotations, variant="L858R", gene="EGFR")
+    assert s["clinvar_classification"] is None
+    assert "clinvar_note" in s
+
+
+def test_clinvar_classification_set_when_exact_match_true():
+    t = _tool()
+    annotations = {
+        "clinvar": {
+            "total_gene_variants": 3167,
+            "matched": 1,
+            "exact_match": True,
+            "variants": [
+                {"name": "p.Leu858Arg", "classification": "Pathogenic"},
+            ],
+        },
+    }
+    s = t._build_summary(annotations, variant="L858R", gene="EGFR")
+    assert s["clinvar_classification"] == "Pathogenic"

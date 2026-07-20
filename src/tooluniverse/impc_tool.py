@@ -287,7 +287,8 @@ class IMPCTool(BaseTool):
         return {
             "status": "success",
             "data": {
-                "gene_symbol": gene_symbol or docs[0].get("marker_symbol", ""),
+                "gene_symbol": gene_symbol
+                or (docs[0].get("marker_symbol", "") if docs else ""),
                 "mgi_id": mgi_id
                 or (docs[0].get("marker_accession_id", "") if docs else ""),
                 "total_phenotype_calls": num_found,
