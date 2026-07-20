@@ -15,7 +15,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/gene?symbol=eq.{symbol}"
+      "endpoint": "https://api.cpicpgx.org/v1/gene?symbol=eq.{symbol}",
+      "uppercase_params": ["symbol"]
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -1087,7 +1088,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/allele?genesymbol=eq.{genesymbol}&select=name,functionalstatus,activityvalue,clinicalfunctionalstatus&limit={limit}"
+      "endpoint": "https://api.cpicpgx.org/v1/allele?genesymbol=eq.{genesymbol}&select=name,functionalstatus,activityvalue,clinicalfunctionalstatus&limit={limit}",
+      "uppercase_params": ["genesymbol"]
     },
     "type": "BaseRESTTool",
     "test_examples": [

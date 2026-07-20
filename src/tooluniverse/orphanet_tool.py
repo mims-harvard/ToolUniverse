@@ -37,6 +37,18 @@ def normalize_lang(lang: str) -> str:
     return lang.upper() if lang else "EN"
 
 
+def _encode_orphadata_gene_name(name: str) -> str:
+    """URL-encode a gene name for the Orphadata /genes/names/{name} path.
+
+    Fix-R30D-2: some official gene names contain a literal "/" (e.g. "lamin
+    A/C" for LMNA) -- confirmed live that Orphadata's router 404s on the
+    correctly percent-encoded form (%2F) but succeeds if the slash is
+    replaced with a hyphen first. Only affects this Orphadata gene-name
+    endpoint, not the separate RDcode disease-name search endpoints.
+    """
+    return urllib.parse.quote(name.replace("/", "-"), safe="")
+
+
 @register_tool("OrphanetTool")
 class OrphanetTool(BaseTool):
     """
@@ -949,7 +961,7 @@ class OrphanetTool(BaseTool):
         }
 
         try:
-            encoded_name = urllib.parse.quote(gene_name, safe="")
+            encoded_name = _encode_orphadata_gene_name(gene_name)
             response = requests.get(
                 f"{ORPHADATA_API_URL}/rd-associated-genes/genes/names/{encoded_name}",
                 timeout=self.timeout,
@@ -960,7 +972,7 @@ class OrphanetTool(BaseTool):
             if response.status_code == 404:
                 full_name = self._resolve_gene_symbol(gene_name)
                 if full_name:
-                    encoded_name = urllib.parse.quote(full_name, safe="")
+                    encoded_name = _encode_orphadata_gene_name(full_name)
                     response = requests.get(
                         f"{ORPHADATA_API_URL}/rd-associated-genes/genes/names/{encoded_name}",
                         timeout=self.timeout,

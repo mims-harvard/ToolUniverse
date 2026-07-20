@@ -275,6 +275,22 @@ class BaseRESTTool(BaseTool):
                     if isinstance(value, str):
                         arguments[key] = value.lower()
 
+            # Fix-R30E-3: the mirror-image case -- CPIC's gene/allele tables
+            # store symbols uppercase (e.g. "CYP2D6"), so a lowercase or
+            # mixed-case input to `symbol=eq.{symbol}`/`genesymbol=eq.{...}`
+            # silently returns an empty success (confirmed live: "cyp2d6" ->
+            # 0 rows, "CYP2D6" -> 1). `fields.uppercase_params` lists params
+            # to upcase.
+            uppercase_params = (
+                self.tool_config.get("fields", {}).get("uppercase_params") or []
+            )
+            if uppercase_params:
+                arguments = dict(arguments)
+                for key in uppercase_params:
+                    value = arguments.get(key)
+                    if isinstance(value, str):
+                        arguments[key] = value.upper()
+
             url = self._build_url(arguments)
             params = self._build_params(arguments)
 

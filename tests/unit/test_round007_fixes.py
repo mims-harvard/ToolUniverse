@@ -140,5 +140,56 @@ class TestBaseRESTLowercaseParams(unittest.TestCase):
         self.assertNotIn("Clopidogrel", captured["url"])
 
 
+# ---------------------------------------------------------------------------
+# Fix-R30E-3: BaseRESTTool uppercase_params upcases before request
+# ---------------------------------------------------------------------------
+class TestBaseRESTUppercaseParams(unittest.TestCase):
+    """Regression guard for Fix-R30E-3: CPIC's gene/allele tables store
+    symbols uppercase (opposite of CPIC's drug-name table, Feature-007-003
+    above) -- confirmed live that CPIC_get_gene_info({"symbol": "cyp2d6"})
+    silently returned status:success with 0 rows while "CYP2D6" returned
+    real data. `fields.uppercase_params` mirrors `lowercase_params` for this
+    direction."""
+
+    def _make_tool(self):
+        from tooluniverse.base_rest_tool import BaseRESTTool
+
+        config = {
+            "name": "CPIC_get_gene_info",
+            "type": "BaseRESTTool",
+            "parameter": {
+                "type": "object",
+                "properties": {"symbol": {"type": "string"}},
+                "required": ["symbol"],
+            },
+            "fields": {
+                "endpoint": "https://api.cpicpgx.org/v1/gene?symbol=eq.{symbol}",
+                "uppercase_params": ["symbol"],
+            },
+        }
+        return BaseRESTTool(config)
+
+    def test_lowercase_symbol_is_uppercased_in_url(self):
+        tool = self._make_tool()
+        captured = {}
+
+        def fake_request(session, method, url, **kwargs):
+            captured["url"] = url
+            resp = MagicMock()
+            resp.status_code = 200
+            resp.json.return_value = []
+            resp.headers = {"content-type": "application/json"}
+            resp.text = "[]"
+            return resp
+
+        with patch(
+            "tooluniverse.base_rest_tool.request_with_retry", side_effect=fake_request
+        ):
+            tool.run({"symbol": "cyp2d6"})
+
+        self.assertIn("symbol=eq.CYP2D6", captured["url"])
+        self.assertNotIn("cyp2d6", captured["url"])
+
+
 if __name__ == "__main__":
     unittest.main()

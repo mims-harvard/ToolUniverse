@@ -66,11 +66,22 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         results_by_source["OMIM"] = self._extract_genes_or_diseases(r, "OMIM")
 
         # 3. OpenTargets
-        r = _try_tool(
-            "OpenTargets",
-            "OpenTargets_get_disease_ids_by_name",
-            {"name": disease or gene},
-        )
+        # Fix-R30D-6: for a gene-only query, passing the gene symbol into
+        # OpenTargets_get_disease_ids_by_name (a disease-name search) doesn't
+        # look up the gene's associated diseases at all -- confirmed live it
+        # returns 0-1 spurious hits that merely happen to contain the gene
+        # symbol as a substring (e.g. "congenital muscular dystrophy due to
+        # LMNA mutation"), not real gene->disease associations (OpenTargets
+        # itself has 6084 for LMNA). Resolve the gene symbol to its Ensembl
+        # ID first and query its associated-diseases list instead.
+        if disease:
+            r = _try_tool(
+                "OpenTargets",
+                "OpenTargets_get_disease_ids_by_name",
+                {"name": disease},
+            )
+        else:
+            r = self._opentargets_gene_diseases(tu, gene, sources_failed)
         results_by_source["OpenTargets"] = self._extract_genes_or_diseases(
             r, "OpenTargets"
         )
@@ -105,6 +116,42 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             },
         }
 
+    def _opentargets_gene_diseases(
+        self, tu, gene: str, sources_failed: List[str]
+    ) -> Dict[str, Any]:
+        """Resolve a gene symbol to its OpenTargets/Ensembl target ID, then
+        fetch its real associated-diseases list. OpenTargets has no
+        symbol-keyed "diseases for this gene" endpoint, so this chains the
+        target-name search (for the ID) with the ID-based diseases lookup."""
+        search = tu.run_one_function(
+            {
+                "name": "OpenTargets_get_target_id_description_by_name",
+                "arguments": {"targetName": gene},
+            }
+        )
+        hits = (search or {}).get("data", {}).get("search", {}).get("hits", [])
+        if not hits:
+            sources_failed.append(f"OpenTargets: no target match for gene '{gene}'")
+            return {"status": "error", "error": f"No target match for gene '{gene}'"}
+
+        gene_upper = gene.upper()
+        match = next(
+            (h for h in hits if h.get("name", "").upper() == gene_upper), hits[0]
+        )
+        ensembl_id = match.get("id")
+
+        result = tu.run_one_function(
+            {
+                "name": "OpenTargets_get_diseases_phenotypes_by_target_ensembl",
+                "arguments": {"ensemblId": ensembl_id},
+            }
+        )
+        if isinstance(result, dict) and result.get("status") == "error":
+            sources_failed.append(
+                f"OpenTargets: {result.get('error', 'unknown error')[:100]}"
+            )
+        return result
+
     def _extract_genes_or_diseases(
         self, result: Any, source: str
     ) -> List[Dict[str, Any]]:
@@ -138,6 +185,18 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             for hit in hits[:30]:
                 if isinstance(hit, dict):
                     name = hit.get("name", "")
+                    items.append({"name": str(name), "score": None, "source": source})
+            return items
+
+        # OpenTargets: data has "target.associatedDiseases.rows" list (gene-only queries)
+        if isinstance(data, dict) and "target" in data:
+            rows = (
+                (data.get("target") or {}).get("associatedDiseases", {}).get("rows", [])
+            )
+            for row in rows[:30]:
+                disease = (row or {}).get("disease") or {}
+                name = disease.get("name", "")
+                if name:
                     items.append({"name": str(name), "score": None, "source": source})
             return items
 

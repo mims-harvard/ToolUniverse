@@ -33,11 +33,25 @@ def _evidence_counts(researches: Any) -> Dict[str, int]:
     return {k: (len(v) if isinstance(v, list) else v) for k, v in researches.items()}
 
 
-def _fetch_json(path: str, timeout: int, params: Dict[str, Any] = None) -> Any:
+def _fetch_json(
+    path: str, timeout: int, params: Dict[str, Any] = None, not_found_ok: bool = False
+) -> Any:
     """GET a JSON resource from Open Genes.
 
     Returns the parsed JSON on success, or a {"status": "error", ...} dict on
     any network/parse failure so callers can return it directly.
+
+    Fix-R30D-5: for a single-resource lookup like gene/{symbol}, Open Genes
+    signals "unknown symbol" via a genuine HTTP 404 (confirmed live:
+    gene/FAKEGENE123 -> 404 with body {"message":"Gene FAKEGENE123 not
+    found",...}) -- the same conceptual outcome as when it instead returns
+    200 with a body missing the expected fields, which callers already
+    handle gracefully. Without not_found_ok, a 404 was previously
+    indistinguishable from a real network failure, giving two different
+    envelopes for the same "not in Open Genes" case depending on which way
+    the upstream happened to signal it. `not_found_ok=True` returns None on
+    404 instead, letting the caller route it through its existing
+    graceful-empty-result handling.
     """
     try:
         resp = requests.get(
@@ -46,6 +60,8 @@ def _fetch_json(path: str, timeout: int, params: Dict[str, Any] = None) -> Any:
             headers={"Accept": "application/json"},
             timeout=timeout,
         )
+        if not_found_ok and resp.status_code == 404:
+            return None
         resp.raise_for_status()
         return resp.json()
     except requests.exceptions.Timeout:
@@ -98,11 +114,12 @@ class OpenGenesGeneTool(BaseTool):
                 "error": "'symbol' is required (e.g. 'GHR', 'FOXO3', 'TP53')",
             }
 
-        g = _fetch_json(f"gene/{symbol}", self.timeout)
+        g = _fetch_json(f"gene/{symbol}", self.timeout, not_found_ok=True)
         if isinstance(g, dict) and g.get("status") == "error":
             return g
 
-        # Unknown symbols return a string/error page rather than a gene object.
+        # Unknown symbols 404, or return a string/error page instead of a
+        # gene object; both mean the same thing to a caller.
         if not isinstance(g, dict) or not g.get("symbol"):
             return {
                 "status": "success",
