@@ -458,8 +458,9 @@ class ClinGenTool(BaseTool):
                 "source": "ClinGen Evidence Repository",
             }
             if not data:
+                queried = f"gene '{gene}'" if gene else f"variant '{variant}'"
                 result["note"] = (
-                    f"No variant classifications found for {gene}. "
+                    f"No variant classifications found for {queried}. "
                     "The ClinGen Evidence Repository only contains variants "
                     "curated by Variant Curation Expert Panels (VCEPs). "
                     "Not all genes have active VCEPs. Try ClinGen_get_gene_validity "
