@@ -26,8 +26,7 @@
       },
       "required": [
         "drug_name",
-        "patient_sex",
-        "serious_events_only"
+        "patient_sex"
       ]
     },
     "auto_load_dependencies": true,
@@ -536,8 +535,7 @@
         }
       },
       "required": [
-        "disease_condition",
-        "sample_type"
+        "disease_condition"
       ]
     },
     "auto_load_dependencies": true,
