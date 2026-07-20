@@ -43,7 +43,11 @@ class SearchSPLTool(BaseTool):
         if arguments.get("published_date_eq"):
             params["published_date[eq]"] = arguments["published_date_eq"]
 
-        params["pagesize"] = arguments.get("pagesize", 100)
+        # Fix-R33A-1: "limit" is the dominant pagination param name across
+        # ToolUniverse (CPIC, ClinVar, GWAS, ...), so a caller guessing it
+        # here instead of DailyMed's own "pagesize" was silently ignored --
+        # confirmed live (limit=3 still returned all 44 isoniazid labels).
+        params["pagesize"] = arguments.get("pagesize") or arguments.get("limit") or 100
         params["page"] = arguments.get("page", 1)
 
         try:
