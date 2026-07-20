@@ -180,8 +180,7 @@
         }
       },
       "required": [
-        "query",
-        "search_type"
+        "query"
       ]
     },
     "return_schema": {

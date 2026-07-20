@@ -118,6 +118,24 @@ class TestRequiresGeneOrVariant:
 
         assert result["status"] == "success"
 
+    def test_empty_result_for_uncurated_variant_does_not_say_none(self):
+        """Fix (PR #339 review): the empty-result guard was widened from
+        `if not data and gene:` to `if not data:` to also cover variant-only
+        queries, but the note text still hardcoded `for {gene}` -- a
+        variant-only query with zero results printed "...for None." since
+        `gene` is unset in that branch."""
+        tool = _tool()
+        with patch(
+            "tooluniverse.clingen_tool.requests.get",
+            return_value=_resp({"variantInterpretations": []}),
+        ):
+            result = tool.run({"variant": "CA9999999999"})
+
+        assert result["status"] == "success"
+        assert result["data"] == []
+        assert "None" not in result["note"]
+        assert "CA9999999999" in result["note"]
+
 
 class TestVariantFilterPrecision:
     def test_variant_query_narrowed_to_exact_match(self):

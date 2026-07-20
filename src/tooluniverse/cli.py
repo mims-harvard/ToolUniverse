@@ -537,8 +537,10 @@ def _render_run(d: dict) -> str:
     # openFDA's "use a .exact keyword field" hint) — short_err is usually
     # just a generic "<Tool> API error". Surface it instead of dropping it.
     detail = d.get("detail")
+    detail_already_shown = False
     if isinstance(detail, str) and detail.strip() and detail.strip() not in short_err:
         lines.append(f"Detail: {detail.strip()[:300]}")
+        detail_already_shown = True
     details = d.get("error_details") or {}
 
     # Feature-25B-02: for "tool not found" errors, replace generic network tips
@@ -596,7 +598,19 @@ def _render_run(d: dict) -> str:
             nested.get("detail") if isinstance(nested, dict) else None
         )
         detail_hint = _extract_detail_hint(raw_detail)
-        if detail_hint and detail_hint != hint:
+        # When `detail` is a plain (non-JSON) string, _extract_detail_hint's
+        # fallback returns that exact string (capped the same way), which
+        # would just repeat the "Detail: ..." line above -- both come from
+        # the same d["detail"] value. Skip in that case; still show it when
+        # extraction actually pulled a more specific sub-field out of JSON.
+        is_raw_passthrough_of_shown_detail = detail_already_shown and detail_hint == (
+            detail if len(detail) <= 300 else detail[:297] + "..."
+        )
+        if (
+            detail_hint
+            and detail_hint != hint
+            and not is_raw_passthrough_of_shown_detail
+        ):
             cli_steps = [*cli_steps, f"Upstream detail: {detail_hint}"]
         if cli_steps:
             lines.append("Tips:")

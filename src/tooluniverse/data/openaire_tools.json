@@ -29,9 +29,7 @@
         }
       },
       "required": [
-        "query",
-        "max_results",
-        "type"
+        "query"
       ]
     },
     "return_schema": {

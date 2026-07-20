@@ -122,35 +122,47 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         """Resolve a gene symbol to its OpenTargets/Ensembl target ID, then
         fetch its real associated-diseases list. OpenTargets has no
         symbol-keyed "diseases for this gene" endpoint, so this chains the
-        target-name search (for the ID) with the ID-based diseases lookup."""
-        search = tu.run_one_function(
-            {
-                "name": "OpenTargets_get_target_id_description_by_name",
-                "arguments": {"targetName": gene},
-            }
-        )
-        hits = (search or {}).get("data", {}).get("search", {}).get("hits", [])
-        if not hits:
-            sources_failed.append(f"OpenTargets: no target match for gene '{gene}'")
-            return {"status": "error", "error": f"No target match for gene '{gene}'"}
+        target-name search (for the ID) with the ID-based diseases lookup.
 
-        gene_upper = gene.upper()
-        match = next(
-            (h for h in hits if h.get("name", "").upper() == gene_upper), hits[0]
-        )
-        ensembl_id = match.get("id")
-
-        result = tu.run_one_function(
-            {
-                "name": "OpenTargets_get_diseases_phenotypes_by_target_ensembl",
-                "arguments": {"ensemblId": ensembl_id},
-            }
-        )
-        if isinstance(result, dict) and result.get("status") == "error":
-            sources_failed.append(
-                f"OpenTargets: {result.get('error', 'unknown error')[:100]}"
+        Both calls are wrapped the same way `_try_tool` wraps every other
+        source in `run()` -- an unhandled exception here (e.g. a network
+        error) would otherwise propagate out of `run()` and kill the whole
+        multi-source lookup instead of just marking OpenTargets failed."""
+        try:
+            search = tu.run_one_function(
+                {
+                    "name": "OpenTargets_get_target_id_description_by_name",
+                    "arguments": {"targetName": gene},
+                }
             )
-        return result
+            hits = (search or {}).get("data", {}).get("search", {}).get("hits", [])
+            if not hits:
+                sources_failed.append(f"OpenTargets: no target match for gene '{gene}'")
+                return {
+                    "status": "error",
+                    "error": f"No target match for gene '{gene}'",
+                }
+
+            gene_upper = gene.upper()
+            match = next(
+                (h for h in hits if h.get("name", "").upper() == gene_upper), hits[0]
+            )
+            ensembl_id = match.get("id")
+
+            result = tu.run_one_function(
+                {
+                    "name": "OpenTargets_get_diseases_phenotypes_by_target_ensembl",
+                    "arguments": {"ensemblId": ensembl_id},
+                }
+            )
+            if isinstance(result, dict) and result.get("status") == "error":
+                sources_failed.append(
+                    f"OpenTargets: {result.get('error', 'unknown error')[:100]}"
+                )
+            return result
+        except Exception as e:
+            sources_failed.append(f"OpenTargets: {str(e)[:100]}")
+            return {"status": "error", "error": str(e)}
 
     def _extract_genes_or_diseases(
         self, result: Any, source: str
