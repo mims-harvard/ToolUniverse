@@ -5,7 +5,7 @@ STITCH (Search Tool for Interacting Chemicals) API tool for ToolUniverse.
 STITCH is a database of known and predicted interactions between
 chemicals and proteins, combining data from various sources.
 
-API Documentation: http://stitch.embl.de/
+API Documentation: https://stitch-db.org/
 """
 
 import requests
@@ -13,18 +13,20 @@ from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-# Base URL for STITCH REST API (chemical-protein interactions)
-# Fix-R19E-3: this previously pointed at string-db.org, STRING's own
-# PROTEIN-ONLY network API -- confirmed live it silently returns real but
-# entirely protein-protein data (e.g. resolving "aspirin" returned the gene
-# SLC17A4) with zero chemicals anywhere in the response, since STRING has
-# no concept of a chemical CID. stitch.embl.de (STITCH's real, historical
-# domain) 301-redirects to stitch-db.org, which correctly resolves
-# chemical names/CIDs to STITCH-format stringIds (confirmed live: aspirin
-# -> "-1.CID100002244"). Note: the network/interactions sub-endpoints
-# still 404 on the new domain even with a correctly-resolved identifier
-# (confirmed live) -- see the honest error messages in
-# _get_interactions/_get_interactors below.
+# Base URL for STITCH REST API (chemical-protein interactions).
+# Fix-R19E-3/R28: STITCH and STRING are separate sister databases sharing
+# the same API software, NOT the same database -- confirmed live that
+# string-db.org genuinely doesn't recognize chemical identifiers (its own
+# /resolve fuzzy-matched "aspirin" to an unrelated protein, SLC17A4, and
+# /interaction_partners rejected the real STITCH chemical id
+# "-1.CID100002244" as "not found"), so pointing STITCH queries at
+# string-db.org was silently returning wrong, mislabeled protein-protein
+# data as chemical-protein interactions. stitch.embl.de now redirects to
+# stitch-db.org (the correct current STITCH host per the shared API docs'
+# own "List of databases" table); use that instead. Note: the
+# network/interactions sub-endpoints still 404 on the new domain even with
+# a correctly-resolved identifier (confirmed live) -- see the honest error
+# messages in _get_interactions/_get_interactors below.
 STITCH_BASE_URL = "https://stitch-db.org/api"
 
 
@@ -192,7 +194,7 @@ class STITCHTool(BaseTool):
                 return {
                     "status": "error",
                     "error": f"Identifier '{identifier}' not found in STITCH. "
-                    "Try using CID identifiers or check at http://stitch.embl.de/",
+                    "Try using CID identifiers or check at https://stitch-db.org/",
                 }
             response.raise_for_status()
             return {"status": "success", "data": response.json()}

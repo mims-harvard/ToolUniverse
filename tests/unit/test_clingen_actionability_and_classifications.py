@@ -1,4 +1,4 @@
-"""Regression guard for Fix-R19B-1/2/3: ClinGenTool's actionability and
+"""Regression guard for Fix-R19B-1/3: ClinGenTool's actionability and
 variant-classification methods had two related bugs, both confirmed live --
 
 1. The actionability API's `?flavor=flat` response is a JSON table --
@@ -8,7 +8,11 @@ variant-classification methods had two related bugs, both confirmed live --
    entirely (returning all 254 unfiltered rows for BRCA1). The identical
    check in `_search_actionability` had the opposite symptom: `matches`
    was never assigned, so it always returned {"Adult": [], "Pediatric":
-   []} even for BRCA1, which has real curated actionability data.
+   []} even for BRCA1, which has real curated actionability data. The
+   table-to-dicts conversion itself (`_actionability_rows_to_dicts`, a
+   ClinGenTool static method) is covered directly in
+   test_clingen_actionability_columnar_parsing.py -- these tests exercise
+   the end-to-end gene-filtering behavior through `tool.run()`.
 2. `_get_variant_classifications` downloaded the ENTIRE, unpaginated
    ClinGen Evidence Repository (confirmed live: 28+MB and still streaming
    after 200s) and filtered client-side afterward. A fast, already
@@ -25,7 +29,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tooluniverse.clingen_tool import ClinGenTool, _actionability_rows_to_dicts
+from tooluniverse.clingen_tool import ClinGenTool
 
 pytestmark = pytest.mark.unit
 
@@ -49,20 +53,6 @@ TABLE_RESPONSE = {
         ["AC003", "MLH1,MSH2,MSH6,PMS2", "Lynch Syndrome"],
     ],
 }
-
-
-def test_actionability_rows_to_dicts_converts_table_format():
-    result = _actionability_rows_to_dicts(TABLE_RESPONSE)
-    assert result == [
-        {"docId": "AC001", "geneOrVariant": "CYP27A1", "disease": "Cerebrotendinous xanthomatosis"},
-        {"docId": "AC002", "geneOrVariant": "BRCA1,BRCA2", "disease": "Hereditary Breast and Ovarian Cancer"},
-        {"docId": "AC003", "geneOrVariant": "MLH1,MSH2,MSH6,PMS2", "disease": "Lynch Syndrome"},
-    ]
-
-
-def test_actionability_rows_to_dicts_passes_through_existing_list():
-    already_list = [{"a": 1}]
-    assert _actionability_rows_to_dicts(already_list) is already_list
 
 
 def test_get_actionability_adult_filters_by_gene(monkeypatch):

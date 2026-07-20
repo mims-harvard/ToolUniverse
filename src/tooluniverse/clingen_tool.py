@@ -27,38 +27,6 @@ ACTIONABILITY_PEDIATRIC_URL = (
 EREPO_BASE_URL = "https://erepo.clinicalgenome.org/evrepo/api"
 
 
-def _actionability_rows_to_dicts(data: Any) -> List[Dict[str, Any]]:
-    """Fix-R19B-1/2: the actionability API's `?flavor=flat` response is a
-    JSON table -- {"columns": [...26 names...], "rows": [[...26 values...],
-    ...]} -- confirmed live, not a list of per-curation dicts. The gene
-    filter's `isinstance(curations, list)` guard was always False against
-    this dict, silently skipping the filter entirely in
-    _get_actionability_adult/_pediatric (returning everything, unfiltered)
-    and silently zeroing out `matches` in _search_actionability (returning
-    nothing). Zip columns with each row into real dicts so both a
-    downstream isinstance(list) check and dict-style field access work.
-    """
-    if isinstance(data, list):
-        return data
-    columns = data.get("columns")
-    rows = data.get("rows")
-    if not isinstance(columns, list) or not isinstance(rows, list):
-        return []
-    return [dict(zip(columns, row)) for row in rows]
-
-
-def _filter_curations_by_gene(
-    curations: List[Dict[str, Any]], gene: str
-) -> List[Dict[str, Any]]:
-    """Keep only actionability curations whose `geneOrVariant` field contains
-    `gene` (case-insensitive substring; the field holds comma-separated gene
-    lists, e.g. "BRCA1,BRCA2")."""
-    gene_upper = gene.upper()
-    return [
-        c for c in curations if gene_upper in str(c.get("geneOrVariant", "")).upper()
-    ]
-
-
 @register_tool("ClinGenTool")
 class ClinGenTool(BaseTool):
     """
@@ -277,6 +245,28 @@ class ClinGenTool(BaseTool):
         """Get clinical actionability curations for pediatric context."""
         return self._get_actionability(arguments, "Pediatric")
 
+    @staticmethod
+    def _actionability_rows_to_dicts(data: Any) -> list:
+        """The ?flavor=flat actionability API returns a columnar table --
+        {"columns": [...], "rows": [[...], ...]} -- not a list of record
+        dicts (confirmed live). Neither older code path recognized this
+        shape (isinstance(data, list) is False and there's no "data" key),
+        so the gene filter silently matched nothing and the raw un-parsed
+        table was returned as-is. Zip columns with each row into dicts.
+        """
+        if isinstance(data, list):
+            return data
+        if isinstance(data, dict) and isinstance(data.get("columns"), list):
+            columns = data["columns"]
+            return [
+                dict(zip(columns, row))
+                for row in data.get("rows", [])
+                if isinstance(row, list)
+            ]
+        if isinstance(data, dict) and isinstance(data.get("data"), list):
+            return data["data"]
+        return []
+
     def _get_actionability(
         self, arguments: Dict[str, Any], context: str
     ) -> Dict[str, Any]:
@@ -295,15 +285,22 @@ class ClinGenTool(BaseTool):
             response = requests.get(url, headers=headers, timeout=self.timeout)
             response.raise_for_status()
 
-            data = response.json()
+            curations = self._actionability_rows_to_dicts(response.json())
 
-            # Extract curations from the response
-            curations = _actionability_rows_to_dicts(data)
-
-            # Optional filtering by gene
+            # Optional filtering by gene. geneOrVariant is a comma-joined
+            # multi-gene field for panel curations (e.g. "BRCA1,BRCA2"), so
+            # substring match rather than exact-match the whole field.
             gene = arguments.get("gene")
             if gene:
-                curations = _filter_curations_by_gene(curations, gene)
+                gene_upper = gene.upper()
+                curations = [
+                    c
+                    for c in curations
+                    if gene_upper in str(c.get("geneOrVariant", "")).upper()
+                    or gene_upper in str(c.get("gene", "")).upper()
+                    or gene_upper in str(c.get("Gene", "")).upper()
+                    or gene_upper in str(c.get("hgncId", "")).upper()
+                ]
 
             return {
                 "status": "success",
@@ -341,9 +338,21 @@ class ClinGenTool(BaseTool):
                     response = requests.get(url, headers=headers, timeout=self.timeout)
                     response.raise_for_status()
 
-                    data = response.json()
-                    curations = _actionability_rows_to_dicts(data)
-                    results[context] = _filter_curations_by_gene(curations, gene)
+                    curations = self._actionability_rows_to_dicts(response.json())
+
+                    # Filter by gene. geneOrVariant is a comma-joined
+                    # multi-gene field for panel curations, so substring
+                    # match rather than exact-match the whole field.
+                    gene_upper = gene.upper()
+                    matches = [
+                        c
+                        for c in curations
+                        if gene_upper in str(c.get("geneOrVariant", "")).upper()
+                        or gene_upper in str(c.get("gene", "")).upper()
+                        or gene_upper in str(c.get("Gene", "")).upper()
+                        or gene_upper in str(c.get("hgncId", "")).upper()
+                    ]
+                    results[context] = matches
                 except Exception:
                     # Continue with other context if one fails
                     pass

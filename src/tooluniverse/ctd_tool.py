@@ -195,8 +195,13 @@ class CTDTool(BaseTool):
         """Resolve an input (name or any CURIE) to the graph's canonical id.
 
         Uses RENCI's /cypher endpoint to search by `id`, `equivalent_identifiers`,
-        or case-insensitive `name`. Returns the canonical `id` or None.
+        or case-insensitive `name`. Returns the canonical `id` or None. Callers
+        should try candidates from `_candidate_curies()` in order -- this does
+        a single lookup and does not itself retry with a CURIE prefix.
         """
+        return self._cypher_lookup(term)
+
+    def _cypher_lookup(self, term: str) -> Optional[str]:
         safe = term.replace('"', "").replace("\\", "")
         query = (
             'MATCH (n) WHERE n.id = "' + safe + '" OR "' + safe + '" IN '
