@@ -35,8 +35,25 @@ def _resolve_drug_to_guideline_id(
         )
         r.raise_for_status()
         rows = r.json()
-        if rows and rows[0].get("guidelineid"):
-            return rows[0]["guidelineid"], rows[0].get("rxnormid")
+        if not rows:
+            return None
+        # Fix-R35C-1: substring `ilike` matching picks a false first hit
+        # whenever one drug name is a substring of another -- confirmed
+        # live for "citalopram" (a substring of "escitalopram") and
+        # "phenytoin" (a substring of "fosphenytoin"): querying the shorter
+        # name silently returned the OTHER drug's guideline/rxnorm id
+        # because it happened to sort first in CPIC's unordered response,
+        # so CPIC_get_recommendations returned a different drug's dosing
+        # guidance with no indication of the substitution. Prefer an exact
+        # case-insensitive match; only fall back to the first fuzzy hit
+        # when no exact match exists (genuine partial/typo queries).
+        exact = next(
+            (row for row in rows if row.get("name", "").lower() == drug_name.lower()),
+            None,
+        )
+        row = exact or rows[0]
+        if row.get("guidelineid"):
+            return row["guidelineid"], row.get("rxnormid")
     except Exception:
         pass
     return None

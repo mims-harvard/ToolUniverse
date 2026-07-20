@@ -10,7 +10,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from tooluniverse.cpic_search_pairs_tool import CPICGetRecommendationsTool
+from tooluniverse.cpic_search_pairs_tool import (
+    CPICGetRecommendationsTool,
+    _resolve_drug_to_guideline_id,
+)
 
 pytestmark = pytest.mark.unit
 
@@ -95,3 +98,79 @@ class TestEmptyRecommendationNoteAccuracy:
             result = tool.run({"drug": "warfarin"})
 
         assert "dosing algorithm" in result["data"]["note"]
+
+
+class TestExactMatchPreferredOverSubstring:
+    """Regression guard for Fix-R35C-1: CPIC's /drug lookup used a fuzzy
+    `ilike.*name*` substring match and always took the first result --
+    confirmed live that querying "citalopram" (a substring of
+    "escitalopram") silently returned escitalopram's guideline/rxnorm id
+    instead, because escitalopram happened to sort first in CPIC's
+    unordered response. Same collision confirmed for "phenytoin" (a
+    substring of "fosphenytoin"). A clinician asking for one drug's dosing
+    guidance would silently receive a different, related drug's guidance
+    with no indication of the substitution."""
+
+    def test_exact_match_wins_over_a_substring_match_sorted_first(self):
+        # escitalopram sorts before citalopram in the fuzzy result set, but
+        # querying "citalopram" must resolve to citalopram's own record.
+        rows = [
+            {"name": "escitalopram", "guidelineid": 100413, "rxnormid": "321988"},
+            {"name": "citalopram", "guidelineid": 100413, "rxnormid": "2556"},
+        ]
+        resp = MagicMock()
+        resp.json.return_value = rows
+        resp.raise_for_status.return_value = None
+
+        with patch(
+            "tooluniverse.cpic_search_pairs_tool.requests.get", return_value=resp
+        ):
+            guideline_id, rxnorm_id = _resolve_drug_to_guideline_id("citalopram")
+
+        assert guideline_id == 100413
+        assert rxnorm_id == "2556"
+
+    def test_no_exact_match_falls_back_to_first_fuzzy_hit(self):
+        rows = [{"name": "escitalopram", "guidelineid": 100413, "rxnormid": "321988"}]
+        resp = MagicMock()
+        resp.json.return_value = rows
+        resp.raise_for_status.return_value = None
+
+        with patch(
+            "tooluniverse.cpic_search_pairs_tool.requests.get", return_value=resp
+        ):
+            guideline_id, rxnorm_id = _resolve_drug_to_guideline_id("citalop")
+
+        assert guideline_id == 100413
+        assert rxnorm_id == "321988"
+
+    def test_end_to_end_recommendations_use_the_exact_drug(self):
+        tool = CPICGetRecommendationsTool({"name": "CPIC_get_recommendations"})
+
+        def fake_get(url, params=None, **kwargs):
+            if url.endswith("/drug"):
+                return _resp(
+                    [
+                        {
+                            "name": "fosphenytoin",
+                            "guidelineid": 100412,
+                            "rxnormid": "72236",
+                        },
+                        {
+                            "name": "phenytoin",
+                            "guidelineid": 100412,
+                            "rxnormid": "8183",
+                        },
+                    ]
+                )
+            assert params.get("drugid") == "eq.RxNorm:8183"
+            return _resp(
+                [{"drugid": "RxNorm:8183", "drug": {"name": "phenytoin"}}]
+            )
+
+        with patch(
+            "tooluniverse.cpic_search_pairs_tool.requests.get", side_effect=fake_get
+        ):
+            result = tool.run({"drug": "phenytoin"})
+
+        assert result["data"]["recommendations"][0]["drug"]["name"] == "phenytoin"
