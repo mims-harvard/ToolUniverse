@@ -122,5 +122,7 @@ def test_search_similarity_threshold_omitted_matches_explicit_default():
         explicit_url = mock_get.call_args.args[0]
 
     assert omitted_result["status"] == "success"
+    assert explicit_result["status"] == "success"
+    assert omitted_result == explicit_result
     assert "Threshold=90" in explicit_url
     assert "Threshold" not in omitted_url
