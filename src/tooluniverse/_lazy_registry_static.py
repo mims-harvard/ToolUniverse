@@ -534,6 +534,7 @@ STATIC_LAZY_REGISTRY = {
     "OrthoDBTool": "orthodb_tool",
     "OxOTool": "oxo_tool",
     "PANTHERTool": "panther_tool",
+    "PanelAppSearchTool": "panelapp_tool",
     "PDBECompoundTool": "pdbe_compound_tool",
     "PDBeAPIRESTTool": "pdbe_api_tool",
     "PDBeLigandsTool": "pdbe_ligands_tool",

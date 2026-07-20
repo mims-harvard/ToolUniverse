@@ -19,9 +19,9 @@ from .tool_registry import register_tool
 OPEN_GENES_BASE = "https://open-genes.com/api"
 
 
-def _names(items: Any) -> List[str]:
+def _names(items: Any, key: str = "name") -> List[str]:
     return (
-        [i.get("name") for i in items if isinstance(i, dict) and i.get("name")]
+        [i.get(key) for i in items if isinstance(i, dict) and i.get(key)]
         if isinstance(items, list)
         else []
     )
@@ -69,7 +69,14 @@ def _summarize(g: Dict[str, Any]) -> Dict[str, Any]:
         "ensembl": g.get("ensembl"),
         "aging_mechanisms": _names(g.get("agingMechanisms")),
         "functional_clusters": _names(g.get("functionalClusters")),
-        "disease_categories": _names(g.get("diseaseCategories")),
+        # diseaseCategories entries key their label as "icdCategoryName", not
+        # "name" (confirmed live), so pass that key explicitly.
+        "disease_categories": _names(g.get("diseaseCategories"), "icdCategoryName"),
+        # Specific named disease associations (e.g. "Progeria", "Dilated
+        # cardiomyopathy") -- a separate, more specific field from
+        # diseaseCategories's broad ICD chapter groupings, and previously
+        # not surfaced at all.
+        "diseases": _names(g.get("diseases")),
         "confidence_level": conf.get("name") if isinstance(conf, dict) else conf,
         "expression_change": g.get("expressionChange"),
     }
