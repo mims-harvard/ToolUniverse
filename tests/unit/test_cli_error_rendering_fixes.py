@@ -95,3 +95,41 @@ def test_detail_dict_falls_back_to_message_when_no_hint():
     rendered = _render_run(result)
 
     assert "some upstream error message" in rendered
+
+
+def test_plain_string_detail_is_not_shown_twice():
+    """Fix (PR #339 review): when `detail` is a plain (non-JSON) string,
+    _extract_detail_hint's fallback used to return that exact same string,
+    so it was printed once as "Detail: ..." and then again as
+    "Upstream detail: ..." -- redundant duplication of the same info."""
+    result = {
+        "status": "error",
+        "error": "Tool X API error",
+        "detail": "Not Found: the resource does not exist",
+    }
+
+    rendered = _render_run(result)
+
+    assert rendered.count("Not Found: the resource does not exist") == 1
+    assert "Detail: Not Found: the resource does not exist" in rendered
+    assert "Upstream detail:" not in rendered
+
+
+def test_json_detail_with_extractable_key_still_shows_both_lines():
+    """A JSON-encoded detail that _extract_detail_hint can actually pull a
+    more specific sub-field out of is NOT a pure duplicate -- both the raw
+    "Detail:" line and the extracted "Upstream detail:" line should still
+    appear, since they show genuinely different content."""
+    result = {
+        "status": "error",
+        "error": "SASBDB API error",
+        "detail": '{"code": "404", "status": "The Uniprot code p00698 does not exist in the SASBDB"}',
+    }
+
+    rendered = _render_run(result)
+
+    assert 'Detail: {"code": "404"' in rendered
+    assert (
+        "Upstream detail: The Uniprot code p00698 does not exist in the SASBDB"
+        in rendered
+    )

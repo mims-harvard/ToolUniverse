@@ -97,6 +97,61 @@ class TestOpenTargetsGeneOnlyLookup:
         assert second_call.args[0]["arguments"] == {"ensemblId": "ENSG00000160789"}
         assert sources_failed == []
 
+    def test_exception_from_run_one_function_is_caught_not_raised(self):
+        """Fix (PR #339 review): _opentargets_gene_diseases previously had no
+        try/except around its two tu.run_one_function calls, unlike every
+        other source in run() which routes through _try_tool -- an
+        unhandled exception here (e.g. a network error) would propagate out
+        of run() and crash the whole multi-source lookup instead of just
+        marking OpenTargets failed."""
+        tool = _tool()
+        tu = MagicMock()
+        tu.run_one_function.side_effect = ConnectionError("simulated network failure")
+        sources_failed = []
+
+        result = tool._opentargets_gene_diseases(tu, "LMNA", sources_failed)
+
+        assert result["status"] == "error"
+        assert "simulated network failure" in result["error"]
+        assert len(sources_failed) == 1
+        assert "OpenTargets" in sources_failed[0]
+        assert "simulated network failure" in sources_failed[0]
+
+    def test_exception_on_second_call_is_also_caught(self):
+        tool = _tool()
+        tu = MagicMock()
+        tu.run_one_function.side_effect = [
+            _TARGET_SEARCH_RESPONSE,
+            TimeoutError("simulated timeout"),
+        ]
+        sources_failed = []
+
+        result = tool._opentargets_gene_diseases(tu, "LMNA", sources_failed)
+
+        assert result["status"] == "error"
+        assert "simulated timeout" in result["error"]
+        assert len(sources_failed) == 1
+
+    def test_gene_only_query_degrades_gracefully_on_opentargets_exception(self):
+        """End-to-end: run() must not raise even when OpenTargets's chained
+        lookup blows up -- other sources still return normally."""
+        tool = _tool()
+        tu = MagicMock()
+
+        def fake_run(call):
+            if call["name"] == "OpenTargets_get_target_id_description_by_name":
+                raise ConnectionError("simulated network failure")
+            return {"status": "error", "error": "unused source"}
+
+        tu.run_one_function.side_effect = fake_run
+
+        with patch("tooluniverse.execute_function.ToolUniverse", return_value=tu):
+            result = tool.run({"gene": "LMNA"})
+
+        assert result["status"] == "success"
+        failed = result["data"]["sources_failed"]
+        assert any("OpenTargets" in f and "simulated network failure" in f for f in failed)
+
     def test_no_target_match_records_failure_without_crashing(self):
         tool = _tool()
         tu = MagicMock()
