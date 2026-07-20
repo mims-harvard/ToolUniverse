@@ -42,101 +42,83 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "symbol": {
-                    "type": "string"
-                  },
-                  "chr": {
-                    "type": "string"
-                  },
-                  "genesequenceid": {
-                    "type": "string"
-                  },
-                  "proteinsequenceid": {
-                    "type": "string"
-                  },
-                  "chromosequenceid": {
-                    "type": "string"
-                  },
-                  "mrnasequenceid": {
-                    "type": "string"
-                  },
-                  "hgncid": {
-                    "type": "string"
-                  },
-                  "ncbiid": {
-                    "type": "string"
-                  },
-                  "ensemblid": {
-                    "type": "string"
-                  },
-                  "clinpgxid": {
-                    "type": "string"
-                  },
-                  "frequencymethods": {
-                    "type": "string"
-                  },
-                  "lookupmethod": {
-                    "type": "string"
-                  },
-                  "version": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "notesondiplotype": {
-                    "type": "null"
-                  },
-                  "url": {
-                    "type": "string"
-                  },
-                  "functionmethods": {
-                    "type": "null"
-                  },
-                  "notesonallelenaming": {
-                    "type": "string"
-                  },
-                  "includephenotypefrequencies": {
-                    "type": "boolean"
-                  },
-                  "includediplotypefrequencies": {
-                    "type": "boolean"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "chr": {
+                "type": "string"
+              },
+              "genesequenceid": {
+                "type": "string"
+              },
+              "proteinsequenceid": {
+                "type": "string"
+              },
+              "chromosequenceid": {
+                "type": "string"
+              },
+              "mrnasequenceid": {
+                "type": "string"
+              },
+              "hgncid": {
+                "type": "string"
+              },
+              "ncbiid": {
+                "type": "string"
+              },
+              "ensemblid": {
+                "type": "string"
+              },
+              "clinpgxid": {
+                "type": "string"
+              },
+              "frequencymethods": {
+                "type": "string"
+              },
+              "lookupmethod": {
+                "type": "string"
+              },
+              "version": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "notesondiplotype": {
+                "type": "null"
+              },
+              "url": {
+                "type": "string"
+              },
+              "functionmethods": {
+                "type": "null"
+              },
+              "notesonallelenaming": {
+                "type": "string"
+              },
+              "includephenotypefrequencies": {
+                "type": "boolean"
+              },
+              "includediplotypefrequencies": {
+                "type": "boolean"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -158,131 +140,113 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "symbol": {
-                    "type": "string"
-                  },
-                  "chr": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "genesequenceid": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "proteinsequenceid": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "chromosequenceid": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "mrnasequenceid": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "hgncid": {
-                    "type": "string"
-                  },
-                  "ncbiid": {
-                    "type": "string"
-                  },
-                  "ensemblid": {
-                    "type": "string"
-                  },
-                  "clinpgxid": {
-                    "type": "string"
-                  },
-                  "frequencymethods": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "lookupmethod": {
-                    "type": "string"
-                  },
-                  "version": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "notesondiplotype": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "url": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "functionmethods": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "notesonallelenaming": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "includephenotypefrequencies": {
-                    "type": "boolean"
-                  },
-                  "includediplotypefrequencies": {
-                    "type": "boolean"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "chr": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "genesequenceid": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "proteinsequenceid": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "chromosequenceid": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "mrnasequenceid": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "hgncid": {
+                "type": "string"
+              },
+              "ncbiid": {
+                "type": "string"
+              },
+              "ensemblid": {
+                "type": "string"
+              },
+              "clinpgxid": {
+                "type": "string"
+              },
+              "frequencymethods": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "lookupmethod": {
+                "type": "string"
+              },
+              "version": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "notesondiplotype": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "url": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "functionmethods": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "notesonallelenaming": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "includephenotypefrequencies": {
+                "type": "boolean"
+              },
+              "includediplotypefrequencies": {
+                "type": "boolean"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -319,83 +283,65 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "drugid": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "clinpgxid": {
-                    "type": "string"
-                  },
-                  "rxnormid": {
-                    "type": "string"
-                  },
-                  "drugbankid": {
-                    "type": "string"
-                  },
-                  "atcid": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "umlscui": {
-                    "type": "null"
-                  },
-                  "flowchart": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "version": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "guidelineid": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "drugid": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "clinpgxid": {
+                "type": "string"
+              },
+              "rxnormid": {
+                "type": "string"
+              },
+              "drugbankid": {
+                "type": "string"
+              },
+              "atcid": {
+                "type": "array",
+                "items": {
+                  "type": "string"
                 }
+              },
+              "umlscui": {
+                "type": "null"
+              },
+              "flowchart": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "version": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "guidelineid": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -448,116 +394,98 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pairid": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "genesymbol": {
+                "type": "string"
+              },
+              "drugid": {
+                "type": "string"
+              },
+              "guidelineid": {
+                "type": [
+                  "integer",
+                  "null",
+                  "number"
+                ]
+              },
+              "usedforrecommendation": {
+                "type": "boolean"
+              },
+              "version": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "cpiclevel": {
+                "type": "string"
+              },
+              "clinpgxlevel": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "pgxtesting": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "citations": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "removed": {
+                "type": "boolean"
+              },
+              "removeddate": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "removedreason": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "drug": {
                 "type": "object",
                 "properties": {
-                  "pairid": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "genesymbol": {
+                  "name": {
                     "type": "string"
-                  },
-                  "drugid": {
-                    "type": "string"
-                  },
-                  "guidelineid": {
-                    "type": [
-                      "integer",
-                      "null",
-                      "number"
-                    ]
-                  },
-                  "usedforrecommendation": {
-                    "type": "boolean"
-                  },
-                  "version": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "cpiclevel": {
-                    "type": "string"
-                  },
-                  "clinpgxlevel": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "pgxtesting": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "citations": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "removed": {
-                    "type": "boolean"
-                  },
-                  "removeddate": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "removedreason": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "drug": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      }
-                    }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -594,85 +522,67 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "version": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "url": {
-                    "type": "string"
-                  },
-                  "genes": {
-                    "type": "array",
-                    "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "version": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "genes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "notesonusage": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "clinpgxid": {
+                "type": "string"
+              },
+              "drug": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
                       "type": "string"
-                    }
-                  },
-                  "notesonusage": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "clinpgxid": {
-                    "type": "string"
-                  },
-                  "drug": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        }
-                      }
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -727,153 +637,138 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "guideline_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "guideline_id": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "recommendations": {
-                  "type": "array",
-                  "items": {
+            "recommendations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "guidelineid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "drugid": {
+                    "type": "string"
+                  },
+                  "implications": {
                     "type": "object",
                     "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "guidelineid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "drugid": {
+                      "CYP2D6": {
                         "type": "string"
                       },
-                      "implications": {
-                        "type": "object",
-                        "properties": {
-                          "CYP2D6": {
-                            "type": "string"
-                          },
-                          "HLA-B": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "drugrecommendation": {
+                      "HLA-B": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "drugrecommendation": {
+                    "type": "string"
+                  },
+                  "classification": {
+                    "type": "string"
+                  },
+                  "phenotypes": {
+                    "type": "object",
+                    "properties": {
+                      "CYP2D6": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "activityscore": {
+                    "type": "object",
+                    "properties": {
+                      "CYP2D6": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "allelestatus": {
+                    "type": "object",
+                    "properties": {
+                      "HLA-B": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "lookupkey": {
+                    "type": "object",
+                    "properties": {
+                      "CYP2D6": {
                         "type": "string"
                       },
-                      "classification": {
+                      "HLA-B": {
                         "type": "string"
-                      },
-                      "phenotypes": {
-                        "type": "object",
-                        "properties": {
-                          "CYP2D6": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "activityscore": {
-                        "type": "object",
-                        "properties": {
-                          "CYP2D6": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "allelestatus": {
-                        "type": "object",
-                        "properties": {
-                          "HLA-B": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "lookupkey": {
-                        "type": "object",
-                        "properties": {
-                          "CYP2D6": {
-                            "type": "string"
-                          },
-                          "HLA-B": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "population": {
+                      }
+                    }
+                  },
+                  "population": {
+                    "type": "string"
+                  },
+                  "comments": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "dosinginformation": {
+                    "type": "boolean"
+                  },
+                  "alternatedrugavailable": {
+                    "type": "boolean"
+                  },
+                  "otherprescribingguidance": {
+                    "type": "boolean"
+                  },
+                  "drug": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
                         "type": "string"
-                      },
-                      "comments": {
-                        "type": "string"
-                      },
-                      "version": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "dosinginformation": {
-                        "type": "boolean"
-                      },
-                      "alternatedrugavailable": {
-                        "type": "boolean"
-                      },
-                      "otherprescribingguidance": {
-                        "type": "boolean"
-                      },
-                      "drug": {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "string"
-                          }
-                        }
                       }
                     }
                   }
-                },
-                "count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "guideline_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -940,72 +835,54 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "genesymbol": {
-                    "type": "string"
-                  },
-                  "drugid": {
-                    "type": "string"
-                  },
-                  "cpiclevel": {
-                    "type": "string"
-                  },
-                  "guidelineid": {
-                    "type": [
-                      "integer",
-                      "null",
-                      "number"
-                    ]
-                  },
-                  "usedforrecommendation": {
-                    "type": "boolean"
-                  },
-                  "clinpgxlevel": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "pgxtesting": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "genesymbol": {
+                "type": "string"
+              },
+              "drugid": {
+                "type": "string"
+              },
+              "cpiclevel": {
+                "type": "string"
+              },
+              "guidelineid": {
+                "type": [
+                  "integer",
+                  "null",
+                  "number"
+                ]
+              },
+              "usedforrecommendation": {
+                "type": "boolean"
+              },
+              "clinpgxlevel": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "pgxtesting": {
+                "type": [
+                  "null",
+                  "string"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -1028,51 +905,33 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "guidelineid": {
-                    "type": [
-                      "integer",
-                      "null",
-                      "number"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "guidelineid": {
+                "type": [
+                  "integer",
+                  "null",
+                  "number"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -1118,56 +977,38 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "functionalstatus": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "activityvalue": {
-                    "type": "string"
-                  },
-                  "clinicalfunctionalstatus": {
-                    "type": "string"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "functionalstatus": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "activityvalue": {
+                "type": "string"
+              },
+              "clinicalfunctionalstatus": {
+                "type": "string"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

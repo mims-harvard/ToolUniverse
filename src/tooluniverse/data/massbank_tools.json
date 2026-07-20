@@ -254,43 +254,25 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "description": "Ranked library matches, highest cosine score first",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": "string",
-                    "description": "MassBank record accession (e.g., MSBNK-BAFG-CSL2311094669). Resolve full record with MassBank_get_record_by_accession."
-                  },
-                  "score": {
-                    "type": "number",
-                    "description": "Cosine similarity score in [0,1]; 1.0 = identical spectrum"
-                  }
-                }
+          "type": "array",
+          "description": "Ranked library matches, highest cosine score first",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string",
+                "description": "MassBank record accession (e.g., MSBNK-BAFG-CSL2311094669). Resolve full record with MassBank_get_record_by_accession."
+              },
+              "score": {
+                "type": "number",
+                "description": "Cosine similarity score in [0,1]; 1.0 = identical spectrum"
               }
-            },
-            "count": {
-              "type": "integer"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
@@ -333,81 +315,69 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Full MassBank spectrum record",
           "properties": {
-            "status": {
+            "accession": {
               "type": "string"
             },
-            "data": {
+            "title": {
+              "type": "string",
+              "description": "Spectrum title with compound, instrument, MS level, collision energy and precursor type"
+            },
+            "compound": {
               "type": "object",
-              "description": "Full MassBank spectrum record",
               "properties": {
-                "accession": {
+                "names": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "formula": {
                   "type": "string"
                 },
-                "title": {
-                  "type": "string",
-                  "description": "Spectrum title with compound, instrument, MS level, collision energy and precursor type"
+                "mass": {
+                  "type": "number"
                 },
-                "compound": {
-                  "type": "object",
-                  "properties": {
-                    "names": {
-                      "type": "array",
-                      "items": {
+                "smiles": {
+                  "type": "string"
+                },
+                "inchi": {
+                  "type": "string"
+                },
+                "link": {
+                  "type": "array",
+                  "description": "External DB cross-references (CAS, CHEBI, KEGG, PubChem)",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "database": {
                         "type": "string"
-                      }
-                    },
-                    "formula": {
-                      "type": "string"
-                    },
-                    "mass": {
-                      "type": "number"
-                    },
-                    "smiles": {
-                      "type": "string"
-                    },
-                    "inchi": {
-                      "type": "string"
-                    },
-                    "link": {
-                      "type": "array",
-                      "description": "External DB cross-references (CAS, CHEBI, KEGG, PubChem)",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "database": {
-                            "type": "string"
-                          },
-                          "identifier": {
-                            "type": "string"
-                          }
-                        }
+                      },
+                      "identifier": {
+                        "type": "string"
                       }
                     }
                   }
-                },
-                "acquisition": {
-                  "type": "object",
-                  "description": "Instrument and MS acquisition parameters"
-                },
-                "peak": {
-                  "type": "object",
-                  "description": "Spectral peaks with SPLASH hash"
                 }
               }
+            },
+            "acquisition": {
+              "type": "object",
+              "description": "Instrument and MS acquisition parameters"
+            },
+            "peak": {
+              "type": "object",
+              "description": "Spectral peaks with SPLASH hash"
             }
           },
           "required": [
-            "status",
-            "data"
+            "accession"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
@@ -519,39 +489,21 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "description": "Matching MassBank records (filtered set)",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": "string",
-                    "description": "MassBank record accession. Resolve full record with MassBank_get_record_by_accession."
-                  }
-                }
+          "type": "array",
+          "description": "Matching MassBank records (filtered set)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string",
+                "description": "MassBank record accession. Resolve full record with MassBank_get_record_by_accession."
               }
-            },
-            "count": {
-              "type": "integer"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }

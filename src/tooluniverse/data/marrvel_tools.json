@@ -12,12 +12,24 @@
         "fields": {"timeout": 30},
         "type": "MARRVELGeneTool",
         "test_examples": [{"symbol": "CFTR"}, {"symbol": "BRCA1"}, {"symbol": "TP53"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Aggregated gene record", "properties": {
-                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "MARRVEL_get_omim_phenotypes",
@@ -32,11 +44,26 @@
         "fields": {"timeout": 30},
         "type": "MARRVELOmimTool",
         "test_examples": [{"symbol": "CFTR"}, {"symbol": "FBN1"}, {"symbol": "LMNA"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "OMIM phenotype list", "properties": {
-                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

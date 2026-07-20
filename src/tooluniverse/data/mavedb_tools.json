@@ -260,52 +260,83 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "urn": {"type": "string"},
-                "matrix": {
-                  "type": "array",
-                  "description": "(20 × n_positions) effect matrix. Rows = 20 standard amino acids in 'ACDEFGHIKLMNPQRSTVWY' order. Cells = score for that (alt_aa, position) variant, or null for unmeasured / WT-diagonal.",
-                  "items": {
-                    "type": "array",
-                    "items": {"type": ["number", "null"]}
-                  }
-                },
-                "positions": {
-                  "type": "array",
-                  "description": "Sorted list of 1-based residue positions (length = matrix's column count).",
-                  "items": {"type": "integer"}
-                },
-                "amino_acid_order": {
-                  "type": "string",
-                  "description": "Always 'ACDEFGHIKLMNPQRSTVWY' for consistency across downstream skills."
-                },
-                "shape": {
-                  "type": "array",
-                  "items": {"type": "integer"}
-                },
-                "n_parsed_single_missense": {"type": "integer"},
-                "n_dropped": {"type": "integer"},
-                "n_total_rows": {"type": "integer"},
-                "score_field_used": {"type": ["string", "null"]},
-                "numbering_check": {"type": ["object", "null"]},
-                "numbering_offset": {"type": ["integer", "null"]}
-              },
-              "required": ["matrix", "positions", "amino_acid_order"]
+            "urn": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "matrix": {
+              "type": "array",
+              "description": "(20 × n_positions) effect matrix. Rows = 20 standard amino acids in 'ACDEFGHIKLMNPQRSTVWY' order. Cells = score for that (alt_aa, position) variant, or null for unmeasured / WT-diagonal.",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "positions": {
+              "type": "array",
+              "description": "Sorted list of 1-based residue positions (length = matrix's column count).",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "amino_acid_order": {
+              "type": "string",
+              "description": "Always 'ACDEFGHIKLMNPQRSTVWY' for consistency across downstream skills."
+            },
+            "shape": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "n_parsed_single_missense": {
+              "type": "integer"
+            },
+            "n_dropped": {
+              "type": "integer"
+            },
+            "n_total_rows": {
+              "type": "integer"
+            },
+            "score_field_used": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "numbering_check": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "numbering_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "matrix",
+            "positions",
+            "amino_acid_order"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -343,57 +374,143 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "urn": {"type": "string"},
-                "total_mapped_variants": {"type": "integer"},
-                "returned": {"type": "integer"},
-                "truncated": {"type": "boolean"},
-                "n_with_genomic_location": {"type": "integer"},
-                "n_with_clingen_allele_id": {"type": "integer"},
-                "mapped_variants": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
+            "urn": {
+              "type": "string"
+            },
+            "total_mapped_variants": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "n_with_genomic_location": {
+              "type": "integer"
+            },
+            "n_with_clingen_allele_id": {
+              "type": "integer"
+            },
+            "mapped_variants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "variant_urn": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "clingen_allele_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "alignment_level": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "vrs_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "current": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "error_message": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "post_mapped": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
                     "properties": {
-                      "variant_urn": {"type": ["string", "null"]},
-                      "clingen_allele_id": {"type": ["string", "null"]},
-                      "alignment_level": {"type": ["string", "null"]},
-                      "vrs_version": {"type": ["string", "null"]},
-                      "current": {"type": ["boolean", "null"]},
-                      "error_message": {"type": ["string", "null"]},
-                      "post_mapped": {
-                        "type": ["object", "null"],
-                        "properties": {
-                          "vrs_id": {"type": ["string", "null"]},
-                          "sequence_reference_label": {"type": ["string", "null"]},
-                          "refget_accession": {"type": ["string", "null"]},
-                          "start": {"type": ["integer", "null"]},
-                          "end": {"type": ["integer", "null"]},
-                          "state_sequence": {"type": ["string", "null"]},
-                          "hgvs_expressions": {"type": ["array", "null"], "items": {"type": "string"}}
-                        }
+                      "vrs_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
-                      "pre_mapped": {"type": ["object", "null"]}
+                      "sequence_reference_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "refget_accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "start": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "end": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "state_sequence": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "hgvs_expressions": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        }
+                      }
                     }
+                  },
+                  "pre_mapped": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": ["urn", "mapped_variants"]
-            },
-            "metadata": {"type": "object"}
+              }
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "urn",
+            "mapped_variants"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -440,45 +557,93 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "urn": {"type": "string"},
-                "total_clinical_controls": {"type": "integer"},
-                "returned": {"type": "integer"},
-                "truncated": {"type": "boolean"},
-                "significance_filter": {"type": ["string", "null"]},
-                "significance_breakdown": {"type": "object"},
-                "clinical_controls": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "db_name": {"type": ["string", "null"]},
-                      "db_identifier": {"type": ["string", "null"]},
-                      "db_version": {"type": ["string", "null"]},
-                      "gene_symbol": {"type": ["string", "null"]},
-                      "clinical_significance": {"type": ["string", "null"]},
-                      "clinical_review_status": {"type": ["string", "null"]},
-                      "mapped_variant_urns": {"type": "array", "items": {"type": "string"}}
+            "urn": {
+              "type": "string"
+            },
+            "total_clinical_controls": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "significance_filter": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "significance_breakdown": {
+              "type": "object"
+            },
+            "clinical_controls": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "db_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "db_identifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "db_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "clinical_significance": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "clinical_review_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mapped_variant_urns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
                 }
-              },
-              "required": ["urn", "clinical_controls"]
-            },
-            "metadata": {"type": "object"}
+              }
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "urn",
+            "clinical_controls"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -515,46 +680,84 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "urn": {"type": "string"},
-                "total_gnomad_variants": {"type": "integer"},
-                "returned": {"type": "integer"},
-                "truncated": {"type": "boolean"},
-                "gnomad_variants": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "db_name": {"type": ["string", "null"]},
-                      "db_identifier": {"type": ["string", "null"]},
-                      "db_version": {"type": ["string", "null"]},
-                      "allele_count": {"type": ["integer", "null"]},
-                      "allele_number": {"type": ["integer", "null"]},
-                      "allele_frequency": {"type": ["number", "null"]},
-                      "mapped_genomic_alleles": {
-                        "type": "array",
-                        "items": {"type": "object"}
-                      }
+            "urn": {
+              "type": "string"
+            },
+            "total_gnomad_variants": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "gnomad_variants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "db_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "db_identifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "db_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "allele_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "allele_number": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "allele_frequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "mapped_genomic_alleles": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
                     }
                   }
                 }
-              },
-              "required": ["urn", "gnomad_variants"]
-            },
-            "metadata": {"type": "object"}
+              }
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "urn",
+            "gnomad_variants"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

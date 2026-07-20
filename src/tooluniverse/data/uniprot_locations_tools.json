@@ -30,115 +30,100 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
+            "name": {
+              "type": "string"
+            },
+            "definition": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "note": {
+              "type": "null"
+            },
+            "synonyms": {
+              "type": "array"
+            },
+            "keyword": {
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "id": {
                   "type": "string"
                 },
                 "name": {
                   "type": "string"
-                },
-                "definition": {
-                  "type": "string"
-                },
-                "content": {
-                  "type": "string"
-                },
-                "category": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "null"
-                },
-                "synonyms": {
-                  "type": "array"
-                },
-                "keyword": {
-                  "type": [
-                    "null",
-                    "object"
-                  ],
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "gene_ontologies": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "go_id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "reviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "unreviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "part_of": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "children": {
-                  "type": "array"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "gene_ontologies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "reviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "unreviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "part_of": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "children": {
+              "type": "array"
             }
-          }
+          },
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -179,136 +164,118 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "definition": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string"
+              },
+              "note": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "keyword": {
+                "type": [
+                  "null",
+                  "object"
+                ],
                 "properties": {
                   "id": {
                     "type": "string"
                   },
                   "name": {
                     "type": "string"
-                  },
-                  "definition": {
-                    "type": "string"
-                  },
-                  "content": {
-                    "type": "string"
-                  },
-                  "category": {
-                    "type": "string"
-                  },
-                  "note": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "synonyms": {
-                    "type": "array",
-                    "items": {
+                  }
+                }
+              },
+              "gene_ontologies": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "go_id": {
+                      "type": "string"
+                    },
+                    "name": {
                       "type": "string"
                     }
-                  },
-                  "keyword": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
+                  }
+                }
+              },
+              "reviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "unreviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "part_of": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
                     }
-                  },
-                  "gene_ontologies": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "go_id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "reviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "unreviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "part_of": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "children": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        }
-                      }
+                  }
+                }
+              },
+              "children": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

@@ -45,227 +45,112 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "orbit": {
               "type": "object",
               "properties": {
-                "orbit": {
-                  "type": "object",
-                  "properties": {
-                    "data_arc": {
-                      "type": "string"
-                    },
-                    "not_valid_after": {
-                      "type": "null"
-                    },
-                    "n_dop_obs_used": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "soln_date": {
-                      "type": "string"
-                    },
-                    "cov_epoch": {
-                      "type": "string"
-                    },
-                    "producer": {
-                      "type": "string"
-                    },
-                    "epoch": {
-                      "type": "string"
-                    },
-                    "moid": {
-                      "type": "string"
-                    },
-                    "moid_jup": {
-                      "type": "string"
-                    },
-                    "sb_used": {
-                      "type": "string"
-                    },
-                    "source": {
-                      "type": "string"
-                    },
-                    "not_valid_before": {
-                      "type": "null"
-                    },
-                    "orbit_id": {
-                      "type": "string"
-                    },
-                    "two_body": {
-                      "type": "null"
-                    },
-                    "n_obs_used": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "last_obs": {
-                      "type": "string"
-                    },
-                    "model_pars": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "units": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
-                          },
-                          "desc": {
-                            "type": "string"
-                          },
-                          "title": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "n": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          },
-                          "sigma": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
-                          },
-                          "kind": {
-                            "type": "string"
-                          }
-                        }
+                "data_arc": {
+                  "type": "string"
+                },
+                "not_valid_after": {
+                  "type": "null"
+                },
+                "n_dop_obs_used": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "soln_date": {
+                  "type": "string"
+                },
+                "cov_epoch": {
+                  "type": "string"
+                },
+                "producer": {
+                  "type": "string"
+                },
+                "epoch": {
+                  "type": "string"
+                },
+                "moid": {
+                  "type": "string"
+                },
+                "moid_jup": {
+                  "type": "string"
+                },
+                "sb_used": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "not_valid_before": {
+                  "type": "null"
+                },
+                "orbit_id": {
+                  "type": "string"
+                },
+                "two_body": {
+                  "type": "null"
+                },
+                "n_obs_used": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "last_obs": {
+                  "type": "string"
+                },
+                "model_pars": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "units": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "desc": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "n": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "sigma": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "kind": {
+                        "type": "string"
                       }
-                    },
-                    "t_jup": {
-                      "type": "string"
-                    },
-                    "rms": {
-                      "type": "string"
-                    },
-                    "elements": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "string"
-                          },
-                          "value": {
-                            "type": "string"
-                          },
-                          "sigma": {
-                            "type": "string"
-                          },
-                          "units": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
-                          },
-                          "label": {
-                            "type": "string"
-                          },
-                          "title": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    },
-                    "pe_used": {
-                      "type": "string"
-                    },
-                    "first_obs": {
-                      "type": "string"
-                    },
-                    "n_del_obs_used": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "equinox": {
-                      "type": "string"
-                    },
-                    "condition_code": {
-                      "type": "string"
-                    },
-                    "comment": {
-                      "type": "null"
                     }
                   }
                 },
-                "signature": {
-                  "type": "object",
-                  "properties": {
-                    "source": {
-                      "type": "string"
-                    },
-                    "version": {
-                      "type": "string"
-                    }
-                  }
+                "t_jup": {
+                  "type": "string"
                 },
-                "object": {
-                  "type": "object",
-                  "properties": {
-                    "des": {
-                      "type": "string"
-                    },
-                    "fullname": {
-                      "type": "string"
-                    },
-                    "orbit_class": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "code": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "orbit_id": {
-                      "type": "string"
-                    },
-                    "spkid": {
-                      "type": "string"
-                    },
-                    "prefix": {
-                      "type": "null"
-                    },
-                    "pha": {
-                      "type": "boolean"
-                    },
-                    "shortname": {
-                      "type": "string"
-                    },
-                    "neo": {
-                      "type": "boolean"
-                    },
-                    "kind": {
-                      "type": "string"
-                    }
-                  }
+                "rms": {
+                  "type": "string"
                 },
-                "phys_par": {
+                "elements": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -276,17 +161,8 @@
                       "value": {
                         "type": "string"
                       },
-                      "notes": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
                       "sigma": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "units": {
                         "type": [
@@ -294,39 +170,148 @@
                           "string"
                         ]
                       },
-                      "ref": {
+                      "label": {
                         "type": "string"
                       },
                       "title": {
                         "type": "string"
-                      },
-                      "desc": {
-                        "type": "string"
                       }
                     }
                   }
+                },
+                "pe_used": {
+                  "type": "string"
+                },
+                "first_obs": {
+                  "type": "string"
+                },
+                "n_del_obs_used": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "equinox": {
+                  "type": "string"
+                },
+                "condition_code": {
+                  "type": "string"
+                },
+                "comment": {
+                  "type": "null"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "signature": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                }
+              }
+            },
+            "object": {
+              "type": "object",
+              "properties": {
+                "des": {
+                  "type": "string"
+                },
+                "fullname": {
+                  "type": "string"
+                },
+                "orbit_class": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "orbit_id": {
+                  "type": "string"
+                },
+                "spkid": {
+                  "type": "string"
+                },
+                "prefix": {
+                  "type": "null"
+                },
+                "pha": {
+                  "type": "boolean"
+                },
+                "shortname": {
+                  "type": "string"
+                },
+                "neo": {
+                  "type": "boolean"
+                },
+                "kind": {
+                  "type": "string"
+                }
+              }
+            },
+            "phys_par": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "notes": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "sigma": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "units": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "desc": {
+                    "type": "string"
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "orbit"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -409,75 +394,60 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "signature": {
               "type": "object",
               "properties": {
-                "signature": {
-                  "type": "object",
-                  "properties": {
-                    "version": {
-                      "type": "string"
-                    },
-                    "source": {
-                      "type": "string"
-                    }
-                  }
+                "version": {
+                  "type": "string"
                 },
-                "count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "total": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "fields": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
+                "source": {
+                  "type": "string"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "total": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "signature"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

@@ -14,12 +14,24 @@
             {"ids": "675", "source": "ncbigene", "target": "hgnc"},
             {"ids": "2244", "source": "pubchem_compound", "target": "chebi"}
         ],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Converted identifiers", "properties": {
-                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "TogoID_list_datasets",
@@ -30,11 +42,26 @@
         "fields": {"timeout": 30},
         "type": "TogoIDDatasetsTool",
         "test_examples": [{"category": "Compound"}, {"category": "Gene"}, {}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Supported ID datasets", "properties": {
-                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

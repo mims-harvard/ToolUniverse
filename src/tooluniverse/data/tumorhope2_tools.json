@@ -28,25 +28,22 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": { "const": "success" },
-            "data": {
-              "type": "array",
-              "items": { "type": "object" },
-              "description": "Matching tumor-homing peptide records. Each has id, title, pmid, year, source, name_source, sequence, n_term, c_term, motif, target_tumor, target_cell, receptors_biomarker, phage_display, invitro, invivo."
-            },
-            "metadata": { "type": "object" }
+          "type": "array",
+          "items": {
+            "type": "object"
           },
-          "required": ["status", "data", "metadata"]
+          "description": "Matching tumor-homing peptide records. Each has id, title, pmid, year, source, name_source, sequence, n_term, c_term, motif, target_tumor, target_cell, receptors_biomarker, phage_display, invitro, invivo."
         },
         {
           "type": "object",
           "properties": {
-            "status": { "const": "error" },
-            "error": { "type": "string" }
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

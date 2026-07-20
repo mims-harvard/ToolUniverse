@@ -38,58 +38,43 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "peptides": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "peptide_sequence_id": {
-                        "type": "string"
-                      },
-                      "peptide_sequence": {
-                        "type": "string"
-                      },
-                      "hla_class": {
-                        "type": "string"
-                      },
-                      "donor_alleles": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "tissues": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
+            "peptides": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "peptide_sequence_id": {
+                    "type": "string"
+                  },
+                  "peptide_sequence": {
+                    "type": "string"
+                  },
+                  "hla_class": {
+                    "type": "string"
+                  },
+                  "donor_alleles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tissues": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           },
           "required": [
-            "status",
-            "data"
+            "peptides"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
@@ -137,43 +122,28 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "donors": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "donor": {
-                        "type": "string"
-                      },
-                      "hla_allele": {
-                        "type": "string"
-                      }
-                    }
+            "donors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "donor": {
+                    "type": "string"
+                  },
+                  "hla_allele": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           },
           "required": [
-            "status",
-            "data"
+            "donors"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }

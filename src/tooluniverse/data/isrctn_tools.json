@@ -40,42 +40,25 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Matching ISRCTN trials",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "description": "Includes total_available"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -183,42 +166,25 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Field-scoped ISRCTN trials",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "description": "Includes total_available and the compiled query"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -252,38 +218,22 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Single ISRCTN trial",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "object"
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

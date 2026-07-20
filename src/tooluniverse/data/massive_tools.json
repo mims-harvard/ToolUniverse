@@ -132,59 +132,105 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Successful identification-level lookup.",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "result_type": {"type": "string", "enum": ["proteins", "psms"]},
-                                "accession": {"type": ["string", "null"]},
-                                "protein_accession": {"type": ["string", "null"]},
-                                "count": {"type": "integer"},
-                                "proteins": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "proteinAccession": {"type": "string"},
-                                            "countPSM": {"type": ["integer", "string"]},
-                                            "countPeptides": {"type": ["integer", "string"]},
-                                            "countPeptidoforms": {"type": ["integer", "string"]},
-                                            "countDatasets": {"type": ["integer", "string"]}
-                                        }
-                                    }
-                                },
-                                "psms": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "peptideSequence": {"type": "string"},
-                                            "charge": {"type": ["integer", "string"]},
-                                            "usi": {"type": "string"}
-                                        }
-                                    }
-                                }
-                            },
-                            "required": ["result_type", "count"]
-                        }
-                    },
-                    "required": ["status", "data"]
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "result_type": {
+                  "type": "string",
+                  "enum": [
+                    "proteins",
+                    "psms"
+                  ]
                 },
-                {
+                "accession": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "protein_accession": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "count": {
+                  "type": "integer"
+                },
+                "proteins": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
-                    "description": "Error envelope returned on failure.",
                     "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
+                      "proteinAccession": {
+                        "type": "string"
+                      },
+                      "countPSM": {
+                        "type": [
+                          "integer",
+                          "string"
+                        ]
+                      },
+                      "countPeptides": {
+                        "type": [
+                          "integer",
+                          "string"
+                        ]
+                      },
+                      "countPeptidoforms": {
+                        "type": [
+                          "integer",
+                          "string"
+                        ]
+                      },
+                      "countDatasets": {
+                        "type": [
+                          "integer",
+                          "string"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "psms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "peptideSequence": {
+                        "type": "string"
+                      },
+                      "charge": {
+                        "type": [
+                          "integer",
+                          "string"
+                        ]
+                      },
+                      "usi": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
-            ]
+              },
+              "required": [
+                "result_type",
+                "count"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         },
         "label": ["MassIVE", "Proteomics", "Protein Identifications"],
         "metadata": {

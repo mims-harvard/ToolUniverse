@@ -19,12 +19,27 @@
         "fields": {"timeout": 30},
         "type": "iDigBioSearchTool",
         "test_examples": [{"genus": "Quercus", "limit": 5}, {"scientificname": "Puma concolor", "limit": 3}, {"family": "Fabaceae", "country": "Mexico", "limit": 3}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Biodiversity specimen records", "properties": {
-                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "iDigBio_get_record",
@@ -35,12 +50,24 @@
         "fields": {"timeout": 30},
         "type": "iDigBioRecordTool",
         "test_examples": [{"uuid": "b659bd7f-7fa7-434b-80e7-2be10d1c4e80"}, {"uuid": "25e65e9a-8ca8-4477-8802-001fb51e459f"}, {"uuid": "9d0283aa-e6be-4b7e-a810-1ad0ec8df79a"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Single specimen record", "properties": {
-                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "iDigBio_summary_facets",
@@ -61,17 +88,38 @@
         "fields": {"timeout": 30, "mode": "summary"},
         "type": "iDigBioSearchTool",
         "test_examples": [{"genus": "puma", "top_fields": "country", "count": 5}, {"scientificname": "puma concolor"}, {"family": "Felidae", "top_fields": "country", "count": 3}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Aggregate count and facet breakdown", "properties": {
-                "status": {"type": "string"},
-                "data": {"type": "object", "properties": {
-                    "itemCount": {"type": ["integer", "null"]},
-                    "facets": {"type": "object"}
-                }},
-                "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"status": {"type": "string"}, "error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "itemCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "facets": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "itemCount"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "iDigBio_search_media",
@@ -93,22 +141,76 @@
         "fields": {"timeout": 30, "mode": "media"},
         "type": "iDigBioSearchTool",
         "test_examples": [{"scientificname": "puma concolor", "limit": 2}, {"genus": "Quercus", "limit": 2}, {"family": "Felidae", "limit": 2}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Specimen media (image) records", "properties": {
-                "status": {"type": "string"},
-                "data": {"type": "array", "items": {"type": "object", "properties": {
-                    "uuid": {"type": ["string", "null"]},
-                    "type": {"type": ["string", "null"]},
-                    "format": {"type": ["string", "null"]},
-                    "provider_managed_id": {"type": ["string", "null"]},
-                    "creator": {"type": ["string", "null"]},
-                    "rights_owner": {"type": ["string", "null"]},
-                    "usage_terms": {"type": ["string", "null"]},
-                    "access_uri": {"type": ["string", "null"]}
-                }}},
-                "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"status": {"type": "string"}, "error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "format": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "provider_managed_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "creator": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rights_owner": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "usage_terms": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "access_uri": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

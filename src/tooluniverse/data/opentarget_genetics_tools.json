@@ -1185,83 +1185,64 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "success"
-                            ]
-                        },
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "variant": {
-                                    "type": [
-                                        "object",
-                                        "null"
-                                    ],
-                                    "properties": {
-                                        "id": {
-                                            "type": "string"
-                                        },
-                                        "rsIds": {
-                                            "type": "array"
-                                        },
-                                        "variantEffect": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "method": {
-                                                        "type": "string"
-                                                    },
-                                                    "assessment": {
-                                                        "type": [
-                                                            "string",
-                                                            "null"
-                                                        ]
-                                                    },
-                                                    "score": {
-                                                        "type": [
-                                                            "number",
-                                                            "null"
-                                                        ]
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "variant": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
                     },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "error"
-                            ]
-                        },
-                        "error": {
+                    "rsIds": {
+                      "type": "array"
+                    },
+                    "variantEffect": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "method": {
                             "type": "string"
+                          },
+                          "assessment": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "score": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
                         }
-                    },
-                    "required": [
-                        "status",
-                        "error"
-                    ]
+                      }
+                    }
+                  }
                 }
-            ]
+              },
+              "required": [
+                "variant"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -1293,89 +1274,70 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "success"
-                            ]
-                        },
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "variant": {
-                                    "type": [
-                                        "object",
-                                        "null"
-                                    ],
-                                    "properties": {
-                                        "id": {
-                                            "type": "string"
-                                        },
-                                        "rsIds": {
-                                            "type": "array"
-                                        },
-                                        "transcriptConsequences": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "transcriptId": {
-                                                        "type": "string"
-                                                    },
-                                                    "aminoAcidChange": {
-                                                        "type": [
-                                                            "string",
-                                                            "null"
-                                                        ]
-                                                    },
-                                                    "consequenceScore": {
-                                                        "type": [
-                                                            "number",
-                                                            "null"
-                                                        ]
-                                                    },
-                                                    "impact": {
-                                                        "type": [
-                                                            "string",
-                                                            "null"
-                                                        ]
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "variant": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
                     },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "error"
-                            ]
-                        },
-                        "error": {
+                    "rsIds": {
+                      "type": "array"
+                    },
+                    "transcriptConsequences": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "transcriptId": {
                             "type": "string"
+                          },
+                          "aminoAcidChange": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "consequenceScore": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "impact": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
                         }
-                    },
-                    "required": [
-                        "status",
-                        "error"
-                    ]
+                      }
+                    }
+                  }
                 }
-            ]
+              },
+              "required": [
+                "variant"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -1408,89 +1370,70 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "success"
-                            ]
-                        },
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "variant": {
-                                    "type": [
-                                        "object",
-                                        "null"
-                                    ],
-                                    "properties": {
-                                        "id": {
-                                            "type": "string"
-                                        },
-                                        "rsIds": {
-                                            "type": "array"
-                                        },
-                                        "pharmacogenomics": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "drugs": {
-                                                        "type": "array"
-                                                    },
-                                                    "phenotypeText": {
-                                                        "type": [
-                                                            "string",
-                                                            "null"
-                                                        ]
-                                                    },
-                                                    "evidenceLevel": {
-                                                        "type": [
-                                                            "string",
-                                                            "null"
-                                                        ]
-                                                    },
-                                                    "genotypeAnnotationText": {
-                                                        "type": [
-                                                            "string",
-                                                            "null"
-                                                        ]
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "variant": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
                     },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "error"
-                            ]
-                        },
-                        "error": {
-                            "type": "string"
-                        }
+                    "rsIds": {
+                      "type": "array"
                     },
-                    "required": [
-                        "status",
-                        "error"
-                    ]
+                    "pharmacogenomics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "drugs": {
+                            "type": "array"
+                          },
+                          "phenotypeText": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "evidenceLevel": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "genotypeAnnotationText": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
-            ]
+              },
+              "required": [
+                "variant"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -1530,106 +1473,87 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "success"
-                            ]
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "credibleSet": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "studyLocusId": {
+                      "type": "string"
+                    },
+                    "colocalisation": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "count": {
+                          "type": "integer"
                         },
-                        "data": {
+                        "rows": {
+                          "type": "array",
+                          "items": {
                             "type": "object",
                             "properties": {
-                                "credibleSet": {
-                                    "type": [
-                                        "object",
-                                        "null"
-                                    ],
-                                    "properties": {
-                                        "studyLocusId": {
-                                            "type": "string"
-                                        },
-                                        "colocalisation": {
-                                            "type": [
-                                                "object",
-                                                "null"
-                                            ],
-                                            "properties": {
-                                                "count": {
-                                                    "type": "integer"
-                                                },
-                                                "rows": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "colocalisationMethod": {
-                                                                "type": [
-                                                                    "string",
-                                                                    "null"
-                                                                ]
-                                                            },
-                                                            "h4": {
-                                                                "type": [
-                                                                    "number",
-                                                                    "null"
-                                                                ]
-                                                            },
-                                                            "clpp": {
-                                                                "type": [
-                                                                    "number",
-                                                                    "null"
-                                                                ]
-                                                            },
-                                                            "numberColocalisingVariants": {
-                                                                "type": [
-                                                                    "number",
-                                                                    "null"
-                                                                ]
-                                                            },
-                                                            "otherStudyLocus": {
-                                                                "type": [
-                                                                    "object",
-                                                                    "null"
-                                                                ]
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                              "colocalisationMethod": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "h4": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "clpp": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "numberColocalisingVariants": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "otherStudyLocus": {
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              }
                             }
+                          }
                         }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "error"
-                            ]
-                        },
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "error"
-                    ]
+                      }
+                    }
+                  }
                 }
-            ]
+              },
+              "required": [
+                "credibleSet"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

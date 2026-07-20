@@ -30,36 +30,47 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rrid": {"type": "string"},
-                  "ab_id": {"type": "integer"},
-                  "abName": {"type": "string"},
-                  "abTarget": {"type": "string"},
-                  "clonality": {"type": "string"},
-                  "vendorName": {"type": "string"},
-                  "catalogNum": {"type": "string"},
-                  "definingCitation": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rrid": {
+                "type": "string"
+              },
+              "ab_id": {
+                "type": "integer"
+              },
+              "abName": {
+                "type": "string"
+              },
+              "abTarget": {
+                "type": "string"
+              },
+              "clonality": {
+                "type": "string"
+              },
+              "vendorName": {
+                "type": "string"
+              },
+              "catalogNum": {
+                "type": "string"
+              },
+              "definingCitation": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -87,30 +98,42 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "rrid": {"type": "string"},
-                "ab_id": {"type": "integer"},
-                "abName": {"type": "string"},
-                "abTarget": {"type": "string"},
-                "clonality": {"type": "string"},
-                "vendorName": {"type": "string"},
-                "catalogNum": {"type": "string"}
-              }
+            "rrid": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "ab_id": {
+              "type": "integer"
+            },
+            "abName": {
+              "type": "string"
+            },
+            "abTarget": {
+              "type": "string"
+            },
+            "clonality": {
+              "type": "string"
+            },
+            "vendorName": {
+              "type": "string"
+            },
+            "catalogNum": {
+              "type": "string"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "rrid"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

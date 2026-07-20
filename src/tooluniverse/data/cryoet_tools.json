@@ -48,96 +48,84 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "datasets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "organismName": {
-                        "type": "string"
-                      },
-                      "tissueName": {
-                        "type": "string"
-                      },
-                      "cellName": {
-                        "type": "string"
-                      },
-                      "sampleType": {
-                        "type": "string"
-                      },
-                      "depositionDate": {
-                        "type": "string"
-                      },
-                      "releaseDate": {
-                        "type": "string"
-                      },
-                      "relatedDatabaseEntries": {
-                        "type": "null"
-                      },
-                      "datasetPublications": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "s3Prefix": {
-                        "type": "string"
-                      },
-                      "httpsPrefix": {
-                        "type": "string"
-                      }
-                    }
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "organismName": {
+                    "type": "string"
+                  },
+                  "tissueName": {
+                    "type": "string"
+                  },
+                  "cellName": {
+                    "type": "string"
+                  },
+                  "sampleType": {
+                    "type": "string"
+                  },
+                  "depositionDate": {
+                    "type": "string"
+                  },
+                  "releaseDate": {
+                    "type": "string"
+                  },
+                  "relatedDatabaseEntries": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "datasetPublications": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "s3Prefix": {
+                    "type": "string"
+                  },
+                  "httpsPrefix": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "count"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -180,117 +168,102 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "dataset": {
               "type": "object",
               "properties": {
-                "dataset": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "title": {
-                      "type": "string"
-                    },
-                    "description": {
-                      "type": "string"
-                    },
-                    "organismName": {
-                      "type": "string"
-                    },
-                    "organismTaxid": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "tissueName": {
-                      "type": "string"
-                    },
-                    "tissueId": {
-                      "type": "string"
-                    },
-                    "cellName": {
-                      "type": "string"
-                    },
-                    "cellTypeId": {
-                      "type": "string"
-                    },
-                    "cellStrainName": {
-                      "type": "string"
-                    },
-                    "sampleType": {
-                      "type": "string"
-                    },
-                    "samplePreparation": {
-                      "type": "string"
-                    },
-                    "gridPreparation": {
-                      "type": "null"
-                    },
-                    "otherSetup": {
-                      "type": "null"
-                    },
-                    "depositionDate": {
-                      "type": "string"
-                    },
-                    "releaseDate": {
-                      "type": "string"
-                    },
-                    "lastModifiedDate": {
-                      "type": "string"
-                    },
-                    "datasetPublications": {
-                      "type": "string"
-                    },
-                    "relatedDatabaseEntries": {
-                      "type": "string"
-                    },
-                    "keyPhotoUrl": {
-                      "type": "string"
-                    },
-                    "s3Prefix": {
-                      "type": "string"
-                    },
-                    "httpsPrefix": {
-                      "type": "string"
-                    },
-                    "fileSize": {
-                      "type": "number"
-                    }
-                  }
+                "id": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "organismName": {
+                  "type": "string"
+                },
+                "organismTaxid": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "tissueName": {
+                  "type": "string"
+                },
+                "tissueId": {
+                  "type": "string"
+                },
+                "cellName": {
+                  "type": "string"
+                },
+                "cellTypeId": {
+                  "type": "string"
+                },
+                "cellStrainName": {
+                  "type": "string"
+                },
+                "sampleType": {
+                  "type": "string"
+                },
+                "samplePreparation": {
+                  "type": "string"
+                },
+                "gridPreparation": {
+                  "type": "null"
+                },
+                "otherSetup": {
+                  "type": "null"
+                },
+                "depositionDate": {
+                  "type": "string"
+                },
+                "releaseDate": {
+                  "type": "string"
+                },
+                "lastModifiedDate": {
+                  "type": "string"
+                },
+                "datasetPublications": {
+                  "type": "string"
+                },
+                "relatedDatabaseEntries": {
+                  "type": "string"
+                },
+                "keyPhotoUrl": {
+                  "type": "string"
+                },
+                "s3Prefix": {
+                  "type": "string"
+                },
+                "httpsPrefix": {
+                  "type": "string"
+                },
+                "fileSize": {
+                  "type": "number"
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "dataset"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -342,78 +315,63 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "dataset_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "dataset_id": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "runs": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "datasetId": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "s3Prefix": {
-                        "type": "string"
-                      },
-                      "httpsPrefix": {
-                        "type": "string"
-                      }
-                    }
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "runs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "datasetId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "s3Prefix": {
+                    "type": "string"
+                  },
+                  "httpsPrefix": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "dataset_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -466,132 +424,117 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "run_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "run_id": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "tomograms": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "runId": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "voxelSpacing": {
-                        "type": "number"
-                      },
-                      "sizeX": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "sizeY": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "sizeZ": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "reconstructionMethod": {
-                        "type": "string"
-                      },
-                      "processing": {
-                        "type": "string"
-                      },
-                      "processingSoftware": {
-                        "type": "null"
-                      },
-                      "reconstructionSoftware": {
-                        "type": "string"
-                      },
-                      "isPortalStandard": {
-                        "type": "boolean"
-                      },
-                      "isAuthorSubmitted": {
-                        "type": "boolean"
-                      },
-                      "isVisualizationDefault": {
-                        "type": "boolean"
-                      },
-                      "ctfCorrected": {
-                        "type": "boolean"
-                      },
-                      "s3OmezarrDir": {
-                        "type": "string"
-                      },
-                      "httpsMrcFile": {
-                        "type": "string"
-                      },
-                      "s3MrcFile": {
-                        "type": "string"
-                      },
-                      "depositionDate": {
-                        "type": "string"
-                      },
-                      "releaseDate": {
-                        "type": "string"
-                      }
-                    }
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "tomograms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "runId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "voxelSpacing": {
+                    "type": "number"
+                  },
+                  "sizeX": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "sizeY": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "sizeZ": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "reconstructionMethod": {
+                    "type": "string"
+                  },
+                  "processing": {
+                    "type": "string"
+                  },
+                  "processingSoftware": {
+                    "type": "null"
+                  },
+                  "reconstructionSoftware": {
+                    "type": "string"
+                  },
+                  "isPortalStandard": {
+                    "type": "boolean"
+                  },
+                  "isAuthorSubmitted": {
+                    "type": "boolean"
+                  },
+                  "isVisualizationDefault": {
+                    "type": "boolean"
+                  },
+                  "ctfCorrected": {
+                    "type": "boolean"
+                  },
+                  "s3OmezarrDir": {
+                    "type": "string"
+                  },
+                  "httpsMrcFile": {
+                    "type": "string"
+                  },
+                  "s3MrcFile": {
+                    "type": "string"
+                  },
+                  "depositionDate": {
+                    "type": "string"
+                  },
+                  "releaseDate": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "run_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -648,114 +591,99 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "run_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "run_id": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "objectName": {
-                        "type": "string"
-                      },
-                      "objectId": {
-                        "type": "string"
-                      },
-                      "objectDescription": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "objectState": {
-                        "type": "null"
-                      },
-                      "objectCount": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "annotationMethod": {
-                        "type": "string"
-                      },
-                      "annotationSoftware": {
-                        "type": "string"
-                      },
-                      "groundTruthStatus": {
-                        "type": "boolean"
-                      },
-                      "isCuratorRecommended": {
-                        "type": "boolean"
-                      },
-                      "methodType": {
-                        "type": "string"
-                      },
-                      "depositionDate": {
-                        "type": "string"
-                      },
-                      "releaseDate": {
-                        "type": "string"
-                      },
-                      "annotationPublication": {
-                        "type": "string"
-                      },
-                      "s3MetadataPath": {
-                        "type": "string"
-                      },
-                      "httpsMetadataPath": {
-                        "type": "string"
-                      }
-                    }
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "objectName": {
+                    "type": "string"
+                  },
+                  "objectId": {
+                    "type": "string"
+                  },
+                  "objectDescription": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "objectState": {
+                    "type": "null"
+                  },
+                  "objectCount": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "annotationMethod": {
+                    "type": "string"
+                  },
+                  "annotationSoftware": {
+                    "type": "string"
+                  },
+                  "groundTruthStatus": {
+                    "type": "boolean"
+                  },
+                  "isCuratorRecommended": {
+                    "type": "boolean"
+                  },
+                  "methodType": {
+                    "type": "string"
+                  },
+                  "depositionDate": {
+                    "type": "string"
+                  },
+                  "releaseDate": {
+                    "type": "string"
+                  },
+                  "annotationPublication": {
+                    "type": "string"
+                  },
+                  "s3MetadataPath": {
+                    "type": "string"
+                  },
+                  "httpsMetadataPath": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "run_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -808,179 +736,164 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "run_id": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "run_id": {
-                  "type": [
-                    "integer",
-                    "number",
-                    "null"
-                  ]
-                },
-                "count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "tiltseries": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "runId": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "microscopeManufacturer": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "microscopeModel": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "accelerationVoltage": {
-                        "type": [
-                          "integer",
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "sphericalAberrationConstant": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "tiltMin": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "tiltMax": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "tiltStep": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "tiltAxis": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "totalFlux": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "cameraModel": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "cameraManufacturer": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "dataAcquisitionSoftware": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "binningFromFrames": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "pixelSpacing": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "isAligned": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
-                      },
-                      "httpsMrcFile": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "s3MrcFile": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "httpsOmezarrDir": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "tiltseries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "runId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "microscopeManufacturer": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "microscopeModel": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "accelerationVoltage": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sphericalAberrationConstant": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "tiltMin": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "tiltMax": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "tiltStep": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "tiltAxis": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "totalFlux": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "cameraModel": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cameraManufacturer": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "dataAcquisitionSoftware": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "binningFromFrames": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "pixelSpacing": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "isAligned": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "httpsMrcFile": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "s3MrcFile": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "httpsOmezarrDir": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "run_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -1038,105 +951,90 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "depositions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "depositionDate": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "releaseDate": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "lastModifiedDate": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "relatedDatabaseEntries": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "depositionPublications": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "keyPhotoUrl": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "depositions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "depositionDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "releaseDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "lastModifiedDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "relatedDatabaseEntries": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "depositionPublications": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "keyPhotoUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "count"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

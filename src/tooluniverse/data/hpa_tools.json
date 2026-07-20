@@ -38,48 +38,26 @@
       }
     ],
     "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "success"
-                            ]
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "error"
-                            ]
-                        },
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "error"
-                    ]
-                }
-            ]
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
+    }
   },
   {
     "type": "HPASearchGenesTool",

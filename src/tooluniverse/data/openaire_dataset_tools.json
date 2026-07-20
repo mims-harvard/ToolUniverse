@@ -43,114 +43,99 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "keywords": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "keywords": {
-                  "type": "string"
-                },
-                "funder": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
-                },
-                "country": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
-                },
-                "total_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "returned": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "datasets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "title": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "creators": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "date": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "publisher": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "access_rights": {
-                        "type": "string"
-                      },
-                      "doi": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "subjects": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
+            "funder": {
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            "country": {
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "creators": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "date": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "publisher": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "access_rights": {
+                    "type": "string"
+                  },
+                  "doi": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "subjects": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "keywords"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

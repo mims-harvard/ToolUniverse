@@ -287,75 +287,57 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "total": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "next": {
+              "type": "integer"
             },
             "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "offset": {
-                  "type": "integer"
-                },
-                "next": {
-                  "type": "integer"
-                },
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "authorId": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "affiliations": {
-                        "type": "array"
-                      },
-                      "paperCount": {
-                        "type": "integer"
-                      },
-                      "citationCount": {
-                        "type": "integer"
-                      },
-                      "hIndex": {
-                        "type": "integer"
-                      }
-                    }
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "authorId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "affiliations": {
+                    "type": "array"
+                  },
+                  "paperCount": {
+                    "type": "integer"
+                  },
+                  "citationCount": {
+                    "type": "integer"
+                  },
+                  "hIndex": {
+                    "type": "integer"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
-            },
-            "url": {
-              "type": "string"
             }
-          }
+          },
+          "required": [
+            "total"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -550,43 +532,28 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "recommendedPapers": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
+            "recommendedPapers": {
+              "type": "array",
+              "items": {
+                "type": "object"
               }
-            },
-            "url": {
-              "type": "string"
             }
-          }
+          },
+          "required": [
+            "recommendedPapers"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -642,83 +609,65 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
+          "description": "Citation list page from Semantic Scholar",
           "properties": {
-            "status": {
-              "const": "success"
+            "offset": {
+              "type": "integer",
+              "description": "Pagination offset of this page"
+            },
+            "next": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of the next page, if more results exist"
             },
             "data": {
-              "type": "object",
-              "description": "Citation list page from Semantic Scholar",
-              "properties": {
-                "offset": {
-                  "type": "integer",
-                  "description": "Pagination offset of this page"
-                },
-                "next": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Offset of the next page, if more results exist"
-                },
-                "data": {
-                  "type": "array",
-                  "description": "Citing-paper records",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "intents": {
-                        "type": "array",
-                        "description": "Citation intents: background, methodology, and/or result",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "isInfluential": {
-                        "type": "boolean",
-                        "description": "Whether this is a highly influential citation"
-                      },
-                      "contexts": {
-                        "type": "array",
-                        "description": "Citing-sentence context strings (when requested)",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "citingPaper": {
-                        "type": "object",
-                        "description": "Metadata of the citing paper (fields depend on requested fields)"
-                      }
+              "type": "array",
+              "description": "Citing-paper records",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "intents": {
+                    "type": "array",
+                    "description": "Citation intents: background, methodology, and/or result",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "isInfluential": {
+                    "type": "boolean",
+                    "description": "Whether this is a highly influential citation"
+                  },
+                  "contexts": {
+                    "type": "array",
+                    "description": "Citing-sentence context strings (when requested)",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "citingPaper": {
+                    "type": "object",
+                    "description": "Metadata of the citing paper (fields depend on requested fields)"
                   }
                 }
               }
-            },
-            "url": {
-              "type": "string"
-            },
-            "count": {
-              "type": "integer"
             }
-          }
+          },
+          "required": [
+            "offset"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -774,87 +723,69 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
+          "description": "Reference list page from Semantic Scholar",
           "properties": {
-            "status": {
-              "const": "success"
+            "offset": {
+              "type": "integer",
+              "description": "Pagination offset of this page"
+            },
+            "next": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of the next page, if more results exist"
+            },
+            "citingPaperInfo": {
+              "type": "object",
+              "description": "Metadata of the source (citing) paper"
             },
             "data": {
-              "type": "object",
-              "description": "Reference list page from Semantic Scholar",
-              "properties": {
-                "offset": {
-                  "type": "integer",
-                  "description": "Pagination offset of this page"
-                },
-                "next": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Offset of the next page, if more results exist"
-                },
-                "citingPaperInfo": {
-                  "type": "object",
-                  "description": "Metadata of the source (citing) paper"
-                },
-                "data": {
-                  "type": "array",
-                  "description": "Cited-paper records",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "intents": {
-                        "type": "array",
-                        "description": "Citation intents: background, methodology, and/or result",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "isInfluential": {
-                        "type": "boolean",
-                        "description": "Whether this is a highly influential reference"
-                      },
-                      "contexts": {
-                        "type": "array",
-                        "description": "Citing-sentence context strings (when requested)",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "citedPaper": {
-                        "type": "object",
-                        "description": "Metadata of the cited paper (fields depend on requested fields)"
-                      }
+              "type": "array",
+              "description": "Cited-paper records",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "intents": {
+                    "type": "array",
+                    "description": "Citation intents: background, methodology, and/or result",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "isInfluential": {
+                    "type": "boolean",
+                    "description": "Whether this is a highly influential reference"
+                  },
+                  "contexts": {
+                    "type": "array",
+                    "description": "Citing-sentence context strings (when requested)",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "citedPaper": {
+                    "type": "object",
+                    "description": "Metadata of the cited paper (fields depend on requested fields)"
                   }
                 }
               }
-            },
-            "url": {
-              "type": "string"
-            },
-            "count": {
-              "type": "integer"
             }
-          }
+          },
+          "required": [
+            "offset"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -910,91 +841,73 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
+          "description": "Author paper list page from Semantic Scholar",
           "properties": {
-            "status": {
-              "const": "success"
+            "offset": {
+              "type": "integer",
+              "description": "Pagination offset of this page"
+            },
+            "next": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of the next page, if more results exist"
             },
             "data": {
-              "type": "object",
-              "description": "Author paper list page from Semantic Scholar",
-              "properties": {
-                "offset": {
-                  "type": "integer",
-                  "description": "Pagination offset of this page"
-                },
-                "next": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Offset of the next page, if more results exist"
-                },
-                "data": {
-                  "type": "array",
-                  "description": "Author's papers",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "paperId": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "year": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "citationCount": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "venue": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+              "type": "array",
+              "description": "Author's papers",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "paperId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "year": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "citationCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "venue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "url": {
-              "type": "string"
-            },
-            "count": {
-              "type": "integer"
             }
-          }
+          },
+          "required": [
+            "offset"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

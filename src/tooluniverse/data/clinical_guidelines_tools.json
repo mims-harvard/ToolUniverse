@@ -17,245 +17,227 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "byName": {
-                    "type": "string"
-                  },
-                  "shortCode": {
-                    "type": "string"
-                  },
-                  "owner": {
-                    "type": "string"
-                  },
-                  "mainEditor": {
-                    "type": "string"
-                  },
-                  "startDate": {
-                    "type": "string"
-                  },
-                  "lastEdit": {
-                    "type": "string"
-                  },
-                  "language": {
-                    "type": "string"
-                  },
-                  "countryFlag": {
-                    "type": "string"
-                  },
-                  "sponsors": {
-                    "type": "string"
-                  },
-                  "disclaimer": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "contactName": {
-                    "type": "string"
-                  },
-                  "contactAddress": {
-                    "type": "string"
-                  },
-                  "contactEmail": {
-                    "type": "string"
-                  },
-                  "contactTelephone": {
-                    "type": "string"
-                  },
-                  "institutionId": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "institutionName": {
-                    "type": "string"
-                  },
-                  "institutionUrl": {
-                    "type": "string"
-                  },
-                  "institutionLogoUrl": {
-                    "type": "string"
-                  },
-                  "institutionShortName": {
-                    "type": "string"
-                  },
-                  "institutionGradeStrength": {
-                    "type": "string"
-                  },
-                  "hasAltGrade": {
-                    "type": "boolean"
-                  },
-                  "guidelineId": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "currentDraftId": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "publishedId": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "editDraft": {
-                    "type": "boolean"
-                  },
-                  "editPublish": {
-                    "type": "boolean"
-                  },
-                  "permissionDraft": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "permissionPublish": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "isLatestPublished": {
-                    "type": "boolean"
-                  },
-                  "isDraftEditable": {
-                    "type": "boolean"
-                  },
-                  "isPublic": {
-                    "type": "boolean"
-                  },
-                  "versionMajor": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "versionMinor": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "versionLabel": {
-                    "type": "string"
-                  },
-                  "draftPicoCount": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "draftRecommendationCount": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "publishedPicoCount": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "publishedRecommendationCount": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "pdfPublishedPath": {
-                    "type": "string"
-                  },
-                  "jsonPath": {
-                    "type": "string"
-                  },
-                  "contentAdmin": {
-                    "type": "boolean"
-                  },
-                  "status": {
-                    "type": "string"
-                  },
-                  "commentsInPublished": {
-                    "type": "boolean"
-                  },
-                  "publishCreationTime": {
-                    "type": "string"
-                  },
-                  "publishDate": {
-                    "type": "string"
-                  },
-                  "publishLastSearchDate": {
-                    "type": "string"
-                  },
-                  "trackChanges": {
-                    "type": "boolean"
-                  },
-                  "sectionNumbers": {
-                    "type": "boolean"
-                  },
-                  "showRecByline": {
-                    "type": "boolean"
-                  },
-                  "showRecNumbers": {
-                    "type": "string"
-                  },
-                  "showConflicts": {
-                    "type": "boolean"
-                  },
-                  "showCertaintyStrengthLabels": {
-                    "type": "boolean"
-                  },
-                  "showSectionPreview": {
-                    "type": "boolean"
-                  },
-                  "subscriptions": {
-                    "type": "boolean"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "byName": {
+                "type": "string"
+              },
+              "shortCode": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "string"
+              },
+              "mainEditor": {
+                "type": "string"
+              },
+              "startDate": {
+                "type": "string"
+              },
+              "lastEdit": {
+                "type": "string"
+              },
+              "language": {
+                "type": "string"
+              },
+              "countryFlag": {
+                "type": "string"
+              },
+              "sponsors": {
+                "type": "string"
+              },
+              "disclaimer": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "contactName": {
+                "type": "string"
+              },
+              "contactAddress": {
+                "type": "string"
+              },
+              "contactEmail": {
+                "type": "string"
+              },
+              "contactTelephone": {
+                "type": "string"
+              },
+              "institutionId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "institutionName": {
+                "type": "string"
+              },
+              "institutionUrl": {
+                "type": "string"
+              },
+              "institutionLogoUrl": {
+                "type": "string"
+              },
+              "institutionShortName": {
+                "type": "string"
+              },
+              "institutionGradeStrength": {
+                "type": "string"
+              },
+              "hasAltGrade": {
+                "type": "boolean"
+              },
+              "guidelineId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "currentDraftId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "publishedId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "editDraft": {
+                "type": "boolean"
+              },
+              "editPublish": {
+                "type": "boolean"
+              },
+              "permissionDraft": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "permissionPublish": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "isLatestPublished": {
+                "type": "boolean"
+              },
+              "isDraftEditable": {
+                "type": "boolean"
+              },
+              "isPublic": {
+                "type": "boolean"
+              },
+              "versionMajor": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "versionMinor": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "versionLabel": {
+                "type": "string"
+              },
+              "draftPicoCount": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "draftRecommendationCount": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "publishedPicoCount": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "publishedRecommendationCount": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "pdfPublishedPath": {
+                "type": "string"
+              },
+              "jsonPath": {
+                "type": "string"
+              },
+              "contentAdmin": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": "string"
+              },
+              "commentsInPublished": {
+                "type": "boolean"
+              },
+              "publishCreationTime": {
+                "type": "string"
+              },
+              "publishDate": {
+                "type": "string"
+              },
+              "publishLastSearchDate": {
+                "type": "string"
+              },
+              "trackChanges": {
+                "type": "boolean"
+              },
+              "sectionNumbers": {
+                "type": "boolean"
+              },
+              "showRecByline": {
+                "type": "boolean"
+              },
+              "showRecNumbers": {
+                "type": "string"
+              },
+              "showConflicts": {
+                "type": "boolean"
+              },
+              "showCertaintyStrengthLabels": {
+                "type": "boolean"
+              },
+              "showSectionPreview": {
+                "type": "boolean"
+              },
+              "subscriptions": {
+                "type": "boolean"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -294,370 +276,355 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "name": {
+              "type": "string"
             },
-            "data": {
+            "byName": {
+              "type": "string"
+            },
+            "shortCode": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "mainEditor": {
+              "type": "string"
+            },
+            "startDate": {
+              "type": "string"
+            },
+            "lastEdit": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            },
+            "countryFlag": {
+              "type": "string"
+            },
+            "sponsors": {
+              "type": "string"
+            },
+            "disclaimer": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "isbn": {
+              "type": "string"
+            },
+            "issn": {
+              "type": "string"
+            },
+            "orgDocId": {
+              "type": "string"
+            },
+            "department": {
+              "type": "string"
+            },
+            "contactName": {
+              "type": "string"
+            },
+            "contactAddress": {
+              "type": "string"
+            },
+            "contactEmail": {
+              "type": "string"
+            },
+            "contactTelephone": {
+              "type": "string"
+            },
+            "contactWeb": {
+              "type": "string"
+            },
+            "institutionId": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "institutionName": {
+              "type": "string"
+            },
+            "institutionLogoUrl": {
+              "type": "string"
+            },
+            "institutionShortName": {
+              "type": "string"
+            },
+            "institutionGradeStrength": {
+              "type": "string"
+            },
+            "hasAltGrade": {
+              "type": "boolean"
+            },
+            "guidelineId": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "currentDraftId": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "publishedId": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "edit": {
+              "type": "boolean"
+            },
+            "permission": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "isLatestPublished": {
+              "type": "boolean"
+            },
+            "isDraftEditable": {
+              "type": "boolean"
+            },
+            "isPublic": {
+              "type": "boolean"
+            },
+            "versionMajor": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "versionMinor": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "draftPicoCount": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "draftRecommendationCount": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "publishedPicoCount": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "publishedRecommendationCount": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "pdfPublishedPath": {
+              "type": "string"
+            },
+            "jsonPath": {
+              "type": "string"
+            },
+            "contentAdmin": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "string"
+            },
+            "commentsInPublished": {
+              "type": "boolean"
+            },
+            "publishCreationTime": {
+              "type": "string"
+            },
+            "publishDate": {
+              "type": "string"
+            },
+            "publishLastSearchDate": {
+              "type": "string"
+            },
+            "trackChanges": {
+              "type": "boolean"
+            },
+            "sectionNumbers": {
+              "type": "boolean"
+            },
+            "showRecByline": {
+              "type": "boolean"
+            },
+            "showRecNumbers": {
+              "type": "string"
+            },
+            "showConflicts": {
+              "type": "boolean"
+            },
+            "showCertaintyStrengthLabels": {
+              "type": "boolean"
+            },
+            "showSectionPreview": {
+              "type": "boolean"
+            },
+            "subscriptions": {
+              "type": "boolean"
+            },
+            "defaultKeyInfoType": {
+              "type": "string"
+            },
+            "pdfSettings": {
               "type": "object",
               "properties": {
-                "name": {
+                "pdfPageSize": {
                   "type": "string"
                 },
-                "byName": {
-                  "type": "string"
-                },
-                "shortCode": {
-                  "type": "string"
-                },
-                "owner": {
-                  "type": "string"
-                },
-                "mainEditor": {
-                  "type": "string"
-                },
-                "startDate": {
-                  "type": "string"
-                },
-                "lastEdit": {
-                  "type": "string"
-                },
-                "language": {
-                  "type": "string"
-                },
-                "countryFlag": {
-                  "type": "string"
-                },
-                "sponsors": {
-                  "type": "string"
-                },
-                "disclaimer": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "isbn": {
-                  "type": "string"
-                },
-                "issn": {
-                  "type": "string"
-                },
-                "orgDocId": {
-                  "type": "string"
-                },
-                "department": {
-                  "type": "string"
-                },
-                "contactName": {
-                  "type": "string"
-                },
-                "contactAddress": {
-                  "type": "string"
-                },
-                "contactEmail": {
-                  "type": "string"
-                },
-                "contactTelephone": {
-                  "type": "string"
-                },
-                "contactWeb": {
-                  "type": "string"
-                },
-                "institutionId": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "institutionName": {
-                  "type": "string"
-                },
-                "institutionLogoUrl": {
-                  "type": "string"
-                },
-                "institutionShortName": {
-                  "type": "string"
-                },
-                "institutionGradeStrength": {
-                  "type": "string"
-                },
-                "hasAltGrade": {
-                  "type": "boolean"
-                },
-                "guidelineId": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "currentDraftId": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "publishedId": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "edit": {
-                  "type": "boolean"
-                },
-                "permission": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "isLatestPublished": {
-                  "type": "boolean"
-                },
-                "isDraftEditable": {
-                  "type": "boolean"
-                },
-                "isPublic": {
-                  "type": "boolean"
-                },
-                "versionMajor": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "versionMinor": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "draftPicoCount": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "draftRecommendationCount": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "publishedPicoCount": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "publishedRecommendationCount": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "pdfPublishedPath": {
-                  "type": "string"
-                },
-                "jsonPath": {
-                  "type": "string"
-                },
-                "contentAdmin": {
-                  "type": "boolean"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "commentsInPublished": {
-                  "type": "boolean"
-                },
-                "publishCreationTime": {
-                  "type": "string"
-                },
-                "publishDate": {
-                  "type": "string"
-                },
-                "publishLastSearchDate": {
-                  "type": "string"
-                },
-                "trackChanges": {
-                  "type": "boolean"
-                },
-                "sectionNumbers": {
-                  "type": "boolean"
-                },
-                "showRecByline": {
-                  "type": "boolean"
-                },
-                "showRecNumbers": {
-                  "type": "string"
-                },
-                "showConflicts": {
-                  "type": "boolean"
-                },
-                "showCertaintyStrengthLabels": {
-                  "type": "boolean"
-                },
-                "showSectionPreview": {
-                  "type": "boolean"
-                },
-                "subscriptions": {
-                  "type": "boolean"
-                },
-                "defaultKeyInfoType": {
-                  "type": "string"
-                },
-                "pdfSettings": {
+                "pdfCoverPage": {
                   "type": "object",
                   "properties": {
-                    "pdfPageSize": {
+                    "image": {
+                      "type": "null"
+                    },
+                    "fileName": {
                       "type": "string"
                     },
-                    "pdfCoverPage": {
-                      "type": "object",
-                      "properties": {
-                        "image": {
-                          "type": "null"
-                        },
-                        "fileName": {
-                          "type": "string"
-                        },
-                        "fileType": {
-                          "type": "string"
-                        },
-                        "fileUrl": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "pdfLastPage": {
-                      "type": "object",
-                      "properties": {
-                        "image": {
-                          "type": "null"
-                        },
-                        "fileName": {
-                          "type": "string"
-                        },
-                        "fileType": {
-                          "type": "string"
-                        },
-                        "fileUrl": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "pdfSectionTitleColor": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
-                    },
-                    "pdfTabText": {
+                    "fileType": {
                       "type": "string"
                     },
-                    "pdfSectionText": {
+                    "fileUrl": {
                       "type": "string"
-                    },
-                    "pdfPicoReferences": {
-                      "type": "boolean"
-                    },
-                    "pdfPageB": {
-                      "type": "boolean"
-                    },
-                    "pdfSubChpPageBreak": {
-                      "type": "boolean"
-                    },
-                    "pdfPage2": {
-                      "type": "boolean"
-                    },
-                    "pdfTOC": {
-                      "type": "boolean"
-                    },
-                    "pdfSOR": {
-                      "type": "boolean"
-                    },
-                    "pdfTrackChanges": {
-                      "type": "string"
-                    },
-                    "pdfWatermark": {
-                      "type": "boolean"
-                    },
-                    "pdfHideHiddenRecInDraft": {
-                      "type": "boolean"
-                    },
-                    "pdfHeadFont": {
-                      "type": "null"
-                    },
-                    "pdfHeadSize": {
-                      "type": "null"
-                    },
-                    "pdfHeadSub1Size": {
-                      "type": "null"
-                    },
-                    "pdfHeadSub2Size": {
-                      "type": "null"
-                    },
-                    "pdfHeadSub3Size": {
-                      "type": "null"
-                    },
-                    "pdfTextFont": {
-                      "type": "null"
-                    },
-                    "pdfTextSize": {
-                      "type": "null"
-                    },
-                    "pdfOnlySOR": {
-                      "type": "boolean"
-                    },
-                    "pdfPicoInAppendix": {
-                      "type": "boolean"
-                    },
-                    "pdfPicoFootNotes": {
-                      "type": "boolean"
-                    },
-                    "pdfHidePicos": {
-                      "type": "boolean"
-                    },
-                    "pdfCiteSquare": {
-                      "type": "boolean"
-                    },
-                    "saveSettings": {
-                      "type": "boolean"
                     }
                   }
                 },
-                "gradeStrengthLabel": {
+                "pdfLastPage": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "null"
+                    },
+                    "fileName": {
+                      "type": "string"
+                    },
+                    "fileType": {
+                      "type": "string"
+                    },
+                    "fileUrl": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "pdfSectionTitleColor": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "pdfTabText": {
                   "type": "string"
                 },
-                "keyInfoJudgementType": {
+                "pdfSectionText": {
                   "type": "string"
+                },
+                "pdfPicoReferences": {
+                  "type": "boolean"
+                },
+                "pdfPageB": {
+                  "type": "boolean"
+                },
+                "pdfSubChpPageBreak": {
+                  "type": "boolean"
+                },
+                "pdfPage2": {
+                  "type": "boolean"
+                },
+                "pdfTOC": {
+                  "type": "boolean"
+                },
+                "pdfSOR": {
+                  "type": "boolean"
+                },
+                "pdfTrackChanges": {
+                  "type": "string"
+                },
+                "pdfWatermark": {
+                  "type": "boolean"
+                },
+                "pdfHideHiddenRecInDraft": {
+                  "type": "boolean"
+                },
+                "pdfHeadFont": {
+                  "type": "null"
+                },
+                "pdfHeadSize": {
+                  "type": "null"
+                },
+                "pdfHeadSub1Size": {
+                  "type": "null"
+                },
+                "pdfHeadSub2Size": {
+                  "type": "null"
+                },
+                "pdfHeadSub3Size": {
+                  "type": "null"
+                },
+                "pdfTextFont": {
+                  "type": "null"
+                },
+                "pdfTextSize": {
+                  "type": "null"
+                },
+                "pdfOnlySOR": {
+                  "type": "boolean"
+                },
+                "pdfPicoInAppendix": {
+                  "type": "boolean"
+                },
+                "pdfPicoFootNotes": {
+                  "type": "boolean"
+                },
+                "pdfHidePicos": {
+                  "type": "boolean"
+                },
+                "pdfCiteSquare": {
+                  "type": "boolean"
+                },
+                "saveSettings": {
+                  "type": "boolean"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "gradeStrengthLabel": {
+              "type": "string"
+            },
+            "keyInfoJudgementType": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "name"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -695,17 +662,308 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "recommendationId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "shortCode": {
+                "type": "string"
+              },
+              "guidelineId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "sectionId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "order": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "strength": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "heading": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "remarks": {
+                "type": "string"
+              },
+              "advice": {
+                "type": "string"
+              },
+              "rational": {
+                "type": "string"
+              },
+              "adaptation": {
+                "type": "string"
+              },
+              "implementation": {
+                "type": "string"
+              },
+              "evaluation": {
+                "type": "string"
+              },
+              "research": {
+                "type": "string"
+              },
+              "keyInfoType": {
+                "type": "string"
+              },
+              "keyInfoDisplayMode": {
+                "type": "string"
+              },
+              "hideInPublish": {
+                "type": "boolean"
+              },
+              "picoIds": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              },
+              "keyInfo": {
+                "type": "object",
+                "properties": {
+                  "keyInfoType": {
+                    "type": "string"
+                  },
+                  "recommendationId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "guidelineId": {
+                    "type": "null"
+                  },
+                  "sectionId": {
+                    "type": "null"
+                  },
+                  "benefits": {
+                    "type": "string"
+                  },
+                  "benefitsResearchEvidence": {
+                    "type": "string"
+                  },
+                  "benefitsResearchEvidenceInPublic": {
+                    "type": "boolean"
+                  },
+                  "benefitsAdditionalConsideration": {
+                    "type": "string"
+                  },
+                  "benefitsAdditionalConsiderationInPublic": {
+                    "type": "boolean"
+                  },
+                  "evidence": {
+                    "type": "string"
+                  },
+                  "evidenceResearchEvidence": {
+                    "type": "string"
+                  },
+                  "evidenceResearchEvidenceInPublic": {
+                    "type": "boolean"
+                  },
+                  "evidenceAdditionalConsideration": {
+                    "type": "string"
+                  },
+                  "evidenceAdditionalConsiderationInPublic": {
+                    "type": "boolean"
+                  },
+                  "preferences": {
+                    "type": "string"
+                  },
+                  "preferencesResearchEvidence": {
+                    "type": "string"
+                  },
+                  "preferencesResearchEvidenceInPublic": {
+                    "type": "boolean"
+                  },
+                  "preferencesAdditionalConsideration": {
+                    "type": "string"
+                  },
+                  "preferencesAdditionalConsiderationInPublic": {
+                    "type": "boolean"
+                  },
+                  "resources": {
+                    "type": "string"
+                  },
+                  "resourcesResearchEvidence": {
+                    "type": "string"
+                  },
+                  "resourcesResearchEvidenceInPublic": {
+                    "type": "boolean"
+                  },
+                  "resourcesAdditionalConsideration": {
+                    "type": "string"
+                  },
+                  "resourcesAdditionalConsiderationInPublic": {
+                    "type": "boolean"
+                  },
+                  "benefitsStrength": {
+                    "type": "string"
+                  },
+                  "evidenceStrength": {
+                    "type": "string"
+                  },
+                  "preferencesStrength": {
+                    "type": "string"
+                  },
+                  "resourcesStrength": {
+                    "type": "string"
+                  },
+                  "interventions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "recommendationId": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "picoId": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "picoElement": {
+                          "type": "string"
+                        },
+                        "intervention": {
+                          "type": "string"
+                        },
+                        "isComparator": {
+                          "type": "boolean"
+                        },
+                        "showComparator": {
+                          "type": "boolean"
+                        },
+                        "sortOrder": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "judgements": {
+                          "type": "object",
+                          "properties": {
+                            "BENEFITS_DESIRABLE": {
+                              "type": "string"
+                            },
+                            "BENEFITS_UNDESIRABLE": {
+                              "type": "string"
+                            },
+                            "EVIDENCE": {
+                              "type": "string"
+                            },
+                            "PREFERENCES": {
+                              "type": "string"
+                            },
+                            "RESOURCES": {
+                              "type": "string"
+                            },
+                            "EQUITY": {
+                              "type": "string"
+                            },
+                            "ACCEPTABILITY": {
+                              "type": "string"
+                            },
+                            "FEASIBILITY": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "comparator": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  },
+                  "isSummaryOfJudgementPublic": {
+                    "type": "boolean"
+                  },
+                  "acceptabilityStrength": {
+                    "type": "string"
+                  },
+                  "acceptability": {
+                    "type": "string"
+                  },
+                  "acceptabilityResearchEvidence": {
+                    "type": "string"
+                  },
+                  "acceptabilityResearchEvidenceInPublic": {
+                    "type": "boolean"
+                  },
+                  "acceptabilityAdditionalConsideration": {
+                    "type": "string"
+                  },
+                  "acceptabilityAdditionalConsiderationInPublic": {
+                    "type": "boolean"
+                  },
+                  "equityStrength": {
+                    "type": "string"
+                  },
+                  "equity": {
+                    "type": "string"
+                  },
+                  "equityResearchEvidence": {
+                    "type": "string"
+                  },
+                  "equityResearchEvidenceInPublic": {
+                    "type": "boolean"
+                  },
+                  "equityAdditionalConsideration": {
+                    "type": "string"
+                  },
+                  "equityAdditionalConsiderationInPublic": {
+                    "type": "boolean"
+                  },
+                  "feasibilityStrength": {
+                    "type": "string"
+                  },
+                  "feasibility": {
+                    "type": "string"
+                  },
+                  "feasibilityResearchEvidence": {
+                    "type": "string"
+                  },
+                  "feasibilityResearchEvidenceInPublic": {
+                    "type": "boolean"
+                  },
+                  "feasibilityAdditionalConsideration": {
+                    "type": "string"
+                  },
+                  "feasibilityAdditionalConsiderationInPublic": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "interventions": {
                 "type": "object",
                 "properties": {
                   "recommendationId": {
@@ -729,329 +987,74 @@
                       "number"
                     ]
                   },
-                  "order": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "strength": {
+                  "emrImplement": {
                     "type": "string"
                   },
-                  "status": {
+                  "emrResources": {
                     "type": "string"
                   },
-                  "heading": {
+                  "targetPopulation": {
                     "type": "string"
                   },
-                  "text": {
+                  "recommendedInvention": {
                     "type": "string"
                   },
-                  "remarks": {
-                    "type": "string"
-                  },
-                  "advice": {
-                    "type": "string"
-                  },
-                  "rational": {
-                    "type": "string"
-                  },
-                  "adaptation": {
-                    "type": "string"
-                  },
-                  "implementation": {
-                    "type": "string"
-                  },
-                  "evaluation": {
-                    "type": "string"
-                  },
-                  "research": {
-                    "type": "string"
-                  },
-                  "keyInfoType": {
-                    "type": "string"
-                  },
-                  "keyInfoDisplayMode": {
-                    "type": "string"
-                  },
-                  "hideInPublish": {
-                    "type": "boolean"
-                  },
-                  "picoIds": {
-                    "type": "array",
-                    "items": {
+                  "codes": {
+                    "type": "array"
+                  }
+                }
+              },
+              "emrCodes": {
+                "type": "array"
+              },
+              "picos": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "picoId": {
                       "type": [
                         "integer",
                         "number"
                       ]
-                    }
-                  },
-                  "keyInfo": {
-                    "type": "object",
-                    "properties": {
-                      "keyInfoType": {
-                        "type": "string"
-                      },
-                      "recommendationId": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "guidelineId": {
-                        "type": "null"
-                      },
-                      "sectionId": {
-                        "type": "null"
-                      },
-                      "benefits": {
-                        "type": "string"
-                      },
-                      "benefitsResearchEvidence": {
-                        "type": "string"
-                      },
-                      "benefitsResearchEvidenceInPublic": {
-                        "type": "boolean"
-                      },
-                      "benefitsAdditionalConsideration": {
-                        "type": "string"
-                      },
-                      "benefitsAdditionalConsiderationInPublic": {
-                        "type": "boolean"
-                      },
-                      "evidence": {
-                        "type": "string"
-                      },
-                      "evidenceResearchEvidence": {
-                        "type": "string"
-                      },
-                      "evidenceResearchEvidenceInPublic": {
-                        "type": "boolean"
-                      },
-                      "evidenceAdditionalConsideration": {
-                        "type": "string"
-                      },
-                      "evidenceAdditionalConsiderationInPublic": {
-                        "type": "boolean"
-                      },
-                      "preferences": {
-                        "type": "string"
-                      },
-                      "preferencesResearchEvidence": {
-                        "type": "string"
-                      },
-                      "preferencesResearchEvidenceInPublic": {
-                        "type": "boolean"
-                      },
-                      "preferencesAdditionalConsideration": {
-                        "type": "string"
-                      },
-                      "preferencesAdditionalConsiderationInPublic": {
-                        "type": "boolean"
-                      },
-                      "resources": {
-                        "type": "string"
-                      },
-                      "resourcesResearchEvidence": {
-                        "type": "string"
-                      },
-                      "resourcesResearchEvidenceInPublic": {
-                        "type": "boolean"
-                      },
-                      "resourcesAdditionalConsideration": {
-                        "type": "string"
-                      },
-                      "resourcesAdditionalConsiderationInPublic": {
-                        "type": "boolean"
-                      },
-                      "benefitsStrength": {
-                        "type": "string"
-                      },
-                      "evidenceStrength": {
-                        "type": "string"
-                      },
-                      "preferencesStrength": {
-                        "type": "string"
-                      },
-                      "resourcesStrength": {
-                        "type": "string"
-                      },
-                      "interventions": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "recommendationId": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "picoId": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "picoElement": {
-                              "type": "string"
-                            },
-                            "intervention": {
-                              "type": "string"
-                            },
-                            "isComparator": {
-                              "type": "boolean"
-                            },
-                            "showComparator": {
-                              "type": "boolean"
-                            },
-                            "sortOrder": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "judgements": {
-                              "type": "object",
-                              "properties": {
-                                "BENEFITS_DESIRABLE": {
-                                  "type": "string"
-                                },
-                                "BENEFITS_UNDESIRABLE": {
-                                  "type": "string"
-                                },
-                                "EVIDENCE": {
-                                  "type": "string"
-                                },
-                                "PREFERENCES": {
-                                  "type": "string"
-                                },
-                                "RESOURCES": {
-                                  "type": "string"
-                                },
-                                "EQUITY": {
-                                  "type": "string"
-                                },
-                                "ACCEPTABILITY": {
-                                  "type": "string"
-                                },
-                                "FEASIBILITY": {
-                                  "type": "string"
-                                }
-                              }
-                            },
-                            "comparator": {
-                              "type": "boolean"
-                            }
-                          }
-                        }
-                      },
-                      "isSummaryOfJudgementPublic": {
-                        "type": "boolean"
-                      },
-                      "acceptabilityStrength": {
-                        "type": "string"
-                      },
-                      "acceptability": {
-                        "type": "string"
-                      },
-                      "acceptabilityResearchEvidence": {
-                        "type": "string"
-                      },
-                      "acceptabilityResearchEvidenceInPublic": {
-                        "type": "boolean"
-                      },
-                      "acceptabilityAdditionalConsideration": {
-                        "type": "string"
-                      },
-                      "acceptabilityAdditionalConsiderationInPublic": {
-                        "type": "boolean"
-                      },
-                      "equityStrength": {
-                        "type": "string"
-                      },
-                      "equity": {
-                        "type": "string"
-                      },
-                      "equityResearchEvidence": {
-                        "type": "string"
-                      },
-                      "equityResearchEvidenceInPublic": {
-                        "type": "boolean"
-                      },
-                      "equityAdditionalConsideration": {
-                        "type": "string"
-                      },
-                      "equityAdditionalConsiderationInPublic": {
-                        "type": "boolean"
-                      },
-                      "feasibilityStrength": {
-                        "type": "string"
-                      },
-                      "feasibility": {
-                        "type": "string"
-                      },
-                      "feasibilityResearchEvidence": {
-                        "type": "string"
-                      },
-                      "feasibilityResearchEvidenceInPublic": {
-                        "type": "boolean"
-                      },
-                      "feasibilityAdditionalConsideration": {
-                        "type": "string"
-                      },
-                      "feasibilityAdditionalConsiderationInPublic": {
-                        "type": "boolean"
-                      }
-                    }
-                  },
-                  "interventions": {
-                    "type": "object",
-                    "properties": {
-                      "recommendationId": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "shortCode": {
-                        "type": "string"
-                      },
-                      "guidelineId": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "sectionId": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "emrImplement": {
-                        "type": "string"
-                      },
-                      "emrResources": {
-                        "type": "string"
-                      },
-                      "targetPopulation": {
-                        "type": "string"
-                      },
-                      "recommendedInvention": {
-                        "type": "string"
-                      },
-                      "codes": {
-                        "type": "array"
-                      }
-                    }
-                  },
-                  "emrCodes": {
-                    "type": "array"
-                  },
-                  "picos": {
-                    "type": "array",
-                    "items": {
+                    },
+                    "sectionId": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "order": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "population": {
+                      "type": "string"
+                    },
+                    "populationShortName": {
+                      "type": "string"
+                    },
+                    "intervention": {
+                      "type": "string"
+                    },
+                    "interventionShortName": {
+                      "type": "string"
+                    },
+                    "comparator": {
+                      "type": "string"
+                    },
+                    "comparatorShortName": {
+                      "type": "string"
+                    },
+                    "shortCode": {
+                      "type": "string"
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "outcomes": {
                       "type": "object",
                       "properties": {
                         "picoId": {
@@ -1066,837 +1069,186 @@
                             "number"
                           ]
                         },
-                        "order": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "population": {
-                          "type": "string"
-                        },
-                        "populationShortName": {
-                          "type": "string"
-                        },
-                        "intervention": {
-                          "type": "string"
-                        },
-                        "interventionShortName": {
-                          "type": "string"
-                        },
-                        "comparator": {
-                          "type": "string"
-                        },
-                        "comparatorShortName": {
-                          "type": "string"
-                        },
-                        "shortCode": {
-                          "type": "string"
-                        },
-                        "summary": {
-                          "type": "string"
-                        },
-                        "outcomes": {
-                          "type": "object",
-                          "properties": {
-                            "picoId": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "sectionId": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "guidelineId": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "dichotomousOutcomes": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "outcomeId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "picoId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "sectionId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "guidelineId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "status": {
-                                    "type": "string"
-                                  },
-                                  "isHidden": {
-                                    "type": "boolean"
-                                  },
-                                  "sortOrder": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "shortCode": {
-                                    "type": "string"
-                                  },
-                                  "outcome": {
-                                    "type": "string"
-                                  },
-                                  "shortName": {
-                                    "type": "string"
-                                  },
-                                  "importanceLevel": {
-                                    "type": "string"
-                                  },
-                                  "interventionStudies": {
-                                    "type": "string"
-                                  },
-                                  "interventionTotalParticipants": {
-                                    "type": "number"
-                                  },
-                                  "interventionReferenceType": {
-                                    "type": "string"
-                                  },
-                                  "interventionStudyType": {
-                                    "type": "string"
-                                  },
-                                  "comparatorStudyType": {
-                                    "type": "string"
-                                  },
-                                  "comparatorReferenceType": {
-                                    "type": "string"
-                                  },
-                                  "comparatorComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityInterventionStudyType": {
-                                    "type": "string"
-                                  },
-                                  "qualityOfEvidenceLevel": {
-                                    "type": "string"
-                                  },
-                                  "qualityOfEvidenceComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityRiskOfBias": {
-                                    "type": "string"
-                                  },
-                                  "qualityInconsistency": {
-                                    "type": "string"
-                                  },
-                                  "qualityIndirectness": {
-                                    "type": "string"
-                                  },
-                                  "qualityIndirectnessComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityImprecision": {
-                                    "type": "string"
-                                  },
-                                  "qualityPublicationBias": {
-                                    "type": "string"
-                                  },
-                                  "qualityUpgrade": {
-                                    "type": "string"
-                                  },
-                                  "plainSummaryComment": {
-                                    "type": "string"
-                                  },
-                                  "directionOfEffectType": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifference": {
-                                    "type": "number"
-                                  },
-                                  "absoluteDifferenceDirection": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceConfidenceType": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceLow": {
-                                    "type": "number"
-                                  },
-                                  "absoluteDifferenceLowDirection": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceHigh": {
-                                    "type": "number"
-                                  },
-                                  "absoluteDifferenceHighDirection": {
-                                    "type": "string"
-                                  },
-                                  "relativeEffect": {
-                                    "type": "number"
-                                  },
-                                  "relativeEffectType": {
-                                    "type": "string"
-                                  },
-                                  "relativeEffectConfidenceType": {
-                                    "type": "string"
-                                  },
-                                  "relativeEffectConfidenceLow": {
-                                    "type": "number"
-                                  },
-                                  "relativeEffectConfidenceHigh": {
-                                    "type": "number"
-                                  },
-                                  "comparatorEffect": {
-                                    "type": "number"
-                                  },
-                                  "comparatorEffectType": {
-                                    "type": "string"
-                                  },
-                                  "interventionEffect": {
-                                    "type": "number"
-                                  },
-                                  "interventionEffectType": {
-                                    "type": "string"
-                                  },
-                                  "autoCalcInterventions": {
-                                    "type": "string"
-                                  },
-                                  "shadow_PARENT_ID_FOR_MERGING": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "qualityRiskOfBiasComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityImprecisionComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityRiskOfBiasIssues": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "id": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        },
-                                        "value": {
-                                          "type": "string"
-                                        },
-                                        "description": {
-                                          "type": "string"
-                                        },
-                                        "type": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "comparatorStudies": {
-                                    "type": "string"
-                                  },
-                                  "comparatorTotalParticipants": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "comparatorTotalEvents": {
-                                    "type": "number"
-                                  },
-                                  "qualityUpgradeComment": {
-                                    "type": "string"
-                                  },
-                                  "timeFrame": {
-                                    "type": "string"
-                                  },
-                                  "description": {
-                                    "type": "string"
-                                  },
-                                  "interventionStudyFollowUp": {
-                                    "type": "string"
-                                  },
-                                  "comparatorFollowUp": {
-                                    "type": "string"
-                                  },
-                                  "qualityInconsistencyComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityPublicationBiasComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityInconsistencyIssues": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "id": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        },
-                                        "value": {
-                                          "type": "string"
-                                        },
-                                        "description": {
-                                          "type": "string"
-                                        },
-                                        "type": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "qualityPublicationBiasIssues": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "id": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        },
-                                        "value": {
-                                          "type": "string"
-                                        },
-                                        "description": {
-                                          "type": "string"
-                                        },
-                                        "type": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                            "continuousOutcomes": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "outcomeId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "picoId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "sectionId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "guidelineId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "status": {
-                                    "type": "string"
-                                  },
-                                  "isHidden": {
-                                    "type": "boolean"
-                                  },
-                                  "sortOrder": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "shortCode": {
-                                    "type": "string"
-                                  },
-                                  "outcome": {
-                                    "type": "string"
-                                  },
-                                  "shortName": {
-                                    "type": "string"
-                                  },
-                                  "importanceLevel": {
-                                    "type": "string"
-                                  },
-                                  "interventionStudies": {
-                                    "type": "string"
-                                  },
-                                  "interventionReferenceType": {
-                                    "type": "string"
-                                  },
-                                  "interventionStudyType": {
-                                    "type": "string"
-                                  },
-                                  "comparatorStudyType": {
-                                    "type": "string"
-                                  },
-                                  "comparatorReferenceType": {
-                                    "type": "string"
-                                  },
-                                  "qualityInterventionStudyType": {
-                                    "type": "string"
-                                  },
-                                  "qualityOfEvidenceLevel": {
-                                    "type": "string"
-                                  },
-                                  "qualityOfEvidenceComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityRiskOfBias": {
-                                    "type": "string"
-                                  },
-                                  "qualityRiskOfBiasComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityInconsistency": {
-                                    "type": "string"
-                                  },
-                                  "qualityIndirectness": {
-                                    "type": "string"
-                                  },
-                                  "qualityImprecision": {
-                                    "type": "string"
-                                  },
-                                  "qualityPublicationBias": {
-                                    "type": "string"
-                                  },
-                                  "qualityPublicationBiasComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityUpgrade": {
-                                    "type": "string"
-                                  },
-                                  "qualityRiskOfBiasIssues": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "id": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        },
-                                        "value": {
-                                          "type": "string"
-                                        },
-                                        "description": {
-                                          "type": "string"
-                                        },
-                                        "type": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "qualityPublicationBiasIssues": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "id": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        },
-                                        "value": {
-                                          "type": "string"
-                                        },
-                                        "description": {
-                                          "type": "string"
-                                        },
-                                        "type": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "plainSummaryComment": {
-                                    "type": "string"
-                                  },
-                                  "directionOfEffectType": {
-                                    "type": "string"
-                                  },
-                                  "measurementLabel": {
-                                    "type": "string"
-                                  },
-                                  "scaleLow": {
-                                    "type": "string"
-                                  },
-                                  "scaleDirection": {
-                                    "type": "string"
-                                  },
-                                  "unit": {
-                                    "type": "string"
-                                  },
-                                  "interventionEffect": {
-                                    "type": "string"
-                                  },
-                                  "interventionEffectType": {
-                                    "type": "string"
-                                  },
-                                  "interventionEffectConfidenceType": {
-                                    "type": "string"
-                                  },
-                                  "interventionEffectConfidenceLow": {
-                                    "type": "string"
-                                  },
-                                  "interventionEffectConfidenceHigh": {
-                                    "type": "string"
-                                  },
-                                  "comparatorEffect": {
-                                    "type": "string"
-                                  },
-                                  "comparatorEffectType": {
-                                    "type": "string"
-                                  },
-                                  "comparatorEffectConfidenceType": {
-                                    "type": "string"
-                                  },
-                                  "comparatorEffectConfidenceLow": {
-                                    "type": "string"
-                                  },
-                                  "comparatorEffectConfidenceHigh": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceType": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifference": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceDirection": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceConfidenceType": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceLow": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceLowDirection": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceHigh": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceHighDirection": {
-                                    "type": "string"
-                                  },
-                                  "absoluteDifferenceDirectionType": {
-                                    "type": "string"
-                                  },
-                                  "shadow_PARENT_ID_FOR_MERGING": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "qualityInconsistencyComment": {
-                                    "type": "string"
-                                  },
-                                  "description": {
-                                    "type": "string"
-                                  },
-                                  "interventionTotalParticipants": {
-                                    "type": "number"
-                                  },
-                                  "qualityInconsistencyIssues": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "id": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        },
-                                        "value": {
-                                          "type": "string"
-                                        },
-                                        "description": {
-                                          "type": "string"
-                                        },
-                                        "type": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "scaleHigh": {
-                                    "type": "string"
-                                  }
-                                }
-                              }
-                            },
-                            "nonPoolableOutcomes": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "outcomeId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "picoId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "sectionId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "guidelineId": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "status": {
-                                    "type": "string"
-                                  },
-                                  "isHidden": {
-                                    "type": "boolean"
-                                  },
-                                  "sortOrder": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  },
-                                  "shortCode": {
-                                    "type": "string"
-                                  },
-                                  "outcome": {
-                                    "type": "string"
-                                  },
-                                  "shortName": {
-                                    "type": "string"
-                                  },
-                                  "importanceLevel": {
-                                    "type": "string"
-                                  },
-                                  "interventionStudies": {
-                                    "type": "string"
-                                  },
-                                  "interventionTotalParticipants": {
-                                    "type": "number"
-                                  },
-                                  "interventionReferenceType": {
-                                    "type": "string"
-                                  },
-                                  "interventionStudyType": {
-                                    "type": "string"
-                                  },
-                                  "comparatorStudyType": {
-                                    "type": "string"
-                                  },
-                                  "comparatorReferenceType": {
-                                    "type": "string"
-                                  },
-                                  "extraReferences": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "referenceId": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        },
-                                        "referenceNumber": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        },
-                                        "authors": {
-                                          "type": "array",
-                                          "items": {
-                                            "type": "object",
-                                            "properties": {
-                                              "id": {
-                                                "type": [
-                                                  "integer",
-                                                  "number"
-                                                ]
-                                              },
-                                              "firstName": {
-                                                "type": "string"
-                                              },
-                                              "lastName": {
-                                                "type": "string"
-                                              },
-                                              "formattedName": {
-                                                "type": "string"
-                                              }
-                                            }
-                                          }
-                                        },
-                                        "titleText": {
-                                          "type": "string"
-                                        },
-                                        "url": {
-                                          "type": "string"
-                                        },
-                                        "doi": {
-                                          "type": "string"
-                                        },
-                                        "pmid": {
-                                          "type": "string"
-                                        },
-                                        "journal": {
-                                          "type": "string"
-                                        },
-                                        "year": {
-                                          "type": "string"
-                                        },
-                                        "volume": {
-                                          "type": "string"
-                                        },
-                                        "issue": {
-                                          "type": "string"
-                                        },
-                                        "pageStart": {
-                                          "type": "string"
-                                        },
-                                        "pageEnd": {
-                                          "type": "string"
-                                        },
-                                        "creationType": {
-                                          "type": "string"
-                                        },
-                                        "comment": {
-                                          "type": "string"
-                                        },
-                                        "attachedFiles": {
-                                          "type": "array"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "qualityInterventionStudyType": {
-                                    "type": "string"
-                                  },
-                                  "qualityOfEvidenceLevel": {
-                                    "type": "string"
-                                  },
-                                  "qualityOfEvidenceComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityRiskOfBias": {
-                                    "type": "string"
-                                  },
-                                  "qualityRiskOfBiasComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityInconsistency": {
-                                    "type": "string"
-                                  },
-                                  "qualityIndirectness": {
-                                    "type": "string"
-                                  },
-                                  "qualityIndirectnessComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityImprecision": {
-                                    "type": "string"
-                                  },
-                                  "qualityImprecisionComment": {
-                                    "type": "string"
-                                  },
-                                  "qualityPublicationBias": {
-                                    "type": "string"
-                                  },
-                                  "qualityUpgrade": {
-                                    "type": "string"
-                                  },
-                                  "plainSummaryComment": {
-                                    "type": "string"
-                                  },
-                                  "directionOfEffectType": {
-                                    "type": "string"
-                                  },
-                                  "estimatesDescription": {
-                                    "type": "string"
-                                  },
-                                  "shadow_PARENT_ID_FOR_MERGING": {
-                                    "type": [
-                                      "integer",
-                                      "number"
-                                    ]
-                                  }
-                                }
-                              }
-                            },
-                            "practicalIssues": {
-                              "type": "array"
-                            }
-                          }
-                        },
                         "guidelineId": {
                           "type": [
                             "integer",
                             "number"
                           ]
                         },
-                        "references": {
+                        "dichotomousOutcomes": {
                           "type": "array",
                           "items": {
                             "type": "object",
                             "properties": {
-                              "referenceId": {
+                              "outcomeId": {
                                 "type": [
                                   "integer",
                                   "number"
                                 ]
                               },
-                              "referenceNumber": {
+                              "picoId": {
                                 "type": [
                                   "integer",
                                   "number"
                                 ]
                               },
-                              "authors": {
+                              "sectionId": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "guidelineId": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "isHidden": {
+                                "type": "boolean"
+                              },
+                              "sortOrder": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "shortCode": {
+                                "type": "string"
+                              },
+                              "outcome": {
+                                "type": "string"
+                              },
+                              "shortName": {
+                                "type": "string"
+                              },
+                              "importanceLevel": {
+                                "type": "string"
+                              },
+                              "interventionStudies": {
+                                "type": "string"
+                              },
+                              "interventionTotalParticipants": {
+                                "type": "number"
+                              },
+                              "interventionReferenceType": {
+                                "type": "string"
+                              },
+                              "interventionStudyType": {
+                                "type": "string"
+                              },
+                              "comparatorStudyType": {
+                                "type": "string"
+                              },
+                              "comparatorReferenceType": {
+                                "type": "string"
+                              },
+                              "comparatorComment": {
+                                "type": "string"
+                              },
+                              "qualityInterventionStudyType": {
+                                "type": "string"
+                              },
+                              "qualityOfEvidenceLevel": {
+                                "type": "string"
+                              },
+                              "qualityOfEvidenceComment": {
+                                "type": "string"
+                              },
+                              "qualityRiskOfBias": {
+                                "type": "string"
+                              },
+                              "qualityInconsistency": {
+                                "type": "string"
+                              },
+                              "qualityIndirectness": {
+                                "type": "string"
+                              },
+                              "qualityIndirectnessComment": {
+                                "type": "string"
+                              },
+                              "qualityImprecision": {
+                                "type": "string"
+                              },
+                              "qualityPublicationBias": {
+                                "type": "string"
+                              },
+                              "qualityUpgrade": {
+                                "type": "string"
+                              },
+                              "plainSummaryComment": {
+                                "type": "string"
+                              },
+                              "directionOfEffectType": {
+                                "type": "string"
+                              },
+                              "absoluteDifference": {
+                                "type": "number"
+                              },
+                              "absoluteDifferenceDirection": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceConfidenceType": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceLow": {
+                                "type": "number"
+                              },
+                              "absoluteDifferenceLowDirection": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceHigh": {
+                                "type": "number"
+                              },
+                              "absoluteDifferenceHighDirection": {
+                                "type": "string"
+                              },
+                              "relativeEffect": {
+                                "type": "number"
+                              },
+                              "relativeEffectType": {
+                                "type": "string"
+                              },
+                              "relativeEffectConfidenceType": {
+                                "type": "string"
+                              },
+                              "relativeEffectConfidenceLow": {
+                                "type": "number"
+                              },
+                              "relativeEffectConfidenceHigh": {
+                                "type": "number"
+                              },
+                              "comparatorEffect": {
+                                "type": "number"
+                              },
+                              "comparatorEffectType": {
+                                "type": "string"
+                              },
+                              "interventionEffect": {
+                                "type": "number"
+                              },
+                              "interventionEffectType": {
+                                "type": "string"
+                              },
+                              "autoCalcInterventions": {
+                                "type": "string"
+                              },
+                              "shadow_PARENT_ID_FOR_MERGING": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "qualityRiskOfBiasComment": {
+                                "type": "string"
+                              },
+                              "qualityImprecisionComment": {
+                                "type": "string"
+                              },
+                              "qualityRiskOfBiasIssues": {
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -1907,50 +1259,122 @@
                                         "number"
                                       ]
                                     },
-                                    "firstName": {
+                                    "value": {
                                       "type": "string"
                                     },
-                                    "lastName": {
+                                    "description": {
                                       "type": "string"
                                     },
-                                    "formattedName": {
+                                    "type": {
                                       "type": "string"
                                     }
                                   }
                                 }
                               },
-                              "titleText": {
+                              "comparatorStudies": {
                                 "type": "string"
                               },
-                              "url": {
+                              "comparatorTotalParticipants": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "comparatorTotalEvents": {
+                                "type": "number"
+                              },
+                              "qualityUpgradeComment": {
                                 "type": "string"
                               },
-                              "doi": {
+                              "timeFrame": {
                                 "type": "string"
                               },
-                              "pmid": {
+                              "description": {
                                 "type": "string"
                               },
-                              "journal": {
+                              "interventionStudyFollowUp": {
                                 "type": "string"
                               },
-                              "year": {
+                              "comparatorFollowUp": {
                                 "type": "string"
                               },
-                              "volume": {
+                              "qualityInconsistencyComment": {
                                 "type": "string"
                               },
-                              "issue": {
+                              "qualityPublicationBiasComment": {
                                 "type": "string"
                               },
-                              "pageStart": {
-                                "type": "string"
+                              "qualityInconsistencyIssues": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": [
+                                        "integer",
+                                        "number"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
                               },
-                              "pageEnd": {
-                                "type": "string"
+                              "qualityPublicationBiasIssues": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": [
+                                        "integer",
+                                        "number"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "continuousOutcomes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "outcomeId": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
                               },
-                              "creationType": {
-                                "type": "string"
+                              "picoId": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "sectionId": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
                               },
                               "guidelineId": {
                                 "type": [
@@ -1958,212 +1382,737 @@
                                   "number"
                                 ]
                               },
-                              "shortName": {
+                              "status": {
                                 "type": "string"
                               },
-                              "order": {
+                              "isHidden": {
+                                "type": "boolean"
+                              },
+                              "sortOrder": {
                                 "type": [
                                   "integer",
                                   "number"
                                 ]
                               },
-                              "referenceType": {
+                              "shortCode": {
                                 "type": "string"
                               },
-                              "studyType": {
+                              "outcome": {
                                 "type": "string"
                               },
-                              "attachedFiles": {
-                                "type": "array"
-                              },
-                              "abstractText": {
+                              "shortName": {
                                 "type": "string"
                               },
-                              "comments": {
+                              "importanceLevel": {
                                 "type": "string"
                               },
-                              "selected": {
-                                "type": "boolean"
+                              "interventionStudies": {
+                                "type": "string"
                               },
-                              "usageCount": {
-                                "type": "null"
+                              "interventionReferenceType": {
+                                "type": "string"
                               },
-                              "referencePicos": {
-                                "type": "array"
+                              "interventionStudyType": {
+                                "type": "string"
                               },
-                              "files": {
-                                "type": "array"
+                              "comparatorStudyType": {
+                                "type": "string"
                               },
-                              "results": {
+                              "comparatorReferenceType": {
+                                "type": "string"
+                              },
+                              "qualityInterventionStudyType": {
+                                "type": "string"
+                              },
+                              "qualityOfEvidenceLevel": {
+                                "type": "string"
+                              },
+                              "qualityOfEvidenceComment": {
+                                "type": "string"
+                              },
+                              "qualityRiskOfBias": {
+                                "type": "string"
+                              },
+                              "qualityRiskOfBiasComment": {
+                                "type": "string"
+                              },
+                              "qualityInconsistency": {
+                                "type": "string"
+                              },
+                              "qualityIndirectness": {
+                                "type": "string"
+                              },
+                              "qualityImprecision": {
+                                "type": "string"
+                              },
+                              "qualityPublicationBias": {
+                                "type": "string"
+                              },
+                              "qualityPublicationBiasComment": {
+                                "type": "string"
+                              },
+                              "qualityUpgrade": {
+                                "type": "string"
+                              },
+                              "qualityRiskOfBiasIssues": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": [
+                                        "integer",
+                                        "number"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "qualityPublicationBiasIssues": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": [
+                                        "integer",
+                                        "number"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "plainSummaryComment": {
+                                "type": "string"
+                              },
+                              "directionOfEffectType": {
+                                "type": "string"
+                              },
+                              "measurementLabel": {
+                                "type": "string"
+                              },
+                              "scaleLow": {
+                                "type": "string"
+                              },
+                              "scaleDirection": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "string"
+                              },
+                              "interventionEffect": {
+                                "type": "string"
+                              },
+                              "interventionEffectType": {
+                                "type": "string"
+                              },
+                              "interventionEffectConfidenceType": {
+                                "type": "string"
+                              },
+                              "interventionEffectConfidenceLow": {
+                                "type": "string"
+                              },
+                              "interventionEffectConfidenceHigh": {
+                                "type": "string"
+                              },
+                              "comparatorEffect": {
+                                "type": "string"
+                              },
+                              "comparatorEffectType": {
+                                "type": "string"
+                              },
+                              "comparatorEffectConfidenceType": {
+                                "type": "string"
+                              },
+                              "comparatorEffectConfidenceLow": {
+                                "type": "string"
+                              },
+                              "comparatorEffectConfidenceHigh": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceType": {
+                                "type": "string"
+                              },
+                              "absoluteDifference": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceDirection": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceConfidenceType": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceLow": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceLowDirection": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceHigh": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceHighDirection": {
+                                "type": "string"
+                              },
+                              "absoluteDifferenceDirectionType": {
+                                "type": "string"
+                              },
+                              "shadow_PARENT_ID_FOR_MERGING": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "qualityInconsistencyComment": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "interventionTotalParticipants": {
+                                "type": "number"
+                              },
+                              "qualityInconsistencyIssues": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": [
+                                        "integer",
+                                        "number"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "scaleHigh": {
                                 "type": "string"
                               }
                             }
                           }
                         },
-                        "picoCodes": {
-                          "type": "array"
-                        }
-                      }
-                    }
-                  },
-                  "references": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "referenceId": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "referenceNumber": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "authors": {
+                        "nonPoolableOutcomes": {
                           "type": "array",
                           "items": {
                             "type": "object",
                             "properties": {
-                              "id": {
+                              "outcomeId": {
                                 "type": [
                                   "integer",
                                   "number"
                                 ]
                               },
-                              "firstName": {
+                              "picoId": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "sectionId": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "guidelineId": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "status": {
                                 "type": "string"
                               },
-                              "lastName": {
+                              "isHidden": {
+                                "type": "boolean"
+                              },
+                              "sortOrder": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "shortCode": {
                                 "type": "string"
                               },
-                              "formattedName": {
+                              "outcome": {
                                 "type": "string"
+                              },
+                              "shortName": {
+                                "type": "string"
+                              },
+                              "importanceLevel": {
+                                "type": "string"
+                              },
+                              "interventionStudies": {
+                                "type": "string"
+                              },
+                              "interventionTotalParticipants": {
+                                "type": "number"
+                              },
+                              "interventionReferenceType": {
+                                "type": "string"
+                              },
+                              "interventionStudyType": {
+                                "type": "string"
+                              },
+                              "comparatorStudyType": {
+                                "type": "string"
+                              },
+                              "comparatorReferenceType": {
+                                "type": "string"
+                              },
+                              "extraReferences": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "referenceId": {
+                                      "type": [
+                                        "integer",
+                                        "number"
+                                      ]
+                                    },
+                                    "referenceNumber": {
+                                      "type": [
+                                        "integer",
+                                        "number"
+                                      ]
+                                    },
+                                    "authors": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "id": {
+                                            "type": [
+                                              "integer",
+                                              "number"
+                                            ]
+                                          },
+                                          "firstName": {
+                                            "type": "string"
+                                          },
+                                          "lastName": {
+                                            "type": "string"
+                                          },
+                                          "formattedName": {
+                                            "type": "string"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "titleText": {
+                                      "type": "string"
+                                    },
+                                    "url": {
+                                      "type": "string"
+                                    },
+                                    "doi": {
+                                      "type": "string"
+                                    },
+                                    "pmid": {
+                                      "type": "string"
+                                    },
+                                    "journal": {
+                                      "type": "string"
+                                    },
+                                    "year": {
+                                      "type": "string"
+                                    },
+                                    "volume": {
+                                      "type": "string"
+                                    },
+                                    "issue": {
+                                      "type": "string"
+                                    },
+                                    "pageStart": {
+                                      "type": "string"
+                                    },
+                                    "pageEnd": {
+                                      "type": "string"
+                                    },
+                                    "creationType": {
+                                      "type": "string"
+                                    },
+                                    "comment": {
+                                      "type": "string"
+                                    },
+                                    "attachedFiles": {
+                                      "type": "array"
+                                    }
+                                  }
+                                }
+                              },
+                              "qualityInterventionStudyType": {
+                                "type": "string"
+                              },
+                              "qualityOfEvidenceLevel": {
+                                "type": "string"
+                              },
+                              "qualityOfEvidenceComment": {
+                                "type": "string"
+                              },
+                              "qualityRiskOfBias": {
+                                "type": "string"
+                              },
+                              "qualityRiskOfBiasComment": {
+                                "type": "string"
+                              },
+                              "qualityInconsistency": {
+                                "type": "string"
+                              },
+                              "qualityIndirectness": {
+                                "type": "string"
+                              },
+                              "qualityIndirectnessComment": {
+                                "type": "string"
+                              },
+                              "qualityImprecision": {
+                                "type": "string"
+                              },
+                              "qualityImprecisionComment": {
+                                "type": "string"
+                              },
+                              "qualityPublicationBias": {
+                                "type": "string"
+                              },
+                              "qualityUpgrade": {
+                                "type": "string"
+                              },
+                              "plainSummaryComment": {
+                                "type": "string"
+                              },
+                              "directionOfEffectType": {
+                                "type": "string"
+                              },
+                              "estimatesDescription": {
+                                "type": "string"
+                              },
+                              "shadow_PARENT_ID_FOR_MERGING": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
                               }
                             }
                           }
                         },
-                        "titleText": {
-                          "type": "string"
-                        },
-                        "url": {
-                          "type": "string"
-                        },
-                        "doi": {
-                          "type": "string"
-                        },
-                        "pmid": {
-                          "type": "string"
-                        },
-                        "journal": {
-                          "type": "string"
-                        },
-                        "year": {
-                          "type": "string"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "string"
-                        },
-                        "pageStart": {
-                          "type": "string"
-                        },
-                        "pageEnd": {
-                          "type": "string"
-                        },
-                        "creationType": {
-                          "type": "string"
-                        },
-                        "guidelineId": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "shortName": {
-                          "type": "string"
-                        },
-                        "order": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "referenceType": {
-                          "type": "string"
-                        },
-                        "studyType": {
-                          "type": "string"
-                        },
-                        "attachedFiles": {
+                        "practicalIssues": {
                           "type": "array"
-                        },
-                        "abstractText": {
-                          "type": "string"
-                        },
-                        "comments": {
-                          "type": "string"
-                        },
-                        "selected": {
-                          "type": "boolean"
-                        },
-                        "usageCount": {
-                          "type": "null"
-                        },
-                        "referencePicos": {
-                          "type": "array"
-                        },
-                        "files": {
-                          "type": "array"
-                        },
-                        "results": {
-                          "type": "string"
                         }
                       }
-                    }
-                  },
-                  "files": {
-                    "type": "array"
-                  },
-                  "images": {
-                    "type": "array"
-                  },
-                  "referenceIds": {
-                    "type": "array",
-                    "items": {
+                    },
+                    "guidelineId": {
                       "type": [
                         "integer",
                         "number"
                       ]
+                    },
+                    "references": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "referenceId": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "referenceNumber": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "authors": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": [
+                                    "integer",
+                                    "number"
+                                  ]
+                                },
+                                "firstName": {
+                                  "type": "string"
+                                },
+                                "lastName": {
+                                  "type": "string"
+                                },
+                                "formattedName": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "titleText": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "doi": {
+                            "type": "string"
+                          },
+                          "pmid": {
+                            "type": "string"
+                          },
+                          "journal": {
+                            "type": "string"
+                          },
+                          "year": {
+                            "type": "string"
+                          },
+                          "volume": {
+                            "type": "string"
+                          },
+                          "issue": {
+                            "type": "string"
+                          },
+                          "pageStart": {
+                            "type": "string"
+                          },
+                          "pageEnd": {
+                            "type": "string"
+                          },
+                          "creationType": {
+                            "type": "string"
+                          },
+                          "guidelineId": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "shortName": {
+                            "type": "string"
+                          },
+                          "order": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "referenceType": {
+                            "type": "string"
+                          },
+                          "studyType": {
+                            "type": "string"
+                          },
+                          "attachedFiles": {
+                            "type": "array"
+                          },
+                          "abstractText": {
+                            "type": "string"
+                          },
+                          "comments": {
+                            "type": "string"
+                          },
+                          "selected": {
+                            "type": "boolean"
+                          },
+                          "usageCount": {
+                            "type": "null"
+                          },
+                          "referencePicos": {
+                            "type": "array"
+                          },
+                          "files": {
+                            "type": "array"
+                          },
+                          "results": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "picoCodes": {
+                      "type": "array"
                     }
                   }
                 }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "referenceNumber": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "authors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "firstName": {
+                            "type": "string"
+                          },
+                          "lastName": {
+                            "type": "string"
+                          },
+                          "formattedName": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "titleText": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "doi": {
+                      "type": "string"
+                    },
+                    "pmid": {
+                      "type": "string"
+                    },
+                    "journal": {
+                      "type": "string"
+                    },
+                    "year": {
+                      "type": "string"
+                    },
+                    "volume": {
+                      "type": "string"
+                    },
+                    "issue": {
+                      "type": "string"
+                    },
+                    "pageStart": {
+                      "type": "string"
+                    },
+                    "pageEnd": {
+                      "type": "string"
+                    },
+                    "creationType": {
+                      "type": "string"
+                    },
+                    "guidelineId": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "shortName": {
+                      "type": "string"
+                    },
+                    "order": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "referenceType": {
+                      "type": "string"
+                    },
+                    "studyType": {
+                      "type": "string"
+                    },
+                    "attachedFiles": {
+                      "type": "array"
+                    },
+                    "abstractText": {
+                      "type": "string"
+                    },
+                    "comments": {
+                      "type": "string"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    },
+                    "usageCount": {
+                      "type": "null"
+                    },
+                    "referencePicos": {
+                      "type": "array"
+                    },
+                    "files": {
+                      "type": "array"
+                    },
+                    "results": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "files": {
+                "type": "array"
+              },
+              "images": {
+                "type": "array"
+              },
+              "referenceIds": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -2198,106 +2147,88 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "guidelineId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "sectionId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "parentId": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "order": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "sectionType": {
+                "type": "string"
+              },
+              "shortCode": {
+                "type": "string"
+              },
+              "sectionLabel": {
+                "type": "string"
+              },
+              "sectionNumber": {
+                "type": "string"
+              },
+              "isNumbered": {
+                "type": "boolean"
+              },
+              "heading": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "counts": {
                 "type": "object",
                 "properties": {
-                  "guidelineId": {
+                  "picoCount": {
                     "type": [
                       "integer",
                       "number"
                     ]
                   },
-                  "sectionId": {
+                  "recommendationCount": {
                     "type": [
                       "integer",
                       "number"
                     ]
-                  },
-                  "parentId": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "order": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "sectionType": {
-                    "type": "string"
-                  },
-                  "shortCode": {
-                    "type": "string"
-                  },
-                  "sectionLabel": {
-                    "type": "string"
-                  },
-                  "sectionNumber": {
-                    "type": "string"
-                  },
-                  "isNumbered": {
-                    "type": "boolean"
-                  },
-                  "heading": {
-                    "type": "string"
-                  },
-                  "text": {
-                    "type": "string"
-                  },
-                  "counts": {
-                    "type": "object",
-                    "properties": {
-                      "picoCount": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "recommendationCount": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      }
-                    }
-                  },
-                  "hasUncommittedChanges": {
-                    "type": "boolean"
                   }
                 }
+              },
+              "hasUncommittedChanges": {
+                "type": "boolean"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -2359,222 +2290,174 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "meta": {
               "type": "object",
               "properties": {
-                "meta": {
-                  "type": "object",
-                  "properties": {
-                    "totalResults": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "from": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "originalQuery": {
-                      "type": "string"
-                    }
-                  }
+                "totalResults": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "website": {
-                        "type": "string"
-                      },
-                      "body": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "toolTypes": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "key": {
-                              "type": "string"
-                            },
-                            "label": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "toolSubtypes": {
-                        "type": "null"
-                      },
-                      "researchAreas": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "key": {
-                              "type": "string"
-                            },
-                            "label": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "researchTypes": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "key": {
-                              "type": "string"
-                            },
-                            "label": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "resourceAccess": {
-                        "type": "object",
-                        "properties": {
-                          "type": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
-                          },
-                          "notes": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
-                          }
-                        }
-                      },
-                      "doCs": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "key": {
-                              "type": "string"
-                            },
-                            "label": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "poCs": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "object",
-                              "properties": {
-                                "prefix": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
-                                },
-                                "firstName": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
-                                },
-                                "middleName": {
-                                  "type": "null"
-                                },
-                                "lastName": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
-                                },
-                                "suffix": {
-                                  "type": "null"
-                                }
-                              }
-                            },
-                            "title": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
-                            },
-                            "phone": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
-                            },
-                            "email": {
-                              "type": "string"
-                            }
-                          }
+                "from": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "originalQuery": {
+                  "type": "string"
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "website": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "toolTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
                         }
                       }
                     }
-                  }
-                },
-                "facets": {
-                  "type": "array",
-                  "items": {
+                  },
+                  "toolSubtypes": {
+                    "type": "null"
+                  },
+                  "researchAreas": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "researchTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "resourceAccess": {
                     "type": "object",
                     "properties": {
-                      "title": {
-                        "type": "string"
+                      "type": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
                       },
-                      "param": {
-                        "type": "string"
-                      },
-                      "items": {
-                        "type": "array",
-                        "items": {
+                      "notes": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  },
+                  "doCs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "poCs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
                           "type": "object",
                           "properties": {
-                            "key": {
-                              "type": "string"
-                            },
-                            "label": {
-                              "type": "string"
-                            },
-                            "count": {
+                            "prefix": {
                               "type": [
-                                "integer",
-                                "number"
+                                "null",
+                                "string"
                               ]
                             },
-                            "selected": {
-                              "type": "boolean"
+                            "firstName": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "middleName": {
+                              "type": "null"
+                            },
+                            "lastName": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "suffix": {
+                              "type": "null"
                             }
                           }
+                        },
+                        "title": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "phone": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "email": {
+                          "type": "string"
                         }
                       }
                     }
@@ -2582,25 +2465,58 @@
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "facets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "param": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        },
+                        "count": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "selected": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "meta"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -2639,100 +2555,85 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "aliases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
             },
-            "data": {
+            "definition": {
               "type": "object",
               "properties": {
-                "aliases": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "definition": {
-                  "type": "object",
-                  "properties": {
-                    "html": {
-                      "type": "string"
-                    },
-                    "text": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "drugInfoSummaryLink": {
-                  "type": "object",
-                  "properties": {
-                    "uri": {
-                      "type": "string"
-                    },
-                    "text": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "nciConceptId": {
+                "html": {
                   "type": "string"
                 },
-                "nciConceptName": {
-                  "type": "string"
-                },
-                "termId": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "name": {
-                  "type": "string"
-                },
-                "firstLetter": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "termNameType": {
-                  "type": "string"
-                },
-                "prettyUrlName": {
+                "text": {
                   "type": "string"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "drugInfoSummaryLink": {
+              "type": "object",
+              "properties": {
+                "uri": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            },
+            "nciConceptId": {
+              "type": "string"
+            },
+            "nciConceptName": {
+              "type": "string"
+            },
+            "termId": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "firstLetter": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "termNameType": {
+              "type": "string"
+            },
+            "prettyUrlName": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "aliases"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -2784,89 +2685,74 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "meta": {
               "type": "object",
               "properties": {
-                "meta": {
-                  "type": "object",
-                  "properties": {
-                    "totalResults": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "from": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    }
-                  }
+                "totalResults": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "preferredName": {
-                        "type": "string"
-                      },
-                      "termId": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "firstLetter": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "termNameType": {
-                        "type": "string"
-                      },
-                      "prettyUrlName": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "links": {
-                  "type": "null"
+                "from": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "preferredName": {
+                    "type": "string"
+                  },
+                  "termId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "firstLetter": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "termNameType": {
+                    "type": "string"
+                  },
+                  "prettyUrlName": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "links": {
+              "type": "null"
             }
-          }
+          },
+          "required": [
+            "meta"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -2918,107 +2804,92 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
             "data": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "string"
-                      },
-                      "codingSystem": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "metadata": {
-                  "type": "object",
-                  "properties": {
-                    "db_published_date": {
-                      "type": "string"
-                    },
-                    "elements_per_page": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "current_url": {
-                      "type": "string"
-                    },
-                    "next_page_url": {
-                      "type": "string"
-                    },
-                    "total_elements": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "total_pages": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "current_page": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "previous_page": {
-                      "type": "string"
-                    },
-                    "previous_page_url": {
-                      "type": "string"
-                    },
-                    "next_page": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    }
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "codingSystem": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
                   }
                 }
               }
             },
             "metadata": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "db_published_date": {
+                  "type": "string"
+                },
+                "elements_per_page": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "current_url": {
+                  "type": "string"
+                },
+                "next_page_url": {
+                  "type": "string"
+                },
+                "total_elements": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "total_pages": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "current_page": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "previous_page": {
+                  "type": "string"
+                },
+                "previous_page_url": {
+                  "type": "string"
+                },
+                "next_page": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

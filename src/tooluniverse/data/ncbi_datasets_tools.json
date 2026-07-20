@@ -762,39 +762,23 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Assembly metadata",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "object",
-                            "description": "Curated assembly fields (accession, organism, level, stats)"
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "object",
+              "description": "Curated assembly fields (accession, organism, level, stats)"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -846,43 +830,26 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "List of assemblies",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            },
-                            "description": "Assembly summaries"
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "description": "Includes total_available count"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Assembly summaries"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -916,42 +883,26 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Per-sequence reports",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            },
-                            "description": "Sequence records"
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Sequence records"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

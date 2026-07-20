@@ -18,42 +18,61 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "doi": {"type": "string"},
-                "title": {"type": "string"},
-                "is_retracted": {"type": "boolean"},
-                "has_expression_of_concern": {"type": "boolean"},
-                "has_correction": {"type": "boolean"},
-                "notices": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {"type": "string"},
-                      "label": {"type": "string"},
-                      "notice_doi": {"type": "string"},
-                      "date": {"type": "string"},
-                      "source": {"type": "string"}
-                    }
+            "doi": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "is_retracted": {
+              "type": "boolean"
+            },
+            "has_expression_of_concern": {
+              "type": "boolean"
+            },
+            "has_correction": {
+              "type": "boolean"
+            },
+            "notices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "notice_doi": {
+                    "type": "string"
+                  },
+                  "date": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
                   }
                 }
-              },
-              "required": ["doi", "is_retracted", "notices"]
-            },
-            "metadata": {"type": "object"}
+              }
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "doi",
+            "is_retracted",
+            "notices"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

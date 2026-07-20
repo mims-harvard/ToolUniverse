@@ -507,105 +507,90 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "group_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "group_id": {
-                  "type": "string"
-                },
-                "sequences": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "sequence": {
-                        "type": "string"
-                      },
-                      "length": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "pub_gene_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "og_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "organism_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "organism_taxid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "pub_og_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "sequences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "sequence": {
+                    "type": "string"
+                  },
+                  "length": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "pub_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "og_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "organism_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "organism_taxid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pub_og_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
-                },
-                "total_sequences": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "fasta": {
-                  "type": "string"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total_sequences": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "fasta": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "group_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

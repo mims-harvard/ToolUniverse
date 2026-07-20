@@ -491,40 +491,59 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "source": {"type": "string"},
-            "endpoint": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene": {"type": "string"},
-                "project_count": {"type": "integer"},
-                "total_mutated_cases": {"type": "integer"},
-                "total_cases": {"type": "integer"},
-                "projects": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "project_id": {"type": ["string", "null"]},
-                      "mutated_case_count": {"type": "integer"},
-                      "total_case_count": {"type": "integer"},
-                      "frequency": {"type": ["number", "null"]}
-                    }
+            "gene": {
+              "type": "string"
+            },
+            "project_count": {
+              "type": "integer"
+            },
+            "total_mutated_cases": {
+              "type": "integer"
+            },
+            "total_cases": {
+              "type": "integer"
+            },
+            "projects": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "project_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mutated_case_count": {
+                    "type": "integer"
+                  },
+                  "total_case_count": {
+                    "type": "integer"
+                  },
+                  "frequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

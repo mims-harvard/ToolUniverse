@@ -414,109 +414,58 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "Name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "path": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "size": {
-                    "type": [
-                      "integer",
-                      "number",
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "section": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "annotations": {
-                    "type": "object"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                },
-                "records_total": {
-                  "type": [
-                    "integer",
-                    "number",
-                    "null"
-                  ]
-                },
-                "returned": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "offset": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "limit": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "size": {
+                "type": [
+                  "integer",
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "section": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "annotations": {
+                "type": "object"
               }
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

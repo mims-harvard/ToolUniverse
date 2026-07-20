@@ -237,48 +237,26 @@
       }
     ],
     "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "success"
-                            ]
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "error"
-                            ]
-                        },
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "error"
-                    ]
-                }
-            ]
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
+    }
   },
  {
   "name": "GtoPdb_search_diseases",
@@ -419,132 +397,113 @@
    }
   ],
   "return_schema": {
-   "oneOf": [
-    {
-     "type": "object",
-     "properties": {
-      "status": {
-       "type": "string",
-       "enum": [
-        "success"
-       ]
-      },
-      "data": {
-       "type": "object",
-       "properties": {
-        "ligandId": {
-         "type": [
-          "integer",
-          "null"
-         ]
-        },
-        "ligandName": {
-         "type": [
-          "string",
-          "null"
-         ]
-        },
-        "iupacName": {
-         "type": [
-          "string",
-          "null"
-         ]
-        },
-        "smiles": {
-         "type": [
-          "string",
-          "null"
-         ]
-        },
-        "inchi": {
-         "type": [
-          "string",
-          "null"
-         ]
-        },
-        "inchiKey": {
-         "type": [
-          "string",
-          "null"
-         ]
-        },
-        "molecularProperties": {
-         "type": [
-          "object",
-          "null"
-         ],
-         "properties": {
-          "molecularWeight": {
-           "type": [
-            "number",
-            "null"
-           ]
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "ligandId": {
+            "type": [
+              "integer",
+              "null"
+            ]
           },
-          "logP": {
-           "type": [
-            "number",
-            "null"
-           ]
+          "ligandName": {
+            "type": [
+              "string",
+              "null"
+            ]
           },
-          "hydrogenBondDonors": {
-           "type": [
-            "integer",
-            "null"
-           ]
+          "iupacName": {
+            "type": [
+              "string",
+              "null"
+            ]
           },
-          "hydrogenBondAcceptors": {
-           "type": [
-            "integer",
-            "null"
-           ]
+          "smiles": {
+            "type": [
+              "string",
+              "null"
+            ]
           },
-          "rotatableBonds": {
-           "type": [
-            "integer",
-            "null"
-           ]
+          "inchi": {
+            "type": [
+              "string",
+              "null"
+            ]
           },
-          "topologicalPolarSurfaceArea": {
-           "type": [
-            "number",
-            "null"
-           ]
+          "inchiKey": {
+            "type": [
+              "string",
+              "null"
+            ]
           },
-          "lipinskisRuleOfFive": {
-           "type": [
-            "integer",
-            "null"
-           ]
+          "molecularProperties": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "molecularWeight": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "logP": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "hydrogenBondDonors": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "hydrogenBondAcceptors": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "rotatableBonds": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "topologicalPolarSurfaceArea": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "lipinskisRuleOfFive": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            }
           }
-         }
-        }
-       }
-      }
-     },
-     "required": [
-      "status",
-      "data"
-     ]
-    },
-    {
-     "type": "object",
-     "properties": {
-      "status": {
-       "type": "string",
-       "enum": [
-        "error"
-       ]
+        },
+        "required": [
+          "ligandId"
+        ]
       },
-      "error": {
-       "type": "string"
+      {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ]
       }
-     },
-     "required": [
-      "status",
-      "error"
-     ]
-    }
-   ]
+    ]
   }
  },
  {
@@ -584,74 +543,46 @@
    }
   ],
   "return_schema": {
-   "oneOf": [
-    {
-     "type": "object",
-     "properties": {
-      "status": {
-       "type": "string",
-       "enum": [
-        "success"
-       ]
-      },
-      "data": {
-       "type": "object",
-       "properties": {
-        "diseaseId": {
-         "type": [
-          "integer",
-          "null"
-         ]
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "diseaseId": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "diseaseTargets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "diseaseLigands": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
         },
-        "diseaseTargets": {
-         "type": "array",
-         "items": {
-          "type": "object"
-         }
+        "required": [
+          "diseaseTargets",
+          "diseaseLigands"
+        ]
+      },
+      {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
         },
-        "diseaseLigands": {
-         "type": "array",
-         "items": {
-          "type": "object"
-         }
-        }
-       },
-       "required": [
-        "diseaseTargets",
-        "diseaseLigands"
-       ]
-      },
-      "target_count": {
-       "type": "integer"
-      },
-      "ligand_count": {
-       "type": "integer"
+        "required": [
+          "error"
+        ]
       }
-     },
-     "required": [
-      "status",
-      "data"
-     ]
-    },
-    {
-     "type": "object",
-     "properties": {
-      "status": {
-       "type": "string",
-       "enum": [
-        "error"
-       ]
-      },
-      "error": {
-       "type": "string"
-      }
-     },
-     "required": [
-      "status",
-      "error"
-     ]
-    }
-   ]
+    ]
   }
  }
 ]

@@ -8,11 +8,23 @@
         "fields": {"timeout": 30},
         "type": "AlphaFillTransplantsTool",
         "test_examples": [{"uniprot": "P00520"}, {"uniprot": "P24941"}, {"uniprot": "P00533"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "AlphaFill transplanted ligands", "properties": {
-                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

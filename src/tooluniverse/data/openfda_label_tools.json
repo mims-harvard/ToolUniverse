@@ -45,119 +45,94 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array",
-              "description": "List of FDA drug label summaries with clinical sections",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "brand_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "generic_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "manufacturer": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "route": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "pharm_class": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "boxed_warning": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "indications_and_usage": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "dosage_and_administration": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "contraindications": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "warnings_and_precautions": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "drug_interactions": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "spl_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
+          "type": "array",
+          "description": "List of FDA drug label summaries with clinical sections",
+          "items": {
+            "type": "object",
+            "properties": {
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "generic_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "manufacturer": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "route": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pharm_class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "boxed_warning": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "indications_and_usage": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "dosage_and_administration": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "contraindications": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "warnings_and_precautions": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "drug_interactions": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "spl_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -199,151 +174,129 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Complete FDA drug label with all clinical sections",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
+            "brand_name": {
+              "type": [
+                "string",
+                "null"
               ]
             },
-            "data": {
-              "type": "object",
-              "description": "Complete FDA drug label with all clinical sections",
-              "properties": {
-                "brand_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "generic_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "manufacturer": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "route": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "pharm_class": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "rxcui": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                },
-                "boxed_warning": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "indications_and_usage": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "dosage_and_administration": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "dosage_forms_and_strengths": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "contraindications": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "warnings_and_precautions": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "adverse_reactions": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "drug_interactions": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "use_in_specific_populations": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "clinical_pharmacology": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "mechanism_of_action": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "spl_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
+            "generic_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "metadata": {
-              "type": "object"
+            "manufacturer": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "route": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pharm_class": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rxcui": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "boxed_warning": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "indications_and_usage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dosage_and_administration": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dosage_forms_and_strengths": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "contraindications": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "warnings_and_precautions": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "adverse_reactions": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "drug_interactions": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "use_in_specific_populations": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "clinical_pharmacology": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mechanism_of_action": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "spl_id": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "required": [
-            "status",
-            "data"
+            "brand_name"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -380,53 +333,28 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array",
-              "description": "List of FDA pharmacological drug classes with product counts",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "drug_class": {
-                    "type": "string"
-                  },
-                  "count": {
-                    "type": "integer"
-                  }
-                }
+          "type": "array",
+          "description": "List of FDA pharmacological drug classes with product counts",
+          "items": {
+            "type": "object",
+            "properties": {
+              "drug_class": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

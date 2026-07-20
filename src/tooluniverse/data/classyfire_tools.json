@@ -12,24 +12,79 @@
             {"inchikey": "RYYVLZVUVIJVGH-UHFFFAOYSA-N"},
             {"inchikey": "ATUOYWHBWRKTHZ-UHFFFAOYSA-N"}
         ],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "ChemOnt classification", "properties": {
-                "status": {"type": "string"},
-                "data": {"type": "object", "properties": {
-                    "inchikey": {"type": "string"},
-                    "classified": {"type": "boolean"},
-                    "kingdom": {"type": ["string", "null"]},
-                    "superclass": {"type": ["string", "null"]},
-                    "class": {"type": ["string", "null"]},
-                    "subclass": {"type": ["string", "null"]},
-                    "direct_parent": {"type": ["string", "null"]},
-                    "molecular_framework": {"type": ["string", "null"]},
-                    "substituents": {"type": "array"},
-                    "description": {"type": ["string", "null"]}
-                }},
-                "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "inchikey": {
+                  "type": "string"
+                },
+                "classified": {
+                  "type": "boolean"
+                },
+                "kingdom": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "superclass": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "class": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "subclass": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "direct_parent": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "molecular_framework": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "substituents": {
+                  "type": "array"
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "inchikey"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

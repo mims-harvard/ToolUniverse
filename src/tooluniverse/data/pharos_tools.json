@@ -242,64 +242,96 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": ["object", "null"],
-                            "properties": {
-                                "sym": {"type": "string"},
-                                "tdl": {"type": "string"},
-                                "fam": {"type": ["string", "null"]},
-                                "ligandCounts": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "name": {"type": "string"},
-                                            "value": {"type": "integer"}
-                                        }
-                                    }
-                                },
-                                "ligands": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "name": {"type": "string"},
-                                            "isdrug": {"type": "boolean"},
-                                            "synonyms": {"type": "array"},
-                                            "activities": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "type": {"type": ["string", "null"]},
-                                                        "moa": {"type": ["string", "null"]},
-                                                        "value": {"type": ["number", "null"]}
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "message": {"type": "string"}
-                    },
-                    "required": ["status"]
+          "oneOf": [
+            {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "sym": {
+                  "type": "string"
                 },
-                {
+                "tdl": {
+                  "type": "string"
+                },
+                "fam": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ligandCounts": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "ligands": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "isdrug": {
+                        "type": "boolean"
+                      },
+                      "synonyms": {
+                        "type": "array"
+                      },
+                      "activities": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "moa": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "value": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
-            ]
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         },
         "label": ["Pharos", "Ligands", "Bioactivity", "IDG"],
         "metadata": {
@@ -330,52 +362,85 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": ["object", "null"],
-                            "properties": {
-                                "name": {"type": "string"},
-                                "isdrug": {"type": "boolean"},
-                                "smiles": {"type": ["string", "null"]},
-                                "targetCount": {"type": "integer"},
-                                "activities": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "target": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "sym": {"type": "string"},
-                                                    "tdl": {"type": "string"},
-                                                    "fam": {"type": ["string", "null"]}
-                                                }
-                                            },
-                                            "type": {"type": ["string", "null"]},
-                                            "value": {"type": ["number", "null"]},
-                                            "moa": {"type": ["string", "null"]}
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "message": {"type": "string"}
-                    },
-                    "required": ["status"]
+          "oneOf": [
+            {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
                 },
-                {
+                "isdrug": {
+                  "type": "boolean"
+                },
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "targetCount": {
+                  "type": "integer"
+                },
+                "activities": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
+                      "target": {
+                        "type": "object",
+                        "properties": {
+                          "sym": {
+                            "type": "string"
+                          },
+                          "tdl": {
+                            "type": "string"
+                          },
+                          "fam": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "moa": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
                 }
-            ]
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         },
         "label": ["Pharos", "Ligand", "Polypharmacology", "IDG"],
         "metadata": {
@@ -409,42 +474,56 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": ["object", "null"],
-                            "properties": {
-                                "sym": {"type": "string"},
-                                "count": {"type": "integer"},
-                                "gtex": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "tissue": {"type": "string"},
-                                            "tpm": {"type": ["number", "null"]},
-                                            "gender": {"type": ["string", "null"]}
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "message": {"type": "string"}
-                    },
-                    "required": ["status"]
+          "oneOf": [
+            {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "sym": {
+                  "type": "string"
                 },
-                {
+                "count": {
+                  "type": "integer"
+                },
+                "gtex": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
+                      "tissue": {
+                        "type": "string"
+                      },
+                      "tpm": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "gender": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
                 }
-            ]
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         },
         "label": ["Pharos", "Expression", "GTEx", "IDG"],
         "metadata": {

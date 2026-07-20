@@ -19,19 +19,42 @@
             {"refseq_id": "NM_000059"}
         ],
         "return_schema": {
-            "oneOf": [
-                {"type": "object", "description": "MANE transcript pairings", "properties": {
-                    "status": {"type": "string"},
-                    "data": {"type": "array", "items": {"type": "object", "properties": {
-                        "gene": {"type": "string"},
-                        "mane_type": {"type": "string", "description": "MANE SELECT or MANE PLUS CLINICAL"},
-                        "ensembl_transcript": {"type": "string", "description": "Versioned ENST id"},
-                        "refseq_transcript": {"type": "string", "description": "Versioned RefSeq NM id"}
-                    }}},
-                    "metadata": {"type": "object"}
-                }, "required": ["status", "data"]},
-                {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-            ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene": {
+                    "type": "string"
+                  },
+                  "mane_type": {
+                    "type": "string",
+                    "description": "MANE SELECT or MANE PLUS CLINICAL"
+                  },
+                  "ensembl_transcript": {
+                    "type": "string",
+                    "description": "Versioned ENST id"
+                  },
+                  "refseq_transcript": {
+                    "type": "string",
+                    "description": "Versioned RefSeq NM id"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -52,14 +75,25 @@
             {"stable_id": "ENST00000003084"}
         ],
         "return_schema": {
-            "oneOf": [
-                {"type": "object", "description": "Transcript archive records", "properties": {
-                    "status": {"type": "string"},
-                    "data": {"type": "array", "items": {"type": "object"}},
-                    "metadata": {"type": "object"}
-                }, "required": ["status", "data"]},
-                {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-            ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

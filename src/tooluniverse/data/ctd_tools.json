@@ -30,146 +30,93 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "source_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the subject node (e.g., CHEBI:15365)"
-                  },
-                  "source_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the subject"
-                  },
-                  "target_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the object node (e.g., NCBIGene:7076)"
-                  },
-                  "target_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the object"
-                  },
-                  "predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "biolink predicate (e.g., biolink:affects)"
-                  },
-                  "qualified_predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Causal flavour of the predicate (e.g., biolink:causes)"
-                  },
-                  "object_direction_qualifier": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Direction of effect on the object (e.g., increased, decreased)"
-                  },
-                  "knowledge_level": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "How the edge was obtained (e.g., knowledge_assertion)"
-                  },
-                  "agent_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Who created the edge (e.g., manual_agent)"
-                  },
-                  "primary_knowledge_source": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "InfoRes id of the source database (e.g., infores:ctd)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "backend": {
-                  "type": "string"
-                },
-                "data_as_of": {
-                  "type": "string"
-                },
-                "input_terms": {
-                  "type": "string"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "canonical_curie": {
-                  "type": "string"
-                },
-                "source_category": {
-                  "type": "string"
-                },
-                "target_category": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
-            },
-            "suggestion": {
-              "type": "string"
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -205,146 +152,93 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "source_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the subject node (e.g., CHEBI:15365)"
-                  },
-                  "source_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the subject"
-                  },
-                  "target_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the object node (e.g., NCBIGene:7076)"
-                  },
-                  "target_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the object"
-                  },
-                  "predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "biolink predicate (e.g., biolink:affects)"
-                  },
-                  "qualified_predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Causal flavour of the predicate (e.g., biolink:causes)"
-                  },
-                  "object_direction_qualifier": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Direction of effect on the object (e.g., increased, decreased)"
-                  },
-                  "knowledge_level": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "How the edge was obtained (e.g., knowledge_assertion)"
-                  },
-                  "agent_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Who created the edge (e.g., manual_agent)"
-                  },
-                  "primary_knowledge_source": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "InfoRes id of the source database (e.g., infores:ctd)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "backend": {
-                  "type": "string"
-                },
-                "data_as_of": {
-                  "type": "string"
-                },
-                "input_terms": {
-                  "type": "string"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "canonical_curie": {
-                  "type": "string"
-                },
-                "source_category": {
-                  "type": "string"
-                },
-                "target_category": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
-            },
-            "suggestion": {
-              "type": "string"
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -379,146 +273,93 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "source_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the subject node (e.g., CHEBI:15365)"
-                  },
-                  "source_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the subject"
-                  },
-                  "target_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the object node (e.g., NCBIGene:7076)"
-                  },
-                  "target_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the object"
-                  },
-                  "predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "biolink predicate (e.g., biolink:affects)"
-                  },
-                  "qualified_predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Causal flavour of the predicate (e.g., biolink:causes)"
-                  },
-                  "object_direction_qualifier": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Direction of effect on the object (e.g., increased, decreased)"
-                  },
-                  "knowledge_level": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "How the edge was obtained (e.g., knowledge_assertion)"
-                  },
-                  "agent_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Who created the edge (e.g., manual_agent)"
-                  },
-                  "primary_knowledge_source": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "InfoRes id of the source database (e.g., infores:ctd)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "backend": {
-                  "type": "string"
-                },
-                "data_as_of": {
-                  "type": "string"
-                },
-                "input_terms": {
-                  "type": "string"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "canonical_curie": {
-                  "type": "string"
-                },
-                "source_category": {
-                  "type": "string"
-                },
-                "target_category": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
-            },
-            "suggestion": {
-              "type": "string"
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -554,146 +395,93 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "source_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the subject node (e.g., CHEBI:15365)"
-                  },
-                  "source_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the subject"
-                  },
-                  "target_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the object node (e.g., NCBIGene:7076)"
-                  },
-                  "target_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the object"
-                  },
-                  "predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "biolink predicate (e.g., biolink:affects)"
-                  },
-                  "qualified_predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Causal flavour of the predicate (e.g., biolink:causes)"
-                  },
-                  "object_direction_qualifier": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Direction of effect on the object (e.g., increased, decreased)"
-                  },
-                  "knowledge_level": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "How the edge was obtained (e.g., knowledge_assertion)"
-                  },
-                  "agent_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Who created the edge (e.g., manual_agent)"
-                  },
-                  "primary_knowledge_source": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "InfoRes id of the source database (e.g., infores:ctd)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "backend": {
-                  "type": "string"
-                },
-                "data_as_of": {
-                  "type": "string"
-                },
-                "input_terms": {
-                  "type": "string"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "canonical_curie": {
-                  "type": "string"
-                },
-                "source_category": {
-                  "type": "string"
-                },
-                "target_category": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
-            },
-            "suggestion": {
-              "type": "string"
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -729,146 +517,93 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "source_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the subject node (e.g., CHEBI:15365)"
-                  },
-                  "source_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the subject"
-                  },
-                  "target_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "CURIE of the object node (e.g., NCBIGene:7076)"
-                  },
-                  "target_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable name of the object"
-                  },
-                  "predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "biolink predicate (e.g., biolink:affects)"
-                  },
-                  "qualified_predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Causal flavour of the predicate (e.g., biolink:causes)"
-                  },
-                  "object_direction_qualifier": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Direction of effect on the object (e.g., increased, decreased)"
-                  },
-                  "knowledge_level": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "How the edge was obtained (e.g., knowledge_assertion)"
-                  },
-                  "agent_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Who created the edge (e.g., manual_agent)"
-                  },
-                  "primary_knowledge_source": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "InfoRes id of the source database (e.g., infores:ctd)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "backend": {
-                  "type": "string"
-                },
-                "data_as_of": {
-                  "type": "string"
-                },
-                "input_terms": {
-                  "type": "string"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "canonical_curie": {
-                  "type": "string"
-                },
-                "source_category": {
-                  "type": "string"
-                },
-                "target_category": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
-            },
-            "suggestion": {
-              "type": "string"
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

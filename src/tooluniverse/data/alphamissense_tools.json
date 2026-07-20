@@ -32,41 +32,61 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "uniprot_id": {"type": "string"},
-                                "protein_length": {"type": "integer"},
-                                "scores": {
-                                    "type": "array",
-                                    "description": "Per-residue records, one per position with successful fetch. Each record carries position, uid, aa, resi, benign/ambiguous/pathogenic bin strings (e.g. '6:A,C,D,R,S,V'), benign_all/ambiguous_all/pathogenic_all (covering all 19 substitutions, not just SNV-reachable), and mean/mean_all numeric scores.",
-                                    "items": {"type": "object"}
-                                },
-                                "n_positions_returned": {"type": "integer"},
-                                "n_positions_attempted": {"type": "integer"},
-                                "max_residues_cap": {"type": ["integer", "null"]},
-                                "thresholds": {"type": "object"},
-                                "pdb_download": {"type": "string"}
-                            },
-                            "required": ["uniprot_id", "protein_length", "scores", "n_positions_returned"]
-                        }
-                    },
-                    "required": ["status", "data"]
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "uniprot_id": {
+                  "type": "string"
                 },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
+                "protein_length": {
+                  "type": "integer"
+                },
+                "scores": {
+                  "type": "array",
+                  "description": "Per-residue records, one per position with successful fetch. Each record carries position, uid, aa, resi, benign/ambiguous/pathogenic bin strings (e.g. '6:A,C,D,R,S,V'), benign_all/ambiguous_all/pathogenic_all (covering all 19 substitutions, not just SNV-reachable), and mean/mean_all numeric scores.",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "n_positions_returned": {
+                  "type": "integer"
+                },
+                "n_positions_attempted": {
+                  "type": "integer"
+                },
+                "max_residues_cap": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "thresholds": {
+                  "type": "object"
+                },
+                "pdb_download": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "uniprot_id",
+                "protein_length",
+                "scores",
+                "n_positions_returned"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         },
         "label": ["AlphaMissense", "Protein", "Pathogenicity"],
         "metadata": {

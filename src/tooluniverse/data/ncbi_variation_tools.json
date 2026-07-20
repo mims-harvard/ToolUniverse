@@ -199,38 +199,57 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Per-ancestry ALFA allele frequencies for the variant",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "refsnp_id": {"type": "string"},
-                "build_id": {"type": ["string", "null"]},
-                "positions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "position_key": {"type": "string"},
-                      "reference_allele": {"type": ["string", "null"]},
-                      "studies": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "study": {"type": "string"},
-                            "populations": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "biosample_id": {"type": "string"},
-                                  "population": {"type": "string"},
-                                  "total_alleles": {"type": "integer"},
-                                  "allele_counts": {"type": "object"},
-                                  "allele_frequencies": {"type": "object"}
-                                }
+            "refsnp_id": {
+              "type": "string"
+            },
+            "build_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "positions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "position_key": {
+                    "type": "string"
+                  },
+                  "reference_allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "studies": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "study": {
+                          "type": "string"
+                        },
+                        "populations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "biosample_id": {
+                                "type": "string"
+                              },
+                              "population": {
+                                "type": "string"
+                              },
+                              "total_alleles": {
+                                "type": "integer"
+                              },
+                              "allele_counts": {
+                                "type": "object"
+                              },
+                              "allele_frequencies": {
+                                "type": "object"
                               }
                             }
                           }
@@ -242,15 +261,20 @@
               }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "refsnp_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -279,27 +303,34 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "dbSNP rsIDs co-located with the SPDI variant",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "spdi": {"type": "string"},
-                "rsids": {"type": "array", "items": {"type": "integer"}},
-                "count": {"type": "integer"}
+            "spdi": {
+              "type": "string"
+            },
+            "rsids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
               }
+            },
+            "count": {
+              "type": "integer"
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "spdi"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -341,37 +372,45 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Normalized contextual SPDI(s) for the VCF variant",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "spdis": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "seq_id": {"type": "string"},
-                      "position": {"type": "integer"},
-                      "deleted_sequence": {"type": "string"},
-                      "inserted_sequence": {"type": "string"}
-                    }
+            "spdis": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "seq_id": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "deleted_sequence": {
+                    "type": "string"
+                  },
+                  "inserted_sequence": {
+                    "type": "string"
                   }
-                },
-                "count": {"type": "integer"}
+                }
               }
+            },
+            "count": {
+              "type": "integer"
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "spdis"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

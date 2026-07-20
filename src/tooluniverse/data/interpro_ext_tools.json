@@ -42,84 +42,69 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "domain_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "domain_id": {
-                  "type": "string"
-                },
-                "total_proteins": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "proteins": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "source_database": {
-                        "type": "string"
-                      },
-                      "length": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "source_organism": {
-                        "type": "string"
-                      },
-                      "tax_id": {
-                        "type": "string"
-                      }
-                    }
+            "total_proteins": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "proteins": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "source_database": {
+                    "type": "string"
+                  },
+                  "length": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "source_organism": {
+                    "type": "string"
+                  },
+                  "tax_id": {
+                    "type": "string"
                   }
-                },
-                "page_size": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "reviewed_only": {
-                  "type": "boolean"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "page_size": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "reviewed_only": {
+              "type": "boolean"
             }
-          }
+          },
+          "required": [
+            "domain_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

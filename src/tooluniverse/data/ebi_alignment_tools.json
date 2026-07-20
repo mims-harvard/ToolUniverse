@@ -32,28 +32,45 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "method": {"type": "string"},
-                "num_sequences": {"type": "integer"},
-                "aligned_fasta": {"type": ["string", "null"]},
-                "alignment_clustal": {"type": ["string", "null"]},
-                "guide_tree_newick": {"type": ["string", "null"]}
-              }
+            "method": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "num_sequences": {
+              "type": "integer"
+            },
+            "aligned_fasta": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "alignment_clustal": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "guide_tree_newick": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "method"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -95,26 +112,30 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "newick": {"type": "string"},
-                "num_taxa": {"type": "integer"},
-                "clustering": {"type": "string"}
-              }
+            "newick": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "num_taxa": {
+              "type": "integer"
+            },
+            "clustering": {
+              "type": "string"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "newick"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

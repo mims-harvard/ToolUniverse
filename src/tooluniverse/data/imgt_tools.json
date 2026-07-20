@@ -83,55 +83,44 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "success"
+            "gene_type": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_type": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "fasta": {
-                  "type": "string"
-                },
-                "record_count": {
-                  "type": "integer"
-                },
-                "first_records": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "required": ["gene_type", "fasta", "record_count"]
+            "species": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "query": {
+              "type": "string"
+            },
+            "fasta": {
+              "type": "string"
+            },
+            "record_count": {
+              "type": "integer"
+            },
+            "first_records": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "gene_type",
+            "fasta",
+            "record_count"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

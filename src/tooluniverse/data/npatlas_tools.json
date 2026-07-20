@@ -12,12 +12,27 @@
         "fields": {"timeout": 30},
         "type": "NPAtlasSearchTool",
         "test_examples": [{"name": "penicillin", "limit": 3}, {"formula": "C19H37NO5"}, {"name": "curvularide"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Matching natural products", "properties": {
-                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "NPAtlas_get_compound",
@@ -28,11 +43,23 @@
         "fields": {"timeout": 30},
         "type": "NPAtlasCompoundTool",
         "test_examples": [{"npaid": "NPA000001"}, {"npaid": "NPA019568"}, {"npaid": "NPA020973"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Full compound record", "properties": {
-                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

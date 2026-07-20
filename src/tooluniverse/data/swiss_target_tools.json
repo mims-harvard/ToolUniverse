@@ -154,57 +154,45 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "organisms": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "display_name": {
-                        "type": "string"
-                      },
-                      "common_name": {
-                        "type": "string"
-                      },
-                      "taxonomy_id": {
-                        "type": "integer"
-                      }
-                    }
+            "organisms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  },
+                  "display_name": {
+                    "type": "string"
+                  },
+                  "common_name": {
+                    "type": "string"
+                  },
+                  "taxonomy_id": {
+                    "type": "integer"
                   }
-                },
-                "total": {
-                  "type": "integer"
                 }
               }
+            },
+            "total": {
+              "type": "integer"
             }
-          }
+          },
+          "required": [
+            "organisms"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

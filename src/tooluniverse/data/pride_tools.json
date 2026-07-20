@@ -251,51 +251,34 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful protein-to-projects reverse lookup.",
+          "additionalProperties": true,
           "properties": {
-            "status": {
+            "proteinAccession": {
               "type": "string",
-              "enum": ["success"]
+              "description": "UniProt accession queried (echoed back by PRIDE)"
             },
-            "data": {
-              "type": "object",
-              "additionalProperties": true,
-              "properties": {
-                "proteinAccession": {
-                  "type": "string",
-                  "description": "UniProt accession queried (echoed back by PRIDE)"
-                },
-                "projects": {
-                  "type": "array",
-                  "description": "List of PRIDE project accessions (PXD######) that identified this protein",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+            "projects": {
+              "type": "array",
+              "description": "List of PRIDE project accessions (PXD######) that identified this protein",
+              "items": {
+                "type": "string"
               }
-            },
-            "url": {
-              "type": "string"
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "proteinAccession"
+          ]
         },
         {
           "type": "object",
-          "description": "Error envelope returned on failure.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["error"]
-            },
             "error": {
               "type": "string"
-            },
-            "url": {
-              "type": ["string", "null"]
             }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

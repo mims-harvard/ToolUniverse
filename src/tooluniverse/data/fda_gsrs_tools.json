@@ -35,69 +35,48 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "uuid": {
-                    "type": "string"
-                  },
-                  "unii": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "substanceClass": {
-                    "type": "string"
-                  },
-                  "status": {
-                    "type": "string"
-                  },
-                  "formula": {
-                    "type": "string"
-                  },
-                  "smiles": {
-                    "type": "string"
-                  },
-                  "synonyms": {
-                    "type": "array"
-                  },
-                  "xrefs": {
-                    "type": "object"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uuid": {
+                "type": "string"
+              },
+              "unii": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "substanceClass": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "formula": {
+                "type": "string"
+              },
+              "smiles": {
+                "type": "string"
+              },
+              "synonyms": {
+                "type": "array"
+              },
+              "xrefs": {
+                "type": "object"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -140,61 +119,43 @@
         {
           "type": "object",
           "properties": {
+            "uuid": {
+              "type": "string"
+            },
+            "unii": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "substanceClass": {
+              "type": "string"
+            },
             "status": {
-              "type": "string",
-              "const": "success"
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "uuid": {
-                  "type": "string"
-                },
-                "unii": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "substanceClass": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "structure": {
-                  "type": "object"
-                },
-                "names": {
-                  "type": "array"
-                },
-                "codes": {
-                  "type": "array"
-                }
-              }
-            },
-            "metadata": {
+            "structure": {
               "type": "object"
+            },
+            "names": {
+              "type": "array"
+            },
+            "codes": {
+              "type": "array"
             }
           },
           "required": [
-            "status",
-            "data"
+            "uuid"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -236,60 +197,42 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "success"
+            "id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "smiles": {
-                  "type": "string"
-                },
-                "formula": {
-                  "type": "string"
-                },
-                "molfile": {
-                  "type": "string"
-                },
-                "inchiKey": {
-                  "type": "string"
-                },
-                "mwt": {},
-                "charge": {},
-                "stereoChemistry": {
-                  "type": "string"
-                },
-                "opticalActivity": {
-                  "type": "string"
-                }
-              }
+            "smiles": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "formula": {
+              "type": "string"
+            },
+            "molfile": {
+              "type": "string"
+            },
+            "inchiKey": {
+              "type": "string"
+            },
+            "mwt": {},
+            "charge": {},
+            "stereoChemistry": {
+              "type": "string"
+            },
+            "opticalActivity": {
+              "type": "string"
             }
           },
           "required": [
-            "status",
-            "data"
+            "id"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -349,84 +292,66 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "success"
+            "uuid": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "uuid": {
-                  "type": "string"
-                },
-                "unii": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "substanceClass": {
-                  "type": "string"
-                },
-                "relationships": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string"
-                      },
-                      "relatedSubstanceName": {
-                        "type": "string"
-                      },
-                      "relatedSubstanceUnii": {
-                        "type": "string"
-                      },
-                      "relatedSubstanceClass": {
-                        "type": "string"
-                      },
-                      "interactionType": {
-                        "type": "string"
-                      },
-                      "qualification": {
-                        "type": "string"
-                      },
-                      "amount": {
-                        "type": "string"
-                      },
-                      "comments": {
-                        "type": "string"
-                      }
-                    }
+            "unii": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "substanceClass": {
+              "type": "string"
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "relatedSubstanceName": {
+                    "type": "string"
+                  },
+                  "relatedSubstanceUnii": {
+                    "type": "string"
+                  },
+                  "relatedSubstanceClass": {
+                    "type": "string"
+                  },
+                  "interactionType": {
+                    "type": "string"
+                  },
+                  "qualification": {
+                    "type": "string"
+                  },
+                  "amount": {
+                    "type": "string"
+                  },
+                  "comments": {
+                    "type": "string"
                   }
-                },
-                "references": {
-                  "type": "array"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "references": {
+              "type": "array"
             }
           },
           "required": [
-            "status",
-            "data"
+            "uuid"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

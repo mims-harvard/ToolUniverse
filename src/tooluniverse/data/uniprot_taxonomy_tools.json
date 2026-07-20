@@ -30,95 +30,80 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "taxon_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
+            "scientific_name": {
+              "type": "string"
+            },
+            "common_name": {
+              "type": "string"
+            },
+            "mnemonic": {
+              "type": "string"
+            },
+            "rank": {
+              "type": "string"
+            },
+            "lineage": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": "string"
+                  },
+                  "rank": {
+                    "type": "string"
+                  },
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "statistics": {
               "type": "object",
               "properties": {
-                "taxon_id": {
+                "reviewed_protein_count": {
                   "type": [
                     "integer",
                     "number"
                   ]
                 },
-                "scientific_name": {
-                  "type": "string"
-                },
-                "common_name": {
-                  "type": "string"
-                },
-                "mnemonic": {
-                  "type": "string"
-                },
-                "rank": {
-                  "type": "string"
-                },
-                "lineage": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "taxon_id": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "scientific_name": {
-                        "type": "string"
-                      },
-                      "rank": {
-                        "type": "string"
-                      },
-                      "hidden": {
-                        "type": "boolean"
-                      }
-                    }
-                  }
-                },
-                "statistics": {
-                  "type": "object",
-                  "properties": {
-                    "reviewed_protein_count": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "unreviewed_protein_count": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    }
-                  }
+                "unreviewed_protein_count": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "taxon_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -158,74 +143,56 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "taxon_id": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "scientific_name": {
-                    "type": "string"
-                  },
-                  "common_name": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "mnemonic": {
-                    "type": "string"
-                  },
-                  "rank": {
-                    "type": "string"
-                  },
-                  "reviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "unreviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "taxon_id": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "scientific_name": {
+                "type": "string"
+              },
+              "common_name": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "mnemonic": {
+                "type": "string"
+              },
+              "rank": {
+                "type": "string"
+              },
+              "reviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "unreviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

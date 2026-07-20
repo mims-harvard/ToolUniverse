@@ -24,34 +24,58 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful meltome lookup.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_name": {"type": ["string", "null"]},
-                "uniprot": {"type": ["string", "null"]},
-                "protein_name": {"type": ["string", "null"]},
-                "protein_id": {"type": ["integer", "null"]},
-                "n_melting_curves": {"type": "integer"},
-                "median_apparent_tm_celsius": {"type": ["number", "null"]},
-                "curves": {"type": "array"}
-              }
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "metadata": {"type": "object"}
+            "uniprot": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "protein_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "protein_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "n_melting_curves": {
+              "type": "integer"
+            },
+            "median_apparent_tm_celsius": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "curves": {
+              "type": "array"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "gene_name"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

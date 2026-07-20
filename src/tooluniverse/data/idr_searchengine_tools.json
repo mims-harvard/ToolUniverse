@@ -73,78 +73,67 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "query": {
               "type": "object",
               "properties": {
-                "query": {
-                  "type": "object",
-                  "properties": {
-                    "key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "value": {
-                      "type": "string"
-                    },
-                    "operator": {
-                      "type": "string"
-                    }
-                  }
+                "key": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "image_count": {
-                  "type": "integer"
+                "value": {
+                  "type": "string"
                 },
-                "images": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "image_id": {
-                        "type": [
-                          "integer",
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "image_webclient_url": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "study": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "key_values": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "string"
-                            },
-                            "value": {
-                              "type": "string"
-                            }
-                          }
+                "operator": {
+                  "type": "string"
+                }
+              }
+            },
+            "image_count": {
+              "type": "integer"
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "image_id": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "image_webclient_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "study": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "key_values": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
                         }
                       }
                     }
@@ -152,22 +141,21 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "query"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -237,79 +225,68 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "query": {
               "type": "object",
               "properties": {
-                "query": {
-                  "type": "object",
-                  "properties": {
-                    "key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "value": {
-                      "type": "string"
-                    },
-                    "operator": {
-                      "type": "string"
-                    }
-                  }
+                "key": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "container_count": {
-                  "type": "integer"
+                "value": {
+                  "type": "string"
                 },
-                "containers": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "image_count": {
-                        "type": [
-                          "integer",
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "key_values": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "string"
-                            },
-                            "value": {
-                              "type": "string"
-                            }
-                          }
+                "operator": {
+                  "type": "string"
+                }
+              }
+            },
+            "container_count": {
+              "type": "integer"
+            },
+            "containers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "image_count": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "key_values": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
                         }
                       }
                     }
@@ -317,22 +294,21 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "query"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -364,46 +340,34 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "resource": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "resource": {
-                  "type": "string"
-                },
-                "key_count": {
-                  "type": "integer"
-                },
-                "keys": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+            "key_count": {
+              "type": "integer"
+            },
+            "keys": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             }
-          }
+          },
+          "required": [
+            "resource"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -452,64 +416,52 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "resource": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "resource": {
-                  "type": "string"
-                },
-                "key": {
-                  "type": "string"
-                },
-                "value_count": {
-                  "type": "integer"
-                },
-                "values": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "image_count": {
-                        "type": [
-                          "integer",
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "key": {
+              "type": "string"
+            },
+            "value_count": {
+              "type": "integer"
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "image_count": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             }
-          }
+          },
+          "required": [
+            "resource"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

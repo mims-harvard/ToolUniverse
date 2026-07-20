@@ -73,92 +73,77 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
             "status": {
-              "const": "success"
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "search_type": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "title": {
-                        "type": "string"
-                      },
-                      "url": {
-                        "type": "string"
-                      },
-                      "snippet": {
-                        "type": "string"
-                      },
-                      "rank": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "backend_used": {
-                  "type": "string"
-                },
-                "attempted_backends": {
-                  "type": "array",
-                  "items": {
+            "query": {
+              "type": "string"
+            },
+            "search_type": {
+              "type": "string"
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
                     "type": "string"
-                  }
-                },
-                "provider_errors": {
-                  "type": "object",
-                  "properties": {
-                    "duckduckgo": {
-                      "type": "string"
-                    }
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "snippet": {
+                    "type": "string"
+                  },
+                  "rank": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "backend_used": {
+              "type": "string"
+            },
+            "attempted_backends": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "provider_errors": {
+              "type": "object",
+              "properties": {
+                "duckduckgo": {
+                  "type": "string"
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -238,98 +223,83 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
             "status": {
-              "const": "success"
+              "type": "string"
             },
-            "data": {
+            "query": {
+              "type": "string"
+            },
+            "search_type": {
+              "type": "string"
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "snippet": {
+                    "type": "string"
+                  },
+                  "rank": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  }
+                }
+              }
+            },
+            "backend_used": {
+              "type": "string"
+            },
+            "attempted_backends": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "provider_errors": {
               "type": "object",
               "properties": {
-                "status": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "search_type": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "title": {
-                        "type": "string"
-                      },
-                      "url": {
-                        "type": "string"
-                      },
-                      "snippet": {
-                        "type": "string"
-                      },
-                      "rank": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "backend_used": {
-                  "type": "string"
-                },
-                "attempted_backends": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "provider_errors": {
-                  "type": "object",
-                  "properties": {
-                    "duckduckgo": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "focus": {
-                  "type": "string"
-                },
-                "enhanced_query": {
+                "duckduckgo": {
                   "type": "string"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "focus": {
+              "type": "string"
+            },
+            "enhanced_query": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

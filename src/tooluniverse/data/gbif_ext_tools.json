@@ -408,43 +408,152 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "GBIF single best name match",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "usageKey": {"type": ["integer", "null"], "description": "Stable GBIF taxon key for the matched name"},
-                "scientificName": {"type": ["string", "null"]},
-                "canonicalName": {"type": ["string", "null"]},
-                "rank": {"type": ["string", "null"]},
-                "status": {"type": ["string", "null"], "description": "ACCEPTED, SYNONYM, DOUBTFUL"},
-                "confidence": {"type": ["integer", "null"], "description": "Match confidence score 0-100"},
-                "matchType": {"type": ["string", "null"], "description": "EXACT, FUZZY, HIGHERRANK, or NONE"},
-                "kingdom": {"type": ["string", "null"]},
-                "phylum": {"type": ["string", "null"]},
-                "class": {"type": ["string", "null"]},
-                "order": {"type": ["string", "null"]},
-                "family": {"type": ["string", "null"]},
-                "genus": {"type": ["string", "null"]},
-                "species": {"type": ["string", "null"]},
-                "kingdomKey": {"type": ["integer", "null"]},
-                "phylumKey": {"type": ["integer", "null"]},
-                "classKey": {"type": ["integer", "null"]},
-                "orderKey": {"type": ["integer", "null"]},
-                "familyKey": {"type": ["integer", "null"]},
-                "genusKey": {"type": ["integer", "null"]},
-                "speciesKey": {"type": ["integer", "null"]}
-              }
+            "usageKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Stable GBIF taxon key for the matched name"
             },
-            "url": {"type": "string"}
+            "scientificName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "canonicalName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rank": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ACCEPTED, SYNONYM, DOUBTFUL"
+            },
+            "confidence": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Match confidence score 0-100"
+            },
+            "matchType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "EXACT, FUZZY, HIGHERRANK, or NONE"
+            },
+            "kingdom": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "phylum": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "class": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "order": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "genus": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "kingdomKey": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "phylumKey": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "classKey": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "orderKey": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "familyKey": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "genusKey": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "speciesKey": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "usageKey"
+          ]
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -487,43 +596,57 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "GBIF occurrence count and facets",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "count": {"type": ["integer", "null"], "description": "Total occurrence count for the taxon/filters"},
-                "limit": {"type": "integer"},
-                "facets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "field": {"type": "string"},
-                      "counts": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "name": {"type": "string"},
-                            "count": {"type": "integer"}
-                          }
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total occurrence count for the taxon/filters"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "facets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string"
+                  },
+                  "counts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "count": {
+                          "type": "integer"
                         }
                       }
                     }
                   }
                 }
               }
-            },
-            "url": {"type": "string"}
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "count"
+          ]
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

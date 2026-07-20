@@ -30,95 +30,80 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "px_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "px_id": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "array",
-                  "items": {
+            "title": {
+              "type": "string"
+            },
+            "species": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "identifiers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
                     "type": "string"
                   }
-                },
-                "identifiers": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "value": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "instruments": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "publications": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pubmed_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "doi": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "file_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "instruments": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "publications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pubmed_id": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "doi": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                }
+              }
+            },
+            "file_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "px_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -162,53 +147,35 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": "string"
-                  },
-                  "title": {
-                    "type": "string"
-                  },
-                  "species": {
-                    "type": "string"
-                  },
-                  "contact": {
-                    "type": "string"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "species": {
+                "type": "string"
+              },
+              "contact": {
+                "type": "string"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -252,117 +219,102 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "usi": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "usi": {
-                  "type": "string"
-                },
-                "scan_number": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "charge": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "precursor_mz": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "peptide_sequence": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "attributes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "value": {}
-                    }
-                  }
-                },
-                "total_peaks": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "returned_peaks": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "peaks_truncated": {
-                  "type": "boolean"
-                },
-                "peaks": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "mz": {
-                        "type": [
-                          "number",
-                          "integer"
-                        ]
-                      },
-                      "intensity": {
-                        "type": [
-                          "number",
-                          "integer"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "note": {
-                  "type": "string"
+            "scan_number": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "charge": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "precursor_mz": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "peptide_sequence": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "attributes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {}
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total_peaks": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "returned_peaks": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "peaks_truncated": {
+              "type": "boolean"
+            },
+            "peaks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mz": {
+                    "type": [
+                      "number",
+                      "integer"
+                    ]
+                  },
+                  "intensity": {
+                    "type": [
+                      "number",
+                      "integer"
+                    ]
+                  }
+                }
+              }
+            },
+            "note": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "usi"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

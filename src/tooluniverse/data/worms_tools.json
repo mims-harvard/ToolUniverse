@@ -80,28 +80,38 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Nested classification tree",
+          "description": "Recursive classification node",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "description": "Recursive classification node",
-              "properties": {
-                "AphiaID": {"type": "integer"},
-                "rank": {"type": "string"},
-                "scientificname": {"type": "string"},
-                "child": {"type": ["object", "null"]}
-              }
+            "AphiaID": {
+              "type": "integer"
             },
-            "url": {"type": "string"},
-            "AphiaID": {"type": "integer"}
+            "rank": {
+              "type": "string"
+            },
+            "scientificname": {
+              "type": "string"
+            },
+            "child": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "AphiaID"
+          ]
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -129,31 +139,38 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Vernacular (common) names with language codes",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "vernacular": {"type": "string"},
-                  "language_code": {"type": ["string", "null"]},
-                  "language": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "vernacular": {
+                "type": "string"
+              },
+              "language_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "language": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "AphiaID": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -181,38 +198,83 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Marine distribution localities",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "locality": {"type": ["string", "null"]},
-                  "locationID": {"type": ["string", "null"]},
-                  "higherGeography": {"type": ["string", "null"]},
-                  "higherGeographyID": {"type": ["string", "null"]},
-                  "recordStatus": {"type": ["string", "null"]},
-                  "establishmentMeans": {"type": ["string", "null"]},
-                  "invasiveness": {"type": ["string", "null"]},
-                  "occurrence": {"type": ["string", "null"]},
-                  "decimalLatitude": {"type": ["number", "null"]},
-                  "decimalLongitude": {"type": ["number", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "locality": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "locationID": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "higherGeography": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "higherGeographyID": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recordStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "establishmentMeans": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "invasiveness": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "occurrence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "decimalLatitude": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "decimalLongitude": {
+                "type": [
+                  "number",
+                  "null"
+                ]
               }
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "AphiaID": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -240,36 +302,53 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Taxonomic synonyms",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "AphiaID": {"type": "integer"},
-                  "scientificname": {"type": "string"},
-                  "authority": {"type": ["string", "null"]},
-                  "status": {"type": "string"},
-                  "unacceptreason": {"type": ["string", "null"]},
-                  "rank": {"type": "string"},
-                  "valid_AphiaID": {"type": "integer"},
-                  "valid_name": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "AphiaID": {
+                "type": "integer"
+              },
+              "scientificname": {
+                "type": "string"
+              },
+              "authority": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string"
+              },
+              "unacceptreason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": "string"
+              },
+              "valid_AphiaID": {
+                "type": "integer"
+              },
+              "valid_name": {
+                "type": "string"
               }
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "AphiaID": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

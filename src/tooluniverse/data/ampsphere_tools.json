@@ -68,40 +68,18 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Successful AMP search or options listing.",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "description": "List of AMP records (search), or the filter-options object (list_options)."
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "mode": {"type": "string"},
-                "current_page": {"type": ["integer", "null"]},
-                "page_size": {"type": ["integer", "null"]},
-                "total_page": {"type": ["integer", "null"]},
-                "total_item": {"type": ["integer", "null"]},
-                "returned_count": {"type": ["integer", "null"]},
-                "filters": {"type": "object"}
-              }
-            }
-          },
-          "required": ["status", "data", "metadata"]
+          "description": "List of AMP records (search), or the filter-options object (list_options)."
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -134,45 +112,50 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful family lookup.",
+          "description": "Full AMPSphere family record.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "description": "Full AMPSphere family record.",
-              "properties": {
-                "accession": {"type": "string"},
-                "consensus_sequence": {"type": ["string", "null"]},
-                "num_amps": {"type": ["integer", "null"]},
-                "downloads": {"type": "object"},
-                "associated_amps": {"type": "array"},
-                "feature_statistics": {"type": "object"},
-                "distributions": {"type": "object"}
-              }
+            "accession": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "accession": {"type": "string"},
-                "num_amps": {"type": ["integer", "null"]},
-                "member_count": {"type": "integer"}
-              }
+            "consensus_sequence": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "num_amps": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "downloads": {
+              "type": "object"
+            },
+            "associated_amps": {
+              "type": "array"
+            },
+            "feature_statistics": {
+              "type": "object"
+            },
+            "distributions": {
+              "type": "object"
             }
           },
-          "required": ["status", "data", "metadata"]
+          "required": [
+            "accession"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -204,40 +187,32 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful distribution lookup.",
+          "description": "Per-AMP distribution record.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "description": "Per-AMP distribution record.",
-              "properties": {
-                "geo": {"type": "object"},
-                "habitat": {"type": "object"},
-                "microbial_source": {"type": "object"}
-              }
+            "geo": {
+              "type": "object"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "accession": {"type": "string"},
-                "geo_point_count": {"type": ["integer", "null"]}
-              }
+            "habitat": {
+              "type": "object"
+            },
+            "microbial_source": {
+              "type": "object"
             }
           },
-          "required": ["status", "data", "metadata"]
+          "required": [
+            "geo"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -269,45 +244,71 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful feature lookup.",
+          "description": "Physicochemical feature profile.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "description": "Physicochemical feature profile.",
-              "properties": {
-                "MW": {"type": ["number", "null"]},
-                "Length": {"type": ["number", "null"]},
-                "Molar_extinction": {"type": "object"},
-                "Aromaticity": {"type": ["number", "null"]},
-                "GRAVY": {"type": ["number", "null"]},
-                "Instability_index": {"type": ["number", "null"]},
-                "Isoelectric_point": {"type": ["number", "null"]},
-                "Charge_at_pH_7": {"type": ["number", "null"]},
-                "Secondary_structure": {"type": "object"}
-              }
+            "MW": {
+              "type": [
+                "number",
+                "null"
+              ]
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "accession": {"type": "string"}
-              }
+            "Length": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "Molar_extinction": {
+              "type": "object"
+            },
+            "Aromaticity": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "GRAVY": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "Instability_index": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "Isoelectric_point": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "Charge_at_pH_7": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "Secondary_structure": {
+              "type": "object"
             }
           },
-          "required": ["status", "data", "metadata"]
+          "required": [
+            "MW"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

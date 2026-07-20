@@ -85,70 +85,48 @@
       "format": "json"
     },
     "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "success"
-                            ]
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "id": {
-                                        "type": "string",
-                                        "description": "MGnify analysis accession"
-                                    },
-                                    "type": {
-                                        "type": "string",
-                                        "description": "Resource type (analyses)"
-                                    },
-                                    "attributes": {
-                                        "type": "object",
-                                        "description": "Analysis metadata (pipeline version, taxonomy/function results, etc.)"
-                                    },
-                                    "relationships": {
-                                        "type": "object",
-                                        "description": "Links to related resources (study, sample, downloads, etc.)"
-                                    },
-                                    "links": {
-                                        "type": "object",
-                                        "description": "API links for this analysis"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "enum": [
-                                "error"
-                            ]
-                        },
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "error"
-                    ]
-                }
-            ]
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "MGnify analysis accession"
+              },
+              "type": {
+                "type": "string",
+                "description": "Resource type (analyses)"
+              },
+              "attributes": {
+                "type": "object",
+                "description": "Analysis metadata (pipeline version, taxonomy/function results, etc.)"
+              },
+              "relationships": {
+                "type": "object",
+                "description": "Links to related resources (study, sample, downloads, etc.)"
+              },
+              "links": {
+                "type": "object",
+                "description": "API links for this analysis"
+              }
+            }
+          }
         },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
     "test_examples": [
       {"study_accession": "MGYS00002012", "size": 1}
     ],

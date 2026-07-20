@@ -406,77 +406,54 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["success"]
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "protein_1_pro_id": {
-                    "type": "string",
-                    "description": "PRO ontology proteoform ID of the first interactant (e.g., PR:000025934)"
-                  },
-                  "protein_1_label": {
-                    "type": "string",
-                    "description": "Human-readable proteoform label encoding isoform + modification state (e.g., hSMAD2/iso:Long/Phos:1)"
-                  },
-                  "relation": {
-                    "type": "string",
-                    "description": "Interaction relation type (e.g., Interaction)"
-                  },
-                  "protein_2_pro_id": {
-                    "type": "string",
-                    "description": "PRO ontology proteoform ID of the second interactant (e.g., PR:Q13485)"
-                  },
-                  "protein_2_label": {
-                    "type": "string",
-                    "description": "Human-readable proteoform label of the second interactant (e.g., hSMAD4)"
-                  },
-                  "source": {
-                    "type": "string",
-                    "description": "Data source (e.g., PRO)"
-                  },
-                  "pmids": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "PubMed IDs supporting the interaction"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "uniprot_id": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "protein_1_pro_id": {
+                "type": "string",
+                "description": "PRO ontology proteoform ID of the first interactant (e.g., PR:000025934)"
+              },
+              "protein_1_label": {
+                "type": "string",
+                "description": "Human-readable proteoform label encoding isoform + modification state (e.g., hSMAD2/iso:Long/Phos:1)"
+              },
+              "relation": {
+                "type": "string",
+                "description": "Interaction relation type (e.g., Interaction)"
+              },
+              "protein_2_pro_id": {
+                "type": "string",
+                "description": "PRO ontology proteoform ID of the second interactant (e.g., PR:Q13485)"
+              },
+              "protein_2_label": {
+                "type": "string",
+                "description": "Human-readable proteoform label of the second interactant (e.g., hSMAD4)"
+              },
+              "source": {
+                "type": "string",
+                "description": "Data source (e.g., PRO)"
+              },
+              "pmids": {
+                "type": "array",
+                "items": {
                   "type": "string"
                 },
-                "total_interactions": {
-                  "type": "integer"
-                }
+                "description": "PubMed IDs supporting the interaction"
               }
             }
-          },
-          "required": ["status", "data"]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["error"]
-            },
             "error": {
               "type": "string"
             }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

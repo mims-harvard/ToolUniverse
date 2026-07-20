@@ -50,65 +50,50 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "alleles": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "alleles": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "accession": {
-                                                "type": "string"
-                                            },
-                                            "name": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                },
-                                "count": {
-                                    "type": "integer"
-                                },
-                                "total": {
-                                    "type": [
-                                        "integer",
-                                        "null"
-                                    ]
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
+                      "accession": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+                "count": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
-            ]
+              },
+              "required": [
+                "alleles"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -144,54 +129,39 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "accession": {
-                                    "type": "string"
-                                },
-                                "name": {
-                                    "type": "string"
-                                },
-                                "locus": {
-                                    "type": "string"
-                                },
-                                "class": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "accession": {
+                  "type": "string"
                 },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+                "name": {
+                  "type": "string"
+                },
+                "locus": {
+                  "type": "string"
+                },
+                "class": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "accession"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -251,65 +221,50 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "cells": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "cells": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "cellid": {
-                                                "type": "string"
-                                            },
-                                            "primary_name": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                },
-                                "count": {
-                                    "type": "integer"
-                                },
-                                "total": {
-                                    "type": [
-                                        "integer",
-                                        "null"
-                                    ]
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
+                      "cellid": {
+                        "type": "string"
+                      },
+                      "primary_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+                "count": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
-            ]
+              },
+              "required": [
+                "cells"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

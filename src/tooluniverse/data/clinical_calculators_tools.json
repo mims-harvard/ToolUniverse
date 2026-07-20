@@ -17,10 +17,38 @@
       {"age": 80, "female": true, "hypertension": true, "diabetes": true},
       {"age": 55, "chf": false, "hypertension": false}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   },
   {
     "name": "ClinicalCalc_HAS_BLED",
@@ -42,10 +70,38 @@
       {"age": 70, "hypertension": true, "bleeding_history": true, "labile_inr": true},
       {"age": 60}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   },
   {
     "name": "ClinicalCalc_CURB_65",
@@ -63,10 +119,38 @@
       {"age": 72, "confusion": true, "elevated_urea": true, "high_resp_rate": false, "low_bp": false},
       {"age": 40, "confusion": false}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   },
   {
     "name": "ClinicalCalc_qSOFA",
@@ -82,10 +166,38 @@
       {"high_resp_rate": true, "altered_mentation": true, "low_sbp": false},
       {"high_resp_rate": false, "altered_mentation": false, "low_sbp": false}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   },
   {
     "name": "ClinicalCalc_Child_Pugh",
@@ -103,10 +215,41 @@
       {"bilirubin": 1.0, "albumin": 4.0, "inr": 1.0, "ascites": "none", "encephalopathy": "none"},
       {"bilirubin": 3.5, "albumin": 2.5, "inr": 2.4, "ascites": "moderate", "encephalopathy": "grade3-4"}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}, "child_pugh_class": {"type": "string"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            },
+            "child_pugh_class": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   },
   {
     "name": "ClinicalCalc_Wells_DVT",
@@ -129,10 +272,38 @@
       {"active_cancer": true, "localized_tenderness": true, "leg_swollen": true},
       {"alternative_diagnosis": true, "calf_swelling": true}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   },
   {
     "name": "ClinicalCalc_Wells_PE",
@@ -152,10 +323,44 @@
       {"clinical_dvt": true, "pe_most_likely": true, "tachycardia": true},
       {"hemoptysis": true}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}, "three_tier": {"type": "string"}, "two_tier": {"type": "string"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            },
+            "three_tier": {
+              "type": "string"
+            },
+            "two_tier": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   },
   {
     "name": "ClinicalCalc_MELD_Na",
@@ -173,10 +378,38 @@
       {"creatinine": 1.5, "bilirubin": 2.0, "inr": 1.5, "sodium": 130},
       {"creatinine": 2.0, "bilirubin": 5.0, "inr": 2.0, "sodium": 128, "dialysis": false}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   },
   {
     "name": "ClinicalCalc_eGFR_CKD_EPI",
@@ -192,10 +425,41 @@
       {"creatinine": 0.9, "age": 60, "female": true},
       {"creatinine": 1.3, "age": 60, "female": false}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}, "unit": {"type": "string"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            },
+            "unit": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   },
   {
     "name": "ClinicalCalc_ASCVD_risk",
@@ -217,9 +481,40 @@
       {"age": 55, "total_cholesterol": 213, "hdl_cholesterol": 50, "systolic_bp": 120, "bp_treated": false, "smoker": false, "diabetes": false, "female": false, "race": "white"},
       {"age": 60, "total_cholesterol": 240, "hdl_cholesterol": 40, "systolic_bp": 140, "bp_treated": true, "smoker": true, "diabetes": true, "female": true, "race": "black"}
     ],
-    "return_schema": {"oneOf": [
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["success"]}, "data": {"type": "object", "properties": {"score": {"type": "number"}, "interpretation": {"type": "string"}, "components": {"type": "object"}, "unit": {"type": "string"}}}, "metadata": {"type": "object"}}, "required": ["status", "data"]},
-      {"type": "object", "properties": {"status": {"type": "string", "enum": ["error"]}, "error": {"type": "string"}}, "required": ["status", "error"]}
-    ]}
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            },
+            "unit": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

@@ -17,64 +17,145 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful AMP lookup.",
+          "description": "Full AMPSphere AMP record.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "description": "Full AMPSphere AMP record.",
+            "accession": {
+              "type": "string"
+            },
+            "sequence": {
+              "type": "string"
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "length": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "molecular_weight": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "isoelectric_point": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "charge": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "aromaticity": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "instability_index": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "gravy": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "Antifam": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "RNAcode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "metaproteomes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "metatranscriptomes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "coordinates": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "num_genes": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "secondary_structure": {
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
-                "accession": {"type": "string"},
-                "sequence": {"type": "string"},
-                "family": {"type": ["string", "null"]},
-                "length": {"type": ["integer", "null"]},
-                "molecular_weight": {"type": ["number", "null"]},
-                "isoelectric_point": {"type": ["number", "null"]},
-                "charge": {"type": ["number", "null"]},
-                "aromaticity": {"type": ["number", "null"]},
-                "instability_index": {"type": ["number", "null"]},
-                "gravy": {"type": ["number", "null"]},
-                "Antifam": {"type": ["string", "null"]},
-                "RNAcode": {"type": ["string", "null"]},
-                "metaproteomes": {"type": ["string", "null"]},
-                "metatranscriptomes": {"type": ["string", "null"]},
-                "coordinates": {"type": ["string", "null"]},
-                "num_genes": {"type": ["integer", "null"]},
-                "secondary_structure": {
-                  "type": ["object", "null"],
-                  "properties": {
-                    "helix": {"type": ["number", "null"]},
-                    "turn": {"type": ["number", "null"]},
-                    "sheet": {"type": ["number", "null"]}
-                  }
+                "helix": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
-                "metadata": {"type": ["object", "null"]}
+                "turn": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "sheet": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "accession": {"type": "string"},
-                "family": {"type": ["string", "null"]},
-                "length": {"type": ["integer", "null"]},
-                "gene_count": {"type": "integer"}
-              }
+              "type": [
+                "object",
+                "null"
+              ]
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "accession"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -106,38 +187,34 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful exact-match test.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "query": {"type": "string"},
-                "result": {"type": ["string", "null"]},
-                "matched": {"type": "boolean"}
-              }
+            "query": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "accession": {"type": ["string", "null"]}
-              }
+            "result": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "matched": {
+              "type": "boolean"
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "query"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

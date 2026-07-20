@@ -43,39 +43,21 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": [
-                "array",
-                "string"
-              ]
-            },
-            "metadata": {
-              "type": "object"
-            }
-          }
+          "type": [
+            "array",
+            "string"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -120,70 +102,55 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "name": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "pubchem_cid": {
-                  "type": "string"
-                },
-                "inchi_key": {
-                  "type": "string"
-                },
-                "exactmass": {
-                  "type": "number"
-                },
-                "formula": {
-                  "type": "string"
-                },
-                "super_class": {
-                  "type": "string"
-                },
-                "main_class": {
-                  "type": "string"
-                },
-                "sub_class": {
-                  "type": "string"
-                },
-                "smiles": {
-                  "type": "string"
-                },
-                "regno": {
-                  "type": "string"
-                },
-                "refmet_id": {
-                  "type": "string"
-                }
-              }
+            "pubchem_cid": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "inchi_key": {
+              "type": "string"
+            },
+            "exactmass": {
+              "type": "number"
+            },
+            "formula": {
+              "type": "string"
+            },
+            "super_class": {
+              "type": "string"
+            },
+            "main_class": {
+              "type": "string"
+            },
+            "sub_class": {
+              "type": "string"
+            },
+            "smiles": {
+              "type": "string"
+            },
+            "regno": {
+              "type": "string"
+            },
+            "refmet_id": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "name"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -234,73 +201,58 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "pubchem_cid": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "pubchem_cid": {
-                  "type": "string"
-                },
-                "regno": {
-                  "type": "string"
-                },
-                "formula": {
-                  "type": "string"
-                },
-                "exactmass": {
-                  "type": "number"
-                },
-                "inchi_key": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "sys_name": {
-                  "type": "string"
-                },
-                "hmdb_id": {
-                  "type": "string"
-                },
-                "kegg_id": {
-                  "type": "string"
-                },
-                "chebi_id": {
-                  "type": "string"
-                },
-                "metacyc_id": {
-                  "type": "string"
-                },
-                "smiles": {
-                  "type": "string"
-                }
-              }
+            "regno": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "formula": {
+              "type": "string"
+            },
+            "exactmass": {
+              "type": "number"
+            },
+            "inchi_key": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "sys_name": {
+              "type": "string"
+            },
+            "hmdb_id": {
+              "type": "string"
+            },
+            "kegg_id": {
+              "type": "string"
+            },
+            "chebi_id": {
+              "type": "string"
+            },
+            "metacyc_id": {
+              "type": "string"
+            },
+            "smiles": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "pubchem_cid"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -342,70 +294,55 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "name": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "pubchem_cid": {
-                  "type": "string"
-                },
-                "inchi_key": {
-                  "type": "string"
-                },
-                "exactmass": {
-                  "type": "number"
-                },
-                "formula": {
-                  "type": "string"
-                },
-                "super_class": {
-                  "type": "string"
-                },
-                "main_class": {
-                  "type": "string"
-                },
-                "sub_class": {
-                  "type": "string"
-                },
-                "smiles": {
-                  "type": "string"
-                },
-                "regno": {
-                  "type": "string"
-                },
-                "refmet_id": {
-                  "type": "string"
-                }
-              }
+            "pubchem_cid": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "inchi_key": {
+              "type": "string"
+            },
+            "exactmass": {
+              "type": "number"
+            },
+            "formula": {
+              "type": "string"
+            },
+            "super_class": {
+              "type": "string"
+            },
+            "main_class": {
+              "type": "string"
+            },
+            "sub_class": {
+              "type": "string"
+            },
+            "smiles": {
+              "type": "string"
+            },
+            "regno": {
+              "type": "string"
+            },
+            "refmet_id": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "name"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -464,36 +401,21 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "string"
-            },
-            "metadata": {
-              "type": "object"
-            }
+          "type": "array",
+          "items": {
+            "type": "object"
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -535,36 +457,22 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "string"
-            },
-            "metadata": {
-              "type": "object"
-            }
+          "type": ["array", "string"],
+          "description": "Array of matched-compound records; a raw TSV header-only string when the search returns no matches.",
+          "items": {
+            "type": "object"
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -653,51 +561,33 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "description": "Matching studies",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "study": {
-                    "type": "string",
-                    "description": "Study id (e.g. ST003897)"
-                  },
-                  "study_title": {
-                    "type": "string"
-                  },
-                  "species": {
-                    "type": "string"
-                  },
-                  "source": {
-                    "type": "string"
-                  },
-                  "disease": {
-                    "type": "string"
-                  }
-                }
+          "type": "array",
+          "description": "Matching studies",
+          "items": {
+            "type": "object",
+            "properties": {
+              "study": {
+                "type": "string",
+                "description": "Study id (e.g. ST003897)"
+              },
+              "study_title": {
+                "type": "string"
+              },
+              "species": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "disease": {
+                "type": "string"
               }
-            },
-            "count": {
-              "type": "integer"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
@@ -758,62 +648,44 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "description": "Gene or protein MGP record(s)",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "gene_symbol": {
-                    "type": "string"
-                  },
-                  "gene_id": {
-                    "type": "string"
-                  },
-                  "gene_name": {
-                    "type": "string"
-                  },
-                  "mgp_id": {
-                    "type": "string"
-                  },
-                  "uniprot_id": {
-                    "type": "string"
-                  },
-                  "protein_entry": {
-                    "type": "string"
-                  },
-                  "mrna_id": {
-                    "type": "string"
-                  },
-                  "refseq_id": {
-                    "type": "string"
-                  },
-                  "seqlength": {
-                    "type": "string"
-                  }
-                }
+          "type": "array",
+          "description": "Gene or protein MGP record(s)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene_symbol": {
+                "type": "string"
+              },
+              "gene_id": {
+                "type": "string"
+              },
+              "gene_name": {
+                "type": "string"
+              },
+              "mgp_id": {
+                "type": "string"
+              },
+              "uniprot_id": {
+                "type": "string"
+              },
+              "protein_entry": {
+                "type": "string"
+              },
+              "mrna_id": {
+                "type": "string"
+              },
+              "refseq_id": {
+                "type": "string"
+              },
+              "seqlength": {
+                "type": "string"
               }
-            },
-            "count": {
-              "type": "integer"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
