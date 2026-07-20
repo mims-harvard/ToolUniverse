@@ -326,6 +326,19 @@ class IEDBPredictionTool(BaseTool):
             "sequence_text": sequence,
             "allele": allele,
         }
+        # Fix-R34A-1: IEDB's mhcii endpoint defaults its sliding-window
+        # length to 15 server-side and hard-errors on any shorter sequence
+        # ("length of input sequence is less than the input/default length
+        # 15") -- confirmed live, including against this tool's own <15-
+        # residue test example. Unlike the MHC-I methods in this file,
+        # this endpoint never exposed a length override. Auto-shrink the
+        # window to the sequence's own length when it's under 15, mirroring
+        # the MHC-I `length` param.
+        length = arguments.get("length")
+        if length is None and len(sequence) < 15:
+            length = len(sequence)
+        if length is not None:
+            data["length"] = str(length)
 
         resp = requests.post(
             f"{IEDB_TOOLS_BASE}/mhcii/",

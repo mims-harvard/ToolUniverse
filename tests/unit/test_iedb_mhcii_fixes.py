@@ -112,3 +112,47 @@ def test_empty_response_is_reported_as_error():
         result = tool.run({"sequence": "A" * 20, "allele": "HLA-DRB1*01:01"})
 
     assert result["status"] == "error"
+
+
+# Fix-R34A-1: IEDB's mhcii endpoint defaults its sliding-window length to 15
+# server-side and hard-errors on any shorter sequence -- confirmed live,
+# including against this tool's own registered <15-residue test example
+# ("PKYVKQNTLKLAT", 13 residues). Unlike the MHC-I methods in this file,
+# this endpoint never passed a length override even though IEDB's API
+# accepts one (confirmed live: length=13 makes the same short peptide
+# succeed). Auto-shrink the window to the sequence's own length when it's
+# under 15.
+_TSV = "allele\tseq_num\tstart\tend\tlength\tcore_peptide\tpeptide\tscore\trank\nHLA-DRB1*01:01\t1\t1\t13\t13\tYVKQNTLKL\tPKYVKQNTLKLAT\t0.8871\t0.23\n"
+
+
+def test_short_sequence_auto_shrinks_length_param():
+    tool = _tool("predict_mhcii")
+    with patch(
+        "tooluniverse.iedb_prediction_tool.requests.post", return_value=_resp(_TSV)
+    ) as mock_post:
+        result = tool.run({"sequence": "PKYVKQNTLKLAT", "allele": "HLA-DRB1*01:01"})
+
+    assert result["status"] == "success"
+    assert mock_post.call_args.kwargs["data"]["length"] == "13"
+
+
+def test_long_sequence_omits_length_param_by_default():
+    tool = _tool("predict_mhcii")
+    with patch(
+        "tooluniverse.iedb_prediction_tool.requests.post", return_value=_resp(_TSV)
+    ) as mock_post:
+        tool.run({"sequence": "A" * 20, "allele": "HLA-DRB1*01:01"})
+
+    assert "length" not in mock_post.call_args.kwargs["data"]
+
+
+def test_explicit_length_argument_takes_precedence():
+    tool = _tool("predict_mhcii")
+    with patch(
+        "tooluniverse.iedb_prediction_tool.requests.post", return_value=_resp(_TSV)
+    ) as mock_post:
+        tool.run(
+            {"sequence": "A" * 20, "allele": "HLA-DRB1*01:01", "length": 11}
+        )
+
+    assert mock_post.call_args.kwargs["data"]["length"] == "11"
