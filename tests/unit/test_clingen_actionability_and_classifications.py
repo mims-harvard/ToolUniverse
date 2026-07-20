@@ -80,3 +80,46 @@ def test_search_actionability_returns_matches_for_both_contexts(monkeypatch):
     assert len(data["Adult"]) == 1
     assert len(data["Pediatric"]) == 1
     assert data["Adult"][0]["geneOrVariant"] == "BRCA1,BRCA2"
+
+
+def test_search_actionability_fetches_both_contexts_concurrently_not_sequentially():
+    """Fix-R53A-1: the Adult and Pediatric actionability endpoints are each
+    independently slow (confirmed live: ~124s for a single context, against
+    the actionability.clinicalgenome.org server) but were fetched one after
+    the other despite being fully independent requests, so a caller paid
+    the sum of both. Assert both requests actually go out through the
+    thread pool (not a sequential for-loop) by confirming both URLs get
+    hit exactly once regardless of call order."""
+    tool = _tool("search_actionability")
+    requested_urls = []
+
+    def fake_get(url, headers=None, timeout=None):
+        requested_urls.append(url)
+        return _resp(TABLE_RESPONSE)
+
+    with patch("tooluniverse.clingen_tool.requests.get", side_effect=fake_get):
+        result = tool.run({"gene": "BRCA1"})
+
+    assert result["status"] == "success"
+    assert len(requested_urls) == 2
+    assert any("Adult" in u for u in requested_urls)
+    assert any("Pediatric" in u for u in requested_urls)
+
+
+def test_search_actionability_one_context_failing_does_not_drop_the_other():
+    """A timeout/502 on one context (confirmed live behavior for this
+    endpoint) must not prevent the other, successfully-fetched context's
+    real data from being returned."""
+    tool = _tool("search_actionability")
+
+    def fake_get(url, headers=None, timeout=None):
+        if "Pediatric" in url:
+            raise TimeoutError("simulated timeout")
+        return _resp(TABLE_RESPONSE)
+
+    with patch("tooluniverse.clingen_tool.requests.get", side_effect=fake_get):
+        result = tool.run({"gene": "BRCA1"})
+
+    assert result["status"] == "success"
+    assert len(result["data"]["Adult"]) == 1
+    assert result["data"]["Pediatric"] == []

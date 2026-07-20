@@ -14,6 +14,7 @@ gene-disease relationships for use in clinical genomics.
 import requests
 import csv
 import io
+from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -319,6 +320,31 @@ class ClinGenTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    def _fetch_actionability_context(
+        self, base_url: str, gene: str
+    ) -> List[Dict[str, Any]]:
+        """Fetch and gene-filter one actionability context (Adult/Pediatric).
+        Raises on failure -- the caller decides how to handle a failed context."""
+        url = f"{base_url}/summ?flavor=flat"
+        headers = {"Accept": "application/json"}
+        response = requests.get(url, headers=headers, timeout=self.timeout)
+        response.raise_for_status()
+
+        curations = self._actionability_rows_to_dicts(response.json())
+
+        # Filter by gene. geneOrVariant is a comma-joined multi-gene field
+        # for panel curations, so substring match rather than exact-match
+        # the whole field.
+        gene_upper = gene.upper()
+        return [
+            c
+            for c in curations
+            if gene_upper in str(c.get("geneOrVariant", "")).upper()
+            or gene_upper in str(c.get("gene", "")).upper()
+            or gene_upper in str(c.get("Gene", "")).upper()
+            or gene_upper in str(c.get("hgncId", "")).upper()
+        ]
+
     def _search_actionability(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search clinical actionability across both adult and pediatric contexts."""
         gene = arguments.get("gene")
@@ -326,36 +352,34 @@ class ClinGenTool(BaseTool):
             return {"status": "error", "error": "Missing required parameter: gene"}
 
         try:
-            results = {"Adult": [], "Pediatric": []}
-
-            for context, base_url in [
+            # Fix-R53A-1: the Adult and Pediatric actionability endpoints are
+            # each independently slow (confirmed live: the Adult endpoint
+            # alone took ~124s for a 138KB response -- expensive server-side
+            # computation, not a network issue) but are fetched one after
+            # the other despite being fully independent requests, so a
+            # caller paid the sum of both (up to ~4 minutes, and close to
+            # this tool's own 120s per-request timeout budget even for a
+            # single context). Fetching them concurrently bounds the wait
+            # to the slower of the two instead of the sum of both.
+            contexts = [
                 ("Adult", ACTIONABILITY_ADULT_URL),
                 ("Pediatric", ACTIONABILITY_PEDIATRIC_URL),
-            ]:
-                try:
-                    url = f"{base_url}/summ?flavor=flat"
-                    headers = {"Accept": "application/json"}
-                    response = requests.get(url, headers=headers, timeout=self.timeout)
-                    response.raise_for_status()
-
-                    curations = self._actionability_rows_to_dicts(response.json())
-
-                    # Filter by gene. geneOrVariant is a comma-joined
-                    # multi-gene field for panel curations, so substring
-                    # match rather than exact-match the whole field.
-                    gene_upper = gene.upper()
-                    matches = [
-                        c
-                        for c in curations
-                        if gene_upper in str(c.get("geneOrVariant", "")).upper()
-                        or gene_upper in str(c.get("gene", "")).upper()
-                        or gene_upper in str(c.get("Gene", "")).upper()
-                        or gene_upper in str(c.get("hgncId", "")).upper()
-                    ]
-                    results[context] = matches
-                except Exception:
-                    # Continue with other context if one fails
-                    pass
+            ]
+            results = {"Adult": [], "Pediatric": []}
+            with ThreadPoolExecutor(max_workers=len(contexts)) as executor:
+                futures = {
+                    executor.submit(
+                        self._fetch_actionability_context, base_url, gene
+                    ): context
+                    for context, base_url in contexts
+                }
+                for future in futures:
+                    context = futures[future]
+                    try:
+                        results[context] = future.result()
+                    except Exception:
+                        # Continue with other context if one fails
+                        pass
 
             return {
                 "status": "success",

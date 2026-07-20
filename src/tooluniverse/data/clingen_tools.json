@@ -152,7 +152,7 @@
     },
     "fields": {
       "operation": "get_actionability_adult",
-      "timeout": 60
+      "timeout": 200
     },
     "return_schema": {
       "type": "object",
@@ -186,7 +186,7 @@
     },
     "fields": {
       "operation": "get_actionability_pediatric",
-      "timeout": 60
+      "timeout": 200
     },
     "return_schema": {
       "type": "object",
@@ -220,7 +220,7 @@
     },
     "fields": {
       "operation": "search_actionability",
-      "timeout": 120
+      "timeout": 200
     },
     "return_schema": {
       "type": "object",
