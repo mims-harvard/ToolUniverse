@@ -123,14 +123,18 @@ class ClinGenTool(BaseTool):
             # Parse CSV response
             curations = self._parse_csv(response.text)
 
-            # Filter by gene symbol (case-insensitive)
-            # Handle both "GENE SYMBOL" (from CSV) and "Gene Symbol" key formats
+            # Filter by gene symbol (case-insensitive, EXACT match -- this
+            # column holds a single precise HGNC symbol, not free text, and
+            # substring matching silently pulled in unrelated genes whose
+            # symbol happens to contain the query, e.g. "OTC" -> "NOTCH1"/
+            # "NOTCH2" (confirmed live). Mirrors _get_gene_validity's already-
+            # correct exact-match filter above.
             gene_upper = gene.upper()
-            matches = []
-            for c in curations:
-                gene_val = c.get("GENE SYMBOL", c.get("Gene Symbol", ""))
-                if gene_upper in gene_val.upper():
-                    matches.append(c)
+            matches = [
+                c
+                for c in curations
+                if c.get("GENE SYMBOL", c.get("Gene Symbol", "")).upper() == gene_upper
+            ]
 
             return {
                 "status": "success",
@@ -165,7 +169,11 @@ class ClinGenTool(BaseTool):
             # Parse CSV response
             curations = self._parse_csv(response.text)
 
-            # Optional filtering by gene
+            # Optional filtering by gene -- EXACT match (case-insensitive):
+            # this column holds a single precise HGNC symbol, not free text,
+            # and substring matching silently pulled in unrelated genes
+            # whose symbol happens to contain the query, e.g. "OTC" ->
+            # "NOTCH1"/"NOTCH2" (confirmed live).
             gene = arguments.get("gene")
             if gene:
                 gene_upper = gene.upper()
@@ -173,8 +181,8 @@ class ClinGenTool(BaseTool):
                 curations = [
                     c
                     for c in curations
-                    if gene_upper
-                    in c.get("GENE SYMBOL", c.get("Gene Symbol", "")).upper()
+                    if c.get("GENE SYMBOL", c.get("Gene Symbol", "")).upper()
+                    == gene_upper
                 ]
 
             return {
@@ -210,16 +218,21 @@ class ClinGenTool(BaseTool):
             # Parse CSV response
             curations = self._parse_csv(response.text)
 
-            # Filter by gene symbol (case-insensitive)
+            # Filter by gene symbol (case-insensitive, EXACT match -- this
+            # column holds a single precise HGNC symbol, not free text, and
+            # substring matching silently pulled in unrelated genes whose
+            # symbol happens to contain the query, e.g. "OTC" -> "NOTCH1"/
+            # "NOTCH2" (confirmed live).
             # Handle different column name formats from different endpoints
             gene_upper = gene.upper()
-            matches = []
-            for c in curations:
-                gene_val = c.get(
+            matches = [
+                c
+                for c in curations
+                if c.get(
                     "GENE SYMBOL", c.get("GENE/REGION", c.get("Gene Symbol", ""))
-                )
-                if gene_upper in gene_val.upper():
-                    matches.append(c)
+                ).upper()
+                == gene_upper
+            ]
 
             return {
                 "status": "success",
