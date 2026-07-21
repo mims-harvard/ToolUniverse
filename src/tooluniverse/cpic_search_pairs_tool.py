@@ -117,14 +117,35 @@ class CPICGetRecommendationsTool(BaseTool):
 
         limit = arguments.get("limit", 50) or 50
         offset = arguments.get("offset", 0) or 0
+        # Fix-R79A-1: "gene"/"phenotype" are not real params (no
+        # additionalProperties: false on this schema, so they were silently
+        # accepted and dropped, not rejected) -- confirmed live that
+        # {"drug": "clopidogrel", "gene": "CYP2C19", "phenotype": "Poor
+        # Metabolizer"} returned all 24 rows across every phenotype and
+        # population/context combination for the guideline, unfiltered, with
+        # no indication either filter had zero effect. A caller very
+        # naturally guesses these param names, since the tool's own
+        # description says it "links genotype/phenotype to prescribing
+        # actions" and every returned row already carries a `phenotypes`
+        # dict keyed by gene symbol -- add real client-side filtering rather
+        # than just erroring more clearly on the unrecognized names, since
+        # the data to filter on is already present in every response.
+        gene_filter = arguments.get("gene")
+        phenotype_filter = arguments.get("phenotype")
+        filtering = bool(gene_filter or phenotype_filter)
 
         try:
             url = f"{_CPIC_API}/recommendation"
             params: Dict[str, Any] = {
                 "select": "*,drug(name)",
                 "guidelineid": f"eq.{guideline_id}",
-                "limit": limit,
-                "offset": offset,
+                # When filtering client-side, fetch a large batch up front so
+                # limit/offset apply to the FILTERED results (matching a
+                # caller's expectation of "page N of the phenotype-filtered
+                # list"), not to an arbitrary slice of the raw, unfiltered
+                # table that the filter would then be applied to piecemeal.
+                "limit": 1000 if filtering else limit,
+                "offset": 0 if filtering else offset,
             }
             # Filter by specific drug within multi-drug guidelines (e.g., CYP2D6/Opioids
             # covers codeine, tramadol, hydrocodone — filter to the requested drug).
@@ -133,11 +154,54 @@ class CPICGetRecommendationsTool(BaseTool):
             r = requests.get(url, params=params, timeout=30)
             r.raise_for_status()
             data = r.json()
+
+            available_phenotypes = None
+            if filtering:
+                available_phenotypes = sorted(
+                    {
+                        v
+                        for row in data
+                        for k, v in (row.get("phenotypes") or {}).items()
+                        if not gene_filter or k.lower() == gene_filter.lower()
+                    }
+                )
+
+                def _row_matches(row: Dict[str, Any]) -> bool:
+                    phenotypes = row.get("phenotypes") or {}
+                    if gene_filter:
+                        gene_key = next(
+                            (k for k in phenotypes if k.lower() == gene_filter.lower()),
+                            None,
+                        )
+                        if gene_key is None:
+                            return False
+                        if phenotype_filter:
+                            return (
+                                phenotypes[gene_key].lower() == phenotype_filter.lower()
+                            )
+                        return True
+                    # No gene given: match if ANY gene's phenotype value hits.
+                    return any(
+                        v.lower() == phenotype_filter.lower()
+                        for v in phenotypes.values()
+                    )
+
+                data = [row for row in data if _row_matches(row)]
+                data = data[offset : offset + limit]
+
             result: Dict[str, Any] = {
                 "guideline_id": guideline_id,
                 "recommendations": data,
                 "count": len(data),
             }
+            if filtering and not data:
+                result["note"] = (
+                    f"No recommendations matched gene={gene_filter!r} "
+                    f"phenotype={phenotype_filter!r} for guideline {guideline_id}. "
+                    f"Available phenotype values for this guideline"
+                    + (f" and gene {gene_filter}" if gene_filter else "")
+                    + f": {available_phenotypes or '[]'}."
+                )
             # Fix-R31C-3: this note used to fire whenever `data` was empty and
             # always blame it on "guideline uses a dosing algorithm" -- but
             # confirmed live that's wrong for a multi-drug guideline filtered
@@ -147,8 +211,9 @@ class CPICGetRecommendationsTool(BaseTool):
             # Distinguish "no table at all" (the real dosing-algorithm case,
             # e.g. warfarin/100425) from "table exists, not for this drug" by
             # checking whether the guideline has any rows once the drug
-            # filter is dropped.
-            if not data:
+            # filter is dropped. Skip when a gene/phenotype filter caused the
+            # emptiness -- the more specific note above already explains why.
+            if not data and not filtering:
                 guideline_has_other_rows = False
                 if rxnorm_id:
                     try:

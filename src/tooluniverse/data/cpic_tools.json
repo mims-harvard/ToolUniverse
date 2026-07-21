@@ -589,7 +589,7 @@
   },
   {
     "name": "CPIC_get_recommendations",
-    "description": "Get drug dosing recommendations from a CPIC pharmacogenomic guideline. Returns clinically actionable recommendations linking genotype/phenotype to prescribing actions (classification strength, recommendation text, allele status). Accepts drug name (e.g. 'codeine', 'abacavir') for auto-resolution to guideline_id, or provide guideline_id directly. Key guideline IDs: 100421 (HLA-B/abacavir), 100416 (CYP2D6,OPRM1,COMT/opioids-codeine), 100414 (CYP2D6,CYP2C19/tricyclic-antidepressants), 100415 (CYP2D6/tamoxifen), 100412 (CYP2C9,HLA-B/phenytoin). Note: warfarin (guideline 100425) uses a dosing calculator and returns 0 rows from this endpoint.",
+    "description": "Get drug dosing recommendations from a CPIC pharmacogenomic guideline. Returns clinically actionable recommendations linking genotype/phenotype to prescribing actions (classification strength, recommendation text, allele status). Accepts drug name (e.g. 'codeine', 'abacavir') for auto-resolution to guideline_id, or provide guideline_id directly. Without gene/phenotype, returns ALL recommendation rows for every genotype/phenotype combination the guideline covers -- pass gene (e.g. 'CYP2C19') and/or phenotype (e.g. 'Poor Metabolizer', exact CPIC term) to filter to one specific recommendation. Key guideline IDs: 100421 (HLA-B/abacavir), 100416 (CYP2D6,OPRM1,COMT/opioids-codeine), 100414 (CYP2D6,CYP2C19/tricyclic-antidepressants), 100415 (CYP2D6/tamoxifen), 100412 (CYP2C9,HLA-B/phenytoin). Note: warfarin (guideline 100425) uses a dosing calculator and returns 0 rows from this endpoint.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -605,19 +605,33 @@
           "type": "string",
           "description": "Alias for drug."
         },
+        "gene": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter to recommendation rows for this pharmacogene (e.g. 'CYP2C19', 'CYP2D6'), matched case-insensitively against each row's own phenotypes dict. Combine with phenotype for an exact single-row lookup."
+        },
+        "phenotype": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter to recommendation rows whose phenotype exactly matches this CPIC term (case-insensitive), e.g. 'Poor Metabolizer', 'Likely Poor Metabolizer', 'Normal Metabolizer', 'Ultrarapid Metabolizer'. Note 'Poor Metabolizer' and 'Likely Poor Metabolizer' are distinct CPIC categories, not synonyms -- use the exact term. If gene is also given, matches only that gene's phenotype value; otherwise matches any gene's phenotype value in the row."
+        },
         "limit": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Maximum number of recommendations to return (default 50)"
+          "description": "Maximum number of recommendations to return (default 50). Applied after gene/phenotype filtering, if any."
         },
         "offset": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Number of recommendations to skip for pagination (default 0)"
+          "description": "Number of recommendations to skip for pagination (default 0). Applied after gene/phenotype filtering, if any."
         }
       },
       "required": []
@@ -631,6 +645,11 @@
       {
         "guideline_id": 100421,
         "limit": 10
+      },
+      {
+        "drug": "clopidogrel",
+        "gene": "CYP2C19",
+        "phenotype": "Poor Metabolizer"
       }
     ],
     "return_schema": {
@@ -752,6 +771,12 @@
               "type": [
                 "integer",
                 "number"
+              ]
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
               ]
             }
           },
