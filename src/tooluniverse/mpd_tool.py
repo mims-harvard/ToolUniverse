@@ -21,7 +21,7 @@ class MPDRESTTool(BaseTool):
             # live, its phenotype endpoints require a measure ID or project
             # symbol the caller doesn't supply here.
             strain = arguments.get("strain", "C57BL/6J")
-            limit = arguments.get("limit", 5)
+            limit = arguments.get("limit", 10)
 
             # searchTerm is a free-text match, unlike biosample_ontology.term_name
             # (a tissue/cell-type ontology field, not a strain field) -- confirmed

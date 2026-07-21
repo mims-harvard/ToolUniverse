@@ -42,8 +42,18 @@ class CDCRESTTool(BaseTool):
         # Socrata rejects mixing $query with the discrete $limit/$where/... params.
         soql_query = arguments.get("soql_query")
 
-        # Handle limit ($limit in Socrata)
-        limit = arguments.get("limit", 50)
+        # _build_url backs 3 registered tool names (search_datasets/get_dataset/
+        # aggregate) with different declared `limit` defaults (e.g. get_dataset
+        # default=100). Read the per-instance declared default instead of
+        # hardcoding one limit for all three, or get_dataset silently returns
+        # fewer rows than documented whenever `limit` is omitted.
+        declared_limit_default = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("limit", {})
+            .get("default", 50)
+        )
+        limit = arguments.get("limit", declared_limit_default)
         if limit and not soql_query:
             query_params["$limit"] = (
                 min(limit, 1000) if "views.json" in endpoint else min(limit, 50000)
