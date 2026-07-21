@@ -93,28 +93,55 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             r = _try_tool("GenCC", "GenCC_search_disease", {"disease": disease})
         results_by_source["GenCC"] = self._extract_genes_or_diseases(r, "GenCC")
 
-        # 5. ClinVar
-        r = _try_tool(
-            "ClinVar",
-            "ClinVar_search_variants",
-            {"query": gene or disease, "limit": 10},
-        )
+        # 5. ClinVar -- Fix-R80A-1: "query" is documented as an alias for
+        # "condition" (a disease/phenotype free-text search), not a gene
+        # lookup -- the exact same mistake already caught and fixed in the
+        # sibling compound_variant_tool.py (Fix-R31D-4/R31A-3), but never
+        # ported here. Confirmed live that {"query": "LDLR"} silently
+        # returned ClinVar rows for LDLR-related variants anyway (a
+        # coincidental partial match, not a deliberate gene lookup) whose
+        # `genes` field then got mislabeled as "disease" entries below (see
+        # that fix for why genes can't be used as disease names at all).
+        # Branch on gene/disease the same way DisGeNET/OpenTargets already do
+        # above.
+        if disease:
+            r = _try_tool(
+                "ClinVar",
+                "ClinVar_search_variants",
+                {"condition": disease, "limit": 10},
+            )
+        else:
+            r = _try_tool(
+                "ClinVar", "ClinVar_search_variants", {"gene": gene, "limit": 10}
+            )
         results_by_source["ClinVar"] = self._extract_genes_or_diseases(r, "ClinVar")
+
+        notes: List[str] = []
+        clinvar_failed = any(f.startswith("ClinVar:") for f in sources_failed)
+        if not clinvar_failed and not results_by_source["ClinVar"]:
+            notes.append(
+                "ClinVar was queried successfully but contributed no entries to "
+                "the disease-name comparison: ClinVar_search_variants' response "
+                "carries variant title/genes/clinical_significance, not a "
+                "condition/disease name, so this tool cannot extract named "
+                "disease associations from it. This is a data-shape limitation, "
+                "not evidence ClinVar has no data for this gene/disease."
+            )
 
         # Build cross-reference table
         associations = self._build_concordance(results_by_source)
 
-        return {
-            "status": "success",
-            "data": {
-                "query": {"gene": gene, "disease": disease},
-                "sources_queried": list(results_by_source.keys()),
-                "sources_failed": sources_failed,
-                "num_associations": len(associations),
-                "associations": associations[:50],
-                "per_source_results": {k: v[:10] for k, v in results_by_source.items()},
-            },
+        result: Dict[str, Any] = {
+            "query": {"gene": gene, "disease": disease},
+            "sources_queried": list(results_by_source.keys()),
+            "sources_failed": sources_failed,
+            "num_associations": len(associations),
+            "associations": associations[:50],
+            "per_source_results": {k: v[:10] for k, v in results_by_source.items()},
         }
+        if notes:
+            result["notes"] = notes
+        return {"status": "success", "data": result}
 
     def _opentargets_gene_diseases(
         self, tu, gene: str, sources_failed: List[str]
@@ -212,20 +239,19 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
                     items.append({"name": str(name), "score": None, "source": source})
             return items
 
-        # ClinVar: data has "variants" list
+        # Fix-R80A-1: ClinVar_search_variants' rows carry variant title,
+        # genes, clinical_significance, and review_status -- NOT a
+        # condition/disease name (confirmed live, including via the raw
+        # ClinVar eSearch/eSummary shape). The old code extracted each row's
+        # `genes` field into `items` here, so gene symbols themselves (e.g.
+        # "LDLR", plus co-located genes ClinVar's `genes` array includes for
+        # overlapping variants, like the antisense RNA gene "LDLR-AS1")
+        # silently appeared as if they were disease names in the
+        # concordance table. There is currently no usable disease/condition
+        # field to extract instead -- deliberately contribute nothing rather
+        # than fabricate one; run() adds an explanatory note when this
+        # leaves ClinVar's contribution empty despite a successful query.
         if isinstance(data, dict) and "variants" in data:
-            for v in data["variants"][:30]:
-                if isinstance(v, dict):
-                    genes = v.get("genes", [])
-                    for g in genes:
-                        items.append(
-                            {
-                                "name": str(g),
-                                "score": None,
-                                "source": source,
-                                "classification": v.get("clinical_significance", ""),
-                            }
-                        )
             return items
 
         # Generic: try common patterns
