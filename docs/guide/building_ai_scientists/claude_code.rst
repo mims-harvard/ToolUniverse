@@ -35,6 +35,31 @@ Quickstart — install the plugin
 Restart Claude Code. The MCP server auto-starts via ``uvx tooluniverse`` on first use
 (~30 s cold start, instant after).
 
+.. tip::
+
+   **Recommended: turn on auto-update.** Third-party marketplaces default to no
+   auto-update, so new skills and fixes only reach you when you remember to run
+   ``claude plugin update`` yourself. Turn it on once:
+
+   .. code-block:: bash
+
+      python3 -c "
+      import json, pathlib, sys
+      p = pathlib.Path.home() / '.claude/plugins/known_marketplaces.json'
+      d = json.loads(p.read_text())
+      if 'tooluniverse' not in d:
+          sys.exit('Run the marketplace add command above first')
+      d['tooluniverse']['autoUpdate'] = True
+      p.write_text(json.dumps(d, indent=2))
+      print('autoUpdate enabled for tooluniverse')
+      "
+
+   Equivalent interactive path: ``/plugin`` → Marketplaces → ``tooluniverse`` →
+   Enable auto-update. With this on, Claude Code checks for updates in the
+   background after each session start (up to a ~10 min random delay) and
+   updates the installed plugin automatically — no more manual
+   ``claude plugin update``.
+
 .. note::
 
    **Pin to a specific version (optional):**
@@ -98,6 +123,15 @@ What you get
    * - ``/tooluniverse:literature-sweep``
      - Graded mini-review across PubMed + EuropePMC + Semantic Scholar
      - Slash command
+   * - ``/tooluniverse:verify-references``
+     - Check that cited references are real and accurately described, including retraction status
+     - Slash command
+   * - ``/tooluniverse:self-review``
+     - Generate weighted success criteria for a task and check work against them (what's missing / done well)
+     - Slash command
+   * - ``/tooluniverse:setup-keys``
+     - Configure ToolUniverse API keys
+     - Slash command
    * - ``/tooluniverse:researcher``
      - Same investigation as ``research``, delegated to a forked-context subagent that returns one summary (use when you don't want intermediate tool-call output in your main thread)
      - Slash command
@@ -108,6 +142,9 @@ What you get
 
 Update / uninstall
 ------------------
+
+If you enabled auto-update above, updates happen automatically in the
+background — no action needed. Otherwise, update manually:
 
 .. code-block:: bash
 

@@ -97,7 +97,7 @@ Get your first scientific query running in 5 minutes:
       .. code-block:: python
 
          # Load only specific tool categories
-         tu.load_tools(tool_type=['uniprot', 'ChEMBL', 'opentarget'])
+         tu.load_tools(categories=['uniprot', 'ChEMBL', 'opentarget'])
 
 .. card:: Step 3: Execute Your First Tool
  :class-card: step-card current
@@ -286,7 +286,7 @@ Common Examples
 
    # Search scientific papers
    result = tu.run({
-       "name": "PubTator_search_publications",
+       "name": "PubTator3_LiteratureSearch",
        "arguments": {
            "query": "CRISPR cancer therapy",
            "limit": 10
@@ -424,7 +424,7 @@ Tool Loading Options
    tu.load_tools()
 
    # Load specific categories
-   tu.load_tools(tool_type=['uniprot', 'ChEMBL', 'opentarget'])
+   tu.load_tools(categories=['uniprot', 'ChEMBL', 'opentarget'])
 
    # Load only specific tools by name
    tu.load_tools(include_tools=['UniProt_get_function_by_accession', 'PubMed_search_articles'])
