@@ -240,6 +240,32 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             # Use [uid] to look up by numeric variation ID.
             query_parts.append(f"{arguments['variant_id']}[uid]")
 
+        if arguments.get("variant_name"):
+            # Fix-R78B-1: the Fix-R5D-1/R8C-1 comment above assumed there was
+            # "no such parameter" -- but ClinVar eSearch DOES support a real
+            # [Variant name] field tag (confirmed live: "HBB[gene] AND
+            # Glu7Val[Variant name]" -> 9 hits including VCV 15333, the
+            # canonical sickle-cell NM_000518.5(HBB):c.20A>T (p.Glu7Val)
+            # Pathogenic record). Without this, an exact-match lookup for a
+            # specific protein change/HGVS notation could only be done by
+            # fetching gene-level rows (capped at 100) and filtering
+            # client-side -- which silently misses old/low-ID records in any
+            # variant-dense gene, since ClinVar's default gene-level order
+            # isn't clinical-significance- or fame-ranked (confirmed live:
+            # HBB's own sickle-cell record, one of the best-known variants in
+            # human genetics, isn't within the first 100 or even the first
+            # 425-Pathogenic-filtered gene-level rows). Accepts either a
+            # single name or a list (a multi-allelic site yields one protein
+            # change per allele; only the queried allele's name will hit, so
+            # every candidate must be tried) -- combined with OR so one
+            # request covers all candidates.
+            names = arguments["variant_name"]
+            names = names if isinstance(names, list) else [names]
+            names = [str(n).strip() for n in names if str(n).strip()]
+            if names:
+                terms = " OR ".join(f"{n}[Variant name]" for n in names)
+                query_parts.append(f"({terms})" if len(names) > 1 else terms)
+
         if "clinical_significance" in arguments:
             # Feature-82A-002: NCBI silently translates [clnsig] to [All Fields],
             # returning unrelated variants. The correct syntax is the [Filter] field:
@@ -263,15 +289,16 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             )
 
         # Fix-R5D-1/R8C-1: a caller-supplied param that doesn't match any
-        # recognized name/alias (e.g. "gene_name" instead of "gene", or
-        # "variant_name" -- there is no such parameter, only "variant_id")
-        # was silently dropped. When it's the ONLY param supplied, this
+        # recognized name/alias (e.g. "gene_name" instead of "gene") was
+        # silently dropped. (Fix-R78B-1: "variant_name" -- originally called
+        # out here as "no such parameter" -- is now a real, supported param;
+        # see above.) When it's the ONLY param supplied, this
         # produced a generic "at least one search parameter is required"
         # error with no hint the parameter itself was misnamed. When OTHER
         # valid params are also supplied, the query still runs but silently
         # ignores the unrecognized one -- confirmed live that
-        # {"gene": "GJB2", "variant_name": "35delG"} returns all 739 GJB2
-        # variants with no indication the variant_name filter had zero
+        # {"gene": "GJB2", "made_up_param": "35delG"} returns all 739 GJB2
+        # variants with no indication the made_up_param filter had zero
         # effect. Name unrecognized parameter(s) in both cases.
         recognized = {
             "gene",
@@ -279,6 +306,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             "condition",
             "query",
             "variant_id",
+            "variant_name",
             "clinical_significance",
             "significance",
             "max_results",
@@ -293,7 +321,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
                     "error": (
                         f"Unrecognized parameter(s): {', '.join(unrecognized)}. "
                         "Valid search parameters: gene (or gene_symbol), "
-                        "condition (or query), variant_id, "
+                        "condition (or query), variant_id, variant_name, "
                         "clinical_significance (or significance)."
                     ),
                 }

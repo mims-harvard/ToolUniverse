@@ -13,12 +13,14 @@ mitochondrial genes all need the hyphen PRESERVED, e.g. "HLA-B[gene]" ->
 preserved first, falling back to the stripped form only if that returns
 zero results, so both cases resolve correctly without a hardcoded gene list.
 
-Fix-R5D-1/R8C-1: an unrecognized parameter (e.g. "variant_name", which
-doesn't exist -- only "variant_id" does) was silently dropped. When it was
-the only param supplied, this produced a generic "at least one search
-parameter is required" error; when other valid params were also supplied,
-the query ran but silently ignored the unrecognized one with no
-indication the filter had zero effect.
+Fix-R5D-1/R8C-1: an unrecognized parameter (e.g. "variant_nam", a typo of a
+real param) was silently dropped. When it was the only param supplied, this
+produced a generic "at least one search parameter is required" error; when
+other valid params were also supplied, the query ran but silently ignored
+the unrecognized one with no indication the filter had zero effect. (Note:
+"variant_name" itself was originally this fix's own illustrative example of
+a parameter that "doesn't exist" -- Fix-R78B-1 later added it as a real,
+working parameter; see test_clinvar_variant_name_search.py.)
 """
 
 from unittest.mock import patch
@@ -138,10 +140,10 @@ def test_plain_gene_symbol_unaffected():
 
 def test_unrecognized_param_alone_names_itself_in_error():
     tool = _tool()
-    result = tool.run({"variant_name": "35delG"})
+    result = tool.run({"varient_name": "35delG"})
 
     assert result["status"] == "error"
-    assert "variant_name" in result["error"]
+    assert "varient_name" in result["error"]
     assert "Unrecognized parameter" in result["error"]
 
 
@@ -163,10 +165,10 @@ def test_unrecognized_param_alongside_valid_param_is_noted_not_silently_dropped(
             },
         ],
     ):
-        result = tool.run({"gene": "GJB2", "variant_name": "35delG"})
+        result = tool.run({"gene": "GJB2", "varient_name": "35delG"})
 
     assert result["status"] == "success"
-    assert result["data"]["ignored_parameters"] == ["variant_name"]
+    assert result["data"]["ignored_parameters"] == ["varient_name"]
     assert result["data"]["total_count"] == 739
 
 

@@ -88,7 +88,14 @@ class MARRVELGeneTool(BaseTool):
                 "name": rec.get("name"),
                 "entrez_id": rec.get("entrezId"),
                 "hgnc_id": xref.get("hgncId"),
-                "omim_id": xref.get("omimId"),
+                # Fix-R78A-1: MARRVEL's own /gene/taxonId/.../symbol/... endpoint
+                # returns a bogus small placeholder integer in xref.omimId (e.g.
+                # "1" for BRCA1/EGFR/APOE/MYH7/TP53, "6" for CFTR/PTEN) instead
+                # of the real 6-digit OMIM MIM number -- confirmed live across
+                # multiple genes, so this isn't a per-gene data gap. The correct
+                # gene_mim_number is only available from MARRVEL's dedicated OMIM
+                # endpoint, exposed here as MARRVEL_get_omim_phenotypes -- point
+                # callers there instead of surfacing this misleading value.
                 "ensembl_id": xref.get("ensemblId"),
                 "uniprot_id": rec.get("uniprotKBId"),
                 "chromosome": rec.get("chr"),

@@ -671,3 +671,130 @@ def test_explicit_gene_wins_over_rsid_resolved_gene_when_both_given():
 
     gnomad_call = next(c for c in calls if c["name"] == "gnomad_get_gene")
     assert gnomad_call["arguments"]["gene_symbol"] == "HBB"
+
+
+# Fix-R78B-1: rs334 (HBB, the sickle-cell mutation) always reported "no exact
+# ClinVar match" even though ClinVar has a Pathogenic record for it (VCV
+# 15333) -- the record's low/old variant ID meant it was never within the
+# first 100 (or even 425 Pathogenic-filtered) gene-level rows the old code
+# fetched and filtered client-side. ClinVar_search_variants now supports a
+# targeted variant_name search; the ClinVar step here must try that first and
+# only fall back to the old gene-level browse when it doesn't confirm a match.
+def test_clinvar_uses_targeted_variant_name_search_when_it_finds_exact_match():
+    t = _tool()
+    calls = []
+
+    def fake_run_one_function(call):
+        calls.append(call)
+        if call["name"] == "dbsnp_get_variant_by_rsid":
+            return {
+                "status": "success",
+                "data": {"hgvs_notation": "...|NP_000509.1:p.Glu7Val|GENE=HBB:3043"},
+            }
+        if call["name"] == "ClinVar_search_variants":
+            if call["arguments"].get("variant_name"):
+                return {
+                    "status": "success",
+                    "data": {
+                        "total_count": 1,
+                        "variants": [
+                            {
+                                "title": "NM_000518.5(HBB):c.20A>T (p.Glu7Val)",
+                                "clinical_significance": "Pathogenic",
+                                "review_status": "criteria provided, multiple submitters",
+                            }
+                        ],
+                    },
+                }
+            # bulk gene-level fallback -- must NOT be reached in this test
+            raise AssertionError(
+                "bulk gene-level ClinVar fetch was called even though the "
+                "targeted variant_name search already found an exact match"
+            )
+        return {"status": "success", "data": {}}
+
+    with patch(
+        "tooluniverse.execute_function.ToolUniverse.run_one_function",
+        side_effect=fake_run_one_function,
+    ), patch("tooluniverse.execute_function.ToolUniverse.load_tools", return_value=None):
+        result = t.run({"rsid": "rs334"})
+
+    clinvar_calls = [c for c in calls if c["name"] == "ClinVar_search_variants"]
+    assert len(clinvar_calls) == 1
+    assert clinvar_calls[0]["arguments"]["variant_name"] == ["Glu7Val", "Glu6Val"]
+
+    clinvar = result["data"]["annotations"]["clinvar"]
+    assert clinvar["exact_match"] is True
+    assert clinvar["matched"] == 1
+    assert clinvar["variants"][0]["classification"] == "Pathogenic"
+    assert result["data"]["summary"]["clinvar_classification"] == "Pathogenic"
+
+
+def test_clinvar_falls_back_to_gene_level_browse_when_targeted_search_finds_nothing():
+    t = _tool()
+    calls = []
+
+    def fake_run_one_function(call):
+        calls.append(call)
+        if call["name"] == "dbsnp_get_variant_by_rsid":
+            return {
+                "status": "success",
+                "data": {"hgvs_notation": "...|NP_004324.2:p.Val600Glu|GENE=BRAF:673"},
+            }
+        if call["name"] == "ClinVar_search_variants":
+            if call["arguments"].get("variant_name"):
+                # targeted search finds nothing (e.g. nomenclature ClinVar's
+                # index doesn't recognize) -- must fall back to bulk browse
+                return {"status": "success", "data": {"total_count": 0, "variants": []}}
+            return {
+                "status": "success",
+                "data": {
+                    "total_count": 1,
+                    "variants": [
+                        {
+                            "title": "NM_004333.6(BRAF):c.1799T>A (p.Val600Glu)",
+                            "clinical_significance": "Pathogenic",
+                            "review_status": "reviewed by expert panel",
+                        }
+                    ],
+                },
+            }
+        return {"status": "success", "data": {}}
+
+    with patch(
+        "tooluniverse.execute_function.ToolUniverse.run_one_function",
+        side_effect=fake_run_one_function,
+    ), patch("tooluniverse.execute_function.ToolUniverse.load_tools", return_value=None):
+        result = t.run({"rsid": "rs113488022"})
+
+    clinvar_calls = [c for c in calls if c["name"] == "ClinVar_search_variants"]
+    assert len(clinvar_calls) == 2
+    assert clinvar_calls[0]["arguments"].get("variant_name")
+    assert "variant_name" not in clinvar_calls[1]["arguments"]
+    assert clinvar_calls[1]["arguments"]["limit"] == 100
+
+    clinvar = result["data"]["annotations"]["clinvar"]
+    assert clinvar["exact_match"] is True
+    assert clinvar["variants"][0]["classification"] == "Pathogenic"
+
+
+def test_clinvar_skips_targeted_search_when_no_variant_token_resolvable():
+    """A gene-only query (no rsid/variant, so variant_token stays None) must
+    go straight to the bulk browse -- unchanged from before this fix."""
+    t = _tool()
+    calls = []
+
+    def fake_run_one_function(call):
+        calls.append(call)
+        return {"status": "success", "data": {"total_count": 0, "variants": []}}
+
+    with patch(
+        "tooluniverse.execute_function.ToolUniverse.run_one_function",
+        side_effect=fake_run_one_function,
+    ), patch("tooluniverse.execute_function.ToolUniverse.load_tools", return_value=None):
+        t.run({"gene": "BRCA1"})
+
+    clinvar_calls = [c for c in calls if c["name"] == "ClinVar_search_variants"]
+    assert len(clinvar_calls) == 1
+    assert "variant_name" not in clinvar_calls[0]["arguments"]
+    assert clinvar_calls[0]["arguments"]["limit"] == 100
