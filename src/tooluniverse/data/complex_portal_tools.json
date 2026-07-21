@@ -11,7 +11,7 @@
         },
         "species": {
           "type": "string",
-          "description": "NCBI taxonomy ID to filter by species (default: '9606' for human). Use '10090' for mouse, '10116' for rat, '' for all species.",
+          "description": "NCBI taxonomy ID or common species name to filter by species (default: '9606' for human). Common IDs/names are mapped to Complex Portal's organism index, e.g. '10090' or 'mouse' for Mus musculus, '10116' or 'rat' for Rattus norvegicus, 'yeast' for Saccharomyces cerevisiae; pass '' for all species.",
           "default": "9606"
         },
         "number": {
