@@ -175,12 +175,9 @@
 - **Use Case**: Protein structure and complex formation
 - **API**: Public REST API
 
-**Tools (5)** - Use for structural analysis:
-1. `SASBDB_search_entries` - Find structural data
-2. `SASBDB_get_entry` - Get entry metadata
-3. `SASBDB_get_entry` - Get structural models
-4. `SASBDB_get_entry` - Get scattering data
-5. `SASBDB_download_data` - Download raw data
+**Tools (2)** - Use for structural analysis:
+1. `SASBDB_search_entries` - Find structural data (by molecular type, or list all entries)
+2. `SASBDB_get_entry` - Get entry metadata, experimental conditions, publication info, and data file URLs (one call covers structure/scattering data access — there is no separate download tool)
 
 ---
 

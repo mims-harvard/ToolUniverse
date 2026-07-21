@@ -761,8 +761,8 @@ result = tu.tools.OMIM_search(query="BRCA1")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `ClinGen_gene_validity` | Get curation status | `gene` |
-| `ClinGen_dosage` | Dosage sensitivity | `gene` |
+| `ClinGen_get_gene_validity` | Get curation status | `gene` |
+| `ClinGen_dosage_by_gene` | Dosage sensitivity | `gene` |
 
 **Gene Validity Levels**:
 | Level | Meaning |
