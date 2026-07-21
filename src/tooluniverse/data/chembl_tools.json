@@ -523,6 +523,11 @@
         "offset": {
           "type": "integer",
           "default": 0
+        },
+        "fields": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Optional list of assay fields to include in each returned assay object (projection). Mapped to ChEMBL's `only` query parameter (comma-separated)."
         }
       },
       "required": [

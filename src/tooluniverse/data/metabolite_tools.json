@@ -398,6 +398,15 @@
         "compound_name": {
           "type": "string",
           "description": "Compound name (e.g., glucose)"
+        },
+        "pubchem_cid": {
+          "type": "string",
+          "description": "PubChem CID as an alternative identifier to hmdb_id or compound_name."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 50,
+          "description": "Maximum number of disease associations to return (default 50)."
         }
       },
       "required": []
