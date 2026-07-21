@@ -17,6 +17,7 @@ Website: https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/therasabdab/
 
 import requests
 from typing import Dict, Any, List, Optional
+import html as html_lib
 import re
 from urllib.parse import urlparse, parse_qs
 from .base_tool import BaseTool
@@ -230,8 +231,8 @@ class TheraSAbDabTool(BaseTool):
                 def clean_html(text):
                     # Remove HTML tags
                     clean = re.sub(r"<[^>]+>", "", text)
-                    # Decode entities
-                    clean = clean.replace("&nbsp;", " ").strip()
+                    # Decode entities (named and numeric, e.g. &amp; &#39; &nbsp;)
+                    clean = html_lib.unescape(clean).replace("\xa0", " ").strip()
                     return clean
 
                 therapeutic = {
