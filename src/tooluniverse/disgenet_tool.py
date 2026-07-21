@@ -123,16 +123,37 @@ class DisGeNETTool(BaseTool):
     @staticmethod
     def _apply_filters(rows: List[Dict[str, Any]], min_score, limit):
         if min_score is not None:
-            rows = [r for r in rows if (r.get("score") is not None and r["score"] >= min_score)]
+            rows = [
+                r
+                for r in rows
+                if (r.get("score") is not None and r["score"] >= min_score)
+            ]
         if limit:
             rows = rows[: int(limit)]
         return rows
+
+    def _declared_limit_default(self, fallback):
+        # _gene_disease and _disease_genes each back 2 registered tool names
+        # (e.g. DisGeNET_search_gene default=10 vs DisGeNET_get_gda
+        # default=25, both routed through _gene_disease). Read the
+        # per-instance declared default instead of hardcoding one limit for
+        # both, or the tool with the smaller declared default silently
+        # returns more rows than documented whenever `limit` is omitted.
+        return (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("limit", {})
+            .get("default", fallback)
+        )
 
     def _err(self, e) -> Dict[str, Any]:
         if isinstance(e, requests.exceptions.HTTPError) and e.response is not None:
             code = e.response.status_code
             if code in (401, 403):
-                return {"status": "error", "error": "DisGeNET API key invalid or unauthorized for this resource (academic keys only access CURATED sources)."}
+                return {
+                    "status": "error",
+                    "error": "DisGeNET API key invalid or unauthorized for this resource (academic keys only access CURATED sources).",
+                }
             return {"status": "error", "error": f"DisGeNET HTTP error: {code}"}
         return {"status": "error", "error": f"DisGeNET request failed: {str(e)}"}
 
@@ -169,7 +190,10 @@ class DisGeNETTool(BaseTool):
         gene = (arguments.get("gene") or "").strip()
         disease = (arguments.get("disease") or "").strip()
         if not gene and not disease:
-            return {"status": "error", "error": "Provide 'gene' (symbol or NCBI id) or 'disease' (UMLS CUI)."}
+            return {
+                "status": "error",
+                "error": "Provide 'gene' (symbol or NCBI id) or 'disease' (UMLS CUI).",
+            }
 
         query: Dict[str, Any] = {}
         if gene:
@@ -180,7 +204,10 @@ class DisGeNETTool(BaseTool):
         if disease:
             code = self._normalize_disease(disease)
             if code is None:
-                return {"status": "error", "error": f"'{disease}' is not a UMLS CUI. Resolve the disease name to a CUI first (e.g. umls_search_concepts), then pass disease='C0152200'."}
+                return {
+                    "status": "error",
+                    "error": f"'{disease}' is not a UMLS CUI. Resolve the disease name to a CUI first (e.g. umls_search_concepts), then pass disease='C0152200'.",
+                }
             query["disease"] = code
         if arguments.get("source"):
             query["source"] = arguments["source"]
@@ -190,25 +217,40 @@ class DisGeNETTool(BaseTool):
         except Exception as e:  # noqa: BLE001 - never raise out of run()
             return self._err(e)
 
-        rows = self._apply_filters([self._fmt_gda(r) for r in payload],
-                                   arguments.get("min_score"),
-                                   arguments.get("limit", 25))
+        rows = self._apply_filters(
+            [self._fmt_gda(r) for r in payload],
+            arguments.get("min_score"),
+            arguments.get("limit", self._declared_limit_default(25)),
+        )
         return {
             "status": "success",
-            "data": {"gene": gene or None, "disease": disease or None,
-                     "associations": rows, "count": len(rows)},
-            "metadata": {"source": "DisGeNET GDA", "warnings": warnings,
-                         "note": "Academic keys return CURATED sources only."},
+            "data": {
+                "gene": gene or None,
+                "disease": disease or None,
+                "associations": rows,
+                "count": len(rows),
+            },
+            "metadata": {
+                "source": "DisGeNET GDA",
+                "warnings": warnings,
+                "note": "Academic keys return CURATED sources only.",
+            },
         }
 
     def _disease_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """All genes associated with a disease (UMLS CUI)."""
         disease = (arguments.get("disease") or "").strip()
         if not disease:
-            return {"status": "error", "error": "Missing required parameter: disease (UMLS CUI, e.g. C0152200)."}
+            return {
+                "status": "error",
+                "error": "Missing required parameter: disease (UMLS CUI, e.g. C0152200).",
+            }
         code = self._normalize_disease(disease)
         if code is None:
-            return {"status": "error", "error": f"'{disease}' is not a UMLS CUI. Resolve the disease name to a CUI first (e.g. umls_search_concepts), then pass disease='C0152200'."}
+            return {
+                "status": "error",
+                "error": f"'{disease}' is not a UMLS CUI. Resolve the disease name to a CUI first (e.g. umls_search_concepts), then pass disease='C0152200'.",
+            }
 
         query: Dict[str, Any] = {"disease": code}
         if arguments.get("source"):
@@ -223,15 +265,32 @@ class DisGeNETTool(BaseTool):
             sym = row.get("symbolOfGene")
             if sym and sym not in seen:
                 seen.add(sym)
-                genes.append({"symbol": sym, "ncbi_id": row.get("geneNcbiID"),
-                              "score": row.get("score"), "n_pmids": row.get("numPMIDs")})
-        genes = self._apply_filters(genes, arguments.get("min_score"), arguments.get("limit", 50))
+                genes.append(
+                    {
+                        "symbol": sym,
+                        "ncbi_id": row.get("geneNcbiID"),
+                        "score": row.get("score"),
+                        "n_pmids": row.get("numPMIDs"),
+                    }
+                )
+        genes = self._apply_filters(
+            genes,
+            arguments.get("min_score"),
+            arguments.get("limit", self._declared_limit_default(50)),
+        )
         return {
             "status": "success",
-            "data": {"disease": disease, "disease_code": code,
-                     "genes": genes, "gene_count": len(genes)},
-            "metadata": {"source": "DisGeNET", "warnings": warnings,
-                         "note": "Academic keys return CURATED sources only."},
+            "data": {
+                "disease": disease,
+                "disease_code": code,
+                "genes": genes,
+                "gene_count": len(genes),
+            },
+            "metadata": {
+                "source": "DisGeNET",
+                "warnings": warnings,
+                "note": "Academic keys return CURATED sources only.",
+            },
         }
 
     def _variant_disease(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -239,7 +298,10 @@ class DisGeNETTool(BaseTool):
         variant = (arguments.get("variant") or "").strip()
         gene = (arguments.get("gene") or "").strip()
         if not variant and not gene:
-            return {"status": "error", "error": "Provide 'variant' (rsID) or 'gene' (symbol)."}
+            return {
+                "status": "error",
+                "error": "Provide 'variant' (rsID) or 'gene' (symbol).",
+            }
         query: Dict[str, Any] = {}
         if variant:
             query["variant"] = variant
@@ -249,13 +311,22 @@ class DisGeNETTool(BaseTool):
             payload, warnings = self._query_summary("vda", query)
         except Exception as e:  # noqa: BLE001
             return self._err(e)
-        rows = self._apply_filters([self._fmt_vda(r) for r in payload],
-                                   arguments.get("min_score"),
-                                   arguments.get("limit", 25))
+        rows = self._apply_filters(
+            [self._fmt_vda(r) for r in payload],
+            arguments.get("min_score"),
+            arguments.get("limit", 25),
+        )
         return {
             "status": "success",
-            "data": {"variant": variant or None, "gene": gene or None,
-                     "associations": rows, "count": len(rows)},
-            "metadata": {"source": "DisGeNET VDA", "warnings": warnings,
-                         "note": "Academic keys return CURATED sources only."},
+            "data": {
+                "variant": variant or None,
+                "gene": gene or None,
+                "associations": rows,
+                "count": len(rows),
+            },
+            "metadata": {
+                "source": "DisGeNET VDA",
+                "warnings": warnings,
+                "note": "Academic keys return CURATED sources only.",
+            },
         }
