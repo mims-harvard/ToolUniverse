@@ -60,8 +60,16 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
             timeout=self.timeout,
             max_attempts=3,
         )
-        if resp.status_code != 200:
-            return []
+        # Fix-R75A-1: a genuine zero-hit PubMed query returns HTTP 200 with
+        # an empty idlist (confirmed live) -- a non-200 here always means
+        # the request itself failed (rate limit, outage, etc.), never
+        # "no results." The old `if status_code != 200: return []` made
+        # both cases produce the identical empty list, so run()'s "No
+        # PubMed results found for query: {query}" success message
+        # silently misreported real request failures as empty searches.
+        # Raise instead, so run()'s existing except-Exception surfaces it
+        # as an actual error.
+        resp.raise_for_status()
         data = resp.json()
         return data.get("esearchresult", {}).get("idlist", [])
 
@@ -77,8 +85,11 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
             timeout=self.timeout,
             max_attempts=3,
         )
-        if resp.status_code != 200:
-            return []
+        # Fix-R75A-1: same reasoning as _search_pubmed -- a failed batch
+        # fetch previously vanished silently (extend() of an empty list),
+        # under-representing citation data for that PMID chunk with no
+        # error at all. Raise so the caller's except-Exception catches it.
+        resp.raise_for_status()
         data = resp.json()
         return data.get("data", [])
 
