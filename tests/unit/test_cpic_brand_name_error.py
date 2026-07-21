@@ -9,6 +9,7 @@ real constraint and suggests trying the generic name instead.
 from unittest.mock import MagicMock, patch
 
 import pytest
+import requests
 
 from tooluniverse.cpic_search_pairs_tool import (
     CPICGetRecommendationsTool,
@@ -46,6 +47,56 @@ def test_missing_drug_and_guideline_id_keeps_original_error():
 
     assert result["status"] == "error"
     assert "Either guideline_id or drug name is required" in result["error"]
+
+
+class TestRequestFailureDistinctFromGenuineNotFound:
+    """Regression guard for Fix-R56A-1: _resolve_drug_to_guideline_id's bare
+    `except Exception: pass` reported a transient CPIC API failure (network
+    error, timeout) identically to a drug genuinely not being in CPIC's
+    database -- confirmed live for simvastatin, which IS in CPIC's /drug
+    table with a real guidelineid (100426), but a connection hiccup while
+    testing this exact endpoint produced "No CPIC guideline found for drug
+    'simvastatin'", wrongly implying the drug has no CPIC coverage at all.
+    A request failure must now surface as its own distinct error."""
+
+    def test_connection_error_reports_api_failure_not_drug_not_found(self):
+        tool = CPICGetRecommendationsTool({"name": "CPIC_get_recommendations"})
+
+        with patch(
+            "tooluniverse.cpic_search_pairs_tool.requests.get",
+            side_effect=requests.exceptions.ConnectionError("simulated connection failure"),
+        ):
+            result = tool.run({"drug": "simvastatin"})
+
+        assert result["status"] == "error"
+        assert "CPIC API error" in result["error"]
+        assert "simvastatin" in result["error"]
+        # Must NOT claim the drug has no guideline -- that's a different,
+        # false claim about CPIC's actual data.
+        assert "No CPIC guideline found" not in result["error"]
+
+    def test_genuinely_empty_drug_lookup_still_reports_not_found(self):
+        """A real 'not in CPIC' case (request succeeds, zero rows) must
+        keep reporting the original not-found message, not an API error."""
+        tool = CPICGetRecommendationsTool({"name": "CPIC_get_recommendations"})
+
+        with patch(
+            "tooluniverse.cpic_search_pairs_tool.requests.get",
+            return_value=_empty_drug_lookup_response(),
+        ):
+            result = tool.run({"drug": "not-a-real-drug-xyz"})
+
+        assert result["status"] == "error"
+        assert "No CPIC guideline found" in result["error"]
+        assert "CPIC API error" not in result["error"]
+
+    def test_resolve_helper_raises_on_request_failure_rather_than_swallowing_it(self):
+        with patch(
+            "tooluniverse.cpic_search_pairs_tool.requests.get",
+            side_effect=requests.exceptions.Timeout("simulated timeout"),
+        ):
+            with pytest.raises(requests.exceptions.RequestException):
+                _resolve_drug_to_guideline_id("simvastatin")
 
 
 def _resp(json_body):

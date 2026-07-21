@@ -21,41 +21,49 @@ def _resolve_drug_to_guideline_id(
 ) -> Optional[Tuple[int, Optional[str]]]:
     """Look up CPIC guideline ID and RxNorm ID for a drug name via CPIC API.
 
-    Returns (guideline_id, rxnorm_id) tuple, or None if not found.
-    rxnorm_id may be None if the drug has no RxNorm entry.
-    """
-    try:
-        r = requests.get(
-            f"{_CPIC_API}/drug",
-            params={
-                "select": "name,guidelineid,rxnormid",
-                "name": f"ilike.*{drug_name}*",
-            },
-            timeout=15,
-        )
-        r.raise_for_status()
-        rows = r.json()
-        if not rows:
-            return None
-        # Fix-R35C-1: substring `ilike` matching picks a false first hit
-        # whenever one drug name is a substring of another -- confirmed
-        # live for "citalopram" (a substring of "escitalopram") and
-        # "phenytoin" (a substring of "fosphenytoin"): querying the shorter
-        # name silently returned the OTHER drug's guideline/rxnorm id
-        # because it happened to sort first in CPIC's unordered response,
-        # so CPIC_get_recommendations returned a different drug's dosing
-        # guidance with no indication of the substitution. Prefer an exact
-        # case-insensitive match; only fall back to the first fuzzy hit
-        # when no exact match exists (genuine partial/typo queries).
-        exact = next(
-            (row for row in rows if row.get("name", "").lower() == drug_name.lower()),
-            None,
-        )
-        row = exact or rows[0]
-        if row.get("guidelineid"):
-            return row["guidelineid"], row.get("rxnormid")
-    except Exception:
-        pass
+    Returns (guideline_id, rxnorm_id) tuple, or None if genuinely not found
+    (the request succeeded but no matching drug/guideline exists). Raises
+    requests.exceptions.RequestException on a request failure (network
+    error, timeout, HTTP error) -- Fix-R56A-1: this used to swallow those
+    the same way as a genuine "not found", so a transient CPIC API hiccup
+    (confirmed live: a `Max retries exceeded`/connection error while testing
+    this exact endpoint) was reported to the caller as "No CPIC guideline
+    found for drug 'simvastatin'" even though simvastatin IS in CPIC's
+    /drug table with a real guidelineid (100426) -- misleading a caller
+    into concluding the drug has no CPIC coverage at all. The rest of this
+    file already distinguishes RequestException from a genuine empty result
+    (see CPICGetRecommendationsTool.run's own /recommendation call below);
+    this makes the /drug lookup consistent with that same pattern instead
+    of being the one place that still conflates them."""
+    r = requests.get(
+        f"{_CPIC_API}/drug",
+        params={
+            "select": "name,guidelineid,rxnormid",
+            "name": f"ilike.*{drug_name}*",
+        },
+        timeout=15,
+    )
+    r.raise_for_status()
+    rows = r.json()
+    if not rows:
+        return None
+    # Fix-R35C-1: substring `ilike` matching picks a false first hit
+    # whenever one drug name is a substring of another -- confirmed
+    # live for "citalopram" (a substring of "escitalopram") and
+    # "phenytoin" (a substring of "fosphenytoin"): querying the shorter
+    # name silently returned the OTHER drug's guideline/rxnorm id
+    # because it happened to sort first in CPIC's unordered response,
+    # so CPIC_get_recommendations returned a different drug's dosing
+    # guidance with no indication of the substitution. Prefer an exact
+    # case-insensitive match; only fall back to the first fuzzy hit
+    # when no exact match exists (genuine partial/typo queries).
+    exact = next(
+        (row for row in rows if row.get("name", "").lower() == drug_name.lower()),
+        None,
+    )
+    row = exact or rows[0]
+    if row.get("guidelineid"):
+        return row["guidelineid"], row.get("rxnormid")
     return None
 
 
@@ -82,7 +90,13 @@ class CPICGetRecommendationsTool(BaseTool):
                         "Use CPIC_list_guidelines to browse available guidelines."
                     ),
                 }
-            result = _resolve_drug_to_guideline_id(drug)
+            try:
+                result = _resolve_drug_to_guideline_id(drug)
+            except requests.exceptions.RequestException as e:
+                return {
+                    "status": "error",
+                    "error": f"CPIC API error while resolving drug '{drug}': {e}",
+                }
             if result is None:
                 # Fix-R5C-2: CPIC's /drug table only has generic names (no
                 # brand-name field), so a brand name like "zoloft" never
