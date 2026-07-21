@@ -489,7 +489,13 @@ class UniProtRESTTool(BaseTool):
     def _handle_uniref_search(self, arguments: Dict[str, Any]) -> Any:
         """Handle UniRef search queries"""
         query = arguments.get("query", "")
-        cluster_type = arguments.get("cluster_type", "")
+        declared_cluster_type_default = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("cluster_type", {})
+            .get("default", "")
+        )
+        cluster_type = arguments.get("cluster_type", declared_cluster_type_default)
         limit_value = arguments.get("limit", 25)
         if isinstance(limit_value, str):
             limit_value = int(limit_value)
@@ -497,11 +503,28 @@ class UniProtRESTTool(BaseTool):
 
         # Build query - if cluster_type specified and not in query, add it
         # Note: UniRef search accepts queries like "P04637" or "id:UniRef50_P04637"
+        # cluster_type is applied via UniProt's `identity:` query filter
+        # (0.5/0.9/1.0 for UniRef50/90/100 -- confirmed live against
+        # rest.uniprot.org/uniref/search). Skip it when the query already
+        # names a UniRef cluster directly (e.g. "UniRef50_P04637") or
+        # already carries its own identity filter, so we don't override an
+        # explicit caller choice.
         full_query = query
-        if cluster_type and "uniref" not in query.lower():
-            # User can filter by cluster type in their query if needed
-            # For now, just use the query as-is - API will return matching clusters
-            pass
+        cluster_identity = {
+            "UniRef100": "1.0",
+            "UniRef90": "0.9",
+            "UniRef50": "0.5",
+        }.get(cluster_type)
+        if (
+            cluster_identity
+            and "uniref" not in query.lower()
+            and "identity:" not in query.lower()
+        ):
+            full_query = (
+                f"({query}) AND identity:{cluster_identity}"
+                if query
+                else f"identity:{cluster_identity}"
+            )
 
         params = {"query": full_query, "size": str(limit), "format": "json"}
         url = "https://rest.uniprot.org/uniref/search"

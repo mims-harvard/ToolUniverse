@@ -92,18 +92,38 @@ class RGDTool(BaseTool):
             "metadata": {"source": "RGD", "query_id": rgd_id},
         }
 
+    # Maps this tool's documented `species` values to the exact strings the
+    # Alliance of Genome Resources API returns in each gene hit's `species`
+    # field (confirmed live against alliancegenome.org/api/search).
+    _SPECIES_ALIASES = {
+        "rat": "Rattus norvegicus",
+        "human": "Homo sapiens",
+        "mouse": "Mus musculus",
+    }
+
     def _search_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         query = arguments.get("query") or arguments.get("gene_symbol", "")
         if not query:
             return {"status": "error", "error": "query is required"}
 
         limit = arguments.get("limit", 10)
+        declared_species_default = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("species", {})
+            .get("default", "rat")
+        )
+        species_arg = str(arguments.get("species") or declared_species_default).strip()
+        target_species = self._SPECIES_ALIASES.get(species_arg.lower(), species_arg)
 
-        # Use Alliance of Genome Resources search (aggregates RGD data)
+        # Use Alliance of Genome Resources search (aggregates RGD/HGNC/MGI data)
         # RGD's own symbol search is unreliable (returns 400 for many queries).
         # Note: the Alliance API no longer honours a `category=gene` query param
         # (it returns zero results) and the gene id is now in `curie` (was
-        # `primaryKey`). Fetch unfiltered and keep RGD gene hits client-side.
+        # `primaryKey`). Fetch unfiltered and keep hits for the requested
+        # species client-side -- this used to hardcode an RGD-only (rat)
+        # filter regardless of the `species` argument, so a caller passing
+        # species='human' or 'mouse' silently got rat genes back instead.
         alliance_url = "https://www.alliancegenome.org/api/search"
         params = {"q": query, "limit": max(int(limit) * 5, 25)}
         resp = self.session.get(alliance_url, params=params, timeout=self.timeout)
@@ -114,16 +134,18 @@ class RGDTool(BaseTool):
         for r in data.get("results", []):
             if r.get("category") != "gene_search_result":
                 continue
-            curie = r.get("curie", "")
-            # Filter to RGD entries only (rat genes)
-            if not curie.startswith("RGD:"):
+            if (r.get("species") or "").lower() != target_species.lower():
                 continue
+            curie = r.get("curie", "")
             genes.append(
                 {
-                    "rgd_id": curie.replace("RGD:", ""),
+                    "gene_id": curie,
+                    "rgd_id": curie.replace("RGD:", "")
+                    if curie.startswith("RGD:")
+                    else None,
                     "symbol": r.get("symbol"),
                     "name": r.get("name"),
-                    "species": r.get("species", "Rattus norvegicus"),
+                    "species": r.get("species"),
                     "synonyms": r.get("synonyms", [])[:5],
                 }
             )
@@ -135,6 +157,7 @@ class RGDTool(BaseTool):
             "data": genes,
             "metadata": {
                 "query": query,
+                "species": target_species,
                 "returned": len(genes),
                 "total_alliance_results": data.get("total", 0),
                 "source": "RGD via Alliance of Genome Resources",
