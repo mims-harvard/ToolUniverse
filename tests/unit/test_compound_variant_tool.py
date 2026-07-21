@@ -135,6 +135,97 @@ def test_parse_uniprot_falls_back_to_raw_for_unexpected_shape():
     assert "raw" in out
 
 
+def test_parse_uniprot_prefers_exact_gene_match_over_top_relevance_hit():
+    """Fix-R62A-2: blindly taking results[0] silently returned the WRONG
+    gene's protein for gene-symbol families sharing a name prefix --
+    confirmed live querying "GBA" (glucocerebrosidase/Gaucher disease,
+    renamed to "GBA1" in 2023): UniProt's own relevance ranking put "GBA3"
+    (cytosolic beta-glucosidase, a completely different, unrelated enzyme)
+    at position 0, with a real GBA entry only at position 3 (still tagged
+    with the legacy "GBA" symbol in that record's own gene_names)."""
+    t = _tool()
+    real = {
+        "status": "success",
+        "data": {
+            "results": [
+                {
+                    "accession": "Q9H227",
+                    "protein_name": "Cytosolic beta-glucosidase",
+                    "gene_names": ["GBA3"],
+                },
+                {
+                    "accession": "Q9HCG7",
+                    "protein_name": "Non-lysosomal glucosylceramidase",
+                    "gene_names": ["GBA2"],
+                },
+                {
+                    "accession": "P04062",
+                    "protein_name": "Lysosomal acid glucosylceramidase",
+                    "gene_names": ["GBA1"],
+                },
+                {
+                    "accession": "A0A068F658",
+                    "protein_name": "Glucosylceramidase",
+                    "gene_names": ["GBA"],
+                },
+            ],
+        },
+    }
+    out = t._parse_uniprot(real, gene="GBA")
+    assert out["accession"] == "A0A068F658"
+    assert out["gene_name"] == "GBA"
+
+
+def test_parse_uniprot_matches_case_insensitively():
+    t = _tool()
+    real = {
+        "status": "success",
+        "data": {
+            "results": [
+                {"accession": "WRONG", "protein_name": "unrelated", "gene_names": ["OTHER"]},
+                {"accession": "P51587", "protein_name": "BRCA2", "gene_names": ["BRCA2"]},
+            ],
+        },
+    }
+    out = t._parse_uniprot(real, gene="brca2")
+    assert out["accession"] == "P51587"
+
+
+def test_parse_uniprot_falls_back_to_top_hit_when_no_gene_matches():
+    """When none of the fetched results' gene_names match the queried gene
+    at all (the gene truly isn't among them, not just mis-ranked), the old
+    top-hit behavior is the only reasonable fallback -- must not error or
+    return nothing."""
+    t = _tool()
+    real = {
+        "status": "success",
+        "data": {
+            "results": [
+                {"accession": "P05091", "protein_name": "ALDH2", "gene_names": ["ALDH2"]},
+            ],
+        },
+    }
+    out = t._parse_uniprot(real, gene="COMPLETELY_UNRELATED_GENE")
+    assert out["accession"] == "P05091"
+
+
+def test_parse_uniprot_without_gene_arg_keeps_old_top_hit_behavior():
+    """Backward compatibility: gene defaults to None, so callers that don't
+    pass it (or genuinely have no gene) get exactly the pre-fix behavior."""
+    t = _tool()
+    real = {
+        "status": "success",
+        "data": {
+            "results": [
+                {"accession": "FIRST", "protein_name": "x", "gene_names": ["A"]},
+                {"accession": "SECOND", "protein_name": "y", "gene_names": ["B"]},
+            ],
+        },
+    }
+    out = t._parse_uniprot(real)
+    assert out["accession"] == "FIRST"
+
+
 def test_summary_does_not_misattribute_unmatched_clinvar_context():
     """Fix-T2A-001: when clinvar has no exact match, `variants` holds unrelated
     gene-level fallback context (see test_parse_clinvar_falls_back_...). The

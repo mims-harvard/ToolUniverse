@@ -198,7 +198,11 @@ class CompoundVariantAnnotationTool(BaseTool):
                         "arguments": {
                             "query": gene_for_gnomad,
                             "organism": "human",
-                            "limit": 3,
+                            # Fix-R62A-2: bumped 3->5 so a correct match
+                            # ranked below UniProt's top few relevance hits
+                            # (see _parse_uniprot) is still in the fetched
+                            # set to select from.
+                            "limit": 5,
                         },
                     }
                 )
@@ -206,7 +210,7 @@ class CompoundVariantAnnotationTool(BaseTool):
                 if error:
                     sources_failed.append(f"UniProt: {error[:100]}")
                 else:
-                    annotations["uniprot"] = self._parse_uniprot(r)
+                    annotations["uniprot"] = self._parse_uniprot(r, gene_for_gnomad)
             except Exception as e:
                 sources_failed.append(f"UniProt: {str(e)[:100]}")
 
@@ -379,7 +383,7 @@ class CompoundVariantAnnotationTool(BaseTool):
             "variants": variants_out[:20],
         }
 
-    def _parse_uniprot(self, result: Any) -> Dict[str, Any]:
+    def _parse_uniprot(self, result: Any, gene: Optional[str] = None) -> Dict[str, Any]:
         # Fix-R31A-4: UniProt_search's "data" is a dict with a "results" list
         # (e.g. {"total_results": N, "results": [...]}), not itself a list --
         # confirmed live this always fell through to the raw-repr-string escape
@@ -391,6 +395,29 @@ class CompoundVariantAnnotationTool(BaseTool):
         results = data.get("results") if isinstance(data, dict) else None
         if isinstance(results, list) and results:
             entry = results[0]
+            # Fix-R62A-2: blindly taking the top relevance hit silently
+            # returned the WRONG gene's protein for gene-symbol families
+            # sharing a name prefix -- confirmed live querying "GBA"
+            # (glucocerebrosidase/Gaucher disease, HGNC-renamed to "GBA1" in
+            # 2023) put "GBA3" (cytosolic beta-glucosidase, an unrelated
+            # gene/enzyme) at position 0, with the correct gene only at
+            # position 3 (still tagged with the legacy "GBA" symbol in that
+            # UniProt entry's own gene_names). Prefer whichever fetched
+            # entry's gene_names contains an exact case-insensitive match to
+            # the queried gene; fall back to the top hit only when none does.
+            if gene:
+                gene_upper = gene.upper()
+                exact = next(
+                    (
+                        r
+                        for r in results
+                        if gene_upper
+                        in [g.upper() for g in (r.get("gene_names") or [])]
+                    ),
+                    None,
+                )
+                if exact:
+                    entry = exact
             gene_names = entry.get("gene_names") or []
             return {
                 "accession": entry.get("accession", ""),

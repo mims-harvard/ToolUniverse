@@ -329,6 +329,32 @@ class ClinVarSearchVariants(ClinVarRESTTool):
                 result = fallback_result
                 data = result["data"]
 
+        # Fix-R62A-1: some gene symbols are HGNC-deprecated/renamed entirely,
+        # not just informally hyphenated -- e.g. "GBA" (glucocerebrosidase,
+        # Gaucher disease) was renamed to "GBA1" in 2023 to disambiguate from
+        # the GBA2/GBA3 gene family, and ClinVar's own [gene] index has fully
+        # absorbed the rename with no backward-compat alias (confirmed live
+        # and via raw NCBI E-utils: "GBA[gene]" -> 0 hits, not even recognized
+        # as a search phrase; "GBA1[gene]" -> 786 hits). Unlike the hyphen
+        # case above, no string transform recovers the current symbol --
+        # resolve it via NCBI's own gene database (which tracks "GBA" as an
+        # alias of gene ID 2629, current official symbol "GBA1") instead of
+        # hardcoding a growing alias list.
+        if "gene" in arguments and int(data["esearchresult"].get("count", 0)) == 0:
+            resolved_gene = self._resolve_deprecated_gene_symbol(gene)
+            if resolved_gene and resolved_gene.upper() != gene.upper():
+                resolved_query_parts = [f"{resolved_gene}[gene]"] + query_parts[1:]
+                resolved_params = dict(params, term=" AND ".join(resolved_query_parts))
+                resolved_result = self._make_request(self.endpoint, resolved_params)
+                if (
+                    resolved_result.get("status") == "success"
+                    and "esearchresult" in resolved_result.get("data", {})
+                    and int(resolved_result["data"]["esearchresult"].get("count", 0))
+                    > 0
+                ):
+                    result = resolved_result
+                    data = result["data"]
+
         esearch = data["esearchresult"]
         ids = esearch.get("idlist", [])
         count = int(esearch.get("count", 0))
@@ -368,6 +394,38 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         if unrecognized:
             response_data["ignored_parameters"] = unrecognized
         return {"status": "success", "data": response_data}
+
+    def _resolve_deprecated_gene_symbol(self, gene: str) -> Optional[str]:
+        """Look up `gene` in NCBI's own gene database (which tracks
+        deprecated/previous symbols as aliases, e.g. "GBA" -> current
+        official symbol "GBA1") and return its current official symbol.
+        Best-effort: returns None on any failure or if no gene is found,
+        never raises -- this is a fallback, not a hard requirement."""
+        try:
+            search_result = self._make_request(
+                "/esearch.fcgi",
+                {
+                    "db": "gene",
+                    "term": f"{gene}[sym] AND human[orgn]",
+                    "retmode": "json",
+                },
+            )
+            if search_result.get("status") != "success":
+                return None
+            ids = (
+                search_result.get("data", {}).get("esearchresult", {}).get("idlist", [])
+            )
+            if not ids:
+                return None
+            summary_result = self._make_request(
+                "/esummary.fcgi", {"db": "gene", "id": ids[0], "retmode": "json"}
+            )
+            if summary_result.get("status") != "success":
+                return None
+            gene_data = summary_result.get("data", {}).get("result", {}).get(ids[0], {})
+            return gene_data.get("name") or None
+        except Exception:
+            return None
 
 
 @register_tool("ClinVarGetVariantDetails")

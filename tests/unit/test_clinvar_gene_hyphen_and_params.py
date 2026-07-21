@@ -102,16 +102,22 @@ def test_hyphen_fallback_preserves_other_query_parts():
 
 def test_hyphenated_gene_with_no_real_match_stays_zero_after_fallback():
     """Both the hyphenated and stripped attempts genuinely finding nothing
-    must not error or loop -- just report 0."""
+    must not error or loop -- just report 0. A third call now also happens
+    (Fix-R62A-1's deprecated-symbol gene-database lookup), which itself
+    finds nothing (empty idlist) so no further retry is attempted."""
     tool = _tool()
     with patch.object(
         ClinVarSearchVariants,
         "_make_request",
-        side_effect=[_esearch_result(0), _esearch_result(0)],
+        side_effect=[
+            _esearch_result(0),
+            _esearch_result(0),
+            {"status": "success", "data": {"esearchresult": {"idlist": []}}},
+        ],
     ) as mock_request:
         result = tool.run({"gene": "NOT-A-REAL-GENE"})
 
-    assert mock_request.call_count == 2
+    assert mock_request.call_count == 3
     assert result["data"]["total_count"] == 0
 
 
@@ -178,3 +184,82 @@ def test_all_valid_params_have_no_ignored_parameters_key():
 
     assert result["status"] == "success"
     assert "ignored_parameters" not in result["data"]
+
+
+def _gene_db_result(ids):
+    return {"status": "success", "data": {"esearchresult": {"idlist": ids}}}
+
+
+def _gene_summary_result(gene_id, current_symbol):
+    return {
+        "status": "success",
+        "data": {"result": {gene_id: {"name": current_symbol}}},
+    }
+
+
+def test_deprecated_gene_symbol_resolves_via_ncbi_gene_database():
+    """Fix-R62A-1: "GBA" (glucocerebrosidase, Gaucher disease) was renamed
+    to "GBA1" in 2023 -- ClinVar's [gene] index fully absorbed the rename
+    with no backward-compat alias, unlike the hyphen case, so no string
+    transform recovers it. Confirmed live: "GBA[gene]" -> 0 hits (not even
+    a hyphen to strip), "GBA1[gene]" -> 786 hits. Resolve via NCBI's own
+    gene database (which tracks "GBA" as an alias of gene ID 2629, current
+    symbol "GBA1") and retry."""
+    tool = _tool()
+    with patch.object(
+        ClinVarSearchVariants,
+        "_make_request",
+        side_effect=[
+            _esearch_result(0),  # GBA[gene] -- no hyphen, so only 1 attempt
+            _gene_db_result(["2629"]),  # db=gene esearch for "GBA"
+            _gene_summary_result("2629", "GBA1"),  # db=gene esummary
+            _esearch_result(786, query_translation="GBA1[gene]"),  # retry
+        ],
+    ) as mock_request:
+        result = tool.run({"gene": "GBA"})
+
+    assert mock_request.call_count == 4
+    assert mock_request.call_args_list[-1][0][1]["term"] == "GBA1[gene]"
+    assert result["data"]["total_count"] == 786
+    # search_params still echoes back what the caller actually asked for.
+    assert result["data"]["search_params"]["gene"] == "GBA"
+
+
+def test_gene_database_resolving_to_the_same_symbol_does_not_retry():
+    """If NCBI's gene database resolves the queried symbol right back to
+    itself (already current, genuinely 0 pathogenic hits for some other
+    reason -- e.g. an overly narrow significance filter), no pointless
+    retry should be attempted."""
+    tool = _tool()
+    with patch.object(
+        ClinVarSearchVariants,
+        "_make_request",
+        side_effect=[
+            _esearch_result(0),
+            _gene_db_result(["7157"]),
+            _gene_summary_result("7157", "TP53"),
+        ],
+    ) as mock_request:
+        result = tool.run({"gene": "TP53"})
+
+    assert mock_request.call_count == 3
+    assert result["data"]["total_count"] == 0
+
+
+def test_gene_database_lookup_failure_does_not_crash_or_error():
+    """The gene-database fallback is best-effort -- a network error there
+    must not surface as a tool failure, just leave the result at 0."""
+    tool = _tool()
+    with patch.object(
+        ClinVarSearchVariants,
+        "_make_request",
+        side_effect=[
+            _esearch_result(0),
+            {"status": "error", "error": "Could not find a suitable TLS CA certificate bundle"},
+        ],
+    ) as mock_request:
+        result = tool.run({"gene": "GBA"})
+
+    assert mock_request.call_count == 2
+    assert result["status"] == "success"
+    assert result["data"]["total_count"] == 0
