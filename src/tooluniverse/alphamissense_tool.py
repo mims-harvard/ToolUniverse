@@ -89,19 +89,33 @@ class AlphaMissenseTool(BaseTool):
 
     def _fetch_single_residue(
         self, uniprot_id: str, position: int
-    ) -> Optional[Dict[str, Any]]:
-        """Fetch one residue's AlphaMissense scores; returns None on error."""
+    ) -> "tuple[Optional[Dict[str, Any]], bool]":
+        """Fetch one residue's AlphaMissense scores.
+
+        Fix-R76A-2: returns (data, failed) rather than just data. Confirmed
+        live the API 404s with a clear "no data for this residue" message
+        for a position outside its actual coverage (e.g. resi=99999 on a
+        real protein) -- that's a legitimate empty result, not a failure.
+        Only a non-404 non-200 status or a request exception is a genuine
+        failure. The caller previously dropped ALL non-200 positions from
+        the output identically (`if s is not None`), so a batch of
+        genuinely-failed positions (rate limit, timeout) vanished from the
+        response with zero indication anything went wrong, indistinguishable
+        from AlphaMissense simply not covering those residues.
+        """
         try:
             r = requests.get(
                 f"{ALPHAMISSENSE_BASE_URL}/hotspotapi",
                 params={"uid": uniprot_id, "resi": position},
                 timeout=self.timeout,
             )
+            if r.status_code == 404:
+                return None, False
             if r.status_code != 200:
-                return None
-            return r.json()
+                return None, True
+            return r.json(), False
         except requests.exceptions.RequestException:
-            return None
+            return None, True
 
     def _get_protein_scores(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -144,6 +158,7 @@ class AlphaMissenseTool(BaseTool):
 
         # 2. Concurrent per-residue fetch
         scores: List[Optional[Dict[str, Any]]] = [None] * len(positions)
+        failed: List[bool] = [False] * len(positions)
         with ThreadPoolExecutor(max_workers=20) as executor:
             future_to_idx = {
                 executor.submit(self._fetch_single_residue, uniprot_id, p): i
@@ -152,13 +167,29 @@ class AlphaMissenseTool(BaseTool):
             for fut in as_completed(future_to_idx):
                 idx = future_to_idx[fut]
                 try:
-                    scores[idx] = fut.result()
+                    scores[idx], failed[idx] = fut.result()
                 except Exception:
-                    scores[idx] = None
+                    scores[idx], failed[idx] = None, True
 
         n_fetched = sum(1 for s in scores if s is not None)
+        n_failed = sum(failed)
         if n_fetched == 0:
             pdb_url = f"{ALPHAMISSENSE_BASE_URL}/pdb/AF-{uniprot_id}-F1-AM_v4.pdb"
+            # Fix-R76A-2: distinguish "every position genuinely has no
+            # AlphaMissense data" (all 404s) from "every request failed"
+            # (rate limit/timeout/5xx) -- confirmed live 404 means "no data
+            # for this residue," a non-404 non-200 or a raised exception
+            # means the request itself failed.
+            if n_failed == len(positions):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Could not fetch AlphaMissense data for '{uniprot_id}' "
+                        f"-- all {len(positions)} position requests failed "
+                        "(rate limit, timeout, or upstream error). This is not "
+                        "necessarily 'no data', just a failed lookup; retry later."
+                    ),
+                }
             return {
                 "status": "error",
                 "error": (
@@ -169,14 +200,16 @@ class AlphaMissenseTool(BaseTool):
                 "pdb_download": pdb_url,
             }
 
-        # 3. Aggregate into per-position list (drop Nones from failed positions)
+        # 3. Aggregate into per-position list (drop positions with no data,
+        # whether genuinely absent or failed to fetch -- n_positions_failed
+        # below is what makes the difference honest instead of silent).
         per_position = [
             {"position": p, **(s or {})}
             for p, s in zip(positions, scores)
             if s is not None
         ]
 
-        return {
+        result: Dict[str, Any] = {
             "status": "success",
             "data": {
                 "uniprot_id": uniprot_id,
@@ -193,6 +226,18 @@ class AlphaMissenseTool(BaseTool):
                 "pdb_download": f"{ALPHAMISSENSE_BASE_URL}/pdb/AF-{uniprot_id}-F1-AM_v4.pdb",
             },
         }
+        if n_failed:
+            # Fix-R76A-2: previously these positions vanished from the
+            # response with zero indication anything failed, indistinguishable
+            # from AlphaMissense simply not covering them.
+            result["data"]["n_positions_failed"] = n_failed
+            result["data"]["note"] = (
+                f"{n_failed} of {len(positions)} position requests failed "
+                "(rate limit, timeout, or upstream error) and are missing "
+                "from scores, not necessarily because AlphaMissense lacks "
+                "data for them. Retry to attempt to fill in the gaps."
+            )
+        return result
 
     def _get_variant_score(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """

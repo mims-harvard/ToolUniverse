@@ -325,45 +325,76 @@ class OrphanetTool(BaseTool):
             )
         return genes
 
-    def _fetch_genes_for_code(self, orpha_code, headers) -> List[Dict]:
-        """Fetch gene associations for a single ORPHA code. Returns [] on failure."""
+    def _fetch_genes_for_code(self, orpha_code, headers) -> "tuple[List[Dict], bool]":
+        """Fetch gene associations for a single ORPHA code.
+
+        Fix-R76A-1: returns (genes, failed) rather than just genes -- the
+        caller's subtype-fallback search is deliberately triggered on an
+        empty result regardless of cause (a parent ORPHA code often
+        genuinely has zero direct gene entries by design, and retrying via
+        a different endpoint is worth attempting even after a transient
+        failure), so this still swallows the exception to keep that
+        resilience behavior. But confirmed live this previously let a
+        real API failure (rate limit, 5xx, timeout) end up reported as
+        unconditional "status": "success" with "genes": [] -- clinically
+        indistinguishable from "Orphadata has no gene curation for this
+        disease." The caller uses `failed` to make that distinction
+        honest in the final response instead of silently equating the two.
+        """
         try:
             response = requests.get(
                 f"{ORPHADATA_API_URL}/rd-associated-genes/orphacodes/{orpha_code}",
                 timeout=self.timeout,
                 headers=headers,
             )
+            if response.status_code == 404:
+                # Pre-existing, deliberate behavior (see
+                # test_valid_code_with_no_data_still_returns_success_empty):
+                # this endpoint 404s for a valid disease that simply has no
+                # gene curation records -- confirmed empty, not a failure.
+                return [], False
             if response.status_code != 200:
-                return []
+                return [], True
             results = response.json().get("data", {}).get("results", {})
-            return self._extract_genes_from_associations(
-                results.get("DisorderGeneAssociation", [])
+            return (
+                self._extract_genes_from_associations(
+                    results.get("DisorderGeneAssociation", [])
+                ),
+                False,
             )
         except Exception:
-            return []
+            return [], True
 
     def _find_subtype_codes(
         self, disease_name: str, exclude_code: str, headers
-    ) -> List[Dict]:
-        """Find orphacodes whose name contains disease_name, excluding exclude_code."""
+    ) -> "tuple[List[Dict], bool]":
+        """Find orphacodes whose name contains disease_name, excluding
+        exclude_code. Returns (codes, failed) -- see _fetch_genes_for_code."""
         try:
             response = requests.get(
                 f"{ORPHADATA_API_URL}/rd-associated-genes/orphacodes",
                 timeout=self.timeout,
                 headers=headers,
             )
+            if response.status_code == 404:
+                # Same precedent as _fetch_genes_for_code: this API 404s
+                # for "no records", not just for genuinely missing routes.
+                return [], False
             if response.status_code != 200:
-                return []
+                return [], True
             all_entries = response.json().get("data", {}).get("results", [])
             disease_lower = disease_name.lower()
-            return [
-                entry
-                for entry in all_entries
-                if disease_lower in entry.get("Preferred term", "").lower()
-                and str(entry.get("ORPHAcode", "")) != str(exclude_code)
-            ]
+            return (
+                [
+                    entry
+                    for entry in all_entries
+                    if disease_lower in entry.get("Preferred term", "").lower()
+                    and str(entry.get("ORPHAcode", "")) != str(exclude_code)
+                ],
+                False,
+            )
         except Exception:
-            return []
+            return [], True
 
     def _get_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -426,21 +457,27 @@ class OrphanetTool(BaseTool):
             }
 
             # Strategy 1: Direct orphacode lookup via Orphadata
-            genes = self._fetch_genes_for_code(orpha_code, orphadata_headers)
+            genes, any_fetch_failed = self._fetch_genes_for_code(
+                orpha_code, orphadata_headers
+            )
 
             # Strategy 2: If no genes found and we have a disease name, search
             # for subtypes in the Orphadata orphacodes list (parent codes like
             # "Marfan syndrome" 558 lack direct gene entries, but subtypes like
-            # "Marfan syndrome type 1" 284963 have them)
+            # "Marfan syndrome type 1" 284963 have them). Attempted regardless
+            # of *why* strategy 1 came up empty (genuine absence or a failed
+            # request) -- it's a different endpoint and may succeed either way.
             if not genes and disease_name:
-                matching_codes = self._find_subtype_codes(
+                matching_codes, subtype_search_failed = self._find_subtype_codes(
                     disease_name, orpha_code, orphadata_headers
                 )
+                any_fetch_failed = any_fetch_failed or subtype_search_failed
                 existing_symbols = set()
                 for entry in matching_codes[:5]:
-                    sub_genes = self._fetch_genes_for_code(
+                    sub_genes, sub_failed = self._fetch_genes_for_code(
                         entry.get("ORPHAcode"), orphadata_headers
                     )
+                    any_fetch_failed = any_fetch_failed or sub_failed
                     if not sub_genes:
                         continue
                     subtype_sources.append(
@@ -453,6 +490,24 @@ class OrphanetTool(BaseTool):
                         if g["Symbol"] not in existing_symbols:
                             genes.append(g)
                             existing_symbols.add(g["Symbol"])
+
+            # Fix-R76A-1: an empty `genes` list must not be reported as an
+            # unqualified success when it's actually because one or more
+            # Orphadata requests failed (rate limit, 5xx, timeout) -- that's
+            # clinically indistinguishable from "Orphadata has no gene
+            # curation for this disease" otherwise. Only genuinely-confirmed
+            # empty (every fetch succeeded, all returned zero genes) is a
+            # clean success.
+            if not genes and any_fetch_failed:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Could not confirm gene associations for ORPHA:{orpha_code} "
+                        "-- one or more Orphadata requests failed. This is not "
+                        "necessarily 'no genes known', just an incomplete lookup; "
+                        "retry later."
+                    ),
+                }
 
             result_data = {
                 "orpha_code": orpha_code,
