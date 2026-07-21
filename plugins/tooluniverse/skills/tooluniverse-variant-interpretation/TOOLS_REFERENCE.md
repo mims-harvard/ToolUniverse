@@ -613,6 +613,20 @@ peaks = tu.tools.ChIPAtlas_get_peak_data(
 | `ENCODE_get_experiment` | Experiment details | `accession` |
 | `ENCODE_get_biosample` | Sample annotations | `accession` |
 
+### Sequence Deep-Learning Variant-Effect Predictors
+
+Predict the functional impact of a non-coding (and, for Evo 2, any) variant directly from sequence — the mechanistic evidence (PS3_supporting / PP3) that SIFT/PolyPhen/AlphaMissense cannot give for non-coding loci. Outputs are Δ (alt − ref) effect sizes, not calibrated probabilities.
+
+| Tool | Predicts | Access |
+|------|----------|--------|
+| `AlphaGenome_score_variant` | RNA-seq/ATAC/CAGE/splice track Δ (1 Mb, single-base) | hosted API — `ALPHA_GENOME_API_KEY` |
+| `run_enformer_variant_effect` | Δ across 5,313 human tracks (196 kb) | remote MCP server |
+| `run_borzoi_variant_effect` | RNA-seq coverage Δ (expression/splicing, 524 kb) | remote MCP server |
+| `run_chrombpnet_variant_effect` | chromatin accessibility Δ (ATAC/DNase, base-res) | remote MCP server |
+| `Evo2_score_variant` | genome-LM delta log-likelihood; coding + non-coding | hosted NIM — `NVIDIA_API_KEY` |
+
+**Inputs**: `AlphaGenome_score_variant` → `chromosome`,`position`,`reference_bases`,`alternate_bases`,`output_type`,`sequence_length`. `Evo2_score_variant` → `sequence`+`position`+`alternate` (or `ref_sequence`/`alt_sequence`), optional `model` (`evo2-40b`/`evo2-7b`). The Enformer/Borzoi/ChromBPNet remote tools take the variant locus. See SKILL.md Phase 2.5 for selection guidance.
+
 **Example - Get regulatory annotations**:
 ```python
 # Search for regulatory data near variant

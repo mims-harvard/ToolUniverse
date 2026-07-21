@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-variant-interpretation
-description: Clinical variant interpretation from raw variant calls to ACMG-classified recommendations with structural impact analysis. Use for VUS classification, pathogenicity assessment with cited criteria, structure-based variant impact (AlphaFold/PDB), and producing clinical-grade variant reports for return of results or molecular tumor boards.
+description: Clinical variant interpretation from raw variant calls to ACMG-classified recommendations with structural impact analysis. Use for VUS classification, pathogenicity assessment with cited criteria, structure-based variant impact (AlphaFold/PDB), non-coding/regulatory variant effect prediction with sequence deep-learning models (AlphaGenome, Enformer, Borzoi, ChromBPNet, Evo 2), and producing clinical-grade variant reports for return of results or molecular tumor boards. Use this whenever a user asks about a variant's significance, an intronic/promoter/enhancer/UTR non-coding variant's functional impact, or needs ACMG classification — even if they don't say "ACMG".
 disable-model-invocation: true
 ---
 
@@ -37,7 +37,7 @@ When asked about a variant's significance, query ClinVar/gnomAD/CIViC FIRST. Nev
 ```
 Phase 1: VARIANT IDENTITY        → Normalize HGVS, map gene/transcript/consequence
 Phase 2: CLINICAL DATABASES       → ClinVar, gnomAD, OMIM, ClinGen, COSMIC, SpliceAI
-Phase 2.5: REGULATORY CONTEXT     → ChIPAtlas, ENCODE (non-coding variants only)
+Phase 2.5: REGULATORY CONTEXT     → ChIPAtlas/ENCODE annotation + DL variant-effect (AlphaGenome/Enformer/Borzoi/ChromBPNet/Evo2) (non-coding only)
 Phase 3: COMPUTATIONAL PREDICTIONS → CADD, AlphaMissense, EVE, SIFT/PolyPhen
 Phase 4: STRUCTURAL ANALYSIS      → PDB/AlphaFold2, domains, functional sites (VUS/novel)
 Phase 4.5: EXPRESSION CONTEXT     → CELLxGENE, GTEx tissue expression
@@ -82,7 +82,23 @@ See `CODE_PATTERNS.md` for implementation details.
 
 Apply for intronic (non-splice), promoter, UTR, or intergenic variants near disease genes.
 
-Tools: `ChIPAtlas_enrichment_analysis`, `ChIPAtlas_get_peak_data`, `ENCODE_search_experiments`, `ENCODE_get_experiment`
+**Annotation — what regulatory element is here:** `ChIPAtlas_enrichment_analysis`, `ChIPAtlas_get_peak_data`, `ENCODE_search_experiments`, `ENCODE_get_experiment`. These tell you whether the variant falls in a known TF-binding peak, enhancer, or open-chromatin region.
+
+**Prediction — what the variant *does* to regulation:** annotation says an element is present, not whether this specific allele disrupts it. Sequence-based deep-learning models answer that directly: they read the reference and alternate DNA windows and predict the change in regulatory signal. This is what turns "the variant is in an enhancer" into "the variant is predicted to reduce accessibility/expression in the relevant tissue" — the mechanistic evidence ACMG PS3/PP3 actually needs for a non-coding variant, where SIFT/PolyPhen/AlphaMissense do not apply.
+
+| Tool | Predicts | Context | Access |
+|---|---|---|---|
+| `AlphaGenome_score_variant` | Δ across RNA-seq / ATAC / CAGE / splice tracks (frontier accuracy, single-base) | up to 1 Mb | hosted API — needs `ALPHA_GENOME_API_KEY` |
+| `run_enformer_variant_effect` | Δ across 5,313 human tracks (expression, chromatin, TF binding) | 196 kb | remote MCP server |
+| `run_borzoi_variant_effect` | Δ in RNA-seq coverage (expression / polyA / splicing emphasis) | 524 kb | remote MCP server |
+| `run_chrombpnet_variant_effect` | Δ in chromatin accessibility (ATAC / DNase), base-resolution | ~2 kb | remote MCP server |
+| `Evo2_score_variant` | Genome-foundation-model delta log-likelihood; covers coding **and** non-coding | up to 1 Mb | hosted NIM — needs `NVIDIA_API_KEY` |
+
+**Reading the score:** these return Δ (alt − ref) effect sizes, *not* calibrated pathogenicity probabilities. A large predicted disruption in a tissue-relevant track is mechanistic support (PS3_supporting / PP3) for a non-coding variant; near-zero across tracks supports BP4. Rank or calibrate against known regulatory variants rather than applying an absolute cutoff.
+
+**Which to pick:** start with `AlphaGenome_score_variant` (broadest readout, longest context, frontier accuracy) when its key is set; `run_enformer_variant_effect` / `run_borzoi_variant_effect` are the named, self-hostable equivalents (Enformer for general regulation, Borzoi when expression/splicing is the question); `run_chrombpnet_variant_effect` when the hypothesis is specifically chromatin accessibility; `Evo2_score_variant` as a sequence-only check that also works on coding variants. If no key/server is provisioned, fall back to the ChIPAtlas/ENCODE annotation above and note the predictive gap rather than guessing.
+
+**Inputs:** `AlphaGenome_score_variant` takes `chromosome` + `position` + `reference_bases`/`alternate_bases` (+ `output_type`, `sequence_length`); `Evo2_score_variant` takes a DNA window as `sequence` + `position` + `alternate` (point substitution) or `ref_sequence`/`alt_sequence`, plus optional `model` (`evo2-40b` default, `evo2-7b` faster); the Enformer/Borzoi/ChromBPNet remote tools take the variant locus and score the change over their output tracks.
 
 ## Phase 2.9: Short-Circuit Check
 

@@ -99,6 +99,9 @@ The router skill auto-dispatches to the right specialized skill — no command p
 | **`/tooluniverse:cross-validate`** | Verify a claim across 3+ independent databases | Slash command |
 | **`/tooluniverse:compare`** | N-way side-by-side comparison with domain-appropriate columns | Slash command |
 | **`/tooluniverse:literature-sweep`** | Graded mini-review across PubMed + EuropePMC + Semantic Scholar | Slash command |
+| **`/tooluniverse:verify-references`** | Check that cited references are real and accurately described, including retraction status | Slash command |
+| **`/tooluniverse:self-review`** | Generate weighted success criteria for a task and check work against them (what's missing / done well) | Slash command |
+| **`/tooluniverse:setup-keys`** | Configure ToolUniverse API keys | Slash command |
 | **`/tooluniverse:researcher`** | Same investigation as `research`, delegated to a forked subagent | Slash command |
 | **120+ skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
 

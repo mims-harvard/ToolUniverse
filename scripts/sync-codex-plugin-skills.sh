@@ -18,8 +18,10 @@ for skill_dir in "$REPO_ROOT/skills/tooluniverse" "$REPO_ROOT"/skills/tooluniver
     name="$(basename "$skill_dir")"
 
     # Claude-specific install docs are useful in the Claude plugin, but not in
-    # the Codex plugin's skill router surface.
-    if [ "$name" = "tooluniverse-claude-code-plugin" ]; then
+    # the Codex plugin's skill router surface. Same for Claude Science install
+    # docs (different host entirely: conda env + host.skills.* API, no
+    # MCP/uvx/plugin marketplace involved).
+    if [ "$name" = "tooluniverse-claude-code-plugin" ] || [ "$name" = "tooluniverse-cs-setup" ]; then
         continue
     fi
 
