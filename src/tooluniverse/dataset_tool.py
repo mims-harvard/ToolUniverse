@@ -131,7 +131,14 @@ class DatasetTool(BaseTool):
         search_fields = arguments.get("search_fields")
         case_sensitive = arguments.get("case_sensitive", False)
         exact_match = arguments.get("exact_match", False)
-        limit = arguments.get("limit", 50)
+        # _drugbank_search backs multiple registered tool names with
+        # different declared `limit` defaults (e.g. diqt_search default 100
+        # vs drugbank_full_search/dict_search/etc default 10). Read the
+        # per-instance declared default instead of hardcoding one limit for
+        # every tool routed through this handler.
+        limit = arguments.get(
+            "limit", self.parameters.get("limit", {}).get("default", 50)
+        )
 
         if not query:
             return {
@@ -260,7 +267,11 @@ class DatasetTool(BaseTool):
         field = arguments.get("field")
         condition = arguments.get("condition")
         value = arguments.get("value", "")
-        limit = arguments.get("limit", 100)
+        # _drugbank_filter backs multiple registered tool names too; read
+        # the per-instance declared default rather than hardcoding one.
+        limit = arguments.get(
+            "limit", self.parameters.get("limit", {}).get("default", 100)
+        )
 
         if not field or not condition:
             return {
