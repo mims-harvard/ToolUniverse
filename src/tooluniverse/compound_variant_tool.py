@@ -167,25 +167,56 @@ class CompoundVariantAnnotationTool(BaseTool):
         # gene still can't be searched and is skipped, same as before.
         if gene_for_gnomad:
             try:
+                # Fix-R78B-1: ClinVar_search_variants now supports a targeted
+                # variant_name search (ClinVar's own [Variant name] field tag)
+                # -- try that FIRST when we have candidate protein-change
+                # token(s), since it's an exact server-side lookup rather than
+                # a capped, arbitrarily-ordered gene-level browse. Confirmed
+                # live this is necessary, not just nicer: rs334/HBB's
+                # canonical sickle-cell record (VCV 15333, Pathogenic) has a
+                # low/old variant ID and isn't within the first 100 -- or even
+                # the first 425 clinical_significance=Pathogenic-filtered --
+                # gene-level rows, so the old gene-level-only fetch always
+                # reported "no exact ClinVar match" for one of the best-known
+                # pathogenic variants in human genetics.
+                parsed = None
+                if variant_token:
+                    tr = tu.run_one_function(
+                        {
+                            "name": "ClinVar_search_variants",
+                            "arguments": {
+                                "gene": gene_for_gnomad,
+                                "variant_name": variant_token,
+                                "limit": 20,
+                            },
+                        }
+                    )
+                    if not self._sub_call_error(tr):
+                        candidate = self._parse_clinvar(tr, variant_token)
+                        if candidate.get("exact_match"):
+                            parsed = candidate
+
                 # limit=100 (ClinVar_search_variants' own max) rather than 20:
-                # ClinVar_search_variants has no HGVS/protein-change search
-                # parameter, only gene/condition/clinical_significance, so an
-                # exact-match lookup for a specific variant can only work by
-                # fetching as many gene-level rows as possible and filtering
-                # client-side in _parse_clinvar -- confirmed live that even
-                # 100 isn't always enough for variant-dense genes (ACADM has
-                # 1127 ClinVar entries; a known Pathogenic founder variant
-                # still wasn't within the first 100), but it materially
-                # improves the hit rate for smaller genes versus 20.
-                r = tu.run_one_function(
-                    {
-                        "name": "ClinVar_search_variants",
-                        "arguments": {"gene": gene_for_gnomad, "limit": 100},
-                    }
-                )
-                error = self._sub_call_error(r)
+                # fallback for when no variant_token was resolvable, or the
+                # targeted variant_name search above didn't confirm a match
+                # (e.g. a token whose nomenclature ClinVar's index doesn't
+                # recognize) -- browse as many gene-level rows as possible and
+                # filter client-side in _parse_clinvar, same as before this fix.
+                if parsed is None:
+                    r = tu.run_one_function(
+                        {
+                            "name": "ClinVar_search_variants",
+                            "arguments": {"gene": gene_for_gnomad, "limit": 100},
+                        }
+                    )
+                    error = self._sub_call_error(r)
+                else:
+                    r, error = None, None
+
                 if error:
                     sources_failed.append(f"ClinVar: {error[:100]}")
+                elif parsed is not None:
+                    annotations["clinvar"] = parsed
                 else:
                     annotations["clinvar"] = self._parse_clinvar(r, variant_token)
             except Exception as e:

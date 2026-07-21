@@ -2,7 +2,7 @@
     {
         "type": "ClinVarSearchVariants",
         "name": "ClinVar_search_variants",
-        "description": "Search for variants in ClinVar database by gene name, condition, or variant ID. Returns variant identifiers and basic information. At least one of gene, condition, or variant_id must be provided.",
+        "description": "Search for variants in ClinVar database by gene name, condition, variant ID, or variant name (protein change / HGVS notation). Returns variant identifiers and basic information. At least one of gene, condition, variant_id, or variant_name must be provided. Combine gene + variant_name for an exact-match lookup of one specific known variant instead of browsing all of a gene's ClinVar entries.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -17,6 +17,14 @@
                 "variant_id": {
                     "type": "string",
                     "description": "ClinVar variant ID (e.g., '12345') At least one of gene, condition, or variant_id must be provided."
+                },
+                "variant_name": {
+                    "type": [
+                        "string",
+                        "array",
+                        "null"
+                    ],
+                    "description": "Protein change or HGVS notation to search for (e.g., 'Glu6Val', 'V600E', 'c.20A>T'), matched against ClinVar's own [Variant name] index -- combine with 'gene' for an exact-match lookup of a specific known variant instead of browsing all of a gene's ClinVar entries. A gene-level browse can silently miss well-known but old/low-ID records once a gene has more entries than max_results (e.g. HBB's canonical sickle-cell record, NM_000518.5(HBB):c.20A>T (p.Glu7Val), isn't within the first 100-425 gene-level rows). Accepts a list to try multiple candidate names in one call (e.g. every allele at a multi-allelic site) -- combined with OR."
                 },
                 "max_results": {
                     "type": "integer",
@@ -126,6 +134,11 @@
             {
                 "condition": "breast cancer",
                 "max_results": 5
+            },
+            {
+                "gene": "HBB",
+                "variant_name": "Glu6Val",
+                "max_results": 20
             }
         ],
         "label": [

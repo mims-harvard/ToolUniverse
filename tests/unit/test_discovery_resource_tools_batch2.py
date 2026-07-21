@@ -85,12 +85,24 @@ def test_marrvel_gene_requires_symbol():
 def test_marrvel_gene_curates_xrefs():
     rec = {"symbol": "CFTR", "name": "CF transmembrane regulator", "entrezId": 1080,
            "uniprotKBId": "P13569", "chr": "7", "location": "7q31.2", "type": "protein-coding",
-           "alias": ["ABCC7"], "xref": {"omimId": "602421", "hgncId": "1884", "ensemblId": "ENSG00000001626"}}
+           "alias": ["ABCC7"], "xref": {"omimId": "6", "hgncId": "1884", "ensemblId": "ENSG00000001626"}}
     with patch("tooluniverse.marrvel_tool.requests.get", return_value=_resp(200, rec)):
         out = MARRVELGeneTool(_cfg("MARRVEL_get_gene", "MARRVELGeneTool")).run({"symbol": "CFTR"})
-    assert out["data"]["omim_id"] == "602421"
+    assert out["data"]["hgnc_id"] == "1884"
     assert out["data"]["ensembl_id"] == "ENSG00000001626"
     assert out["data"]["uniprot_id"] == "P13569"
+
+
+# Fix-R78A-1: MARRVEL's /gene/taxonId/.../symbol/... endpoint returns a bogus
+# small placeholder integer in xref.omimId ("1" for BRCA1/EGFR/APOE/MYH7/TP53,
+# "6" for CFTR/PTEN -- confirmed live) instead of the real 6-digit OMIM MIM
+# number, so it must never be surfaced as omim_id even though xref carries it.
+def test_marrvel_gene_does_not_surface_unreliable_omim_id():
+    rec = {"symbol": "TP53", "xref": {"omimId": "1", "hgncId": "11998",
+                                       "ensemblId": "ENSG00000141510"}}
+    with patch("tooluniverse.marrvel_tool.requests.get", return_value=_resp(200, rec)):
+        out = MARRVELGeneTool(_cfg("MARRVEL_get_gene", "MARRVELGeneTool")).run({"symbol": "TP53"})
+    assert "omim_id" not in out["data"]
 
 
 def test_marrvel_omim_curates_phenotypes():
