@@ -15,7 +15,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://icite.od.nih.gov/api/pubs"
+      "endpoint": "https://icite.od.nih.gov/api/pubs",
+      "extract_path": "data"
     },
     "type": "BaseRESTTool",
     "test_examples": [

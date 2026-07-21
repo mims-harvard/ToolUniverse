@@ -76,7 +76,7 @@
               "type": "string"
             },
             "next_page_url": {
-              "type": "string"
+              "type": ["string", "null"]
             },
             "total_elements": {
               "type": "integer"
@@ -91,7 +91,7 @@
               "type": ["string", "integer", "null"]
             },
             "previous_page_url": {
-              "type": "string"
+              "type": ["string", "null"]
             },
             "next_page": {
               "type": ["string", "integer", "null"]

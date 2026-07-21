@@ -106,13 +106,13 @@
                     "type": "string"
                   },
                   "description": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "organisms": {
                     "type": ["array", "null"]
                   },
                   "publicationDate": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "omicsType": {
                     "type": "array"
