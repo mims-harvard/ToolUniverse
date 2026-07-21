@@ -79,7 +79,7 @@ First run takes ~30s (downloads package), then instant. **Shortcut**: `uv tool i
 | `tu info` | Show tool parameters and schema | `tu info PubMed_search_articles` |
 | `tu run` | Execute a tool | `tu run PubMed_search_articles '{"query": "CRISPR"}'` |
 | `tu test` | Test a tool with its example inputs | `tu test UniProt_get_entry_by_accession` |
-| `tu build` | Generate typed Python wrappers for Coding API | `tu build --output ./my_tools` |
+| `tu build` | Generate typed Python wrappers for Coding API (also regenerates the internal lazy-load registry in place — unaffected by `--output`) | `tu build --output ./my_tools` |
 | `tu serve` | Start MCP stdio server (same as `uvx tooluniverse`) | `tu serve` |
 
 **Output flags** (most commands except `build`/`serve`): `--json` (pretty) or `--raw` (compact, pipe-friendly).

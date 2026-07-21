@@ -1949,7 +1949,10 @@ def main() -> None:
     # ── build ─────────────────────────────────────────────────────────────────
     p = sub.add_parser(
         "build",
-        help="Rebuild the static tool registry (run after adding new built-in tools)",
+        help=(
+            "Rebuild the static tool registry and regenerate coding-API "
+            "wrapper files (run after adding new built-in tools)"
+        ),
     )
     p.add_argument(
         "--output",
@@ -1957,7 +1960,9 @@ def main() -> None:
         default=None,
         help=(
             "Directory to write coding-API wrapper files into "
-            "(default: .tooluniverse/coding_api/)"
+            "(default: .tooluniverse/coding_api/). Only affects the wrapper "
+            "files — the static lazy registry is always regenerated in "
+            "place inside the installed package, regardless of --output."
         ),
     )
     p.set_defaults(func=cmd_build)
