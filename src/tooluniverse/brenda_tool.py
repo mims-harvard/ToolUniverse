@@ -15,7 +15,6 @@ WSDL: https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl
 
 import hashlib
 import os
-import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -389,50 +388,71 @@ class BRENDATool(BaseTool):
     ) -> Dict[str, Any]:
         """Fetch kinetic parameters from SABIO-RK (no auth).
 
-        Reuses shared parsing from sabiork_tool module.
+        Fix-R73A-1: the legacy /sabioRestWebServices/searchKineticLaws/
+        entryIDs REST endpoint this used to call was retired by SABIO-RK in
+        2025 -- every request now 302-redirects to the sabiork.h-its.org
+        SPA's 404 page (confirmed live via raw curl), and the old status-
+        code/XML-parse checks below silently swallowed that as "0 entries,
+        success" instead of surfacing a failure. Confirmed live for EC
+        1.1.1.1 (alcohol dehydrogenase, one of the most-studied enzymes):
+        silently reported 0 SABIO-RK entries when the real count is 768.
+        Ports the same Solr-backed endpoint sabiork_tool.py's SABIORKTool
+        already migrated to (see its _search_reactions docstring) instead
+        of reimplementing a second copy of the fix. That endpoint doesn't
+        expose raw numeric parameter values (confirmed live -- SABIORKTool's
+        own "parameters" field is always empty too), so kinetic_laws entries
+        carry parameter_types/entry metadata but no Km/kcat/Ki numeric
+        values; the caller's numeric parameter_summary aggregation below
+        simply has nothing to aggregate, same as before this fix (never a
+        regression, since the old code always returned 0 entries anyway).
         """
-        from .sabiork_tool import (
-            SABIORK_BASE,
-            _is_no_data_response,
-            _parse_entry_ids,
-            _parse_sbml_kinetics,
-        )
-
-        query_parts = [f"ecnumber:{ec_number}"]
+        query_parts = [f"ECNumber:{ec_number}"]
         if organism:
             query_parts.append(f'Organism:"{organism}"')
         query = " AND ".join(query_parts)
 
         resp = requests.get(
-            f"{SABIORK_BASE}/searchKineticLaws/entryIDs?q={query}", timeout=20
+            "https://sabiork.h-its.org/api/ft/proxy-select",
+            params={
+                "q": query,
+                "df": "Everything",
+                "wt": "json",
+                "rows": limit,
+                "fl": "EntryID,ECNumber,EnzymeName,Organism,Tissue,Substrate,"
+                "Product,ParameterType,PubMedID",
+            },
+            timeout=20,
         )
-        if resp.status_code != 200:
-            return {"kinetic_laws": [], "total_count": 0}
+        resp.raise_for_status()
+        response = resp.json().get("response", {}) or {}
+        total_count = response.get("numFound", 0)
+        docs = response.get("docs", []) or []
 
-        if _is_no_data_response(resp.text):
-            return {"kinetic_laws": [], "total_count": 0}
+        def _first(v):
+            return v[0] if isinstance(v, list) and v else v
 
-        try:
-            entry_ids = _parse_entry_ids(resp.text)
-        except ET.ParseError:
-            return {"kinetic_laws": [], "total_count": 0}
-
-        total = len(entry_ids)
-        if total == 0:
-            return {"kinetic_laws": [], "total_count": 0}
-
-        fetch_ids = entry_ids[:limit]
-        resp2 = requests.get(
-            f"{SABIORK_BASE}/kineticLaws?kinlawids={','.join(fetch_ids)}", timeout=30
-        )
-        if resp2.status_code != 200:
-            return {"kinetic_laws": [], "total_count": total}
-
-        records = _parse_sbml_kinetics(resp2.text)
-        for i, rec in enumerate(records):
-            if i < len(fetch_ids):
-                rec["sabiork_entry_id"] = fetch_ids[i]
-        return {"kinetic_laws": records, "total_count": total}
+        kinetic_laws = [
+            {
+                "sabiork_entry_id": str(_first(d.get("EntryID")) or ""),
+                "ec_number": _first(d.get("ECNumber")),
+                "enzyme_name": _first(d.get("EnzymeName")),
+                "organism": _first(d.get("Organism")),
+                "tissue": _first(d.get("Tissue")),
+                "substrates": d.get("Substrate")
+                if isinstance(d.get("Substrate"), list)
+                else [],
+                "products": d.get("Product")
+                if isinstance(d.get("Product"), list)
+                else [],
+                "parameter_types": d.get("ParameterType")
+                if isinstance(d.get("ParameterType"), list)
+                else [],
+                "parameters": [],
+                "pubmed_id": _first(d.get("PubMedID")),
+            }
+            for d in docs
+        ]
+        return {"kinetic_laws": kinetic_laws, "total_count": total_count}
 
     def _get_enzyme_kinetics(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
