@@ -11,6 +11,7 @@ from tooluniverse.compound_variant_tool import (
     CompoundVariantAnnotationTool,
     _variant_match_forms,
     _title_matches,
+    _offset_protein_tokens,
 )
 
 
@@ -189,7 +190,9 @@ def test_run_records_sub_call_failures_instead_of_empty_success():
     error dict, e.g. a network outage), the aggregator must report those
     failures in sources_failed rather than silently treating them as
     "gene has zero known variants" (a dangerous false negative for a
-    clinically significant gene like BRCA1)."""
+    clinically significant gene like BRCA1). 5 failures, not 4: since
+    Fix-R60A-2, dbSNP is queried for its protein-change token even when gene
+    was already supplied, so it also has a chance to fail."""
     t = _tool()
 
     def fake_run_one_function(call):
@@ -205,7 +208,7 @@ def test_run_records_sub_call_failures_instead_of_empty_success():
 
     data = result["data"]
     assert data["annotations"] == {}
-    assert len(data["sources_failed"]) == 4
+    assert len(data["sources_failed"]) == 5
     assert all("TLS" in msg for msg in data["sources_failed"])
     assert data["sources_queried"] == []
 
@@ -451,3 +454,129 @@ def test_rsid_only_query_derives_variant_token_for_exact_matching():
     assert clinvar["exact_match"] is True
     assert clinvar["matched"] == 1
     assert result["data"]["summary"]["clinvar_classification"] == "Pathogenic/Likely pathogenic"
+
+
+def test_offset_protein_tokens_adds_mature_protein_numbering_for_hbb():
+    """Fix-R60A-1: dbSNP/ClinVar number HBB's protein from the RefSeq
+    precursor (Met-inclusive: NP_000509.1), but CIViC and essentially all
+    clinical literature use the historical mature-protein numbering, one
+    less. Confirmed live for rs334 (the sickle-cell mutation): dbSNP/ClinVar
+    report "p.Glu7Val" while CIViC's sole HBB entry is "E6V" -- without this
+    offset, the two conventions can never match."""
+    tokens = _offset_protein_tokens(["Glu7Val", "Glu7Gly"], "HBB")
+    assert "Glu7Val" in tokens
+    assert "Glu6Val" in tokens
+    assert "Glu6Gly" in tokens
+    assert _title_matches("E6V", tokens)
+
+
+def test_offset_protein_tokens_leaves_other_genes_unchanged():
+    """The mature-protein numbering offset is a documented quirk specific to
+    a small set of genes (confirmed for HBB) -- applying it universally would
+    risk false-positive matches against an unrelated variant that happens to
+    sit one residue away. Genes outside the confirmed set must be untouched."""
+    tokens = _offset_protein_tokens(["Lys329Glu"], "ACADM")
+    assert tokens == ["Lys329Glu"]
+
+
+def test_resolve_gene_from_rsid_applies_mature_protein_offset_for_hbb():
+    t = _tool()
+
+    class _FakeTU:
+        def run_one_function(self, call):
+            return {
+                "status": "success",
+                "data": {
+                    "hgvs_notation": (
+                        "HGVS=NM_000518.5:c.20A>T,NP_000509.1:p.Glu7Val"
+                        "|SEQ=[T/A]|LEN=1|GENE=HBB:3043"
+                    )
+                },
+            }
+
+    sources_failed = []
+    gene, variant_tokens = t._resolve_gene_from_rsid(_FakeTU(), "rs334", sources_failed)
+    assert gene == "HBB"
+    assert variant_tokens == ["Glu7Val", "Glu6Val"]
+    assert _title_matches("E6V", variant_tokens)
+
+
+def test_gene_and_rsid_given_together_still_resolves_variant_token():
+    """Fix-R60A-2: the old "not gene_for_gnomad and rsid" guard only called
+    _resolve_gene_from_rsid when gene was NOT already given -- so the very
+    common {"gene": ..., "rsid": ...} query shape skipped protein-token
+    resolution entirely, leaving variant_token permanently None and
+    ClinVar/CIViC matching silently inert. Confirmed live for
+    {"rsid": "rs334", "gene": "HBB"}: CIViC's sole HBB entry ("E6V") went
+    unmatched even though it IS the queried variant. dbsnp_get_variant_by_rsid
+    must still be called (and its token used) whenever a token is missing,
+    even when gene was already supplied -- and the explicit gene must win
+    over whatever dbSNP resolves, in case they ever disagree."""
+    t = _tool()
+    calls = []
+
+    def fake_run_one_function(call):
+        calls.append(call)
+        if call["name"] == "dbsnp_get_variant_by_rsid":
+            return {
+                "status": "success",
+                "data": {
+                    "hgvs_notation": (
+                        "HGVS=...|NP_000509.1:p.Glu7Val|GENE=HBB:3043"
+                    )
+                },
+            }
+        if call["name"] == "civic_get_variants_by_gene":
+            return {
+                "status": "success",
+                "data": {
+                    "gene": {
+                        "variants": {
+                            "nodes": [{"id": 4420, "name": "E6V", "feature": {"name": "HBB"}}]
+                        }
+                    }
+                },
+            }
+        return {"status": "success", "data": {}}
+
+    with patch(
+        "tooluniverse.execute_function.ToolUniverse.run_one_function",
+        side_effect=fake_run_one_function,
+    ), patch("tooluniverse.execute_function.ToolUniverse.load_tools", return_value=None):
+        result = t.run({"rsid": "rs334", "gene": "HBB"})
+
+    called_names = [c["name"] for c in calls]
+    assert "dbsnp_get_variant_by_rsid" in called_names
+    civic_call = next(c for c in calls if c["name"] == "civic_get_variants_by_gene")
+    assert civic_call["arguments"]["gene_symbol"] == "HBB"
+    civic = result["data"]["annotations"]["civic"]
+    assert civic["matched"] == 1
+    assert civic["exact_match"] is True
+
+
+def test_explicit_gene_wins_over_rsid_resolved_gene_when_both_given():
+    """When gene and rsid are both supplied, the explicit gene must be used
+    for the ClinVar/CIViC/gnomAD/UniProt sub-queries even though
+    _resolve_gene_from_rsid is now also called (for its token) -- the
+    resolved gene must never silently override an explicit, user-supplied
+    one."""
+    t = _tool()
+    calls = []
+
+    def fake_run_one_function(call):
+        calls.append(call)
+        if call["name"] == "dbsnp_get_variant_by_rsid":
+            return {
+                "status": "success",
+                "data": {"hgvs_notation": "...|GENE=SOMEOTHERGENE:1"},
+            }
+        return {"status": "success", "data": {}}
+
+    with patch(
+        "tooluniverse.execute_function.ToolUniverse.run_one_function",
+        side_effect=fake_run_one_function,
+    ), patch("tooluniverse.execute_function.ToolUniverse.load_tools", return_value=None):
+        t.run({"rsid": "rs334", "gene": "HBB"})
+
+    gnomad_call = next(c for c in calls if c["name"] == "gnomad_get_gene")
+    assert gnomad_call["arguments"]["gene_symbol"] == "HBB"

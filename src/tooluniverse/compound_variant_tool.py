@@ -37,6 +37,33 @@ _AA_1TO3 = {
 }
 _AA_3TO1 = {v.upper(): k for k, v in _AA_1TO3.items()}
 
+# Genes whose historically-established variant nomenclature numbers residues
+# from the mature protein (after post-translational cleavage of the
+# initiator Met), one less than RefSeq's precursor-based protein HGVS
+# numbering. Confirmed live for HBB via rs334, the sickle-cell mutation:
+# dbSNP and ClinVar both report "p.Glu7Val" (NP_000509.1, Met-inclusive)
+# while CIViC and essentially all clinical/scientific literature call it
+# "Glu6Val"/"E6V" (mature-protein numbering, predating RefSeq by decades).
+# Without this offset, an rsid-only query for this gene's best-known variant
+# can never report exact_match=True even when CIViC's sole HBB entry IS that
+# exact variant.
+_MATURE_PROTEIN_OFFSET_GENES = {"HBB"}
+
+
+def _offset_protein_tokens(tokens: List[str], gene: Optional[str]) -> List[str]:
+    """For genes in _MATURE_PROTEIN_OFFSET_GENES, add a position-1 candidate
+    for each RefSeq-numbered token so mature-protein-numbered records (like
+    CIViC's) can still match."""
+    if gene not in _MATURE_PROTEIN_OFFSET_GENES:
+        return tokens
+    offset_tokens = []
+    for tok in tokens:
+        m = re.fullmatch(r"([A-Za-z]{3})(\d+)([A-Za-z]{3})", tok)
+        if m:
+            ref, pos, alt = m.group(1), m.group(2), m.group(3)
+            offset_tokens.append(f"{ref}{int(pos) - 1}{alt}")
+    return list(dict.fromkeys(tokens + offset_tokens))
+
 
 def _variant_match_forms(token: str) -> List[str]:
     """Expand a protein change to every form that appears in records: 1-letter
@@ -115,12 +142,21 @@ class CompoundVariantAnnotationTool(BaseTool):
         if variant:
             toks = variant.split()
             variant_token = toks[-1] if toks else variant
-        if not gene_for_gnomad and rsid:
-            gene_for_gnomad, rsid_variant_token = self._resolve_gene_from_rsid(
+        # Confirmed live for rs334+gene="HBB" (the sickle-cell mutation) given
+        # together: the old "not gene_for_gnomad and rsid" guard skipped this
+        # resolution entirely whenever gene was explicit, so variant_token
+        # stayed None and CIViC/ClinVar matching silently never ran even
+        # though CIViC's sole HBB entry IS the queried variant. Resolve from
+        # rsid whenever a token is still missing, not only when gene is also
+        # missing -- keep the explicit gene if one was given rather than
+        # letting the resolved gene override it.
+        if rsid and not variant_token:
+            resolved_gene, rsid_variant_token = self._resolve_gene_from_rsid(
                 tu, rsid, sources_failed
             )
-            if not variant_token:
-                variant_token = rsid_variant_token
+            if not gene_for_gnomad:
+                gene_for_gnomad = resolved_gene
+            variant_token = rsid_variant_token
 
         # 1. ClinVar -- Fix-R31D-4/R31A-3: "query" is documented as an alias for
         # "condition" (a disease/phenotype free-text search), not a gene or rsid
@@ -281,6 +317,7 @@ class CompoundVariantAnnotationTool(BaseTool):
             variant_tokens = list(
                 dict.fromkeys(re.findall(r"p\.([A-Za-z]{3}\d+[A-Za-z]{3})", hgvs))
             )
+            variant_tokens = _offset_protein_tokens(variant_tokens, gene)
             return gene, (variant_tokens or None)
         except Exception as e:
             sources_failed.append(f"dbSNP (rsid->gene): {str(e)[:100]}")
