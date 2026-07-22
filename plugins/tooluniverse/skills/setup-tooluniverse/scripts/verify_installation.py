@@ -27,7 +27,7 @@ def check_import():
     except ImportError as e:
         print(f"   ❌ FAIL: Cannot import tooluniverse")
         print(f"   Error: {e}")
-        print("\n   Solution: Install with 'pip install tooluniverse'")
+        print("\n   Solution: Install with: pip install 'tooluniverse[all]'")
         return False, None
 
 

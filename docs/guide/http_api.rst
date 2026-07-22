@@ -16,7 +16,7 @@ On the machine with ToolUniverse installed:
 .. code-block:: bash
 
     # Install full ToolUniverse package
-    pip install tooluniverse
+    pip install "tooluniverse[all]"
 
     # Start HTTP API server (defaults to loopback 127.0.0.1)
     tooluniverse-http-api --port 8080
@@ -295,7 +295,7 @@ For development with auto-reload:
 Installation
 ------------
 
-- **Server**: ``pip install tooluniverse``
+- **Server**: ``pip install "tooluniverse[all]"``
 - **Client**: ``pip install tooluniverse[client]`` (only requests + pydantic)
 
 Testing
@@ -396,7 +396,7 @@ With GPU Support
 
     WORKDIR /app
     COPY . .
-    RUN pip install tooluniverse uvicorn fastapi
+    RUN pip install "tooluniverse[all]" uvicorn fastapi
 
     EXPOSE 8080
 
@@ -422,7 +422,7 @@ Without GPU (CPU-Only)
 
     WORKDIR /app
     COPY . .
-    RUN pip install tooluniverse uvicorn fastapi
+    RUN pip install "tooluniverse[all]" uvicorn fastapi
 
     EXPOSE 8080
 

@@ -132,7 +132,7 @@ def check_tooluniverse_installation(report):
     
     except ImportError as e:
         report.add_issue(f"ToolUniverse not installed: {e}")
-        report.add_line("Install with: pip install tooluniverse")
+        report.add_line("Install with: pip install 'tooluniverse[all]'")
 
 
 def check_cli_commands(report):

@@ -34,7 +34,7 @@ What you’ll do
 
    # From the repo root
    python -m venv .venv && source .venv/bin/activate
-   uv pip install tooluniverse
+   uv pip install "tooluniverse[all]"
    # if macOS run below: required for FTS5 support
    brew install python3.12 sqlite 
 

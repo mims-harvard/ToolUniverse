@@ -25,7 +25,7 @@ try:
     TOOLS_AVAILABLE = True
 except ImportError:
     TOOLS_AVAILABLE = False
-    warnings.warn("ToolUniverse not installed. Install with: pip install tooluniverse")
+    warnings.warn("ToolUniverse not installed. Install with: pip install 'tooluniverse[all]'")
 
 
 @dataclass
@@ -115,7 +115,7 @@ def discover_gwas_genes(
         This is automatically handled in the implementation.
     """
     if not TOOLS_AVAILABLE:
-        raise ImportError("ToolUniverse not available. Install with: pip install tooluniverse")
+        raise ImportError("ToolUniverse not available. Install with: pip install 'tooluniverse[all]'")
 
     # Data structures for aggregation
     gene_data = defaultdict(lambda: {

@@ -169,7 +169,7 @@ def main():
     if all_critical_passed:
         print("\n✅ Ready to install ToolUniverse!")
         print("\nNext steps:")
-        print("  1. Run: pip install tooluniverse")
+        print("  1. Run: pip install 'tooluniverse[all]'")
         print("  2. Run: python scripts/verify_installation.py")
         return 0
     else:

@@ -13,7 +13,7 @@ Install ToolUniverse and the OpenAI SDK:
 
 .. code-block:: bash
 
-   pip install tooluniverse openai
+   pip install "tooluniverse[all]" openai
 
 Example
 -------

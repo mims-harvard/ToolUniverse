@@ -78,7 +78,7 @@ def list_categories():
         
     except ImportError:
         print("\n❌ ToolUniverse not installed")
-        print("Install with: pip install tooluniverse")
+        print("Install with: pip install 'tooluniverse[all]'")
         return 1
     except Exception as e:
         print(f"\n❌ Error: {e}")

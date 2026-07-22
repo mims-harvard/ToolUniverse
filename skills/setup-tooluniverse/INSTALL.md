@@ -179,7 +179,7 @@ pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org toolun
 
 ```bash
 pip install --upgrade pip
-pip install tooluniverse
+pip install "tooluniverse[all]"
 ```
 
 ## Uninstallation

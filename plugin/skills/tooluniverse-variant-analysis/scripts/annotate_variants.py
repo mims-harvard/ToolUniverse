@@ -22,7 +22,7 @@ from python_implementation import parse_vcf, batch_annotate_variants
 try:
     from tooluniverse import ToolUniverse
 except ImportError:
-    print("Error: ToolUniverse not installed. Install with: pip install tooluniverse")
+    print("Error: ToolUniverse not installed. Install with: pip install 'tooluniverse[all]'")
     sys.exit(1)
 
 

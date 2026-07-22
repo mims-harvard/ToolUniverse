@@ -25,7 +25,7 @@ The Human Expert Feedback System is a sophisticated **human-in-the-loop** consul
 
 ### Install Package
 ```bash
-pip install tooluniverse
+pip install "tooluniverse[all]"
 ```
 
 ### Start Expert Feedback Server
