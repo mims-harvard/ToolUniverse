@@ -3,7 +3,7 @@ Claude Code
 
 `Claude Code <https://claude.com/claude-code>`_ is Anthropic's terminal-based AI
 coding agent. ToolUniverse ships an official Claude Code **plugin** that auto-configures
-the MCP server, ~115 specialized research skills, slash commands, and a research
+the MCP server, 150+ specialized research skills, slash commands, and a research
 agent — all in two commands.
 
 The plugin is the recommended way to use ToolUniverse with Claude Code. A
@@ -103,7 +103,7 @@ What you get
      - What it does
      - How to invoke
    * - **MCP server**
-     - 1000+ scientific tools via ``find_tools``, ``get_tool_info``, ``execute_tool``
+     - 2,600+ scientific tools via ``find_tools``, ``get_tool_info``, ``execute_tool``
      - Auto-loaded; no action needed
    * - **Slash commands**
      - Discipline-enforcing prompts for common research tasks
@@ -135,7 +135,7 @@ What you get
    * - ``/tooluniverse:researcher``
      - Same investigation as ``research``, delegated to a forked-context subagent that returns one summary (use when you don't want intermediate tool-call output in your main thread)
      - Slash command
-   * - **~115 research skills**
+   * - **150+ research skills**
      - Structured workflows for genomics, drug discovery, clinical analysis, statistical modeling, phylogenetics, CRISPR screens, variant interpretation, etc.
      - Auto-activate when the question matches
 

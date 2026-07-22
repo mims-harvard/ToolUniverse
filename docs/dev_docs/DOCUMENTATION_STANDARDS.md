@@ -68,7 +68,7 @@ All other `.rst` and `.md` files are manually maintained:
 
 ### Tool Counts
 
-**Standard**: Use `1000+ tools` consistently across documentation.
+**Standard**: Use `2,600+ tools` consistently across documentation.
 
 - Actual count (as of latest): 1962 tools
 - Use rounded public-facing number for simplicity

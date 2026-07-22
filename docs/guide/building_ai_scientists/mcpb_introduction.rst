@@ -22,7 +22,7 @@ Key Features
 
 *   **Standalone Execution**: The bundle acts as a self-contained server.
 *   **Seamless Integration**: Designed specifically for **Claude Desktop** and other MCPB-aware clients.
-*   **Access to Scientific Tools**: Immediately unlocks 1000+ scientific tools for your AI assistant without command-line setup.
+*   **Access to Scientific Tools**: Immediately unlocks 2,600+ scientific tools for your AI assistant without command-line setup.
 
 Getting Started
 ---------------

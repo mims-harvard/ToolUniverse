@@ -9,7 +9,7 @@ API Keys and Authentication
 Overview
 --------
 
-ToolUniverse provides access to 1000+ scientific tools across various domains. Many tools work without API keys, but some require authentication for full functionality or enhanced rate limits.
+ToolUniverse provides access to 2,600+ scientific tools across various domains. Many tools work without API keys, but some require authentication for full functionality or enhanced rate limits.
 
 API Key Categories
 ------------------

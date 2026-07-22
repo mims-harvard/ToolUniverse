@@ -1,7 +1,7 @@
 Tool Composition Tutorial
 =========================
 
-**Chain ToolUniverse's 1000+ tools into powerful scientific workflows**
+**Chain ToolUniverse's 2,600+ tools into powerful scientific workflows**
 
 Overview
 --------

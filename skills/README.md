@@ -1,6 +1,6 @@
 # ToolUniverse Skills
 
-68 pre-built research skills for AI agents. Skills are automatically available — just ask naturally.
+150+ pre-built research skills for AI agents. Skills are automatically available — just ask naturally.
 
 ```
 "Find the E. coli K-12 genome"           → tooluniverse-sequence-retrieval

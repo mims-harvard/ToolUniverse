@@ -21,7 +21,7 @@ Technical terms and concepts used throughout ToolUniverse documentation.
       Unique identifier for chemical compounds in the ChEMBL database (e.g., CHEMBL25 for aspirin).
 
    Compact Mode
-      Context window optimization mode that exposes only 4-5 core discovery tools instead of 1000+ tools. Reduces context usage by 99% while maintaining full functionality through the ``execute_tool`` tool.
+      Context window optimization mode that exposes only 4-5 core discovery tools instead of 2,600+ tools. Reduces context usage by 99% while maintaining full functionality through the ``execute_tool`` tool.
 
    EFO
    EFO ID

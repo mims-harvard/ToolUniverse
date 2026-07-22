@@ -15,7 +15,7 @@
 
 ## Install
 
-**ToolUniverse is a platform, not just a pip package.** It combines a registry of 1000+ scientific tools with an MCP server, a `tu` CLI, a Python SDK, 60+ agent research skills, and optional API keys. A complete setup connects several of these — running only `pip install tooluniverse` gives you a fraction of the system, and many tools stay silently unavailable.
+**ToolUniverse is a platform, not just a pip package.** It combines a registry of 2,600+ scientific tools with an MCP server, a `tu` CLI, a Python SDK, 150+ agent research skills, and optional API keys. A complete setup connects several of these — running only `pip install tooluniverse` gives you the tool *library*, not the assembled system (no skills, no chat/MCP integration, no API keys).
 
 **Recommended — let your AI agent set up the whole system.** Open your AI agent (Claude, Cursor, ChatGPT, Gemini, …) and run:
 ```
@@ -39,7 +39,7 @@ It walks you through every step: install `uv`, wire up the MCP server, add API k
 }
 ```
 
-**2. Agent skills** — install the 60+ research workflows:
+**2. Agent skills** — install the 150+ research workflows:
 ```bash
 npx skills add mims-harvard/ToolUniverse
 ```
@@ -57,7 +57,7 @@ npx skills add mims-harvard/ToolUniverse
   ```bash
   uv pip install "tooluniverse[all]"   # or:  pip install "tooluniverse[all]"
   ```
-  > **Minimal / core-only:** `pip install tooluniverse` (without `[all]`) installs just the core Python package — not the MCP server, skills, or keys that make up the full system, and tools needing optional scientific deps (ML, RDKit/cheminformatics, visualization, bioinformatics, single-cell) silently fail to register. Single-cell tools need one more add-on: `pip install "tooluniverse[singlecell]"`.
+  > **Minimal / core-only:** `pip install tooluniverse` (without `[all]`) installs just the core Python package — the tool *library*, not the assembled system (no skills, no chat/MCP, no API keys). All tools still register and appear in `tu list`/`tu status`; but tools that need optional scientific deps (ML, RDKit/cheminformatics, visualization, bioinformatics, single-cell) return a clear error when called (e.g. `Install with: pip install rdkit`) until you add `[all]`. Single-cell needs one more add-on: `pip install "tooluniverse[singlecell]"`.
 
 ## Building AI Scientists with ToolUniverse
 
@@ -71,7 +71,7 @@ npx skills add mims-harvard/ToolUniverse
 
 ## What is ToolUniverse?
 
-ToolUniverse is an ecosystem for creating AI scientist systems from any large language model. Powered by the AI-Tool Interaction Protocol, it standardizes how LLMs identify and call tools, integrating more than **1000 machine learning models, datasets, APIs, and scientific packages** for data analysis, knowledge retrieval, and experimental design.
+ToolUniverse is an ecosystem for creating AI scientist systems from any large language model. Powered by the AI-Tool Interaction Protocol, it standardizes how LLMs identify and call tools, integrating more than **2,600 machine learning models, datasets, APIs, and scientific packages** for data analysis, knowledge retrieval, and experimental design.
 
 **Key features:**
 
@@ -80,9 +80,9 @@ ToolUniverse is an ecosystem for creating AI scientist systems from any large la
 - [**MCP Integration**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/mcp_support.html): Native Model Context Protocol server with configurable transport and tool selection
 - [**Async Operations**](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/async_tools_guide.html): Long-running tasks (protein docking, molecular simulations) with progress tracking and parallel execution
 - [**Tool Composition**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tool_composition.html): Chain tools for sequential or parallel execution in self-directed workflows
-- [**Compact Mode**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/compact_mode.html): Reduces 1000+ tools to 4-5 core discovery tools, saving ~99% context window
+- [**Compact Mode**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/compact_mode.html): Reduces 2,600+ tools to 4-5 core discovery tools, saving ~99% context window
 - [**CLI (`tu`)**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tu_cli.html): Discover, inspect, run, and test tools directly from the terminal — 9 subcommands for interactive and scripted workflows
-- [**Agent Skills**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html): 68 pre-built research workflows for drug discovery, precision oncology, rare disease diagnosis, pharmacovigilance, and more
+- [**Agent Skills**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html): 150+ pre-built research workflows for drug discovery, precision oncology, rare disease diagnosis, pharmacovigilance, and more
 - [**Literature Search**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/literature_search_tools_tutorial.html): Unified search across PubMed, Semantic Scholar, ArXiv, BioRxiv, Europe PMC, and more
 - [**Two-Tier Result Caching**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/cache_system.html): In-memory LRU + SQLite persistence with per-tool fingerprinting for 10x speedup, offline support, and reproducibility
 - [**Continuous Expansion**](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/index.html): Register new tools locally or remotely without additional configuration

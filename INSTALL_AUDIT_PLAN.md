@@ -8,7 +8,7 @@ Users treat ToolUniverse as "just a pip package," run bare `pip install tooluniv
 
 1. **`uv`** — the single prerequisite
 2. **An access mode** — MCP server (chat), `tu` CLI, or Python SDK (the SDK is where the full `[all]` package matters)
-3. **API keys** — NCBI/PubMed, NVIDIA structure prediction, FDA, USPTO, DisGeNET, OMIM, … Whole tool families are rate-limited or unavailable without them (a major source of "tools silently missing")
+3. **API keys** — NCBI/PubMed, NVIDIA structure prediction, FDA, USPTO, DisGeNET, OMIM, … Key-gated tools still register and are discoverable, but return a clear "set XXX env var" error (or run rate-limited) at call time until a key is provided
 4. **Agent skills / research workflows** — installed into the client (`npx skills add …` or the plugin); these make it a research platform, not a tool list
 5. **Validation** — `tu status`, a test tool call
 
@@ -47,10 +47,16 @@ uv pip install "tooluniverse[all]"     # or:  pip install "tooluniverse[all]"
   - **Review question (do NOT change without sign-off):** should `singlecell` be folded into `all`? Recommendation: **keep separate** (its native deps break on many platforms), but document it as a prominent add-on wherever `[all]` appears. This is the only extras-naming ambiguity found; everything else is expressible today.
 
 **Platform framing one-liner (reuse verbatim):**
-> ToolUniverse is a platform — an MCP server, a registry of 1000+ scientific tools, and 60+ agent skills — not just a Python package. Install the full package so every tool registers.
+> ToolUniverse is a platform — an MCP server, a registry of 2,600+ scientific tools, and 150+ agent skills — not just a Python package. Install the full package so every tool registers.
 
-**Minimal / core-only note (reuse verbatim):**
-> `pip install tooluniverse` installs only the core package. Tools that rely on optional scientific dependencies (ML models, RDKit/cheminformatics, visualization, bioinformatics, single-cell) silently fail to register or run. Use `[all]` above unless you specifically want a slim install.
+**Minimal / core-only note (reuse verbatim — honest version):**
+> `pip install tooluniverse` (without `[all]`) installs just the core package — the tool *library*, not the assembled system (no skills, no chat/MCP, no API keys). All tools still register and appear in `tu list`/`tu status`; but tools that need optional scientific dependencies (ML models, RDKit/cheminformatics, visualization, bioinformatics, single-cell) return a clear error when called (e.g. `Install with: pip install rdkit`) until you add `[all]`.
+
+### Accuracy correction + number unification (this pass)
+
+- **Wording:** verified in code that all optional imports are `try/except`-guarded and `@register_tool` runs unconditionally, so bare-install tools **still register** and fail **loudly at call time** with actionable messages — not "silently." All "silently fail to register/run" phrasing was corrected to the honest version above across README/docs/all three skill trees.
+- **Numbers (deterministic counts):** tool config entries = **2,620** across 607 configs → standardized on **"2,600+ tools"**; `SKILL.md` dirs = **152** (canonical `skills/` tree; 139 shipped in the plugin) → standardized on **"150+ skills"**. Replaced scattered `1000+/1200+/2,000+` (tools) and `60+/115/120+/130+/68` (skills) across README, docs, the three skill trees, and the plugin/marketplace manifests. Deliberately left untouched: the `docs/index.rst` per-category card badges (`15/6/1` — a separate categorized breakdown, not a platform-scale claim), the `devtu-docs-quality` QA skill (uses counts as teaching examples), and non-tool "1000+" data counts (epigenomics "1000+ positions", binder "1000+ SMILES").
+- **Deferred (separate follow-up, report R27):** `setup.md` = `setup-tooluniverse/SKILL.md` still leaks agent-only content to the public site (`## Internal Notes (do not show)`, `## Agent Behavior`, `AskQuestion`, routing frontmatter). Not touched this pass — needs a decouple-public-page-from-agent-skill decision.
 
 ---
 

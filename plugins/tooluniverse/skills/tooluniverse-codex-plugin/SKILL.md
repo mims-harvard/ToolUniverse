@@ -1,12 +1,12 @@
 ---
 
 name: tooluniverse-codex-plugin
-description: "Install, set up, verify, update, pin, uninstall, or troubleshoot the ToolUniverse plugin on OpenAI Codex. ALWAYS consult this skill for any of those — don't answer from memory, because the exact marketplace name (mims-harvard/ToolUniverse), the \"codex plugin marketplace add\" then \"codex plugin add -m tooluniverse\" flow, Codex's startup auto-upgrade behavior, the uvx tooluniverse MCP server, and the API-key env vars are easy to get wrong. Use it whenever someone wants to get ToolUniverse (or \"the 1000+ scientific tools\" / \"the harvard tools\") working on Codex, says the Codex plugin or its tools/skills won't load, hits a uvx or MCP-server startup error, asks how Codex updates it, wants to pin or remove it, or finds it running an old tool version — even if they never say the word \"plugin\". Not for the Claude Code plugin (use tooluniverse-claude-code-plugin), for running research with the tools, or for authoring new tools or skills."
+description: "Install, set up, verify, update, pin, uninstall, or troubleshoot the ToolUniverse plugin on OpenAI Codex. ALWAYS consult this skill for any of those — don't answer from memory, because the exact marketplace name (mims-harvard/ToolUniverse), the \"codex plugin marketplace add\" then \"codex plugin add -m tooluniverse\" flow, Codex's startup auto-upgrade behavior, the uvx tooluniverse MCP server, and the API-key env vars are easy to get wrong. Use it whenever someone wants to get ToolUniverse (or \"the 2,600+ scientific tools\" / \"the harvard tools\") working on Codex, says the Codex plugin or its tools/skills won't load, hits a uvx or MCP-server startup error, asks how Codex updates it, wants to pin or remove it, or finds it running an old tool version — even if they never say the word \"plugin\". Not for the Claude Code plugin (use tooluniverse-claude-code-plugin), for running research with the tools, or for authoring new tools or skills."
 ---
 
 # Install the ToolUniverse Plugin for OpenAI Codex
 
-One-step install on Codex: an MCP server exposing 1000+ scientific tools plus 130+ research skills — all auto-configured. (For the Claude Code version, see `tooluniverse-claude-code-plugin`.)
+One-step install on Codex: an MCP server exposing 2,600+ scientific tools plus 150+ research skills — all auto-configured. (For the Claude Code version, see `tooluniverse-claude-code-plugin`.)
 
 ## Prerequisites (check once)
 
@@ -49,7 +49,7 @@ The research skills auto-activate on matching questions, and the MCP tools are d
 
 | Component | What it does | How it's used |
 |---|---|---|
-| **MCP server** | 1000+ tools via `find_tools`, `get_tool_info`, `execute_tool` | Auto-loaded; no action needed |
+| **MCP server** | 2,600+ tools via `find_tools`, `get_tool_info`, `execute_tool` | Auto-loaded; no action needed |
 | **130+ skills** | Structured research workflows — drug discovery, variant interpretation, pharmacovigilance, phylogenetics, statistical modeling, and more | Auto-activate on matching questions |
 
 > Unlike the Claude Code plugin, the Codex plugin ships **MCP tools + skills only** — there are no slash commands. You drive everything by asking naturally.

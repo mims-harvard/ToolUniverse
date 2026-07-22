@@ -1,7 +1,7 @@
 Scientific Workflows
 ====================
 
-The best way to run scientific workflows with ToolUniverse is through AI agent skills — pre-built, interactive research workflows that combine 1000+ tools.
+The best way to run scientific workflows with ToolUniverse is through AI agent skills — pre-built, interactive research workflows that combine 2,600+ tools.
 
 Use the skills catalog to find workflows for drug discovery, target analysis, disease research, genomics, literature review, and more:
 

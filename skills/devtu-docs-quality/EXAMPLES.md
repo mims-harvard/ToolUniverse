@@ -32,14 +32,14 @@ tooluniverse-server --config config.json
 ```
 docs/index.rst:12 [HIGH]
   Found: 600+ tools
-  Should be: 1000+ tools
+  Should be: 2,600+ tools
 
 docs/features.rst:34 [HIGH]
   Found: 750 scientific resources
-  Should be: 1000+ tools
+  Should be: 2,600+ tools
 ```
 
-**After:** All changed to "1000+ tools"
+**After:** All changed to "2,600+ tools"
 
 ## Example 3: Circular Navigation
 
@@ -199,11 +199,11 @@ docs/installation.md:45 [HIGH]
 
 docs/index.rst:12 [HIGH]
   Found: 600+ tools
-  Should be: 1000+ tools
+  Should be: 2,600+ tools
 
 docs/features.rst:34 [HIGH]
   Found: 750 tools
-  Should be: 1000+ tools
+  Should be: 2,600+ tools
 
 docs/quickstart.rst:23 [MEDIUM]
   Found: API URL
@@ -256,7 +256,7 @@ Run fixes and re-validate.
 ### 2. Inconsistent tool counts
 - **Files affected**: 7
 - **Variations**: 600+, 750+, 1195
-- **Fix**: Standardize to "1000+"
+- **Fix**: Standardize to "2,600+"
 - **Effort**: 20 minutes
 
 ### 3. Missing CLI documentation

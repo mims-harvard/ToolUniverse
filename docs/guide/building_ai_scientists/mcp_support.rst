@@ -1,7 +1,7 @@
 MCP Support
 ===========
 
-ToolUniverse runs as a `Model Context Protocol <https://modelcontextprotocol.io/>`_ server, exposing 1000+ scientific tools to any MCP-compatible AI client.
+ToolUniverse runs as a `Model Context Protocol <https://modelcontextprotocol.io/>`_ server, exposing 2,600+ scientific tools to any MCP-compatible AI client.
 
 For platform-specific setup, see :doc:`index`.
 

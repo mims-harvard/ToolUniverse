@@ -147,7 +147,7 @@ Key differences from standard config: uses `"servers"` (not `"mcpServers"`) and 
 
 ### Compact Mode (Default with uvx)
 
-When using `uvx tooluniverse`, compact mode is **enabled by default** — no flag needed. It exposes only 5 core tools to prevent context overflow, while keeping all 1000+ tools accessible via `execute_tool`.
+When using `uvx tooluniverse`, compact mode is **enabled by default** — no flag needed. It exposes only 5 core tools to prevent context overflow, while keeping all 2,600+ tools accessible via `execute_tool`.
 
 If using the pip-based `tooluniverse-smcp-stdio` command, pass `--compact-mode` explicitly:
 ```json

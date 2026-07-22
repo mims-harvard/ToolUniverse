@@ -132,7 +132,7 @@ ToolUniverse provides two main MCP server functions for different use cases:
 1. **`tooluniverse-smcp`** - Full-featured server with configurable transport (HTTP, SSE, stdio)
 2. **`tooluniverse-smcp-stdio`** - Specialized server for stdio transport (for desktop AI applications)
 
-Both functions expose the same 1000+ scientific tools through the Model Context Protocol (MCP), but with different transport configurations and argument handling.
+Both functions expose the same 2,600+ scientific tools through the Model Context Protocol (MCP), but with different transport configurations and argument handling.
 
 tooluniverse-smcp Function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -65,7 +65,7 @@ Read https://aiscientist.tools/setup.md and set up ToolUniverse for me.
 ```
 Per-platform pages must contain exactly three things: (1) official install link, (2) official MCP setup guide link, (3) the setup prompt above. Nothing else — no JSON snippets, no step-by-step instructions, no troubleshooting. Those belong in the setup skill at `aiscientist.tools/setup.md`.
 
-**Consistent tool count.** Always "1000+ tools". Never "600+", "750+", "1200+", "10000+", or any other number.
+**Consistent tool count.** Always "2,600+ tools". Never "600+", "750+", "1000+", "1200+", "10000+", or any other number.
 
 **Clean navigation bar.** Must not contain "API", "API Keys", or "Contribution" items. Must include a link to `https://aiscientist.tools` as the first item.
 
@@ -206,9 +206,9 @@ for f in sorted(DOCS.rglob("*.rst")) + sorted(DOCS.rglob("*.md")):
             issues.append(f"EMOJI  {rel}:{line}  {repr(m.group())}")
 
     # Check wrong tool counts
-    for bad in ["600+", "750+", "1200+", "10000+"]:
+    for bad in ["600+", "750+", "1000+", "1200+", "10000+"]:
         if bad in text and "tools" in text[text.find(bad):text.find(bad)+20]:
-            issues.append(f"COUNT  {rel}  contains '{bad} tools' (use '1000+')")
+            issues.append(f"COUNT  {rel}  contains '{bad} tools' (use '2,600+')")
 
     # Check broken :doc: references
     for m in re.finditer(r':doc:`([^`]+)`', text):
@@ -282,8 +282,8 @@ python scripts/validate_documentation.py
 # scripts/validate_documentation.py checks:
 DEPRECATED_PATTERNS = [
     (r"python -m tooluniverse\.server", "tooluniverse-server"),
-    (r"600\+?\s+tools", "1000+ tools"),
-    (r"750\+?\s+tools", "1000+ tools"),
+    (r"600\+?\s+tools", "2,600+ tools"),
+    (r"750\+?\s+tools", "2,600+ tools"),
 ]
 ```
 
@@ -293,7 +293,7 @@ DEPRECATED_PATTERNS = [
 
 **Circular navigation** — trace `index.rst → quickstart → getting_started` manually; no loops allowed.
 
-**Tool count** — "1000+ tools" consistently everywhere. Run: `rg "[0-9]+\+?\s+(tools|integrations)" docs/ --no-filename | sort -u`
+**Tool count** — "2,600+ tools" consistently everywhere. Run: `rg "[0-9]+\+?\s+(tools|integrations)" docs/ --no-filename | sort -u`
 
 **Auto-generated headers** — `docs/tools/*_tools.rst` and `docs/api/*.rst` must start with `.. AUTO-GENERATED`.
 
@@ -331,7 +331,7 @@ All items must pass before the audit is done. A partial pass is not acceptable.
 
 **Less is more (Apple-style):**
 - [ ] Phase E scan exits 0 — no emojis, no wrong counts, no broken links, no oversized pages
-- [ ] "1000+ tools" used consistently everywhere (not 600+, 750+, 10000+, etc.)
+- [ ] "2,600+ tools" used consistently everywhere (not 600+, 750+, 1000+, 1200+, 10000+, etc.)
 - [ ] Each per-platform setup page: install link + MCP guide link + setup prompt only (≤15 lines)
 - [ ] No duplicate setup instructions anywhere on the site
 - [ ] Navbar: no "API", "API Keys", "Contribution"; has `aiscientist.tools` link

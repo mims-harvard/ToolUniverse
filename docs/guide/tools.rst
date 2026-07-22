@@ -3,7 +3,7 @@ Available Tools Reference
 
 **Complete reference of all ToolUniverse scientific tools and their capabilities.**
 
-ToolUniverse provides 1000+ tools across eight major categories, each serving specific computational and analytical requirements in scientific research.
+ToolUniverse provides 2,600+ tools across eight major categories, each serving specific computational and analytical requirements in scientific research.
 
 Tool Ecosystem Overview
 -----------------------
@@ -12,7 +12,7 @@ ToolUniverse integrates tools across eight major categories:
 
 .. code-block:: text
 
-   ToolUniverse Ecosystem (1000+ Tools):
+   ToolUniverse Ecosystem (2,600+ Tools):
 
    ┌─────────────────┐
    │   ML Models     │ 15 tools  → Prediction, Classification, Generation

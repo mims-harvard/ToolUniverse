@@ -9,7 +9,7 @@ Core Concepts
 * **Loading Tools** → :doc:`loading_tools` - Complete tutorial to loading tools with Python API and MCP terminal commands
 * **Listing Tools** → :doc:`listing_tools` - Discover and filter tools by capability, domain, and IO
 * **Tool Caller** → :doc:`tool_caller` - Primary execution engine with dynamic loading, validation, and MCP server integration
-* **Tool Composition** → :doc:`tool_composition` - Chain ToolUniverse's 1000+ tools into powerful scientific workflows using Tool Composer
+* **Tool Composition** → :doc:`tool_composition` - Chain ToolUniverse's 2,600+ tools into powerful scientific workflows using Tool Composer
 * **Coding API** → :doc:`coding_api` - Import and call tools like normal Python functions with type safety
 * **Scientific Workflows** → :doc:`scientific_workflows` - Real-world research scenarios: drug discovery, safety analysis, literature review
 * **MCP Support** → :doc:`building_ai_scientists/mcp_support` - Model Context Protocol integration and server setup

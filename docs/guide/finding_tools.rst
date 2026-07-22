@@ -7,7 +7,7 @@ Tool Finder Tutorial
 Introduction
 ============
 
-ToolUniverse contains a vast repository of over 1000+ scientific tools. To help you quickly find the right tools for your research tasks, ToolUniverse provides three sophisticated tool finder methods, each optimized for different use cases and computational requirements.
+ToolUniverse contains a vast repository of over 2,600+ scientific tools. To help you quickly find the right tools for your research tasks, ToolUniverse provides three sophisticated tool finder methods, each optimized for different use cases and computational requirements.
 
 Why Use Tool Finders?
 ---------------------

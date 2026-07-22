@@ -1,7 +1,7 @@
 ---
 
 name: tooluniverse-custom-tool
-description: "Add custom local tools to ToolUniverse alongside the 1000+ built-in tools. Covers JSON-config tools (simplest, no code), Python class tools (REST/SOAP/GraphQL APIs, computational logic), and best-practices for return schemas. Use for wrapping new APIs, adding domain-specific computations, or contributing tools to the registry."
+description: "Add custom local tools to ToolUniverse alongside the 2,600+ built-in tools. Covers JSON-config tools (simplest, no code), Python class tools (REST/SOAP/GraphQL APIs, computational logic), and best-practices for return schemas. Use for wrapping new APIs, adding domain-specific computations, or contributing tools to the registry."
 ---
 
 # Adding Custom Tools to ToolUniverse

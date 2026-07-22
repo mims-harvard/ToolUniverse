@@ -760,7 +760,7 @@ Development Skills
       :class-card: hover-lift
       :shadow: md
 
-      Build AI scientist systems using ToolUniverse Python SDK for scientific research. Use when users need to access 1000++ scientific tools through Python code, create scientific workflows, perform drug discovery, protein...
+      Build AI scientist systems using ToolUniverse Python SDK for scientific research. Use when users need to access 2,600+ scientific tools through Python code, create scientific workflows, perform drug discovery, protein...
 
       +++
       :bdg-info:`tooluniverse-sdk`

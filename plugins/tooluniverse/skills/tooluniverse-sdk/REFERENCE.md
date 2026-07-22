@@ -10,7 +10,7 @@ Detailed reference for ToolUniverse Python SDK features and advanced usage.
 # Full platform — recommended; all tools register (adds ML/cheminformatics/viz/bioinformatics deps)
 pip install "tooluniverse[all]"
 
-# Core-only (~200-300 MB) — minimal; tools needing optional deps silently fail to register
+# Core-only (~200-300 MB) — tool library only; all tools still register, but ones needing optional deps error at call time with an install hint
 pip install tooluniverse
 
 # With embedding search only (+1-2 GB for model weights)
@@ -25,7 +25,7 @@ pip install "tooluniverse[client]"
 
 ### Performance Metrics
 
-- First `load_tools()`: 5-10 seconds (1000++ tools)
+- First `load_tools()`: 5-10 seconds (2,600+ tools)
 - Subsequent loads: 2-3 seconds (cached)
 - Specific categories: <2 seconds
 - Memory: 200-300 MB base, +1-2 GB with embeddings

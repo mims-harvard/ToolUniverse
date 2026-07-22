@@ -1,6 +1,6 @@
 {
   "name": "tooluniverse",
-  "description": "1000+ scientific research tools for biology, chemistry, medicine, and data science. Access PubMed, UniProt, PubChem, TCGA, NHANES, GWAS Catalog, and hundreds more databases through a unified MCP interface. Includes specialized research skills for genomics, drug discovery, clinical analysis, protein variant interpretation, and more.",
+  "description": "2,600+ scientific research tools for biology, chemistry, medicine, and data science. Access PubMed, UniProt, PubChem, TCGA, NHANES, GWAS Catalog, and hundreds more databases through a unified MCP interface. Includes specialized research skills for genomics, drug discovery, clinical analysis, protein variant interpretation, and more.",
   "version": "1.3.2",
   "author": {
     "name": "Shanghua Gao",
@@ -33,7 +33,7 @@
   "interface": {
     "displayName": "ToolUniverse",
     "shortDescription": "Scientific research tools for Codex",
-    "longDescription": "Use ToolUniverse to discover and run 1000+ tools across biology, chemistry, medicine, genomics, literature search, drug discovery, clinical research, and scientific data analysis.",
+    "longDescription": "Use ToolUniverse to discover and run 2,600+ tools across biology, chemistry, medicine, genomics, literature search, drug discovery, clinical research, and scientific data analysis.",
     "developerName": "ToolUniverse",
     "category": "Research",
     "capabilities": [

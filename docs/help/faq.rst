@@ -74,7 +74,7 @@ How do I install ToolUniverse?
 
    .. tab:: Core-only (minimal)
 
-      Core package only — tools needing ML/cheminformatics/visualization/bioinformatics/single-cell deps will silently fail to register:
+      Core package only — the tool library, not the full system. All tools still register, but ones needing ML/cheminformatics/visualization/bioinformatics/single-cell deps return a clear "install X" error when called:
 
       .. code-block:: bash
 

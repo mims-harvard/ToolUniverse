@@ -9,8 +9,8 @@ Installation
 .. admonition:: The Python SDK is one access mode of a larger platform
    :class: important
 
-   ToolUniverse is a **system**, not just a Python package: a registry of 1000+ tools
-   plus an MCP server, a ``tu`` CLI, 60+ agent research skills, and optional API keys.
+   ToolUniverse is a **system**, not just a Python package: a registry of 2,600+ tools
+   plus an MCP server, a ``tu`` CLI, 150+ agent research skills, and optional API keys.
    The SDK below is the *code* access mode. For the full experience — chat-based tool
    use, research skills, and the tool families that need keys — also set up the MCP
    server, API keys, and skills. See :doc:`building_ai_scientists/index` and
@@ -53,11 +53,13 @@ Choose your package manager:
 
 .. note:: **Minimal / core-only install**
 
-   ``pip install tooluniverse`` (without ``[all]``) installs only the core package.
-   Tools that rely on optional scientific dependencies (ML models, RDKit/cheminformatics,
-   visualization, bioinformatics, single-cell) silently fail to register or run. Use
-   ``[all]`` unless you specifically want a slim install. Single-cell tools need one more
-   add-on: ``pip install "tooluniverse[singlecell]"``.
+   ``pip install tooluniverse`` (without ``[all]``) installs just the core Python package —
+   the tool *library*, not the assembled system (no skills, no chat/MCP, no API keys). All
+   tools still register and appear in ``tu list``/``tu status``; but tools that need optional
+   scientific dependencies (ML models, RDKit/cheminformatics, visualization, bioinformatics,
+   single-cell) return a clear error when called (e.g. ``Install with: pip install rdkit``)
+   until you add ``[all]``. Single-cell needs one more add-on:
+   ``pip install "tooluniverse[singlecell]"``.
 
 .. tip:: **Pro Tip**
 
@@ -103,7 +105,7 @@ Get your first scientific query running in 5 minutes:
 
    .. code-block:: python
 
-      # Load all 1000+ tools
+      # Load all 2,600+ tools
       tu.load_tools()
 
       print(f"✅ Loaded {len(tu.all_tools)} scientific tools!")
@@ -136,7 +138,7 @@ Get your first scientific query running in 5 minutes:
 
 .. important:: **Success!**
  
- You now have access to 1000+ scientific tools for drug discovery, protein analysis, literature search, and more!
+ You now have access to 2,600+ scientific tools for drug discovery, protein analysis, literature search, and more!
 
 Tool Execution
 ~~~~~~~~~~~~~~
@@ -189,7 +191,7 @@ All tools follow a **consistent structure**:
 Tool Finders
 ~~~~~~~~~~~~~~
 
-ToolUniverse has **three ways** to find tools. Don't browse 1000+ tools manually—use Tool Finder!
+ToolUniverse has **three ways** to find tools. Don't browse 2,600+ tools manually—use Tool Finder!
 
 .. grid:: 1 1 2 2
    :gutter: 3

@@ -133,7 +133,7 @@ SMCP Server Overview
 The SMCP (Scientific Model Context Protocol) server extends standard MCP with scientific domain expertise and intelligent tool discovery.
 
 Key Features:
-- **Scientific Tool Integration**: Access to 1000+ specialized tools
+- **Scientific Tool Integration**: Access to 2,600+ specialized tools
 - **AI-Powered Tool Discovery**: Multi-tiered intelligent search system
 - **Full MCP Protocol Support**: Complete implementation of MCP specification
 - **High-Performance Architecture**: Production-ready features

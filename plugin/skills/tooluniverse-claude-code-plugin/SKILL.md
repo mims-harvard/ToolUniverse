@@ -1,12 +1,12 @@
 ---
 name: tooluniverse-claude-code-plugin
-description: Install the ToolUniverse Claude Code plugin in one step — provides MCP server with 1000+ scientific tools, 120+ research skills, slash commands, hooks, and the research agent. Use for first-time plugin install, troubleshooting plugin not loading, verifying MCP server connection, listing API key requirements, or configuring auto-update.
+description: Install the ToolUniverse Claude Code plugin in one step — provides MCP server with 2,600+ scientific tools, 150+ research skills, slash commands, hooks, and the research agent. Use for first-time plugin install, troubleshooting plugin not loading, verifying MCP server connection, listing API key requirements, or configuring auto-update.
 disable-model-invocation: true
 ---
 
 # Install the ToolUniverse Plugin for Claude Code
 
-One-step install of the ToolUniverse plugin: MCP server with 1000+ tools, 120+ research skills, slash commands, and the research agent — all auto-configured.
+One-step install of the ToolUniverse plugin: MCP server with 2,600+ tools, 150+ research skills, slash commands, and the research agent — all auto-configured.
 
 ## Prerequisites (check once)
 
@@ -93,7 +93,7 @@ The router skill auto-dispatches to the right specialized skill — no command p
 
 | Component | What it does | How to invoke |
 |---|---|---|
-| **MCP server** | 1000+ tools via `find_tools`, `get_tool_info`, `execute_tool` | Auto-loaded; no action needed |
+| **MCP server** | 2,600+ tools via `find_tools`, `get_tool_info`, `execute_tool` | Auto-loaded; no action needed |
 | **`/tooluniverse:research`** | Multi-database investigation inline in this chat (you see each step) | Slash command |
 | **`/tooluniverse:translate-id`** | Resolve an ID across all relevant namespaces | Slash command |
 | **`/tooluniverse:cross-validate`** | Verify a claim across 3+ independent databases | Slash command |
@@ -103,7 +103,7 @@ The router skill auto-dispatches to the right specialized skill — no command p
 | **`/tooluniverse:self-review`** | Generate weighted success criteria for a task and check work against them (what's missing / done well) | Slash command |
 | **`/tooluniverse:setup-keys`** | Configure ToolUniverse API keys | Slash command |
 | **`/tooluniverse:researcher`** | Same investigation as `research`, delegated to a forked subagent | Slash command |
-| **120+ skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
+| **150+ skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
 
 ## API keys (optional, but recommended)
 

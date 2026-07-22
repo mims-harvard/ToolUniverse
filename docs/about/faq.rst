@@ -8,7 +8,7 @@ Quick answers to the most common questions about ToolUniverse.
 What is ToolUniverse?
 ---------------------
 
-ToolUniverse is a collection of 1000+ scientific tools for AI agents, providing unified access to drug safety data, genomics, literature, clinical trials, and more.
+ToolUniverse is a collection of 2,600+ scientific tools for AI agents, providing unified access to drug safety data, genomics, literature, clinical trials, and more.
 
 .. code-block:: python
 
@@ -39,10 +39,12 @@ Python SDK access mode, use the **full** package so every tool registers:
 
 .. note::
 
-   ``pip install tooluniverse`` (without ``[all]``) installs only the core Python package —
-   not the MCP server, skills, or keys that make up the full system — and tools that depend
-   on optional scientific packages (ML, cheminformatics, visualization, bioinformatics,
-   single-cell) silently fail to register. Use ``[all]`` unless you want a slim install.
+   ``pip install tooluniverse`` (without ``[all]``) installs just the core Python package —
+   the tool *library*, not the assembled system (no MCP server, skills, or keys). All tools
+   still register and appear in ``tu list``; but tools that depend on optional scientific
+   packages (ML, cheminformatics, visualization, bioinformatics, single-cell) return a clear
+   "install X" error when called until you add ``[all]``. Use ``[all]`` unless you want a slim
+   install.
 
 Do I need API keys?
 -------------------

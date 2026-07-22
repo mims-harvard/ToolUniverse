@@ -18,13 +18,13 @@ Guide the user step-by-step through setting up ToolUniverse.
 
 ## Internal Notes (do not show)
 
-ToolUniverse has 1200+ tools. The `tooluniverse` command enables compact mode automatically, exposing only 5 core MCP tools (list_tools, grep_tools, get_tool_info, execute_tool, find_tools) while keeping all tools accessible via execute_tool.
+ToolUniverse has 2,600+ tools. The `tooluniverse` command enables compact mode automatically, exposing only 5 core MCP tools (list_tools, grep_tools, get_tool_info, execute_tool, find_tools) while keeping all tools accessible via execute_tool.
 
 ## What is ToolUniverse?
 
 **Always explain first, in plain language:**
 
-ToolUniverse is free, open-source software connecting to 2,000+ scientific databases (PubMed, UniProt, ChEMBL, FAERS, ClinicalTrials.gov, etc.). Instead of visiting each website, you search from one place. Think of it like a universal remote for scientific databases.
+ToolUniverse is free, open-source software connecting to 2,600+ scientific tools across databases like PubMed, UniProt, ChEMBL, FAERS, and ClinicalTrials.gov. Instead of visiting each website, you search from one place. Think of it like a universal remote for scientific databases.
 
 **Why AI assistants?** The AI reads your question, figures out which databases to search, runs queries, and summarizes results. You just ask your question.
 
@@ -153,7 +153,7 @@ Make sure Step 2 is done (`uv --version` works).
 > claude plugin marketplace add mims-harvard/ToolUniverse
 > claude plugin install tooluniverse@tooluniverse
 > ```
-> This installs MCP server + 115 skills + slash commands in one step. Then see the `tooluniverse-claude-code-plugin` skill's "Recommended: turn on auto-update" step so future releases apply without manual `claude plugin update`.
+> This installs MCP server + 150+ skills + slash commands in one step. Then see the `tooluniverse-claude-code-plugin` skill's "Recommended: turn on auto-update" step so future releases apply without manual `claude plugin update`.
 
 | Client | File | How to Access |
 |--------|------|---------------|
@@ -221,7 +221,7 @@ SDK — same as CLI (export or `.env` file).
 **Chat mode**: Ask user to restart app. Then run a test call yourself:
 1. `list_tools` or `grep_tools` with "PubMed" — confirm tools visible
 2. `execute_tool("PubMed_search_articles", {"query": "CRISPR", "max_results": 1})` — confirm it works
-3. Celebrate: "It works! You have access to 1200+ scientific tools."
+3. Celebrate: "It works! You have access to 2,600+ scientific tools."
 
 **CLI**: Run together:
 ```bash
@@ -320,7 +320,7 @@ After setup, write a reminder to the agent's memory file so future sessions know
 **Content:**
 ```markdown
 # ToolUniverse
-For any scientific research question (drugs, genes, proteins, diseases, literature, clinical trials, etc.), invoke the `tooluniverse` skill — it routes to specialized research skills and 1,200+ database tools.
+For any scientific research question (drugs, genes, proteins, diseases, literature, clinical trials, etc.), invoke the `tooluniverse` skill — it routes to specialized research skills and 2,600+ database tools.
 ```
 
 Append (don't overwrite). Check for existing section first. Ask user permission.

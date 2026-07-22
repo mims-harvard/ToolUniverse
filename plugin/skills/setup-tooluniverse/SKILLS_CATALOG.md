@@ -6,7 +6,7 @@
 
 | Skill | What It Does |
 |-------|-------------|
-| `tooluniverse` | General strategies for using 1000+ tools effectively |
+| `tooluniverse` | General strategies for using 2,600+ tools effectively |
 | `tooluniverse-drug-research` | Comprehensive drug profiling (identity, pharmacology, safety, ADMET) |
 | `tooluniverse-target-research` | Drug target intelligence (structure, interactions, druggability) |
 | `tooluniverse-disease-research` | Systematic disease analysis across 10 research dimensions |
