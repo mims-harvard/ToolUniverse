@@ -24,7 +24,14 @@ ToolUniverse is a collection of 1000+ scientific tools for AI agents, providing 
 How do I install it?
 --------------------
 
-Install the **full** platform so every tool registers:
+ToolUniverse is a **system**, not just a pip package — a tool registry plus an MCP
+server, a ``tu`` CLI, a Python SDK, agent skills, and optional API keys. The simplest
+way to set up the whole thing is to let your AI agent do it:
+
+   ``Read https://aiscientist.tools/setup.md and set up ToolUniverse for me.``
+
+That covers ``uv``, the MCP server, API keys, skills, and validation. To install just the
+Python SDK access mode, use the **full** package so every tool registers:
 
 .. code-block:: bash
 
@@ -32,10 +39,10 @@ Install the **full** platform so every tool registers:
 
 .. note::
 
-   ``pip install tooluniverse`` (without ``[all]``) installs only the core package;
-   tools that depend on optional scientific packages (ML, cheminformatics, visualization,
-   bioinformatics, single-cell) silently fail to register. Use ``[all]`` unless you want a
-   slim install.
+   ``pip install tooluniverse`` (without ``[all]``) installs only the core Python package —
+   not the MCP server, skills, or keys that make up the full system — and tools that depend
+   on optional scientific packages (ML, cheminformatics, visualization, bioinformatics,
+   single-cell) silently fail to register. Use ``[all]`` unless you want a slim install.
 
 Do I need API keys?
 -------------------

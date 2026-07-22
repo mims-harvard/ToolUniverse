@@ -13,8 +13,10 @@ disable-model-invocation: true
 
 ## Installation
 
+> The SDK is one access mode of the ToolUniverse **system** (which also includes the MCP server, `tu` CLI, agent skills, and API keys). Installing the package alone is not the full platform — add API keys and skills for the complete experience. To set up everything at once, run `Read https://aiscientist.tools/setup.md and set up ToolUniverse for me.` in your AI agent, or invoke the `setup-tooluniverse` skill.
+
 ```bash
-pip install "tooluniverse[all]"         # Recommended: full platform, all tools register
+pip install "tooluniverse[all]"         # Recommended: full package, all tools register
 pip install "tooluniverse[embedding]"   # Embedding search (GPU) only
 pip install tooluniverse                # Core-only (minimal; omits many tools)
 ```

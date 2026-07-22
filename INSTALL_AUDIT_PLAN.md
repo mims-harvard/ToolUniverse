@@ -2,9 +2,23 @@
 
 **Branch:** `docs/install-full-guidance` · **Scope:** docs / README / skills / extras naming only. No product code, no service/credential files, no website repo.
 
-## Problem
+## Problem (corrected scope)
 
-Users treat ToolUniverse as "just a pip package," run bare `pip install tooluniverse`, and get an **incomplete** install: tools that depend on optional scientific packages (ML models, RDKit/cheminformatics, visualization, bioinformatics, single-cell) silently fail to register or run. ToolUniverse is a **platform** — an MCP server + a registry of 1000+ tools + agent skills — not merely a Python package. Every install instruction should **lead with the full/recommended install** so nobody gets the crippled version by accident.
+Users treat ToolUniverse as "just a pip package," run bare `pip install tooluniverse`, and get an **incomplete system**. The gap is **not only** the missing package extras — it is that ToolUniverse is a **complete platform** and the package is one component. A working setup is a multi-step onboarding:
+
+1. **`uv`** — the single prerequisite
+2. **An access mode** — MCP server (chat), `tu` CLI, or Python SDK (the SDK is where the full `[all]` package matters)
+3. **API keys** — NCBI/PubMed, NVIDIA structure prediction, FDA, USPTO, DisGeNET, OMIM, … Whole tool families are rate-limited or unavailable without them (a major source of "tools silently missing")
+4. **Agent skills / research workflows** — installed into the client (`npx skills add …` or the plugin); these make it a research platform, not a tool list
+5. **Validation** — `tu status`, a test tool call
+
+Every install surface must therefore **lead with the whole-system onboarding** and stop implying `pip install` = done. Package-level guidance (`[all]` vs core-only) is a sub-step of the SDK access mode, not the headline.
+
+### Website audit (aiscientist.tools) — report only, DO NOT edit
+
+The site is a full platform, not a package page. Sitemap routes: `/`, `/search` (tool registry), `/graph` (tool relationship graph), `/BuildAIScientist`, `/mcp`, `/workflows` (skills), `/submit`, `/contributors`, `/citation`. Most are client-rendered (React SPA); only `/setup.md` returns static markdown.
+
+**`https://aiscientist.tools/setup.md`** is the canonical onboarding (5 steps: install `uv` → choose access mode → API keys → test → install skills). **It has the same crippled default this branch fixes:** its SDK step still reads `uv pip install tooluniverse` (no `[all]`), and its CLI step uses `uvx --from tooluniverse` (base only). **Recommended change for the site repo (separate lane):** change the SDK step to `uv pip install "tooluniverse[all]"` with the same minimal/core-only caveat, and keep the 5-step system framing front-and-center. Source lives in the external `aiscientist.tools` site repo — **not in this repo** (`web/` here holds only data JSON), so it is reported, not edited.
 
 ---
 

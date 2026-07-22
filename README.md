@@ -15,16 +15,18 @@
 
 ## Install
 
-**AI agent (recommended)** — open your AI agent and run:
+**ToolUniverse is a platform, not just a pip package.** It combines a registry of 1000+ scientific tools with an MCP server, a `tu` CLI, a Python SDK, 60+ agent research skills, and optional API keys. A complete setup connects several of these — running only `pip install tooluniverse` gives you a fraction of the system, and many tools stay silently unavailable.
+
+**Recommended — let your AI agent set up the whole system.** Open your AI agent (Claude, Cursor, ChatGPT, Gemini, …) and run:
 ```
 Read https://aiscientist.tools/setup.md and set up ToolUniverse for me.
 ```
-The agent will walk you through MCP configuration, API keys, skill installation, and validation.
+It walks you through every step: install `uv`, wire up the MCP server, add API keys, install the agent skills, and validate.
 
 <details>
 <summary>or set up manually</summary>
 
-Add to your MCP config file:
+**1. MCP server** — add to your MCP config file:
 ```json
 {
   "mcpServers": {
@@ -37,22 +39,25 @@ Add to your MCP config file:
 }
 ```
 
-Install agent skills:
+**2. Agent skills** — install the 60+ research workflows:
 ```bash
 npx skills add mims-harvard/ToolUniverse
 ```
+
+**3. API keys** — several tool families (NCBI/PubMed, NVIDIA structure prediction, FDA, USPTO, DisGeNET, OMIM, …) need free keys, or run rate-limited/unavailable without them. Add them to the MCP `env` block or a `.env`; see the [setup guide](https://aiscientist.tools/setup.md).
 </details>
 
-**Python developers** — install the full platform:
-```bash
-uv pip install "tooluniverse[all]"   # or:  pip install "tooluniverse[all]"
-```
-ToolUniverse is a platform — an MCP server, a registry of 1000+ scientific tools, and 60+ agent skills — not just a Python package. The `[all]` extra pulls in every optional dependency so all tools register and run.
+**Prefer the terminal or your own code?** These are additional access modes of the same platform — pair them with API keys and skills (above) for the full experience:
 
-> **Minimal / core-only:** `pip install tooluniverse` installs only the core package. Tools that rely on optional scientific dependencies (ML models, RDKit/cheminformatics, visualization, bioinformatics, single-cell) silently fail to register or run. Use `[all]` above unless you specifically want a slim install. Single-cell tools need one more add-on: `pip install "tooluniverse[singlecell]"`.
-
-**[`tu` CLI](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tu_cli.html)** — discover, inspect, run, and test tools from the terminal.
-**[Python SDK](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)** — programmatic access for building AI scientist systems.
+- **[`tu` CLI](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tu_cli.html)** — discover, inspect, run, and test tools from the terminal:
+  ```bash
+  uvx --from tooluniverse tu status
+  ```
+- **[Python SDK](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)** — programmatic access for building AI scientist systems. Install the **full** package so every tool registers:
+  ```bash
+  uv pip install "tooluniverse[all]"   # or:  pip install "tooluniverse[all]"
+  ```
+  > **Minimal / core-only:** `pip install tooluniverse` (without `[all]`) installs just the core Python package — not the MCP server, skills, or keys that make up the full system, and tools needing optional scientific deps (ML, RDKit/cheminformatics, visualization, bioinformatics, single-cell) silently fail to register. Single-cell tools need one more add-on: `pip install "tooluniverse[singlecell]"`.
 
 ## Building AI Scientists with ToolUniverse
 

@@ -6,9 +6,19 @@ Python Guide
 Installation
 ------------
 
-ToolUniverse is a platform — an MCP server, a registry of 1000+ scientific tools,
-and 60+ agent skills — not just a Python package. Install the **full** package with
-the ``[all]`` extra so every tool registers and runs. Choose your package manager:
+.. admonition:: The Python SDK is one access mode of a larger platform
+   :class: important
+
+   ToolUniverse is a **system**, not just a Python package: a registry of 1000+ tools
+   plus an MCP server, a ``tu`` CLI, 60+ agent research skills, and optional API keys.
+   The SDK below is the *code* access mode. For the full experience — chat-based tool
+   use, research skills, and the tool families that need keys — also set up the MCP
+   server, API keys, and skills. See :doc:`building_ai_scientists/index` and
+   :doc:`api_keys`, or run ``Read https://aiscientist.tools/setup.md and set up
+   ToolUniverse for me.`` in your AI agent.
+
+Install the **full** package with the ``[all]`` extra so every tool registers and runs.
+Choose your package manager:
 
 .. tab-set::
 
