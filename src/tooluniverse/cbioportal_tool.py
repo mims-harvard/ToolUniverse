@@ -1,5 +1,6 @@
 import requests
 from typing import Any, Dict
+from urllib.parse import quote
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -225,6 +226,19 @@ class CBioPortalRESTTool(BaseTool):
                     "molecular_profile_id": profile_id,
                     "entrez_gene_ids": entrez_ids,
                 }
+
+            # cBioPortal_get_clinical_data declares an optional
+            # `clinical_attribute_id` filter that maps to the API's
+            # `attributeId` query param. _build_url only substitutes
+            # {placeholders}, so without this the filter was silently dropped
+            # and every call returned all clinical attributes regardless of the
+            # requested one (confirmed live: brca_tcga returns 17 attributes
+            # unfiltered vs 1 with attributeId=CANCER_TYPE).
+            if "cBioPortal_get_clinical_data" in self.tool_config.get("name", ""):
+                attribute_id = arguments.get("clinical_attribute_id")
+                if attribute_id:
+                    sep = "&" if "?" in url else "?"
+                    url = f"{url}{sep}attributeId={quote(str(attribute_id))}"
 
             # Handle regular GET or POST requests
             if method == "POST":
