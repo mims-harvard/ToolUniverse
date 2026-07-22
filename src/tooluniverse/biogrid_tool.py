@@ -196,21 +196,51 @@ class BioGRIDRESTTool(BaseTool):
                 "error": api_response.get("error"),
             }
 
+        # interaction_type is declared as a physical/genetic/both filter, but
+        # BioGRID's REST API can't filter on it server-side -- it must be applied
+        # client-side on each record's EXPERIMENTAL_SYSTEM_TYPE field (confirmed
+        # present in this tool's return_schema, values "physical"/"genetic").
+        # Without this it was silently ignored: every call returned all
+        # interaction types regardless of the one requested, so a PPI-only query
+        # could be polluted with genetic interactions.
+        interaction_type = str(arguments.get("interaction_type") or "both").lower()
+        interaction_type_note = None
+        if interaction_type in ("physical", "genetic") and isinstance(
+            api_response, dict
+        ):
+            total = len(api_response)
+            kept = {
+                k: v
+                for k, v in api_response.items()
+                if isinstance(v, dict)
+                and str(v.get("EXPERIMENTAL_SYSTEM_TYPE", "")).lower()
+                == interaction_type
+            }
+            api_response = kept
+            interaction_type_note = (
+                f"Filtered client-side to interaction_type='{interaction_type}' on the "
+                f"EXPERIMENTAL_SYSTEM_TYPE field ({len(kept)} of {total} interactions kept); "
+                "BioGRID's REST API does not filter by interaction type server-side."
+            )
+
         gene_names = arguments.get("gene_names", [])
+        metadata = {
+            "source": "BioGRID",
+            "gene_names": gene_names,
+            "interaction_count": len(api_response)
+            if isinstance(api_response, dict)
+            else 0,
+            "note": (
+                "BioGRID chemicalList filter is not supported by the REST API; "
+                "results reflect all protein interactions for the queried gene(s), "
+                "not filtered by chemical. Use ChEMBL_search_mechanisms or "
+                "DGIdb_search_interactions for drug-protein interaction data."
+            ),
+        }
+        if interaction_type_note:
+            metadata["interaction_type_filter"] = interaction_type_note
         return {
             "status": "success",
             "data": api_response,
-            "metadata": {
-                "source": "BioGRID",
-                "gene_names": gene_names,
-                "interaction_count": len(api_response)
-                if isinstance(api_response, dict)
-                else 0,
-                "note": (
-                    "BioGRID chemicalList filter is not supported by the REST API; "
-                    "results reflect all protein interactions for the queried gene(s), "
-                    "not filtered by chemical. Use ChEMBL_search_mechanisms or "
-                    "DGIdb_search_interactions for drug-protein interaction data."
-                ),
-            },
+            "metadata": metadata,
         }
