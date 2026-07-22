@@ -8,6 +8,7 @@ import yaml
 from pathlib import Path
 
 from tooluniverse.profile import (
+    fill_defaults,
     validate_profile_config,
     validate_with_schema,
     validate_yaml_file_with_schema,
@@ -194,3 +195,25 @@ class TestProfileSchema:
         assert PROFILE_SCHEMA['properties']['tags']['default'] == []
         assert PROFILE_SCHEMA['properties']['llm_config']['properties']['mode']['default'] == 'default'
         assert PROFILE_SCHEMA['properties']['hooks']['items']['properties']['enabled']['default'] is True
+
+
+class TestFillDefaultsIsolation:
+    """Test that filled defaults do not alias the schema's own objects."""
+
+    def test_filled_mutable_default_is_a_copy(self):
+        """A filled list default must not be the schema's own list."""
+        config = fill_defaults({'name': 'Test'}, PROFILE_SCHEMA)
+
+        assert config['tags'] == []
+        assert config['tags'] is not PROFILE_SCHEMA['properties']['tags']['default']
+
+    def test_mutating_one_config_does_not_leak_into_the_next(self):
+        """Regression: the default was shared, so edits to one config
+        mutated PROFILE_SCHEMA and reappeared in every later config."""
+        first = fill_defaults({'name': 'First'}, PROFILE_SCHEMA)
+        first['tags'].append('biology')
+
+        second = fill_defaults({'name': 'Second'}, PROFILE_SCHEMA)
+
+        assert second['tags'] == []
+        assert PROFILE_SCHEMA['properties']['tags']['default'] == []
