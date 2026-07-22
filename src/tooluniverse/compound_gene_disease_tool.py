@@ -59,11 +59,15 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             r = _try_tool(
                 "DisGeNET", "DisGeNET_search_gene", {"gene": gene, "limit": 20}
             )
-        results_by_source["DisGeNET"] = self._extract_genes_or_diseases(r, "DisGeNET")
+        results_by_source["DisGeNET"] = self._extract_genes_or_diseases(
+            r, "DisGeNET", query_by_disease=bool(disease)
+        )
 
         # 2. OMIM
         r = _try_tool("OMIM", "OMIM_search", {"query": disease or gene, "limit": 10})
-        results_by_source["OMIM"] = self._extract_genes_or_diseases(r, "OMIM")
+        results_by_source["OMIM"] = self._extract_genes_or_diseases(
+            r, "OMIM", query_by_disease=bool(disease)
+        )
 
         # 3. OpenTargets
         # Fix-R30D-6: for a gene-only query, passing the gene symbol into
@@ -75,15 +79,11 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # itself has 6084 for LMNA). Resolve the gene symbol to its Ensembl
         # ID first and query its associated-diseases list instead.
         if disease:
-            r = _try_tool(
-                "OpenTargets",
-                "OpenTargets_get_disease_ids_by_name",
-                {"name": disease},
-            )
+            r = self._opentargets_disease_genes(tu, disease, sources_failed)
         else:
             r = self._opentargets_gene_diseases(tu, gene, sources_failed)
         results_by_source["OpenTargets"] = self._extract_genes_or_diseases(
-            r, "OpenTargets"
+            r, "OpenTargets", query_by_disease=bool(disease)
         )
 
         # 4. GenCC
@@ -91,7 +91,9 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             r = _try_tool("GenCC", "GenCC_search_gene", {"gene_symbol": gene})
         else:
             r = _try_tool("GenCC", "GenCC_search_disease", {"disease": disease})
-        results_by_source["GenCC"] = self._extract_genes_or_diseases(r, "GenCC")
+        results_by_source["GenCC"] = self._extract_genes_or_diseases(
+            r, "GenCC", query_by_disease=bool(disease)
+        )
 
         # 5. ClinVar -- Fix-R80A-1: "query" is documented as an alias for
         # "condition" (a disease/phenotype free-text search), not a gene
@@ -114,11 +116,16 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             r = _try_tool(
                 "ClinVar", "ClinVar_search_variants", {"gene": gene, "limit": 10}
             )
-        results_by_source["ClinVar"] = self._extract_genes_or_diseases(r, "ClinVar")
+        results_by_source["ClinVar"] = self._extract_genes_or_diseases(
+            r, "ClinVar", query_by_disease=bool(disease)
+        )
 
         notes: List[str] = []
         clinvar_failed = any(f.startswith("ClinVar:") for f in sources_failed)
-        if not clinvar_failed and not results_by_source["ClinVar"]:
+        # Only the gene->disease direction has the ClinVar data-shape limitation
+        # (its rows carry no disease name). In the disease->gene direction ClinVar
+        # DOES contribute (the variants' `genes` field), so no note is needed.
+        if not clinvar_failed and not results_by_source["ClinVar"] and not disease:
             notes.append(
                 "ClinVar was queried successfully but contributed no entries to "
                 "the disease-name comparison: ClinVar_search_variants' response "
@@ -191,10 +198,55 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             sources_failed.append(f"OpenTargets: {str(e)[:100]}")
             return {"status": "error", "error": str(e)}
 
+    def _opentargets_disease_genes(
+        self, tu, disease: str, sources_failed: List[str]
+    ) -> Dict[str, Any]:
+        """Resolve a disease name to its OpenTargets EFO id, then fetch its real
+        associated-targets (gene) list -- the disease-direction parallel of
+        _opentargets_gene_diseases. The bare disease-name search
+        (get_disease_ids_by_name / get_disease_id_description_by_name) only
+        returns matching disease *names*, NOT the genes associated with the
+        disease, so without this chaining a disease-query's OpenTargets
+        contribution was just the queried disease echoed back instead of its
+        associated genes (the disease-direction twin of the gene-direction bug
+        already fixed by Fix-R30D-6)."""
+        try:
+            search = tu.run_one_function(
+                {
+                    "name": "OpenTargets_get_disease_id_description_by_name",
+                    "arguments": {"diseaseName": disease},
+                }
+            )
+            hits = (search or {}).get("data", {}).get("search", {}).get("hits", [])
+            if not hits:
+                sources_failed.append(f"OpenTargets: no disease match for '{disease}'")
+                return {"status": "error", "error": f"No disease match for '{disease}'"}
+            efo_id = hits[0].get("id")
+            result = tu.run_one_function(
+                {
+                    "name": "OpenTargets_get_associated_targets_by_disease_efoId",
+                    "arguments": {"efoId": efo_id},
+                }
+            )
+            if isinstance(result, dict) and result.get("status") == "error":
+                sources_failed.append(
+                    f"OpenTargets: {result.get('error', 'unknown error')[:100]}"
+                )
+            return result
+        except Exception as e:
+            sources_failed.append(f"OpenTargets: {str(e)[:100]}")
+            return {"status": "error", "error": str(e)}
+
     def _extract_genes_or_diseases(
-        self, result: Any, source: str
+        self, result: Any, source: str, query_by_disease: bool = False
     ) -> List[Dict[str, Any]]:
-        """Extract gene/disease names from a tool result, handling various formats."""
+        """Extract the association *targets* from a tool result, direction-aware:
+        the associated GENES when the caller queried by disease
+        (disease->gene), the associated DISEASE names when they queried by gene
+        (gene->disease). Without the direction split, a disease query just
+        echoed back the queried disease name and dropped the genes that are the
+        actual answer (e.g. GenCC returns cystic fibrosis + CFTR; the useful
+        part for a disease query is CFTR)."""
         items = []
         if not isinstance(result, dict):
             return items
@@ -203,11 +255,15 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
 
         data = result.get("data", result)
 
-        # GenCC: data has "submissions" list
+        # GenCC "submissions" carry BOTH disease_title and gene_symbol; pick the
+        # one the caller is asking for.
         if isinstance(data, dict) and "submissions" in data:
             for sub in data["submissions"][:30]:
                 if isinstance(sub, dict):
-                    name = sub.get("disease_title") or sub.get("gene_symbol") or ""
+                    if query_by_disease:
+                        name = sub.get("gene_symbol") or sub.get("disease_title") or ""
+                    else:
+                        name = sub.get("disease_title") or sub.get("gene_symbol") or ""
                     items.append(
                         {
                             "name": str(name),
@@ -218,16 +274,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
                     )
             return items
 
-        # OpenTargets: data has "search.hits" list
-        if isinstance(data, dict) and "search" in data:
-            hits = data["search"].get("hits", [])
-            for hit in hits[:30]:
-                if isinstance(hit, dict):
-                    name = hit.get("name", "")
-                    items.append({"name": str(name), "score": None, "source": source})
-            return items
-
-        # OpenTargets: data has "target.associatedDiseases.rows" list (gene-only queries)
+        # OpenTargets gene->disease: "target.associatedDiseases.rows"
         if isinstance(data, dict) and "target" in data:
             rows = (
                 (data.get("target") or {}).get("associatedDiseases", {}).get("rows", [])
@@ -236,43 +283,70 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
                 disease = (row or {}).get("disease") or {}
                 name = disease.get("name", "")
                 if name:
+                    items.append(
+                        {"name": str(name), "score": row.get("score"), "source": source}
+                    )
+            return items
+
+        # OpenTargets disease->gene: "disease.associatedTargets.rows"
+        if isinstance(data, dict) and "disease" in data:
+            rows = (
+                (data.get("disease") or {}).get("associatedTargets", {}).get("rows", [])
+            )
+            for row in rows[:30]:
+                target = (row or {}).get("target") or {}
+                name = target.get("approvedSymbol", "")
+                if name:
+                    items.append(
+                        {"name": str(name), "score": row.get("score"), "source": source}
+                    )
+            return items
+
+        # OpenTargets bare disease-name search fallback: "search.hits" (names).
+        if isinstance(data, dict) and "search" in data:
+            hits = data["search"].get("hits", [])
+            for hit in hits[:30]:
+                if isinstance(hit, dict):
+                    name = hit.get("name", "")
                     items.append({"name": str(name), "score": None, "source": source})
             return items
 
-        # Fix-R80A-1: ClinVar_search_variants' rows carry variant title,
-        # genes, clinical_significance, and review_status -- NOT a
-        # condition/disease name (confirmed live, including via the raw
-        # ClinVar eSearch/eSummary shape). The old code extracted each row's
-        # `genes` field into `items` here, so gene symbols themselves (e.g.
-        # "LDLR", plus co-located genes ClinVar's `genes` array includes for
-        # overlapping variants, like the antisense RNA gene "LDLR-AS1")
-        # silently appeared as if they were disease names in the
-        # concordance table. There is currently no usable disease/condition
-        # field to extract instead -- deliberately contribute nothing rather
-        # than fabricate one; run() adds an explanatory note when this
-        # leaves ClinVar's contribution empty despite a successful query.
+        # ClinVar_search_variants rows carry a variant title + a `genes` list +
+        # clinical_significance -- NOT a condition/disease name. For a GENE
+        # query, extracting those genes would mislabel them as diseases in the
+        # concordance (Fix-R80A-1: "LDLR"/"LDLR-AS1" appeared as fake diseases)
+        # -- so contribute nothing. For a DISEASE query, though, a
+        # condition-search returns that disease's variants and their `genes`
+        # field IS the disease-associated gene set (e.g. cystic fibrosis ->
+        # CFTR), so extract it.
         if isinstance(data, dict) and "variants" in data:
+            if query_by_disease:
+                for v in (data.get("variants") or [])[:30]:
+                    if isinstance(v, dict):
+                        for g in v.get("genes", []) or []:
+                            if g:
+                                items.append(
+                                    {"name": str(g), "score": None, "source": source}
+                                )
             return items
 
-        # Generic: try common patterns
+        # Generic list: prefer the field the caller is asking for -- gene fields
+        # for a disease query, disease fields for a gene query.
         if isinstance(data, dict):
             data = data.get(
                 "results", data.get("data", data.get("genes", data.get("entries", [])))
             )
         if isinstance(data, list):
+            gene_fields = ("gene_symbol", "geneName", "gene", "symbol")
+            disease_fields = ("disease", "diseaseName", "disease_name", "title", "name")
+            order = (
+                gene_fields + disease_fields
+                if query_by_disease
+                else disease_fields + gene_fields
+            )
             for item in data[:30]:
                 if isinstance(item, dict):
-                    name = (
-                        item.get("gene_symbol")
-                        or item.get("geneName")
-                        or item.get("gene")
-                        or item.get("symbol")
-                        or item.get("title")
-                        or item.get("name")
-                        or item.get("disease")
-                        or item.get("diseaseName")
-                        or ""
-                    )
+                    name = next((item[f] for f in order if item.get(f)), "")
                     score = item.get(
                         "score", item.get("gda_score", item.get("associationScore"))
                     )
