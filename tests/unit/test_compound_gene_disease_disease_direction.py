@@ -122,3 +122,31 @@ def test_clinvar_gene_query_contributes_nothing():
     t = _tool()
     got = t._extract_genes_or_diseases(_CLINVAR_CONDITION, "ClinVar", query_by_disease=False)
     assert got == []
+
+
+def test_concordance_ranks_by_score_within_tier():
+    # Same concordance tier: the higher-scored entity must lead, not the
+    # alphabetically-earlier one (regression guard for the score-blind sort that
+    # buried HBB below BCL11A for sickle cell).
+    t = _tool()
+    results = {
+        "OpenTargets": [
+            {"name": "BCL11A", "score": 0.30, "source": "OpenTargets"},
+            {"name": "HBB", "score": 0.81, "source": "OpenTargets"},
+        ]
+    }
+    out = t._build_concordance(results)
+    assert [a["name"] for a in out] == ["HBB", "BCL11A"]
+    # output shape stays clean (no internal sort key leaks)
+    assert "_best_score" not in out[0]
+
+
+def test_concordance_scored_entities_lead_unscored_in_tier():
+    t = _tool()
+    results = {
+        "GenCC": [{"name": "ZZZ1", "score": None, "source": "GenCC"}],
+        "OpenTargets": [{"name": "AAA1", "score": 0.5, "source": "OpenTargets"}],
+    }
+    out = t._build_concordance(results)
+    # both concordance 1; scored AAA1 leads the unscored ZZZ1 despite alphabetical order
+    assert [a["name"] for a in out] == ["AAA1", "ZZZ1"]

@@ -388,5 +388,25 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
                 }
             )
 
-        associations.sort(key=lambda x: (-x["concordance"], x["name"]))
+        # Rank by cross-source concordance first (agreement = confidence), then
+        # by the best association score within a tier, then name as a stable
+        # tiebreak. Without the score term, entities in the same concordance tier
+        # were ordered alphabetically, which could bury the most-relevant entity
+        # below an alphabetically-earlier lower-scored one (e.g. for "sickle cell"
+        # the causal gene HBB -- OpenTargets' top target at score 0.81 -- sorted
+        # below BCL11A). Scores are computed here anyway; use them. Kept as an
+        # internal sort key so the output shape is unchanged.
+        for a in associations:
+            vals = [v for v in a["scores"].values() if isinstance(v, (int, float))]
+            a["_best_score"] = max(vals) if vals else None
+        associations.sort(
+            key=lambda a: (
+                -a["concordance"],
+                0 if a["_best_score"] is not None else 1,
+                -(a["_best_score"] or 0),
+                a["name"],
+            )
+        )
+        for a in associations:
+            a.pop("_best_score", None)
         return associations
