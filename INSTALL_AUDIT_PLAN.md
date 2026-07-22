@@ -14,11 +14,13 @@ Users treat ToolUniverse as "just a pip package," run bare `pip install tooluniv
 
 Every install surface must therefore **lead with the whole-system onboarding** and stop implying `pip install` = done. Package-level guidance (`[all]` vs core-only) is a sub-step of the SDK access mode, not the headline.
 
-### Website audit (aiscientist.tools) — report only, DO NOT edit
+### Website audit (aiscientist.tools) — `setup.md` source IS in this repo (fixed here)
 
 The site is a full platform, not a package page. Sitemap routes: `/`, `/search` (tool registry), `/graph` (tool relationship graph), `/BuildAIScientist`, `/mcp`, `/workflows` (skills), `/submit`, `/contributors`, `/citation`. Most are client-rendered (React SPA); only `/setup.md` returns static markdown.
 
-**`https://aiscientist.tools/setup.md`** is the canonical onboarding (5 steps: install `uv` → choose access mode → API keys → test → install skills). **It has the same crippled default this branch fixes:** its SDK step still reads `uv pip install tooluniverse` (no `[all]`), and its CLI step uses `uvx --from tooluniverse` (base only). **Recommended change for the site repo (separate lane):** change the SDK step to `uv pip install "tooluniverse[all]"` with the same minimal/core-only caveat, and keep the 5-step system framing front-and-center. Source lives in the external `aiscientist.tools` site repo — **not in this repo** (`web/` here holds only data JSON), so it is reported, not edited.
+**`https://aiscientist.tools/setup.md`** is the canonical onboarding (5 steps: install `uv` → choose access mode → API keys → test → install skills). **It is served byte-for-byte from this repo's `skills/setup-tooluniverse/SKILL.md`** — verified: the live file carries the `name: setup-tooluniverse` YAML frontmatter, the "Internal Notes (do not show)" / "Agent Behavior" / "AskQuestion" markers, and the "# Setup ToolUniverse" header. The website just serves the raw skill markdown (the `web/` dir here holds only data JSON — the site SPA is separate, but the *content* of setup.md is this skill).
+
+It had the same crippled default (SDK step `uv pip install tooluniverse`, no `[all]`). **This branch fixes it directly**: the `setup-tooluniverse` skill's SDK step is now `uv pip install "tooluniverse[all]"` + core-only caveat, 5-step framing intact, mirrored across all three skill trees. Once this merges to `main`, the live setup.md updates when the site re-pulls. The CLI step (`uvx --from tooluniverse tu status`) is intentionally left on the base package (ephemeral `tu` calls hit API tools; forcing `[all]` would download the full heavy stack on every run).
 
 ---
 
@@ -52,11 +54,11 @@ uv pip install "tooluniverse[all]"     # or:  pip install "tooluniverse[all]"
 
 ---
 
-## Phase 1 — Website copy location (report only, DO NOT edit)
+## Phase 1 — Website copy location (`setup.md` source is in THIS repo)
 
 - The README + every `docs/guide/building_ai_scientists/*.rst` page point the "recommended" agent path at **`https://aiscientist.tools/setup.md`**.
-- That `setup.md` is **served by the external `aiscientist.tools` website** — its source is **NOT in this repo**. `web/` here contains only data JSON (`tool_relationship_graph_FINAL.json`, `v5_all_tools_final.json`), not site copy. `grep` finds no `setup.md` source anywhere in the tree.
-- **Action:** the website's install copy must be updated in the separate `aiscientist.tools` site repo (different lane). Recorded here; **not touched** by this branch. Another session may be editing it — do not collide.
+- **Correction (initial audit was wrong):** `setup.md` is **served byte-for-byte from this repo's `skills/setup-tooluniverse/SKILL.md`**. Verified against the live URL — it carries the `name: setup-tooluniverse` frontmatter, the "Internal Notes (do not show)" / "Agent Behavior" / "AskQuestion" markers, and the "# Setup ToolUniverse" header. The site's React SPA (separate repo) just serves the raw skill markdown; the *content* is this skill. (`web/` here is only data JSON, which is why the first grep missed it — the source was hiding in plain sight as the skill.)
+- **Action:** editable directly, and **fixed by this branch** — the `setup-tooluniverse` skill's SDK step is corrected to `uv pip install "tooluniverse[all]"` across all three skill trees. No separate site-repo change needed; live setup.md updates when the site re-pulls `main`.
 
 ---
 
@@ -115,4 +117,4 @@ All skill edits are mirrored into `plugin/skills/<same>` and `plugins/tooluniver
 
 1. This plan.
 2. Applied edits on `docs/install-full-guidance` (committed, not pushed).
-3. Canonical command: **`uv pip install "tooluniverse[all]"`**. Website copy (`aiscientist.tools/setup.md`) lives in the **external site repo** — handle separately.
+3. Canonical command: **`uv pip install "tooluniverse[all]"`**. Website copy (`aiscientist.tools/setup.md`) = this repo's `skills/setup-tooluniverse/SKILL.md` — **fixed in this branch**, no separate lane needed.
