@@ -5,8 +5,8 @@ Get started with interpreting genetic variants in under 5 minutes.
 ## Installation
 
 ```bash
-# Install ToolUniverse (if not already installed)
-pip install tooluniverse
+# Install ToolUniverse (full platform; all tools register)
+pip install "tooluniverse[all]"
 
 # No additional dependencies required - uses built-in GWAS tools
 ```

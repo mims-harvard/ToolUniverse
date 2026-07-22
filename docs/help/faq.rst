@@ -64,7 +64,17 @@ How do I install ToolUniverse?
 
 .. tabs::
 
-   .. tab:: Basic Installation
+   .. tab:: Full Installation (Recommended)
+
+      Installs every optional dependency so all tools register and run:
+
+      .. code-block:: bash
+
+         pip install "tooluniverse[all]"
+
+   .. tab:: Core-only (minimal)
+
+      Core package only — tools needing ML/cheminformatics/visualization/bioinformatics/single-cell deps will silently fail to register:
 
       .. code-block:: bash
 
@@ -76,13 +86,7 @@ How do I install ToolUniverse?
 
          git clone https://github.com/mims-harvard/ToolUniverse
          cd tooluniverse
-         pip install -e .
-
-   .. tab:: With Optional Dependencies
-
-      .. code-block:: bash
-
-         pip install tooluniverse[all]
+         pip install -e ".[all]"
 
 Do I need API keys?
 ~~~~~~~~~~~~~~~~~~~
@@ -321,7 +325,7 @@ Getting import errors?
 
       .. code-block:: bash
 
-         pip install tooluniverse[all]
+         pip install "tooluniverse[all]"
 
    .. tab:: Python Version
 
@@ -341,7 +345,7 @@ Getting import errors?
          source venv/bin/activate  # Linux/Mac
          # or
          venv\Scripts\activate  # Windows
-         pip install tooluniverse
+         pip install "tooluniverse[all]"
 
 Network connectivity issues?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -24,9 +24,18 @@ ToolUniverse is a collection of 1000+ scientific tools for AI agents, providing 
 How do I install it?
 --------------------
 
+Install the **full** platform so every tool registers:
+
 .. code-block:: bash
 
-   pip install tooluniverse
+   uv pip install "tooluniverse[all]"   # or:  pip install "tooluniverse[all]"
+
+.. note::
+
+   ``pip install tooluniverse`` (without ``[all]``) installs only the core package;
+   tools that depend on optional scientific packages (ML, cheminformatics, visualization,
+   bioinformatics, single-cell) silently fail to register. Use ``[all]`` unless you want a
+   slim install.
 
 Do I need API keys?
 -------------------

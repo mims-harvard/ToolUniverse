@@ -2,14 +2,27 @@
 
 Detailed installation options and troubleshooting.
 
-## Installation Methods
+> **ToolUniverse is a platform** — an MCP server, a registry of 1000+ scientific tools, and 60+ agent skills — not just a Python package. Install the **full** package with the `[all]` extra so every tool registers and runs.
 
-### Method 1: PyPI (Recommended for Users)
-
-Standard installation from Python Package Index:
+## Recommended: full install
 
 ```bash
-pip install tooluniverse
+uv pip install "tooluniverse[all]"   # or:  pip install "tooluniverse[all]"
+```
+
+This pulls in every optional dependency. Single-cell tools need one more add-on: `pip install "tooluniverse[singlecell]"`.
+
+> **Minimal / core-only:** `pip install tooluniverse` (without `[all]`) installs only the core package. Tools that rely on optional scientific dependencies (ML models, RDKit/cheminformatics, visualization, bioinformatics, single-cell) silently fail to register or run. Use `[all]` unless you specifically want a slim install.
+
+## Installation Methods
+
+### Method 1: PyPI
+
+Full installation from Python Package Index:
+
+```bash
+pip install "tooluniverse[all]"        # full (recommended)
+# pip install tooluniverse             # core-only (minimal; omits many tools)
 ```
 
 **Pros**: Simple, stable, latest release
@@ -27,8 +40,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 mkdir -p ~/tooluniverse-env
 cd ~/tooluniverse-env
 
-# Install ToolUniverse
-uv pip install tooluniverse
+# Install ToolUniverse (full)
+uv pip install "tooluniverse[all]"
 ```
 
 **Pros**: Better isolation, faster dependency resolution, works well with MCP
@@ -41,7 +54,7 @@ Install from source for development:
 ```bash
 git clone https://github.com/mims-harvard/ToolUniverse.git
 cd ToolUniverse
-pip install -e .
+pip install -e ".[all]"
 ```
 
 **Pros**: Latest features, can modify code
@@ -49,10 +62,10 @@ pip install -e .
 
 ## Optional Dependencies
 
-### All Features
+### All Features (recommended)
 
 ```bash
-pip install tooluniverse[all]
+pip install "tooluniverse[all]"
 ```
 
 ### Specific Features
@@ -116,8 +129,8 @@ source tooluniverse-venv/bin/activate  # macOS/Linux
 # or
 tooluniverse-venv\Scripts\activate  # Windows
 
-# Install
-pip install tooluniverse
+# Install (full)
+pip install "tooluniverse[all]"
 ```
 
 ## Verification

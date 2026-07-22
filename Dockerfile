@@ -13,7 +13,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libexpat1 \
   && rm -rf /var/lib/apt/lists/*
 
-# Install tooluniverse from PyPI
+# Install tooluniverse from PyPI.
+# This slim image ships the core package for the MCP stdio server (API-backed tools).
+# For full local-compute coverage (ML/cheminformatics/visualization/bioinformatics tools),
+# build with the [all] extra instead:  pip install --no-cache-dir "tooluniverse[all]"
 RUN pip install --no-cache-dir tooluniverse
 
 # Remove build dependencies to reduce image size (keep runtime libraries)

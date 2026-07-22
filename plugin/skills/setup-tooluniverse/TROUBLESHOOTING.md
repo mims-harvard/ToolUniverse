@@ -40,11 +40,11 @@ Restart the app after editing.
 
 **Fix**:
 ```bash
-pip install tooluniverse[all]
+pip install "tooluniverse[all]"
 # Or the specific extra needed:
-# pip install tooluniverse[visualization]   # rdkit, py3Dmol
-# pip install tooluniverse[singlecell]       # cellxgene
-# pip install tooluniverse[ml,embedding]     # sentence-transformers, admet-ai
+# pip install "tooluniverse[visualization]"   # rdkit, py3Dmol
+# pip install "tooluniverse[singlecell]"       # cellxgene
+# pip install "tooluniverse[ml,embedding]"     # sentence-transformers, admet-ai
 ```
 
 ## Issue 5: MCP Server Won't Start

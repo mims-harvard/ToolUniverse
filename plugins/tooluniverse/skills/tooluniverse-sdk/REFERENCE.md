@@ -7,20 +7,20 @@ Detailed reference for ToolUniverse Python SDK features and advanced usage.
 ### Package Options
 
 ```bash
-# Base installation (~200-300 MB)
+# Full platform — recommended; all tools register (adds ML/cheminformatics/viz/bioinformatics deps)
+pip install "tooluniverse[all]"
+
+# Core-only (~200-300 MB) — minimal; tools needing optional deps silently fail to register
 pip install tooluniverse
 
-# With embedding search (+1-2 GB for model weights)
-pip install tooluniverse[embedding]
+# With embedding search only (+1-2 GB for model weights)
+pip install "tooluniverse[embedding]"
 
-# With ML tools (+2-5 GB for model weights)
-pip install tooluniverse[ml]
+# With ML tools only (+2-5 GB for model weights)
+pip install "tooluniverse[ml]"
 
-# All features
-pip install tooluniverse[all]
-
-# Minimal client for HTTP API access
-pip install tooluniverse[client]
+# Minimal client for HTTP API access (requests + pydantic only)
+pip install "tooluniverse[client]"
 ```
 
 ### Performance Metrics
@@ -234,8 +234,8 @@ Deploy ToolUniverse as a server for remote access.
 ### Server Setup
 
 ```bash
-# Install on server
-pip install tooluniverse
+# Install on server (full, so all tools are served)
+pip install "tooluniverse[all]"
 
 # Start server
 tooluniverse-http-api --host 0.0.0.0 --port 8080
@@ -245,7 +245,7 @@ tooluniverse-http-api --host 0.0.0.0 --port 8080
 
 ```bash
 # Install minimal client
-pip install tooluniverse[client]
+pip install "tooluniverse[client]"
 ```
 
 ```python

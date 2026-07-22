@@ -43,10 +43,13 @@ npx skills add mims-harvard/ToolUniverse
 ```
 </details>
 
-**Python developers** — install the SDK:
+**Python developers** — install the full platform:
 ```bash
-uv pip install tooluniverse
+uv pip install "tooluniverse[all]"   # or:  pip install "tooluniverse[all]"
 ```
+ToolUniverse is a platform — an MCP server, a registry of 1000+ scientific tools, and 60+ agent skills — not just a Python package. The `[all]` extra pulls in every optional dependency so all tools register and run.
+
+> **Minimal / core-only:** `pip install tooluniverse` installs only the core package. Tools that rely on optional scientific dependencies (ML models, RDKit/cheminformatics, visualization, bioinformatics, single-cell) silently fail to register or run. Use `[all]` above unless you specifically want a slim install. Single-cell tools need one more add-on: `pip install "tooluniverse[singlecell]"`.
 
 **[`tu` CLI](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tu_cli.html)** — discover, inspect, run, and test tools from the terminal.
 **[Python SDK](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)** — programmatic access for building AI scientist systems.

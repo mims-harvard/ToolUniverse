@@ -509,7 +509,7 @@ Tools not loading
 **Solution**: Install missing dependencies::
 
    # Install all optional dependencies
-   pip install tooluniverse[all]
+   pip install "tooluniverse[all]"
    
    # Or follow the specific installation instructions from doctor output
 

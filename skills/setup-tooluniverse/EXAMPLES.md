@@ -21,7 +21,7 @@ Real-world examples of using the setup-tooluniverse skill.
 
 2. **Install ToolUniverse**
    ```bash
-   pip install tooluniverse
+   pip install "tooluniverse[all]"
    ```
 
 3. **Verify Installation**
@@ -236,7 +236,7 @@ Real-world examples of using the setup-tooluniverse skill.
    ```bash
    mkdir -p ~/tooluniverse-env
    cd ~/tooluniverse-env
-   uv pip install tooluniverse
+   uv pip install "tooluniverse[all]"
    ```
 
 3. **Configure MCP with UV**
@@ -292,7 +292,7 @@ Real-world examples of using the setup-tooluniverse skill.
 
 3. **Install with Specific Version**
    ```bash
-   python3.12 -m pip install tooluniverse
+   python3.12 -m pip install "tooluniverse[all]"
    ```
 
 4. **Update MCP Config**
@@ -329,7 +329,7 @@ Real-world examples of using the setup-tooluniverse skill.
 
 2. **Install ToolUniverse**
    ```powershell
-   pip install tooluniverse
+   pip install "tooluniverse[all]"
    ```
 
 3. **Find Config Location**
@@ -407,7 +407,7 @@ cd ~/.cursor/skills/setup-tooluniverse
 python scripts/check_prerequisites.py
 
 # 2. Install ToolUniverse
-pip install tooluniverse
+pip install "tooluniverse[all]"
 
 # 3. Verify installation
 python scripts/verify_installation.py
@@ -464,7 +464,7 @@ brew install python@3.12  # macOS
 pip show tooluniverse
 
 # If not installed
-pip install tooluniverse
+pip install "tooluniverse[all]"
 ```
 
 ### "Context window overflow" or slow performance
@@ -480,5 +480,5 @@ pip install tooluniverse
 ```bash
 mkdir -p ~/tooluniverse-env
 cd ~/tooluniverse-env
-uv pip install tooluniverse
+uv pip install "tooluniverse[all]"
 ```

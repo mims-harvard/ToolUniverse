@@ -24,13 +24,13 @@ Get started with drug target discovery from GWAS data in minutes.
 ### Prerequisites
 
 ```bash
-# Install ToolUniverse
-pip install tooluniverse
+# Install ToolUniverse (full platform; all tools register)
+pip install "tooluniverse[all]"
 
 # Or from source
-git clone https://github.com/example/tooluniverse.git
-cd tooluniverse
-pip install -e .
+git clone https://github.com/mims-harvard/ToolUniverse.git
+cd ToolUniverse
+pip install -e ".[all]"
 ```
 
 ### Verify Installation

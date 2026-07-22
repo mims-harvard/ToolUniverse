@@ -14,9 +14,9 @@ description: "Build AI scientist systems with the ToolUniverse Python SDK for sc
 ## Installation
 
 ```bash
-pip install tooluniverse              # Standard
-pip install tooluniverse[embedding]   # Embedding search (GPU)
-pip install tooluniverse[all]         # All features
+pip install "tooluniverse[all]"         # Recommended: full platform, all tools register
+pip install "tooluniverse[embedding]"   # Embedding search (GPU) only
+pip install tooluniverse                # Core-only (minimal; omits many tools)
 ```
 
 ```bash

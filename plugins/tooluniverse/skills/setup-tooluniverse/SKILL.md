@@ -90,8 +90,10 @@ Continue to **Step 3** (API Keys).
 
 Make sure Step 2 is done. For detailed patterns, invoke the `tooluniverse-sdk` skill.
 
+Install the **full** platform so every tool registers (bare `tooluniverse` is core-only and omits many tools):
+
 ```bash
-uv pip install tooluniverse
+uv pip install "tooluniverse[all]"
 ```
 
 ### Coding API — 3 calling patterns
@@ -350,7 +352,7 @@ NVIDIA_API_KEY=your_shared_key
 | `requires-python >= 3.10` | `uv python install 3.12` |
 | `uvx: command not found` | Run install script from Step 2, restart terminal |
 | Context window overflow | Verify using `uvx tooluniverse` (compact mode is default) |
-| `ModuleNotFoundError` | `uv pip install tooluniverse[all]` |
+| `ModuleNotFoundError` | `uv pip install "tooluniverse[all]"` |
 | MCP server won't start | Test: `uvx tooluniverse` in terminal. Check JSON syntax. |
 | API key 401/403 | Check key in `env` block, restart app, verify key name |
 | Upgrade needed | `uv cache clean tooluniverse` then restart app |

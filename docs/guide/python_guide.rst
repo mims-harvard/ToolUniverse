@@ -6,18 +6,11 @@ Python Guide
 Installation
 ------------
 
-Choose your preferred installation method:
+ToolUniverse is a platform — an MCP server, a registry of 1000+ scientific tools,
+and 60+ agent skills — not just a Python package. Install the **full** package with
+the ``[all]`` extra so every tool registers and runs. Choose your package manager:
 
 .. tab-set::
-
-   .. tab-item:: pip
-      :sync: pip
-
-      Standard installation with pip:
-
-      .. code-block:: bash
-
-         pip install tooluniverse
 
    .. tab-item:: uv (Recommended)
       :sync: uv
@@ -26,7 +19,16 @@ Choose your preferred installation method:
 
       .. code-block:: bash
 
-         uv pip install tooluniverse
+         uv pip install "tooluniverse[all]"
+
+   .. tab-item:: pip
+      :sync: pip
+
+      Full installation with pip:
+
+      .. code-block:: bash
+
+         pip install "tooluniverse[all]"
 
    .. tab-item:: Development
       :sync: dev
@@ -37,10 +39,18 @@ Choose your preferred installation method:
 
          git clone https://github.com/mims-harvard/ToolUniverse.git
          cd ToolUniverse
-         uv sync  # or: pip install -e .[dev]
+         uv sync  # or: pip install -e ".[all]"
+
+.. note:: **Minimal / core-only install**
+
+   ``pip install tooluniverse`` (without ``[all]``) installs only the core package.
+   Tools that rely on optional scientific dependencies (ML models, RDKit/cheminformatics,
+   visualization, bioinformatics, single-cell) silently fail to register or run. Use
+   ``[all]`` unless you specifically want a slim install. Single-cell tools need one more
+   add-on: ``pip install "tooluniverse[singlecell]"``.
 
 .. tip:: **Pro Tip**
- 
+
  Use ``uv`` for faster installations and better dependency management. Install it with: ``curl -LsSf https://astral.sh/uv/install.sh | sh``
 
 Verify Installation

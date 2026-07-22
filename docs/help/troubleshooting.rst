@@ -54,11 +54,13 @@ ImportError: No module named 'tooluniverse'
 
 .. tabs::
 
-   .. tab:: Standard Installation
+   .. tab:: Full Installation (Recommended)
+
+      Installs every optional dependency so all tools register:
 
       .. code-block:: bash
 
-         pip install tooluniverse
+         pip install "tooluniverse[all]"
 
    .. tab:: Development Installation
 
@@ -66,7 +68,7 @@ ImportError: No module named 'tooluniverse'
 
          git clone https://github.com/mims-harvard/ToolUniverse
          cd tooluniverse
-         pip install -e .
+         pip install -e ".[all]"
 
    .. tab:: Virtual Environment
 
@@ -75,7 +77,7 @@ ImportError: No module named 'tooluniverse'
          python -m venv tooluniverse_env
          source tooluniverse_env/bin/activate  # Linux/Mac
          # tooluniverse_env\Scripts\activate  # Windows
-         pip install tooluniverse
+         pip install "tooluniverse[all]"
 
 Dependency conflicts
 ~~~~~~~~~~~~~~~~~~~~
@@ -96,7 +98,7 @@ Dependency conflicts
 
       conda create -n tooluniverse python=3.10
       conda activate tooluniverse
-      pip install tooluniverse
+      pip install "tooluniverse[all]"
 
 2. **Update conflicting packages:**
 

@@ -15,11 +15,11 @@ This guide shows how to use the Metabolomics Research skill with both Python SDK
 ### Installation
 
 ```bash
-# Install ToolUniverse
-pip install tooluniverse
+# Install ToolUniverse (full platform; all tools register)
+pip install "tooluniverse[all]"
 
 # Or with uv (recommended)
-uv pip install tooluniverse
+uv pip install "tooluniverse[all]"
 ```
 
 ### Basic Usage
