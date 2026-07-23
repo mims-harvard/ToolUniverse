@@ -248,6 +248,24 @@ class ChEMBLRESTTool(BaseTool):
             return parent_id
         return mol_id
 
+    def _fetch_parent_chembl_id(self, chembl_id: str) -> Optional[str]:
+        """Resolve a ChEMBL molecule id to its parent (active-moiety) id.
+
+        /mechanism.json indexes records under the PARENT molecule, but
+        ChEMBL_search_drugs hands back the salt/child id (e.g. dolutegravir
+        CHEMBL1213165, parent CHEMBL1229211), so a mechanism query on the child
+        matched nothing. Fetch the molecule record and return its parent id, or
+        None if it has no distinct parent / the lookup fails."""
+        base = f"{self.base_url}/molecule/{chembl_id}.json"
+        headers = {"Accept": "application/json", "User-Agent": "ToolUniverse/1.0"}
+        try:
+            resp = requests.get(base, headers=headers, timeout=20)
+            resp.raise_for_status()
+            parent = self._extract_parent_chembl_id(resp.json())
+            return parent if parent and parent != chembl_id else None
+        except Exception:
+            return None
+
     def _lookup_chembl_id_by_name(self, drug_name: str) -> Optional[str]:
         """Look up a ChEMBL molecule ID by preferred name (case-insensitive).
 
@@ -483,6 +501,47 @@ class ChEMBLRESTTool(BaseTool):
                     if key in data and isinstance(data[key], list):
                         response_data["count"] = len(data[key])
                         break
+
+            # ChEMBL_get_drug_mechanisms: /mechanism.json indexes records under
+            # the PARENT molecule. A caller who passes a salt/child id -- exactly
+            # what ChEMBL_search_drugs returns (e.g. dolutegravir CHEMBL1213165,
+            # parent CHEMBL1229211) -- got a silent empty. On an empty result,
+            # resolve the parent and retry once so the search->mechanism chain
+            # works instead of falsely reporting "no mechanism on file".
+            if (
+                tool_name == "ChEMBL_get_drug_mechanisms"
+                and isinstance(data, dict)
+                and not data.get("mechanisms")
+                and mol_id
+            ):
+                parent_id = self._fetch_parent_chembl_id(mol_id)
+                if parent_id:
+                    retry_args = dict(arguments)
+                    retry_args["drug_chembl_id"] = parent_id
+                    retry_params = self._build_params(retry_args)
+                    retry_resp = request_with_retry(
+                        self.session,
+                        "GET",
+                        url,
+                        params=retry_params,
+                        timeout=self.timeout,
+                        max_attempts=3,
+                        backoff_seconds=0.5,
+                    )
+                    retry_resp.raise_for_status()
+                    retry_data = retry_resp.json()
+                    if isinstance(retry_data, dict) and retry_data.get("mechanisms"):
+                        response_data["data"] = retry_data
+                        response_data["url"] = retry_resp.url
+                        response_data["count"] = len(retry_data["mechanisms"])
+                        response_data.setdefault("metadata", {})[
+                            "resolved_parent_chembl_id"
+                        ] = parent_id
+                        response_data["metadata"]["note"] = (
+                            f"No mechanisms indexed under '{mol_id}' (a salt/child "
+                            f"molecule); returned mechanisms for its parent "
+                            f"'{parent_id}'."
+                        )
 
             return response_data
 
