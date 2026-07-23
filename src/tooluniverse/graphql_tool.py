@@ -333,6 +333,32 @@ class OpentargetTool(GraphQLTool):
                     "For non-oncology phenotypes, use OpenTargets_get_evidence_by_datasource instead."
                 )
 
+        # OpenTargets_get_approved_indications: the query returns ALL indications
+        # with their maxClinicalStage, so the tool -- despite its name -- listed
+        # investigational (PHASE_1/2) diseases alongside approved ones (e.g.
+        # selpercatinib: 17 rows, only 5 APPROVAL). A clinician trusting the
+        # "approved" name would treat Phase-2 indications as approved. Filter to
+        # APPROVAL-stage rows so the tool matches its name; the unfiltered list is
+        # available via OpenTargets_get_drug_indications_by_chemblId.
+        if (
+            result.get("status") == "success"
+            and self.tool_config.get("name")
+            == "OpenTargets_get_approved_indications_by_drug_chemblId"
+        ):
+            indications = (result.get("data", {}).get("drug", {}) or {}).get(
+                "indications"
+            )
+            if isinstance(indications, dict) and isinstance(
+                indications.get("rows"), list
+            ):
+                approved = [
+                    r
+                    for r in indications["rows"]
+                    if isinstance(r, dict) and r.get("maxClinicalStage") == "APPROVAL"
+                ]
+                indications["rows"] = approved
+                indications["count"] = len(approved)
+
         # A diseaseIds-filtered list query (e.g. studies(diseaseIds: ...))
         # has no single entity to resolve to null, so the EFO->MONDO
         # not-found detection above never fires for it -- it just returns a

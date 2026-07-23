@@ -3141,7 +3141,7 @@
     },
     {
         "name": "OpenTargets_get_approved_indications_by_drug_chemblId",
-        "description": "Retrieve detailed information about multiple drugs using a list of ChEMBL IDs.",
+        "description": "Retrieve the approved (APPROVAL-stage) disease indications for a single drug by its ChEMBL ID. For the full indication list including investigational (Phase 1-3) diseases with their max clinical stage, use OpenTargets_get_drug_indications_by_chemblId.",
         "parameter": {
             "type": "object",
             "properties": {
