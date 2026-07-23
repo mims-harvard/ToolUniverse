@@ -20,6 +20,24 @@ HPO_BASE_URL = "https://ontology.jax.org/api/hp"
 HPO_ANNOTATION_URL = "https://ontology.jax.org/api/network/annotation"
 
 
+def _normalize_hpo_id(term_id: str) -> str:
+    """Normalize an HPO term id to the canonical colon CURIE 'HP:0001250'.
+
+    Accepts the underscore form 'HP_0001250' (which OpenTargets and other tools
+    emit, e.g. phenotypeHPO.id) and a bare numeric id '0001250'. Without this,
+    'HP_0001250' failed the old `startswith("HP:")` check and was turned into
+    'HP:HP_0001250', causing an HPO API 404 -- a cross-tool chaining break in the
+    OpenTargets-phenotype -> HPO_get_term path a clinician follows."""
+    tid = str(term_id).strip()
+    # Underscore CURIE from OpenTargets et al. -> colon CURIE.
+    if tid.upper().startswith("HP_"):
+        tid = "HP:" + tid[3:]
+    elif not tid.upper().startswith("HP:"):
+        tid = f"HP:{tid}"
+    # Canonicalize the prefix case ('hp:' -> 'HP:').
+    return "HP:" + tid.split(":", 1)[1] if ":" in tid else tid
+
+
 @register_tool("HPOTool")
 class HPOTool(BaseTool):
     """
@@ -203,8 +221,7 @@ class HPOTool(BaseTool):
                 "status": "error",
                 "error": "term_id parameter is required (e.g., 'HP:0001250')",
             }
-        if not str(term_id).startswith("HP:"):
-            term_id = f"HP:{term_id}"
+        term_id = _normalize_hpo_id(term_id)
 
         try:
             limit = int(arguments.get("limit", 50))
@@ -247,9 +264,8 @@ class HPOTool(BaseTool):
                 "error": "term_id parameter is required (e.g., 'HP:0001250')",
             }
 
-        # Normalize the ID format
-        if not term_id.startswith("HP:"):
-            term_id = f"HP:{term_id}"
+        # Normalize the ID format (accepts HP:xxx, HP_xxx, and bare digits)
+        term_id = _normalize_hpo_id(term_id)
 
         url = f"{HPO_BASE_URL}/terms/{term_id}"
         response = requests.get(url, timeout=self.timeout)
@@ -333,8 +349,7 @@ class HPOTool(BaseTool):
                 "error": "term_id parameter is required (e.g., 'HP:0001250')",
             }
 
-        if not term_id.startswith("HP:"):
-            term_id = f"HP:{term_id}"
+        term_id = _normalize_hpo_id(term_id)
 
         direction = arguments.get("direction", "children")
 
