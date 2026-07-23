@@ -4,6 +4,9 @@ import urllib.parse
 import networkx as nx
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .logging_config import get_logger
+
+logger = get_logger("EnrichrTool")
 
 
 @register_tool("EnrichrTool")
@@ -65,16 +68,18 @@ class EnrichrTool(BaseTool):
         for hit in hits:
             symbol = hit.get("symbol", "")
             if symbol.upper() == gene_name.upper():
-                print(
-                    f"[enrichr_api] Using the official gene name: '{symbol}' instead of {gene_name}",
-                    flush=True,
+                logger.debug(
+                    "[enrichr_api] Using the official gene name: '%s' instead of %s",
+                    symbol,
+                    gene_name,
                 )
                 return symbol
             aliases = hit.get("alias", [])
             if any(gene_name.upper() == alias.upper() for alias in aliases):
-                print(
-                    f"[enrichr_api] Using the official gene name: '{symbol}' instead of {gene_name}",
-                    flush=True,
+                logger.debug(
+                    "[enrichr_api] Using the official gene name: '%s' instead of %s",
+                    symbol,
+                    gene_name,
                 )
                 return symbol
 
@@ -82,9 +87,10 @@ class EnrichrTool(BaseTool):
         top_hit = hits[0]
         symbol = top_hit.get("symbol", None)
         if symbol:
-            print(
-                f"[enrichr_api] Using the official gene name: '{symbol}' instead of {gene_name}",
-                flush=True,
+            logger.debug(
+                "[enrichr_api] Using the official gene name: '%s' instead of %s",
+                symbol,
+                gene_name,
             )
             return symbol
         else:
@@ -221,7 +227,7 @@ class EnrichrTool(BaseTool):
         """
         # Convert each gene to its official name and log the result
         genes = [self.get_official_gene_name(gene) for gene in genes]
-        print("Official gene names:", genes)
+        logger.debug("Official gene names: %s", genes)
 
         # Ensure at least two genes are provided for path ranking
         if len(genes) < 2:
@@ -259,13 +265,14 @@ class EnrichrTool(BaseTool):
 
         # Check for empty outputs and print helper messages
         if not connected_path:
-            print(
-                f"[Enrichr] No ranked paths were found between the gene pair {genes}."
+            logger.debug(
+                "[Enrichr] No ranked paths were found between the gene pair %s.", genes
             )
 
         if not connections:
-            print(
-                f"[Enrichr] No connection between genes and terms in the enriched graph of {genes}."
+            logger.debug(
+                "[Enrichr] No connection between genes and terms in the enriched graph of %s.",
+                genes,
             )
 
         return connected_path, connections
