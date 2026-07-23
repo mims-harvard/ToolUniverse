@@ -65,15 +65,33 @@ class UniProtRESTTool(BaseTool):
 
         comment_summaries = []
         for comment in data.get("comments", []):
+            comment_type = comment.get("commentType", "")
             text_values = [
                 text["value"]
                 for text in comment.get("texts", [])
                 if isinstance(text, dict) and text.get("value")
             ]
+            # Some biologically important comment types carry no top-level
+            # `texts` array, so keying only on text_values silently dropped them.
+            # COFACTOR stores its data under `cofactors[].name` (+ an optional
+            # `note.texts`); confirmed live that P00439's Fe(2+) cofactor -- a
+            # clinically relevant field -- vanished from the compact summary.
+            if comment_type == "COFACTOR":
+                cofactor_names = [
+                    cf["name"]
+                    for cf in comment.get("cofactors", [])
+                    if isinstance(cf, dict) and cf.get("name")
+                ]
+                note_texts = [
+                    t["value"]
+                    for t in (comment.get("note", {}) or {}).get("texts", [])
+                    if isinstance(t, dict) and t.get("value")
+                ]
+                text_values = cofactor_names + note_texts + text_values
             if text_values:
                 comment_summaries.append(
                     {
-                        "commentType": comment.get("commentType", ""),
+                        "commentType": comment_type,
                         "texts": text_values[:3],
                     }
                 )
