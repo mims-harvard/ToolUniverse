@@ -128,7 +128,7 @@
                 "ensemblId"
             ]
         },
-        "query_schema": "\nquery associatedDiseases($ensemblId: String!, $page: Pagination) {\n  target(ensemblId: $ensemblId) {\n    id\n    approvedSymbol\n    associatedDiseases(page: $page) {\n      count\n      rows {\n        disease {\n          id\n          name\n        }\n        datasourceScores {\n          id\n          score\n        }\n      }\n    }\n  }\n}\n",
+        "query_schema": "\nquery associatedDiseases($ensemblId: String!, $page: Pagination) {\n  target(ensemblId: $ensemblId) {\n    id\n    approvedSymbol\n    associatedDiseases(page: $page) {\n      count\n      rows {\n        score\n        disease {\n          id\n          name\n        }\n        datasourceScores {\n          id\n          score\n        }\n      }\n    }\n  }\n}\n",
         "type": "OpenTarget",
         "test_examples": [
             {
