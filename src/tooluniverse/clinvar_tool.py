@@ -559,7 +559,16 @@ class ClinVarGetVariantDetails(ClinVarRESTTool):
         variant_data = fetch["variant_data"]
         result = fetch["result"]
         result["variant_id"] = variant_id
-        result["formatted_data"] = {
+        # Fix-R8E-1/R6C-2: assign the formatted payload *over* `result["data"]`
+        # (the full, unprocessed esummary envelope from _make_request) instead
+        # of publishing it alongside under a second key. Keeping both roughly
+        # tripled payload size for no informational gain and made this tool's
+        # output nearly indistinguishable from ClinVarGetClinicalSignificance's,
+        # which had the identical duplication. Overwriting preserves that
+        # de-duplication -- raw access remains at data["raw_data"] -- while
+        # delivering the payload under the `data` key the return_schema
+        # declares and every other tool in the registry uses.
+        result["data"] = {
             "variant_id": variant_id,
             "accession": variant_data.get("accession", ""),
             "obj_type": variant_data.get("obj_type", ""),
@@ -573,15 +582,6 @@ class ClinVarGetVariantDetails(ClinVarRESTTool):
             **self._parse_variant_summary(variant_data),
             "raw_data": variant_data,
         }
-        # Fix-R8E-1/R6C-2: `result["data"]` (the full, unprocessed esummary
-        # envelope from _make_request) duplicates the same content already
-        # exposed at formatted_data["raw_data"] -- keeping both roughly
-        # tripled payload size for no informational gain and made this
-        # tool's output nearly indistinguishable from
-        # ClinVarGetClinicalSignificance's, which has the identical
-        # duplication. Drop the redundant top-level copy; raw access is
-        # still available via formatted_data.raw_data.
-        result.pop("data", None)
 
         return result
 
@@ -613,7 +613,11 @@ class ClinVarGetClinicalSignificance(ClinVarRESTTool):
         clinical_impact = variant_data.get("clinical_impact_classification", {})
         oncogenicity = variant_data.get("oncogenicity_classification", {})
 
-        result["formatted_data"] = {
+        # Fix-R8E-1/R6C-2: see the matching fix in ClinVarGetVariantDetails --
+        # assigning over `result["data"]` (the raw esummary envelope) both
+        # de-duplicates the payload and honours the `data` key declared in the
+        # return_schema. Raw access remains at data["raw_data"].
+        result["data"] = {
             "variant_id": variant_id,
             "germline_classification": {
                 "description": germline_class.get("description", ""),
@@ -637,8 +641,5 @@ class ClinVarGetClinicalSignificance(ClinVarRESTTool):
             },
             "raw_data": variant_data,
         }
-        # Fix-R8E-1/R6C-2: see the matching fix in ClinVarGetVariantDetails
-        # -- result["data"] duplicates formatted_data["raw_data"].
-        result.pop("data", None)
 
         return result
