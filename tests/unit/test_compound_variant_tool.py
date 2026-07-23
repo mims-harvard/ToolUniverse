@@ -267,6 +267,74 @@ def test_summary_reports_classification_for_exact_clinvar_match():
     assert "clinvar_note" not in s
 
 
+def test_summary_surfaces_most_severe_classification_for_multiallelic_match():
+    """Fix: a multi-allelic match (e.g. rsid rs80358981 = c.7558C>G VUS +
+    c.7558C>T Pathogenic) previously reported classifications[0] -- the leading
+    VUS -- and hid the Pathogenic allele, a clinically dangerous mis-summary.
+    The headline must be the MOST clinically significant classification, with
+    every distinct classification exposed and a disambiguating note."""
+    t = _tool()
+    annotations = {
+        "clinvar": {
+            "total_gene_variants": 2,
+            "matched": 2,
+            "exact_match": True,
+            "variants": [
+                {"name": "NM_000059.4(BRCA2):c.7558C>G (p.Arg2520Gly)",
+                 "classification": "Uncertain significance"},
+                {"name": "NM_000059.4(BRCA2):c.7558C>T (p.Arg2520Ter)",
+                 "classification": "Pathogenic"},
+            ],
+        }
+    }
+    s = t._build_summary(annotations, rsid="rs80358981")
+    # Most severe surfaces, NOT the first-listed VUS.
+    assert s["clinvar_classification"] == "Pathogenic"
+    assert set(s["clinvar_classifications"]) == {
+        "Uncertain significance",
+        "Pathogenic",
+    }
+    assert "clinvar_note" in s
+    # rsid query must not be mislabeled as the resolved gene symbol.
+    assert s["query"] == "rs80358981"
+
+
+def test_summary_query_label_precedence():
+    """summary.query reflects the most specific identifier the caller queried:
+    variant > rsid > gene. An rsid-only query resolved to a gene must still
+    report the rsid, not the gene."""
+    t = _tool()
+    assert t._build_summary({}, variant="BRAF V600E", gene="BRAF")["query"] == (
+        "BRAF V600E"
+    )
+    assert t._build_summary({}, rsid="rs80358981", gene="BRCA2")["query"] == (
+        "rs80358981"
+    )
+    assert t._build_summary({}, gene="BRCA2")["query"] == "BRCA2"
+
+
+def test_clinvar_severity_key_orders_pathogenic_above_vus_and_benign():
+    from tooluniverse.compound_variant_tool import _clinvar_severity_key
+
+    assert _clinvar_severity_key("Pathogenic") < _clinvar_severity_key(
+        "Uncertain significance"
+    )
+    assert _clinvar_severity_key("Likely pathogenic") < _clinvar_severity_key(
+        "Benign"
+    )
+    # Case/whitespace-insensitive.
+    assert _clinvar_severity_key("  PATHOGENIC ") == _clinvar_severity_key(
+        "pathogenic"
+    )
+    # Unknown labels sort after pathogenic/risk but before benign.
+    assert _clinvar_severity_key("Pathogenic") < _clinvar_severity_key(
+        "some novel label"
+    )
+    assert _clinvar_severity_key("some novel label") < _clinvar_severity_key(
+        "Benign"
+    )
+
+
 def test_sub_call_error_detects_error_status_dict():
     """Fix-R2B-003: sub-tools signal failure by returning
     {"status": "error", ...}, not by raising."""

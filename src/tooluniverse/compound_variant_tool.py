@@ -50,6 +50,37 @@ _AA_3TO1 = {v.upper(): k for k, v in _AA_1TO3.items()}
 _MATURE_PROTEIN_OFFSET_GENES = {"HBB"}
 
 
+# ClinVar clinical-significance terms ranked most→least clinically significant.
+# Used to pick the headline classification when a query matches several ClinVar
+# variants (e.g. a multi-allelic rsid whose alleles carry different
+# classifications): the most severe must surface, never merely the first in the
+# list — reporting a VUS while a Pathogenic allele is hidden is dangerous.
+_CLINVAR_SEVERITY_ORDER = [
+    "pathogenic",
+    "pathogenic/likely pathogenic",
+    "likely pathogenic",
+    "established risk allele",
+    "likely risk allele",
+    "uncertain risk allele",
+    "drug response",
+    "conflicting classifications of pathogenicity",
+    "conflicting interpretations of pathogenicity",
+    "uncertain significance",
+    "likely benign",
+    "benign/likely benign",
+    "benign",
+]
+_CLINVAR_SEVERITY_RANK = {term: i for i, term in enumerate(_CLINVAR_SEVERITY_ORDER)}
+
+
+def _clinvar_severity_key(classification: str) -> int:
+    """Sort key: lower = more clinically significant. Unknown terms sort after
+    all pathogenic/risk terms but before benign, so a recognized Pathogenic
+    always wins over an unrecognized label."""
+    norm = str(classification or "").strip().lower()
+    return _CLINVAR_SEVERITY_RANK.get(norm, len(_CLINVAR_SEVERITY_ORDER) - 3)
+
+
 def _offset_protein_tokens(tokens: List[str], gene: Optional[str]) -> List[str]:
     """For genes in _MATURE_PROTEIN_OFFSET_GENES, add a position-1 candidate
     for each RefSeq-numbered token so mature-protein-numbered records (like
@@ -502,7 +533,11 @@ class CompoundVariantAnnotationTool(BaseTool):
         gene: str = None,
         rsid: str = None,
     ) -> Dict[str, Any]:
-        summary = {"query": variant or gene or rsid, "sources_with_data": []}
+        # Reflect the identifier the caller actually queried: a variant or rsid
+        # is more specific than the gene it was resolved to, so prefer them over
+        # the (possibly rsid-derived) gene symbol -- otherwise an rsid-only query
+        # mislabels summary.query as the gene (e.g. "BRCA2" for rs80358981).
+        summary = {"query": variant or rsid or gene, "sources_with_data": []}
 
         # A source counts as "with data" only if it returned actual results — not
         # merely because the sub-call did not throw.
@@ -535,7 +570,24 @@ class CompoundVariantAnnotationTool(BaseTool):
                 if v.get("classification")
             ]
             if classifications:
-                summary["clinvar_classification"] = classifications[0]
+                # Surface the MOST clinically significant classification, not the
+                # first one listed. A multi-allelic match (e.g. rs80358981 =
+                # c.7558C>G VUS + c.7558C>T Pathogenic) previously reported the
+                # leading VUS and hid the Pathogenic allele -- a dangerous
+                # mis-summary. When the matches disagree, also expose every
+                # distinct classification so the curator sees the full picture.
+                summary["clinvar_classification"] = min(
+                    classifications, key=_clinvar_severity_key
+                )
+                distinct = list(dict.fromkeys(classifications))
+                if len(distinct) > 1:
+                    summary["clinvar_classifications"] = distinct
+                    summary["clinvar_note"] = (
+                        "Multiple ClinVar classifications matched the query "
+                        "(e.g. a multi-allelic site); clinvar_classification "
+                        "reports the most clinically significant. See "
+                        "annotations.clinvar.variants for per-allele detail."
+                    )
         elif clinvar.get("variants"):
             summary["clinvar_classification"] = None
             summary["clinvar_note"] = (
