@@ -17,6 +17,45 @@ from .tool_registry import register_tool
 CIVIC_BASE_URL = "https://civicdb.org/api"
 CIVIC_GRAPHQL_URL = f"{CIVIC_BASE_URL}/graphql"
 
+# Fixed CIViC GraphQL enum vocabularies. An invalid value was passed straight to
+# the API and came back as an opaque "GraphQL query errors" with no hint; we
+# validate up front and name the allowed values instead.
+CIVIC_EVIDENCE_TYPES = {
+    "DIAGNOSTIC",
+    "PROGNOSTIC",
+    "PREDICTIVE",
+    "PREDISPOSING",
+    "FUNCTIONAL",
+    "ONCOGENIC",
+}
+CIVIC_EVIDENCE_SIGNIFICANCES = {
+    "SENSITIVITYRESPONSE",
+    "RESISTANCE",
+    "BETTER_OUTCOME",
+    "POOR_OUTCOME",
+    "POSITIVE",
+    "NEGATIVE",
+    "NA",
+    "ADVERSE_RESPONSE",
+    "PATHOGENIC",
+    "LIKELY_PATHOGENIC",
+    "BENIGN",
+    "LIKELY_BENIGN",
+    "UNCERTAIN_SIGNIFICANCE",
+    "REDUCED_SENSITIVITY",
+    "GAIN_OF_FUNCTION",
+    "LOSS_OF_FUNCTION",
+    "UNALTERED_FUNCTION",
+    "NEOMORPHIC",
+    "UNKNOWN",
+    "DOMINANT_NEGATIVE",
+    "PREDISPOSITION",
+    "PROTECTIVENESS",
+    "ONCOGENICITY",
+    "LIKELY_ONCOGENIC",
+}
+CIVIC_EVIDENCE_DIRECTIONS = {"SUPPORTS", "DOES_NOT_SUPPORT", "NA"}
+
 
 @register_tool("CIViCTool")
 class CIViCTool(BaseTool):
@@ -251,6 +290,25 @@ class CIViCTool(BaseTool):
         # Feature-61A-001: extend to catch ANY unrecognized parameter that would be silently
         # ignored, causing unfiltered evidence dumps (e.g. description="ESR1", gene_id=38).
         if tool_name == "civic_search_evidence_items":
+            # Validate enum-valued filters up front: an invalid value (e.g.
+            # evidence_type="BANANA") was passed straight to the CIViC GraphQL API
+            # and returned an opaque "GraphQL query errors" with no hint of what
+            # was wrong or what is valid.
+            for _enum_arg, _valid in (
+                ("evidence_type", CIVIC_EVIDENCE_TYPES),
+                ("significance", CIVIC_EVIDENCE_SIGNIFICANCES),
+                ("evidence_direction", CIVIC_EVIDENCE_DIRECTIONS),
+            ):
+                _val = arguments.get(_enum_arg)
+                if _val is not None and str(_val).upper() not in _valid:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"Invalid {_enum_arg} '{_val}'. Allowed values: "
+                            + ", ".join(sorted(_valid))
+                            + "."
+                        ),
+                    }
             _known_params = {
                 "molecular_profile",
                 "disease",
