@@ -171,6 +171,24 @@ class LipidMapsTool(BaseTool):
         if not input_value:
             return {"status": "error", "error": "input_value parameter is required"}
 
+        # Reject unrecognized parameters. `xref_type` has a default (kegg_id), so
+        # a typo like `input_type` (instead of `xref_type`) was silently accepted
+        # and the lookup fell back to kegg_id -- a PubChem CID searched as a KEGG
+        # id then returned an empty "not found" the user wrongly trusted. Name
+        # the bad parameter instead of silently returning a false empty.
+        _recognized = {"input_value", "output_item", "xref_type", "input_item"}
+        unknown = sorted(k for k in arguments if k not in _recognized)
+        if unknown:
+            return {
+                "status": "error",
+                "error": (
+                    f"Unrecognized parameter(s): {', '.join(unknown)}. Supported: "
+                    "input_value, xref_type (e.g. 'pubchem_cid', 'hmdb_id', "
+                    "'chebi_id', 'kegg_id', 'inchi_key', 'abbrev_chains'), "
+                    "output_item. Did you mean 'xref_type'?"
+                ),
+            }
+
         # Allow the input item (the LMSD lookup key) to be overridden per call
         # via xref_type / input_item, falling back to the config default. This
         # powers the cross-reference lookup tool without a new tool class.
