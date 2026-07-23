@@ -176,6 +176,20 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             arguments = dict(arguments, gene=arguments["gene_symbol"])
         if not arguments.get("clinical_significance") and arguments.get("significance"):
             arguments = dict(arguments, clinical_significance=arguments["significance"])
+        # An rsID (e.g. rs4244285) passed as `query` was aliased to `condition`
+        # and searched as a DISEASE term ('rs4244285[dis]'), silently returning
+        # 0 -- but ClinVar's free-text index DOES match a bare rsID (confirmed
+        # live: term=rs4244285 -> 37 records). Route an rsID to a bare-term
+        # search so the standard PGx chain rsID -> ClinVar works instead of a
+        # false 'not found'.
+        _rsid_src = arguments.get("rsid") or arguments.get("query")
+        if (
+            not arguments.get("rsid")
+            and isinstance(_rsid_src, str)
+            and re.fullmatch(r"rs\d+", _rsid_src.strip(), re.IGNORECASE)
+        ):
+            arguments = dict(arguments, rsid=_rsid_src.strip())
+            arguments.pop("query", None)
         if not arguments.get("condition") and arguments.get("query"):
             arguments = dict(arguments, condition=arguments["query"])
         # `variant` is the intuitive name for the variant filter (the schema
@@ -242,6 +256,11 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             if " " in condition and not condition.startswith('"'):
                 condition = f'"{condition}"'
             query_parts.append(f"{condition}[dis]")
+
+        if arguments.get("rsid"):
+            # Search a dbSNP rsID as a bare free-text term -- ClinVar matches it
+            # across the record (not via [dis]/[gene]/[Variant name]).
+            query_parts.append(str(arguments["rsid"]).strip())
 
         if "variant_id" in arguments:
             # Feature-70B-004: [variant_id] is not recognized by ClinVar eSearch.
@@ -316,6 +335,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             "variant_id",
             "variant_name",
             "variant",
+            "rsid",
             "clinical_significance",
             "significance",
             "max_results",
