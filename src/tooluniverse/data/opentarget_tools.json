@@ -2904,7 +2904,7 @@
     },
     {
         "name": "OpenTargets_get_known_drugs_by_drug_chemblId",
-        "description": "Get a list of known drugs and associated information using the specified chemblId.",
+        "description": "Get a drug's known clinical information for the specified ChEMBL ID: its approved/investigational indications (diseases, each with the maximum clinical phase reached), its mechanisms of action (with the molecular targets acted on), and any drug safety warnings.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -2917,7 +2917,7 @@
                 "chemblId"
             ]
         },
-        "query_schema": "\n  query drugKnownDrugs($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      maximumClinicalStage\n      drugType\n      drugWarnings {\n        toxicityClass\n        description\n      }\n    }\n  }\n  ",
+        "query_schema": "\n  query drugKnownDrugs($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      maximumClinicalStage\n      drugType\n      indications {\n        count\n        rows {\n          maxClinicalStage\n          disease {\n            id\n            name\n          }\n        }\n      }\n      mechanismsOfAction {\n        rows {\n          mechanismOfAction\n          actionType\n          targetName\n          targets {\n            id\n            approvedSymbol\n          }\n        }\n      }\n      drugWarnings {\n        toxicityClass\n        description\n      }\n    }\n  }\n  ",
         "label": [
             "OpenTarget",
             "Drug",
