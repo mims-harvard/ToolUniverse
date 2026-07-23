@@ -1,7 +1,24 @@
 from .graphql_tool import GraphQLTool, remove_none_and_empty_values
+import re
 import requests
 import copy
 from .tool_registry import register_tool
+
+_UNDERSCORE_CURIE_RE = re.compile(r"^([A-Za-z]+)_(\d+)$")
+
+
+def _normalize_curie(value):
+    """Convert an underscore ontology CURIE ('HP_0000639', 'MONDO_0008765') to
+    the colon form Monarch requires ('HP:0000639'). OpenTargets phenotype/disease
+    tools emit the underscore form, but Monarch's /entity/{id} 404s on it and
+    returns "Entity not found" wrapped in status:success -- a silent false-empty
+    that breaks the OpenTargets -> Monarch phenotype chain. Non-CURIE values
+    (search terms, colon CURIEs) pass through unchanged."""
+    if not isinstance(value, str):
+        return value
+    stripped = value.strip()
+    m = _UNDERSCORE_CURIE_RE.match(stripped)
+    return f"{m.group(1)}:{m.group(2)}" if m else stripped
 
 
 def execute_RESTful_query(endpoint_url, variables=None):
@@ -52,8 +69,11 @@ class MonarchTool(RESTfulTool):
                 query_schema_runtime[key] = arguments[key]
         if "url_key" in query_schema_runtime:
             url_key_name = query_schema_runtime["url_key"]
+            # Normalize an underscore ontology CURIE (HP_0000639) to the colon
+            # form Monarch's /entity/{id} needs; otherwise it 404s and returns
+            # "Entity not found" as a silent status:success false-empty.
             formatted_endpoint_url = self.endpoint_url.format(
-                url_key=query_schema_runtime[url_key_name]
+                url_key=_normalize_curie(query_schema_runtime[url_key_name])
             )
             del query_schema_runtime["url_key"]
         else:
