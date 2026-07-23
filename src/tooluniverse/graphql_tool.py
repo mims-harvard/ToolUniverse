@@ -262,6 +262,26 @@ class OpentargetTool(GraphQLTool):
                 self._normalize_ot_disease_id(v) for v in arguments["diseaseIds"]
             ]
 
+        # Bridge efoId -> diseaseIds for tools whose query takes the diseaseIds
+        # ARRAY (e.g. search_gwas_studies_by_disease). Every OTHER OpenTargets
+        # disease tool uses `efoId`, so a user naturally reuses it here -- but the
+        # unrecognized efoId was silently ignored and the tool returned a
+        # plausible "0 studies" success (Parkinson's MONDO_0005180: efoId -> 0,
+        # diseaseIds -> 103).
+        if (
+            "diseaseIds" in self.query_schema
+            and not arguments.get("diseaseIds")
+            and arguments.get("efoId")
+        ):
+            arguments["diseaseIds"] = [arguments.pop("efoId")]
+
+        # Strip a versioned Ensembl id suffix ('ENSG00000120659.16') that
+        # UniProt_id_mapping emits -- OpenTargets rejects it ("no target for
+        # Ensembl ID ...") and only accepts the unversioned form.
+        _ens = arguments.get("ensemblId")
+        if isinstance(_ens, str):
+            arguments["ensemblId"] = re.sub(r"^(ENSG\d+)\.\d+$", r"\1", _ens)
+
         # Normalize common aliases before resolution
         if "ensemblId" not in arguments and "gene_symbol" not in arguments:
             for alias in ("target", "gene", "gene_name"):
