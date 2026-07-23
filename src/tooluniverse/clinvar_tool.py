@@ -300,6 +300,19 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             names = arguments["variant_name"]
             names = names if isinstance(names, list) else [names]
             names = [str(n).strip() for n in names if str(n).strip()]
+            # NCBI's [Variant name] index mangles the '.' in an HGVS reference
+            # prefix ('p.Glu342Lys' -> 'p0x2eGlu342Lys') and matches nothing, so a
+            # clinician typing standard HGVS got a silent false-empty. Strip the
+            # leading reference-type prefix so 'p.Glu342Lys' -> 'Glu342Lys' (which
+            # matches). Verified live: SERPINA1 p.Glu342Lys 0 -> 2 hits (Z-allele).
+            names = [re.sub(r"(?i)^[pcgmnor]\.", "", n) for n in names]
+            # An rsID passed as variant_name (e.g. rs776746) belongs in a bare
+            # free-text search, not the [Variant name] field, which returns 0 for
+            # it -- route it like the rsid param instead of a false-empty.
+            rsid_names = [n for n in names if re.fullmatch(r"rs\d+", n, re.IGNORECASE)]
+            names = [n for n in names if n not in rsid_names]
+            for _rs in rsid_names:
+                query_parts.append(_rs)
             if names:
                 terms = " OR ".join(f"{n}[Variant name]" for n in names)
                 query_parts.append(f"({terms})" if len(names) > 1 else terms)
