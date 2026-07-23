@@ -16,13 +16,22 @@
                 "efoId": {
                     "type": "string",
                     "description": "The efoId of a disease or phenotype."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Number of top-scored associated targets to return (default 50). A disease can have thousands of associated targets; raise this to retrieve more than the first page.",
+                    "default": 50
+                },
+                "index": {
+                    "type": "integer",
+                    "description": "Zero-based page index for paginating beyond the first `size` targets (default 0)."
                 }
             },
             "required": [
                 "efoId"
             ]
         },
-        "query_schema": "\nquery associatedTargets($efoId: String!) {\n  disease(efoId: $efoId) {\n    id\n    name\n    associatedTargets {\n      count\n      rows {\n        target {\n          id\n          approvedSymbol\n        }\n        score\n      }\n    }\n  }\n}\n",
+        "query_schema": "\nquery associatedTargets($efoId: String!, $size: Int = 50, $index: Int = 0) {\n  disease(efoId: $efoId) {\n    id\n    name\n    associatedTargets(page: {index: $index, size: $size}) {\n      count\n      rows {\n        target {\n          id\n          approvedSymbol\n        }\n        score\n      }\n    }\n  }\n}\n",
         "type": "OpenTarget",
         "test_examples": [
             {

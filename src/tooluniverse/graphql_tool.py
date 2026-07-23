@@ -110,7 +110,13 @@ class GraphQLTool(BaseTool):
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
         if "size" in self.parameters and "size" not in arguments:
-            arguments["size"] = self.default_size
+            # Honor the size parameter's own schema default when it declares one
+            # (e.g. a targets-by-disease tool that pages 50 at a time); fall back
+            # to the generic default only when the tool declares no size default.
+            # Otherwise this hardcoded 5 silently overrode a tool's intended
+            # larger default, capping results far below what the query allows.
+            size_default = self.parameters["size"].get("default", self.default_size)
+            arguments["size"] = size_default
         result = execute_query(
             endpoint_url=self.endpoint_url, query=self.query_schema, variables=arguments
         )
