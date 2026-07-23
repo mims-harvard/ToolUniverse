@@ -12,6 +12,16 @@ from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
+# Human-readable clinical-significance classes whose NCBI clinsig [prop] token is
+# NOT the naive underscore form. Confirmed live: "Uncertain significance" ->
+# clinsig_vus[prop] (BRCA2: 4345), while clinsig_uncertain_significance[prop]
+# returns 0 -- so filtering for VUS, the single LARGEST ClinVar category,
+# silently returned an empty success. Keyed by the normalized (lowercased,
+# spaces) class name.
+_CLINSIG_PROP_ALIASES = {
+    "uncertain significance": "vus",
+}
+
 
 class ClinVarRESTTool(BaseTool):
     """Base class for ClinVar REST API tools."""
@@ -324,7 +334,13 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             for _comp in _components:
                 _c = _comp.lower().replace("_", " ")
                 _c_prop = _c.replace(" ", "_")
-                _clauses.append(f'("clinsig {_c}"[Filter] OR clinsig_{_c_prop}[prop])')
+                _forms = f'"clinsig {_c}"[Filter] OR clinsig_{_c_prop}[prop]'
+                # Some classes index under a different NCBI token (e.g. VUS);
+                # OR it in so a valid class is never a silent false-empty.
+                _alias = _CLINSIG_PROP_ALIASES.get(_c)
+                if _alias:
+                    _forms += f" OR clinsig_{_alias}[prop]"
+                _clauses.append(f"({_forms})")
             if _clauses:
                 query_parts.append(
                     "(" + " OR ".join(_clauses) + ")"
