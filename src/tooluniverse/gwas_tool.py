@@ -273,10 +273,23 @@ class GWASAssociationSearch(GWASRESTTool):
             params["accession_id"] = accession_id
 
         sort = self._coerce_str(arguments.get("sort"))
+        direction = self._coerce_str(arguments.get("direction"))
+        # A p_value threshold is applied CLIENT-SIDE to the fetched page (the API
+        # has no server-side p-value filter), but the API returns associations
+        # UNSORTED -- so without sorting by significance the fetched window omits
+        # the strongest loci and a strict threshold falsely returns 0 (SLE
+        # p<=1e-100 -> 0 even though hits exist at p=2e-298). When a p-value
+        # filter is requested and the caller gave no explicit sort, fetch
+        # most-significant-first so the threshold actually sees the top hits.
+        if not sort and (
+            arguments.get("p_value") is not None
+            or arguments.get("p_value_threshold") is not None
+        ):
+            sort = "p_value"
+            if not direction:
+                direction = "asc"
         if sort:
             params["sort"] = sort
-
-        direction = self._coerce_str(arguments.get("direction"))
         if direction:
             params["direction"] = direction
 
