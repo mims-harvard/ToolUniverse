@@ -176,6 +176,15 @@ def _ot_entity_not_found_message(arguments):
             "Verify the ID (e.g. ENSG00000141510 for TP53) or pass gene_symbol "
             "to auto-resolve it."
         )
+    variant_id = arguments.get("variantId")
+    if variant_id is not None:
+        return (
+            f"OpenTargets returned no variant for ID '{variant_id}'. Use the "
+            "chr_pos_ref_alt format with UNDERSCORES (e.g. '19_44908684_T_C'); "
+            "the hyphen form gnomAD emits ('19-44908684-T-C') is auto-converted, "
+            "so a remaining failure means the variant is genuinely absent from "
+            "OpenTargets. rsIDs are not accepted here."
+        )
     return (
         "OpenTargets returned no entity for the provided identifier(s). Verify "
         "the ID is current — OpenTargets periodically remaps disease IDs from "
@@ -189,11 +198,36 @@ class OpentargetTool(GraphQLTool):
         self.endpoint_url = "https://api.platform.opentargets.org/api/v4/graphql"
         super().__init__(tool_config, self.endpoint_url)
 
+    @staticmethod
+    def _normalize_variant_id(value):
+        """Accept gnomAD's hyphen-delimited variant id and convert it to the
+        underscore form OpenTargets requires. gnomad_search_variants /
+        gnomad_get_variant_populations emit 'chr-pos-ref-alt' (e.g.
+        '19-44908684-T-C'), but OpenTargets' variant(variantId:) wants
+        'chr_pos_ref_alt' -- feeding the hyphen form straight through returned a
+        misleading "no entity ... EFO to MONDO" error, a cross-tool chaining
+        break. Only rewrite when the value is exactly chr-pos-ref-alt (4
+        hyphen-separated parts, no underscores); leave everything else untouched.
+        """
+        if not isinstance(value, str) or "_" in value or "-" not in value:
+            return value
+        parts = value.split("-")
+        if len(parts) == 4 and all(parts):
+            return "_".join(parts)
+        return value
+
     def _empty_result_error(self, arguments):
         return _ot_entity_not_found_message(arguments)
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
+
+        # Accept gnomAD's hyphen-delimited variant id (chr-pos-ref-alt) and
+        # convert it to the underscore form OpenTargets requires -- must run
+        # BEFORE the query and before the hyphen->space retry below (which is
+        # for hyphenated NAMES, not coordinate ids).
+        if arguments.get("variantId"):
+            arguments["variantId"] = self._normalize_variant_id(arguments["variantId"])
 
         # Normalize common aliases before resolution
         if "ensemblId" not in arguments and "gene_symbol" not in arguments:
