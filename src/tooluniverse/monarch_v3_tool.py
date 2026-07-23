@@ -11,12 +11,30 @@ API: https://api.monarchinitiative.org/v3/api/
 No authentication required. Free public access.
 """
 
-import requests
+import re
 from typing import Dict, Any
+
+import requests
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 MONARCH_BASE_URL = "https://api.monarchinitiative.org/v3/api"
+
+_UNDERSCORE_CURIE_RE = re.compile(r"^([A-Za-z]+)_(\d+)$")
+
+
+def _normalize_curie(entity_id: str) -> str:
+    """Convert an underscore-delimited ontology CURIE to the colon form Monarch
+    requires. OpenTargets and other tools emit 'MONDO_0004995' / 'EFO_0008572' /
+    'Orphanet_238583', but Monarch's /entity endpoint 404s on those and needs
+    'MONDO:0004995'. Feeding one tool's output into Mondo_get_disease broke with
+    a bare 404 that never revealed the delimiter was the cause."""
+    if not isinstance(entity_id, str):
+        return entity_id
+    stripped = entity_id.strip()
+    m = _UNDERSCORE_CURIE_RE.match(stripped)
+    return f"{m.group(1)}:{m.group(2)}" if m else stripped
 
 
 @register_tool("MonarchV3Tool")
@@ -86,7 +104,9 @@ class MonarchV3Tool(BaseTool):
 
     def _get_entity(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed entity information by CURIE identifier."""
-        entity_id = arguments.get("entity_id") or arguments.get("id", "")
+        entity_id = _normalize_curie(
+            arguments.get("entity_id") or arguments.get("id", "")
+        )
         if not entity_id:
             return {
                 "status": "error",
@@ -120,8 +140,8 @@ class MonarchV3Tool(BaseTool):
 
     def _get_associations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get associations for an entity with optional filtering by category."""
-        subject = arguments.get("subject", "")
-        obj = arguments.get("object", "")
+        subject = _normalize_curie(arguments.get("subject", ""))
+        obj = _normalize_curie(arguments.get("object", ""))
         if not subject and not obj:
             return {
                 "status": "error",
@@ -264,7 +284,7 @@ class MonarchV3Tool(BaseTool):
 
     def _mondo_get_disease(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed Mondo disease information including hierarchy and cross-references."""
-        disease_id = arguments.get("disease_id", "").strip()
+        disease_id = _normalize_curie(arguments.get("disease_id", ""))
         if not disease_id:
             return {
                 "status": "error",
@@ -344,7 +364,7 @@ class MonarchV3Tool(BaseTool):
 
     def _mondo_get_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get HPO phenotypes associated with a Mondo disease."""
-        disease_id = arguments.get("disease_id", "").strip()
+        disease_id = _normalize_curie(arguments.get("disease_id", ""))
         if not disease_id:
             return {
                 "status": "error",
@@ -392,7 +412,7 @@ class MonarchV3Tool(BaseTool):
 
     def _histopheno(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get phenotype counts by body system for a disease."""
-        entity_id = arguments.get("entity_id", "").strip()
+        entity_id = _normalize_curie(arguments.get("entity_id", ""))
         if not entity_id:
             return {
                 "status": "error",
@@ -429,7 +449,7 @@ class MonarchV3Tool(BaseTool):
 
     def _get_mappings(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get cross-ontology mappings for an entity."""
-        entity_id = arguments.get("entity_id", "").strip()
+        entity_id = _normalize_curie(arguments.get("entity_id", ""))
         if not entity_id:
             return {
                 "status": "error",
