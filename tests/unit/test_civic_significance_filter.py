@@ -44,6 +44,15 @@ def test_significance_is_bound_in_query_template():
 
 
 @pytest.mark.unit
+def test_significance_is_a_declared_parameter():
+    """significance must be discoverable in `tu info`, not just functional."""
+    cfg = _load_config("civic_search_evidence_items")
+    props = cfg["parameter"]["properties"]
+    assert "significance" in props
+    assert "RESISTANCE" in props["significance"]["description"]
+
+
+@pytest.mark.unit
 def test_build_graphql_query_binds_significance():
     """A user-supplied significance value must reach the GraphQL variables."""
     cfg = _load_config("civic_search_evidence_items")
