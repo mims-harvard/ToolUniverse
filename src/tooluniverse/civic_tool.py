@@ -313,6 +313,31 @@ class CIViCTool(BaseTool):
                     ),
                 }
 
+        # civic_search_molecular_profiles only filters by query/name (free-text)
+        # + limit; the GraphQL query binds nothing else. A param like variant_id
+        # (a very natural thing to pass -- "profiles for CIViC variant 78") was
+        # silently ignored, returning the full unfiltered profile list (BRAF
+        # V600E, ERBB2 Amplification, ...) as a plausible-but-wrong "success".
+        # Reject unrecognized params with an actionable hint, mirroring
+        # civic_search_evidence_items.
+        if tool_name == "civic_search_molecular_profiles":
+            _known = {"query", "name", "limit", "operation", "after"}
+            _known.update(self.param_map.keys())
+            _known.update(self.array_wrap.keys())
+            unknown = sorted(k for k in arguments if k not in _known)
+            if unknown:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Unrecognized parameter(s) for civic_search_molecular_profiles:"
+                        f" {', '.join(unknown)}. These are silently ignored by the CIViC"
+                        f" GraphQL API, returning the full unfiltered profile list."
+                        f" Supported filters: query (or name, free-text e.g. 'KRAS G12C'),"
+                        f" limit. To get profiles for a specific variant id, use"
+                        f" civic_get_variant with that id."
+                    ),
+                }
+
         # civic_search_variants: if gene/gene_name provided, look up gene_id then get variants.
         # Feature-41A-01: also handle combined gene+query — get gene variants, filter client-side.
         if tool_name == "civic_search_variants":
