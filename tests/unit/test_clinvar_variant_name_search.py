@@ -92,3 +92,50 @@ def test_empty_or_blank_variant_name_entries_are_dropped():
     term = mock_request.call_args[0][1]["term"]
     assert "Glu6Val[Variant name]" in term
     assert "OR" not in term  # only one real candidate survived, no OR needed
+
+
+def test_variant_is_aliased_to_variant_name_when_gene_also_present():
+    """Fix: `variant` (the intuitive name; schema calls it `variant_name`) was
+    silently dropped whenever a valid param like `gene` was also present, so
+    {"gene":"KRAS","variant":"G12C"} returned ALL KRAS variants instead of the
+    G12C ones -- a dangerous silent full-gene dump. `variant` is now aliased to
+    `variant_name` so the natural query filters correctly."""
+    tool = _tool()
+    with patch.object(
+        ClinVarSearchVariants,
+        "_make_request",
+        return_value={"status": "success", "data": {}},
+    ) as mock_request:
+        result = tool.run({"gene": "KRAS", "variant": "G12C"})
+
+    assert result["status"] == "success"
+    term = mock_request.call_args[0][1]["term"]
+    assert "KRAS[gene]" in term
+    assert "G12C[Variant name]" in term  # the variant filter is actually applied
+
+
+def test_variant_alias_not_flagged_as_unrecognized_when_alone():
+    tool = _tool()
+    with patch.object(
+        ClinVarSearchVariants,
+        "_make_request",
+        return_value={"status": "success", "data": {}},
+    ) as mock_request:
+        result = tool.run({"variant": "G12C"})
+
+    assert result["status"] == "success"
+    assert "G12C[Variant name]" in mock_request.call_args[0][1]["term"]
+
+
+def test_explicit_variant_name_takes_precedence_over_variant_alias():
+    tool = _tool()
+    with patch.object(
+        ClinVarSearchVariants,
+        "_make_request",
+        return_value={"status": "success", "data": {}},
+    ) as mock_request:
+        tool.run({"gene": "KRAS", "variant_name": "G12D", "variant": "G12C"})
+
+    term = mock_request.call_args[0][1]["term"]
+    assert "G12D[Variant name]" in term
+    assert "G12C" not in term

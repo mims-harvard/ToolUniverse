@@ -178,6 +178,14 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             arguments = dict(arguments, clinical_significance=arguments["significance"])
         if not arguments.get("condition") and arguments.get("query"):
             arguments = dict(arguments, condition=arguments["query"])
+        # `variant` is the intuitive name for the variant filter (the schema
+        # calls it `variant_name`). Passing `variant` used to be silently
+        # dropped whenever a valid param like `gene` was also present, so
+        # {"gene":"KRAS","variant":"G12C"} returned ALL 599 KRAS variants
+        # instead of the 2 G12C ones -- a dangerous silent full-gene dump.
+        # Alias it, mirroring the gene_symbol/significance/query aliases above.
+        if not arguments.get("variant_name") and arguments.get("variant"):
+            arguments = dict(arguments, variant_name=arguments["variant"])
 
         params = {
             "db": "clinvar",
@@ -307,6 +315,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             "query",
             "variant_id",
             "variant_name",
+            "variant",
             "clinical_significance",
             "significance",
             "max_results",
