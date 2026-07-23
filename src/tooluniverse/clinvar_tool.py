@@ -209,6 +209,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
 
         # Build search query
         query_parts = []
+        compound_clnsig = False
 
         gene_hyphen_variant = None
         if "gene" in arguments:
@@ -309,11 +310,27 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             # using the already-verified [Filter] path while compound values
             # fall through to the [prop] path -- this can only add matches
             # the old query missed, never drop ones it already found.
-            clnsig = arguments["clinical_significance"].lower().replace("_", " ")
-            clnsig_prop = clnsig.replace(" ", "_")
-            query_parts.append(
-                f'("clinsig {clnsig}"[Filter] OR clinsig_{clnsig_prop}[prop])'
-            )
+            # A COMPOUND aggregate class like "Pathogenic/Likely pathogenic" has
+            # no single NCBI clinsig token -- the slash breaks BOTH the [Filter]
+            # phrase and the [prop] token, so the old query silently returned 0
+            # even though the tool's OWN get_clinical_significance emits that exact
+            # value. Treat "/" as OR and expand to the individual clinsig classes
+            # (the clinically-actionable union), each via the proven
+            # [Filter]-OR-[prop] path.
+            _raw_clnsig = str(arguments["clinical_significance"])
+            _components = [c.strip() for c in _raw_clnsig.split("/") if c.strip()]
+            compound_clnsig = len(_components) > 1
+            _clauses = []
+            for _comp in _components:
+                _c = _comp.lower().replace("_", " ")
+                _c_prop = _c.replace(" ", "_")
+                _clauses.append(f'("clinsig {_c}"[Filter] OR clinsig_{_c_prop}[prop])')
+            if _clauses:
+                query_parts.append(
+                    "(" + " OR ".join(_clauses) + ")"
+                    if len(_clauses) > 1
+                    else _clauses[0]
+                )
 
         # Fix-R5D-1/R8C-1: a caller-supplied param that doesn't match any
         # recognized name/alias (e.g. "gene_name" instead of "gene") was
@@ -450,6 +467,13 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         }
         if unrecognized:
             response_data["ignored_parameters"] = unrecognized
+        if compound_clnsig:
+            response_data["clinical_significance_note"] = (
+                "The '/' in the requested clinical_significance was treated as OR: "
+                "results are the union of the individual classes (e.g. Pathogenic "
+                "AND Likely pathogenic), which is broader than only the aggregate "
+                "'Pathogenic/Likely pathogenic' review class."
+            )
         return {"status": "success", "data": response_data}
 
     def _resolve_deprecated_gene_symbol(self, gene: str) -> Optional[str]:
