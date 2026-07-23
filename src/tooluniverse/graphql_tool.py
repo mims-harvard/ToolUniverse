@@ -3,6 +3,7 @@ from graphql.language import parse
 from graphql.validation import validate
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+import re
 import requests
 import copy
 import time
@@ -222,6 +223,21 @@ class OpentargetTool(GraphQLTool):
             return "_".join(parts)
         return value
 
+    @staticmethod
+    def _normalize_ot_disease_id(value):
+        """Convert a colon ontology CURIE to the underscore form OpenTargets
+        uses. OpenTargets keys diseases/phenotypes as 'MONDO_0010315' /
+        'EFO_0005555' / 'OMIM_300400', but every other tool (HPO, Monarch,
+        OpenTargets' OWN cross-reference output) emits the canonical colon form
+        'MONDO:0010315'. Feeding the colon form to OpenTargets_map_any_disease_id
+        returned a silent empty (just the echoed term, no cross-refs) -- even the
+        tool's documented 'OMIM:604302' example was broken. Rewrite an exact
+        PREFIX:suffix CURIE; leave Ensembl/ChEMBL ids and everything else alone."""
+        if not isinstance(value, str) or ":" not in value:
+            return value
+        m = re.match(r"^([A-Za-z]+):([A-Za-z0-9]+)$", value.strip())
+        return f"{m.group(1)}_{m.group(2)}" if m else value
+
     def _empty_result_error(self, arguments):
         return _ot_entity_not_found_message(arguments)
 
@@ -234,6 +250,17 @@ class OpentargetTool(GraphQLTool):
         # for hyphenated NAMES, not coordinate ids).
         if arguments.get("variantId"):
             arguments["variantId"] = self._normalize_variant_id(arguments["variantId"])
+
+        # Accept the canonical colon CURIE ('MONDO:0010315') that HPO/Monarch and
+        # OpenTargets' own xref output emit, converting to the underscore form
+        # OpenTargets keys on -- otherwise the colon form silently returns empty.
+        for _id_key in ("inputId", "efoId", "entityId"):
+            if arguments.get(_id_key):
+                arguments[_id_key] = self._normalize_ot_disease_id(arguments[_id_key])
+        if isinstance(arguments.get("diseaseIds"), list):
+            arguments["diseaseIds"] = [
+                self._normalize_ot_disease_id(v) for v in arguments["diseaseIds"]
+            ]
 
         # Normalize common aliases before resolution
         if "ensemblId" not in arguments and "gene_symbol" not in arguments:
