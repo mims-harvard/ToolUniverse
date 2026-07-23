@@ -551,7 +551,7 @@
   {
     "type": "HPAGetProteinInteractionsTool",
     "name": "HPA_get_protein_interactions_by_gene",
-    "description": "Fetch known protein-protein interaction partners for a given gene from Human Protein Atlas database.",
+    "description": "DEPRECATED / non-functional: the Human Protein Atlas search API no longer exposes protein-protein interaction (ppi) data, so this tool returns an error. For PPI partners use STRING_get_interactions (by gene symbol) or EBIProteins_get_interactions (by UniProt accession) instead.",
     "fields": {
       "endpoint": "https://www.proteinatlas.org/api/search_download.php",
       "timeout": 30,
