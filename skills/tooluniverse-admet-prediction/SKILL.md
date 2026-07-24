@@ -27,6 +27,26 @@ Comprehensive pharmacokinetic and toxicity profiling integrating AI-based ADMET 
 
 **Input**: Drug name (e.g., "ibuprofen") OR SMILES string (e.g., "CC(C)Cc1ccc(cc1)C(C)C(=O)O")
 
+## Before You Run
+
+ADMETAI tools run a local model, so they need the `ml` extra:
+
+```bash
+uv pip install 'tooluniverse[ml]'
+```
+
+Without it the tools still appear in `tu list` (the config loads) but fail at
+call time with `ADMETModel requires 'admet-ai' package`. Run
+`tooluniverse-doctor` to confirm which optional groups are installed.
+
+**Expected console noise — not errors.** The first ADMETAI call loads PyTorch
+and prints warnings such as missing-GPU / `Trainer` messages from
+PyTorch Lightning, and `TypedStorage is deprecated` from PyTorch. These are
+emitted by the underlying libraries during normal CPU inference. Predictions
+are unaffected — do not report them to the user as failures and do not retry
+the call because of them. Only treat output as a failure if the tool returns an
+`error` field or no predictions.
+
 ---
 
 ## COMPUTE, DON'T DESCRIBE

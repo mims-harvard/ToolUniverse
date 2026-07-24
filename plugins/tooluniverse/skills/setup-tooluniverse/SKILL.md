@@ -63,7 +63,7 @@ Make sure Step 2 is done, then try:
 uvx --from tooluniverse tu status              # How many tools?
 uvx --from tooluniverse tu find 'drug safety'  # Search by topic
 uvx --from tooluniverse tu info FAERS_count_death_related_by_drug  # See params
-uvx --from tooluniverse tu run FAERS_count_death_related_by_drug '{"drug_name": "metformin"}'
+uvx --from tooluniverse tu run FAERS_count_death_related_by_drug '{"medicinalproduct": "metformin"}'
 ```
 
 First run takes ~30s (downloads package), then instant. **Shortcut**: `uv tool install tooluniverse` → then just use `tu` directly.
@@ -88,11 +88,29 @@ Continue to **Step 3** (API Keys).
 
 ## SDK Setup
 
-Make sure Step 2 is done. For detailed patterns, invoke the `tooluniverse-sdk` skill.
+> **Install `uv` first (Step 2). Do not use system `pip`.** On a current Mac
+> (Homebrew Python 3.13/3.14) `pip install tooluniverse` stops with
+> `error: externally-managed-environment` (PEP 668), and `python3 -m venv` can
+> fail at `ensurepip`. `uv` avoids both because it downloads and manages its own
+> Python.
 
 ```bash
+uv venv --python 3.12          # own Python + virtualenv, ignores system pip
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
 uv pip install tooluniverse
 ```
+
+`uv pip install` needs an active virtualenv — run `uv venv` first, or use
+`uv tool install tooluniverse` if you only want the `tu` command.
+
+For detailed patterns, invoke the `tooluniverse-sdk` skill.
+
+**Optional extras**: the base install covers API/database tools. Local ML,
+cheminformatics, and plotting tools need extras — `uv pip install
+'tooluniverse[ml]'`, `[visualization]`, `[bioinformatics]`, or `[all]`.
+Run `tooluniverse-doctor` to see which groups you are missing.
+Note `[all]` does **not** include `singlecell`, `smolagents`, `client`, or
+`build`; install those separately.
 
 ### Coding API — 3 calling patterns
 
@@ -125,9 +143,33 @@ Continue to **Step 3** (API Keys).
 
 ## MCP Setup (Chat Mode)
 
-Make sure Step 2 is done (`uv --version` works).
+**Offer the two low-effort paths first.** Editing JSON by hand is the fallback,
+not the recommendation — a mistyped comma is the single most common setup
+failure. Only walk through the manual path if neither option below fits.
 
-### Add ToolUniverse to your app's config
+**Path A — let an AI agent do it.** If the user already has any agent (Claude,
+Cursor, Copilot, Gemini, Codex...), they can paste this into it:
+
+```
+Read https://aiscientist.tools/setup.md and set up ToolUniverse for me.
+```
+
+The agent handles config, keys, skills, and validation. No terminal, no JSON.
+
+**Path B — Claude Code users: one-liner, no config file at all.**
+
+```bash
+claude plugin marketplace add mims-harvard/ToolUniverse
+claude plugin install tooluniverse@tooluniverse
+```
+
+Installs MCP server + 115 skills + slash commands in one step. Then see the
+`tooluniverse-claude-code-plugin` skill's "Recommended: turn on auto-update"
+step so future releases apply without manual `claude plugin update`.
+
+### Manual config (fallback)
+
+Make sure Step 2 is done (`uv --version` works).
 
 **Config file help** (if user seems unfamiliar): Config files are plain text that store settings — like a preference list for the app. You don't need to understand the format; just paste exactly what's shown below. Most apps have a Settings button that opens the file for you (see table). If the file is empty, paste the entire block. If it already has content, the agent should help merge it.
 
@@ -144,14 +186,23 @@ Make sure Step 2 is done (`uv --version` works).
 }
 ```
 
-**Config file locations:**
-
-> **Claude Code users**: skip manual MCP config — use the plugin instead. Invoke the `tooluniverse-claude-code-plugin` skill or run:
+> **Paste safely.** Copy the block whole — do not retype it. If the file already
+> has an `mcpServers` block, add only the `"tooluniverse": { ... }` entry inside
+> it and put a comma after the previous entry. If the file was empty, paste the
+> whole block. Then validate before restarting the app:
 > ```bash
-> claude plugin marketplace add mims-harvard/ToolUniverse
-> claude plugin install tooluniverse@tooluniverse
+> python3 -m json.tool < "<path-to-config>" > /dev/null && echo "JSON OK"
 > ```
-> This installs MCP server + 115 skills + slash commands in one step. Then see the `tooluniverse-claude-code-plugin` skill's "Recommended: turn on auto-update" step so future releases apply without manual `claude plugin update`.
+> A trailing comma after the last entry, or a missing one between entries, is
+> the usual cause of "MCP server won't start".
+
+**`args` — `["tooluniverse"]` vs `["--refresh", "tooluniverse"]`**: plain is the
+default and starts fast from `uv`'s cache, but can stay on a cached older
+release until you run `uv cache clean tooluniverse`. Adding `--refresh` checks
+PyPI for the newest version on every launch — always current, a few seconds
+slower to start. Use plain unless the user specifically wants auto-updates.
+
+**Config file locations:**
 
 | Client | File | How to Access |
 |--------|------|---------------|
@@ -297,7 +348,7 @@ Skills activate automatically based on user's question. Try: "Research the drug 
 > tu info PubMed_search_articles  # Check parameters
 > tu run PubMed_search_articles '{"query": "CRISPR cancer", "max_results": 3}'
 > tu run UniProt_get_entry_by_accession '{"accession": "P12345"}'
-> tu run FAERS_count_death_related_by_drug '{"drug_name": "metformin"}'
+> tu run FAERS_count_death_related_by_drug '{"medicinalproduct": "metformin"}'
 > ```
 
 ## Write Agent Memory
@@ -347,13 +398,25 @@ NVIDIA_API_KEY=your_shared_key
 
 | Issue | Fix |
 |-------|-----|
+| `error: externally-managed-environment` (PEP 668) | System `pip` refuses to install. Use `uv` — `uv venv --python 3.12 && source .venv/bin/activate && uv pip install tooluniverse`. Never `sudo pip` or `--break-system-packages`. |
+| `python3 -m venv` fails at `ensurepip` | Homebrew Python (3.13/3.14) is missing a working `ensurepip`. Use `uv venv --python 3.12` — `uv` supplies its own Python. |
+| `uv pip install` → "No virtual environment found" | Run `uv venv` first, or use `uv tool install tooluniverse` for just the `tu` command. |
 | `requires-python >= 3.10` | `uv python install 3.12` |
 | `uvx: command not found` | Run install script from Step 2, restart terminal |
 | Context window overflow | Verify using `uvx tooluniverse` (compact mode is default) |
-| `ModuleNotFoundError` | `uv pip install tooluniverse[all]` |
-| MCP server won't start | Test: `uvx tooluniverse` in terminal. Check JSON syntax. |
+| `ModuleNotFoundError` at tool runtime | An optional extra is missing. Run `tooluniverse-doctor` to see which group, then `uv pip install 'tooluniverse[ml]'` (or `[visualization]`, `[bioinformatics]`, `[all]`). |
+| Tools listed but fail when run | Normal for extras-backed tools — `tu status` counts loaded configs, not installed dependencies. `tooluniverse-doctor` reports which groups are missing. |
+| MCP server won't start | Test: `uvx tooluniverse` in terminal. Validate config with `python3 -m json.tool < <config>`. |
 | API key 401/403 | Check key in `env` block, restart app, verify key name |
 | Upgrade needed | `uv cache clean tooluniverse` then restart app |
+
+**Health check**: `tooluniverse-doctor` reports tools that failed to load *and*
+which optional dependency groups are not installed. Use it first whenever a tool
+errors unexpectedly.
+
+**`[all]` is not everything**: it covers `dev, docs, graph, visualization,
+space, embedding, ml, bioinformatics`. `singlecell`, `smolagents`, `client`,
+and `build` must be installed by name.
 
 Still stuck? [GitHub issues](https://github.com/mims-harvard/ToolUniverse/issues) or email [Shanghua Gao](mailto:shanghuagao@gmail.com).
 

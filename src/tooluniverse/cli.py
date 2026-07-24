@@ -635,6 +635,19 @@ def _render_status(d: dict) -> str:
         lines.append("\ntop categories:")
         for cat, cnt in top.items():
             lines.append(f"  {cat:<20} {cnt}")
+    # "tools loaded" counts registered configs, not runnable tools. Flag any
+    # optional dependency group that is missing so a partial install is visible.
+    gaps = d.get("missing_extras") or {}
+    if gaps:
+        lines.append(
+            f"\noptional deps:   {len(gaps)} group(s) not installed "
+            "(tools needing them will fail at runtime)"
+        )
+        for extra, packages in gaps.items():
+            lines.append(
+                f"  [{extra}]{'':<{max(0, 14 - len(extra))}} missing: {', '.join(packages)}"
+            )
+        lines.append("  run `tooluniverse-doctor` for details")
     return "\n".join(lines)
 
 
@@ -1289,6 +1302,9 @@ def cmd_status(args: argparse.Namespace) -> None:
             cat = _get_tool_category(tool, tool_name, tu)
             category_counts[cat] = category_counts.get(cat, 0) + 1
         gated_count = _count_gated_tools(tu)
+        from tooluniverse.extras import runtime_readiness
+
+        readiness = runtime_readiness(tu.all_tools)
     status = {
         "total_tools": len(tu.all_tools),
         "categories": len(category_counts),
@@ -1299,6 +1315,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         ),
         "version": _TU_VERSION,
         "gated_tools_count": gated_count,
+        "missing_extras": readiness["missing_extras"],
     }
     _print_result(status, args, _render_status)
 
