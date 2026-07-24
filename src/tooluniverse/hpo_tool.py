@@ -306,18 +306,29 @@ class HPOTool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        max_results = arguments.get("max_results", 10)
-        if max_results > 50:
-            max_results = 50
+        # Coerce max_results robustly: the schema allows integer|null, so a
+        # caller may omit it, pass null, or pass an out-of-range value. Using
+        # the raw value directly would crash on None (None > 50) and let
+        # negatives/zero through.
+        try:
+            max_results = int(arguments.get("max_results") or 10)
+        except (TypeError, ValueError):
+            max_results = 10
+        max_results = max(1, min(max_results, 50))
 
         url = f"{HPO_BASE_URL}/search"
-        params = {"q": query, "max": max_results}
+        # The JAX ontology search endpoint sizes the page with `limit`. The
+        # previous `max` key was silently ignored, capping every result set at
+        # the API default of 10 regardless of the requested count.
+        params = {"q": query, "limit": max_results}
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
-        terms = data.get("terms", [])
+        # Defensive truncation in case an upstream change ever returns more
+        # rows than requested.
+        terms = data.get("terms", [])[:max_results]
         results = []
         for term in terms:
             results.append(
@@ -337,6 +348,10 @@ class HPOTool(BaseTool):
                 "source": "HPO (JAX Ontology)",
                 "query": query,
                 "total_results": len(results),
+                # Total matches available across all pages (the API reports this
+                # as `totalCount`), so callers can see more terms exist beyond
+                # the returned page instead of assuming this page is exhaustive.
+                "total_available": data.get("totalCount", len(results)),
             },
         }
 
