@@ -40,6 +40,13 @@ dependencies = [
     "aiohttp",
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
+    # markitdown[all] (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
+    # azure-ai-documentintelligence). The [all] marker is deliberate: the
+    # convert_to_markdown tool takes an arbitrary http/https/file/data URI with no
+    # format allowlist, so every converter dropped here becomes a silent runtime
+    # failure for that input type. markitdown is also imported unconditionally at
+    # module scope by unified_guideline_tools.py, so it cannot move to an extra
+    # without guarding that import. Narrow only alongside those two changes.
     "markitdown[all]>=0.1.0",
     "psutil>=5.9.0",
     "ddgs>=9.0.0",
