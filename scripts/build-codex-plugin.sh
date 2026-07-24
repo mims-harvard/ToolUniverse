@@ -3,11 +3,14 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PLUGIN_SRC="$REPO_ROOT/plugins/tooluniverse"
-DIST_DIR="$REPO_ROOT/dist/tooluniverse-codex-plugin"
+# Both destinations can be redirected so tests (and dry runs) can build the
+# plugin into a temp tree without regenerating tracked files in place.
+SKILLS_DEST="${CODEX_PLUGIN_SKILLS_DEST:-$PLUGIN_SRC/skills}"
+DIST_DIR="${CODEX_PLUGIN_DIST:-$REPO_ROOT/dist/tooluniverse-codex-plugin}"
 
 echo "Building ToolUniverse Codex plugin..."
 
-"$REPO_ROOT/scripts/sync-codex-plugin-skills.sh"
+CODEX_PLUGIN_SKILLS_DEST="$SKILLS_DEST" "$REPO_ROOT/scripts/sync-codex-plugin-skills.sh"
 
 rm -rf "$DIST_DIR"
 mkdir -p "$DIST_DIR"
@@ -19,7 +22,7 @@ echo "  [+] Codex plugin manifest"
 cp "$PLUGIN_SRC/.mcp.json" "$DIST_DIR/"
 echo "  [+] MCP server config"
 
-cp -r "$PLUGIN_SRC/skills" "$DIST_DIR/"
+cp -r "$SKILLS_DEST" "$DIST_DIR/skills"
 echo "  [+] Skills"
 
 cp "$PLUGIN_SRC/README.md" "$DIST_DIR/"
