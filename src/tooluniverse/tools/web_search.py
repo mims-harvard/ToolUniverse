@@ -1,7 +1,7 @@
 """
 web_search
 
-General web search using Parallel Search MCP or DDGS backends including Google, Bing, Brave, Yaho...
+General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines ...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def web_search(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    General web search using Parallel Search MCP or DDGS backends including Google, Bing, Brave, Yaho...
+    General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines ...
 
     Parameters
     ----------

@@ -2,7 +2,7 @@
   {
     "type": "WebSearchTool",
     "name": "web_search",
-    "description": "General web search using Parallel Search MCP or DDGS backends including Google, Bing, Brave, Yahoo, and DuckDuckGo. No API keys required.",
+    "description": "General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines including Google, Bing, Brave, Yahoo, and DuckDuckGo. No API keys required. Parallel Search MCP is available as an optional backend.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -177,7 +177,7 @@
   {
     "type": "WebAPIDocumentationSearchTool",
     "name": "web_api_documentation_search",
-    "description": "Specialized web search for API documentation, Python packages, and technical resources using Parallel Search MCP or DDGS backends. Optimized for finding official documentation and library information.",
+    "description": "Specialized web search for API documentation, Python packages, and technical resources using DDGS with multiple search engines. Optimized for finding official documentation and library information. Parallel Search MCP is available as an optional backend.",
     "parameter": {
       "type": "object",
       "properties": {
