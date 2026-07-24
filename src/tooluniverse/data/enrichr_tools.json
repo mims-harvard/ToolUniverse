@@ -19,7 +19,7 @@
           "items": {
             "type": "string"
           },
-          "description": "List of enrichment libraries to use for analysis.",
+          "description": "List of Enrichr enrichment libraries to query (e.g. 'KEGG_2021_Human', 'GO_Biological_Process_2023'). Omitting this or passing an empty list uses a broad default set of pathway/ontology libraries.",
           "default": [
             "WikiPathways_2024_Human",
             "Reactome_Pathways_2024",
@@ -40,11 +40,26 @@
           "BRCA1",
           "EGFR"
         ],
-        "libs": []
+        "libs": [
+          "KEGG_2021_Human"
+        ]
       }
     ],
     "return_schema": {
-      "type": "string"
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "connected_paths": {
+          "type": "object",
+          "description": "Ranked weighted paths between the first two genes routed through shared enrichment terms."
+        },
+        "connections": {
+          "type": "object",
+          "description": "Per gene-to-term connectivity paths found in the enrichment graph."
+        }
+      }
     }
   }
 ]
