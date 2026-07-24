@@ -24,14 +24,31 @@ Understanding the differences between local and remote tools helps you choose th
 
 **Key Differences:**
 
-| Aspect | Local Tools | Remote Tools |
-|--------|-------------|--------------|
-| **Performance** | High (no network overhead) | Lower (network latency) |
-| **Development** | Simple Python classes | MCP servers or API wrappers |
-| **Deployment** | Part of ToolUniverse | Independent servers |
-| **Scalability** | Limited by process | Highly scalable |
-| **Integration** | Full ToolUniverse access | Limited to MCP/API |
-| **Contribution** | Requires ``__init__.py`` changes | No code changes needed |
+.. list-table::
+   :header-rows: 1
+   :widths: 22 39 39
+
+   * - Aspect
+     - Local Tools
+     - Remote Tools
+   * - **Performance**
+     - High (no network overhead)
+     - Lower (network latency)
+   * - **Development**
+     - Simple Python classes
+     - MCP servers or API wrappers
+   * - **Deployment**
+     - Part of ToolUniverse
+     - Independent servers
+   * - **Scalability**
+     - Limited by process
+     - Highly scalable
+   * - **Integration**
+     - Full ToolUniverse access
+     - Limited to MCP/API
+   * - **Contribution**
+     - Requires ``__init__.py`` changes
+     - No code changes needed
 
 **When to Use Local Tools:**
 - Data processing and analysis
@@ -46,7 +63,7 @@ Understanding the differences between local and remote tools helps you choose th
 - Tools in different programming languages
 
 Architecture Details
--------------------
+--------------------
 
 **ToolUniverse Core Components:**
 - **Tool Registry**: Manages tool discovery and registration

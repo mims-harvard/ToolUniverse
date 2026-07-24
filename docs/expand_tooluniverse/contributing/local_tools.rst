@@ -82,6 +82,23 @@ Step 3: Register Tool
 
 The ``@register_tool('MyNewTool')`` decorator registers your tool class. Note that for contributions, we don't include the config in the decorator - that goes in a separate JSON file.
 
+.. important::
+
+   There are two different registration paths:
+
+   - **Contributing to ToolUniverse**: put the class under
+     ``src/tooluniverse/`` and put the JSON spec under
+     ``src/tooluniverse/data/``. The package discovery system can find the
+     decorated class from the ToolUniverse package tree.
+   - **Local experiment outside the package tree**: either import the Python
+     file before calling ``load_tools()``, or include the full config in
+     ``@register_tool(..., config={...})`` as shown in
+     :doc:`../local_tools/local_tools_tutorial`.
+
+   Passing only ``tool_config_files`` loads the JSON specification; it does not
+   import an arbitrary Python file from your current directory. If your class is
+   outside ``src/tooluniverse/``, import that module first so the decorator runs.
+
 Step 4: Create Configuration File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -117,7 +134,7 @@ Create or edit ``src/tooluniverse/data/xxx_tools.json``:
    ]
 
 Step 5: No Modifications Needed in __init__.py!
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With the new automated discovery system, **you do NOT need to modify `src/tooluniverse/__init__.py`**. 
 
@@ -163,6 +180,7 @@ Create tests in ``tests/unit/test_my_new_tool.py``:
            assert result["result"] == ""
 
 Run tests with coverage:
+
 .. code-block:: bash
 
    pytest tests/unit/test_my_new_tool.py --cov=tooluniverse --cov-report=html
@@ -205,7 +223,6 @@ Add comprehensive docstrings to your tool class:
            >>> print(result["result"])
            HELLO
        """
-```
 
 Step 9: Create Examples
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -269,9 +286,11 @@ Create ``examples/my_new_tool/my_new_tool_example.py``:
    if __name__ == "__main__":
        main()
 
-**Note**: A complete working example can be found in ``examples/my_new_tool/`` directory,
-which includes both the multi-file structure (for contributions) and a single-file
-example (for local development). See ``examples/my_new_tool/README.md`` for details.
+**Note**: A complete working example can be found in the
+``examples/my_new_tool/`` directory. That example imports the tool module before
+loading its JSON file because the example tool lives outside the installed
+``tooluniverse`` package tree. It also includes a single-file local-development
+example. See ``examples/my_new_tool/README.md`` for details.
 
 Step 10: Submit Pull Request
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -302,6 +321,7 @@ Step 10: Submit Pull Request
    git push origin feature/add-my-new-tool
 
 **PR Template:**
+
 .. code-block:: markdown
 
    ## Description

@@ -1,0 +1,182 @@
+[
+  {
+    "name": "Cellpose_segment_image",
+    "description": "Segment cells or nuclei in a single microscopy image LOCALLY using the deep-learning Cellpose model (no API, no key). Given a local image file path, returns the number of segmented objects, per-object area (pixels) and centroid (y,x), the image shape, and optionally the path to a saved integer label-mask image. Choose 'model_type' = 'cyto3'/'cyto'/'cyto2' for whole-cell/cytoplasm segmentation or 'nuclei' for nuclei. NOTE: cellpose 3.x honors 'model_type'; cellpose 4.x uses a single unified model (CPSAM) and ignores 'model_type' (the 'model_used' field and a 'note' report what actually ran). Requires the optional 'cellpose' package (pip install cellpose; pulls in torch). On first use cellpose downloads model weights (small in 3.x, ~1 GB CPSAM in 4.x) and caches them, so the first call is slow; later calls reuse cached weights. Returns a clean error if cellpose is not installed or the image cannot be read.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "image_path": {
+          "type": "string",
+          "description": "Path to a local microscopy image file (.tif, .tiff, .png, .jpg, .jpeg, .bmp)."
+        },
+        "model_type": {
+          "type": "string",
+          "description": "Cellpose model to use. 'cyto3'/'cyto'/'cyto2' for cells/cytoplasm, 'nuclei' for nuclei. Honored on cellpose 3.x; ignored by the unified model on 4.x. Default 'cyto3'.",
+          "enum": [
+            "cyto3",
+            "cyto2",
+            "cyto",
+            "nuclei"
+          ]
+        },
+        "diameter": {
+          "type": "number",
+          "description": "Expected object diameter in pixels. Omit or 0 to let cellpose estimate it automatically."
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Two-element [cytoplasm, nucleus] channel spec. Use [0,0] for a grayscale image (default). Used by cellpose 3.x; 4.x infers channels.",
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "save_mask": {
+          "type": "boolean",
+          "description": "If true, save the integer label mask as a 16-bit PNG and return its path. Default false."
+        },
+        "mask_output_path": {
+          "type": "string",
+          "description": "Where to write the mask when save_mask is true. Defaults to '<image_path>_cp_masks.png'."
+        }
+      },
+      "required": [
+        "image_path"
+      ]
+    },
+    "type": "CellposeTool",
+    "requires_local_input": true,
+    "required_packages": [
+      "cellpose"
+    ],
+    "test_examples": [
+      {
+        "image_path": "/path/to/microscopy/cells.tif",
+        "model_type": "cyto3",
+        "channels": [
+          0,
+          0
+        ]
+      },
+      {
+        "image_path": "/path/to/microscopy/nuclei.png",
+        "model_type": "nuclei",
+        "diameter": 30,
+        "save_mask": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Successful segmentation. Mirrors the content of the 'data' field returned by the tool.",
+              "properties": {
+                "image_path": {
+                  "type": "string",
+                  "description": "The input image path that was segmented."
+                },
+                "model_type_requested": {
+                  "type": "string",
+                  "description": "The model_type the caller asked for."
+                },
+                "model_used": {
+                  "type": "string",
+                  "description": "Identifier of the cellpose model that actually produced the segmentation."
+                },
+                "num_objects": {
+                  "type": "integer",
+                  "description": "Number of segmented cells/nuclei (distinct nonzero labels in the mask)."
+                },
+                "image_shape": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "description": "Shape of the output label mask, e.g. [height, width]."
+                },
+                "objects": {
+                  "type": "array",
+                  "description": "One entry per segmented object.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "integer",
+                        "description": "Integer label of this object in the mask."
+                      },
+                      "area": {
+                        "type": "integer",
+                        "description": "Object area in pixels."
+                      },
+                      "centroid_y": {
+                        "type": "number",
+                        "description": "Centroid row (y) coordinate in pixels."
+                      },
+                      "centroid_x": {
+                        "type": "number",
+                        "description": "Centroid column (x) coordinate in pixels."
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "area",
+                      "centroid_y",
+                      "centroid_x"
+                    ]
+                  }
+                },
+                "mask_path": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path to the saved label-mask image, or null if save_mask was false."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Present when the cellpose build ignored model_type (unified-model builds)."
+                },
+                "mask_save_error": {
+                  "type": "string",
+                  "description": "Present only if saving the mask failed (segmentation still succeeded)."
+                }
+              },
+              "required": [
+                "image_path",
+                "model_type_requested",
+                "model_used",
+                "num_objects",
+                "image_shape",
+                "objects"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response (e.g. cellpose not installed, missing/unreadable image, segmentation failure).",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message."
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

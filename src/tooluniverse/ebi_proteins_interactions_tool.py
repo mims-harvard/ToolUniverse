@@ -75,7 +75,7 @@ class EBIProteinsInteractionsTool(BaseTool):
                 "status": "error",
                 "error": "accession is required (e.g., 'P04637').",
             }
-        limit = int(arguments.get("limit", 25))
+        limit = int(arguments.get("limit", 50))
 
         url = f"{EBI_PROTEINS_BASE_URL}/proteins/interaction/{accession}"
         response = requests.get(

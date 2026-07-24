@@ -283,9 +283,17 @@
             "orpha_code": {
               "type": "string"
             },
-            "classification": {
+            "parent": {
+              "type": ["object", "null"],
+              "description": "Preferential parent disease/category in the rare disease taxonomy tree, or null if this is a top-level category."
+            },
+            "children": {
+              "type": "array",
+              "description": "Child diseases/categories in the rare disease taxonomy tree. Empty for leaf diseases."
+            },
+            "member_of_classifications": {
               "type": "object",
-              "description": "Hierarchical classification"
+              "description": "Which named Orphanet classification systems (e.g. 'Orphanet classification of rare respiratory diseases') this disease is filed under. This is classification-system MEMBERSHIP, not the parent/child taxonomy tree -- see parent/children for that."
             }
           }
         }

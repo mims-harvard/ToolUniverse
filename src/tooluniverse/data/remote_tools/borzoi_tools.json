@@ -1,0 +1,73 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_borzoi_predict",
+    "description": "Predict multi-omic coverage (~7,611 human tracks, RNA-seq-dominant, plus CAGE/ATAC/DNase/ChIP) directly from a DNA sequence using Borzoi (Linder 2025), the successor to Enformer. The sequence is center-cropped / N-padded to 524,288 bp. Returns the central-bin value for requested tracks, or the top-signal tracks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {"type": "string", "description": "DNA sequence (A/C/G/T/N). Cropped/padded to 524,288 bp around its center."},
+        "track_indices": {"type": "array", "items": {"type": "integer"}, "description": "Track indices to report (optional). If omitted, the top-signal tracks are returned."},
+        "top_n": {"type": "integer", "description": "When track_indices is omitted, how many top tracks to return (default 20)."}
+      },
+      "required": ["sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "organism": {"type": "string"},
+        "n_tracks": {"type": "integer"},
+        "n_bins": {"type": "integer"},
+        "bin_size_bp": {"type": "integer"},
+        "tracks": {"type": "array", "items": {"type": "object"}, "description": "Per-track central-bin predicted coverage."},
+        "error": {"type": "string"}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "BorzoiPredictTool",
+      "url": "https://github.com/johahi/borzoi-pytorch",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/borzoi",
+      "mcp_tool_name": "run_borzoi_predict"
+    },
+    "test_examples": [
+      {"sequence": "ACGTACGTACGTACGTACGTGGGCCCAAATTTACGTACGTACGT", "top_n": 10}
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "run_borzoi_variant_effect",
+    "description": "Score a variant with Borzoi: predicts coverage for the reference and alternate sequences (each 524,288 bp, variant at center) and returns the central-bin delta (alt - ref) per track — the canonical Borzoi expression/coverage variant-effect score, well suited to RNA-seq and splicing-proximal variants.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ref_sequence": {"type": "string", "description": "Reference DNA sequence centered on the variant (cropped/padded to 524,288 bp)."},
+        "alt_sequence": {"type": "string", "description": "Alternate DNA sequence (same length/centering as ref)."},
+        "track_indices": {"type": "array", "items": {"type": "integer"}, "description": "Track indices to report (optional; default = top |delta| tracks)."},
+        "top_n": {"type": "integer", "description": "When track_indices omitted, number of top |delta| tracks to return (default 20)."}
+      },
+      "required": ["ref_sequence", "alt_sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "organism": {"type": "string"},
+        "n_tracks": {"type": "integer"},
+        "tracks": {"type": "array", "items": {"type": "object"}, "description": "Per-track central-bin alt-ref coverage delta."},
+        "error": {"type": "string"}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "BorzoiVariantEffectTool",
+      "url": "https://github.com/johahi/borzoi-pytorch",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/borzoi",
+      "mcp_tool_name": "run_borzoi_variant_effect"
+    },
+    "test_examples": [
+      {"ref_sequence": "ACGTACGTACGTACGTACGTGGGCCCAAATTTACGTACGTACGT", "alt_sequence": "ACGTACGTACGTACGTACGTGGGCCCAAGTTTACGTACGTACGT", "top_n": 10}
+    ]
+  }
+]

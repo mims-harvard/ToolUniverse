@@ -1,7 +1,7 @@
 Contributing to ToolUniverse
 ============================
 
-We welcome contributions to ToolUniverse! 
+We welcome contributions to ToolUniverse!
 
 Getting Started
 ---------------
@@ -14,21 +14,21 @@ Development Setup
 
 .. code-block:: bash
 
-   git clone https://github.com/yourusername/TxAgent.git
-   cd TxAgent/bio/ToolUniverse
+   git clone https://github.com/yourusername/ToolUniverse.git
+   cd ToolUniverse
 
 3. Create a virtual environment:
 
 .. code-block:: bash
 
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 4. Install in development mode:
 
 .. code-block:: bash
 
-   pip install -e ".[dev]"
+   python -m pip install -e ".[dev]"
 
 5. Install pre-commit hooks:
 
@@ -44,11 +44,11 @@ Development Setup
 .. code-block:: bash
 
    # Install pre-commit if not already installed
-   pip install pre-commit
-   
+   python -m pip install pre-commit
+
    # Install hooks
    pre-commit install
-   
+
    # Update to latest versions
    pre-commit autoupdate
 
@@ -58,9 +58,7 @@ Development Dependencies
 The development setup includes:
 
 - ``pytest`` - Testing framework
-- ``black`` - Code formatting
-- ``flake8`` - Code linting
-- ``mypy`` - Type checking
+- ``ruff`` - Code formatting and linting
 - ``sphinx`` - Documentation
 - ``pre-commit`` - Git hooks
 
@@ -70,24 +68,24 @@ Code Standards
 Code Style
 ~~~~~~~~~~
 
-We use Black for code formatting and follow PEP 8:
+We use Ruff for code formatting and linting:
 
 .. code-block:: bash
 
    # Format code
-   black src/tooluniverse/
+   ruff format src/tooluniverse/ tests/
 
    # Check formatting
-   black --check src/tooluniverse/
+   ruff format --check src/tooluniverse/ tests/
 
 Linting
 ~~~~~~~
 
-Use flake8 for linting:
+Use Ruff for linting:
 
 .. code-block:: bash
 
-   flake8 src/tooluniverse/
+   ruff check src/tooluniverse/ tests/
 
 Type Hints
 ~~~~~~~~~~
@@ -115,14 +113,17 @@ Run the test suite:
 
 .. code-block:: bash
 
-   # Run all tests
+   # Run the default fast test suite
    pytest
 
    # Run with coverage
    pytest --cov=tooluniverse
 
    # Run specific test file
-   pytest tests/test_graphql_tool.py
+   pytest tests/unit/test_tooluniverse_core_methods.py
+
+   # Run integration tests when needed
+   pytest tests/integration
 
 Writing Tests
 ~~~~~~~~~~~~~
@@ -257,7 +258,7 @@ Use conventional commit messages:
 
 .. code-block:: bash
 
-   git add .
+   git add src/tooluniverse/specific_file.py tests/unit/specific_test.py
    git commit -m "feat: add new drug interaction tool
 
    - Implement DrugInteractionTool class
@@ -423,7 +424,7 @@ Test against multiple data sources:
 
    # Test against staging API
    export OPENTARGETS_BASE_URL=https://staging-api.opentargets.org
-   pytest tests/test_graphql_tool.py
+   pytest tests/integration
 
 Performance Testing
 ~~~~~~~~~~~~~~~~~~~
@@ -454,4 +455,4 @@ Contributors are recognized in:
 - Documentation acknowledgments
 - Annual contributor highlights
 
-Thank you for contributing to ToolUniverse! 
+Thank you for contributing to ToolUniverse!

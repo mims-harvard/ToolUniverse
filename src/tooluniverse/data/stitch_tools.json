@@ -1,221 +1,303 @@
 [
-    {
-        "name": "STITCH_get_chemical_protein_interactions",
-        "description": "Get chemical-protein interactions from STITCH. Returns known and predicted interactions between chemicals and proteins with confidence scores.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "identifiers": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Chemical names, drug names, or STITCH IDs (e.g., ['aspirin', 'ibuprofen'] or ['CIDm00002244']). Alias: 'chemical'."
-                },
-                "chemical": {
-                    "type": "string",
-                    "description": "Single chemical name or STITCH ID (alias for identifiers, e.g., 'aspirin' or 'CIDm00002244')."
-                },
-                "species": {
-                    "type": "integer",
-                    "description": "NCBI taxonomy ID (9606 for human, 10090 for mouse).",
-                    "default": 9606
-                },
-                "required_score": {
-                    "type": "integer",
-                    "description": "Minimum confidence score (0-1000). 400=medium, 700=high, 900=highest.",
-                    "default": 400
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "Maximum number of interaction partners per query.",
-                    "default": 10
-                }
-            }
+  {
+    "name": "STITCH_get_chemical_protein_interactions",
+    "description": "Get chemical-protein interactions from STITCH. Returns known and predicted interactions between chemicals and proteins with confidence scores.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Chemical names, drug names, or STITCH IDs (e.g., ['aspirin', 'ibuprofen'] or ['CIDm00002244']). Alias: 'chemical'."
         },
-        "fields": {
-            "operation": "get_interactions"
+        "chemical": {
+          "type": "string",
+          "description": "Single chemical name or STITCH ID (alias for identifiers, e.g., 'aspirin' or 'CIDm00002244')."
         },
-        "type": "STITCHTool",
-        "test_examples": [
-            {
-                "identifiers": [
-                    "aspirin"
-                ]
-            },
-            {
-                "identifiers": [
-                    "metformin"
-                ],
-                "required_score": 700,
-                "limit": 5
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "stringId_A": {"type": "string", "description": "STITCH ID of first entity"},
-                                    "stringId_B": {"type": "string", "description": "STITCH ID of second entity"},
-                                    "preferredName_A": {"type": "string"},
-                                    "preferredName_B": {"type": "string"},
-                                    "score": {"type": "number", "description": "Combined confidence score (0-1)"}
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    }
-                }
-            ]
+        "species": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID (9606 for human, 10090 for mouse).",
+          "default": 9606
+        },
+        "required_score": {
+          "type": "integer",
+          "description": "Minimum confidence score (0-1000). 400=medium, 700=high, 900=highest.",
+          "default": 400
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interaction partners per query.",
+          "default": 10
         }
+      }
     },
-    {
-        "name": "STITCH_get_interaction_partners",
-        "description": "Get all interaction partners (chemicals and proteins) for a given identifier. Returns network of related molecules.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "identifiers": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Chemical or protein identifiers to query."
-                },
-                "species": {
-                    "type": "integer",
-                    "description": "NCBI taxonomy ID.",
-                    "default": 9606
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "Maximum number of partners.",
-                    "default": 10
-                }
-            },
-            "required": [
-                "identifiers"
-            ]
-        },
-        "fields": {
-            "operation": "get_interactors"
-        },
-        "type": "STITCHTool",
-        "test_examples": [
-            {
-                "identifiers": [
-                    "TP53"
-                ]
-            },
-            {
-                "identifiers": [
-                    "EGFR",
-                    "ERBB2"
-                ]
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "stringId": {"type": "string"},
-                                    "preferredName": {"type": "string"},
-                                    "annotation": {"type": "string"}
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    }
-                }
-            ]
-        }
+    "fields": {
+      "operation": "get_interactions"
     },
-    {
-        "name": "STITCH_resolve_identifier",
-        "description": "Resolve a chemical or protein name to STITCH database identifiers. Useful for mapping common names to database IDs.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "identifier": {
-                    "type": "string",
-                    "description": "Chemical or protein name to resolve (e.g., 'aspirin', 'TP53')."
-                },
-                "species": {
-                    "type": "integer",
-                    "description": "NCBI taxonomy ID.",
-                    "default": 9606
-                }
-            },
-            "required": [
-                "identifier"
-            ]
-        },
-        "fields": {
-            "operation": "resolve"
-        },
-        "type": "STITCHTool",
-        "test_examples": [
-            {
-                "identifier": "aspirin"
-            },
-            {
-                "identifier": "metformin"
-            }
+    "type": "STITCHTool",
+    "test_examples": [
+      {
+        "identifiers": [
+          "aspirin"
+        ]
+      },
+      {
+        "identifiers": [
+          "metformin"
         ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "stringId": {"type": "string", "description": "STITCH identifier"},
-                                    "preferredName": {"type": "string"},
-                                    "taxonId": {"type": "integer"},
-                                    "annotation": {"type": "string"}
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    }
+        "required_score": 700,
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stringId_A": {
+                    "type": "string",
+                    "description": "STITCH ID of first entity"
+                  },
+                  "stringId_B": {
+                    "type": "string",
+                    "description": "STITCH ID of second entity"
+                  },
+                  "preferredName_A": {
+                    "type": "string"
+                  },
+                  "preferredName_B": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "number",
+                    "description": "Combined confidence score (0-1)"
+                  }
                 }
-            ]
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
     }
+  },
+  {
+    "name": "STITCH_get_interaction_partners",
+    "description": "Get all interaction partners (chemicals and proteins) for a given identifier. Returns network of related molecules.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Chemical or protein identifiers to query."
+        },
+        "species": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID.",
+          "default": 9606
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of partners.",
+          "default": 10
+        }
+      },
+      "required": [
+        "identifiers"
+      ]
+    },
+    "fields": {
+      "operation": "get_interactors"
+    },
+    "type": "STITCHTool",
+    "test_examples": [
+      {
+        "identifiers": [
+          "TP53"
+        ]
+      },
+      {
+        "identifiers": [
+          "EGFR",
+          "ERBB2"
+        ]
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stringId": {
+                    "type": "string"
+                  },
+                  "preferredName": {
+                    "type": "string"
+                  },
+                  "annotation": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "STITCH_resolve_identifier",
+    "description": "Resolve a chemical or protein name to STITCH database identifiers. Useful for mapping common names to database IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "Chemical or protein name to resolve (e.g., 'aspirin', 'TP53')."
+        },
+        "species": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID.",
+          "default": 9606
+        }
+      },
+      "required": [
+        "identifier"
+      ]
+    },
+    "fields": {
+      "operation": "resolve"
+    },
+    "type": "STITCHTool",
+    "test_examples": [
+      {
+        "identifier": "aspirin"
+      },
+      {
+        "identifier": "metformin"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stringId": {
+                    "type": "string",
+                    "description": "STITCH identifier"
+                  },
+                  "preferredName": {
+                    "type": "string"
+                  },
+                  "taxonId": {
+                    "type": "integer"
+                  },
+                  "annotation": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
 ]

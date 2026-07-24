@@ -22,7 +22,7 @@ def chembl_disease_target_score(
     Parameters
     ----------
     efoId : str
-        The EFO (Experimental Factor Ontology) ID of the disease, e.g., 'EFO_0000339'...
+        The EFO (Experimental Factor Ontology) ID of the disease, e.g., 'MONDO_0011996'...
     pageSize : int
         Number of results per page (default: 100, max: 100)
     stream_callback : Callable, optional

@@ -570,7 +570,7 @@ def test_phase8_clinical_trials(tu):
 
     for cancer, drug in cancer_ici_pairs:
         try:
-            result = tu.tools.clinical_trials_search(
+            result = tu.tools.ClinicalTrials_search_studies(
                 action='search_studies', condition=cancer, intervention=drug, limit=5)
             if isinstance(result, dict) and 'studies' in result:
                 studies = result['studies']
@@ -851,7 +851,7 @@ def test_integration_nsclc_high(tu):
 
     # Step 3: Clinical trials
     try:
-        result = tu.tools.clinical_trials_search(
+        result = tu.tools.ClinicalTrials_search_studies(
             action='search_studies', condition='NSCLC', intervention='pembrolizumab', limit=3)
         has_trials = isinstance(result, dict) and len(result.get('studies', [])) > 0
         log_test("Integration NSCLC: clinical trials found", has_trials)
@@ -975,7 +975,7 @@ def test_integration_bladder(tu):
 
     # Step 2: ICI drugs for bladder
     try:
-        result = tu.tools.clinical_trials_search(
+        result = tu.tools.ClinicalTrials_search_studies(
             action='search_studies', condition='bladder cancer', intervention='pembrolizumab', limit=3)
         has_trials = isinstance(result, dict) and len(result.get('studies', [])) > 0
         log_test("Integration bladder: trials found", has_trials)

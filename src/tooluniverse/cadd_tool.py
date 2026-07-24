@@ -19,8 +19,10 @@ from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-# Base URL for CADD API (BIH mirror - working instance)
-CADD_BASE_URL = "https://cadd.bihealth.org/api/v1.0"
+# Canonical CADD API host. The cadd.bihealth.org mirror returns an empty list
+# (HTTP 200) for GRCh38-v1.7 queries, which surfaced as a silent "No CADD score
+# found" even for scored variants (e.g. BRAF V600E 7:140753336 A>T).
+CADD_BASE_URL = "https://cadd.gs.washington.edu/api/v1.0"
 
 
 @register_tool("CADDTool")

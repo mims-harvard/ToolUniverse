@@ -27,7 +27,7 @@ The repository includes GitHub Actions workflow for automatic deployment to GitH
 **Setup Steps:**
 
 1. Enable GitHub Pages in repository settings:
-==============================================
+
    - Go to repository **Settings > Pages**
    - Set source to **GitHub Actions**
 
@@ -61,7 +61,7 @@ Automated Setup
 ~~~~~~~~~~~~~~~
 
 1. Connect repository to ReadTheDocs:
-=====================================
+
    - Visit https://readthedocs.org/
    - Import repository
    - Configure webhook (automatic)

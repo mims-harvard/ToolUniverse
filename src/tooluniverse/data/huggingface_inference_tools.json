@@ -1,0 +1,1124 @@
+[
+  {
+    "name": "HFInference_classify_text",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Run text-classification on any HuggingFace-hosted model (serverless hf-inference provider) and return labels with confidence scores, sorted high to low. Good for sentiment, emotion, topic, NLI. Example model_id 'distilbert/distilbert-base-uncased-finetuned-sst-2-english' returns POSITIVE/NEGATIVE for a sentence. Optional HF_TOKEN env var raises rate limits. Returns {top_label, labels:[{label,score}]}.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id",
+        "text"
+      ],
+      "properties": {
+        "operation": {
+          "const": "classify_text",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of a text-classification model, e.g. 'distilbert/distilbert-base-uncased-finetuned-sst-2-english' or 'cardiffnlp/twitter-roberta-base-sentiment-latest'."
+        },
+        "text": {
+          "type": "string",
+          "description": "Input text to classify."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "top_label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "labels": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "classify_text",
+        "model_id": "distilbert/distilbert-base-uncased-finetuned-sst-2-english",
+        "text": "I love this"
+      },
+      {
+        "operation": "classify_text",
+        "model_id": "cardiffnlp/twitter-roberta-base-sentiment-latest",
+        "text": "This update is fantastic and works great"
+      }
+    ]
+  },
+  {
+    "name": "HFInference_embed_text",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Generate a dense embedding vector for text using any HuggingFace feature-extraction model (serverless hf-inference provider). Forces the feature-extraction pipeline so sentence-transformers models return a raw vector (not a similarity score); token-level outputs are mean-pooled to one vector. Example model_id 'sentence-transformers/all-MiniLM-L6-v2' -> 384-dim embedding. Verified-live biomedical model_ids: NeuML/pubmedbert-base-embeddings and pritamdeka/S-PubMedBert-MS-MARCO (literature similarity), cambridgeltl/SapBERT-from-PubMedBERT-fulltext (entity normalization), facebook/esm2_t33_650M_UR50D (protein embeddings). Pass the canonical 'org/name' id, not a bare alias. Returns {dimension, embedding:[float], preview}. Optional HF_TOKEN raises rate limits.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id",
+        "text"
+      ],
+      "properties": {
+        "operation": {
+          "const": "embed_text",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of an embedding / feature-extraction model, e.g. 'sentence-transformers/all-MiniLM-L6-v2' or 'BAAI/bge-small-en-v1.5'."
+        },
+        "text": {
+          "type": "string",
+          "description": "Input text to embed."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "dimension": {
+                  "type": "integer"
+                },
+                "embedding": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "preview": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "embed_text",
+        "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "text": "hello world"
+      },
+      {
+        "operation": "embed_text",
+        "model_id": "BAAI/bge-small-en-v1.5",
+        "text": "protein folding prediction"
+      }
+    ]
+  },
+  {
+    "name": "HFInference_fill_mask",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Predict the most likely token(s) for a masked position using any HuggingFace fill-mask (masked-LM) model, including protein language models. Input text must contain the model's mask token: '[MASK]' for BERT-family, '<mask>' for RoBERTa/ESM. Example: 'facebook/esm2_t6_8M_UR50D' with 'MQIF<mask>KTLTGKTITLEV' ranks amino-acid tokens. Verified-live biomedical model_ids: protein LMs facebook/esm2_t33_650M_UR50D (or t30_150M/t12_35M/t6_8M), biomedical text dmis-lab/biobert-base-cased-v1.2, clinical emilyalsentzer/Bio_ClinicalBERT, genomic InstaDeepAI/nucleotide-transformer-500m-human-ref. For proper missense variant scoring (log-likelihood ratio) use ESM2_score_missense_variant, not raw fill-mask. Pass the canonical 'org/name' id (e.g. 'google-bert/bert-base-uncased'), not a bare alias, or hf-inference returns HTTP 400. Returns {top_token, predictions:[{token_str,score,sequence}]}. Optional HF_TOKEN raises rate limits.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id",
+        "text"
+      ],
+      "properties": {
+        "operation": {
+          "const": "fill_mask",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of a fill-mask model, e.g. 'google-bert/bert-base-uncased' (uses [MASK]) or 'facebook/esm2_t6_8M_UR50D' (protein LM, uses <mask>)."
+        },
+        "text": {
+          "type": "string",
+          "description": "Input text containing exactly the model's mask token ([MASK] for BERT, <mask> for RoBERTa/ESM)."
+        },
+        "top_k": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of top candidate tokens to return (default model-dependent, typically 5)."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "top_token": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "predictions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "token_str": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "sequence": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "fill_mask",
+        "model_id": "google-bert/bert-base-uncased",
+        "text": "The capital of France is [MASK]."
+      },
+      {
+        "operation": "fill_mask",
+        "model_id": "facebook/esm2_t6_8M_UR50D",
+        "text": "MQIF<mask>KTLTGKTITLEV",
+        "top_k": 5
+      }
+    ]
+  },
+  {
+    "name": "HFInference_summarize",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Summarize a passage of text using any HuggingFace summarization model (serverless hf-inference provider). Example model_id 'facebook/bart-large-cnn' condenses an article into a few sentences. Optional max_length/min_length cap the summary length (in tokens). Optional HF_TOKEN env var raises rate limits. Returns {summary_text}.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id",
+        "text"
+      ],
+      "properties": {
+        "operation": {
+          "const": "summarize",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of a summarization model, e.g. 'facebook/bart-large-cnn' or 'sshleifer/distilbart-cnn-12-6'."
+        },
+        "text": {
+          "type": "string",
+          "description": "Input text / article to summarize."
+        },
+        "max_length": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum length of the generated summary, in tokens (model-dependent default)."
+        },
+        "min_length": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Minimum length of the generated summary, in tokens (model-dependent default)."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "summary_text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "summarize",
+        "model_id": "facebook/bart-large-cnn",
+        "text": "The James Webb Space Telescope is the largest optical telescope in space. Its high resolution and sensitivity allow it to view objects too old, distant, or faint for the Hubble Space Telescope. This enables investigations across many fields of astronomy and cosmology, such as observing the first stars and the formation of the first galaxies.",
+        "max_length": 60,
+        "min_length": 10
+      }
+    ]
+  },
+  {
+    "name": "HFInference_zero_shot_classify",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Classify text against a caller-supplied set of candidate labels using any HuggingFace zero-shot-classification (NLI) model, without task-specific training. Example model_id 'facebook/bart-large-mnli' scores each candidate_label by entailment. Pass candidate_labels as a list of strings. Optional multi_label allows independent per-label probabilities. Optional HF_TOKEN raises rate limits. Returns {top_label, labels:[{label,score}]} sorted high to low.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id",
+        "text",
+        "candidate_labels"
+      ],
+      "properties": {
+        "operation": {
+          "const": "zero_shot_classify",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of a zero-shot-classification / NLI model, e.g. 'facebook/bart-large-mnli' or 'MoritzLaurer/mDeBERTa-v3-base-mnli-xnli'."
+        },
+        "text": {
+          "type": "string",
+          "description": "Input text to classify."
+        },
+        "candidate_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Non-empty list of candidate label strings to score the text against, e.g. ['refund','shipping','billing']."
+        },
+        "multi_label": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, each label is scored independently (probabilities need not sum to 1). Default false (single best label)."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "top_label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "labels": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "zero_shot_classify",
+        "model_id": "facebook/bart-large-mnli",
+        "text": "I need to return my order because it arrived broken.",
+        "candidate_labels": [
+          "refund",
+          "shipping",
+          "technical support",
+          "billing"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "HFInference_ner",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Extract named entities (people, locations, organizations, etc.) from text using any HuggingFace token-classification / NER model (serverless hf-inference provider). Example model_id 'dslim/bert-base-NER' tags PER/LOC/ORG/MISC spans with confidence scores and character offsets. Verified-live biomedical NER model_ids: d4data/biomedical-ner-all (drugs/diseases/dosage/symptoms) and OpenMed/OpenMed-NER-DiseaseDetect-BioMed-335M (diseases). Pass the canonical 'org/name' id, not a bare alias. Optional HF_TOKEN raises rate limits. Returns {entity_count, entities:[{entity_group,word,score,start,end}]}.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id",
+        "text"
+      ],
+      "properties": {
+        "operation": {
+          "const": "ner",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of a token-classification / NER model, e.g. 'dslim/bert-base-NER' or 'Jean-Baptiste/roberta-large-ner-english'."
+        },
+        "text": {
+          "type": "string",
+          "description": "Input text to extract named entities from."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "entity_count": {
+                  "type": "integer"
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "entity_group": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "word": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "start": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "end": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "ner",
+        "model_id": "dslim/bert-base-NER",
+        "text": "My name is Wolfgang and I live in Berlin and work at Google."
+      }
+    ]
+  },
+  {
+    "name": "HFInference_question_answering",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Answer a question by extracting the relevant span from a supplied context passage, using any HuggingFace extractive question-answering model (serverless hf-inference provider). Example model_id 'deepset/roberta-base-squad2'. Requires both a question and a context. Optional HF_TOKEN raises rate limits. Returns {answer, score, start, end} where start/end are character offsets into the context.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id",
+        "question",
+        "context"
+      ],
+      "properties": {
+        "operation": {
+          "const": "question_answering",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of an extractive QA model, e.g. 'deepset/roberta-base-squad2' or 'distilbert/distilbert-base-cased-distilled-squad'."
+        },
+        "question": {
+          "type": "string",
+          "description": "The question to answer."
+        },
+        "context": {
+          "type": "string",
+          "description": "The context passage that contains the answer."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "answer": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "end": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "question_answering",
+        "model_id": "deepset/roberta-base-squad2",
+        "question": "What is the capital of France?",
+        "context": "France is a country in Europe. Its capital city is Paris, which is known for the Eiffel Tower."
+      }
+    ]
+  },
+  {
+    "name": "HFInference_translate",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Translate text from one language to another using any HuggingFace translation model (serverless hf-inference provider). The source/target languages are fixed by the chosen model_id; example 'Helsinki-NLP/opus-mt-en-fr' translates English to French. Optional HF_TOKEN raises rate limits. Returns {translation_text}.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id",
+        "text"
+      ],
+      "properties": {
+        "operation": {
+          "const": "translate",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of a translation model whose name encodes the language pair, e.g. 'Helsinki-NLP/opus-mt-en-fr' (English->French) or 'Helsinki-NLP/opus-mt-de-en' (German->English)."
+        },
+        "text": {
+          "type": "string",
+          "description": "Input text to translate (in the model's source language)."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "translation_text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "translate",
+        "model_id": "Helsinki-NLP/opus-mt-en-fr",
+        "text": "Hello, how are you today?"
+      }
+    ]
+  },
+  {
+    "name": "HFInference_classify_image",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Run image-classification on any HuggingFace-hosted vision model (serverless hf-inference provider) and return the top predicted labels with confidence scores, sorted high to low. Supply the image as image_url (a public http(s) URL) OR image_path (a local file); the raw image bytes are POSTed with the correct content-type. Example model_id 'google/vit-base-patch16-224' classifies into 1000 ImageNet classes. Serverless image inference requires HF_TOKEN. Returns {top_label, labels:[{label,score}]}.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id"
+      ],
+      "properties": {
+        "operation": {
+          "const": "classify_image",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of an image-classification model, e.g. 'google/vit-base-patch16-224' or 'microsoft/resnet-50'."
+        },
+        "image_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Public http(s) URL of the image to classify. Provide exactly one of image_url or image_path."
+        },
+        "image_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local filesystem path to the image to classify. Provide exactly one of image_url or image_path."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "top_label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "labels": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "classify_image",
+        "model_id": "google/vit-base-patch16-224",
+        "image_url": "http://images.cocodataset.org/val2017/000000039769.jpg"
+      }
+    ]
+  },
+  {
+    "name": "HFInference_detect_objects",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Run object-detection on any HuggingFace-hosted vision model (serverless hf-inference provider) and return the detected objects, each with a label, confidence score, and bounding box (xmin,ymin,xmax,ymax in pixels), sorted by score. Supply the image as image_url (a public http(s) URL) OR image_path (a local file); the raw image bytes are POSTed with the correct content-type. Example model_id 'facebook/detr-resnet-50'. Serverless image inference requires HF_TOKEN. Returns {object_count, objects:[{label,score,box}]}.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "model_id"
+      ],
+      "properties": {
+        "operation": {
+          "const": "detect_objects",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of an object-detection model, e.g. 'facebook/detr-resnet-50' or 'facebook/detr-resnet-101'."
+        },
+        "image_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Public http(s) URL of the image to run detection on. Provide exactly one of image_url or image_path."
+        },
+        "image_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local filesystem path to the image to run detection on. Provide exactly one of image_url or image_path."
+        },
+        "wait_for_model": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {
+                  "type": "string"
+                },
+                "object_count": {
+                  "type": "integer"
+                },
+                "objects": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "box": {
+                        "type": "object",
+                        "properties": {
+                          "xmin": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "ymin": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "xmax": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "ymax": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "HF_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "detect_objects",
+        "model_id": "facebook/detr-resnet-50",
+        "image_url": "http://images.cocodataset.org/val2017/000000039769.jpg"
+      }
+    ]
+  }
+]

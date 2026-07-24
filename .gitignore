@@ -174,3 +174,54 @@ DEVTU_*.md
 # Claude Code configuration
 .claude/
 .tooluniverse/
+
+# Benchmark harness — dev-only, kept locally but never tracked.
+# Plugin build doesn't include skills/evals/ in dist, and .gitattributes
+# already excludes it from `git archive` release tarballs.
+skills/evals/
+
+# Skill iteration / evaluation workspaces — `tooluniverse-*-workspace/`
+# directories hold with-skill-vs-without-skill comparison runs produced
+# by the skill evaluator. They have no SKILL.md (not real skills), match
+# the sync-skills.sh `tooluniverse-*` glob accidentally, and bloat plugin/
+# without ever shipping to users. Keep locally for dev, never track.
+**/tooluniverse-*-workspace/
+
+# One-off outputs from working-example scripts that write to cwd
+# (e.g. ddi_working_example.py). Outputs should go to /tmp or an explicit
+# --output-dir, never beside the example source.
+**/DDI_report_*.md
+**/*_metabolomics_report*.md
+
+# Superseded skill source — when SKILL.md is rewritten, keep the prior
+# version in git history (git log / git show) instead of beside the new
+# one as SKILL_OLD.md, where it ships to users and causes confusion.
+**/SKILL_OLD.md
+**/SKILL_v[0-9]*.md
+
+# Dev iteration notes that lived inside skill source: comparison
+# write-ups, test feedback diaries, "fixed" twin implementations.
+# Belong in git history or PR descriptions, not the shipped skill tree.
+**/COMPARISON_*.md
+**/*_FEEDBACK.md
+**/*_implementation_fixed.py
+**/*_implementation_v[0-9]*.py
+
+# Per-user auto-memory / private session notes (never push)
+memory/
+MEMORY.md
+CLAUDE.md
+
+# API keys & secrets
+.env
+.env.local
+credentials.json
+*_api_key*
+*_token*
+
+# Local-only harness sweep artifacts (test-all command output)
+TOOL_TEST_REPORT.md
+TOOL_SWEEP_TRIAGE.md
+
+# Local-only runtime artifact from test_new_tools.py
+tool_relationship_graph.json

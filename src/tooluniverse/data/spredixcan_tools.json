@@ -1,0 +1,50 @@
+[
+  {
+    "name": "SPrediXcan_associate",
+    "type": "SPrediXcanTool",
+    "description": "Summary-based transcriptome-wide association (S-PrediXcan, Barbeira 2018): test a gene for trait association by combining its eQTL prediction weights with GWAS per-SNP z-scores. Returns the gene TWAS z-score and p-value. Pure-compute (no individual-level data, no LD panel needed when SNPs are independent/LD-pruned; optionally supply a SNP covariance matrix). Pairs with eQTL_get_associations + GWAS summary tools.",
+    "parameter": {
+      "type": "object",
+      "required": ["weight", "gwas_z"],
+      "properties": {
+        "weight": {"type": "array", "items": {"type": "number"}, "description": "Per-SNP eQTL prediction weights for the gene (same SNP order as gwas_z)."},
+        "gwas_z": {"type": "array", "items": {"type": "number"}, "description": "Per-SNP GWAS z-scores (beta/se), same SNP order."},
+        "snp_sd": {"type": ["array", "null"], "items": {"type": "number"}, "description": "Per-SNP standard deviation (~sqrt(2*MAF*(1-MAF))); default 1.0 (standardized)."},
+        "covariance": {"type": ["array", "null"], "items": {"type": "array", "items": {"type": "number"}}, "description": "Optional SNP covariance matrix (n x n, same SNP order). If omitted, SNPs are assumed independent."},
+        "snp": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Optional SNP identifiers (same order), for reference."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "n_snps": {"type": "integer"},
+                "twas_zscore": {"type": "number"},
+                "p_value": {"type": "number"},
+                "direction": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "weight": [0.5, 0.3, 0.2, 0.4, 0.25],
+        "gwas_z": [3.0, 2.0, 1.0, 2.5, 1.5],
+        "snp": ["rs1", "rs2", "rs3", "rs4", "rs5"]
+      }
+    ]
+  }
+]

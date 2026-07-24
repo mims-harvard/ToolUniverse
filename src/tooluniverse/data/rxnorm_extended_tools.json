@@ -159,5 +159,151 @@
       "tags": ["drug_products", "brand_generic", "drug_lookup", "NLM", "rxnorm"],
       "estimated_execution_time": "< 3 seconds"
     }
+  },
+  {
+    "name": "RxNorm_get_ndc_status_history",
+    "description": "Get the historical status and RxCUI remapping timeline for an 11-digit National Drug Code (NDC) from the NLM RxNorm ndcstatus API. Returns the current status (ACTIVE/OBSOLETE/ALIEN), the current RxCUI and concept name, and the full ndcHistory showing which RxCUI the NDC mapped to over time with start/end dates (YYYYMM). Useful for drug-safety provenance and reconciling discontinued/remapped products. No API key required. Example: NDC 00093-0058-01 -> status ACTIVE, rxcui 835603 (tramadol HCl 50 MG Oral Tablet), with history periods (originalRxcui 313442 in 2007-2009, remapped to 835603 from 2009 onward).",
+    "type": "RxNormExtendedTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ndc": {
+          "type": "string",
+          "description": "National Drug Code, 11-digit. Accepts hyphenated (e.g., '00093-0058-01') or plain digits (e.g., '00093005801')."
+        }
+      },
+      "required": ["ndc"]
+    },
+    "fields": {
+      "operation": "get_ndc_status_history",
+      "endpoint": "https://rxnav.nlm.nih.gov/REST/ndcstatus.json"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "ndc": {"type": "string"},
+                "found": {"type": "boolean"},
+                "ndc11": {"type": ["string", "null"]},
+                "status": {"type": ["string", "null"]},
+                "active": {"type": ["string", "null"]},
+                "rxcui": {"type": ["string", "null"]},
+                "concept_name": {"type": ["string", "null"]},
+                "concept_status": {"type": ["string", "null"]},
+                "sources": {"type": "array", "items": {"type": "string"}},
+                "ndc_history": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "active_rxcui": {"type": ["string", "null"]},
+                      "original_rxcui": {"type": ["string", "null"]},
+                      "start_date": {"type": ["string", "null"]},
+                      "end_date": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              },
+              "required": ["ndc", "found"]
+            },
+            "metadata": {"type": "object", "additionalProperties": true}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"ndc": "00093-0058-01"},
+      {"ndc": "00093005801"}
+    ],
+    "label": ["RxNorm", "NDC", "status", "history", "drug_safety", "NLM"],
+    "metadata": {
+      "tags": ["ndc", "drug_status", "remapping", "NLM", "rxnorm"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "RxNorm_get_ndc_properties",
+    "description": "Get product and package identification metadata for a National Drug Code (NDC) from the NLM RxNorm ndcproperties API. Returns pill-identification fields (imprint code, color, shape), labeler, marketing category (ANDA/NDA), packaging description, RxCUI, and the linked DailyMed SPL setid. Useful for physical pill identification and label provenance. No API key required. Example: NDC 0781-1506-10 -> rxcui 197381, imprint 'GG263', color WHITE, ANDA073025, splSetId b900115a-faac-4244-94bc-c1ef2f88aa38, packaging '1000 TABLET in 1 BOTTLE'.",
+    "type": "RxNormExtendedTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ndc": {
+          "type": "string",
+          "description": "National Drug Code. Accepts hyphenated (e.g., '0781-1506-10') or plain-digit form."
+        }
+      },
+      "required": ["ndc"]
+    },
+    "fields": {
+      "operation": "get_ndc_properties",
+      "endpoint": "https://rxnav.nlm.nih.gov/REST/ndcproperties.json"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "ndc": {"type": "string"},
+                "found": {"type": "boolean"},
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ndc_item": {"type": ["string", "null"]},
+                      "ndc10": {"type": ["string", "null"]},
+                      "ndc9": {"type": ["string", "null"]},
+                      "rxcui": {"type": ["string", "null"]},
+                      "spl_set_id": {"type": ["string", "null"]},
+                      "imprint_code": {"type": ["string", "null"]},
+                      "color": {"type": ["string", "null"]},
+                      "shape": {"type": ["string", "null"]},
+                      "labeler": {"type": ["string", "null"]},
+                      "marketing_category": {"type": ["string", "null"]},
+                      "anda": {"type": ["string", "null"]},
+                      "nda": {"type": ["string", "null"]},
+                      "packaging": {"type": "array", "items": {"type": "string"}},
+                      "properties": {"type": "object", "additionalProperties": true}
+                    }
+                  }
+                }
+              },
+              "required": ["ndc", "found"]
+            },
+            "metadata": {"type": "object", "additionalProperties": true}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"ndc": "0781-1506-10"}
+    ],
+    "label": ["RxNorm", "NDC", "pill_id", "imprint", "packaging", "NLM"],
+    "metadata": {
+      "tags": ["ndc", "pill_identification", "imprint", "NLM", "rxnorm"],
+      "estimated_execution_time": "< 3 seconds"
+    }
   }
 ]

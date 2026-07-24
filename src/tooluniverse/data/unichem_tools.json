@@ -222,5 +222,149 @@
         }
       ]
     }
+  },
+  {
+    "name": "UniChem_connectivity_search",
+    "description": "Connectivity (cross-source) search in UniChem: find all compounds across the 40+ source databases that share the same connectivity layer as the query - i.e. salts, stereoisomers, tautomers, and charge/protonation/isotope variants of the input structure. Each returned match carries a per-match 'comparison' object of boolean flags (charge, connectivity, formula, isotope, protonation, stereoDbond, stereoSp3, HAtoms, ...) showing exactly how that match differs from the query. Use this (rather than UniChem_search_compound, which does exact-structure matching) to discover related forms of a molecule across databases. Example: aspirin InChIKey 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' returns response 'Success' with totalCompounds 15 across 1044 source entries.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "compound": {
+          "type": "string",
+          "description": "The compound identifier to search. Typically a (full or connectivity-layer) InChIKey, e.g. 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' (aspirin). Can also be a source compound ID when type='sourceID'."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the compound identifier. One of: 'inchikey', 'sourceID', 'uci'. Default: 'inchikey'."
+        },
+        "sourceID": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Required when type='sourceID'. The source database ID (e.g., 1=ChEMBL, 2=DrugBank, 7=ChEBI, 22=PubChem)."
+        }
+      },
+      "required": [
+        "compound",
+        "type"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "connectivity_search"
+    },
+    "type": "UniChemTool",
+    "test_examples": [
+      {
+        "compound": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+        "type": "inchikey"
+      },
+      {
+        "compound": "RYYVLZVUVIJVGH-UHFFFAOYSA-N",
+        "type": "inchikey"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "response": {
+                  "type": ["string", "null"],
+                  "description": "UniChem response status (e.g. 'Success')"
+                },
+                "searched_compound": {
+                  "type": "object",
+                  "properties": {
+                    "inchi": {
+                      "type": ["string", "null"]
+                    },
+                    "inchikey": {
+                      "type": ["string", "null"]
+                    },
+                    "uci": {
+                      "type": ["integer", "null"]
+                    }
+                  }
+                },
+                "total_compounds": {
+                  "type": ["integer", "null"],
+                  "description": "Total number of distinct connectivity-matched compounds"
+                },
+                "total_sources": {
+                  "type": ["integer", "null"],
+                  "description": "Total number of source-database match entries"
+                },
+                "match_count": {
+                  "type": "integer",
+                  "description": "Number of match entries returned"
+                },
+                "matches": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_id": {
+                        "type": ["integer", "null"]
+                      },
+                      "source_name": {
+                        "type": "string"
+                      },
+                      "source_long_name": {
+                        "type": "string"
+                      },
+                      "compound_id": {
+                        "type": "string"
+                      },
+                      "type_of_search": {
+                        "type": ["string", "null"]
+                      },
+                      "url": {
+                        "type": ["string", "null"]
+                      },
+                      "comparison": {
+                        "type": "object",
+                        "description": "Per-match boolean flags showing how this match differs from the query (charge, connectivity, formula, isotope, protonation, stereoDbond, stereoSp3, HAtoms, ...)"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

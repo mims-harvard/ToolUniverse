@@ -1,0 +1,20 @@
+{
+  "api_name": "OxO - EBI Ontology Xref Service",
+  "base_url": "https://www.ebi.ac.uk/spot/oxo/api",
+  "failure_mode": "No response (connection hangs / times out) on all endpoints",
+  "root_cause": "EBI retired the standalone OxO (Ontology Xref Service). Every OxO endpoint (/api/search, /api/datasources, the web index) is unreachable and hangs until timeout, while other services on the same host (notably OLS4 at https://www.ebi.ac.uk/ols4) respond normally — ruling out a network issue. OxO's cross-reference/mapping functionality has been folded into the Ontology Lookup Service (OLS).",
+  "confirmed_broken_date": "2026-06-02",
+  "last_retry_date": "2026-06-02",
+  "retry_count": 4,
+  "github_issues": [],
+  "retry_after": "2026-09-01",
+  "workaround": "Use OLS (ols_* tools / https://www.ebi.ac.uk/ols4) for ontology term lookup and cross-references. OLS term records carry database cross-references (oboXref / obo_xref), which cover the most common OxO use case (find equivalent identifiers for an ontology term across MONDO/EFO/DOID/HP/OMIM/UMLS/MeSH/etc.). For disease-ID translation specifically, OpenTargets_map_any_disease_id_to_all_other_ids also resolves across ontology namespaces.",
+  "workaround_tool_file": "src/tooluniverse/data/ols_tools.json",
+  "investigation_notes": [
+    "GET/OPTIONS/POST to https://www.ebi.ac.uk/spot/oxo/api/search all hang -> connection returns no HTTP response (curl shows code 000 after the full timeout)",
+    "Same EBI host: https://www.ebi.ac.uk/ols4/api/ontologies returns HTTP 200 in <1s, and ebi.ac.uk/interpro + ebi.ac.uk/chebi respond normally — so this is OxO-specific, not a network outage",
+    "OxO has a long-standing EBI deprecation notice; mapping data is served through OLS now",
+    "If EBI restores or relocates OxO, move this back out of broken_apis and update the endpoint"
+  ],
+  "attempted_config_file": "src/tooluniverse/data/broken_apis/oxo_tools.json"
+}

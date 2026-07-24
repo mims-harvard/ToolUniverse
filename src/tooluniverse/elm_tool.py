@@ -57,6 +57,7 @@ class ELMTool(BaseTool):
         handlers = {
             "get_instances": self._get_instances,
             "list_classes": self._list_classes,
+            "get_interaction_domains": self._get_interaction_domains,
         }
 
         handler = handlers.get(operation)
@@ -166,6 +167,69 @@ class ELMTool(BaseTool):
                 "uniprot_id": uniprot_id,
                 "total_instances": len(results),
                 "motif_type_summary": type_summary,
+            },
+        }
+
+    def _get_interaction_domains(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Map ELM motif classes to the protein domains that recognize them.
+
+        For each Short Linear Motif (SLiM) class, ELM records the interaction
+        domain (with Pfam accession) that binds/recognizes the motif.
+        """
+        elm_identifier = arguments.get("elm_identifier")
+        query = arguments.get("query")
+        max_results = arguments.get("max_results", 100)
+
+        resp = self.session.get(
+            "{}/interactiondomains.tsv".format(ELM_BASE_URL),
+            timeout=self.timeout,
+        )
+        if resp.status_code != 200:
+            return {
+                "status": "error",
+                "error": "ELM returned HTTP {}".format(resp.status_code),
+            }
+
+        rows = self._parse_tsv(resp.text)
+
+        results = []
+        for row in rows:
+            elm_id = row.get("ELM identifier", "")
+            pfam_acc = row.get("Interaction Domain Id", "")
+            domain_desc = row.get("Interaction Domain Description", "")
+            domain_name = row.get("Interaction Domain Name", "")
+
+            if elm_identifier and elm_id.upper() != elm_identifier.upper():
+                continue
+
+            if query:
+                q_lower = query.lower()
+                searchable = "{}|{}|{}|{}".format(
+                    elm_id, pfam_acc, domain_desc, domain_name
+                ).lower()
+                if q_lower not in searchable:
+                    continue
+
+            results.append(
+                {
+                    "elm_identifier": elm_id,
+                    "pfam_accession": pfam_acc,
+                    "interaction_domain_description": domain_desc,
+                    "interaction_domain_name": domain_name,
+                }
+            )
+
+        total = len(results)
+        results = results[:max_results]
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "total_mappings": total,
+                "returned": len(results),
+                "filter_elm_identifier": elm_identifier,
+                "filter_query": query,
             },
         }
 

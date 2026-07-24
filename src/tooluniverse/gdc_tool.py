@@ -668,6 +668,171 @@ class GDCMutationFrequencyTool:
 
 
 @register_tool(
+    "GDCMutationFreqByProjectTool",
+    config={
+        "name": "GDC_get_mutation_frequency_by_project",
+        "type": "GDCMutationFreqByProjectTool",
+        "description": (
+            "Get per-project (per-cancer-type) somatic mutation frequency for a gene from NCI GDC. "
+            "For each TCGA/GDC project, returns the numerator (mutated case count) AND denominator "
+            "(total case count), enabling true per-cancer mutation rates. "
+            "Answers 'In which cancer types is this gene most frequently mutated?'"
+        ),
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "Gene symbol (e.g., 'KRAS', 'TP53', 'EGFR')",
+                },
+                "gene": {
+                    "type": "string",
+                    "description": "Gene symbol alias — alternative to gene_symbol",
+                },
+                "size": {
+                    "type": "integer",
+                    "default": 100,
+                    "minimum": 1,
+                    "maximum": 200,
+                    "description": "Maximum number of projects to return (default 100)",
+                },
+            },
+            "required": [],
+        },
+        "settings": {"base_url": "https://api.gdc.cancer.gov", "timeout": 30},
+    },
+)
+class GDCMutationFreqByProjectTool:
+    """Per-project somatic mutation frequency (mutated cases / total cases) for a gene."""
+
+    def __init__(self, tool_config=None):
+        self.tool_config = tool_config or {}
+
+    def run(self, arguments: Dict[str, Any]):
+        base = self.tool_config.get("settings", {}).get(
+            "base_url", "https://api.gdc.cancer.gov"
+        )
+        timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
+
+        gene_symbol = arguments.get("gene_symbol") or arguments.get("gene")
+        if not gene_symbol:
+            return {
+                "status": "error",
+                "error": "gene_symbol parameter is required",
+                "source": "GDC",
+            }
+
+        size = arguments.get("size", 100)
+        try:
+            size = max(1, min(int(size), 200))
+        except (TypeError, ValueError):
+            size = 100
+
+        filters = json.dumps(
+            {
+                "op": "in",
+                "content": {"field": "genes.symbol", "value": [gene_symbol]},
+            }
+        )
+        query = {"size": 0, "filters": filters}
+        url = f"{base}/analysis/mutated_cases_count_by_project?{urlencode(query)}"
+
+        try:
+            raw = _http_get(
+                url, headers={"Accept": "application/json"}, timeout=timeout
+            )
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": str(e),
+                "source": "GDC",
+                "endpoint": "mutated_cases_count_by_project",
+            }
+
+        buckets = (
+            raw.get("aggregations", {}).get("projects", {}).get("buckets", []) or []
+        )
+
+        # Fix-R4A-002: the analysis endpoint's nested `case_summary.doc_count`
+        # is NOT the project's total case count (confirmed against the raw
+        # API and cross-checked with GDC_search_cases/GDC_list_projects,
+        # e.g. it reports 2282 for TCGA-COAD when the real total is 461) —
+        # its sibling `case_summary.case_with_ssm.doc_count` is simply a
+        # duplicate of the mutated count. Fetch true per-project totals from
+        # the /projects endpoint's `summary.case_count` field instead, the
+        # same field GDC_list_projects uses.
+        project_ids = [b.get("key") for b in buckets if b.get("key")]
+        true_totals: Dict[str, int] = {}
+        if project_ids:
+            proj_filters = json.dumps(
+                {
+                    "op": "in",
+                    "content": {"field": "project_id", "value": project_ids},
+                }
+            )
+            proj_query = {
+                "filters": proj_filters,
+                "fields": "project_id,summary.case_count",
+                "size": len(project_ids),
+            }
+            proj_url = f"{base}/projects?{urlencode(proj_query)}"
+            try:
+                proj_raw = _http_get(
+                    proj_url, headers={"Accept": "application/json"}, timeout=timeout
+                )
+                for hit in proj_raw.get("data", {}).get("hits", []) or []:
+                    pid = hit.get("project_id")
+                    count = (hit.get("summary") or {}).get("case_count")
+                    if pid and count is not None:
+                        true_totals[pid] = count
+            except Exception:
+                pass  # fall back to the (less reliable) case_summary field below
+
+        projects = []
+        for b in buckets:
+            mutated = b.get("doc_count", 0) or 0
+            project_id = b.get("key")
+            case_summary = b.get("case_summary", {}) or {}
+            total = true_totals.get(project_id)
+            if total is None:
+                total = case_summary.get("doc_count", 0) or 0
+            freq = round(mutated / total, 4) if total else None
+            projects.append(
+                {
+                    "project_id": project_id,
+                    "mutated_case_count": mutated,
+                    "total_case_count": total,
+                    "frequency": freq,
+                }
+            )
+
+        # Sort by mutation frequency (descending), then by mutated count.
+        projects.sort(
+            key=lambda p: (
+                p["frequency"] if p["frequency"] is not None else -1,
+                p["mutated_case_count"],
+            ),
+            reverse=True,
+        )
+
+        total_mutated = sum(p["mutated_case_count"] for p in projects)
+        total_cases = sum(p["total_case_count"] for p in projects)
+
+        return {
+            "status": "success",
+            "source": "GDC",
+            "endpoint": "mutated_cases_count_by_project",
+            "data": {
+                "gene": gene_symbol,
+                "project_count": len(projects),
+                "total_mutated_cases": total_mutated,
+                "total_cases": total_cases,
+                "projects": projects[:size],
+            },
+        }
+
+
+@register_tool(
     "GDCClinicalDataTool",
     config={
         "name": "GDC_get_clinical_data",

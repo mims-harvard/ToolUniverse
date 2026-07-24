@@ -65,6 +65,8 @@ class PubChemBioAssayTool(BaseTool):
             return self._search_by_gene(arguments)
         elif self.endpoint == "get_assay_summary":
             return self._get_assay_summary(arguments)
+        elif self.endpoint == "concise_activity_table":
+            return self._get_concise_activity_table(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -188,6 +190,67 @@ class PubChemBioAssayTool(BaseTool):
                 "gene_symbol": gene_symbol,
                 "total_assays": len(aids_list),
                 "returned": len(results),
+            },
+        }
+
+    def _get_concise_activity_table(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get the assay-wide concise bioactivity table for an AID.
+
+        Returns one row per tested compound (SID/CID) with Activity Outcome
+        and Activity Value across ALL compounds in the assay (not just the
+        active CID list and not SID-limited). Large assays can return
+        hundreds of thousands of rows, so the row payload is capped while
+        the true total row count is always reported.
+        """
+        aid = arguments.get("aid")
+        if not aid:
+            return {"status": "error", "error": "aid (Assay ID) parameter is required"}
+
+        max_rows = arguments.get("max_rows", 1000)
+        try:
+            max_rows = int(max_rows)
+        except (TypeError, ValueError):
+            max_rows = 1000
+        if max_rows < 1:
+            max_rows = 1
+        if max_rows > 100000:
+            max_rows = 100000
+
+        url = f"{PUBCHEM_BASE_URL}/assay/aid/{aid}/concise/JSON"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        table = data.get("Table", {})
+        columns = table.get("Columns", {}).get("Column", [])
+        all_rows = table.get("Row", [])
+        if not columns or not all_rows:
+            return {
+                "status": "error",
+                "error": f"No concise activity table found for AID {aid}",
+            }
+
+        total_rows = len(all_rows)
+        rows = []
+        for row in all_rows[:max_rows]:
+            cells = row.get("Cell", [])
+            rows.append(dict(zip(columns, cells)))
+
+        return {
+            "status": "success",
+            "data": {
+                "aid": int(aid) if str(aid).isdigit() else aid,
+                "columns": columns,
+                "total_rows": total_rows,
+                "returned_rows": len(rows),
+                "rows": rows,
+            },
+            "metadata": {
+                "source": "PubChem BioAssay (concise activity table)",
+                "aid": str(aid),
+                "total_rows": total_rows,
+                "returned_rows": len(rows),
+                "truncated": total_rows > len(rows),
             },
         }
 

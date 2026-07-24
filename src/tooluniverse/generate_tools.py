@@ -10,14 +10,26 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
 
 
+# Keyword-only parameters the generator injects into every wrapper signature.
+# A tool whose own parameter sanitizes to one of these would otherwise emit a
+# duplicate argument (e.g. "duplicate argument 'use_cache'") — a hard
+# SyntaxError that breaks importing the entire tools package.
+_INJECTED_PARAM_NAMES = frozenset({"stream_callback", "use_cache", "validate"})
+
+
 def sanitize_param_name(name: str) -> str:
     """Convert an API parameter name to a valid Python identifier.
 
     Handles dots (query.cond -> query_cond), hyphens (from-date -> from_date),
-    and Python reserved keywords (for -> for_, in -> in_).
+    Python reserved keywords (for -> for_, in -> in_), and collisions with the
+    generator's injected keyword-only params (use_cache -> use_cache_).
     """
     sanitized = re.sub(r"[.\-]", "_", name)
-    if keyword.iskeyword(sanitized) or keyword.issoftkeyword(sanitized):
+    if (
+        keyword.iskeyword(sanitized)
+        or keyword.issoftkeyword(sanitized)
+        or sanitized in _INJECTED_PARAM_NAMES
+    ):
         sanitized = sanitized + "_"
     return sanitized
 
@@ -108,21 +120,25 @@ def prop_to_python_type(prop: Dict[str, Any]) -> str:
     Returns:
         Python type annotation as string (e.g., "str", "str | list[str]")
     """
-    # Handle oneOf schemas (e.g., string or array)
+    # Handle oneOf schemas (e.g., string or array). Drop "null" entries: a
+    # nullable field's optionality is already conveyed by the Optional[...]
+    # wrapper, so keeping "null" only yielded noise like Optional[str | Any].
     if "oneOf" in prop:
         types = [
             _resolve_single_type(item.get("type", ""), item)
             for item in prop["oneOf"]
-            if item.get("type")
+            if item.get("type") and item.get("type") != "null"
         ]
         return _deduplicate_types(types)
 
     # Fall back to regular type handling
     json_type = prop.get("type", "string")
 
-    # Handle when type is a list (e.g., ["string", "array"])
+    # Handle when type is a list (e.g., ["string", "array"], ["string", "null"]).
+    # Exclude "null" for the same reason as above — ["string", "null"] is a
+    # nullable string and should annotate as str, not "str | Any".
     if isinstance(json_type, list):
-        types = [_resolve_single_type(t, prop) for t in json_type if t]
+        types = [_resolve_single_type(t, prop) for t in json_type if t and t != "null"]
         return _deduplicate_types(types)
 
     if json_type == "array":
@@ -593,7 +609,9 @@ def main(
     tu = ToolUniverse()
     tu.load_tools()
 
-    output = Path(output_dir) if output_dir is not None else Path(__file__).parent / "tools"
+    output = (
+        Path(output_dir) if output_dir is not None else Path(__file__).parent / "tools"
+    )
     output.mkdir(parents=True, exist_ok=True)
     print(f"   Output → {output}")
 

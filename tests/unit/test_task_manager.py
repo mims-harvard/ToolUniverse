@@ -3,6 +3,7 @@
 import asyncio
 import os
 import sys
+from datetime import datetime
 
 import pytest
 import pytest_asyncio
@@ -10,6 +11,7 @@ from unittest.mock import Mock, AsyncMock
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
+import tooluniverse.task_manager as task_manager_module
 from tooluniverse.task_manager import TaskManager, Task
 from tooluniverse.task_progress import TaskProgress
 
@@ -422,6 +424,41 @@ async def test_list_tasks_sorted_by_creation_time(task_manager):
     assert result["tasks"][0]["taskId"] == task_id3
     assert result["tasks"][1]["taskId"] == task_id2
     assert result["tasks"][2]["taskId"] == task_id1
+
+
+@pytest.mark.asyncio
+async def test_list_tasks_uses_sequence_when_creation_times_match(task_manager):
+    """Tasks created in the same clock tick should still sort newest first."""
+    task_id1 = await task_manager.create_task("TestTool", {"arg": "1"}, 3600000)
+    task_id2 = await task_manager.create_task("TestTool", {"arg": "2"}, 3600000)
+    task_id3 = await task_manager.create_task("TestTool", {"arg": "3"}, 3600000)
+
+    same_time = datetime.now()
+    async with task_manager.lock:
+        for task_id in (task_id1, task_id2, task_id3):
+            task_manager.tasks[task_id].created_at = same_time
+
+    result = await task_manager.list_tasks()
+
+    assert [task["taskId"] for task in result["tasks"][:3]] == [task_id3, task_id2, task_id1]
+
+
+@pytest.mark.asyncio
+async def test_run_tool_handles_uninspectable_run_signature(task_manager, monkeypatch):
+    """Some callable implementations do not expose a Python signature."""
+    tool = Mock()
+    tool.run = Mock(return_value={"data": {"result": "success"}})
+    progress = TaskProgress(Task("task", "TestTool", {}, "working", "working", datetime.now()))
+
+    def raise_uninspectable(_callable):
+        raise ValueError("no signature available")
+
+    monkeypatch.setattr(task_manager_module.inspect, "signature", raise_uninspectable)
+
+    result = await task_manager._run_tool(tool, {"arg": "value"}, progress)
+
+    assert result == {"data": {"result": "success"}}
+    tool.run.assert_called_once_with({"arg": "value"})
 
 
 # ============================================================================

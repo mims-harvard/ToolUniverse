@@ -82,12 +82,12 @@
                 "data": {
                     "type": "object",
                     "properties": {
-                        "model_id": {"type": "string"},
-                        "model_name": {"type": "string"},
-                        "tissue": {"type": "string"},
-                        "cancer_type": {"type": "string"},
-                        "msi_status": {"type": "string"},
-                        "ploidy": {"type": "number"}
+                        "model_id": {"type": ["string", "null"]},
+                        "model_name": {"type": ["string", "null"]},
+                        "tissue": {"type": ["string", "null"]},
+                        "cancer_type": {"type": ["string", "null"]},
+                        "msi_status": {"type": ["string", "null"]},
+                        "ploidy": {"type": ["number", "null"]}
                     }
                 },
                 "error": {"type": "string"}

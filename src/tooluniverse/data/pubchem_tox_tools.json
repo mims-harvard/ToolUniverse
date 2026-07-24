@@ -132,6 +132,128 @@
         }
     },
     {
+        "name": "PubChemTox_get_ecotoxicity_values",
+        "description": "Get aquatic/environmental ecotoxicity values for a chemical compound from PubChem (PUG View 'Ecotoxicity Values' heading under Ecological Information). Returns LC50/EC50 lethal- and effect-concentration data for aquatic and environmental organisms such as fish, crustaceans (shrimp, crabs), and protozoa, sourced largely from HSDB. Use this to assess environmental/aquatic hazard, distinct from PubChemTox_get_toxicity_values which returns mammalian LD50/LC50 lab-animal data. Example: benzene (CID 241) returns entries like 'LC50; Species: Palaemonetes pugio (grass shrimp); Concentration: 27 ppm for 96 hr' and 'LC50; Cancer magister (crab larvae) 108 ppm 96 hr'.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": ["integer", "null"],
+                    "description": "PubChem Compound ID. Examples: 241 (benzene), 887 (methanol), 6228 (atrazine), 2244 (aspirin)."
+                },
+                "compound_name": {
+                    "type": ["string", "null"],
+                    "description": "Compound name (used if cid is not provided). Examples: 'benzene', 'toluene', 'atrazine', 'chlorpyrifos'."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "ecotoxicity_values"
+        },
+        "type": "PubChemToxTool",
+        "test_examples": [
+            {
+                "cid": 241
+            },
+            {
+                "compound_name": "toluene"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cid": {"type": "integer"},
+                                "compound_name": {"type": "string"},
+                                "ecotoxicity_values_count": {"type": "integer", "description": "Number of ecotoxicity value entries found"},
+                                "ecotoxicity_values": {
+                                    "type": "array",
+                                    "description": "Aquatic/environmental LC50/EC50 value strings (species, concentration, duration)",
+                                    "items": {"type": "string"}
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "PubChemTox_get_human_toxicity_values",
+        "description": "Get human toxicity values for a chemical compound from PubChem (PUG View 'Human Toxicity Values' heading under Toxicological Information). Returns human-specific lethality and exposure data such as estimated fatal oral doses, fatal air concentrations, and IDLH ('Immediately Dangerous to Life and Health') thresholds, sourced largely from HSDB. Use this for human exposure / occupational-safety endpoints, distinct from PubChemTox_get_toxicity_values which returns animal LD50/LC50 data. Example: benzene (CID 241) returns 'Estimated oral doses from 9-30 g have proved fatal.', a fatal air concentration of '66,000 mg/cu m (20,000 ppm) ... fatal in man within 5-10 minutes', and 'Immediately dangerous to life and health = 500 ppm'.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": ["integer", "null"],
+                    "description": "PubChem Compound ID. Examples: 241 (benzene), 887 (methanol), 702 (ethanol), 6326 (hydrogen cyanide)."
+                },
+                "compound_name": {
+                    "type": ["string", "null"],
+                    "description": "Compound name (used if cid is not provided). Examples: 'benzene', 'methanol', 'carbon monoxide', 'hydrogen sulfide'."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "human_toxicity_values"
+        },
+        "type": "PubChemToxTool",
+        "test_examples": [
+            {
+                "cid": 241
+            },
+            {
+                "compound_name": "methanol"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cid": {"type": "integer"},
+                                "compound_name": {"type": "string"},
+                                "human_toxicity_values_count": {"type": "integer", "description": "Number of human toxicity value entries found"},
+                                "human_toxicity_values": {
+                                    "type": "array",
+                                    "description": "Human lethal dose / IDLH / fatal exposure threshold strings",
+                                    "items": {"type": "string"}
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
         "name": "PubChemTox_get_carcinogen_classification",
         "description": "Get carcinogen classification data for a chemical compound from PubChem. Returns classifications from authoritative bodies including IARC (International Agency for Research on Cancer), NTP (National Toxicology Program), EPA, and others. IARC groups: Group 1 (Carcinogenic to humans), Group 2A (Probably carcinogenic), Group 2B (Possibly carcinogenic), Group 3 (Not classifiable). For example, arsenic (CID 5359596) is IARC Group 1 (Carcinogenic to humans), benzene (CID 241) is also Group 1, while caffeine (CID 2519) is Group 3. Use this to assess cancer risk associated with chemical exposure.",
         "parameter": {

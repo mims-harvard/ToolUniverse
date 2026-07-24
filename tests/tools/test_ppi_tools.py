@@ -134,7 +134,14 @@ class TestSTRINGTool:
         result = self.tool.run(arguments)
 
         assert "data" in result
-        assert len(result["data"]["data"]) == 1
+        # run() unwraps the TSV-parsed {"data": [...], "header": [...]} so the
+        # top-level `data` is the row list directly (matching the sibling
+        # test_make_request_success / test_parse_tsv_response and the tool's
+        # contract). The old `result["data"]["data"]` assertion predated the
+        # unwrap fix and left this test red on main.
+        assert isinstance(result["data"], list)
+        assert len(result["data"]) == 1
+        assert result["data"][0]["preferredName_A"] == "TP53"
 
 
 class TestBioGRIDTool:

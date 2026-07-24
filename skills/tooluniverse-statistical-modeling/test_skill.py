@@ -997,9 +997,9 @@ def run_tests():
         record_result("11c: R-squared comparison", False, str(e))
 
     # ==================================================================
-    # SECTION 12: BixBench Question Pattern Tests
+    # SECTION 12: Statistical Question Pattern Tests
     # ==================================================================
-    print("\n--- Section 12: BixBench Question Patterns ---")
+    print("\n--- Section 12: Statistical Question Patterns ---")
 
     # 12a: Pattern - Ordinal OR extraction
     try:
@@ -1015,10 +1015,10 @@ def run_tests():
         answer_or = np.exp(fit_bix.params['exposure'])
 
         has_answer = 0 < answer_or < 10
-        record_result("12a: BixBench OR extraction pattern", has_answer,
+        record_result("12a: Statistical OR extraction pattern", has_answer,
                       f"Answer: OR={answer_or:.4f}")
     except Exception as e:
-        record_result("12a: BixBench OR extraction pattern", False, str(e))
+        record_result("12a: Statistical OR extraction pattern", False, str(e))
 
     # 12b: Pattern - Percentage reduction in OR
     try:
@@ -1034,10 +1034,10 @@ def run_tests():
 
         pct_reduction_bix = ((or_crude_bix - or_adj_bix) / or_crude_bix) * 100
         has_pct = -100 < pct_reduction_bix < 100
-        record_result("12b: BixBench % reduction in OR pattern", has_pct,
+        record_result("12b: Statistical % reduction in OR pattern", has_pct,
                       f"crude OR={or_crude_bix:.4f}, adj OR={or_adj_bix:.4f}, reduction={pct_reduction_bix:.1f}%")
     except Exception as e:
-        record_result("12b: BixBench % reduction in OR pattern", False, str(e))
+        record_result("12b: Statistical % reduction in OR pattern", False, str(e))
 
     # 12c: Pattern - Interaction OR
     try:
@@ -1048,10 +1048,10 @@ def run_tests():
         fit_int_bix = model_int_bix.fit(method='bfgs', disp=0)
         interaction_or = np.exp(fit_int_bix.params['exposure_x_male'])
         has_int_or = 0 < interaction_or < 100
-        record_result("12c: BixBench interaction OR pattern", has_int_or,
+        record_result("12c: Statistical interaction OR pattern", has_int_or,
                       f"interaction OR={interaction_or:.4f}, p={fit_int_bix.pvalues['exposure_x_male']:.6f}")
     except Exception as e:
-        record_result("12c: BixBench interaction OR pattern", False, str(e))
+        record_result("12c: Statistical interaction OR pattern", False, str(e))
 
     # 12d: Pattern - HR from Cox model
     try:
@@ -1062,10 +1062,10 @@ def run_tests():
                  duration_col='time', event_col='event')
         hr_answer = float(cph2.summary.loc['treatment', 'exp(coef)'])
         has_hr = 0 < hr_answer < 10
-        record_result("12d: BixBench HR extraction pattern", has_hr,
+        record_result("12d: Statistical HR extraction pattern", has_hr,
                       f"Answer: HR={hr_answer:.4f}")
     except Exception as e:
-        record_result("12d: BixBench HR extraction pattern", False, str(e))
+        record_result("12d: Statistical HR extraction pattern", False, str(e))
 
     # 12e: Pattern - Median survival comparison
     try:
@@ -1079,10 +1079,10 @@ def run_tests():
         med_ctrl = kmf_ctrl.median_survival_time_
         med_treat = kmf_treat.median_survival_time_
         has_medians = not np.isinf(med_ctrl) or not np.isinf(med_treat)
-        record_result("12e: BixBench median survival pattern", has_medians,
+        record_result("12e: Statistical median survival pattern", has_medians,
                       f"control={med_ctrl:.2f}, treatment={med_treat:.2f}")
     except Exception as e:
-        record_result("12e: BixBench median survival pattern", False, str(e))
+        record_result("12e: Statistical median survival pattern", False, str(e))
 
     # 12f: Pattern - Model coefficient with CI
     try:
@@ -1093,10 +1093,10 @@ def run_tests():
         age_ci = model_coef.conf_int().loc['age']
         ci_str = f"({age_ci.iloc[0]:.4f}, {age_ci.iloc[1]:.4f})"
         has_coef_ci = age_ci.iloc[0] < age_coef < age_ci.iloc[1]
-        record_result("12f: BixBench coefficient + CI pattern", has_coef_ci,
+        record_result("12f: Statistical coefficient + CI pattern", has_coef_ci,
                       f"age coef={age_coef:.4f}, 95% CI={ci_str}")
     except Exception as e:
-        record_result("12f: BixBench coefficient + CI pattern", False, str(e))
+        record_result("12f: Statistical coefficient + CI pattern", False, str(e))
 
     # 12g: Pattern - Adjusted vs unadjusted comparison
     try:
@@ -1106,10 +1106,10 @@ def run_tests():
         or_unadj = np.exp(m_unadj.params['treatment'])
         or_adj = np.exp(m_adj.params['treatment'])
         pct_change_adj = ((or_unadj - or_adj) / or_unadj) * 100
-        record_result("12g: BixBench adjusted vs unadjusted pattern", True,
+        record_result("12g: Statistical adjusted vs unadjusted pattern", True,
                       f"unadj OR={or_unadj:.4f}, adj OR={or_adj:.4f}, change={pct_change_adj:.1f}%")
     except Exception as e:
-        record_result("12g: BixBench adjusted vs unadjusted pattern", False, str(e))
+        record_result("12g: Statistical adjusted vs unadjusted pattern", False, str(e))
 
     # ==================================================================
     # SECTION 13: Edge Cases and Robustness
@@ -1349,6 +1349,42 @@ def run_tests():
     return n_fail == 0
 
 
+def run_bundled_script_smoke_tests():
+    """Verify the bundled CLI scripts exist and respond to --help."""
+    import subprocess
+    from pathlib import Path
+
+    print("\n--- Section 16: Bundled Script Smoke Tests ---")
+    scripts_dir = Path(__file__).parent / "scripts"
+    expected = [
+        "r_natural_spline_regression.py",
+        "spline_model_compare.py",
+        "logistic_regression_or.py",
+        "power_analysis.py",
+        "expression_anova.py",
+        "prepare_ae_cohort.py",
+        "stat_tests.py",
+    ]
+    for name in expected:
+        path = scripts_dir / name
+        if not path.exists():
+            record_result(f"16: script {name} present", False, f"missing at {path}")
+            continue
+        try:
+            r = subprocess.run(
+                [sys.executable, str(path), "--help"],
+                capture_output=True, text=True, timeout=20,
+            )
+            ok = r.returncode == 0 and ("usage" in r.stdout.lower() or "usage" in r.stderr.lower())
+            record_result(f"16: {name} --help", ok,
+                          "non-zero exit" if r.returncode != 0 else "no usage block")
+        except Exception as exc:
+            record_result(f"16: {name} --help", False, str(exc))
+
+
 if __name__ == '__main__':
     success = run_tests()
-    sys.exit(0 if success else 1)
+    run_bundled_script_smoke_tests()
+    # Recompute pass/fail after smoke tests
+    n_fail = sum(1 for r in test_results if not r['passed'])
+    sys.exit(0 if n_fail == 0 else 1)

@@ -1,0 +1,76 @@
+[
+  {
+    "name": "ESM2_score_missense_variant",
+    "type": "ESM2VariantEffectTool",
+    "description": "Score a missense protein variant with ESM-2 masked-marginal log-likelihood ratio (Meier 2021) over HuggingFace's keyless hf-inference. Input wild-type 1-letter sequence + 1-based position + mutant residue; returns LLR = logP(mut) - logP(wt). Negative => mutant disfavored (candidate deleterious). No API key. For ESMC/SAE scoring with a key use ESM_score_sequence.",
+    "parameter": {
+      "type": "object",
+      "required": ["sequence", "position", "mutant"],
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Wild-type protein sequence in 1-letter amino-acid code (whitespace is ignored)."
+        },
+        "position": {
+          "type": "integer",
+          "description": "1-based residue position of the variant within the sequence."
+        },
+        "mutant": {
+          "type": "string",
+          "description": "Mutant amino acid (single 1-letter code, one of the 20 standard residues)."
+        },
+        "wild_type": {
+          "type": ["string", "null"],
+          "description": "Optional wild-type residue (1-letter). If given, it is validated against the residue at `position` to catch coordinate/sequence mismatches."
+        },
+        "model_id": {
+          "type": ["string", "null"],
+          "description": "ESM-2 model to use. Default 'facebook/esm2_t33_650M_UR50D'. Other sizes: esm2_t30_150M_UR50D, esm2_t12_35M_UR50D, esm2_t6_8M_UR50D."
+        },
+        "wait_for_model": {
+          "type": ["boolean", "null"],
+          "description": "If true, block until the model finishes loading on the HF servers instead of returning a retryable 'loading' status."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant": {"type": "string"},
+                "wild_type": {"type": "string"},
+                "mutant": {"type": "string"},
+                "p_wild_type": {"type": "number"},
+                "p_mutant": {"type": "number"},
+                "log_likelihood_ratio": {"type": "number"},
+                "direction": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "sequence": "MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH",
+        "position": 7,
+        "wild_type": "E",
+        "mutant": "V"
+      }
+    ]
+  }
+]

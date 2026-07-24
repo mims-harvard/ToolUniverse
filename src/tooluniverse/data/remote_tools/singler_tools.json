@@ -1,0 +1,42 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_singler_annotate",
+    "description": "Annotate single cells with SingleR (Aran 2019): correlate each cell against a labeled reference transcriptome and assign the best-matching cell-type label, per cell (not per cluster) — the standard reference-based alternative to manual marker annotation. Reference is either a built-in celldex panel (HumanPrimaryCellAtlasData, BlueprintEncodeData, MonacoImmuneData, ...) or your own labeled .h5ad (ref_adata_path + ref_labels_key). Returns a label for every cell plus label counts. Input is a server-accessible query .h5ad of log-normalized expression.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path to the query .h5ad (log-normalized expression in .X)."},
+        "celldex_ref": {"type": "string", "description": "Built-in reference name: HumanPrimaryCellAtlasData, BlueprintEncodeData, MonacoImmuneData, DatabaseImmuneCellExpressionData, NovershternHematopoieticData, ImmGenData, or MouseRNAseqData. Omit when using a bring-your-own reference."},
+        "ref_label_field": {"type": "string", "description": "celldex label granularity: 'label.main' (default) or 'label.fine'."},
+        "ref_adata_path": {"type": "string", "description": "Bring-your-own reference .h5ad (log-normalized); used when celldex_ref is omitted."},
+        "ref_labels_key": {"type": "string", "description": "obs column in ref_adata_path holding the reference cell-type labels."}
+      },
+      "required": ["adata_path"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "reference": {"type": "string"},
+        "n_cells": {"type": "integer"},
+        "label_counts": {"type": "object", "description": "Mapping of predicted label -> number of cells (descending)."},
+        "predicted_labels": {"type": "array", "items": {"type": "string"}, "description": "Per-cell predicted cell type (omitted if n_cells > 50000)."},
+        "cell_ids": {"type": "array", "items": {"type": "string"}, "description": "obs_names aligned with predicted_labels (omitted if n_cells > 50000)."},
+        "note": {"type": "string"},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "SinglerAnnotateTool",
+      "url": "https://bioconductor.org/packages/SingleR/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/singler",
+      "mcp_tool_name": "run_singler_annotate"
+    },
+    "test_examples": [
+      {"adata_path": "pbmc.h5ad", "celldex_ref": "MonacoImmuneData", "ref_label_field": "label.main"}
+    ]
+  }
+]

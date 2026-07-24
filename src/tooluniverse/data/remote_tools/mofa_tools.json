@@ -1,0 +1,56 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_mofa_factors",
+    "description": "Run MOFA+ (Multi-Omics Factor Analysis v2; Argelaguet et al., Genome Biology 2020) to integrate multiple omics 'views' measured on the SAME samples into a small set of unsupervised latent factors (analogous to principal components shared across views). Returns the per-sample factor matrix and the fraction of variance each factor explains in each view. Input views are inlined as {view_name: {feature: [value_per_sample]}}; every feature list must have one value per sample, in the same sample order.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "views": {"type": "object", "description": "Omics views over the SAME samples: {view_name: {feature: [value_per_sample]}}. Every feature list across all views must have the same length = number of samples, in the same sample order."},
+        "samples": {"type": "array", "items": {"type": "string"}, "description": "Optional sample names; length must match the per-feature value-list length. Defaults to sample_0..sample_{N-1}."},
+        "n_factors": {"type": "integer", "description": "Number of latent factors to infer (default 10)."},
+        "n_iter": {"type": "integer", "description": "Maximum training iterations (default 1000)."}
+      },
+      "required": ["views"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_samples": {"type": "integer"},
+        "n_views": {"type": "integer"},
+        "n_factors": {"type": "integer"},
+        "view_names": {"type": "array", "items": {"type": "string"}},
+        "variance_explained": {"type": "object", "description": "Per view: list of r2 (fraction of variance explained) per factor."},
+        "factors": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}, "description": "Samples x n_factors latent factor matrix."},
+        "samples": {"type": "array", "items": {"type": "string"}},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "MofaFactorsTool",
+      "url": "https://biofam.github.io/MOFA2/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/mofa",
+      "mcp_tool_name": "run_mofa_factors"
+    },
+    "test_examples": [
+      {
+        "views": {
+          "rna": {
+            "GENE1": [1.2, 0.4, 3.1, 2.8, 0.9, 1.5],
+            "GENE2": [0.3, 2.1, 0.5, 0.2, 2.7, 0.4],
+            "GENE3": [2.2, 1.8, 2.5, 2.9, 1.1, 2.0]
+          },
+          "protein": {
+            "PROT1": [0.9, 0.2, 2.7, 2.4, 0.5, 1.1],
+            "PROT2": [0.4, 1.9, 0.6, 0.3, 2.2, 0.5]
+          }
+        },
+        "samples": ["s1", "s2", "s3", "s4", "s5", "s6"],
+        "n_factors": 3,
+        "n_iter": 500
+      }
+    ]
+  }
+]

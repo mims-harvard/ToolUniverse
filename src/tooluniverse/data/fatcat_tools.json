@@ -19,8 +19,7 @@
         }
       },
       "required": [
-        "query",
-        "max_results"
+        "query"
       ]
     },
     "return_schema": {

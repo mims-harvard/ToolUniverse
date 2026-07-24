@@ -171,13 +171,22 @@ class RCSBAdvancedSearchTool(BaseTool):
             query = {"type": "group", "logical_operator": "and", "nodes": nodes}
 
         # Sort mapping
+        # Fix-R11A-1: "score" (RCSB's own full-text relevance score) was
+        # missing from this map entirely, so there was no way to request
+        # relevance-sorted results even though every hit already carries a
+        # `score` field in the response -- confirmed live and via raw RCSB
+        # Search API curl that "score" is a valid sort_by value and sorts
+        # correctly descending. Without it, results default to
+        # resolution-sorted order, so the highest-relevance hit for a
+        # text query could be buried well past the first page.
         sort_map = {
             "resolution": "rcsb_entry_info.resolution_combined",
             "date": "rcsb_accession_info.deposit_date",
             "weight": "rcsb_entry_info.molecular_weight",
+            "score": "score",
         }
         sort_field = sort_map.get(sort_by, sort_map["resolution"])
-        sort_direction = "desc" if sort_by == "date" else "asc"
+        sort_direction = "desc" if sort_by in ("date", "score") else "asc"
 
         request_body = {
             "query": query,

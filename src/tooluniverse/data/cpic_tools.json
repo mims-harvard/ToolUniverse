@@ -6,16 +6,29 @@
       "type": "object",
       "properties": {
         "symbol": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD')"
+        },
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Gene symbol alias -- alternative to symbol."
+        },
+        "gene_symbol": {
+          "type": ["string", "null"],
+          "description": "Gene symbol alias -- alternative to symbol."
         }
       },
-      "required": [
-        "symbol"
+      "required": [],
+      "anyOf": [
+        {"required": ["symbol"]},
+        {"required": ["gene"]},
+        {"required": ["gene_symbol"]}
       ]
     },
     "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/gene?symbol=eq.{symbol}"
+      "endpoint": "https://api.cpicpgx.org/v1/gene?symbol=eq.{symbol}",
+      "path_aliases": {"gene": "symbol", "gene_symbol": "symbol"},
+      "uppercase_params": ["symbol", "gene", "gene_symbol"]
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -30,7 +43,6 @@
       "oneOf": [
         {
           "type": "array",
-          "description": "Gene pharmacogenomics information",
           "items": {
             "type": "object",
             "properties": {
@@ -38,40 +50,61 @@
                 "type": "string"
               },
               "chr": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string"
               },
               "genesequenceid": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string"
+              },
+              "proteinsequenceid": {
+                "type": "string"
+              },
+              "chromosequenceid": {
+                "type": "string"
+              },
+              "mrnasequenceid": {
+                "type": "string"
               },
               "hgncid": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string"
               },
               "ncbiid": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string"
               },
               "ensemblid": {
+                "type": "string"
+              },
+              "clinpgxid": {
+                "type": "string"
+              },
+              "frequencymethods": {
+                "type": "string"
+              },
+              "lookupmethod": {
+                "type": "string"
+              },
+              "version": {
                 "type": [
-                  "string",
-                  "null"
+                  "integer",
+                  "number"
                 ]
               },
-              "pharmgkbid": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "notesondiplotype": {
+                "type": "null"
+              },
+              "url": {
+                "type": "string"
+              },
+              "functionmethods": {
+                "type": "null"
+              },
+              "notesonallelenaming": {
+                "type": "string"
+              },
+              "includephenotypefrequencies": {
+                "type": "boolean"
+              },
+              "includediplotypefrequencies": {
+                "type": "boolean"
               }
             }
           }
@@ -80,8 +113,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message if the request failed"
+              "type": "string"
             }
           },
           "required": [
@@ -109,7 +141,6 @@
       "oneOf": [
         {
           "type": "array",
-          "description": "List of pharmacogenomics genes",
           "items": {
             "type": "object",
             "properties": {
@@ -118,21 +149,90 @@
               },
               "chr": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "string"
+                ]
+              },
+              "genesequenceid": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "proteinsequenceid": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "chromosequenceid": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "mrnasequenceid": {
+                "type": [
+                  "null",
+                  "string"
                 ]
               },
               "hgncid": {
+                "type": "string"
+              },
+              "ncbiid": {
+                "type": "string"
+              },
+              "ensemblid": {
+                "type": "string"
+              },
+              "clinpgxid": {
+                "type": "string"
+              },
+              "frequencymethods": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "string"
                 ]
               },
-              "pharmgkbid": {
+              "lookupmethod": {
+                "type": "string"
+              },
+              "version": {
                 "type": [
-                  "string",
-                  "null"
+                  "integer",
+                  "number"
                 ]
+              },
+              "notesondiplotype": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "url": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "functionmethods": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "notesonallelenaming": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "includephenotypefrequencies": {
+                "type": "boolean"
+              },
+              "includediplotypefrequencies": {
+                "type": "boolean"
               }
             }
           }
@@ -141,8 +241,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message if the request failed"
+              "type": "string"
             }
           },
           "required": [
@@ -168,7 +267,9 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/drug?name=eq.{name}"
+      "endpoint": "https://api.cpicpgx.org/v1/drug?name=eq.{name}",
+      "lowercase_params": ["name"],
+      "empty_result_note": "No exact match for this name in CPIC. CPIC indexes one canonical spelling/name per drug (e.g. 'cyclosporine' not 'cyclosporin', 'tacrolimus' not the alternate name 'FK506') -- try CPIC_list_drugs or CPIC_search_gene_drug_pairs to browse indexed names."
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -183,7 +284,6 @@
       "oneOf": [
         {
           "type": "array",
-          "description": "Drug pharmacogenomics information",
           "items": {
             "type": "object",
             "properties": {
@@ -193,28 +293,40 @@
               "name": {
                 "type": "string"
               },
-              "pharmgkbid": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "clinpgxid": {
+                "type": "string"
               },
               "rxnormid": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string"
               },
               "drugbankid": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string"
               },
               "atcid": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "umlscui": {
+                "type": "null"
+              },
+              "flowchart": {
                 "type": [
-                  "array",
-                  "null"
+                  "null",
+                  "string"
+                ]
+              },
+              "version": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "guidelineid": {
+                "type": [
+                  "integer",
+                  "number"
                 ]
               }
             }
@@ -224,8 +336,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message if the request failed"
+              "type": "string"
             }
           },
           "required": [
@@ -284,12 +395,14 @@
       "oneOf": [
         {
           "type": "array",
-          "description": "Gene-drug pairs with evidence levels",
           "items": {
             "type": "object",
             "properties": {
               "pairid": {
-                "type": "integer"
+                "type": [
+                  "integer",
+                  "number"
+                ]
               },
               "genesymbol": {
                 "type": "string"
@@ -300,40 +413,63 @@
               "guidelineid": {
                 "type": [
                   "integer",
-                  "null"
+                  "null",
+                  "number"
                 ]
               },
               "usedforrecommendation": {
                 "type": "boolean"
               },
+              "version": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
               "cpiclevel": {
-                "type": "string",
-                "description": "CPIC evidence level (A, B, B/C, C, D)"
+                "type": "string"
               },
               "clinpgxlevel": {
                 "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "CPIC/PharmGKB clinical annotation level (e.g., '1A', '2A', '3')"
+                  "null",
+                  "string"
+                ]
               },
               "pgxtesting": {
                 "type": [
-                  "string",
+                  "null",
+                  "string"
+                ]
+              },
+              "citations": {
+                "type": [
+                  "array",
                   "null"
                 ],
-                "description": "PGx testing recommendation"
+                "items": {
+                  "type": "string"
+                }
+              },
+              "removed": {
+                "type": "boolean"
+              },
+              "removeddate": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "removedreason": {
+                "type": [
+                  "null",
+                  "string"
+                ]
               },
               "drug": {
-                "type": [
-                  "object",
-                  "null"
-                ],
-                "description": "Embedded drug info from CPIC drug table",
+                "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string",
-                    "description": "Human-readable drug name (e.g., 'codeine', 'warfarin')"
+                    "type": "string"
                   }
                 }
               }
@@ -344,8 +480,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message if the request failed"
+              "type": "string"
             }
           },
           "required": [
@@ -388,53 +523,52 @@
       "oneOf": [
         {
           "type": "array",
-          "description": "List of CPIC pharmacogenomic guidelines",
           "items": {
             "type": "object",
             "properties": {
               "id": {
-                "type": "integer",
-                "description": "Guideline numeric ID - use with CPIC_get_recommendations"
+                "type": [
+                  "integer",
+                  "number"
+                ]
               },
               "version": {
-                "type": "integer",
-                "description": "Current version number of the guideline"
+                "type": [
+                  "integer",
+                  "number"
+                ]
               },
               "name": {
-                "type": "string",
-                "description": "Full name of the guideline (e.g., 'CYP2D6 and Codeine')"
+                "type": "string"
               },
               "url": {
-                "type": "string",
-                "description": "URL to the full guideline on cpicpgx.org"
-              },
-              "pharmgkbid": {
-                "type": [
-                  "array",
-                  "null"
-                ],
-                "description": "Associated PharmGKB guideline annotation IDs"
+                "type": "string"
               },
               "genes": {
-                "type": [
-                  "array",
-                  "null"
-                ],
-                "description": "List of gene symbols covered by this guideline (e.g., ['CYP2D6'])"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "notesonusage": {
                 "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Additional usage notes"
+                  "null",
+                  "string"
+                ]
               },
               "clinpgxid": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "ClinPGx identifier"
+                "type": "string"
+              },
+              "drug": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
           }
@@ -443,8 +577,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message if the request failed"
+              "type": "string"
             }
           },
           "required": [
@@ -456,7 +589,7 @@
   },
   {
     "name": "CPIC_get_recommendations",
-    "description": "Get drug dosing recommendations from a CPIC pharmacogenomic guideline. Returns clinically actionable recommendations linking genotype/phenotype to prescribing actions (classification strength, recommendation text, allele status). Accepts drug name (e.g. 'codeine', 'abacavir') for auto-resolution to guideline_id, or provide guideline_id directly. Key guideline IDs: 100421 (HLA-B/abacavir), 100416 (CYP2D6,OPRM1,COMT/opioids-codeine), 100414 (CYP2D6,CYP2C19/tricyclic-antidepressants), 100415 (CYP2D6/tamoxifen), 100412 (CYP2C9,HLA-B/phenytoin). Note: warfarin (guideline 100425) uses a dosing calculator and returns 0 rows from this endpoint.",
+    "description": "Get drug dosing recommendations from a CPIC pharmacogenomic guideline. Returns clinically actionable recommendations linking genotype/phenotype to prescribing actions (classification strength, recommendation text, allele status). Accepts drug name (e.g. 'codeine', 'abacavir') for auto-resolution to guideline_id, or provide guideline_id directly. Without gene/phenotype, returns ALL recommendation rows for every genotype/phenotype combination the guideline covers -- pass gene (e.g. 'CYP2C19') and/or phenotype (e.g. 'Poor Metabolizer', exact CPIC term) to filter to one specific recommendation. Key guideline IDs: 100421 (HLA-B/abacavir), 100416 (CYP2D6,OPRM1,COMT/opioids-codeine), 100414 (CYP2D6,CYP2C19/tricyclic-antidepressants), 100415 (CYP2D6/tamoxifen), 100412 (CYP2C9,HLA-B/phenytoin). Note: warfarin (guideline 100425) uses a dosing calculator and returns 0 rows from this endpoint.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -472,19 +605,33 @@
           "type": "string",
           "description": "Alias for drug."
         },
+        "gene": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter to recommendation rows for this pharmacogene (e.g. 'CYP2C19', 'CYP2D6'), matched case-insensitively against each row's own phenotypes dict. Combine with phenotype for an exact single-row lookup."
+        },
+        "phenotype": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter to recommendation rows whose phenotype exactly matches this CPIC term (case-insensitive), e.g. 'Poor Metabolizer', 'Likely Poor Metabolizer', 'Normal Metabolizer', 'Ultrarapid Metabolizer'. Note 'Poor Metabolizer' and 'Likely Poor Metabolizer' are distinct CPIC categories, not synonyms -- use the exact term. If gene is also given, matches only that gene's phenotype value; otherwise matches any gene's phenotype value in the row."
+        },
         "limit": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Maximum number of recommendations to return (default 50)"
+          "description": "Maximum number of recommendations to return (default 50). Applied after gene/phenotype filtering, if any."
         },
         "offset": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Number of recommendations to skip for pagination (default 0)"
+          "description": "Number of recommendations to skip for pagination (default 0). Applied after gene/phenotype filtering, if any."
         }
       },
       "required": []
@@ -498,79 +645,150 @@
       {
         "guideline_id": 100421,
         "limit": 10
+      },
+      {
+        "drug": "clopidogrel",
+        "gene": "CYP2C19",
+        "phenotype": "Poor Metabolizer"
       }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "Drug dosing recommendations from the CPIC guideline",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer",
-                "description": "Unique recommendation ID"
-              },
-              "guidelineid": {
-                "type": "integer",
-                "description": "Parent guideline ID"
-              },
-              "drugid": {
-                "type": "string",
-                "description": "RxNorm drug identifier (e.g., 'RxNorm:190521')"
-              },
-              "drugrecommendation": {
-                "type": "string",
-                "description": "Clinical prescribing recommendation text"
-              },
-              "classification": {
-                "type": "string",
-                "description": "Recommendation strength: Strong, Moderate, Optional, or No recommendation"
-              },
-              "implications": {
+          "type": "object",
+          "properties": {
+            "guideline_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "recommendations": {
+              "type": "array",
+              "items": {
                 "type": "object",
-                "description": "Gene-specific clinical implications (gene symbol -> implication text)"
-              },
-              "phenotypes": {
-                "type": "object",
-                "description": "Phenotype assignments per gene"
-              },
-              "allelestatus": {
-                "type": "object",
-                "description": "Allele status context per gene (e.g., HLA-B*57:01 positive/negative)"
-              },
-              "population": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Target patient population (e.g., 'general', 'pediatric')"
-              },
-              "comments": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Additional clinical comments"
-              },
-              "dosinginformation": {
-                "type": "boolean",
-                "description": "Whether the recommendation includes specific dosing information"
-              },
-              "alternatedrugavailable": {
-                "type": "boolean",
-                "description": "Whether an alternative drug is available"
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "guidelineid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "drugid": {
+                    "type": "string"
+                  },
+                  "implications": {
+                    "type": "object",
+                    "properties": {
+                      "CYP2D6": {
+                        "type": "string"
+                      },
+                      "HLA-B": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "drugrecommendation": {
+                    "type": "string"
+                  },
+                  "classification": {
+                    "type": "string"
+                  },
+                  "phenotypes": {
+                    "type": "object",
+                    "properties": {
+                      "CYP2D6": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "activityscore": {
+                    "type": "object",
+                    "properties": {
+                      "CYP2D6": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "allelestatus": {
+                    "type": "object",
+                    "properties": {
+                      "HLA-B": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "lookupkey": {
+                    "type": "object",
+                    "properties": {
+                      "CYP2D6": {
+                        "type": "string"
+                      },
+                      "HLA-B": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "population": {
+                    "type": "string"
+                  },
+                  "comments": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "dosinginformation": {
+                    "type": "boolean"
+                  },
+                  "alternatedrugavailable": {
+                    "type": "boolean"
+                  },
+                  "otherprescribingguidance": {
+                    "type": "boolean"
+                  },
+                  "drug": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
               }
+            },
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
-          }
+          },
+          "required": [
+            "guideline_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message if the request failed"
+              "type": "string"
             }
           },
           "required": [
@@ -643,39 +861,39 @@
       "oneOf": [
         {
           "type": "array",
-          "description": "Gene-drug pairs matching the search filters",
           "items": {
             "type": "object",
             "properties": {
               "genesymbol": {
-                "type": "string",
-                "description": "HGNC gene symbol (e.g., 'CYP2D6')"
+                "type": "string"
               },
               "drugid": {
-                "type": "string",
-                "description": "RxNorm drug identifier (e.g., 'RxNorm:704')"
+                "type": "string"
               },
               "cpiclevel": {
-                "type": "string",
-                "description": "CPIC evidence level: A (strongest), B, B/C, C, D (weakest)"
+                "type": "string"
               },
               "guidelineid": {
                 "type": [
                   "integer",
-                  "null"
-                ],
-                "description": "CPIC guideline ID - use with CPIC_get_recommendations for dosing details"
+                  "null",
+                  "number"
+                ]
               },
               "usedforrecommendation": {
-                "type": "boolean",
-                "description": "Whether this pair is used for clinical recommendations"
+                "type": "boolean"
               },
               "clinpgxlevel": {
                 "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "CPIC/PharmGKB clinical annotation level (e.g., '1A', '2A', '3')"
+                  "null",
+                  "string"
+                ]
+              },
+              "pgxtesting": {
+                "type": [
+                  "null",
+                  "string"
+                ]
               }
             }
           }
@@ -684,8 +902,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message if the request failed"
+              "type": "string"
             }
           },
           "required": [
@@ -714,20 +931,18 @@
       "oneOf": [
         {
           "type": "array",
-          "description": "List of drugs with CPIC pharmacogenomic annotations",
           "items": {
             "type": "object",
             "properties": {
               "name": {
-                "type": "string",
-                "description": "Drug name in lowercase (e.g., 'warfarin', 'codeine', 'abacavir')"
+                "type": "string"
               },
               "guidelineid": {
                 "type": [
                   "integer",
-                  "null"
-                ],
-                "description": "CPIC guideline ID if a full dosing guideline exists, null if only annotated. Use with CPIC_get_recommendations."
+                  "null",
+                  "number"
+                ]
               }
             }
           }
@@ -736,8 +951,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message if the request failed"
+              "type": "string"
             }
           },
           "required": [
@@ -762,7 +976,8 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of alleles to return (default 50)"
+          "description": "Maximum number of alleles to return (default 50)",
+          "default": 50
         }
       },
       "required": [
@@ -770,7 +985,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/allele?genesymbol=eq.{genesymbol}&select=name,functionalstatus,activityvalue,clinicalfunctionalstatus&limit={limit}"
+      "endpoint": "https://api.cpicpgx.org/v1/allele?genesymbol=eq.{genesymbol}&select=name,functionalstatus,activityvalue,clinicalfunctionalstatus&limit={limit}",
+      "uppercase_params": ["genesymbol"]
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -787,32 +1003,23 @@
       "oneOf": [
         {
           "type": "array",
-          "description": "Gene alleles with functional status",
           "items": {
             "type": "object",
             "properties": {
               "name": {
-                "type": "string",
-                "description": "Allele name (e.g., '*1', '*4', 'c.1905+1G>A')"
+                "type": "string"
               },
               "functionalstatus": {
                 "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Functional status: normal function, decreased function, no function, increased function, uncertain function, unknown function"
+                  "null",
+                  "string"
+                ]
               },
               "activityvalue": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string"
               },
               "clinicalfunctionalstatus": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string"
               }
             }
           }
@@ -821,8 +1028,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message if the request failed"
+              "type": "string"
             }
           },
           "required": [

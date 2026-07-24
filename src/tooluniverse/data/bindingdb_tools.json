@@ -15,7 +15,9 @@
           "description": "Alias for query. Target gene symbol or protein name."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "operation": "search_by_target"
@@ -25,16 +27,75 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "uniprots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cutoff": {
+              "type": "integer"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "uniprots"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "EGFR"},
-      {"query": "BRAF"}
+      {
+        "query": "P00533"
+      },
+      {
+        "query": "P38398"
+      }
     ]
   },
   {
@@ -62,48 +123,78 @@
       "operation": "get_ligands_by_uniprot"
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "uniprots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cutoff": {
+              "type": "integer"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
           },
-          "monomerid": {
-            "type": "string"
+          "required": [
+            "uniprots"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
           },
-          "smile": {
-            "type": "string"
-          },
-          "affinity_type": {
-            "type": "string"
-          },
-          "affinity": {
-            "type": "string"
-          },
-          "pmid": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "doi": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
-        "affinity_cutoff": 100,
-        "uniprot_id": "P35354"
+        "uniprot_id": "P00533"
       },
       {
-        "affinity_cutoff": 1000,
-        "uniprot_id": "P00742"
+        "uniprot_id": "P38398"
       }
     ]
   },
@@ -132,44 +223,75 @@
       "operation": "get_ligands_by_uniprots"
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "uniprots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cutoff": {
+              "type": "integer"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
           },
-          "monomerid": {
-            "type": "string"
+          "required": [
+            "uniprots"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
           },
-          "smile": {
-            "type": "string"
-          },
-          "affinity_type": {
-            "type": "string"
-          },
-          "affinity": {
-            "type": "string"
-          },
-          "pmid": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "doi": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
-        "affinity_cutoff": 10000,
-        "uniprot_ids": "P00176,P00183"
+        "uniprot_ids": "P00533;P15056"
       }
     ]
   },
@@ -203,51 +325,73 @@
       "operation": "get_ligands_by_pdb"
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "pdbs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cutoff": {
+              "type": "integer"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
           },
-          "monomerid": {
-            "type": "string"
+          "required": [
+            "pdbs"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
           },
-          "smile": {
-            "type": "string"
-          },
-          "affinity_type": {
-            "type": "string"
-          },
-          "affinity": {
-            "type": "string"
-          },
-          "pmid": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "doi": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
-    "test_examples": [
-      {
-        "pdb_ids": "1Q0L",
-        "affinity_cutoff": 100
-      },
-      {
-        "pdb_ids": "3ANM",
-        "affinity_cutoff": 1000,
-        "sequence_identity": 90
-      }
-    ]
+    "test_examples": []
   },
   {
     "type": "BindingDBTool",
@@ -274,44 +418,73 @@
       "operation": "get_targets_by_compound"
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "smiles": {
+              "type": "string"
+            },
+            "similarity": {
+              "type": "number"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
           },
-          "monomerid": {
-            "type": "string"
+          "required": [
+            "smiles"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
           },
-          "smile": {
-            "type": "string"
-          },
-          "affinity_type": {
-            "type": "string"
-          },
-          "affinity": {
-            "type": "string"
-          },
-          "pmid": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "doi": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
-        "smiles": "CC(C)Cc1ccc(cc1)C(C)C(=O)O",
-        "similarity_cutoff": 0.8
+        "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+        "similarity_cutoff": 0.95
       }
     ]
   }

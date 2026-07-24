@@ -213,7 +213,21 @@ class MyVariantTool(BaseTool):
         Endpoint: GET /variant/<hgvsid>
         """
         variant_id = arguments.get("variant_id", "")
-        fields = arguments.get("fields", "dbsnp,clinvar,cadd,gnomad_genome,dbnsfp")
+        # This handler backs both MyVariant_get_variant_annotation and
+        # MyVariant_get_pathogenicity_scores (both operation="get_variant").
+        # Read the per-instance declared default instead of hardcoding the
+        # generic annotation field list for both, or
+        # MyVariant_get_pathogenicity_scores (whose schema declares a
+        # curated list of dbnsfp pathogenicity-prediction fields) silently
+        # returns generic annotation data instead whenever `fields` is
+        # omitted.
+        declared_default = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("fields", {})
+            .get("default", "dbsnp,clinvar,cadd,gnomad_genome,dbnsfp")
+        )
+        fields = arguments.get("fields", declared_default)
 
         if not variant_id:
             return {

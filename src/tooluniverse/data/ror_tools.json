@@ -1,5 +1,104 @@
 [
   {
+    "name": "ROR_match_affiliation",
+    "description": "Resolve a free-text author affiliation string (as printed in a paper, e.g. 'Department of Chemistry, Harvard University') to the best-matching organization in the Research Organization Registry (ROR). Uses ROR's special 'affiliation' matching algorithm, which returns ranked candidates each with a match score, substring, and matching_type; the single best match has chosen=true and gives the canonical ROR id and organization name/location. Use this for author-affiliation disambiguation and organization normalization. For plain name/keyword lookup use ROR_search_organizations instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "affiliation": {
+          "type": "string",
+          "description": "Raw affiliation string to match, typically copied from a publication byline (e.g., 'Department of Chemistry, Harvard University', 'MIT Media Lab, Cambridge, MA')."
+        }
+      },
+      "required": [
+        "affiliation"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.ror.org/v2/organizations",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "affiliation": "Department of Chemistry, Harvard University"
+      },
+      {
+        "affiliation": "Broad Institute of MIT and Harvard"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "ROR affiliation-matching result with ranked candidate organizations.",
+          "properties": {
+            "number_of_results": {
+              "type": "integer",
+              "description": "Number of candidate matches returned"
+            },
+            "items": {
+              "type": "array",
+              "description": "Ranked candidate matches; the best match has chosen=true",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "substring": {
+                    "type": "string",
+                    "description": "Portion of the affiliation string that matched"
+                  },
+                  "score": {
+                    "type": "number",
+                    "description": "Match confidence score (0-1)"
+                  },
+                  "chosen": {
+                    "type": "boolean",
+                    "description": "True for the single best/selected match"
+                  },
+                  "matching_type": {
+                    "type": "string",
+                    "description": "Algorithm that produced the match (e.g., PHRASE, COMMON TERMS, FUZZY)"
+                  },
+                  "organization": {
+                    "type": "object",
+                    "description": "The matched ROR organization record",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Full ROR URL identifier (e.g., https://ror.org/03vek6s52)"
+                      },
+                      "names": {
+                        "type": "array"
+                      },
+                      "locations": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
     "name": "ROR_search_organizations",
     "description": "Search the Research Organization Registry (ROR) for research institutions, universities, companies, and other organizations. ROR provides unique persistent identifiers for research organizations worldwide, similar to ORCID for researchers. Returns organization names, types, locations, external identifiers (GRID, ISNI, Wikidata), and ROR IDs. Use this to find organizations by name, identify affiliations, or get ROR IDs for detailed lookups with ROR_get_organization. Supports searching by name, acronym, or keyword.",
     "parameter": {

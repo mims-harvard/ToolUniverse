@@ -1,0 +1,64 @@
+{
+  "skill_name": "tooluniverse-peptide-target-deorphanization",
+  "notes": "Reproducible test prompts for the peptide target-deorphanization skill. Run each prompt through a Claude that has this skill loaded; check the output against `assertions`. Eval 1 is the validated control (objective answer), eval 2 is the motivating real case (process + re-ranking), eval 3 exercises seedless mode + the non-canonical path. The full skill-creator eval harness (run_loop.py, generate_review.py) lives in the skill-creator plugin, not this repo; these prompts + assertions are the durable test set.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "exendin4-control-seeded",
+      "prompt": "I have a 39-residue peptide, HGEGTFTSDLSKQMEEEAVRLFIEWLKNGGPSSGAPPPS. It's a type-2-diabetes drug that's supposed to act through GLP1R. Can you confirm what receptor family it really targets from the sequence alone — basically deorphanize it and show me your evidence, don't just take the GLP1R label at face value.",
+      "files": [],
+      "expected_output": "A ranked candidate report that recovers the class-B1 / secretin receptor family (GLP1R + paralogs GCGR, GIPR, GLP2R, SCTR, GHRHR) from the sequence, identifies the PROSITE glucagon/GIP/secretin/VIP family signature (PS00260), and lists GLP1R as a Tier-1 candidate — every candidate backed by a recorded tool result, produced with keyless tools.",
+      "assertions": [
+        "The candidate panel includes GLP1R together with its class-B paralogs (at least GCGR, GIPR, GLP2R, SCTR).",
+        "It identifies the glucagon/GIP/secretin/VIP family signature (PROSITE PS00260) or the equivalent class-B1 ligand family from the sequence.",
+        "GLP1R is reported as a Tier-1 / strong candidate (sequence + phenotype supported).",
+        "Every named candidate receptor is attributed to a tool result (homology hit, family enumeration, or phenotype association) rather than asserted from the peptide's name.",
+        "The analysis is performed with keyless tools (no API key required) or clearly marks any key-gated step (co-folding) as optional."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "source-organism-binding-mouse-negative",
+      "prompt": "A collaborator isolated a short peptide from a single-celled organism. It prevents insulin resistance in mice (real metabolic phenotype), and in the source organism it binds something they call 'GLP1' — but in a mouse wet-lab binding assay it does NOT bind mouse GLP1R. They assumed GLP1R was the target and it isn't. Can you use ToolUniverse to screen for what the real target might be? The peptide is HAEGTYTSDVSSYLEGQAAKEFIAWLVKGRG. Don't just guess from the name.",
+      "files": [],
+      "expected_output": "A deorphanization report that refuses to assert GLP1R from the name, enumerates the full class-B / metabolic receptor panel as explicit candidates, promotes paralogs (e.g. GIPR, GCGR) as the leading alternative real-target hypotheses on phenotype + sequence grounds, performs or describes a cross-species (human vs mouse, plus the source organism if resolvable) ortholog interface comparison to explain the mouse-negative result, flags the GLP1R negative as re-ranking evidence, and ends with a ranked shortlist + wet-lab recommendation.",
+      "assertions": [
+        "It does NOT conclude the target is GLP1R purely because the peptide was labeled a GLP1 binder; the GLP1R-negative result is treated as re-ranking evidence, not a dead end.",
+        "It enumerates the class-B / glucagon-secretin receptor family (GLP1R, GCGR, GIPR, GLP2R, SCTR, GHRHR) as explicit candidates.",
+        "It promotes at least one paralog (e.g. GIPR or GCGR) as a leading alternative real-target hypothesis with stated evidence.",
+        "It addresses the cross-species 'binds in A not B' question via ortholog interface comparison across human / mouse (and the source organism when resolvable), or explicitly notes when the source organism is absent from the sequence databases.",
+        "The final output is a ranked shortlist with evidence tiers and a concrete wet-lab validation recommendation (binding/competition or functional assay against the top candidates).",
+        "Every candidate is supported by a recorded tool result, not by unsourced recall."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "seedless-orphan-no-hypothesized-target",
+      "prompt": "We pulled a ~20-residue peptide out of a marine sponge metabolite screen. It reduces inflammation in a cell assay but we have no idea what it binds — no hypothesized target at all. Sequence is GLPVCGETCVGGTCNTPGCTCSWPVCTRN (it's cysteine-rich, possibly cyclic). What could the real protein target be?",
+      "files": [],
+      "expected_output": "A seedless-mode deorphanization: because no hypothesized target is given, it derives candidate targets from the motif/signature and the inflammation phenotype anchor rather than from a seed family, flags the peptide as cysteine-rich/possibly non-canonical or cyclic (so sequence tools may mischaracterize it), and returns a phenotype-anchored ranked candidate list — degrading gracefully to phenotype-only candidates if the motif resolver returns nothing, without inventing a target.",
+      "assertions": [
+        "It runs without a seeded hypothesized target (seedless mode) and derives candidates from the motif/signature and/or the inflammation phenotype rather than assuming a receptor family.",
+        "It classifies the target class as something OTHER than a GPCR (e.g. ion-channel toxin / cysteine-rich, or unknown) and does NOT restrict candidate generation to receptors only.",
+        "It flags the peptide as cysteine-rich / possibly cyclic or non-canonical and notes that BLAST/PROSITE/ProtParam may mischaracterize a non-linear peptide (or recommends Norine / a cyclic-aware tool).",
+        "It anchors candidate targets on the inflammation phenotype (e.g. via OpenTargets) and intersects with any sequence/motif evidence.",
+        "If the motif-based resolver returns nothing, it degrades to a phenotype-anchored candidate list and says so, rather than fabricating a specific target.",
+        "Every candidate target is supported by a tool result, and the report states which evidence is keyless vs key-gated."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "conotoxin-ion-channel-nongpcr-control",
+      "prompt": "Deorphanize this venom peptide for me: CKGKGAKCSRLMYDCCTGSCRSGKC. It's a 25-mer from a cone snail and it has strong analgesic / pain-relief activity. I want to know what protein it actually acts on — work it out from the sequence, don't just tell me it's a 'conotoxin'.",
+      "files": [],
+      "expected_output": "A deorphanization that classifies this cysteine-rich venom peptide as a NON-GPCR target class (ion-channel toxin), enumerates the relevant channel family via the general HGNC/InterPro route (not GPCRdb), anchors on the pain phenotype, and lands on a voltage-gated calcium channel (CACNA1B / Cav2.2, the real ziconotide target) or the calcium-channel family as the top candidate — with electrophysiology, not a GPCR cAMP assay, as the recommended validation.",
+      "assertions": [
+        "It classifies the target class as an ion-channel toxin / non-GPCR (e.g. from the cysteine-rich pattern and/or conotoxin homology), NOT as a GPCR ligand.",
+        "Candidate generation uses the general target-family route (HGNC gene-family and/or InterPro) rather than GPCRdb, and the candidate panel is a channel family (e.g. voltage-gated calcium channels), not a receptor family.",
+        "The top candidate is a voltage-gated calcium channel — CACNA1B (Cav2.2) or the CACNA1x family — consistent with the analgesic phenotype.",
+        "The recommended validation is class-appropriate (electrophysiology / channel binding), not a GPCR functional assay.",
+        "Every candidate is backed by a tool result, and the answer does not stop at the label 'conotoxin' without naming a protein target."
+      ]
+    }
+  ]
+}

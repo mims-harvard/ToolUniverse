@@ -1,0 +1,57 @@
+[
+  {
+    "name": "MR_estimate",
+    "type": "MendelianRandomizationTool",
+    "description": "Two-sample Mendelian randomization causal estimate from harmonized instrument summary statistics (SNP-exposure + SNP-outcome betas and SEs, e.g. from OpenGWAS_get_mr_instruments). Returns IVW (primary), MR-Egger (with directional-pleiotropy intercept), weighted-median estimates, and Cochran's Q / I^2 heterogeneity. Pure-compute (no R, no API key); reimplements TwoSampleMR's core estimators.",
+    "parameter": {
+      "type": "object",
+      "required": ["beta_exposure", "se_exposure", "beta_outcome", "se_outcome"],
+      "properties": {
+        "beta_exposure": {"type": "array", "items": {"type": "number"}, "description": "Per-instrument SNP-exposure effect sizes (harmonized to the same effect allele; non-zero)."},
+        "se_exposure": {"type": "array", "items": {"type": "number"}, "description": "Standard errors of beta_exposure (positive)."},
+        "beta_outcome": {"type": "array", "items": {"type": "number"}, "description": "Per-instrument SNP-outcome effect sizes (same SNP order / effect allele)."},
+        "se_outcome": {"type": "array", "items": {"type": "number"}, "description": "Standard errors of beta_outcome (positive)."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "n_instruments": {"type": "integer"},
+                "estimates": {
+                  "type": "object",
+                  "properties": {
+                    "ivw": {"type": "object"},
+                    "mr_egger": {"type": "object"},
+                    "weighted_median": {"type": "object"}
+                  }
+                },
+                "egger_intercept": {"type": "object"},
+                "heterogeneity": {"type": "object"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "beta_exposure": [0.10, 0.15, 0.08, 0.20, 0.12, 0.18],
+        "se_exposure": [0.02, 0.03, 0.02, 0.03, 0.02, 0.03],
+        "beta_outcome": [0.05, 0.08, 0.03, 0.11, 0.07, 0.09],
+        "se_outcome": [0.02, 0.02, 0.02, 0.03, 0.02, 0.02]
+      }
+    ]
+  }
+]

@@ -220,7 +220,12 @@ class SequenceAnalyzeTool(BaseTool):
         else:
             seq_type = "Protein"
             mw = _WATER_MASS + sum(_AA_MASS.get(aa, 111.1) for aa in seq)
-            extra = {"estimated_mw_da": round(mw, 2)}
+            # Monoisotopic, not average mass -- confirmed live this was
+            # previously reported as unlabeled "estimated_mw_da" and silently
+            # mismatched the average mass most tools (ExPASy ProtParam,
+            # UniProt) report by default (off by ~11-18 Da, more for larger
+            # proteins). Use ProtParam_calculate for average mass.
+            extra = {"estimated_mw_monoisotopic_da": round(mw, 2)}
 
         data = {
             "sequence_type": seq_type,

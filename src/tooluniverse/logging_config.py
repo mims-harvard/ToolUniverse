@@ -53,9 +53,13 @@ class ToolUniverseFormatter(logging.Formatter):
         "CRITICAL": "[CRITICAL] ",
     }
 
+    def __init__(self, *args, use_emoji: bool = True, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.use_emoji = use_emoji
+
     def format(self, record):
         # Add emoji prefix
-        emoji = self.EMOJI_PREFIX.get(record.levelname, "")
+        emoji = self.EMOJI_PREFIX.get(record.levelname, "") if self.use_emoji else ""
 
         # Add color if output is to terminal
         if hasattr(sys.stderr, "isatty") and sys.stderr.isatty():
@@ -66,6 +70,18 @@ class ToolUniverseFormatter(logging.Formatter):
         # Format the message
         formatted = super().format(record)
         return f"{emoji}{formatted}"
+
+
+def _stream_supports_unicode(stream) -> bool:
+    """Return whether a stream can encode ToolUniverse's log prefixes."""
+
+    encoding = getattr(stream, "encoding", None) or sys.getdefaultencoding()
+    try:
+        for prefix in ToolUniverseFormatter.EMOJI_PREFIX.values():
+            prefix.encode(encoding)
+    except (LookupError, UnicodeEncodeError):
+        return False
+    return True
 
 
 class ToolUniverseLogger:
@@ -115,6 +131,7 @@ class ToolUniverseLogger:
         formatter = ToolUniverseFormatter(
             fmt="%(message)s",  # Simple format since we add emoji prefix
             datefmt="%H:%M:%S",
+            use_emoji=_stream_supports_unicode(output_stream),
         )
         handler.setFormatter(formatter)
 
@@ -138,6 +155,7 @@ class ToolUniverseLogger:
         formatter = ToolUniverseFormatter(
             fmt="%(message)s",
             datefmt="%H:%M:%S",
+            use_emoji=_stream_supports_unicode(sys.stderr),
         )
         handler.setFormatter(formatter)
 

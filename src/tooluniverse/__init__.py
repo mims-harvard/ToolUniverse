@@ -1,11 +1,24 @@
-from importlib.metadata import version
+from importlib.metadata import version, PackageNotFoundError
 import os
 from typing import Any, Optional, List
+
+# Force CPU before torch is imported anywhere — prevents MPS (Metal) segfaults
+# in forked subprocesses (uvx MCP server, tu CLI, Claude Code plugin).
+os.environ.setdefault("PYTORCH_MPS_HIGH_WATERMARK_RATIO", "0.0")
+os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+try:
+    import torch
+
+    if hasattr(torch, "set_default_device"):
+        torch.set_default_device("cpu")
+except ImportError:
+    pass
 
 # Allow installed sub-packages (e.g. tooluniverse-circuit) to contribute
 # modules into the tooluniverse namespace even when the main package is
 # installed in editable mode (pip install -e).
 from pkgutil import extend_path
+
 __path__ = extend_path(__path__, __name__)
 
 from .execute_function import ToolUniverse
@@ -33,8 +46,16 @@ _LIGHT_IMPORT = (
     os.getenv("TOOLUNIVERSE_LIGHT_IMPORT", "false").lower() in _TRUTHY_VALUES
 )
 
-# Version information - read from package metadata or pyproject.toml
-__version__ = version("tooluniverse")
+# Version information. The MCPB bundle installs as "tooluniverse-mcpb-native"
+# (Pattern 2: bundled source, no PyPI dep), and running straight from source
+# has no installed metadata at all — so fall back gracefully in both cases.
+try:
+    __version__ = version("tooluniverse")
+except PackageNotFoundError:
+    try:
+        __version__ = version("tooluniverse-mcpb-native")
+    except PackageNotFoundError:
+        __version__ = "0.0.0+source"
 
 # Check if lazy loading is enabled
 LAZY_LOADING_ENABLED = (
@@ -74,7 +95,9 @@ if not _LIGHT_IMPORT:
             search_enabled: bool = True,
             **kwargs: Any,
         ) -> SMCP:
-            raise ImportError("SMCP requires FastMCP. Install with: pip install fastmcp")
+            raise ImportError(
+                "SMCP requires FastMCP. Install with: pip install fastmcp"
+            )
 else:
     _SMCP_AVAILABLE = False
 

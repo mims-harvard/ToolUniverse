@@ -26,8 +26,7 @@
       },
       "required": [
         "drug_name",
-        "patient_sex",
-        "serious_events_only"
+        "patient_sex"
       ]
     },
     "auto_load_dependencies": true,
@@ -48,8 +47,192 @@
     ],
     "return_schema": {
       "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "drug_name": {
+          "type": "string"
+        },
+        "analysis_parameters": {
+          "type": "object",
+          "properties": {
+            "patient_sex_filter": {
+              "type": "string"
+            },
+            "serious_events_only": {
+              "type": "boolean"
+            }
+          }
+        },
+        "adverse_events": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "term": {
+                    "type": "string"
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "molecular_properties": {
+          "type": "null"
+        },
+        "safety_literature": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "abstract": {
+                    "type": "string"
+                  },
+                  "authors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "journal": {
+                    "type": "string"
+                  },
+                  "year": {
+                    "type": "string"
+                  },
+                  "doi": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "source_db": {
+                    "type": "string"
+                  },
+                  "article_id": {
+                    "type": "string"
+                  },
+                  "pmid": {
+                    "type": "string"
+                  },
+                  "pmcid": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "doi_url": {
+                    "type": "string"
+                  },
+                  "fulltext_xml_url": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "citations": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "open_access": {
+                    "type": "boolean"
+                  },
+                  "keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "data_quality": {
+                    "type": "object",
+                    "properties": {
+                      "has_abstract": {
+                        "type": "boolean"
+                      },
+                      "has_authors": {
+                        "type": "boolean"
+                      },
+                      "has_journal": {
+                        "type": "boolean"
+                      },
+                      "has_year": {
+                        "type": "boolean"
+                      },
+                      "has_doi": {
+                        "type": "boolean"
+                      },
+                      "has_citations": {
+                        "type": "boolean"
+                      },
+                      "has_keywords": {
+                        "type": "boolean"
+                      },
+                      "has_url": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "query": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "analysis_summary": {
+          "type": "object",
+          "properties": {
+            "has_adverse_events": {
+              "type": "boolean"
+            },
+            "has_molecular_data": {
+              "type": "boolean"
+            },
+            "literature_papers_found": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -85,8 +268,65 @@
     ],
     "return_schema": {
       "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "result": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "prompt_used": {
+              "type": "string"
+            },
+            "input_arguments": {
+              "type": "object",
+              "properties": {
+                "research_topic": {
+                  "type": "string"
+                },
+                "literature_content": {
+                  "type": "string"
+                },
+                "focus_area": {
+                  "type": "string"
+                },
+                "study_types": {
+                  "type": "string"
+                },
+                "quality_level": {
+                  "type": "string"
+                },
+                "review_scope": {
+                  "type": "string"
+                }
+              }
+            },
+            "model_info": {
+              "type": "object",
+              "properties": {
+                "api_type": {
+                  "type": "string"
+                },
+                "model_id": {
+                  "type": "string"
+                },
+                "temperature": {
+                  "type": "number"
+                }
+              }
+            },
+            "execution_time_seconds": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -126,8 +366,155 @@
     ],
     "return_schema": {
       "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "target_selection": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "disease": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "associatedTargets": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "rows": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "target": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "approvedSymbol": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "score": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "lead_discovery": {
+          "type": "object",
+          "properties": {
+            "total_drugs": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "approved_drugs": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "drug_data": {
+              "type": "array"
+            }
+          }
+        },
+        "safety_assessment": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
+        },
+        "literature_validation": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            },
+            "result": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "prompt_used": {
+                  "type": "string"
+                },
+                "input_arguments": {
+                  "type": "object",
+                  "properties": {
+                    "research_topic": {
+                      "type": "string"
+                    },
+                    "literature_content": {
+                      "type": "string"
+                    },
+                    "focus_area": {
+                      "type": "string"
+                    },
+                    "study_types": {
+                      "type": "string"
+                    },
+                    "quality_level": {
+                      "type": "string"
+                    },
+                    "review_scope": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "model_info": {
+                  "type": "object",
+                  "properties": {
+                    "api_type": {
+                      "type": "string"
+                    },
+                    "model_id": {
+                      "type": "string"
+                    },
+                    "temperature": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "execution_time_seconds": {
+                  "type": "number"
+                },
+                "timestamp": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -148,8 +535,7 @@
         }
       },
       "required": [
-        "disease_condition",
-        "sample_type"
+        "disease_condition"
       ]
     },
     "auto_load_dependencies": true,
@@ -174,8 +560,297 @@
     ],
     "return_schema": {
       "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "disease": {
+          "type": "string"
+        },
+        "sample_type": {
+          "type": "string"
+        },
+        "literature_evidence": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            },
+            "result": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "prompt_used": {
+                  "type": "string"
+                },
+                "input_arguments": {
+                  "type": "object",
+                  "properties": {
+                    "research_topic": {
+                      "type": "string"
+                    },
+                    "literature_content": {
+                      "type": "string"
+                    },
+                    "focus_area": {
+                      "type": "string"
+                    },
+                    "study_types": {
+                      "type": "string"
+                    },
+                    "quality_level": {
+                      "type": "string"
+                    },
+                    "review_scope": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "model_info": {
+                  "type": "object",
+                  "properties": {
+                    "api_type": {
+                      "type": "string"
+                    },
+                    "model_id": {
+                      "type": "string"
+                    },
+                    "temperature": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "execution_time_seconds": {
+                  "type": "number"
+                },
+                "timestamp": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "expression_data": {
+          "type": "object",
+          "properties": {
+            "search_query": {
+              "type": "string"
+            },
+            "genes_found": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "search_strategy": {
+              "type": "string"
+            },
+            "gene_details": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "error": {
+                  "type": "string"
+                },
+                "error_details": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "retriable": {
+                      "type": "boolean"
+                    },
+                    "next_steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "details": {
+                      "type": "object",
+                      "properties": {
+                        "validation_error": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "array"
+                        },
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "properties": {
+                              "type": "object",
+                              "properties": {
+                                "ensembl_id": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "include_images": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "include_antibodies": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "include_expression": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "required": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "parameter": {
+                          "type": "string"
+                        },
+                        "expected": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "all_candidates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_name": {
+                    "type": "string"
+                  },
+                  "ensembl_id": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pathway_analysis": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
+        },
+        "clinical_validation": {
+          "type": "object",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "properties": {
+                "skip": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "limit": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "total": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "clinical_pharmacology": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "openfda.brand_name": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "openfda.generic_name": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "set_id": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "protein_information": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -234,17 +909,120 @@
         "tool_type_mappings": {
           "Database": [
             "XMLTool"
+          ],
+          "Embedding Store": [
+            "EmbeddingDatabase"
+          ],
+          "Scientific Software Package": [
+            "PackageTool"
+          ],
+          "AI Agent": [
+            "AgenticTool"
+          ],
+          "ML Model": [
+            "ADMETAITool",
+            "AlphaFoldRESTTool",
+            "boltz2_docking",
+            "compute_depmap24q2_gene_correlations",
+            "run_compass_prediction",
+            "run_pinnacle_ppi_retrieval",
+            "run_transcriptformer_embedding_retrieval",
+            "get_abstract_from_patent_app_number",
+            "get_claims_from_patent_app_number",
+            "get_full_text_from_patent_app_number"
+          ],
+          "Human Expert Feedback": [
+            "mcp_auto_loader_human_expert",
+            "consult_human_expert",
+            "get_expert_response",
+            "get_expert_status",
+            "list_pending_expert_requests",
+            "submit_expert_response"
+          ],
+          "MCP": [
+            "MCPAutoLoaderTool",
+            "MCPClientTool",
+            "MCPProxyTool"
+          ],
+          "Compositional Tool": [
+            "ComposeTool"
+          ],
+          "Tool Finder Tool": [
+            "ToolFinderEmbedding",
+            "ToolFinderLLM",
+            "ToolFinderKeyword"
+          ],
+          "Special Tool": [
+            "Finish",
+            "CallAgent"
           ]
         }
       }
     ],
     "return_schema": {
-      "type": [
-        "object",
-        "array"
-      ],
-      "description": "Output of the tool execution - can be object or array of tool metadata configs",
-      "properties": {}
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "detailed_description": {
+            "type": "string"
+          },
+          "toolType": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array"
+          },
+          "category": {
+            "type": "string"
+          },
+          "lab": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "reviewed": {
+            "type": "boolean"
+          },
+          "isValidated": {
+            "type": "boolean"
+          },
+          "usageStats": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "array"
+          },
+          "limitations": {
+            "type": "array"
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "inputSchema": {
+            "type": "object"
+          },
+          "exampleInput": {
+            "type": "object"
+          },
+          "apiEndpoints": {
+            "type": "array"
+          }
+        }
+      }
     }
   },
   {
@@ -302,12 +1080,72 @@
       }
     ],
     "return_schema": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "output_file": {
+          "type": "string"
+        },
+        "graph": {
+          "type": "object",
+          "properties": {
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "edges": {
+              "type": "array"
+            },
+            "stats": {
+              "type": "object",
+              "properties": {
+                "tools": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "pairs_evaluated": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "edges": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "llm_calls": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "runtime_sec": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {

@@ -225,5 +225,109 @@
       "difficulty_level": "easy",
       "estimated_execution_time": "< 3 seconds"
     }
+  },
+  {
+    "type": "GEORESTTool",
+    "name": "geo_list_supplementary_files",
+    "description": "List the actual downloadable supplementary/raw files of a GEO Series (GSE) or Sample (GSM), with per-file name, byte size, type, modification time, and a direct download URL. GEO's E-utilities esummary only reports a type code and the base FTP directory, never the per-file manifest. For a Series this reads the structured suppl/filelist.txt TSV (Archive/File, Name, Time, Size, Type); for a Sample (no filelist.txt) it parses the suppl/ directory listing. Example: GSE42657 returns GSE42657_RAW.tar (TAR, 71680 bytes) and GPL8179_humanMI_V2_R0_XS0000124-MAP.txt.gz (TXT). Keyless; no NCBI API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "GEO Series (GSE...) or Sample (GSM...) accession. Examples: 'GSE42657', 'GSE1000', 'GSM1045442'."
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "mode": "supplementary_files"
+    },
+    "test_examples": [
+      {
+        "accession": "GSE42657"
+      },
+      {
+        "accession": "GSE1000"
+      }
+    ],
+    "label": [
+      "GEO",
+      "Supplementary",
+      "Download"
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "accession": {
+                  "type": "string"
+                },
+                "suppl_url": {
+                  "type": "string"
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "modified": {
+                        "type": "string"
+                      },
+                      "size": {
+                        "type": ["integer", "string"]
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "download_url": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "file_count": {
+                  "type": "integer"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "metadata": {
+      "tags": ["geo", "supplementary", "download", "raw-files"],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 3 seconds"
+    }
   }
 ]

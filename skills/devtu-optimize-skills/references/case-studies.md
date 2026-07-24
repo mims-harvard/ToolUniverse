@@ -4,7 +4,7 @@ Real-world examples from fixing 4 broken skills in February 2026.
 
 ## Case 1: Drug-Drug Interaction Skill
 
-**Original**: 0% functional. Docs showed `drugbank_get_drug_basic_info(drug_name_or_drugbank_id="...")` but tool requires `query`.
+**Original**: 0% functional. Docs showed `drugbank_get_drug_basic_info_by_drug_name_or_id(drug_name_or_drugbank_id="...")` but tool requires `query`.
 
 **Fixes**:
 | Tool | WRONG (in docs) | CORRECT (tested) |

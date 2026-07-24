@@ -9,6 +9,7 @@ Get help and find answers for ToolUniverse.
 
    faq
    troubleshooting
+   wechat_community
 
 **Quick Links:**
 

@@ -78,49 +78,41 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "histone_mark": {
-                        "type": "string"
-                      },
-                      "biosample_summary": {
-                        "type": "string"
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "lab": {
-                        "type": "string"
-                      },
-                      "date_released": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "total": {
+              "type": "integer"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "histone_mark": {
+                    "type": "string"
+                  },
+                  "biosample_summary": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "lab": {
+                    "type": "string"
+                  },
+                  "date_released": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           },
           "required": [
-            "data"
+            "experiments"
           ]
         },
         {
@@ -161,7 +153,10 @@
         "chromatin"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_methylation_experiments",
@@ -281,7 +276,10 @@
         "cpg"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_chromatin_accessibility",
@@ -403,7 +401,10 @@
         "open-chromatin"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_annotations",
@@ -535,7 +536,10 @@
         "chromatin-state"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "UCSC_get_cpg_islands",
@@ -677,7 +681,10 @@
         "promoters"
       ],
       "estimated_execution_time": "< 3 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "UCSC_get_encode_cCREs",
@@ -819,7 +826,10 @@
         "promoters"
       ],
       "estimated_execution_time": "< 3 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "UCSC_get_tf_binding_clusters",
@@ -950,7 +960,10 @@
         "binding-sites"
       ],
       "estimated_execution_time": "< 3 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_search_methylation_datasets",
@@ -1078,7 +1091,10 @@
         "geo"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_search_chipseq_datasets",
@@ -1198,7 +1214,10 @@
         "transcription-factor"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_get_dataset_details",
@@ -1310,7 +1329,10 @@
         "dataset-metadata"
       ],
       "estimated_execution_time": "< 3 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "EnsemblReg_get_regulatory_elements",
@@ -1445,7 +1467,10 @@
         "promoters"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_get_chromatin_state",
@@ -1566,7 +1591,10 @@
         "functional-annotation"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_search_rnaseq_datasets",
@@ -1605,67 +1633,51 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
+            "total": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "datasets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "summary": {
-                        "type": "string"
-                      },
-                      "organism": {
-                        "type": "string"
-                      },
-                      "n_samples": {
-                        "type": "integer"
-                      },
-                      "date_published": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "organism": {
+                    "type": "string"
+                  },
+                  "n_samples": {
+                    "type": "integer"
+                  },
+                  "date_published": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           },
           "required": [
-            "status",
-            "data"
+            "total"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1696,7 +1708,10 @@
         "geo"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_search_atacseq_datasets",
@@ -1735,67 +1750,51 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
+            "total": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "datasets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "summary": {
-                        "type": "string"
-                      },
-                      "organism": {
-                        "type": "string"
-                      },
-                      "n_samples": {
-                        "type": "integer"
-                      },
-                      "date_published": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "organism": {
+                    "type": "string"
+                  },
+                  "n_samples": {
+                    "type": "integer"
+                  },
+                  "date_published": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           },
           "required": [
-            "status",
-            "data"
+            "total"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1827,7 +1826,10 @@
         "epigenomics"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_rnaseq_experiments",
@@ -1892,67 +1894,51 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
+            "total": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "assay_title": {
-                        "type": "string"
-                      },
-                      "biosample_summary": {
-                        "type": "string"
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "lab": {
-                        "type": "string"
-                      },
-                      "date_released": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "assay_title": {
+                    "type": "string"
+                  },
+                  "biosample_summary": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "lab": {
+                    "type": "string"
+                  },
+                  "date_released": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           },
           "required": [
-            "status",
-            "data"
+            "total"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1984,7 +1970,10 @@
         "gene-expression"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_hic_experiments",
@@ -2084,6 +2073,9 @@
         "assay_type": "Hi-C",
         "limit": 3
       }
+    ],
+    "optional_api_keys": [
+      "NCBI_API_KEY"
     ]
   },
   {
@@ -2176,6 +2168,9 @@
         "organism": "Homo sapiens",
         "limit": 10
       }
+    ],
+    "optional_api_keys": [
+      "NCBI_API_KEY"
     ]
   }
 ]

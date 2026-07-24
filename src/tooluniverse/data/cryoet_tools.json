@@ -2,7 +2,9 @@
   {
     "name": "CryoET_list_datasets",
     "type": "CryoETTool",
-    "required_packages": ["requests"],
+    "required_packages": [
+      "requests"
+    ],
     "description": "Search and list cryo-electron tomography (cryo-ET) datasets from the CZ BioHub CryoET Data Portal (cryoetdataportal.czscience.com). Returns dataset metadata including title, description, organism, tissue/cell type, sample type, and S3/HTTPS data access paths. Supports filtering by organism name or tissue name. Use for: discovering available cryo-ET datasets, finding datasets by organism (e.g. 'Homo sapiens', 'Saccharomyces cerevisiae'), filtering by tissue or cell type. Returns up to `limit` datasets per call; use `offset` for pagination.",
     "parameter": {
       "type": "object",
@@ -10,15 +12,23 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["list_datasets"],
+          "enum": [
+            "list_datasets"
+          ],
           "default": "list_datasets"
         },
         "organism_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter by organism name (case-insensitive substring match). Examples: 'Homo sapiens', 'Saccharomyces cerevisiae', 'Coxiella burnetii'."
         },
         "tissue_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter by tissue or cell type name (case-insensitive substring match). Examples: 'kidney', 'endothelial', 'prokaryotic cell'."
         },
         "limit": {
@@ -32,50 +42,90 @@
           "default": 0
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "count": {"type": "integer"},
-                "datasets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {"type": "integer"},
-                      "title": {"type": "string"},
-                      "description": {"type": "string"},
-                      "organismName": {"type": "string"},
-                      "tissueName": {"type": "string"},
-                      "cellName": {"type": "string"},
-                      "sampleType": {"type": "string"},
-                      "depositionDate": {"type": "string"},
-                      "releaseDate": {"type": "string"},
-                      "s3Prefix": {"type": "string"},
-                      "httpsPrefix": {"type": "string"}
-                    },
-                    "additionalProperties": true
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "organismName": {
+                    "type": "string"
+                  },
+                  "tissueName": {
+                    "type": "string"
+                  },
+                  "cellName": {
+                    "type": "string"
+                  },
+                  "sampleType": {
+                    "type": "string"
+                  },
+                  "depositionDate": {
+                    "type": "string"
+                  },
+                  "releaseDate": {
+                    "type": "string"
+                  },
+                  "relatedDatabaseEntries": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "datasetPublications": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "s3Prefix": {
+                    "type": "string"
+                  },
+                  "httpsPrefix": {
+                    "type": "string"
                   }
                 }
-              },
-              "required": ["count", "datasets"]
+              }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "count"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -90,7 +140,9 @@
   {
     "name": "CryoET_get_dataset",
     "type": "CryoETTool",
-    "required_packages": ["requests"],
+    "required_packages": [
+      "requests"
+    ],
     "description": "Get full metadata for a specific CryoET Data Portal dataset by its numeric ID. Returns complete dataset information including organism taxonomy, tissue/cell identifiers, sample preparation details, publication references, data access paths (S3 and HTTPS), and file size. Use this after `CryoET_list_datasets` to retrieve detailed information for a specific dataset. The dataset ID is an integer (e.g. 10053, 10174).",
     "parameter": {
       "type": "object",
@@ -98,7 +150,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["get_dataset"],
+          "enum": [
+            "get_dataset"
+          ],
           "default": "get_dataset"
         },
         "dataset_id": {
@@ -106,52 +160,110 @@
           "description": "Numeric dataset ID from the CryoET Data Portal (e.g. 10053, 10174, 10460)."
         }
       },
-      "required": ["operation", "dataset_id"]
+      "required": [
+        "dataset_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
+            "dataset": {
               "type": "object",
               "properties": {
-                "dataset": {
-                  "type": "object",
-                  "properties": {
-                    "id": {"type": "integer"},
-                    "title": {"type": "string"},
-                    "description": {"type": "string"},
-                    "organismName": {"type": "string"},
-                    "organismTaxid": {"type": "integer"},
-                    "tissueName": {"type": "string"},
-                    "cellName": {"type": "string"},
-                    "sampleType": {"type": "string"},
-                    "samplePreparation": {"type": "string"},
-                    "gridPreparation": {"type": "string"},
-                    "depositionDate": {"type": "string"},
-                    "releaseDate": {"type": "string"},
-                    "datasetPublications": {"type": "string"},
-                    "relatedDatabaseEntries": {"type": "string"},
-                    "s3Prefix": {"type": "string"},
-                    "httpsPrefix": {"type": "string"},
-                    "fileSize": {"type": "number"}
-                  },
-                  "additionalProperties": true
+                "id": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "organismName": {
+                  "type": "string"
+                },
+                "organismTaxid": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "tissueName": {
+                  "type": "string"
+                },
+                "tissueId": {
+                  "type": "string"
+                },
+                "cellName": {
+                  "type": "string"
+                },
+                "cellTypeId": {
+                  "type": "string"
+                },
+                "cellStrainName": {
+                  "type": "string"
+                },
+                "sampleType": {
+                  "type": "string"
+                },
+                "samplePreparation": {
+                  "type": "string"
+                },
+                "gridPreparation": {
+                  "type": "null"
+                },
+                "otherSetup": {
+                  "type": "null"
+                },
+                "depositionDate": {
+                  "type": "string"
+                },
+                "releaseDate": {
+                  "type": "string"
+                },
+                "lastModifiedDate": {
+                  "type": "string"
+                },
+                "datasetPublications": {
+                  "type": "string"
+                },
+                "relatedDatabaseEntries": {
+                  "type": "string"
+                },
+                "keyPhotoUrl": {
+                  "type": "string"
+                },
+                "s3Prefix": {
+                  "type": "string"
+                },
+                "httpsPrefix": {
+                  "type": "string"
+                },
+                "fileSize": {
+                  "type": "number"
                 }
-              },
-              "required": ["dataset"]
+              }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "dataset"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -165,7 +277,9 @@
   {
     "name": "CryoET_list_runs",
     "type": "CryoETTool",
-    "required_packages": ["requests"],
+    "required_packages": [
+      "requests"
+    ],
     "description": "List the experimental tilt-series acquisition runs within a specific CryoET Data Portal dataset. Each run corresponds to one sample grid position with its own tilt series, tomograms, and annotations. Returns run names and data access paths. Use this after `CryoET_get_dataset` to enumerate the runs for a dataset before fetching tomograms or annotations.",
     "parameter": {
       "type": "object",
@@ -173,7 +287,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["list_runs"],
+          "enum": [
+            "list_runs"
+          ],
           "default": "list_runs"
         },
         "dataset_id": {
@@ -191,44 +307,71 @@
           "default": 0
         }
       },
-      "required": ["operation", "dataset_id"]
+      "required": [
+        "dataset_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "dataset_id": {"type": "integer"},
-                "count": {"type": "integer"},
-                "runs": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {"type": "integer"},
-                      "name": {"type": "string"},
-                      "datasetId": {"type": "integer"},
-                      "s3Prefix": {"type": "string"},
-                      "httpsPrefix": {"type": "string"}
-                    }
+            "dataset_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "runs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "datasetId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "s3Prefix": {
+                    "type": "string"
+                  },
+                  "httpsPrefix": {
+                    "type": "string"
                   }
                 }
-              },
-              "required": ["dataset_id", "count", "runs"]
+              }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "dataset_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -243,7 +386,9 @@
   {
     "name": "CryoET_list_tomograms",
     "type": "CryoETTool",
-    "required_packages": ["requests"],
+    "required_packages": [
+      "requests"
+    ],
     "description": "List tomographic reconstructions for a specific experimental run from the CryoET Data Portal. Returns voxel spacing (Angstroms), tomogram dimensions (sizeX/Y/Z voxels), reconstruction method (WBP = Weighted Back Projection, SIRT, etc.), processing pipeline, and download URLs for OME-Zarr (cloud-native) and MRC (traditional) formats. Use after `CryoET_list_runs` to find tomograms; use `isPortalStandard` flag to identify quality-controlled tomograms.",
     "parameter": {
       "type": "object",
@@ -251,7 +396,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["list_tomograms"],
+          "enum": [
+            "list_tomograms"
+          ],
           "default": "list_tomograms"
         },
         "run_id": {
@@ -269,52 +416,125 @@
           "default": 0
         }
       },
-      "required": ["operation", "run_id"]
+      "required": [
+        "run_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "run_id": {"type": "integer"},
-                "count": {"type": "integer"},
-                "tomograms": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {"type": "integer"},
-                      "name": {"type": "string"},
-                      "runId": {"type": "integer"},
-                      "voxelSpacing": {"type": "number"},
-                      "sizeX": {"type": "integer"},
-                      "sizeY": {"type": "integer"},
-                      "sizeZ": {"type": "integer"},
-                      "reconstructionMethod": {"type": "string"},
-                      "processing": {"type": "string"},
-                      "isPortalStandard": {"type": "boolean"},
-                      "s3OmezarrDir": {"type": "string"},
-                      "httpsMrcFile": {"type": "string"}
-                    },
-                    "additionalProperties": true
+            "run_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "tomograms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "runId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "voxelSpacing": {
+                    "type": "number"
+                  },
+                  "sizeX": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "sizeY": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "sizeZ": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "reconstructionMethod": {
+                    "type": "string"
+                  },
+                  "processing": {
+                    "type": "string"
+                  },
+                  "processingSoftware": {
+                    "type": "null"
+                  },
+                  "reconstructionSoftware": {
+                    "type": "string"
+                  },
+                  "isPortalStandard": {
+                    "type": "boolean"
+                  },
+                  "isAuthorSubmitted": {
+                    "type": "boolean"
+                  },
+                  "isVisualizationDefault": {
+                    "type": "boolean"
+                  },
+                  "ctfCorrected": {
+                    "type": "boolean"
+                  },
+                  "s3OmezarrDir": {
+                    "type": "string"
+                  },
+                  "httpsMrcFile": {
+                    "type": "string"
+                  },
+                  "s3MrcFile": {
+                    "type": "string"
+                  },
+                  "depositionDate": {
+                    "type": "string"
+                  },
+                  "releaseDate": {
+                    "type": "string"
                   }
                 }
-              },
-              "required": ["run_id", "count", "tomograms"]
+              }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "run_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -328,7 +548,9 @@
   {
     "name": "CryoET_list_annotations",
     "type": "CryoETTool",
-    "required_packages": ["requests"],
+    "required_packages": [
+      "requests"
+    ],
     "description": "List biological annotations (segmentations, point annotations, surface meshes) for a specific cryo-ET run from the CryoET Data Portal. Annotations label cellular structures such as membranes, ribosomes, and organelles. Returns object name (e.g. 'membrane', 'ribosome'), GO/EMDB ontology ID, annotation method description, count of annotated instances, software used, and metadata paths. Filter by `curator_recommended_only=true` to get curated high-quality annotations.",
     "parameter": {
       "type": "object",
@@ -336,7 +558,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["list_annotations"],
+          "enum": [
+            "list_annotations"
+          ],
           "default": "list_annotations"
         },
         "run_id": {
@@ -359,52 +583,107 @@
           "default": 0
         }
       },
-      "required": ["operation", "run_id"]
+      "required": [
+        "run_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "run_id": {"type": "integer"},
-                "count": {"type": "integer"},
-                "annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {"type": "integer"},
-                      "objectName": {"type": "string"},
-                      "objectId": {"type": "string"},
-                      "objectDescription": {"type": "string"},
-                      "objectCount": {"type": "integer"},
-                      "annotationMethod": {"type": "string"},
-                      "annotationSoftware": {"type": "string"},
-                      "isCuratorRecommended": {"type": "boolean"},
-                      "methodType": {"type": "string"},
-                      "depositionDate": {"type": "string"},
-                      "s3MetadataPath": {"type": "string"},
-                      "httpsMetadataPath": {"type": "string"}
-                    },
-                    "additionalProperties": true
+            "run_id": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "objectName": {
+                    "type": "string"
+                  },
+                  "objectId": {
+                    "type": "string"
+                  },
+                  "objectDescription": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "objectState": {
+                    "type": "null"
+                  },
+                  "objectCount": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "annotationMethod": {
+                    "type": "string"
+                  },
+                  "annotationSoftware": {
+                    "type": "string"
+                  },
+                  "groundTruthStatus": {
+                    "type": "boolean"
+                  },
+                  "isCuratorRecommended": {
+                    "type": "boolean"
+                  },
+                  "methodType": {
+                    "type": "string"
+                  },
+                  "depositionDate": {
+                    "type": "string"
+                  },
+                  "releaseDate": {
+                    "type": "string"
+                  },
+                  "annotationPublication": {
+                    "type": "string"
+                  },
+                  "s3MetadataPath": {
+                    "type": "string"
+                  },
+                  "httpsMetadataPath": {
+                    "type": "string"
                   }
                 }
-              },
-              "required": ["run_id", "count", "annotations"]
+              }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "run_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -412,6 +691,361 @@
       {
         "operation": "list_annotations",
         "run_id": 3430
+      }
+    ]
+  },
+  {
+    "name": "CryoET_list_tiltseries",
+    "type": "CryoETTool",
+    "required_packages": [
+      "requests"
+    ],
+    "description": "List tilt-series RAW ACQUISITION metadata from the CZ BioHub CryoET Data Portal. A tilt-series is the set of projection images acquired at incremental stage tilts, the raw input later reconstructed into a tomogram. This is distinct from CryoET_list_tomograms (the downstream reconstructions). Returns, per tilt-series: microscope manufacturer/model, acceleration voltage (V), spherical aberration constant, tilt range (tiltMin/tiltMax) and tiltStep (degrees), tilt axis, total electron flux/dose, camera model/manufacturer, acquisition software, binning, pixel spacing, alignment status, and the raw MRC file URL (httpsMrcFile). Optionally filter by run_id. Example: id 8009 (runId 8260) = TFS Krios, 300000 V, tilt -65..65 step 1.0, totalFlux 120.0, camera K2, software UCSFTomo.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "list_tiltseries"
+          ],
+          "default": "list_tiltseries"
+        },
+        "run_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Optional: filter to tilt-series of a single run (e.g. 8260). Obtain from CryoET_list_runs."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of tilt-series to return (default: 10).",
+          "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of tilt-series to skip for pagination (default: 0).",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "run_id": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ]
+            },
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "tiltseries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "runId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "microscopeManufacturer": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "microscopeModel": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "accelerationVoltage": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sphericalAberrationConstant": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "tiltMin": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "tiltMax": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "tiltStep": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "tiltAxis": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "totalFlux": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "cameraModel": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cameraManufacturer": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "dataAcquisitionSoftware": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "binningFromFrames": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "pixelSpacing": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "isAligned": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "httpsMrcFile": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "s3MrcFile": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "httpsOmezarrDir": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "run_id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "list_tiltseries",
+        "limit": 1
+      },
+      {
+        "operation": "list_tiltseries",
+        "run_id": 8260,
+        "limit": 2
+      }
+    ]
+  },
+  {
+    "name": "CryoET_list_depositions",
+    "type": "CryoETTool",
+    "required_packages": [
+      "requests"
+    ],
+    "description": "Browse depositions from the CZ BioHub CryoET Data Portal. A deposition is the top-level submission unit that bundles a set of datasets, runs, tomograms, and annotations under one author submission, and carries cross-database links (e.g. EMDB entries) in relatedDatabaseEntries. The portal UI is organized by deposition, so this is the natural entry point for browsing what has been submitted. Returns, per deposition: id, title, description, deposition/release/lastModified dates, relatedDatabaseEntries (comma-separated EMDB/other IDs), publications, and a key photo URL. Optionally filter by deposition_id. Example: id 10014 'Dolichospermum flos-aquae ... by Przemek Dutka', relatedDatabaseEntries 'EMD-29922,EMD-29923,EMD-29924,EMD-29925'; id 10019 Bacillus subtilis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "list_depositions"
+          ],
+          "default": "list_depositions"
+        },
+        "deposition_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Optional: fetch a single deposition by numeric ID (e.g. 10014)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of depositions to return (default: 10).",
+          "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of depositions to skip for pagination (default: 0).",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "depositions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "depositionDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "releaseDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "lastModifiedDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "relatedDatabaseEntries": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "depositionPublications": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "keyPhotoUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "count"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "list_depositions",
+        "limit": 2
+      },
+      {
+        "operation": "list_depositions",
+        "deposition_id": 10014
       }
     ]
   }

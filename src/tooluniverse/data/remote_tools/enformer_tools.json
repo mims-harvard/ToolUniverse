@@ -1,0 +1,75 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_enformer_predict",
+    "description": "Predict genomic track activity (CAGE/DNase/ATAC/ChIP; 5,313 human or 1,643 mouse tracks) directly from a DNA sequence using Enformer (Avsec 2021), which integrates long-range regulatory interactions. The sequence is center-cropped / N-padded to 196,608 bp. Returns the central-bin value for requested tracks, or the top-signal tracks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {"type": "string", "description": "DNA sequence (A/C/G/T/N). Cropped/padded to 196,608 bp around its center."},
+        "organism": {"type": "string", "description": "'human' (5,313 tracks, default) or 'mouse' (1,643 tracks)."},
+        "track_indices": {"type": "array", "items": {"type": "integer"}, "description": "Track indices to report (optional). If omitted, the top-signal tracks are returned."},
+        "top_n": {"type": "integer", "description": "When track_indices is omitted, how many top tracks to return (default 20)."}
+      },
+      "required": ["sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "organism": {"type": "string"},
+        "n_tracks": {"type": "integer"},
+        "n_bins": {"type": "integer"},
+        "bin_size_bp": {"type": "integer"},
+        "tracks": {"type": "array", "items": {"type": "object"}, "description": "Per-track central-bin predicted values."},
+        "error": {"type": "string"}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "EnformerPredictTool",
+      "url": "https://github.com/lucidrains/enformer-pytorch",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/enformer",
+      "mcp_tool_name": "run_enformer_predict"
+    },
+    "test_examples": [
+      {"sequence": "ACGTACGTACGTACGTACGTGGGCCCAAATTTACGTACGTACGT", "organism": "human", "top_n": 10}
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "run_enformer_variant_effect",
+    "description": "Score a regulatory variant with Enformer: predicts tracks for the reference and alternate sequences (each 196,608 bp, variant at center) and returns the central-bin delta (alt - ref) per track — the canonical sequence-model variant-effect-on-expression score.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ref_sequence": {"type": "string", "description": "Reference DNA sequence centered on the variant (cropped/padded to 196,608 bp)."},
+        "alt_sequence": {"type": "string", "description": "Alternate DNA sequence (same length/centering as ref)."},
+        "organism": {"type": "string", "description": "'human' (default) or 'mouse'."},
+        "track_indices": {"type": "array", "items": {"type": "integer"}, "description": "Track indices to report (optional; default = top |delta| tracks)."},
+        "top_n": {"type": "integer", "description": "When track_indices omitted, number of top |delta| tracks to return (default 20)."}
+      },
+      "required": ["ref_sequence", "alt_sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "organism": {"type": "string"},
+        "n_tracks": {"type": "integer"},
+        "tracks": {"type": "array", "items": {"type": "object"}, "description": "Per-track central-bin alt-ref delta."},
+        "error": {"type": "string"}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "EnformerVariantEffectTool",
+      "url": "https://github.com/lucidrains/enformer-pytorch",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/enformer",
+      "mcp_tool_name": "run_enformer_variant_effect"
+    },
+    "test_examples": [
+      {"ref_sequence": "ACGTACGTACGTACGTACGTGGGCCCAAATTTACGTACGTACGT", "alt_sequence": "ACGTACGTACGTACGTACGTGGGCCCAAGTTTACGTACGTACGT", "organism": "human", "top_n": 10}
+    ]
+  }
+]

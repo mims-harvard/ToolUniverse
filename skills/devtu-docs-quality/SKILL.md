@@ -1,6 +1,6 @@
 ---
 name: devtu-docs-quality
-description: TOP PRIORITY skill — find and immediately fix or remove every piece of wrong, outdated, or redundant information in ToolUniverse docs. Wrong code, broken links, incorrect counts, and overlapping instructions must be fixed or removed — never left in place. Runs five phases: (D) static method scan, (C) live code execution, (A) automated validation, (B) ToolUniverse audit, (E) less-is-more simplification. Core philosophy: each concept appears exactly once; remove don't add; no emojis; single setup entry point. Use when reviewing docs, before releases, after API changes, or when asked to audit, fix, or simplify documentation.
+description: "TOP PRIORITY skill — find and immediately fix or remove every piece of wrong, outdated, or redundant information in ToolUniverse docs. Wrong code, broken links, incorrect counts, and overlapping instructions must be fixed or removed — never left in place. Runs five phases: (D) static method scan, (C) live code execution, (A) automated validation, (B) ToolUniverse audit, (E) less-is-more simplification. Core philosophy: each concept appears exactly once; remove don't add; no emojis; single setup entry point. Use when reviewing docs, before releases, after API changes, or when asked to audit, fix, or simplify documentation."
 ---
 
 # Documentation Quality Assurance

@@ -10,8 +10,7 @@
     "parameter": {
       "type": "object",
       "required": [
-        "url",
-        "timeout"
+        "url"
       ],
       "additionalProperties": false,
       "properties": {
@@ -52,8 +51,7 @@
     "parameter": {
       "type": "object",
       "required": [
-        "url",
-        "timeout"
+        "url"
       ],
       "properties": {
         "url": {

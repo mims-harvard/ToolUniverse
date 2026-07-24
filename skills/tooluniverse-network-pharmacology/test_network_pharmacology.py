@@ -900,7 +900,7 @@ def test_clinical_trial_details():
 
     if trials:
         nct_id = trials[0]['NCT ID']
-        r = tu.tools.clinical_trials_get_details(nct_id=nct_id)
+        r = tu.tools.ClinicalTrials_get_study(nct_id=nct_id)
         assert_not_none(r)
 
 

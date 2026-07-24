@@ -237,8 +237,22 @@ class ToolGraphWebUI:
 
         return {"incoming": incoming, "outgoing": outgoing}
 
-    def run(self, host: str = "0.0.0.0", port: int = 5000, debug: bool = True):
-        """Run the web application."""
+    def run(self, host: str = "127.0.0.1", port: int = 5000, debug: bool = False):
+        """Run the web application.
+
+        Defaults to loopback with the debugger off. Flask's ``debug=True`` exposes
+        the Werkzeug interactive debugger (arbitrary code execution), so it must
+        never be enabled on a network-reachable bind. Binding to a non-loopback
+        host without TOOLUNIVERSE_API_TOKEN is refused.
+        """
+        from .server_security import enforce_bind_security, is_loopback_host
+
+        enforce_bind_security(host)
+        if debug and not is_loopback_host(host):
+            raise RuntimeError(
+                "Refusing to run the Flask debugger (debug=True) on a non-loopback "
+                f"host {host!r}: the Werkzeug debugger allows arbitrary code execution."
+            )
         print(f"Starting Tool Graph Web UI on http://{host}:{port}")
         self.app.run(host=host, port=port, debug=debug)
 

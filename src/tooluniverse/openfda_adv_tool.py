@@ -128,6 +128,13 @@ class FDADrugAdverseEventTool(BaseTool):
         mapped_results = []
         for item in response:
             try:
+                # Pass through error sentinels from _search untouched so an
+                # upstream API failure surfaces instead of being masked as a
+                # bogus {"term": None, "count": 0} row.
+                if isinstance(item, dict) and "error" in item and "term" not in item:
+                    mapped_results.append(item)
+                    continue
+
                 term = item.get("term")
                 count = item.get("count", 0)
 
@@ -158,9 +165,13 @@ class FDADrugAdverseEventTool(BaseTool):
     def _search(self, arguments):
         search_parts = []
         for param_name, value in arguments.items():
-            fda_fields = self.search_fields.get(
-                param_name, [param_name]
-            )  # Map param -> FDA field
+            # Only forward parameters defined in the search-field map; an
+            # unrecognized argument (e.g. a stray 'limit') must NOT become a
+            # bogus FDA filter like 'limit:2', which matches nothing and yields
+            # a silent empty result.
+            fda_fields = self.search_fields.get(param_name)
+            if not fda_fields:
+                continue
             # Use the first field name for value mapping
             fda_field = fda_fields[0] if fda_fields else param_name
 
@@ -182,8 +193,14 @@ class FDADrugAdverseEventTool(BaseTool):
                         field_parts.append(f'{fda_field_name}:"{mapped_value}"')
                     else:
                         field_parts.append(f"{fda_field_name}:{mapped_value}")
-                # Join multiple fields with OR
-                search_parts.append("+OR+".join(field_parts))
+                # Join multiple fields with OR. The group MUST be parenthesized:
+                # openFDA/Lucene binds AND tighter than OR, so an un-grouped
+                # "a:x OR b:x AND c:y OR d:y" parses as "a:x OR (b:x AND c:y) OR
+                # d:y" -- wrong. That silently broke every filtered multi-field
+                # query, e.g. FAERS colistin + reaction "acute kidney injury"
+                # returned 0 (HTTP 404) even though the unfiltered count shows
+                # ACUTE KIDNEY INJURY = 151. Wrapping keeps "(a OR b) AND (c OR d)".
+                search_parts.append("(" + "+OR+".join(field_parts) + ")")
             else:
                 # Single field - normal behavior
                 fda_field_name = fda_fields[0]
@@ -204,9 +221,9 @@ class FDADrugAdverseEventTool(BaseTool):
                 f"{self.endpoint_url}?search={search_encoded}&count={self.count_field}"
             )
 
-        # API request
+        # API request (30s timeout so a hung connection cannot block the caller)
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=30)
             # Handle 404 as "no matches found" - return empty list instead of error
             if response.status_code == 404:
                 try:
@@ -302,8 +319,11 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
         # Combine additional filters
         filters = []
         for k, v in arguments.items():
-            # Get FDA field name(s) from search_fields mapping
-            fda_fields = self.search_fields.get(k, [k])
+            # Get FDA field name(s) from the search-field map; skip unrecognized
+            # filters rather than forwarding them as bogus FDA constraints.
+            fda_fields = self.search_fields.get(k)
+            if not fda_fields:
+                continue
             # Use the first field name for value mapping
             fda_field = fda_fields[0] if fda_fields else k
 
@@ -418,9 +438,13 @@ class FDADrugAdverseEventDetailTool(BaseTool):
         # Build search query
         search_parts = []
         for param_name, value in arguments.items():
-            fda_fields = self.search_fields.get(
-                param_name, [param_name]
-            )  # Map param -> FDA field
+            # Only forward parameters defined in the search-field map; an
+            # unrecognized argument (e.g. a stray 'limit') must NOT become a
+            # bogus FDA filter like 'limit:2', which matches nothing and yields
+            # a silent empty result.
+            fda_fields = self.search_fields.get(param_name)
+            if not fda_fields:
+                continue
             # Use the first field name for value mapping
             fda_field = fda_fields[0] if fda_fields else param_name
 
@@ -442,8 +466,14 @@ class FDADrugAdverseEventDetailTool(BaseTool):
                         field_parts.append(f'{fda_field_name}:"{mapped_value}"')
                     else:
                         field_parts.append(f"{fda_field_name}:{mapped_value}")
-                # Join multiple fields with OR
-                search_parts.append("+OR+".join(field_parts))
+                # Join multiple fields with OR. The group MUST be parenthesized:
+                # openFDA/Lucene binds AND tighter than OR, so an un-grouped
+                # "a:x OR b:x AND c:y OR d:y" parses as "a:x OR (b:x AND c:y) OR
+                # d:y" -- wrong. That silently broke every filtered multi-field
+                # query, e.g. FAERS colistin + reaction "acute kidney injury"
+                # returned 0 (HTTP 404) even though the unfiltered count shows
+                # ACUTE KIDNEY INJURY = 151. Wrapping keeps "(a OR b) AND (c OR d)".
+                search_parts.append("(" + "+OR+".join(field_parts) + ")")
             else:
                 # Single field - normal behavior
                 fda_field_name = fda_fields[0]
@@ -771,9 +801,11 @@ class FDADrugInteractionDetailTool(BaseTool):
         # Build additional filters
         filter_parts = []
         for param_name, value in arguments.items():
-            fda_fields = self.search_fields.get(
-                param_name, [param_name]
-            )  # Map param -> FDA field
+            # Skip unrecognized arguments rather than forwarding them as bogus
+            # FDA filters (which silently match nothing).
+            fda_fields = self.search_fields.get(param_name)
+            if not fda_fields:
+                continue
             # Use the first field name for value mapping
             fda_field = fda_fields[0] if fda_fields else param_name
 

@@ -22,7 +22,7 @@
           "description": "Output format"
         }
       },
-      "required": ["operation", "family_id"]
+      "required": ["family_id"]
     },
     "return_schema": {
       "type": "object",
@@ -70,7 +70,7 @@
           "description": "Compress output with gzip"
         }
       },
-      "required": ["operation", "family_id"]
+      "required": ["family_id"]
     },
     "return_schema": {
       "type": "object",
@@ -108,7 +108,7 @@
           "description": "Required: Rfam accession or family name"
         }
       },
-      "required": ["operation", "family_id"]
+      "required": ["family_id"]
     },
     "return_schema": {
       "type": "object",
@@ -151,7 +151,7 @@
           "description": "Maximum time to wait for results (default: 120s). Job continues running if timeout reached."
         }
       },
-      "required": ["operation", "sequence"]
+      "required": ["sequence"]
     },
     "return_schema": {
       "type": "object",
@@ -195,7 +195,7 @@
           "description": "Required: Rfam accession or family name"
         }
       },
-      "required": ["operation", "family_id"]
+      "required": ["family_id"]
     },
     "return_schema": {
       "type": "object",
@@ -237,7 +237,7 @@
           "description": "Output format"
         }
       },
-      "required": ["operation", "family_id"]
+      "required": ["family_id"]
     },
     "return_schema": {
       "type": "object",
@@ -282,7 +282,7 @@
           "description": "Output format"
         }
       },
-      "required": ["operation", "family_id"]
+      "required": ["family_id"]
     },
     "return_schema": {
       "type": "object",
@@ -320,7 +320,7 @@
           "description": "Required: Rfam accession (e.g., RF00360)"
         }
       },
-      "required": ["operation", "accession"]
+      "required": ["accession"]
     },
     "return_schema": {
       "type": "object",
@@ -355,7 +355,7 @@
           "description": "Required: Family name (e.g., snoZ107_R87)"
         }
       },
-      "required": ["operation", "family_id"]
+      "required": ["family_id"]
     },
     "return_schema": {
       "type": "object",

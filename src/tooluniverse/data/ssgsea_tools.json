@@ -1,0 +1,51 @@
+[
+  {
+    "name": "ssGSEA_score",
+    "type": "SSGSEATool",
+    "description": "Single-sample GSEA (Barbie 2009): score each sample for each gene set from an expression matrix (genes x samples), producing a gene_set x sample signature-score matrix. Positive = the set's genes are among that sample's highly-expressed genes. Basis for per-sample signature scoring (immune infiltration, pathway activity). Pure-compute (no R); supply gene sets from MSigDB/Enrichr.",
+    "parameter": {
+      "type": "object",
+      "required": ["expression"],
+      "properties": {
+        "expression": {"type": "object", "description": "{gene: [value_per_sample, ...]} — a genes x samples expression matrix (e.g. log-normalized)."},
+        "samples": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Sample names (same order as the per-gene value lists); defaults to sample_1.."},
+        "gene_sets": {"type": ["object", "null"], "description": "{set_name: [gene, ...]} collection to score. Alternative to gene_set."},
+        "gene_set": {"type": ["array", "null"], "items": {"type": "string"}, "description": "A single gene set (list of gene symbols)."},
+        "alpha": {"type": ["number", "null"], "description": "Rank-weighting exponent (default 0.25, the ssGSEA standard)."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "n_genes": {"type": "integer"},
+                "n_samples": {"type": "integer"},
+                "samples": {"type": "array", "items": {"type": "string"}},
+                "enrichment_scores": {"type": "object"},
+                "skipped_sets": {"type": "array"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "expression": {"G1": [12, 1], "G2": [11, 2], "G3": [10, 3], "G4": [9, 4], "G5": [8, 5], "G6": [7, 6], "G7": [6, 7], "G8": [5, 8], "G9": [4, 9], "G10": [3, 10], "G11": [2, 11], "G12": [1, 12]},
+        "samples": ["tumor", "normal"],
+        "gene_sets": {"TOP_SIG": ["G1", "G2", "G3", "G4"]}
+      }
+    ]
+  }
+]

@@ -61,7 +61,11 @@ class PackageTool(BaseTool):
             response.raise_for_status()
             pypi_data = response.json()
 
-            info = pypi_data.get("info", {})
+            info = pypi_data.get("info") or {}
+            # PyPI returns project_urls: null (not omitted) for packages that
+            # declare no URLs — so .get('project_urls', {}) yields None, and the
+            # chained .get() then crashes with "'NoneType' has no attribute 'get'".
+            project_urls = info.get("project_urls") or {}
 
             # Build response with PyPI data
             result = {
@@ -71,9 +75,9 @@ class PackageTool(BaseTool):
                 "author": info.get("author", "Unknown"),
                 "license": info.get("license", "Not specified"),
                 "home_page": info.get("home_page", ""),
-                "documentation": info.get("project_urls", {}).get("Documentation", ""),
-                "repository": info.get("project_urls", {}).get(
-                    "Repository", info.get("project_urls", {}).get("Source", "")
+                "documentation": project_urls.get("Documentation", ""),
+                "repository": project_urls.get(
+                    "Repository", project_urls.get("Source", "")
                 ),
                 "python_versions": info.get("classifiers", []),
                 "keywords": (

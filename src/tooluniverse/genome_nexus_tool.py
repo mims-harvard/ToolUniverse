@@ -75,8 +75,51 @@ class GenomeNexusTool(BaseTool):
             return self._get_canonical_transcript(arguments)
         elif self.endpoint == "annotate_mutation":
             return self._annotate_mutation(arguments)
+        elif self.endpoint == "annotate_dbsnp":
+            return self._annotate_dbsnp(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
+
+    def _annotate_dbsnp(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Annotate a variant directly by dbSNP rsID.
+
+        Genome Nexus resolves the rsID to genomic coordinates and returns the
+        same aggregated annotation (VEP + SIFT + PolyPhen-2 + AlphaMissense +
+        cancer hotspots) as the HGVS endpoint.
+        """
+        rsid = (arguments.get("rsid") or "").strip()
+        if not rsid:
+            return {
+                "status": "error",
+                "error": "rsid is required (e.g., 'rs121913529').",
+            }
+        # Tolerate a bare numeric id by prefixing 'rs'.
+        if rsid.lower().startswith("rs"):
+            rsid = "rs" + rsid[2:]
+        elif rsid.isdigit():
+            rsid = f"rs{rsid}"
+
+        url = f"{GENOME_NEXUS_BASE_URL}/annotation/dbsnp/{rsid}"
+        params = {"fields": "hotspots,annotation_summary,mutation_assessor"}
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+        # The dbsnp endpoint returns a single object for one rsID.
+        if isinstance(data, list):
+            if not data:
+                return {
+                    "status": "error",
+                    "error": f"No annotation returned for dbSNP '{rsid}'.",
+                }
+            data = data[0]
+
+        if not data.get("successfully_annotated", True):
+            return {
+                "status": "error",
+                "error": data.get("errorMessage", f"Failed to annotate dbSNP '{rsid}'"),
+            }
+
+        return self._format_annotation(data)
 
     def _annotate_variant(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Annotate a variant by HGVS genomic notation."""

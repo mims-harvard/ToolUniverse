@@ -1,0 +1,138 @@
+[
+    {
+        "name": "EPA_search_tri_facilities",
+        "description": "Search EPA Toxics Release Inventory (TRI) facilities by US state (and optional city) via the EPA Envirofacts REST service. Returns regulated facilities that report toxic chemical releases: facility id/name, address, county, ZIP, EPA region, and closed status. Use for environmental-justice screening, locating industrial pollution sources, and facility lookups. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "state": {"type": "string", "description": "2-letter US state code, e.g. 'CA', 'TX'."},
+            "city": {"type": ["string", "null"], "description": "Optional city name filter, e.g. 'Los Angeles'."},
+            "limit": {"type": ["integer", "null"], "description": "Max facilities (default 10, max 100)."}
+        }, "required": ["state"]},
+        "fields": {"timeout": 30},
+        "type": "EPATRIFacilitiesTool",
+        "test_examples": [{"state": "CA", "city": "Sacramento", "limit": 5}, {"state": "TX", "limit": 3}, {"state": "NY", "limit": 3}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "EPA_search_frs_facilities",
+        "description": "Search the EPA Facility Registry Service (FRS) — EPA's integrated registry of regulated facility sites — by US state (and optional city) via the Envirofacts REST service. Returns facility name, standardized address, city/state, registry id, and federal/tribal flags. Broader than TRI (covers facilities across many EPA programs). No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "state": {"type": "string", "description": "2-letter US state code, e.g. 'MA', 'CA'."},
+            "city": {"type": ["string", "null"], "description": "Optional city name filter."},
+            "limit": {"type": ["integer", "null"], "description": "Max facilities (default 10, max 100)."}
+        }, "required": ["state"]},
+        "fields": {"timeout": 30},
+        "type": "EPAFRSFacilitiesTool",
+        "test_examples": [{"state": "MA", "limit": 5}, {"state": "CA", "city": "Oakland", "limit": 3}, {"state": "WA", "limit": 3}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "EPA_get_tri_facility_chemical_releases",
+        "description": "Get the per-chemical, per-year EPA Toxics Release Inventory (TRI) reporting forms submitted by ONE facility, via the EPA Envirofacts tri_reporting_form table. Given a TRI facility id (find one with EPA_search_tri_facilities), returns the actual reporting forms the facility filed: TRI chemical id, CAS chemical name (e.g. 'Lead', 'Zinc compounds'), reporting year, form type, max-amount-on-site code, production ratio, and trade-secret/federal-facility flags. Unlike the facility-search tools, this reveals WHAT a facility reports releasing each year. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "tri_facility_id": {"type": "string", "description": "EPA TRI facility identifier, e.g. '15902CCKRN75BRI'. Obtain from EPA_search_tri_facilities."},
+            "limit": {"type": ["integer", "null"], "description": "Max reporting forms to return (default 10, max 100)."}
+        }, "required": ["tri_facility_id"]},
+        "fields": {"timeout": 30, "table": "tri_reporting_form", "lookup_column": "tri_facility_id", "lookup_param": "tri_facility_id", "row_kind": "reporting_form"},
+        "type": "EPATRIFacilitiesTool",
+        "test_examples": [{"tri_facility_id": "15902CCKRN75BRI", "limit": 3}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tri_facility_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tri_chem_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chemical_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reporting_year": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "form_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "max_amount_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    }
+]

@@ -5,8 +5,11 @@ ToolUniverse HTTP API Server CLI
 Command-line interface for starting the ToolUniverse HTTP API server.
 
 Usage:
-    tooluniverse-http-api --host 0.0.0.0 --port 8080
-    tooluniverse-http-api --host 0.0.0.0 --port 8080 --workers 4
+    # Loopback only (default):
+    tooluniverse-http-api --port 8080
+
+    # Network exposure requires a Bearer token (TOOLUNIVERSE_API_TOKEN):
+    TOOLUNIVERSE_API_TOKEN=secret tooluniverse-http-api --host 0.0.0.0 --port 8080
 """
 
 import argparse
@@ -21,20 +24,25 @@ def run_http_api_server():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Start server with default settings (single worker, 20 threads)
+  # Start server with default settings (loopback 127.0.0.1, single worker)
   tooluniverse-http-api
 
-  # Start on specific host and port
-  tooluniverse-http-api --host 0.0.0.0 --port 8080
+  # Expose to the network (requires TOOLUNIVERSE_API_TOKEN for Bearer auth)
+  TOOLUNIVERSE_API_TOKEN=secret tooluniverse-http-api --host 0.0.0.0 --port 8080
 
-  # Start with larger thread pool for high concurrency (recommended for GPU)
-  tooluniverse-http-api --host 0.0.0.0 --port 8080 --thread-pool-size 50
+  # Larger thread pool for high concurrency (recommended for GPU)
+  TOOLUNIVERSE_API_TOKEN=secret tooluniverse-http-api --host 0.0.0.0 --port 8080 --thread-pool-size 50
 
   # Start with reload for development
   tooluniverse-http-api --reload
 
-  # Start with multiple workers (only for CPU-only workloads, not GPU)
-  tooluniverse-http-api --host 0.0.0.0 --port 8080 --workers 4
+  # Multiple workers (only for CPU-only workloads, not GPU)
+  TOOLUNIVERSE_API_TOKEN=secret tooluniverse-http-api --host 0.0.0.0 --port 8080 --workers 4
+
+Authentication:
+  - Binds to 127.0.0.1 by default; binding to a non-loopback host (e.g. 0.0.0.0)
+    is refused unless TOOLUNIVERSE_API_TOKEN is set.
+  - When set, every request needs 'Authorization: Bearer <token>' (except /health).
 
 Features:
   - Auto-discovers all ToolUniverse methods via introspection
@@ -132,6 +140,12 @@ Note:
 
     try:
         import uvicorn
+
+        from .server_security import enforce_bind_security
+
+        # Refuse to expose the server on a non-loopback interface unless a
+        # TOOLUNIVERSE_API_TOKEN is configured to require Bearer authentication.
+        enforce_bind_security(args.host)
 
         # Use import string when workers > 1 (required by uvicorn)
         if args.workers > 1 and not args.reload:

@@ -1,723 +1,729 @@
 [
-    {
-        "name": "MyGene_query_genes",
-        "description": "Search for genes by keyword, symbol, name, or other identifiers. Returns gene annotations from 30+ sources including Entrez Gene, Ensembl, UniProt, HGNC. Useful for finding gene IDs, symbols, descriptions, and basic annotations.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search query. Can be gene symbol (e.g., 'CDK2'), name ('cyclin dependent kinase'), Entrez ID ('1017'), or Ensembl ID ('ENSG00000123374'). Supports wildcards (*) and boolean operators (AND, OR, NOT)."
-                },
-                "species": {
-                    "type": "string",
-                    "description": "Species filter. Use common name or NCBI taxonomy ID. Examples: 'human', 'mouse', '9606' (human), 'all'.",
-                    "default": "human"
-                },
-                "fields": {
-                    "type": "string",
-                    "description": "Comma-separated list of fields to return. Common fields: symbol, name, entrezgene, ensembl.gene, summary, go, pathway, interpro.",
-                    "default": "symbol,name,entrezgene,ensembl.gene,summary"
-                },
-                "size": {
-                    "type": "integer",
-                    "description": "Maximum number of results to return (1-100).",
-                    "default": 10
-                }
-            },
-            "required": [
-                "query"
-            ]
+  {
+    "name": "MyGene_query_genes",
+    "description": "Search for genes by keyword, symbol, name, or other identifiers. Returns gene annotations from 30+ sources including Entrez Gene, Ensembl, UniProt, HGNC. Useful for finding gene IDs, symbols, descriptions, and basic annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query. Can be gene symbol (e.g., 'CDK2'), name ('cyclin dependent kinase'), Entrez ID ('1017'), or Ensembl ID ('ENSG00000123374'). Supports wildcards (*) and boolean operators (AND, OR, NOT)."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species filter. Use common name or NCBI taxonomy ID. Examples: 'human', 'mouse', '9606' (human), 'all'.",
+          "default": "human"
         },
         "fields": {
-            "operation": "query"
+          "type": "string",
+          "description": "Comma-separated list of fields to return. Common fields: symbol, name, entrezgene, ensembl.gene, summary, go, pathway, interpro.",
+          "default": "symbol,name,entrezgene,ensembl.gene,summary"
         },
-        "type": "MyGeneTool",
-        "test_examples": [
-            {
-                "query": "CDK2",
-                "species": "human"
-            },
-            {
-                "query": "symbol:TP53",
-                "species": "human",
-                "size": 5
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "took": {
-                    "type": "integer",
-                    "description": "Query time in milliseconds"
-                },
-                "total": {
-                    "type": "integer",
-                    "description": "Total number of matching genes"
-                },
-                "max_score": {
-                    "type": "number",
-                    "description": "Maximum relevance score"
-                },
-                "hits": {
-                    "type": "array",
-                    "description": "Array of matching gene records",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "_id": {
-                                "type": "string",
-                                "description": "Gene ID (usually Entrez gene ID)"
-                            },
-                            "_score": {
-                                "type": "number",
-                                "description": "Relevance score"
-                            },
-                            "symbol": {
-                                "type": "string",
-                                "description": "Official gene symbol"
-                            },
-                            "name": {
-                                "type": "string",
-                                "description": "Full gene name"
-                            },
-                            "entrezgene": {
-                                "type": [
-                                    "integer",
-                                    "string"
-                                ],
-                                "description": "Entrez Gene ID"
-                            },
-                            "ensembl": {
-                                "type": "object",
-                                "properties": {
-                                    "gene": {
-                                        "type": "string",
-                                        "description": "Ensembl gene ID"
-                                    }
-                                }
-                            },
-                            "summary": {
-                                "type": "string",
-                                "description": "Gene summary/description"
-                            }
-                        }
-                    }
-                }
-            }
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of results to return (1-100).",
+          "default": 10
         }
+      },
+      "required": [
+        "query"
+      ]
     },
-    {
-        "name": "MyGene_get_gene_annotation",
-        "description": "Get detailed annotation for a specific gene by its ID (Entrez or Ensembl). Returns comprehensive information including gene ontology, pathways, protein domains, and literature references.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "gene_id": {
-                    "type": "string",
-                    "description": "Gene ID to query. Can be Entrez Gene ID (e.g., '1017' for CDK2) or Ensembl ID (e.g., 'ENSG00000123374')."
-                },
-                "fields": {
-                    "type": "string",
-                    "description": "Comma-separated list of fields to return. Available fields include: symbol, name, summary, go (gene ontology), pathway (KEGG/Reactome), interpro (protein domains), generif (gene references), pdb, uniprot.",
-                    "default": "symbol,name,entrezgene,ensembl,summary,go,pathway,interpro"
-                }
-            },
-            "required": [
-                "gene_id"
-            ]
-        },
-        "fields": {
-            "operation": "get_gene"
-        },
-        "type": "MyGeneTool",
-        "test_examples": [
-            {
-                "gene_id": "1017"
-            },
-            {
-                "gene_id": "ENSG00000141510",
-                "fields": "symbol,name,summary,pathway"
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string",
-                    "description": "Gene ID"
-                },
-                "symbol": {
-                    "type": "string",
-                    "description": "Official gene symbol"
-                },
-                "name": {
-                    "type": "string",
-                    "description": "Full gene name"
-                },
-                "entrezgene": {
-                    "type": [
-                        "integer",
-                        "string"
-                    ],
-                    "description": "Entrez Gene ID"
-                },
-                "ensembl": {
-                    "type": "object",
-                    "properties": {
-                        "gene": {
-                            "type": "string"
-                        },
-                        "transcript": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "protein": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                },
-                "summary": {
-                    "type": "string",
-                    "description": "Gene function summary"
-                },
-                "go": {
-                    "type": "object",
-                    "description": "Gene Ontology annotations",
-                    "properties": {
-                        "BP": {
-                            "type": "array",
-                            "description": "Biological Process terms"
-                        },
-                        "CC": {
-                            "type": "array",
-                            "description": "Cellular Component terms"
-                        },
-                        "MF": {
-                            "type": "array",
-                            "description": "Molecular Function terms"
-                        }
-                    }
-                },
-                "pathway": {
-                    "type": "object",
-                    "description": "Pathway annotations from KEGG, Reactome, WikiPathways"
-                }
-            }
-        }
+    "fields": {
+      "operation": "query"
     },
-    {
-        "name": "MyGene_batch_query",
-        "description": "Query multiple genes at once using a list of gene identifiers. Efficient for retrieving annotations for a gene set or performing ID mapping between different gene ID types.",
-        "parameter": {
+    "type": "MyGeneTool",
+    "test_examples": [
+      {
+        "query": "CDK2",
+        "species": "human"
+      },
+      {
+        "query": "symbol:TP53",
+        "species": "human",
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "took": {
+          "type": "integer",
+          "description": "Query time in milliseconds"
+        },
+        "total": {
+          "type": "integer",
+          "description": "Total number of matching genes"
+        },
+        "max_score": {
+          "type": "number",
+          "description": "Maximum relevance score"
+        },
+        "hits": {
+          "type": "array",
+          "description": "Array of matching gene records",
+          "items": {
             "type": "object",
             "properties": {
-                "gene_ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "List of gene IDs to query. Can mix different ID types (Entrez, Ensembl, symbols)."
-                },
-                "species": {
-                    "type": "string",
-                    "description": "Species filter for the query.",
-                    "default": "human"
-                },
-                "fields": {
-                    "type": "string",
-                    "description": "Comma-separated list of fields to return for each gene.",
-                    "default": "symbol,name,entrezgene,ensembl.gene"
-                }
-            },
-            "required": [
-                "gene_ids"
-            ]
-        },
-        "fields": {
-            "operation": "query_batch"
-        },
-        "type": "MyGeneTool",
-        "test_examples": [
-            {
-                "gene_ids": [
-                    "CDK2",
-                    "TP53",
-                    "BRCA1"
-                ]
-            },
-            {
-                "gene_ids": [
-                    "1017",
-                    "7157",
-                    "672"
+              "_id": {
+                "type": "string",
+                "description": "Gene ID (usually Entrez gene ID)"
+              },
+              "_score": {
+                "type": "number",
+                "description": "Relevance score"
+              },
+              "symbol": {
+                "type": "string",
+                "description": "Official gene symbol"
+              },
+              "name": {
+                "type": "string",
+                "description": "Full gene name"
+              },
+              "entrezgene": {
+                "type": [
+                  "integer",
+                  "string"
                 ],
-                "fields": "symbol,name,pathway"
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "results": {
-                    "type": "array",
-                    "description": "Array of gene annotation results",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "_id": {
-                                "type": "string"
-                            },
-                            "query": {
-                                "type": "string",
-                                "description": "Original query term"
-                            },
-                            "symbol": {
-                                "type": "string"
-                            },
-                            "name": {
-                                "type": "string"
-                            },
-                            "entrezgene": {
-                                "type": [
-                                    "integer",
-                                    "string"
-                                ]
-                            },
-                            "notfound": {
-                                "type": "boolean",
-                                "description": "True if gene was not found"
-                            }
-                        }
-                    }
+                "description": "Entrez Gene ID"
+              },
+              "ensembl": {
+                "type": "object",
+                "properties": {
+                  "gene": {
+                    "type": "string",
+                    "description": "Ensembl gene ID"
+                  }
                 }
+              },
+              "summary": {
+                "type": "string",
+                "description": "Gene summary/description"
+              }
             }
+          }
         }
-    },
-    {
-        "name": "MyVariant_query_variants",
-        "description": "Search for genetic variants by various criteria including rsID, gene, chromosome position, or clinical significance. Returns variant annotations from sources like dbSNP, ClinVar, gnomAD, and CADD.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search query. Examples: 'rs58991260' (rsID), 'chr7:g.55249071G>A' (HGVS), 'clinvar.gene.symbol:BRCA1' (gene in ClinVar), 'cadd.phred:>30' (high CADD score)."
-                },
-                "fields": {
-                    "type": "string",
-                    "description": "Comma-separated fields to return. Common: dbsnp, clinvar, cadd, gnomad_genome, dbnsfp.",
-                    "default": "dbsnp.rsid,clinvar.rcv.clinical_significance,cadd.phred,gnomad_genome.af.af"
-                },
-                "size": {
-                    "type": "integer",
-                    "description": "Maximum number of results (1-100).",
-                    "default": 10
-                }
-            },
-            "required": [
-                "query"
-            ]
-        },
-        "fields": {
-            "operation": "query"
-        },
-        "type": "MyVariantTool",
-        "test_examples": [
-            {
-                "query": "rs58991260"
-            },
-            {
-                "query": "clinvar.gene.symbol:BRCA1 AND clinvar.rcv.clinical_significance:Pathogenic",
-                "size": 5
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "took": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                },
-                "hits": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "_id": {
-                                "type": "string",
-                                "description": "Variant ID in HGVS format"
-                            },
-                            "dbsnp": {
-                                "type": "object",
-                                "properties": {
-                                    "rsid": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "clinvar": {
-                                "type": "object",
-                                "properties": {
-                                    "rcv": {
-                                        "type": "array",
-                                        "description": "ClinVar RCV records"
-                                    }
-                                }
-                            },
-                            "cadd": {
-                                "type": "object",
-                                "properties": {
-                                    "phred": {
-                                        "type": "number",
-                                        "description": "CADD Phred score"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    {
-        "name": "MyVariant_get_variant_annotation",
-        "description": "Get detailed annotations for a specific variant by its HGVS ID (e.g., 'chr1:g.2186318G>A'). Returns information from dbSNP, ClinVar, CADD, and other sources.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "variant_id": {
-                    "type": "string",
-                    "description": "HGVS variant ID (e.g., 'chr1:g.2186318G>A' or 'rs123')."
-                },
-                "fields": {
-                    "type": "string",
-                    "description": "Fields to return. Useful fields: dbsnp, clinvar, cadd, gnomad_genome, gnomad_exome, dbnsfp (functional predictions).",
-                    "default": "dbsnp,clinvar,cadd,gnomad_genome,dbnsfp"
-                }
-            },
-            "required": [
-                "variant_id"
-            ]
-        },
-        "fields": {
-            "operation": "get_variant"
-        },
-        "type": "MyVariantTool",
-        "test_examples": [
-            {
-                "variant_id": "chr1:g.218631822G>A"
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "dbsnp": {
-                    "type": "object",
-                    "properties": {
-                        "rsid": {
-                            "type": "string"
-                        },
-                        "gene": {
-                            "type": "object"
-                        },
-                        "alleles": {
-                            "type": "array"
-                        }
-                    }
-                },
-                "clinvar": {
-                    "type": "object",
-                    "description": "ClinVar clinical significance and condition data"
-                },
-                "cadd": {
-                    "type": "object",
-                    "properties": {
-                        "phred": {
-                            "type": "number",
-                            "description": "CADD Phred-scaled score (>20 = top 1% damaging)"
-                        },
-                        "consequence": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "gnomad_genome": {
-                    "type": "object",
-                    "description": "gnomAD genome allele frequencies"
-                }
-            }
-        }
-    },
-    {
-        "name": "MyChem_query_chemicals",
-        "description": "Search for chemicals and drugs by name, structure (InChIKey, SMILES), or database ID. Returns annotations from sources like DrugBank, ChEMBL, ChEBI, and PubChem.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search query. Examples: 'aspirin' (name), 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' (InChIKey), 'drugbank.id:DB00945', 'chembl.molecule_chembl_id:CHEMBL25'."
-                },
-                "fields": {
-                    "type": "string",
-                    "description": "Comma-separated fields to return. Common: drugbank, chebi, pubchem, chembl, drugcentral, unii.",
-                    "default": "drugbank.name,drugbank.drug_interactions,chebi,pubchem.cid,chembl.molecule_chembl_id"
-                },
-                "size": {
-                    "type": "integer",
-                    "description": "Maximum number of results (1-100).",
-                    "default": 10
-                }
-            },
-            "required": [
-                "query"
-            ]
-        },
-        "fields": {
-            "operation": "query"
-        },
-        "type": "MyChemTool",
-        "test_examples": [
-            {
-                "query": "aspirin"
-            },
-            {
-                "query": "drugbank.indication:cancer",
-                "size": 5
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "took": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                },
-                "hits": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "_id": {
-                                "type": "string",
-                                "description": "Chemical ID (usually InChIKey)"
-                            },
-                            "drugbank": {
-                                "type": "object",
-                                "properties": {
-                                    "id": {
-                                        "type": "string"
-                                    },
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "drug_interactions": {
-                                        "type": "array"
-                                    }
-                                }
-                            },
-                            "chembl": {
-                                "type": "object",
-                                "properties": {
-                                    "molecule_chembl_id": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "pubchem": {
-                                "type": "object",
-                                "properties": {
-                                    "cid": {
-                                        "type": "integer"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    {
-        "name": "MyChem_get_chemical_annotation",
-        "description": "Get detailed annotation for a specific chemical/drug by its InChIKey or other ID. Returns comprehensive drug information including mechanisms, targets, interactions, and indications.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "chem_id": {
-                    "type": "string",
-                    "description": "Chemical ID. InChIKey recommended (e.g., 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' for aspirin). Also accepts DrugBank ID or ChEMBL ID."
-                },
-                "fields": {
-                    "type": "string",
-                    "description": "Fields to return. Useful: drugbank (comprehensive), chebi, pubchem, chembl, drugcentral, aeolus (adverse events).",
-                    "default": "drugbank,chebi,pubchem,chembl,drugcentral"
-                }
-            },
-            "required": [
-                "chem_id"
-            ]
-        },
-        "fields": {
-            "operation": "get_chemical"
-        },
-        "type": "MyChemTool",
-        "test_examples": [
-            {
-                "chem_id": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
-            },
-            {
-                "chem_id": "HEFNNWSXXWATRW-UHFFFAOYSA-N",
-                "fields": "drugbank.name,drugbank.targets,drugbank.indication"
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "drugbank": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "string"
-                        },
-                        "name": {
-                            "type": "string"
-                        },
-                        "description": {
-                            "type": "string"
-                        },
-                        "indication": {
-                            "type": "string"
-                        },
-                        "pharmacodynamics": {
-                            "type": "string"
-                        },
-                        "mechanism_of_action": {
-                            "type": "string"
-                        },
-                        "targets": {
-                            "type": "array",
-                            "description": "Drug targets"
-                        },
-                        "drug_interactions": {
-                            "type": "array"
-                        },
-                        "categories": {
-                            "type": "array"
-                        }
-                    }
-                },
-                "chebi": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "string"
-                        },
-                        "name": {
-                            "type": "string"
-                        },
-                        "definition": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "pubchem": {
-                    "type": "object",
-                    "properties": {
-                        "cid": {
-                            "type": "integer"
-                        },
-                        "inchikey": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "chembl": {
-                    "type": "object",
-                    "properties": {
-                        "molecule_chembl_id": {
-                            "type": "string"
-                        },
-                        "pref_name": {
-                            "type": "string"
-                        },
-                        "molecule_type": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        }
-    },
-    {
-        "name": "MyVariant_get_pathogenicity_scores",
-        "description": "Get comprehensive pathogenicity prediction scores for a variant from dbNSFP. Returns REVEL, CADD, AlphaMissense, SIFT, PolyPhen-2, MetaRNN, GERP, PhyloP, and PhastCons scores in a single call. Use this when MyVariant_query_variants does not return dbnsfp data, or when you specifically need REVEL/AlphaMissense scores for ACMG PP3/BP4 classification.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "variant_id": {
-                    "type": "string",
-                    "description": "Variant ID: rsID (e.g., rs45478192) or HGVS genomic (e.g., chr16:g.23635348A>C). Both formats work."
-                },
-                "fields": {
-                    "type": "string",
-                    "description": "Fields to return (pre-configured for pathogenicity scores)",
-                    "default": "dbnsfp.revel.score,dbnsfp.cadd.phred,dbnsfp.alphamissense.score,dbnsfp.alphamissense.pred,dbnsfp.sift.score,dbnsfp.sift.pred,dbnsfp.polyphen2_hdiv.score,dbnsfp.polyphen2_hdiv.pred,dbnsfp.metarnn.score,dbnsfp.metarnn.pred,dbnsfp.gerp_rs,dbnsfp.phylop100way_vertebrate.rankscore,dbnsfp.phastcons100way_vertebrate.rankscore,dbnsfp.vest4.score,dbnsfp.mutationtaster.pred,clinvar.rcv.clinical_significance,dbsnp.rsid"
-                }
-            },
-            "required": [
-                "variant_id"
-            ]
-        },
-        "fields": {
-            "operation": "get_variant"
-        },
-        "type": "MyVariantTool",
-        "test_examples": [
-            {
-                "variant_id": "rs45478192"
-            },
-            {
-                "variant_id": "chr17:g.43092919G>A"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "object"
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    }
-                }
-            ]
-        }
+      }
     }
+  },
+  {
+    "name": "MyGene_get_gene_annotation",
+    "description": "Get detailed annotation for a specific gene by its ID (Entrez or Ensembl). Returns comprehensive information including gene ontology, pathways, protein domains, and literature references.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Gene ID to query. Can be Entrez Gene ID (e.g., '1017' for CDK2) or Ensembl ID (e.g., 'ENSG00000123374')."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated list of fields to return. Available fields include: symbol, name, summary, go (gene ontology), pathway (KEGG/Reactome), interpro (protein domains), generif (gene references), pdb, uniprot.",
+          "default": "symbol,name,entrezgene,ensembl,summary,go,pathway,interpro"
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "operation": "get_gene"
+    },
+    "type": "MyGeneTool",
+    "test_examples": [
+      {
+        "gene_id": "1017"
+      },
+      {
+        "gene_id": "ENSG00000141510",
+        "fields": "symbol,name,summary,pathway"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Gene ID"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Official gene symbol"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full gene name"
+        },
+        "entrezgene": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Entrez Gene ID"
+        },
+        "ensembl": {
+          "type": "object",
+          "properties": {
+            "gene": {
+              "type": "string"
+            },
+            "transcript": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "protein": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "summary": {
+          "type": "string",
+          "description": "Gene function summary"
+        },
+        "go": {
+          "type": "object",
+          "description": "Gene Ontology annotations",
+          "properties": {
+            "BP": {
+              "type": "array",
+              "description": "Biological Process terms"
+            },
+            "CC": {
+              "type": "array",
+              "description": "Cellular Component terms"
+            },
+            "MF": {
+              "type": "array",
+              "description": "Molecular Function terms"
+            }
+          }
+        },
+        "pathway": {
+          "type": "object",
+          "description": "Pathway annotations from KEGG, Reactome, WikiPathways"
+        }
+      }
+    }
+  },
+  {
+    "name": "MyGene_batch_query",
+    "description": "Query multiple genes at once using a list of gene identifiers. Efficient for retrieving annotations for a gene set or performing ID mapping between different gene ID types.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of gene IDs to query. Can mix different ID types (Entrez, Ensembl, symbols)."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species filter for the query.",
+          "default": "human"
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated list of fields to return for each gene.",
+          "default": "symbol,name,entrezgene,ensembl.gene"
+        }
+      },
+      "required": [
+        "gene_ids"
+      ]
+    },
+    "fields": {
+      "operation": "query_batch"
+    },
+    "type": "MyGeneTool",
+    "test_examples": [
+      {
+        "gene_ids": [
+          "CDK2",
+          "TP53",
+          "BRCA1"
+        ]
+      },
+      {
+        "gene_ids": [
+          "1017",
+          "7157",
+          "672"
+        ],
+        "fields": "symbol,name,pathway"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "description": "Array of gene annotation results",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "query": {
+                "type": "string",
+                "description": "Original query term"
+              },
+              "symbol": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "entrezgene": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "notfound": {
+                "type": "boolean",
+                "description": "True if gene was not found"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "MyVariant_query_variants",
+    "description": "Search for genetic variants by various criteria including rsID, gene, chromosome position, or clinical significance. Returns variant annotations from sources like dbSNP, ClinVar, gnomAD, and CADD.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query. Examples: 'rs58991260' (rsID), 'chr7:g.55249071G>A' (HGVS), 'clinvar.gene.symbol:BRCA1' (gene in ClinVar), 'cadd.phred:>30' (high CADD score)."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated fields to return. Common: dbsnp, clinvar, cadd, gnomad_genome, dbnsfp.",
+          "default": "dbsnp.rsid,clinvar.rcv.clinical_significance,cadd.phred,gnomad_genome.af.af"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of results (1-100).",
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "query"
+    },
+    "type": "MyVariantTool",
+    "test_examples": [
+      {
+        "query": "rs58991260"
+      },
+      {
+        "query": "clinvar.gene.symbol:BRCA1 AND clinvar.rcv.clinical_significance:Pathogenic",
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "took": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "hits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Variant ID in HGVS format"
+              },
+              "dbsnp": {
+                "type": "object",
+                "properties": {
+                  "rsid": {
+                    "type": "string"
+                  }
+                }
+              },
+              "clinvar": {
+                "type": "object",
+                "properties": {
+                  "rcv": {
+                    "type": "array",
+                    "description": "ClinVar RCV records"
+                  }
+                }
+              },
+              "cadd": {
+                "type": "object",
+                "properties": {
+                  "phred": {
+                    "type": "number",
+                    "description": "CADD Phred score"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "MyVariant_get_variant_annotation",
+    "description": "Get detailed annotations for a specific variant by its HGVS ID (e.g., 'chr1:g.2186318G>A'). Returns information from dbSNP, ClinVar, CADD, and other sources.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "HGVS variant ID (e.g., 'chr1:g.2186318G>A' or 'rs123')."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Fields to return. Useful fields: dbsnp, clinvar, cadd, gnomad_genome, gnomad_exome, dbnsfp (functional predictions).",
+          "default": "dbsnp,clinvar,cadd,gnomad_genome,dbnsfp"
+        }
+      },
+      "required": [
+        "variant_id"
+      ]
+    },
+    "fields": {
+      "operation": "get_variant"
+    },
+    "type": "MyVariantTool",
+    "test_examples": [
+      {
+        "variant_id": "chr1:g.218631822G>A"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "dbsnp": {
+          "type": "object",
+          "properties": {
+            "rsid": {
+              "type": "string"
+            },
+            "gene": {
+              "type": "object"
+            },
+            "alleles": {
+              "type": "array"
+            }
+          }
+        },
+        "clinvar": {
+          "type": "object",
+          "description": "ClinVar clinical significance and condition data"
+        },
+        "cadd": {
+          "type": "object",
+          "properties": {
+            "phred": {
+              "type": "number",
+              "description": "CADD Phred-scaled score (>20 = top 1% damaging)"
+            },
+            "consequence": {
+              "type": "string"
+            }
+          }
+        },
+        "gnomad_genome": {
+          "type": "object",
+          "description": "gnomAD genome allele frequencies"
+        }
+      }
+    }
+  },
+  {
+    "name": "MyChem_query_chemicals",
+    "description": "Search for chemicals and drugs by name, structure (InChIKey, SMILES), or database ID. Returns annotations from sources like DrugBank, ChEMBL, ChEBI, and PubChem.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query. Examples: 'aspirin' (name), 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' (InChIKey), 'drugbank.id:DB00945', 'chembl.molecule_chembl_id:CHEMBL25'."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated fields to return. Common: drugbank, chebi, pubchem, chembl, drugcentral, unii.",
+          "default": "drugbank.name,drugbank.drug_interactions,chebi,pubchem.cid,chembl.molecule_chembl_id"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of results (1-100).",
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "query"
+    },
+    "type": "MyChemTool",
+    "test_examples": [
+      {
+        "query": "aspirin"
+      },
+      {
+        "query": "drugbank.indication:cancer",
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "took": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "hits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Chemical ID (usually InChIKey)"
+              },
+              "drugbank": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "drug_interactions": {
+                    "type": "array"
+                  }
+                }
+              },
+              "chembl": {
+                "type": "object",
+                "properties": {
+                  "molecule_chembl_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "pubchem": {
+                "type": "object",
+                "properties": {
+                  "cid": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "MyChem_get_chemical_annotation",
+    "description": "Get detailed annotation for a specific chemical/drug by its InChIKey or other ID. Returns comprehensive drug information including mechanisms, targets, interactions, and indications.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chem_id": {
+          "type": "string",
+          "description": "Chemical ID. InChIKey recommended (e.g., 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' for aspirin). Also accepts DrugBank ID or ChEMBL ID."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Fields to return. Useful: drugbank (comprehensive), chebi, pubchem, chembl, drugcentral, aeolus (adverse events).",
+          "default": "drugbank,chebi,pubchem,chembl,drugcentral"
+        }
+      },
+      "required": [
+        "chem_id"
+      ]
+    },
+    "fields": {
+      "operation": "get_chemical"
+    },
+    "type": "MyChemTool",
+    "test_examples": [
+      {
+        "chem_id": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+      },
+      {
+        "chem_id": "HEFNNWSXXWATRW-UHFFFAOYSA-N",
+        "fields": "drugbank.name,drugbank.targets,drugbank.indication"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "drugbank": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "indication": {
+              "type": "string"
+            },
+            "pharmacodynamics": {
+              "type": "string"
+            },
+            "mechanism_of_action": {
+              "type": "string"
+            },
+            "targets": {
+              "type": "array",
+              "description": "Drug targets"
+            },
+            "drug_interactions": {
+              "type": "array"
+            },
+            "categories": {
+              "type": "array"
+            }
+          }
+        },
+        "chebi": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "definition": {
+              "type": "string"
+            }
+          }
+        },
+        "pubchem": {
+          "type": "object",
+          "properties": {
+            "cid": {
+              "type": "integer"
+            },
+            "inchikey": {
+              "type": "string"
+            }
+          }
+        },
+        "chembl": {
+          "type": "object",
+          "properties": {
+            "molecule_chembl_id": {
+              "type": "string"
+            },
+            "pref_name": {
+              "type": "string"
+            },
+            "molecule_type": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "MyVariant_get_pathogenicity_scores",
+    "description": "Get comprehensive pathogenicity prediction scores for a variant from dbNSFP. Returns REVEL, CADD, AlphaMissense, SIFT, PolyPhen-2, MetaRNN, GERP, PhyloP, and PhastCons scores in a single call. Use this when MyVariant_query_variants does not return dbnsfp data, or when you specifically need REVEL/AlphaMissense scores for ACMG PP3/BP4 classification.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "Variant ID: rsID (e.g., rs45478192) or HGVS genomic (e.g., chr16:g.23635348A>C). Both formats work."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Fields to return (pre-configured for pathogenicity scores)",
+          "default": "dbnsfp.revel.score,dbnsfp.cadd.phred,dbnsfp.alphamissense.score,dbnsfp.alphamissense.pred,dbnsfp.sift.score,dbnsfp.sift.pred,dbnsfp.polyphen2_hdiv.score,dbnsfp.polyphen2_hdiv.pred,dbnsfp.metarnn.score,dbnsfp.metarnn.pred,dbnsfp.gerp_rs,dbnsfp.phylop100way_vertebrate.rankscore,dbnsfp.phastcons100way_vertebrate.rankscore,dbnsfp.vest4.score,dbnsfp.mutationtaster.pred,clinvar.rcv.clinical_significance,dbsnp.rsid"
+        }
+      },
+      "required": [
+        "variant_id"
+      ]
+    },
+    "fields": {
+      "operation": "get_variant"
+    },
+    "type": "MyVariantTool",
+    "test_examples": [
+      {
+        "variant_id": "rs45478192"
+      },
+      {
+        "variant_id": "chr7:g.140453136A>T"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object"
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
 ]

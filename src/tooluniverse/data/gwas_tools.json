@@ -68,10 +68,8 @@
       "Search"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS associations search results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS association objects",
           "items": {
@@ -179,34 +177,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -2091,8 +2073,8 @@
         },
         "size": {
           "type": "integer",
-          "description": "Max associations to return.",
-          "default": 5
+          "description": "Max associations to return (default 100; results are sorted by p-value, most significant first).",
+          "default": 100
         }
       },
       "required": [

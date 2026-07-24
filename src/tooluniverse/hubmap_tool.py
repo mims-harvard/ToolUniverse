@@ -50,6 +50,8 @@ class HuBMAPTool(BaseTool):
                 return self._list_organs(arguments)
             elif self.operation == "get_dataset":
                 return self._get_dataset(arguments)
+            elif self.operation == "get_provenance":
+                return self._get_provenance(arguments)
             else:
                 return {
                     "status": "error",
@@ -252,3 +254,67 @@ class HuBMAPTool(BaseTool):
         }
 
         return {"status": "success", "data": result}
+
+    def _get_provenance(self, arguments: dict[str, Any]) -> dict[str, Any]:
+        """Retrieve a dataset's biological provenance lineage (ancestors chain).
+
+        Returns the ordered chain of ancestor entities for a HuBMAP dataset:
+        Dataset -> Sample (section / block / organ) -> Donor.
+        """
+        uuid = arguments.get("uuid") or arguments.get("hubmap_id")
+        if not uuid:
+            return {
+                "status": "error",
+                "error": "uuid (or hubmap_id) is required",
+            }
+
+        url = f"{HUBMAP_ENTITY_URL}/ancestors/{uuid}"
+        resp = requests.get(url, timeout=self.timeout)
+
+        if resp.status_code == 404:
+            return {
+                "status": "error",
+                "error": f"Entity not found: {uuid}",
+            }
+        resp.raise_for_status()
+        ancestors = resp.json()
+
+        if not isinstance(ancestors, list):
+            return {
+                "status": "error",
+                "error": f"Unexpected response for ancestors of {uuid}",
+            }
+
+        # Rank entities so the lineage reads Dataset -> Sample -> Donor, and
+        # Samples are ordered by anatomical granularity (section -> organ).
+        sample_rank = {"section": 1, "suspension": 1, "block": 2, "organ": 3}
+        type_rank = {"Dataset": 0, "Sample": 1, "Donor": 2, "Publication": 3}
+
+        def _sort_key(entity: dict[str, Any]) -> tuple:
+            etype = entity.get("entity_type", "")
+            cat = (entity.get("sample_category") or "").lower()
+            return (type_rank.get(etype, 9), sample_rank.get(cat, 0))
+
+        lineage = []
+        for entity in sorted(ancestors, key=_sort_key):
+            lineage.append(
+                {
+                    "entity_type": entity.get("entity_type"),
+                    "hubmap_id": entity.get("hubmap_id"),
+                    "uuid": entity.get("uuid"),
+                    "sample_category": entity.get("sample_category"),
+                    "organ": entity.get("organ"),
+                    "dataset_type": entity.get("dataset_type"),
+                    "group_name": entity.get("group_name"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "uuid": uuid,
+                "ancestor_count": len(lineage),
+                "lineage": lineage,
+            },
+            "metadata": {"source": "HuBMAP Entity API (ancestors)"},
+        }

@@ -9,6 +9,8 @@ This module provides a reusable base class for REST API tools that handles:
 """
 
 import os
+import csv
+import io
 import requests
 import urllib.parse
 from typing import Any, Dict, Optional, Callable
@@ -44,10 +46,13 @@ class BaseRESTTool(BaseTool):
         """
         Get parameter name mappings from argument names to API parameter names.
 
-        Override this in subclasses to provide custom mappings.
+        Reads ``fields.param_mapping`` from the tool config so pure config-driven
+        BaseRESTTool entries can rename query params without a Python subclass
+        (e.g. OData APIs needing {"filter": "$filter", "top": "$top"}).
+        Subclasses may still override to provide mappings in code.
         Example: {"limit": "rows", "query": "q"}
         """
-        return {}
+        return self.tool_config.get("fields", {}).get("param_mapping", {})
 
     def _build_url(self, args: Dict[str, Any]) -> str:
         """
@@ -61,11 +66,18 @@ class BaseRESTTool(BaseTool):
         """
         url = self.tool_config["fields"]["endpoint"]
 
-        # Apply path_aliases: map alias → canonical name before substitution
+        # Apply path_aliases: map alias → canonical name before substitution.
+        # Fix-R31B-3: an alias key left in `args` after this point leaked into
+        # _build_params as an unrecognized query param -- confirmed live this
+        # isn't just harmless noise: PostgREST-backed APIs (e.g. CPIC) try to
+        # parse every query key as a filter expression and 400 on it
+        # ("failed to parse filter"), breaking the whole request. Always pop
+        # the alias key once consulted, whether or not the canonical name was
+        # already present.
         path_aliases = self.tool_config.get("fields", {}).get("path_aliases", {})
         for alias, canonical in path_aliases.items():
-            if alias in args and canonical not in args:
-                args[canonical] = args[alias]
+            if alias in args:
+                args.setdefault(canonical, args.pop(alias))
 
         # Replace all path parameters from user args
         for key, value in args.items():
@@ -135,6 +147,16 @@ class BaseRESTTool(BaseTool):
             if "default" in prop and prop["default"] is not None:
                 params[param_mapping.get(key, key)] = prop["default"]
 
+        # Inject an API token from an environment variable into a query param
+        # when configured. Config: {"env_var": "WAQI_API_KEY", "param": "token"}.
+        # If the env var is unset the config default (e.g. a public "demo"
+        # token) is left in place, so this is a non-breaking opt-in.
+        auth_param_cfg = self.tool_config.get("fields", {}).get("auth_param")
+        if auth_param_cfg:
+            env_value = os.environ.get(auth_param_cfg.get("env_var", ""), "")
+            if env_value:
+                params[auth_param_cfg.get("param", "token")] = env_value
+
         return params
 
     def _process_response(
@@ -152,6 +174,34 @@ class BaseRESTTool(BaseTool):
         Returns:
             Processed response dictionary
         """
+        fields = self.tool_config.get("fields", {})
+
+        # Some endpoints return CSV/TSV downloads rather than JSON. When
+        # ``fields.parse_csv`` is set, parse the delimited text into a list of
+        # dict records (one per data row, keyed by header) so consuming agents
+        # get structured data instead of an opaque string blob.
+        if fields.get("parse_csv"):
+            text = response.text
+            content_type = response.headers.get("content-type", "")
+            if "text/html" in content_type or text.strip().startswith(
+                ("<html", "<!DOCTYPE", "<HTML")
+            ):
+                return {
+                    "status": "error",
+                    "error": f"{self.api_name}: server returned an HTML page instead of CSV data. The requested resource may not exist.",
+                    "url": url,
+                }
+            delimiter = fields.get("csv_delimiter", ",")
+            reader = csv.DictReader(io.StringIO(text), delimiter=delimiter)
+            records = [dict(row) for row in reader]
+            return {
+                "status": "success",
+                "data": records,
+                "url": url,
+                "count": len(records),
+                "columns": list(reader.fieldnames or []),
+            }
+
         try:
             data = response.json()
         except Exception:
@@ -218,6 +268,36 @@ class BaseRESTTool(BaseTool):
         """
         url = None
         try:
+            # Normalize case-sensitive params before building the request.
+            # Some backends (e.g. CPIC's PostgREST `name=eq.{name}` filter) only
+            # match lowercase values, so a capitalized input silently returns an
+            # empty success. `fields.lowercase_params` lists params to downcase.
+            lowercase_params = (
+                self.tool_config.get("fields", {}).get("lowercase_params") or []
+            )
+            if lowercase_params:
+                arguments = dict(arguments)
+                for key in lowercase_params:
+                    value = arguments.get(key)
+                    if isinstance(value, str):
+                        arguments[key] = value.lower()
+
+            # Fix-R30E-3: the mirror-image case -- CPIC's gene/allele tables
+            # store symbols uppercase (e.g. "CYP2D6"), so a lowercase or
+            # mixed-case input to `symbol=eq.{symbol}`/`genesymbol=eq.{...}`
+            # silently returns an empty success (confirmed live: "cyp2d6" ->
+            # 0 rows, "CYP2D6" -> 1). `fields.uppercase_params` lists params
+            # to upcase.
+            uppercase_params = (
+                self.tool_config.get("fields", {}).get("uppercase_params") or []
+            )
+            if uppercase_params:
+                arguments = dict(arguments)
+                for key in uppercase_params:
+                    value = arguments.get(key)
+                    if isinstance(value, str):
+                        arguments[key] = value.upper()
+
             url = self._build_url(arguments)
             params = self._build_params(arguments)
 
@@ -290,6 +370,22 @@ class BaseRESTTool(BaseTool):
                     result["total_before_limit"] = len(data)
                     result["data"] = data[: int(limit)]
                     result["count"] = int(limit)
+
+            # Fix-R32C-4/5: an exact-match backend (e.g. CPIC's PostgREST
+            # name=eq.{name}) silently returns status:success with an empty
+            # list for any name that isn't spelled/named exactly as the
+            # database stores it -- confirmed live for well-known aliases
+            # ("FK506" for tacrolimus) and spelling variants ("cyclosporin"
+            # vs the indexed "cyclosporine"), indistinguishable from "no PGx
+            # data exists for this drug". `fields.empty_result_note` lets a
+            # config surface the real constraint instead of a bare empty list.
+            empty_note = self.tool_config.get("fields", {}).get("empty_result_note")
+            if (
+                empty_note
+                and isinstance(result.get("data"), list)
+                and not result["data"]
+            ):
+                result["note"] = empty_note
 
             return result
 

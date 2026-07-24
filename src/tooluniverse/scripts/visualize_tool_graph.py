@@ -809,12 +809,21 @@ def main():
 
             threading.Thread(target=open_browser, daemon=True).start()
 
-        # Run the server
+        # Run the server. Refuse to expose a non-loopback bind without a token,
+        # and never run the Werkzeug debugger (debug/reloader) off-loopback —
+        # it allows arbitrary code execution.
+        from tooluniverse.server_security import (
+            enforce_bind_security,
+            is_loopback_host,
+        )
+
+        enforce_bind_security(args.host)
+        debug = (not args.no_auto_reload) and is_loopback_host(args.host)
         app.run(
             host=args.host,
             port=args.port,
-            debug=not args.no_auto_reload,
-            use_reloader=not args.no_auto_reload,
+            debug=debug,
+            use_reloader=debug,
         )
 
     except KeyboardInterrupt:

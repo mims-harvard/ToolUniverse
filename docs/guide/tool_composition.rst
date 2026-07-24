@@ -1,5 +1,5 @@
 Tool Composition Tutorial
-======================
+=========================
 
 **Chain ToolUniverse's 1000+ tools into powerful scientific workflows**
 
@@ -495,32 +495,37 @@ Common Issues and Solutions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. **Tool Not Found Error**
- - Check that the tool name is correct in your compose script
- - Ensure the tool is loaded in ToolUniverse
- - Verify the tool is in the `required_tools` list
- - Use `auto_load_dependencies: true` to automatically load missing tools
+
+   - Check that the tool name is correct in your compose script
+   - Ensure the tool is loaded in ToolUniverse
+   - Verify the tool is in the `required_tools` list
+   - Use `auto_load_dependencies: true` to automatically load missing tools
 
 2. **Import Errors**
- - Make sure your compose script is in the `compose_scripts/` directory
- - Check that the function name matches `composition_function`
- - Verify the function signature is correct: `def compose(arguments, tooluniverse, call_tool):`
+
+   - Make sure your compose script is in the `compose_scripts/` directory
+   - Check that the function name matches `composition_function`
+   - Verify the function signature is correct: `def compose(arguments, tooluniverse, call_tool):`
 
 3. **Parameter Errors**
- - Validate your parameter schema in the JSON configuration
- - Check that required parameters are provided
- - Ensure parameter types match the schema
- - Follow the interaction protocol schema of ToolUniverse
+
+   - Validate your parameter schema in the JSON configuration
+   - Check that required parameters are provided
+   - Ensure parameter types match the schema
+   - Follow the interaction protocol schema of ToolUniverse
 
 4. **Performance Issues**
- - Limit the number of tools called in sequence
- - Use `auto_load_dependencies: true` for automatic loading
- - Consider caching results for repeated calls
- - Implement proper error handling to avoid cascading failures
+
+   - Limit the number of tools called in sequence
+   - Use `auto_load_dependencies: true` for automatic loading
+   - Consider caching results for repeated calls
+   - Implement proper error handling to avoid cascading failures
 
 5. **Heterogeneous Backend Issues**
- - Ensure all required tools are available across different backends
- - Use `fail_on_missing_tools: false` for graceful degradation
- - Implement fallback mechanisms for critical workflow steps
+
+   - Ensure all required tools are available across different backends
+   - Use `fail_on_missing_tools: false` for graceful degradation
+   - Implement fallback mechanisms for critical workflow steps
 
 Available Compose Tools
 ------------------------
@@ -530,38 +535,44 @@ ToolUniverse currently provides several pre-built compose tools that demonstrate
 ** Working Compose Tools**:
 
 1. **LiteratureSearchTool** - Literature research and synthesis
- - Searches EuropePMC, OpenAlex, and PubTator databases
- - Uses AI agent for literature summarization
- - Demonstrates broadcasting pattern
+
+   - Searches EuropePMC, OpenAlex, and PubTator databases
+   - Uses AI agent for literature summarization
+   - Demonstrates broadcasting pattern
 
 2. **ComprehensiveDrugDiscoveryPipeline** - End-to-end drug discovery
- - Target identification using OpenTargets
- - Lead discovery from known drugs
- - Safety assessment using ADMETAI tools
- - Literature validation
- - Demonstrates sequential chaining with tool integration
+
+   - Target identification using OpenTargets
+   - Lead discovery from known drugs
+   - Safety assessment using ADMETAI tools
+   - Literature validation
+   - Demonstrates sequential chaining with tool integration
 
 3. **BiomarkerDiscoveryWorkflow** - Biomarker discovery and validation
- - Literature-based biomarker discovery
- - Multi-strategy gene search using HPA
- - Comprehensive pathway analysis using HPA tools
- - Clinical validation using FDA data
- - Demonstrates multi-strategy fallbacks and error handling
+
+   - Literature-based biomarker discovery
+   - Multi-strategy gene search using HPA
+   - Comprehensive pathway analysis using HPA tools
+   - Clinical validation using FDA data
+   - Demonstrates multi-strategy fallbacks and error handling
 
 4. **DrugSafetyAnalyzer** - Drug safety assessment
- - PubChem compound information retrieval
- - EuropePMC literature search
- - Demonstrates safety-focused workflows
+
+   - PubChem compound information retrieval
+   - EuropePMC literature search
+   - Demonstrates safety-focused workflows
 
 5. **ToolDescriptionOptimizer** - Tool optimization
- - AI-powered tool description improvement
- - Test case generation and quality evaluation
- - Demonstrates agentic optimization loops
+
+   - AI-powered tool description improvement
+   - Test case generation and quality evaluation
+   - Demonstrates agentic optimization loops
 
 6. **ToolDiscover** - Tool discovery and generation
- - AI-powered tool creation from descriptions
- - Iterative code improvement
- - Demonstrates advanced agentic workflows
+
+   - AI-powered tool creation from descriptions
+   - Iterative code improvement
+   - Demonstrates advanced agentic workflows
 
 **Key Features**:
 - **All tools tested and working** with real data processing

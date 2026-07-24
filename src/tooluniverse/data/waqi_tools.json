@@ -1,7 +1,7 @@
 [
   {
     "name": "WAQI_get_air_quality",
-    "description": "Get real-time Air Quality Index (AQI) data for a city or monitoring station using the World Air Quality Index API with the public demo token. Returns AQI values, dominant pollutant, and individual pollutant readings (PM2.5, PM10, NO2, O3, SO2, CO). No personal API key required (uses demo token with limited quota). Useful for environmental research, health risk assessment, and air quality monitoring.",
+    "description": "Get real-time Air Quality Index (AQI) data for a city or monitoring station using the World Air Quality Index API. Returns AQI values, dominant pollutant, and individual pollutant readings (PM2.5, PM10, NO2, O3, SO2, CO). IMPORTANT: without a personal token the public 'demo' token is used, which returns a fixed sample station (Shanghai) regardless of the requested city — do NOT treat demo results as the requested city's air quality. Set the free WAQI_API_KEY environment variable (register at https://aqicn.org/data-platform/token/) to get real per-city data.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18,18 +18,16 @@
       "endpoint": "https://api.waqi.info/feed/{city}/",
       "params": {
         "token": "demo"
+      },
+      "auth_param": {
+        "env_var": "WAQI_API_KEY",
+        "param": "token"
       }
     },
     "type": "BaseRESTTool",
     "test_examples": [
       {
-        "city": "beijing"
-      },
-      {
-        "city": "london"
-      },
-      {
-        "city": "los-angeles"
+        "city": "shanghai"
       }
     ],
     "return_schema": {
@@ -153,6 +151,18 @@
           ]
         }
       ]
+    },
+    "optional_api_keys": [
+      "WAQI_API_KEY"
+    ],
+    "api_key_info": {
+      "WAQI_API_KEY": {
+        "domain": "Other",
+        "type": "secret",
+        "register_url": "https://aqicn.org/data-platform/token/",
+        "purpose": "Fetch real per-city air quality data from the World Air Quality Index API.",
+        "without": "Falls back to the public 'demo' token, which returns a fixed sample station (Shanghai) for every city. The key is free."
+      }
     }
   }
 ]

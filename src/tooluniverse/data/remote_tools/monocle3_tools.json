@@ -1,0 +1,44 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_monocle3_pseudotime",
+    "description": "Infer single-cell pseudotime with Monocle3 (Cao 2019, Trapnell lab): build a cell_data_set from raw counts and run the standard preprocess -> UMAP -> cluster_cells -> learn_graph -> order_cells pipeline, returning each cell's pseudotime along a learned principal graph (with branches/loops) — unlike Slingshot, Monocle3 learns its own graph rather than ordering preset clusters. Specify the trajectory root with root_cluster (+ cluster_key) or explicit root_cells. Input is a server-accessible .h5ad of RAW counts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path to an .h5ad AnnData of RAW counts (Monocle3 normalizes internally)."},
+        "counts_layer": {"type": "string", "description": "layers key holding raw counts if .X is not raw (optional; default: use .X)."},
+        "cluster_key": {"type": "string", "description": "obs column with input cluster labels; required when rooting via root_cluster, and enables per-cluster mean pseudotime."},
+        "root_cluster": {"type": "string", "description": "Name of the input cluster (in cluster_key) whose cells are the trajectory root."},
+        "root_cells": {"type": "array", "items": {"type": "string"}, "description": "Explicit root cell ids (obs_names); alternative to root_cluster."},
+        "num_dim": {"type": "integer", "description": "PCA dimensions for preprocess_cds (default 50)."}
+      },
+      "required": ["adata_path"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "n_cells": {"type": "integer"},
+        "n_unreachable": {"type": "integer", "description": "Cells disconnected from the root (pseudotime null)."},
+        "pseudotime": {"type": "array", "description": "Per-cell pseudotime along the learned graph (null where unreachable); omitted if n_cells > 50000."},
+        "cell_ids": {"type": "array", "items": {"type": "string"}, "description": "obs_names aligned with pseudotime (omitted if n_cells > 50000)."},
+        "monocle_partitions": {"type": "array", "items": {"type": "string"}, "description": "Monocle3 partition assignment per cell (omitted if n_cells > 50000)."},
+        "cluster_pseudotime": {"type": "object", "description": "{input_cluster: mean_pseudotime} (present when cluster_key is given)."},
+        "note": {"type": "string"},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "Monocle3PseudotimeTool",
+      "url": "https://cole-trapnell-lab.github.io/monocle3/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/monocle3",
+      "mcp_tool_name": "run_monocle3_pseudotime"
+    },
+    "test_examples": [
+      {"adata_path": "pancreas_counts.h5ad", "cluster_key": "clusters", "root_cluster": "Ngn3 low EP", "num_dim": 50}
+    ]
+  }
+]

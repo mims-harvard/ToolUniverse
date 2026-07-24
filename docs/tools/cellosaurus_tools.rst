@@ -13,7 +13,7 @@ Available Tools
 **cellosaurus_get_cell_line_info** (Type: CellosaurusGetCellLineInfoTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Get detailed information about a specific cell line using its Cellosaurus accession number (CVCL_...
+Get detailed information about a specific cell line using its Cellosaurus accession number (``CVCL_``...).
 
 .. dropdown:: cellosaurus_get_cell_line_info tool specification
 
@@ -21,12 +21,12 @@ Get detailed information about a specific cell line using its Cellosaurus access
 
    * **Name**: ``cellosaurus_get_cell_line_info``
    * **Type**: ``CellosaurusGetCellLineInfoTool``
-   * **Description**: Get detailed information about a specific cell line using its Cellosaurus accession number (CVCL_ format).
+   * **Description**: Get detailed information about a specific cell line using its Cellosaurus accession number (``CVCL_`` format).
 
    **Parameters:**
 
    * ``accession`` (string) (required)
-     Cellosaurus accession number (must start with 'CVCL_')
+     Cellosaurus accession number (must start with ``CVCL_``)
 
    * ``format`` (string) (required)
      Response format

@@ -1,0 +1,242 @@
+[
+  {
+    "type": "ZoomaTool",
+    "name": "ZOOMA_annotate_text",
+    "description": "Map a free-text term (e.g. a sample attribute, phenotype, organism name, anatomical part, or disease label) to ontology terms using EBI ZOOMA. Returns matched ontology terms as semantic-tag IRIs (OBO/EFO PURLs) with a confidence rating (HIGH/GOOD/MEDIUM/LOW), the curation source, the evidence type, and OLS lookup links. Use this when you have arbitrary text and need the most likely standardized ontology term(s) \u2014 for instance normalizing experiment metadata or resolving a disease/tissue name to an ontology ID. Optionally restrict matches to one or more ontologies (e.g. 'efo', 'mondo', 'uberon'), give a property type hint, set a minimum confidence, and cap the number of results.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "property_value": {
+          "type": "string",
+          "description": "Free text to annotate to ontology terms, e.g. 'bone marrow', 'asthma', 'Homo sapiens'. Required."
+        },
+        "property_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional property-type hint that narrows the annotation context, e.g. 'disease', 'organism part', 'cell type', 'organism'. Leave unset to let ZOOMA infer it."
+        },
+        "ontologies": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional comma-separated ontology source filter restricting matches to these ontologies, e.g. 'efo' or 'efo,uberon' or 'mondo'. Leave unset to search all sources."
+        },
+        "min_confidence": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional minimum confidence to keep, one of 'LOW', 'MEDIUM', 'GOOD', 'HIGH'. Annotations below this level are dropped. Leave unset to keep all."
+        },
+        "max_results": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of annotations to return (default 10). ZOOMA can return 100+ fuzzy matches for common terms."
+        }
+      },
+      "required": [
+        "property_value"
+      ]
+    },
+    "fields": {
+      "operation": "annotate"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "property_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "property_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "semantic_tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Ontology term IRIs (OBO/EFO PURLs) this text maps to."
+                  },
+                  "curies": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Compact CURIEs derived from the semantic-tag IRIs, e.g. 'MONDO:0004979', 'UBERON:0002371', 'EFO:0006842'."
+                  },
+                  "confidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HIGH, GOOD, MEDIUM, or LOW."
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Annotation source name, e.g. 'zooma', 'uberon', 'efo'."
+                  },
+                  "source_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ONTOLOGY or DATABASE."
+                  },
+                  "evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Evidence type, e.g. ZOOMA_INFERRED_FROM_CURATED, OLS_TEXT_TAGGER, OLS_EMBEDDING."
+                  },
+                  "ols_links": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "OLS API URLs for each semantic tag."
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "property_value": "bone marrow"
+      },
+      {
+        "property_value": "asthma",
+        "property_type": "disease"
+      },
+      {
+        "property_value": "diabetes",
+        "ontologies": "efo",
+        "max_results": 5
+      },
+      {
+        "property_value": "Homo sapiens",
+        "min_confidence": "HIGH",
+        "max_results": 3
+      },
+      {
+        "property_value": "liver",
+        "property_type": "organism part",
+        "ontologies": "uberon"
+      }
+    ]
+  },
+  {
+    "type": "ZoomaTool",
+    "name": "ZOOMA_list_datasources",
+    "description": "List the curated annotation datasources that EBI ZOOMA draws on when mapping free text to ontology terms. Returns each datasource's short name, type (DATABASE or ONTOLOGY), and home URI - for example 'uniprot', 'eva-clinvar', 'atlas' (Expression Atlas), 'cbi' (BioSamples), 'metabolights'. Use this to discover valid source identifiers for provenance interpretation or to understand which curated resources back a given ZOOMA annotation. Takes no arguments.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "operation": "list_datasources"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Short datasource identifier, e.g. 'uniprot', 'eva-clinvar', 'atlas'."
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Datasource type: 'DATABASE' or 'ONTOLOGY'."
+                  },
+                  "uri": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Home URI of the datasource."
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ]
+  }
+]

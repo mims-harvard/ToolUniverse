@@ -93,7 +93,7 @@
             "properties": {
                 "category": {
                     "type": ["string", "null"],
-                    "description": "Filter annotators by type/category substring (e.g., 'annotator', 'converter'). Case-insensitive."
+                    "description": "Filter annotators by a case-insensitive substring match against the module's type, name, or title (e.g. 'clinvar', 'sift', 'annotator'). Useful for finding a specific annotator by name, since most modules share type='annotator'."
                 }
             },
             "required": []

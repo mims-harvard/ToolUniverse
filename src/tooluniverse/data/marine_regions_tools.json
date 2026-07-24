@@ -28,7 +28,8 @@
             "integer",
             "null"
           ],
-          "description": "Pagination offset. Default: 0 (first page)"
+          "description": "Pagination offset. Default: 0 (first page)",
+          "default": 0
         }
       },
       "required": [

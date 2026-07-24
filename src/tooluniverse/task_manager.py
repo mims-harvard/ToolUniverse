@@ -40,6 +40,7 @@ class Task:
     progress: Optional[TaskProgress] = None
     auth_context: Optional[str] = None
     _task_handle: Optional[asyncio.Task] = None
+    _sequence: int = 0
 
     def is_expired(self) -> bool:
         """Check if task has exceeded its TTL."""
@@ -61,6 +62,7 @@ class TaskManager:
         self.lock = asyncio.Lock()
         self.tool_universe = tool_universe
         self._cleanup_task: Optional[asyncio.Task] = None
+        self._task_sequence = 0
 
     # -- Lifecycle --------------------------------------------------------
 
@@ -148,8 +150,11 @@ class TaskManager:
 
         Async tools are awaited directly; sync tools run in a thread pool.
         """
-        sig = inspect.signature(tool.run)
-        kwargs = {"progress": progress} if "progress" in sig.parameters else {}
+        try:
+            sig = inspect.signature(tool.run)
+            kwargs = {"progress": progress} if "progress" in sig.parameters else {}
+        except (TypeError, ValueError):
+            kwargs = {}
         is_async = inspect.iscoroutinefunction(tool.run)
 
         if is_async:
@@ -167,19 +172,20 @@ class TaskManager:
     ) -> str:
         """Create a new task and start background execution. Returns the task ID."""
         task_id = str(uuid.uuid4())
-        task = Task(
-            task_id=task_id,
-            tool_name=tool_name,
-            arguments=arguments,
-            status="working",
-            status_message=f"Task submitted: {tool_name}",
-            created_at=datetime.now(),
-            ttl=ttl,
-            auth_context=auth_context,
-        )
-        task.progress = TaskProgress(task, lock=self.lock)
-
         async with self.lock:
+            self._task_sequence += 1
+            task = Task(
+                task_id=task_id,
+                tool_name=tool_name,
+                arguments=arguments,
+                status="working",
+                status_message=f"Task submitted: {tool_name}",
+                created_at=datetime.now(),
+                ttl=ttl,
+                auth_context=auth_context,
+                _sequence=self._task_sequence,
+            )
+            task.progress = TaskProgress(task, lock=self.lock)
             self.tasks[task_id] = task
 
         task._task_handle = asyncio.create_task(self._execute_task(task))
@@ -273,7 +279,7 @@ class TaskManager:
                 for task in self.tasks.values()
                 if not auth_context or task.auth_context == auth_context
             ]
-            tasks_list.sort(key=lambda t: t.created_at, reverse=True)
+            tasks_list.sort(key=lambda t: (t.created_at, t._sequence), reverse=True)
 
             return {
                 "tasks": [

@@ -12,9 +12,11 @@ Rate limit: 40 requests per minute (enforced internally).
 """
 
 import os
+import re
 import time
 import requests
 from typing import Dict, Any, Optional, List
+from urllib.parse import urlparse
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -57,7 +59,11 @@ class NvidiaNIMTool(BaseTool):
     - MAISI, Vista3D
 
     Configuration fields:
-    - endpoint: API endpoint path (relative to base URL)
+    - endpoint: API endpoint path (relative to base URL); may contain {placeholder}
+      segments filled from path_params (e.g. "arc/{model}/generate")
+    - path_params: {name: default} map for templated endpoint segments; the value
+      is taken from the request argument of the same name (or the default) and is
+      not forwarded in the request body (e.g. {"model": "evo2-40b"})
     - base_url: Override base URL (default: https://health.api.nvidia.com/v1/biology)
     - async_expected: Whether 202 async response is expected
     - poll_seconds: NVCF-POLL-SECONDS header value (default 300)
@@ -66,7 +72,13 @@ class NvidiaNIMTool(BaseTool):
     """
 
     DEFAULT_BASE_URL = "https://health.api.nvidia.com/v1/biology"
-    STATUS_URL = "https://integrate.api.nvidia.com/v1/status"
+    # Hosted NVCF functions are polled on the SAME gateway host they are invoked
+    # on. The biology/medical-imaging NIMs live on health.api.nvidia.com, so async
+    # results must be polled there — NOT on integrate.api.nvidia.com, which only
+    # serves the OpenAI-compatible LLM endpoints and has no /v1/status route
+    # (it returns a plain-text "404 page not found"). The poll host is derived
+    # from the invocation base_url at request time; this is the default.
+    STATUS_URL = "https://health.api.nvidia.com/v1/status"
     ASSETS_URL = "https://api.nvcf.nvidia.com/v2/nvcf/assets"
     DEFAULT_TIMEOUT = 600
     DEFAULT_POLL_SECONDS = 300
@@ -78,6 +90,9 @@ class NvidiaNIMTool(BaseTool):
         fields = tool_config.get("fields", {})
 
         self.endpoint = fields.get("endpoint", "")
+        # Optional {placeholder} -> default map for templated endpoints (e.g.
+        # selecting a hosted model variant like evo2-40b vs evo2-7b).
+        self.path_params = fields.get("path_params", {}) or {}
         self.base_url = fields.get("base_url", self.DEFAULT_BASE_URL)
         self.async_expected = fields.get("async_expected", False)
         self.poll_seconds = fields.get("poll_seconds", self.DEFAULT_POLL_SECONDS)
@@ -103,15 +118,28 @@ class NvidiaNIMTool(BaseTool):
 
         return headers
 
-    def _build_url(self) -> str:
-        """Build the full API URL."""
+    def _build_url(self, arguments: Optional[Dict[str, Any]] = None) -> str:
+        """Build the full API URL, filling any {placeholder} path params.
+
+        A templated endpoint (e.g. "arc/{model}/generate") lets one tool target
+        several hosted model variants. Each placeholder is filled from the request
+        argument of the same name, falling back to the per-field default in
+        ``path_params``; values are restricted to a safe slug charset.
+        """
+        endpoint = self.endpoint
+        for key, default in self.path_params.items():
+            value = (arguments or {}).get(key) or default
+            if not re.fullmatch(r"[A-Za-z0-9._-]+", str(value)):
+                value = default
+            endpoint = endpoint.replace("{" + key + "}", str(value))
+
         # Handle endpoints that include full path
-        if self.endpoint.startswith("http"):
-            return self.endpoint
+        if endpoint.startswith("http"):
+            return endpoint
 
         # Ensure proper URL construction
         base = self.base_url.rstrip("/")
-        endpoint = self.endpoint.lstrip("/")
+        endpoint = endpoint.lstrip("/")
         return f"{base}/{endpoint}"
 
     def _poll_for_result(self, req_id: str, headers: Dict[str, str]) -> Dict[str, Any]:
@@ -125,7 +153,10 @@ class NvidiaNIMTool(BaseTool):
         Returns:
             Final response from the API
         """
-        poll_url = f"{self.STATUS_URL}/{req_id}"
+        # Poll on the same gateway host the request was sent to (e.g.
+        # health.api.nvidia.com), falling back to the documented default.
+        host = urlparse(self.base_url).netloc or urlparse(self.STATUS_URL).netloc
+        poll_url = f"https://{host}/v1/status/{req_id}"
 
         for attempt in range(self.MAX_POLL_ATTEMPTS):
             try:
@@ -173,26 +204,67 @@ class NvidiaNIMTool(BaseTool):
             }
 
         if response.status_code == 404:
+            # Two distinct 404s: the route is valid but the model function isn't
+            # provisioned for this account ("Not found for account ..." — a JSON
+            # body), versus a genuinely wrong path (plain "404 page not found").
+            body = response.text or ""
+            if "not found for account" in body.lower():
+                return {
+                    "status": "error",
+                    "error": "Model not available for this NVIDIA account",
+                    "detail": (
+                        "This NIM model is not provisioned for your NVIDIA_API_KEY "
+                        "and may require special/enterprise access. " + body[:300]
+                    ),
+                    "status_code": 404,
+                }
             return {
                 "status": "error",
                 "error": "Endpoint not found",
-                "detail": response.text,
+                "detail": body,
                 "status_code": 404,
             }
 
         if response.status_code >= 500:
+            # 5xx from the gateway often has an empty body; the NVCF headers carry
+            # the real signal (e.g. nvcf-status "errored" on a cold/failed function).
+            nvcf_status = response.headers.get("nvcf-status")
+            detail = response.text.strip()
+            if not detail and nvcf_status:
+                detail = (
+                    f"NVCF function status: {nvcf_status}; request id "
+                    f"{response.headers.get('nvcf-reqid')}. The hosted function may be "
+                    f"cold-starting or temporarily unavailable — retry shortly."
+                )
+            elif not detail:
+                detail = "No response body."
             return {
                 "status": "error",
                 "error": "Server error",
-                "detail": response.text,
+                "detail": detail,
                 "status_code": response.status_code,
             }
 
         if response.status_code not in [200, 201]:
+            body = response.text or ""
+            # A hosted function NVIDIA has flagged unhealthy returns
+            # "DEGRADED function cannot be invoked" (seen as a 400). It's a
+            # transient server-side state, not a bad request from the caller.
+            if "degraded" in body.lower():
+                return {
+                    "status": "error",
+                    "error": "NIM function temporarily degraded",
+                    "detail": (
+                        "NVIDIA has flagged this hosted model as degraded and is "
+                        "rejecting invocations — a transient server-side state, not "
+                        "a problem with your request. Retry later. " + body[:300]
+                    ),
+                    "status_code": response.status_code,
+                }
             return {
                 "status": "error",
                 "error": f"API returned status {response.status_code}",
-                "detail": response.text[:1000] if response.text else "No details",
+                "detail": body[:1000] if body else "No details",
                 "status_code": response.status_code,
             }
 
@@ -222,10 +294,25 @@ class NvidiaNIMTool(BaseTool):
             }
 
         if self.response_type == "pdb" or "text/plain" in content_type:
-            # PDB structure text
+            # PDB structure text. Some NIMs (e.g. ESMFold) wrap it in JSON
+            # {"pdbs": ["...ATOM records..."]} even on the pdb path, so unwrap to
+            # the actual PDB string rather than handing back a JSON blob.
+            structure = response.text
+            stripped = structure.lstrip()
+            if stripped.startswith(("{", "[")):
+                try:
+                    payload = response.json()
+                except ValueError:
+                    payload = None
+                if isinstance(payload, dict):
+                    pdbs = payload.get("pdbs") or payload.get("pdb")
+                    if isinstance(pdbs, list) and pdbs:
+                        structure = pdbs[0]
+                    elif isinstance(pdbs, str):
+                        structure = pdbs
             return {
                 "status": "success",
-                "structure": response.text,
+                "structure": structure,
                 "format": "pdb",
             }
 
@@ -248,6 +335,21 @@ class NvidiaNIMTool(BaseTool):
         # Default: JSON response
         try:
             data = response.json()
+            # Some NIMs (e.g. DiffDock) answer HTTP 200 but report an inner
+            # failure (e.g. {"status": "failed", "detail": ...}). Surface that as
+            # an error rather than a misleading top-level success.
+            if isinstance(data, dict) and str(data.get("status", "")).lower() in (
+                "failed",
+                "error",
+                "errored",
+            ):
+                detail = str(data.get("detail") or data.get("message") or data)[:300]
+                return {
+                    "status": "error",
+                    "error": "NIM reported an inner failure",
+                    "detail": detail,
+                    "data": data,
+                }
             return {
                 "status": "success",
                 "data": data,
@@ -421,13 +523,16 @@ class NvidiaNIMTool(BaseTool):
                 "provided": list(arguments.keys()),
             }
 
-        # Build URL and headers
-        url = self._build_url()
+        # Build URL (filling any templated path params) and headers
+        url = self._build_url(arguments)
         headers = self._get_headers()
 
         # Handle DiffDock staged asset upload workflow
         asset_references = None
         request_arguments = arguments.copy()
+        # Path-param values select the model/variant in the URL, not body fields.
+        for key in self.path_params:
+            request_arguments.pop(key, None)
 
         is_diffdock = "diffdock" in self.endpoint.lower()
         is_staged = arguments.get("is_staged", False)

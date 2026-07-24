@@ -1,5 +1,5 @@
 Troubleshooting Tutorial
-=====================
+========================
 
 Quick Diagnostic
 ----------------
@@ -565,6 +565,47 @@ Claude/AI assistant not finding tools
       tools = tu.return_all_loaded_tools()
       print(f"Registered {len(tools)} tools")
 
+Claude Desktop reports ``spawn uv ENOENT`` or ``spawn uvx ENOENT``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Diagnosis:**
+
+Claude Desktop starts MCP servers from a GUI process and may not inherit the
+same ``PATH`` as your terminal. A config that works in a shell can still fail in
+Claude Desktop if ``uv`` or ``uvx`` is not available by absolute path.
+
+**Solutions:**
+
+1. **Verify the command in a normal terminal:**
+
+   .. code-block:: bash
+
+      uvx --version
+      uvx tooluniverse --help
+
+2. **Find the absolute path to ``uvx``:**
+
+   .. code-block:: bash
+
+      which uvx      # macOS/Linux
+      where uvx      # Windows
+
+3. **Use that absolute path in Claude Desktop config.** For example:
+
+   .. code-block:: json
+
+      {
+        "mcpServers": {
+          "tooluniverse": {
+            "command": "/Users/yourname/.local/bin/uvx",
+            "args": ["--refresh", "tooluniverse"]
+          }
+        }
+      }
+
+4. **Restart Claude Desktop completely** after saving the config. First startup
+   can take longer while ``uvx`` resolves and installs the package.
+
 Advanced Debugging
 ------------------
 
@@ -639,8 +680,8 @@ If none of these solutions work:
 4. **Join our community**: Discord server link
 
 .. note::
-=========
- When reporting issues, please run the diagnostic script first:
+
+   When reporting issues, please run the diagnostic script first:
 
    .. code-block:: python
 

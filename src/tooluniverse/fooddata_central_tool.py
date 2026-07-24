@@ -69,7 +69,14 @@ class FoodDataCentralTool(BaseTool):
                 "error": "Failed to connect to FoodData Central API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
-            status_code = e.response.status_code if e.response else "unknown"
+            # Fix-R15A-1: requests.Response overrides __bool__ to return
+            # self.ok, which is False for any 4xx/5xx status -- so
+            # `if e.response else "unknown"` was always false-y for a real
+            # HTTP error response (confirmed live), making the 403/429
+            # branches below unreachable dead code. Use `is not None`.
+            status_code = (
+                e.response.status_code if e.response is not None else "unknown"
+            )
             detail = ""
             if e.response is not None:
                 detail = e.response.text[:200]
@@ -79,9 +86,16 @@ class FoodDataCentralTool(BaseTool):
                     "error": "FoodData Central API key invalid or missing. Set FDC_API_KEY env variable.",
                 }
             elif status_code == 429:
+                key_hint = (
+                    " (using the shared DEMO_KEY -- get a free personal key at "
+                    "https://api.nal.usda.gov/signup/ and set FDC_API_KEY for a "
+                    "higher limit)"
+                    if self.api_key == "DEMO_KEY"
+                    else ""
+                )
                 return {
                     "status": "error",
-                    "error": "FoodData Central rate limit exceeded (1000 req/hr). Try again later.",
+                    "error": f"FoodData Central rate limit exceeded (1000 req/hr){key_hint}. Try again later.",
                 }
             return {
                 "status": "error",

@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Finemap_credible_set",
+    "type": "FinemapABFTool",
+    "description": "Single-causal-variant fine-mapping from GWAS/QTL summary statistics (per-SNP effect size + SE over a region). Computes each SNP's posterior inclusion probability (PIP) via Wakefield approximate Bayes factors and the 95% credible set (smallest SNP set capturing the causal variant). LD-free (assumes one causal signal); pure-compute, no R. For multi-signal loci use SuSiE/FINEMAP with LD.",
+    "parameter": {
+      "type": "object",
+      "required": ["beta", "se"],
+      "properties": {
+        "beta": {"type": "array", "items": {"type": "number"}, "description": "Per-SNP effect sizes over the region."},
+        "se": {"type": "array", "items": {"type": "number"}, "description": "Standard errors of beta (positive)."},
+        "snp": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Optional SNP identifiers (same order) to label PIPs and the credible set."},
+        "coverage": {"type": ["number", "null"], "description": "Credible-set coverage in (0,1] (default 0.95)."},
+        "sd_prior": {"type": ["number", "null"], "description": "Prior SD of the effect size (default 0.15)."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "n_snps": {"type": "integer"},
+                "top_snp": {"type": "string"},
+                "top_pip": {"type": "number"},
+                "credible_set": {"type": "array", "items": {"type": "object"}},
+                "credible_set_size": {"type": "integer"},
+                "credible_set_coverage": {"type": "number"},
+                "pip": {"type": "object"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "beta": [0.02, 0.03, 0.25, 0.04, 0.02, 0.05],
+        "se": [0.02, 0.02, 0.02, 0.02, 0.02, 0.02],
+        "snp": ["rs1", "rs2", "rs3", "rs4", "rs5", "rs6"]
+      }
+    ]
+  }
+]

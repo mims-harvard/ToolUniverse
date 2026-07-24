@@ -40,74 +40,104 @@
       "additionalProperties": false
     },
     "return_schema": {
-      "type": "object",
-      "description": "OpenAIRE dataset search results (contents of the data field)",
-      "properties": {
-        "keywords": {
-          "type": "string",
-          "description": "The search keywords used"
-        },
-        "funder": {
-          "type": ["string", "null"],
-          "description": "Funder filter applied"
-        },
-        "country": {
-          "type": ["string", "null"],
-          "description": "Country filter applied"
-        },
-        "total_count": {
-          "type": "integer",
-          "description": "Total number of matching datasets in OpenAIRE"
-        },
-        "returned": {
-          "type": "integer",
-          "description": "Number of datasets returned"
-        },
-        "datasets": {
-          "type": "array",
-          "description": "List of matching datasets",
-          "items": {
-            "type": "object",
-            "properties": {
-              "title": {
-                "type": ["string", "null"],
-                "description": "Dataset title"
-              },
-              "description": {
-                "type": ["string", "null"],
-                "description": "Dataset description (truncated to 500 chars)"
-              },
-              "creators": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": "List of creator/author names"
-              },
-              "date": {
-                "type": ["string", "null"],
-                "description": "Date of acceptance/publication"
-              },
-              "publisher": {
-                "type": ["string", "null"],
-                "description": "Dataset publisher"
-              },
-              "access_rights": {
-                "type": ["string", "null"],
-                "description": "Access rights (Open Access, Restricted, etc.)"
-              },
-              "doi": {
-                "type": ["string", "null"],
-                "description": "DOI identifier if available"
-              },
-              "subjects": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": "Subject keywords and classifications"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "keywords": {
+              "type": "string"
+            },
+            "funder": {
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            "country": {
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "creators": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "date": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "publisher": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "access_rights": {
+                    "type": "string"
+                  },
+                  "doi": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "subjects": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
-          }
+          },
+          "required": [
+            "keywords"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      },
-      "required": ["keywords", "total_count", "returned", "datasets"]
+      ]
     },
     "test_examples": [
       {

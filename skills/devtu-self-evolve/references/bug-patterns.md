@@ -109,7 +109,7 @@ if isinstance(data, list) and len(data) > 0:
         "GtoPdb interactions list pharmacological research compounds — approved "
         "drugs for this target may not be represented. For approved drugs and "
         "clinical compounds, use ChEMBL_get_drug_mechanisms or "
-        f"ChEMBL_search_compounds with target_name='{_chembl_target}'."
+        f"ChEMBL_search_molecules with target_name='{_chembl_target}'."
     )
 ```
 
@@ -352,7 +352,7 @@ if mol_profile and therapy and not disease and len(evidence_nodes) == 0:
 
 ## DGIdb Client-Side Filtering (Feature-68A-001/002)
 
-**Tools**: DGIdb_get_interactions
+**Tools**: DGIdb_get_drug_gene_interactions
 **Pattern**: API ignores `interaction_types` and `sources` filters server-side → returns everything.
 
 **Fix**: Fetch all, filter client-side:
@@ -394,7 +394,7 @@ params["genesymbol"] = _postgrest_eq(gene_symbol)
 
 ## KEGG Organism-Specific Gene Search (Feature-68B-001)
 
-**Tools**: KEGG_find_genes
+**Tools**: kegg_find_genes
 **Pattern**: `/find/genes/{keyword}` ignores organism param → returns all organisms.
 
 **Fix**: Use `/find/{organism}/{keyword}`:
@@ -509,7 +509,7 @@ except Exception:
 
 ## GEO Double-Adding Search Terms (Feature-70A-008)
 
-**Tools**: GEO_search_datasets
+**Tools**: geo_search_datasets
 **Pattern**: Code adds "methylation" to query even when it's already present.
 
 **Fix**: Check before appending:

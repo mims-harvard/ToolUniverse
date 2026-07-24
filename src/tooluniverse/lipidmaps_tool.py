@@ -17,6 +17,19 @@ from .tool_registry import register_tool
 # Base URL for LIPID MAPS REST API
 LIPIDMAPS_BASE_URL = "https://www.lipidmaps.org/rest"
 
+# LIPID MAPS sits behind Cloudflare and 403s the default python-requests UA
+# with a "Just a moment..." challenge page. A normal browser UA passes through
+# the JS-less challenge for plain REST endpoints — same trick as
+# file_download_tool.py uses for Wikipedia.
+_REQUEST_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36 ToolUniverse/LipidMaps"
+    ),
+    "Accept": "application/json,text/plain,*/*",
+}
+
 
 @register_tool("LipidMapsTool")
 class LipidMapsTool(BaseTool):
@@ -81,7 +94,7 @@ class LipidMapsTool(BaseTool):
         """Central method to handle API requests and response parsing."""
         url = f"{LIPIDMAPS_BASE_URL}/{sub_path}"
 
-        response = requests.get(url, timeout=self.timeout)
+        response = requests.get(url, timeout=self.timeout, headers=_REQUEST_HEADERS)
         response.raise_for_status()
 
         raw_text = response.text.strip()
@@ -133,14 +146,65 @@ class LipidMapsTool(BaseTool):
             # Not JSON - return raw text (some endpoints return TSV)
             return {"status": "success", "data": raw_text}
 
+    # Cross-reference / structure input items accepted by the LMSD compound
+    # route. Lets a single tool resolve any external metabolite/lipid id to a
+    # LIPID MAPS record by passing xref_type (e.g. kegg_id, hmdb_id).
+    _XREF_INPUT_ITEMS = {
+        "kegg_id",
+        "hmdb_id",
+        "chebi_id",
+        "pubchem_cid",
+        "inchi_key",
+        "lipidbank_id",
+        "lm_id",
+        "abbrev",
+        "abbrev_chains",
+        "formula",
+        "smiles",
+        "inchi",
+    }
+
     def _query_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Query compound/lipid information from LMSD."""
         input_value = arguments.get("input_value", "")
         output_item = arguments.get("output_item", "all")
         if not input_value:
             return {"status": "error", "error": "input_value parameter is required"}
+
+        # Reject unrecognized parameters. `xref_type` has a default (kegg_id), so
+        # a typo like `input_type` (instead of `xref_type`) was silently accepted
+        # and the lookup fell back to kegg_id -- a PubChem CID searched as a KEGG
+        # id then returned an empty "not found" the user wrongly trusted. Name
+        # the bad parameter instead of silently returning a false empty.
+        _recognized = {"input_value", "output_item", "xref_type", "input_item"}
+        unknown = sorted(k for k in arguments if k not in _recognized)
+        if unknown:
+            return {
+                "status": "error",
+                "error": (
+                    f"Unrecognized parameter(s): {', '.join(unknown)}. Supported: "
+                    "input_value, xref_type (e.g. 'pubchem_cid', 'hmdb_id', "
+                    "'chebi_id', 'kegg_id', 'inchi_key', 'abbrev_chains'), "
+                    "output_item. Did you mean 'xref_type'?"
+                ),
+            }
+
+        # Allow the input item (the LMSD lookup key) to be overridden per call
+        # via xref_type / input_item, falling back to the config default. This
+        # powers the cross-reference lookup tool without a new tool class.
+        input_item = (
+            arguments.get("xref_type") or arguments.get("input_item") or self.input_item
+        )
+        input_item = str(input_item).strip()
+        if input_item not in self._XREF_INPUT_ITEMS:
+            return {
+                "status": "error",
+                "error": f"Unsupported xref_type '{input_item}'. Supported: "
+                + ", ".join(sorted(self._XREF_INPUT_ITEMS)),
+            }
+
         return self._make_request(
-            f"compound/{self.input_item}/{input_value}/{output_item}/json"
+            f"compound/{input_item}/{input_value}/{output_item}/json"
         )
 
     def _query_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -173,7 +237,7 @@ class LipidMapsTool(BaseTool):
 
         # LIPID MAPS m/z endpoint returns TSV, not JSON
         url = f"{LIPIDMAPS_BASE_URL}/moverz/LIPIDS/{mz_value}/{ion_type}/-/{tolerance}/txt"
-        response = requests.get(url, timeout=self.timeout)
+        response = requests.get(url, timeout=self.timeout, headers=_REQUEST_HEADERS)
         response.raise_for_status()
 
         raw_text = response.text.strip()

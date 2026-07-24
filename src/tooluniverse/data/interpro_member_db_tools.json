@@ -1,0 +1,499 @@
+[
+  {
+    "type": "InterProMemberDBTool",
+    "name": "InterPro_get_member_signature",
+    "description": "Retrieve detail for a single InterPro MEMBER-DATABASE signature (not an integrated InterPro IPR entry). Member databases include Pfam (PF...), SMART (SM...), PANTHER (PTHR...), CDD (cd...), NCBIfam/TIGRFAM (NF.../TIGR...), SUPERFAMILY (SSF...), CATH-Gene3D (G3DSA...), PRINTS (PR...), HAMAP, PIRSF, PROSITE patterns/profiles, SFLD, and AntiFam. Returns the signature name, type (family/domain/homologous_superfamily/site), the integrated InterPro entry it maps to (if any), description, GO terms, and protein/structure/taxa counts. Distinct from InterPro_get_domain_details which only accepts integrated IPR accessions. No API key.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "member_database": {
+          "type": "string",
+          "description": "Member database slug: pfam, smart, panther, cdd, ncbifam (TIGRFAM), ssf (SUPERFAMILY), cathgene3d (gene3d), prints, hamap, pirsf, profile (PROSITE profiles), prosite (PROSITE patterns), sfld, antifam. Common aliases (superfamily, gene3d, cath, tigrfam) are accepted."
+        },
+        "accession": {
+          "type": "string",
+          "description": "The member-database signature accession, e.g. PF00069 (Pfam), SM00002 (SMART), PTHR10000 (PANTHER), NF000004 (NCBIfam), SSF52540 (SUPERFAMILY)."
+        }
+      },
+      "required": [
+        "member_database",
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_member_entry"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Member-database signature detail.",
+              "properties": {
+                "accession": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source_database": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "integrated_interpro": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "go_terms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "identifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "category": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "counters": {
+                  "type": "object",
+                  "properties": {
+                    "proteins": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "structures": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "taxa": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "required": [
+                "accession",
+                "source_database"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response.",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "member_database": "pfam",
+        "accession": "PF00069"
+      },
+      {
+        "member_database": "panther",
+        "accession": "PTHR10000"
+      },
+      {
+        "member_database": "ssf",
+        "accession": "SSF52540"
+      }
+    ]
+  },
+  {
+    "type": "InterProMemberDBTool",
+    "name": "InterPro_list_member_signatures",
+    "description": "Browse / paginate the signature catalog of a single InterPro member database. Returns a page of member-database signatures (accession, name, type, and the integrated InterPro entry each maps to) plus the total count for that database. Useful for surveying what a member database (Pfam, SMART, PANTHER, CDD, NCBIfam, SUPERFAMILY, CATH-Gene3D, PRINTS, HAMAP, PIRSF, PROSITE, SFLD, AntiFam) contains. Optionally filter by entry type (family, domain, homologous_superfamily, site). No API key.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "member_database": {
+          "type": "string",
+          "description": "Member database slug: pfam, smart, panther, cdd, ncbifam, ssf, cathgene3d, prints, hamap, pirsf, profile, prosite, sfld, antifam. Aliases (superfamily, gene3d, tigrfam) accepted."
+        },
+        "entry_type": {
+          "type": "string",
+          "description": "Optional filter by entry type: family, domain, homologous_superfamily, or site."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of signatures to return per page (1-100, default 20)."
+        }
+      },
+      "required": [
+        "member_database"
+      ]
+    },
+    "fields": {
+      "endpoint": "list_member_entries"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "A page of member-database signatures.",
+              "properties": {
+                "member_database": {
+                  "type": "string"
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "integrated_interpro": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "member_database",
+                "entries"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response.",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "member_database": "smart",
+        "page_size": 5
+      },
+      {
+        "member_database": "ncbifam",
+        "page_size": 3
+      },
+      {
+        "member_database": "pfam",
+        "entry_type": "domain",
+        "page_size": 5
+      }
+    ]
+  },
+  {
+    "type": "InterProMemberDBTool",
+    "name": "InterPro_get_structures_for_entry",
+    "description": "List the experimentally-solved PDB structures whose chains contain a given InterPro domain/family. Returns each PDB structure's id, title, experiment type (e.g. x-ray, electron microscopy), and resolution, plus the total structure count for that InterPro entry. Useful for finding crystallographic / cryo-EM examples of a domain. Input is an integrated InterPro accession (IPR...). No API key.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "interpro_id": {
+          "type": "string",
+          "description": "An integrated InterPro accession, e.g. IPR000719 (Protein kinase domain)."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of structures to return (1-100, default 20)."
+        }
+      },
+      "required": [
+        "interpro_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_structures_for_entry"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "PDB structures containing the InterPro domain.",
+              "properties": {
+                "interpro_id": {
+                  "type": "string"
+                },
+                "total_structures": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "structures": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pdb_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "experiment_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "resolution": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "interpro_id",
+                "structures"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response.",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "interpro_id": "IPR000719",
+        "page_size": 5
+      },
+      {
+        "interpro_id": "IPR027417",
+        "page_size": 3
+      }
+    ]
+  },
+  {
+    "type": "InterProMemberDBTool",
+    "name": "InterPro_list_member_databases",
+    "description": "List the InterPro member-database catalog with entry counts. Returns the number of signatures contributed by each member database (Pfam, CATH-Gene3D, SUPERFAMILY/ssf, PANTHER, CDD, PROSITE profiles/patterns, SMART, NCBIfam, PRINTS, HAMAP, PIRSF, SFLD, AntiFam) plus the integrated, unintegrated, InterPro and overall totals. Useful as a discovery/overview call before browsing a specific member database. No API key, no parameters.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "list_member_databases"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Member-database catalog with counts.",
+              "properties": {
+                "databases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "member_database": {
+                        "type": "string"
+                      },
+                      "entry_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "integrated_total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "unintegrated_total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "interpro_total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "all_total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "databases"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response.",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ]
+  }
+]

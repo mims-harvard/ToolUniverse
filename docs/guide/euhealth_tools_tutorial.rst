@@ -1,5 +1,5 @@
 EUHealth tools: find and explore EU public-health datasets
-=========================================================
+==========================================================
 
 Use these tools to:
 
@@ -116,7 +116,7 @@ You should see a few JSON results (uuid, title, landing_page, etc.).
 (Inside the agent you’ll get nicely formatted results. This is just a quick check.)
 
 **That's it!!**
----
+---------------
 
 Advanced:
 ---------
@@ -256,7 +256,7 @@ Common questions
   If not, use the **Quick start** download or the **Build it yourself** step.
 
 * **Why did embedding fall back to keyword?**
-Either the Codex MCP config (above) isn't set, or your environment doesn't have Azure + text-embedding-3-small configured. Add the config block to `~/.codex/config.toml` and restart Codex to enable embedding search.
+  Either the Codex MCP config (above) isn't set, or your environment doesn't have Azure + text-embedding-3-small configured. Add the config block to `~/.codex/config.toml` and restart Codex to enable embedding search.
 
 * **Where does my data upload now?**
   When you run `tu-datastore sync-hf upload --collection euhealth`, ToolUniverse automatically detects your `HF_TOKEN` and uploads to **your own Hugging Face namespace** (`your_username/euhealth`).
@@ -276,5 +276,5 @@ If you later want the nitty-gritty (how we crawl, embed, index), see the develop
 
 .. note::
 
-Want to build or share your **own** searchable dataset or tool (like EUHealth)?
-See: :doc:`make_your_data_agent_searchable` - the 3-minute guide to creating and publishing your own ToolUniverse datastore.
+   Want to build or share your **own** searchable dataset or tool (like EUHealth)?
+   See: :doc:`make_your_data_agent_searchable` - the 3-minute guide to creating and publishing your own ToolUniverse datastore.

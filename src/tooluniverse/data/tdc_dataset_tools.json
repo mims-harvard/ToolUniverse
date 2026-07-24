@@ -1,0 +1,250 @@
+[
+  {
+    "name": "TDC_load_dataset",
+    "description": "Load a named Therapeutics Data Commons (TDC) benchmark dataset locally via the PyTDC package and return a summary plus a small sample of rows. Distinct from 'TDC_predict_oracle_score' (which scores SMILES with oracles); this tool retrieves benchmark DATASETS. TDC datasets are organized by problem: single_pred problems are 'ADME', 'Tox', 'HTS', 'QM', 'Yields', 'Epitope', 'Develop'; multi_pred problems are 'DTI', 'DDI', 'PPI', 'GDA', 'DrugRes', 'DrugSyn', 'PeptideMHC', 'AntibodyAff', 'MTI', 'Catalyst', 'TCREpitopeBinding', 'TrialOutcome'. Returns n_rows, columns, a label summary (class distribution for classification labels or summary statistics for regression labels), train/valid/test split sizes, and a capped head() sample (default 5 rows, max 20). Datasets download on first use (network); single_pred datasets are the most reliable. Requires the optional 'PyTDC' package; returns a clean error if it is not installed or if a problem module cannot be imported in this environment. Use TDC_list_datasets to discover valid names for a problem.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "problem": {
+          "type": "string",
+          "description": "TDC problem (case-insensitive). single_pred: ADME, Tox, HTS, QM, Yields, Epitope, Develop. multi_pred: DTI, DDI, PPI, GDA, DrugRes, DrugSyn, PeptideMHC, AntibodyAff, MTI, Catalyst, TCREpitopeBinding, TrialOutcome."
+        },
+        "name": {
+          "type": "string",
+          "description": "Dataset name within the problem (case-insensitive). Example: 'Caco2_Wang' for ADME, 'hERG' for Tox. Use TDC_list_datasets to discover valid names."
+        },
+        "sample_rows": {
+          "type": "integer",
+          "description": "Number of head rows to include in the sample (default 5, max 20).",
+          "minimum": 1,
+          "maximum": 20
+        }
+      },
+      "required": [
+        "problem",
+        "name"
+      ]
+    },
+    "type": "TDCDatasetTool",
+    "required_packages": [
+      "PyTDC"
+    ],
+    "test_examples": [
+      {
+        "operation": "load_dataset",
+        "problem": "ADME",
+        "name": "Caco2_Wang"
+      },
+      {
+        "operation": "load_dataset",
+        "problem": "Tox",
+        "name": "hERG",
+        "sample_rows": 3
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Successful dataset load. Mirrors the 'data' field returned by the tool.",
+              "properties": {
+                "problem": {
+                  "type": "string",
+                  "description": "Canonical TDC problem name used."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Dataset name that was loaded."
+                },
+                "n_rows": {
+                  "type": "integer",
+                  "description": "Total number of rows in the dataset."
+                },
+                "columns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Column names of the dataset DataFrame (e.g. Drug_ID, Drug, Y)."
+                },
+                "label_summary": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Summary of the 'Y' label column, or null if there is no 'Y' column.",
+                  "properties": {
+                    "label_type": {
+                      "type": "string",
+                      "description": "One of 'categorical', 'continuous', or 'other'."
+                    },
+                    "n_unique": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Number of distinct label values."
+                    },
+                    "distribution": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Value-count distribution for categorical labels, otherwise null."
+                    },
+                    "statistics": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Summary statistics (count, mean, std, min, quartiles, max) for continuous labels, otherwise null."
+                    }
+                  },
+                  "required": [
+                    "label_type"
+                  ]
+                },
+                "split_sizes": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Row counts per split (train/valid/test), or null if the split could not be computed.",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                },
+                "sample_rows": {
+                  "type": "integer",
+                  "description": "Number of rows included in the sample."
+                },
+                "sample": {
+                  "type": "array",
+                  "description": "A small head() sample of rows as JSON objects keyed by column name.",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              },
+              "required": [
+                "problem",
+                "name",
+                "n_rows",
+                "columns",
+                "sample"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response (e.g. PyTDC not installed, unknown problem/name, or a problem module that cannot be imported).",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message."
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TDC_list_datasets",
+    "description": "List the available dataset names for a Therapeutics Data Commons (TDC) problem, via the PyTDC package (tdc.utils.retrieve_dataset_names). Use this to discover valid 'name' values before calling TDC_load_dataset. single_pred problems: ADME, Tox, HTS, QM, Yields, Epitope, Develop. multi_pred problems: DTI, DDI, PPI, GDA, DrugRes, DrugSyn, PeptideMHC, AntibodyAff, MTI, Catalyst, TCREpitopeBinding, TrialOutcome. Returns normalized (lowercase) dataset names that are accepted case-insensitively by TDC_load_dataset. Requires the optional 'PyTDC' package; returns a clean error if it is not installed.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "problem": {
+          "type": "string",
+          "description": "TDC problem (case-insensitive). single_pred: ADME, Tox, HTS, QM, Yields, Epitope, Develop. multi_pred: DTI, DDI, PPI, GDA, DrugRes, DrugSyn, PeptideMHC, AntibodyAff, MTI, Catalyst, TCREpitopeBinding, TrialOutcome."
+        }
+      },
+      "required": [
+        "problem"
+      ]
+    },
+    "type": "TDCDatasetTool",
+    "required_packages": [
+      "PyTDC"
+    ],
+    "test_examples": [
+      {
+        "operation": "list_datasets",
+        "problem": "ADME"
+      },
+      {
+        "operation": "list_datasets",
+        "problem": "Tox"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Successful listing. Mirrors the 'data' field returned by the tool.",
+              "properties": {
+                "problem": {
+                  "type": "string",
+                  "description": "Canonical TDC problem name used."
+                },
+                "n_datasets": {
+                  "type": "integer",
+                  "description": "Number of available datasets for this problem."
+                },
+                "dataset_names": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Normalized (lowercase) dataset names accepted case-insensitively by TDC_load_dataset."
+                }
+              },
+              "required": [
+                "problem",
+                "n_datasets",
+                "dataset_names"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response (e.g. PyTDC not installed or unknown problem).",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message."
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

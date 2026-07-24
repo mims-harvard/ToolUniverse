@@ -7,6 +7,15 @@
     "required_api_keys": [
       "BOLTZ_MCP_SERVER_HOST"
     ],
+    "api_key_info": {
+      "BOLTZ_MCP_SERVER_HOST": {
+        "domain": "Models & Infrastructure",
+        "type": "endpoint",
+        "register_url": "https://github.com/jwohlwend/boltz",
+        "purpose": "URL of a self-hosted Boltz structure-prediction MCP server.",
+        "without": "Leave blank unless you run your own Boltz server."
+      }
+    },
     "test_examples": [
       {}
     ],

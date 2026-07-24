@@ -214,14 +214,30 @@ Community & Support
    :hidden:
    :caption: Tutorials
 
+   guide/index
+   guide/tooluniverse_case_study
    guide/agentic_tools_tutorial
    guide/literature_search_tools_tutorial
+   guide/literature_search_web_ui_tutorial
    guide/clinical_guidelines_tools
    guide/scientific_workflows
    guide/make_your_data_agent_searchable
+   guide/visualization_tutorial
+   guide/expert_feedback
    guide/hooks/index
    guide/cache_system
    guide/tools
+
+.. toctree::
+   :maxdepth: 3
+   :hidden:
+   :caption: Advanced
+
+   guide/logging
+   guide/streaming_tools
+   guide/openrouter_support
+   guide/vllm_support
+   guide/euhealth_tools_tutorial
 
 .. toctree::
    :maxdepth: 3

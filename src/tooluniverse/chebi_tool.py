@@ -20,6 +20,29 @@ from .tool_registry import register_tool
 
 CHEBI_BASE_URL = "https://www.ebi.ac.uk/chebi/backend/api/public"
 
+_HTML_TAG_RE = re.compile(r"<[^>]+>")
+
+
+def _strip_html(text):
+    """Remove search-highlight markup (e.g. <em>...</em>) ChEBI embeds in
+    name/synonym fields. Non-string values pass through unchanged."""
+    if isinstance(text, str):
+        return _HTML_TAG_RE.sub("", text)
+    return text
+
+
+def _normalize_chebi_id(chebi_id):
+    """Accept the 'CHEBI:16113' CURIE that ChEBI_search / ChEBI_get_compound
+    emit (chebi_accession) and reduce it to the bare id the ontology endpoints
+    expect. Without this, chaining ChEBI_search -> ChEBI_get_ontology_parents
+    broke: the ontology tools required a bare integer and rejected the prefixed
+    accession the search hands back."""
+    if isinstance(chebi_id, str):
+        chebi_id = chebi_id.strip()
+        if chebi_id.upper().startswith("CHEBI:"):
+            chebi_id = chebi_id.split(":", 1)[1].strip()
+    return chebi_id
+
 
 @register_tool("ChEBITool")
 class ChEBITool(BaseTool):
@@ -72,6 +95,8 @@ class ChEBITool(BaseTool):
             return self._search(arguments)
         elif self.endpoint_type == "ontology_children":
             return self._ontology_children(arguments)
+        elif self.endpoint_type == "ontology_parents":
+            return self._ontology_parents(arguments)
         else:
             return {
                 "status": "error",
@@ -86,6 +111,14 @@ class ChEBITool(BaseTool):
                 "status": "error",
                 "error": "chebi_id parameter is required (e.g., 15365 for aspirin)",
             }
+
+        # Accept the "CHEBI:27732" CURIE form that ChEBI_search returns as
+        # chebi_accession, not just the bare integer — so the two tools chain
+        # without the caller having to strip the prefix.
+        if isinstance(chebi_id, str):
+            chebi_id = chebi_id.strip()
+            if chebi_id.upper().startswith("CHEBI:"):
+                chebi_id = chebi_id.split(":", 1)[1].strip()
 
         url = f"{CHEBI_BASE_URL}/compound/{chebi_id}/"
         response = requests.get(
@@ -103,7 +136,7 @@ class ChEBITool(BaseTool):
             if isinstance(name_list, list):
                 for entry in name_list[:10]:
                     if isinstance(entry, dict):
-                        syn = entry.get("name", "")
+                        syn = _strip_html(entry.get("name", ""))
                         if syn and syn not in synonyms:
                             synonyms.append(syn)
 
@@ -135,8 +168,8 @@ class ChEBITool(BaseTool):
         result = {
             "chebi_id": raw.get("id", chebi_id),
             "chebi_accession": raw.get("chebi_accession", f"CHEBI:{chebi_id}"),
-            "name": raw.get("name", ""),
-            "definition": raw.get("definition", None),
+            "name": _strip_html(raw.get("name", "")),
+            "definition": _strip_html(raw.get("definition", None)),
             "stars": raw.get("stars", 0),
             "formula": chem_data.get("formula", None),
             "mass": mass_val,
@@ -230,6 +263,7 @@ class ChEBITool(BaseTool):
                 "error": "chebi_id parameter is required (e.g., 15365 for aspirin)",
             }
 
+        chebi_id = _normalize_chebi_id(chebi_id)
         url = f"{CHEBI_BASE_URL}/ontology/children/{chebi_id}/"
         response = requests.get(
             url,
@@ -269,5 +303,56 @@ class ChEBITool(BaseTool):
                 "source": "ChEBI",
                 "query": str(chebi_id),
                 "endpoint": "ontology/children",
+            },
+        }
+
+    def _ontology_parents(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get ontology parents (is-a / has-role ancestors) of a ChEBI compound."""
+        chebi_id = arguments.get("chebi_id", None)
+        if chebi_id is None:
+            return {
+                "status": "error",
+                "error": "chebi_id parameter is required (e.g., 15377 for water)",
+            }
+
+        chebi_id = _normalize_chebi_id(chebi_id)
+        url = f"{CHEBI_BASE_URL}/ontology/parents/{chebi_id}/"
+        response = requests.get(
+            url,
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        # Parents are the targets of outgoing_relations (the symmetric
+        # counterpart of the children tool's incoming_relations).
+        relations = []
+        ontology = raw.get("ontology_relations", {})
+        outgoing = ontology.get("outgoing_relations", [])
+        if isinstance(outgoing, list):
+            for rel in outgoing:
+                relations.append(
+                    {
+                        "relation_type": rel.get("relation_type", ""),
+                        "parent_id": rel.get("final_id", 0),
+                        "parent_name": _strip_html(rel.get("final_name", "")),
+                    }
+                )
+
+        result = {
+            "chebi_id": raw.get("id", chebi_id),
+            "chebi_accession": raw.get("chebi_accession", f"CHEBI:{chebi_id}"),
+            "relation_count": len(relations),
+            "relations": relations,
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "ChEBI",
+                "query": str(chebi_id),
+                "endpoint": "ontology/parents",
             },
         }

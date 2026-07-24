@@ -339,5 +339,203 @@
         }
       ]
     }
+  },
+  {
+    "name": "BioSamples_get_relationships",
+    "description": "Retrieve the relationship/provenance graph of a BioSample: the sample-to-sample lineage edges (e.g. 'derived from', 'has member', 'child of', 'same as', 'recurated into') that the standard BioSamples_get_sample parser drops. Each edge reports source, type, target, and the direction relative to the queried sample, so processed-sample -> source-tissue and sample-group -> member-sample provenance becomes reachable. Example: SAMEA4451312 returns edges [SAMEA4451312 derived from SAMEA4451117] and [SAMEG315830 has member SAMEA4451312]. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "BioSamples accession. Formats: SAMEA* (EBI), SAMN* (NCBI), SAMD* (DDBJ), SAMEG* (sample group). Example: 'SAMEA4451312'."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_relationships"
+    },
+    "type": "BioSamplesTool",
+    "test_examples": [
+      {
+        "accession": "SAMEA4451312"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "accession": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": ["string", "null"]
+                },
+                "relationships": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "direction": {
+                        "type": "string"
+                      },
+                      "related_accession": {
+                        "type": ["string", "null"]
+                      }
+                    }
+                  }
+                },
+                "relationship_count": {
+                  "type": "integer"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "BioSamples_get_facets",
+    "description": "Faceted aggregation discovery over EBI BioSamples: given a free-text query, return the available attribute facets (organism, status, SRA accession, external reference, release date range, ...) with sample counts plus the top values per facet, so a scientist learns which filterable attribute keys/values exist before running a structured filter search (BioSamples_search_by_filter). Also returns external-reference data facets (e.g. ENA). Example: text='cancer' returns organism (count 59585), SRA accession (54248), status (59590), external reference (54524), release date range (59590), and ENA external-reference facet (53344). No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Free-text query to compute facets over. Examples: 'cancer', 'liver', 'Homo sapiens'."
+        },
+        "max_values": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of top values to return per facet (1-50, default 10)."
+        }
+      },
+      "required": [
+        "text"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_facets"
+    },
+    "type": "BioSamplesTool",
+    "test_examples": [
+      {
+        "text": "cancer"
+      },
+      {
+        "text": "liver",
+        "max_values": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "facets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "attribute": {
+                        "type": ["string", "null"]
+                      },
+                      "type": {
+                        "type": ["string", "null"]
+                      },
+                      "count": {
+                        "type": ["integer", "null"]
+                      },
+                      "top_values": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": ["string", "null"]
+                            },
+                            "count": {
+                              "type": ["integer", "null"]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "external_reference_data_facets": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

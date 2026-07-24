@@ -19,6 +19,18 @@ from .tool_registry import register_tool
 FDA_LABEL_URL = "https://api.fda.gov/drug/label.json"
 
 
+def _ok(data: Any, **metadata: Any) -> dict:
+    """Wrap a successful result in the standard ToolUniverse envelope.
+
+    Error paths already return {status: error, ...}; this keeps the success
+    path consistent with the project-wide {status, data, metadata} contract.
+    """
+    metadata.setdefault("source", "openFDA drug label")
+    if isinstance(data, list):
+        metadata.setdefault("count", len(data))
+    return {"status": "success", "data": data, "metadata": metadata}
+
+
 def _extract_label(result: dict) -> dict:
     """Extract key clinical sections from a raw openFDA label record."""
     openfda = result.get("openfda", {})
@@ -121,7 +133,8 @@ class FDALabelTool(BaseTool):
             return {"status": "error", "error": "Provide drug_name or indication"}
 
         if drug_name:
-            return self._query_drug_fields(drug_name, limit) or []
+            labels = self._query_drug_fields(drug_name, limit) or []
+            return _ok(labels, query=drug_name, query_field="drug_name")
 
         q = f'indications_and_usage:"{indication}"'
         resp = requests.get(
@@ -129,11 +142,11 @@ class FDALabelTool(BaseTool):
             params={"search": q, "limit": limit},
             timeout=20,
         )
-        if resp.status_code == 404:
-            return []
-        resp.raise_for_status()
-        results = resp.json().get("results", [])
-        return [_extract_label(r) for r in results]
+        labels = []
+        if resp.status_code != 404:
+            resp.raise_for_status()
+            labels = [_extract_label(r) for r in resp.json().get("results", [])]
+        return _ok(labels, query=indication, query_field="indication")
 
     def _get_label(self, arguments: dict) -> Any:
         drug_name = arguments.get("drug_name", "")
@@ -154,7 +167,7 @@ class FDALabelTool(BaseTool):
             return len(brand) or 999
 
         results.sort(key=_match_score)
-        return results[0]
+        return _ok(results[0], query=drug_name)
 
     def _list_classes(self, arguments: dict) -> Any:
         limit = min(int(arguments.get("limit", 20)), 100)
@@ -169,4 +182,5 @@ class FDALabelTool(BaseTool):
         resp.raise_for_status()
         data = resp.json()
         results = data.get("results", [])
-        return [{"drug_class": r["term"], "count": r["count"]} for r in results]
+        classes = [{"drug_class": r["term"], "count": r["count"]} for r in results]
+        return _ok(classes)

@@ -121,6 +121,61 @@
     ]
   },
   {
+    "name": "Bioregistry_get_prefix_mappings",
+    "description": "Get cross-registry prefix mappings for a Bioregistry prefix. Maps a prefix (e.g. 'chebi', 'go', 'mondo') to its equivalent prefix/identifier in other registries: OBO Foundry, MIRIAM/identifiers.org, OLS, Name-to-Thing (N2T), BioPortal, FAIRsharing, BioContext, AberOWL, BARTOC, Wikidata, and more. Use this to translate a registry prefix between metadata systems (distinct from resolve_reference, which maps a specific data identifier to provider URLs). The standard Bioregistry_get_registry tool omits these mappings.",
+    "type": "BioregistryTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_prefix_mappings",
+          "description": "Operation type (fixed: get_prefix_mappings)"
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Bioregistry prefix (e.g., 'chebi', 'go', 'mondo', 'uniprot', 'hgnc')"
+        }
+      },
+      "required": ["prefix"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Success: the `data` payload with cross-registry prefix mappings.",
+          "properties": {
+            "prefix": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "mappings": {
+              "type": "object"
+            }
+          },
+          "required": ["prefix", "mappings"]
+        },
+        {
+          "type": "object",
+          "description": "Error: run() returns {status: error, error: <message>} with no data payload.",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "prefix": "chebi"
+      }
+    ]
+  },
+  {
     "name": "Bioregistry_search_registries",
     "description": "Search the Bioregistry for databases, ontologies, and resources by keyword. Use to find the correct prefix for identifier resolution, or to discover databases related to a topic (e.g., 'protein', 'gene ontology', 'metabolite').",
     "type": "BioregistryTool",

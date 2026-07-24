@@ -30,7 +30,20 @@ class BioRxivTool(BaseTool):
     def run(self, arguments=None):
         arguments = arguments or {}
         doi = arguments.get("doi")
-        server = arguments.get("server", "biorxiv")
+        # This class backs both BioRxiv_get_preprint and MedRxiv_get_preprint
+        # (same "server" param, different registered default per tool config,
+        # e.g. MedRxiv_get_preprint declares default "medrxiv"). Read the
+        # per-instance declared default instead of hardcoding "biorxiv" for
+        # both, or MedRxiv_get_preprint silently queries the wrong server
+        # whenever the caller omits `server` (its enum only allows "medrxiv",
+        # so a caller has no reason to think passing it explicitly matters).
+        declared_default = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("server", {})
+            .get("default", "biorxiv")
+        )
+        server = arguments.get("server", declared_default)
 
         if not doi:
             return {

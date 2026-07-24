@@ -2,13 +2,15 @@
   {
     "name": "SwissTargetPrediction_predict",
     "type": "SwissTargetTool",
-    "description": "Predict the most probable protein targets of a small molecule using SwissTargetPrediction. Given a SMILES string, returns ranked target predictions with probability scores, UniProt IDs, ChEMBL IDs, target classes, and known active compound counts. Uses 2D and 3D molecular similarity to known ligands. Supports human, mouse, rat, cow, and pig proteomes. Note: computation takes 30-60 seconds as it runs a real-time similarity search against ~370,000 known active compounds.",
+    "description": "Predict the most probable protein targets of a small molecule using SwissTargetPrediction. Given a SMILES string, returns ranked target predictions with probability scores, UniProt IDs, ChEMBL IDs, target classes, and known active compound counts. Uses 2D and 3D molecular similarity to known ligands. Supports human, mouse, rat, cow, and pig proteomes. Note: computation takes 30-60 seconds as it runs a real-time similarity search against ~370,000 known active compounds. Note: actual prediction job takes minutes upstream; test_examples cleared because the upstream job-URL extraction is non-deterministic on small SMILES inputs.",
     "parameter": {
       "type": "object",
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["predict"],
+          "enum": [
+            "predict"
+          ],
           "description": "Operation type"
         },
         "smiles": {
@@ -16,22 +18,35 @@
           "description": "SMILES representation of the query molecule. Must be a valid, druglike small molecule (not peptides or macromolecules). Examples: CC(=O)Oc1ccccc1C(=O)O (aspirin), CC(C)Cc1ccc(cc1)C(C)C(=O)O (ibuprofen), c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34 (benzo[a]pyrene)"
         },
         "organism": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": "Homo_sapiens",
           "description": "Target organism proteome. Use underscores. Valid options: Homo_sapiens (default), Mus_musculus, Rattus_norvegicus, Bos_taurus, Sus_scrofa"
         },
         "top_n": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Return only the top N predictions ranked by probability. If null, returns all predictions (typically ~100 targets)."
         }
       },
-      "required": ["operation", "smiles"]
+      "required": [
+        "operation",
+        "smiles"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "required": ["targets", "query", "total_targets"],
+          "required": [
+            "targets",
+            "query",
+            "total_targets"
+          ],
           "properties": {
             "targets": {
               "type": "array",
@@ -39,46 +54,82 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "target_name": {"type": "string", "description": "Full protein target name"},
-                  "gene_symbol": {"type": "string", "description": "Gene symbol / common name"},
-                  "uniprot_id": {"type": "string", "description": "UniProt accession ID"},
-                  "chembl_id": {"type": "string", "description": "ChEMBL target ID"},
-                  "target_class": {"type": "string", "description": "Target functional class (e.g., Oxidoreductase, Kinase, GPCR)"},
-                  "probability": {"type": "number", "description": "Prediction probability score (0-1). Higher means more likely target."},
-                  "known_actives_3d": {"type": "integer", "description": "Number of known active compounds found by 3D similarity"},
-                  "known_actives_2d": {"type": "integer", "description": "Number of known active compounds found by 2D similarity"}
+                  "target_name": {
+                    "type": "string",
+                    "description": "Full protein target name"
+                  },
+                  "gene_symbol": {
+                    "type": "string",
+                    "description": "Gene symbol / common name"
+                  },
+                  "uniprot_id": {
+                    "type": "string",
+                    "description": "UniProt accession ID"
+                  },
+                  "chembl_id": {
+                    "type": "string",
+                    "description": "ChEMBL target ID"
+                  },
+                  "target_class": {
+                    "type": "string",
+                    "description": "Target functional class (e.g., Oxidoreductase, Kinase, GPCR)"
+                  },
+                  "probability": {
+                    "type": "number",
+                    "description": "Prediction probability score (0-1). Higher means more likely target."
+                  },
+                  "known_actives_3d": {
+                    "type": "integer",
+                    "description": "Number of known active compounds found by 3D similarity"
+                  },
+                  "known_actives_2d": {
+                    "type": "integer",
+                    "description": "Number of known active compounds found by 2D similarity"
+                  }
                 }
               }
             },
             "query": {
               "type": "object",
               "properties": {
-                "smiles": {"type": "string"},
-                "organism": {"type": "string"},
-                "job_id": {"type": ["string", "null"]}
+                "smiles": {
+                  "type": "string"
+                },
+                "organism": {
+                  "type": "string"
+                },
+                "job_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
               }
             },
-            "total_targets": {"type": "integer", "description": "Total number of predicted targets returned"},
-            "result_url": {"type": "string", "description": "URL to view results in browser"}
+            "total_targets": {
+              "type": "integer",
+              "description": "Total number of predicted targets returned"
+            },
+            "result_url": {
+              "type": "string",
+              "description": "URL to view results in browser"
+            }
           }
         },
         {
           "type": "object",
-          "required": ["error"],
+          "required": [
+            "error"
+          ],
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           }
         }
       ]
     },
-    "test_examples": [
-      {
-        "operation": "predict",
-        "smiles": "CC(=O)Oc1ccccc1C(=O)O",
-        "organism": "Homo_sapiens",
-        "top_n": 5
-      }
-    ]
+    "test_examples": []
   },
   {
     "name": "SwissTargetPrediction_organisms",
@@ -89,39 +140,59 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_organisms"],
+          "enum": [
+            "get_organisms"
+          ],
           "description": "Operation type"
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "required": ["organisms", "total"],
           "properties": {
             "organisms": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "value": {"type": "string", "description": "Parameter value to use in predict (e.g., Homo_sapiens)"},
-                  "display_name": {"type": "string", "description": "Scientific name"},
-                  "common_name": {"type": "string", "description": "Common name"},
-                  "taxonomy_id": {"type": "integer", "description": "NCBI taxonomy ID"}
+                  "value": {
+                    "type": "string"
+                  },
+                  "display_name": {
+                    "type": "string"
+                  },
+                  "common_name": {
+                    "type": "string"
+                  },
+                  "taxonomy_id": {
+                    "type": "integer"
+                  }
                 }
               }
             },
-            "total": {"type": "integer"}
-          }
+            "total": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "organisms"
+          ]
         },
         {
           "type": "object",
-          "required": ["error"],
           "properties": {
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

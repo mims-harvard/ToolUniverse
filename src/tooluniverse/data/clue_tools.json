@@ -48,7 +48,16 @@
     ],
     "required_api_keys": [
       "CLUE_API_KEY"
-    ]
+    ],
+    "api_key_info": {
+      "CLUE_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://clue.io",
+        "purpose": "Query Connectivity Map drug–gene perturbation signatures for repurposing.",
+        "without": "CLUE tools are blocked without it. The key is free."
+      }
+    }
   },
   {
     "name": "CLUE_get_perturbation",

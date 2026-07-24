@@ -1,5 +1,5 @@
 Tool Caller Tutorial
-==================
+====================
 
 The Tool Caller is ToolUniverse's execution engine that handles tool instantiation, validation, and execution. It uses dynamic loading to efficiently manage hundreds of tools without loading them all at startup.
 
@@ -62,7 +62,7 @@ Use the ``run()`` method for maximum flexibility:
         },
         {
             "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-            "arguments": {"efoId": "EFO_0000249"}
+            "arguments": {"efoId": "MONDO_0004975"}  # Alzheimer disease
         }
     ])
     

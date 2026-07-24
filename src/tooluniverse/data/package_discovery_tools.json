@@ -19,31 +19,44 @@
           "description": "Constraints (python version, license, etc.)"
         }
       },
-      "required": ["requirements"]
+      "required": [
+        "requirements"
+      ]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {"type": "string"},
-        "candidates": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {"type": "string"},
-              "version": {"type": "string"},
-              "quality_score": {"type": "number"},
-              "reasoning": {"type": "string"},
-              "description": {"type": "string"},
-              "has_docs": {"type": "boolean"},
-              "is_stable": {"type": "boolean"}
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "candidates": {
+              "type": "array"
+            },
+            "recommendation": {
+              "type": "null"
+            },
+            "message": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
-        "recommendation": {"type": "object"},
-        "total_evaluated": {"type": "integer"}
-      },
-      "required": ["status", "candidates"]
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     },
     "test_examples": [
       {
@@ -52,7 +65,11 @@
       }
     ],
     "metadata": {
-      "tags": ["package-discovery", "pypi", "dynamic"],
+      "tags": [
+        "package-discovery",
+        "pypi",
+        "dynamic"
+      ],
       "difficulty_level": "intermediate",
       "estimated_execution_time": "5-15 seconds"
     }

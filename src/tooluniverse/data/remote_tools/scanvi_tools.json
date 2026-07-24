@@ -1,0 +1,40 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_scanvi_annotate",
+    "description": "Transfer cell-type labels to unlabeled single cells with scANVI (semi-supervised single-cell annotation; Xu 2021 / scvi-tools, Gayoso 2022). Pretrains scVI on a raw-count matrix, refines it semi-supervised on the known labels, then predicts a cell type for every cell and returns the predictions for the previously-unlabeled cells. Input is a server-accessible .h5ad of raw UMI counts whose `labels_key` obs column holds known cell types for some cells and the `unlabeled_category` sentinel (default 'Unknown') for the cells to annotate.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData of RAW UMI counts."},
+        "labels_key": {"type": "string", "description": "obs column holding known cell-type labels for some cells and the unlabeled_category sentinel for the cells to annotate."},
+        "unlabeled_category": {"type": "string", "description": "Value in labels_key marking unlabeled cells (default 'Unknown')."},
+        "scvi_epochs": {"type": "integer", "description": "Unsupervised scVI pretraining epochs (default 100)."},
+        "scanvi_epochs": {"type": "integer", "description": "Semi-supervised scANVI refinement epochs (default 20)."}
+      },
+      "required": ["adata_path", "labels_key"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_cells": {"type": "integer"},
+        "n_unlabeled": {"type": "integer", "description": "Number of cells that were unlabeled (labels_key == unlabeled_category) and got predicted."},
+        "predicted_labels": {"type": "array", "items": {"type": "string"}, "description": "Predicted cell types for the previously-unlabeled cells (omitted if n_cells > 5000)."},
+        "label_counts": {"type": "object", "description": "Mapping of predicted label -> count over the previously-unlabeled cells."},
+        "cell_ids": {"type": "array", "items": {"type": "string"}, "description": "obs_names of the previously-unlabeled cells, aligned with predicted_labels (omitted if n_cells > 5000)."},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "ScanviAnnotateTool",
+      "url": "https://docs.scvi-tools.org/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/scanvi",
+      "mcp_tool_name": "run_scanvi_annotate"
+    },
+    "test_examples": [
+      {"adata_path": "pbmc_partial_labels.h5ad", "labels_key": "cell_type", "unlabeled_category": "Unknown", "scvi_epochs": 100, "scanvi_epochs": 20}
+    ]
+  }
+]

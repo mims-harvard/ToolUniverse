@@ -1,0 +1,6 @@
+torch>=2.1
+borzoi-pytorch>=0.5
+# borzoi-pytorch loads via HuggingFace transformers; pin to the 4.x line (the 5.x
+# from_pretrained path breaks the borzoi/enformer model classes). Validated on CPU
+# with transformers 4.57.
+transformers>=4.46,<5

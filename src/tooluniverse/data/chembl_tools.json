@@ -22,9 +22,7 @@
         }
       },
       "required": [
-        "query",
-        "similarity_threshold",
-        "max_results"
+        "query"
       ]
     },
     "test_examples": [
@@ -525,6 +523,11 @@
         "offset": {
           "type": "integer",
           "default": 0
+        },
+        "fields": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Optional list of assay fields to include in each returned assay object (projection). Mapped to ChEMBL's `only` query parameter (comma-separated)."
         }
       },
       "required": [
@@ -1005,7 +1008,10 @@
                     "type": "string"
                   },
                   "target_chembl_id": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "standard_value": {
                     "type": [
@@ -1228,7 +1234,7 @@
         },
         "molecule_chembl_id": {
           "type": "string",
-          "description": "Filter by ChEMBL molecule ID (e.g., \"CHEMBL1201581\" for adalimumab)."
+          "description": "Filter by ChEMBL molecule ID (e.g., \"CHEMBL1201580\" for adalimumab)."
         }
       },
       "required": []
@@ -1283,7 +1289,7 @@
         },
         "drug_chembl_id": {
           "type": "string",
-          "description": "ChEMBL drug/molecule ID (e.g., \"CHEMBL1201581\" for adalimumab, \"CHEMBL4535757\" for sotorasib)."
+          "description": "ChEMBL drug/molecule ID (e.g., \"CHEMBL1201580\" for adalimumab, \"CHEMBL4535757\" for sotorasib)."
         },
         "drug_name": {
           "type": "string",
@@ -1337,7 +1343,7 @@
   {
     "type": "ChEMBLRESTTool",
     "name": "ChEMBL_search_mechanisms",
-    "description": "Search mechanisms of action by drug, target, or mechanism type. To find drug or target IDs, use ChEMBL_search_drugs or ChEMBL_search_targets.",
+    "description": "Search mechanisms of action by drug or mechanism type. To find mechanisms for a target, use ChEMBL_search_activities with target_chembl_id to find drugs acting on it, then pass each drug_chembl_id here (the /mechanism.json endpoint does not support filtering by target). To find drug IDs, use ChEMBL_search_drugs or ChEMBL_search_molecules.",
     "fields": {
       "endpoint": "/mechanism.json"
     },
@@ -1350,7 +1356,7 @@
         },
         "target_chembl_id": {
           "type": "string",
-          "description": "Filter by target ChEMBL ID"
+          "description": "NOT SUPPORTED: the /mechanism.json endpoint ignores target-based filters, so passing this always returns an error. Use ChEMBL_search_activities with target_chembl_id to find drugs for a target, then query this tool by drug_chembl_id instead."
         },
         "mechanism_of_action__contains": {
           "type": "string",
@@ -1588,8 +1594,7 @@
         }
       },
       "required": [
-        "smiles",
-        "threshold"
+        "smiles"
       ]
     },
     "return_schema": {
@@ -1610,7 +1615,10 @@
                     "type": "string"
                   },
                   "similarity": {
-                    "type": "number"
+                    "type": [
+                      "number",
+                      "string"
+                    ]
                   }
                 }
               }

@@ -22,8 +22,28 @@ sys.path.insert(0, f"{os.getenv('COMPASS_MODEL_PATH')}/immune-compass/COMPASS") 
 
 from compass import loadcompass  # noqa: E402
 
+
+def _optional_token_auth():
+    """Require a Bearer token only when TOOLUNIVERSE_API_TOKEN is set.
+
+    Returns None (no authentication, unchanged behavior) when the variable is
+    not set, so existing deployments are unaffected.
+    """
+    token = os.getenv("TOOLUNIVERSE_API_TOKEN")
+    if not token:
+        return None
+    try:
+        from fastmcp.server.auth import StaticTokenVerifier
+
+        return StaticTokenVerifier(
+            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
+        )
+    except Exception:
+        return None
+
+
 # Initialize MCP Server for COMPASS predictions
-server = FastMCP("COMPASS Prediction SMCP Server")
+server = FastMCP("COMPASS Prediction SMCP Server", auth=_optional_token_auth())
 
 
 class CompassTool:

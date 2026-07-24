@@ -42,6 +42,7 @@ class EnrichrExtTool(BaseTool):
             "list_libraries": self._list_libraries,
             "enrich": self._enrich,
             "get_top_enriched": self._get_top_enriched,
+            "gene_to_genesets": self._gene_to_genesets,
         }
         handler = dispatch.get(operation)
         if not handler:
@@ -203,3 +204,83 @@ class EnrichrExtTool(BaseTool):
             }
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Request failed: {str(e)}"}
+
+    def _gene_to_genesets(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Reverse lookup: list every Enrichr term/gene-set that contains a gene.
+
+        Uses Enrichr's ``genemap`` endpoint which, given a single gene symbol,
+        returns the specific term/gene-set names containing that gene broken
+        down across all ~243 Enrichr libraries. This is the inverse of forward
+        enrichment: it answers "what known programs/signatures is gene X a
+        member of?" without submitting a gene list.
+        """
+        gene = params.get("gene")
+        if not gene or not str(gene).strip():
+            return {
+                "status": "error",
+                "error": "gene is required (a single gene symbol, e.g. 'STAT3').",
+            }
+        gene = str(gene).strip()
+        include_metadata = bool(params.get("include_metadata", False))
+        max_terms = params.get("max_terms_per_library", 0)
+        try:
+            max_terms = int(max_terms)
+        except (TypeError, ValueError):
+            max_terms = 0
+
+        query: Dict[str, Any] = {"gene": gene, "json": "true"}
+        if include_metadata:
+            query["setup"] = "true"
+        try:
+            resp = requests.get(
+                f"{ENRICHR_BASE}/genemap",
+                params=query,
+                timeout=self.timeout,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
+        except ValueError as e:
+            return {
+                "status": "error",
+                "error": f"Failed to parse Enrichr response: {str(e)}",
+            }
+
+        gene_map = data.get("gene")
+        if not isinstance(gene_map, dict):
+            return {
+                "status": "error",
+                "error": (
+                    f"No gene-set membership returned for '{gene}'. "
+                    "Check the gene symbol (use an official HGNC symbol)."
+                ),
+            }
+
+        libraries: Dict[str, Any] = {}
+        total_terms = 0
+        for library, terms in gene_map.items():
+            if not isinstance(terms, list):
+                continue
+            total_terms += len(terms)
+            if max_terms > 0:
+                libraries[library] = terms[:max_terms]
+            else:
+                libraries[library] = terms
+
+        result: Dict[str, Any] = {
+            "gene": gene,
+            "num_libraries": len(libraries),
+            "total_gene_sets": total_terms,
+            "libraries": libraries,
+        }
+
+        if include_metadata:
+            descriptions = data.get("descriptions")
+            if isinstance(descriptions, list):
+                result["descriptions"] = descriptions
+            categories = data.get("categories")
+            if categories is not None:
+                result["categories"] = categories
+
+        return {"status": "success", "data": result}

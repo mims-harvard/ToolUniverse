@@ -1,0 +1,46 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_slingshot_trajectory",
+    "description": "Infer single-cell lineages and pseudotime with Slingshot (Street 2018): from a low-dimensional embedding (obsm) + cluster labels (obs), order clusters into smooth lineages via a minimum spanning tree + simultaneous principal curves, and assign each cell a pseudotime along every lineage it belongs to. Robust for tree-shaped differentiation. Returns the lineage structure (ordered cluster sequences) and per-cell pseudotime; optionally anchor with a known start and/or terminal clusters. Input is a server-accessible .h5ad.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path to an .h5ad AnnData with a reduced embedding in obsm and cluster labels in obs."},
+        "embedding_key": {"type": "string", "description": "obsm key of the embedding to build the trajectory on (default 'X_pca'; e.g. 'X_umap')."},
+        "cluster_key": {"type": "string", "description": "obs column with cluster labels whose centroids are ordered into lineages."},
+        "start_cluster": {"type": "string", "description": "Known root cluster to start every lineage from (optional but recommended for directionality)."},
+        "end_clusters": {"type": "array", "items": {"type": "string"}, "description": "Known terminal cluster(s) to force as lineage endpoints (optional)."},
+        "n_dims": {"type": "integer", "description": "Use only the first n_dims columns of the embedding (default: all; for X_pca, 10-20 is typical)."}
+      },
+      "required": ["adata_path", "cluster_key"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "embedding_key": {"type": "string"},
+        "n_cells": {"type": "integer"},
+        "n_lineages": {"type": "integer"},
+        "lineages": {"type": "array", "description": "List of lineages, each an ordered sequence of cluster labels from root to terminal."},
+        "lineage_names": {"type": "array", "items": {"type": "string"}},
+        "cluster_pseudotime": {"type": "object", "description": "{cluster: {lineage: mean_pseudotime}} — per-cluster mean pseudotime along each lineage."},
+        "pseudotime": {"type": "array", "description": "Per-cell pseudotime matrix (cells x lineages; null where a cell is not on a lineage); omitted if n_cells > 50000."},
+        "cell_ids": {"type": "array", "items": {"type": "string"}, "description": "obs_names aligned with pseudotime rows (present when pseudotime is returned)."},
+        "note": {"type": "string"},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "SlingshotTrajectoryTool",
+      "url": "https://bioconductor.org/packages/slingshot/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/slingshot",
+      "mcp_tool_name": "run_slingshot_trajectory"
+    },
+    "test_examples": [
+      {"adata_path": "pancreas.h5ad", "embedding_key": "X_pca", "cluster_key": "clusters", "start_cluster": "Ngn3 low EP", "n_dims": 10}
+    ]
+  }
+]

@@ -1,6 +1,16 @@
 Wide Research Web UI Tutorial
 ==============================
 
+.. warning::
+
+   The Wide Research Web UI is not currently packaged in ToolUniverse. The
+   ``tooluniverse-wide-research`` console command is not installed by the
+   current ``pyproject.toml``, and the
+   ``tooluniverse.web_tools.literature_search_ui`` package is not present in
+   the source tree. Treat this page as legacy design documentation until the UI
+   package is restored. For packaged literature workflows, use the literature
+   tools through the CLI, Python API, or MCP server instead.
+
 This tutorial demonstrates how to use the ToolUniverse Wide Research Web UI, a powerful web-based interface that provides intelligent literature search and analysis capabilities across multiple academic databases.
 
 Overview
@@ -20,11 +30,12 @@ Key Features
 - **Unified Search Interface**: Search across ArXiv, PubMed, Crossref, Semantic Scholar, OpenAlex, DBLP, DOAJ, Europe PMC, HAL, MedRxiv, and Unpaywall
 - **Smart Query Processing**: AI-powered query expansion to generate multiple search terms
 - **Intelligent Analysis**: Comprehensive literature review generation with:
- - Research overview and scope analysis
- - Temporal analysis of research trends
- - Thematic analysis of research areas
- - Key contributions identification
- - Research gaps and future directions
+
+  - Research overview and scope analysis
+  - Temporal analysis of research trends
+  - Thematic analysis of research areas
+  - Key contributions identification
+  - Research gaps and future directions
 - **Paper Card Display**: Modern, responsive interface showing papers with source identification
 - **Real-time Status**: Live updates on tool usage and search progress
 
@@ -34,13 +45,17 @@ Quick Start
 Starting the Web UI
 ~~~~~~~~~~~~~~~~~~~
 
-The easiest way to start the Wide Research Web UI is using the command-line tool:
+When the UI package is restored, the intended command-line entry point is:
 
 .. code-block:: bash
 
     tooluniverse-wide-research
 
-This will start the web server and display:
+In current releases this command is not installed. If you need this workflow
+today, use ToolUniverse's packaged literature-search tools through ``tu run``,
+the Python API, or MCP.
+
+The restored command is expected to start the web server and display:
 
 .. code-block:: text
 
@@ -77,9 +92,10 @@ Basic Search
 
 1. **Enter your search query** in the search box
 2. **Choose search options**:
- - Enable "AI Query Split" to automatically expand your search terms
- - Enable "AI Summary" to generate intelligent literature analysis
- - Adjust the result limit (default: 10)
+
+   - Enable "AI Query Split" to automatically expand your search terms
+   - Enable "AI Summary" to generate intelligent literature analysis
+   - Adjust the result limit (default: 10)
 3. **Click "Search Literature"** to start the search
 
 Example searches:
@@ -351,25 +367,29 @@ Here's a complete example of using the Wide Research Web UI:
 2. **Open your browser** and go to http://localhost:5001
 
 3. **Perform a search**:
- - Query: "deep learning computer vision"
- - Enable AI Query Split: 
- - Enable AI Summary: 
- - Limit: 5
+
+   - Query: "deep learning computer vision"
+   - Enable AI Query Split: 
+   - Enable AI Summary: 
+   - Limit: 5
 
 4. **Review the results**:
- - Check the paper cards for relevant publications
- - Read the intelligent summary for insights
- - Note the research timeline and themes
+
+   - Check the paper cards for relevant publications
+   - Read the intelligent summary for insights
+   - Note the research timeline and themes
 
 5. **Refine your search**:
- - Try more specific terms: "object detection deep learning"
- - Focus on recent papers: adjust date filters
- - Explore related themes from the summary
+
+   - Try more specific terms: "object detection deep learning"
+   - Focus on recent papers: adjust date filters
+   - Explore related themes from the summary
 
 6. **Export results**:
- - Use the API to programmatically access results
- - Save interesting papers for further reading
- - Use the summary for your literature review
+
+   - Use the API to programmatically access results
+   - Save interesting papers for further reading
+   - Use the summary for your literature review
 
 This tutorial provides a comprehensive guide to using the ToolUniverse Wide Research Web UI. The interface combines the power of multiple academic databases with intelligent analysis to provide a complete literature research solution.
 

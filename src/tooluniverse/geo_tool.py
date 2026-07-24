@@ -7,9 +7,14 @@ next-generation sequencing, and other forms of high-throughput functional
 genomics data.
 """
 
+import re
+import requests
 from typing import Dict, Any, List
 from .ncbi_eutils_tool import NCBIEUtilsTool
 from .tool_registry import register_tool
+
+# Base of the NCBI GEO FTP-over-HTTPS supplementary file tree.
+GEO_FTP_BASE = "https://ftp.ncbi.nlm.nih.gov/geo"
 
 
 @register_tool("GEORESTTool")
@@ -27,6 +32,10 @@ class GEORESTTool(NCBIEUtilsTool):
         self.endpoint_template: str = fields.get("endpoint", "/esearch.fcgi")
         self.required: List[str] = parameter.get("required", [])
         self.output_format: str = fields.get("return_format", "JSON")
+        # Optional discriminator: when "supplementary_files", run() lists the
+        # downloadable supplementary/raw files from the GEO FTP tree instead of
+        # calling E-utilities.
+        self.mode: str = fields.get("mode", "")
 
     def _build_url(self, arguments: Dict[str, Any]) -> str | Dict[str, Any]:
         """Build URL for GEO API request."""
@@ -114,12 +123,174 @@ class GEORESTTool(NCBIEUtilsTool):
                     "error": f"Missing required parameter: {param}",
                 }
 
+        if self.mode == "supplementary_files":
+            return self._list_supplementary_files(arguments)
+
         # Set endpoint for the base class
         self.endpoint = self.endpoint_template
         params = self._build_params(arguments)
 
         # Use the parent class's _make_request with rate limiting
         return self._make_request(self.endpoint, params)
+
+    @staticmethod
+    def _geo_bucket(accession: str) -> str:
+        """Derive the GEO FTP bucket directory for a GSE/GSM accession.
+
+        The bucket replaces the last three digits of the numeric part with
+        'nnn'; accessions with three or fewer digits live in the bare bucket.
+        e.g. GSE42657 -> GSE42nnn, GSE1000 -> GSE1nnn, GSE100 -> GSEnnn,
+        GSM1045442 -> GSM1045nnn.
+        """
+        prefix = accession[:3]
+        num = accession[3:]
+        head = num[:-3] if len(num) > 3 else ""
+        return f"{prefix}{head}nnn"
+
+    def _list_supplementary_files(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List downloadable supplementary/raw files for a GEO Series/Sample.
+
+        Series (GSE*) expose a structured filelist.txt TSV (Archive/File, Name,
+        Time, Size, Type). Samples (GSM*) have no filelist.txt, so the suppl/
+        directory HTML listing is parsed instead.
+        """
+        try:
+            accession = str(arguments.get("accession", "")).strip().upper()
+            if not accession:
+                return {
+                    "status": "error",
+                    "error": "Missing required parameter: accession",
+                }
+
+            if accession.startswith("GSE"):
+                kind, subdir = "series", "series"
+            elif accession.startswith("GSM"):
+                kind, subdir = "sample", "samples"
+            else:
+                return {
+                    "status": "error",
+                    "error": "accession must be a GEO Series (GSE...) or Sample (GSM...)",
+                }
+
+            bucket = self._geo_bucket(accession)
+            base = f"{GEO_FTP_BASE}/{subdir}/{bucket}/{accession}/suppl"
+
+            if kind == "series":
+                return self._parse_filelist(accession, base)
+            return self._parse_suppl_dir(accession, base)
+
+        except requests.exceptions.Timeout:
+            return {
+                "status": "error",
+                "error": f"GEO FTP request timed out after {self.timeout} seconds",
+            }
+        except requests.exceptions.ConnectionError:
+            return {
+                "status": "error",
+                "error": "Failed to connect to GEO FTP server",
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": f"Failed to list supplementary files: {str(e)}",
+            }
+
+    def _parse_filelist(self, accession: str, base: str) -> Dict[str, Any]:
+        """Parse a Series filelist.txt TSV into structured file records."""
+        url = f"{base}/filelist.txt"
+        resp = requests.get(url, timeout=self.timeout)
+        if resp.status_code == 404:
+            return {
+                "status": "error",
+                "error": f"No supplementary filelist found for {accession} (HTTP 404)",
+                "url": url,
+            }
+        resp.raise_for_status()
+
+        files = []
+        for line in resp.text.splitlines():
+            line = line.rstrip("\n")
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split("\t")
+            if len(parts) < 5:
+                continue
+            kind, name, time_str, size, ftype = parts[:5]
+            try:
+                size_val: Any = int(size)
+            except (ValueError, TypeError):
+                size_val = size
+            files.append(
+                {
+                    "kind": kind,
+                    "name": name,
+                    "modified": time_str,
+                    "size": size_val,
+                    "type": ftype,
+                    "download_url": f"{base}/{name}",
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "accession": accession,
+                "suppl_url": base + "/",
+                "files": files,
+                "file_count": len(files),
+            },
+            "metadata": {
+                "source": "NCBI GEO FTP",
+                "query": accession,
+                "endpoint": "supplementary_files",
+            },
+        }
+
+    def _parse_suppl_dir(self, accession: str, base: str) -> Dict[str, Any]:
+        """Parse a Sample suppl/ directory HTML listing into file records."""
+        url = base + "/"
+        resp = requests.get(url, timeout=self.timeout)
+        if resp.status_code == 404:
+            return {
+                "status": "error",
+                "error": f"No supplementary directory found for {accession} (HTTP 404)",
+                "url": url,
+            }
+        resp.raise_for_status()
+
+        files = []
+        seen = set()
+        for href in re.findall(r'href="([^"]+)"', resp.text):
+            # Skip parent links, absolute paths, and external policy links.
+            if href.startswith("/") or href.startswith("http") or href.startswith("?"):
+                continue
+            if href in ("../",) or href.endswith("/"):
+                continue
+            if href in seen:
+                continue
+            seen.add(href)
+            files.append(
+                {
+                    "kind": "File",
+                    "name": href,
+                    "download_url": f"{base}/{href}",
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "accession": accession,
+                "suppl_url": url,
+                "files": files,
+                "file_count": len(files),
+            },
+            "metadata": {
+                "source": "NCBI GEO FTP",
+                "query": accession,
+                "endpoint": "supplementary_files",
+            },
+        }
 
 
 @register_tool("GEOSearchDatasets")

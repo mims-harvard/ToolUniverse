@@ -1,0 +1,2 @@
+mofapy2
+numpy

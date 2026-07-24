@@ -1,7 +1,7 @@
 """
 OpenTargets_get_disease_ids_by_efoId
 
-Given an EFO ID, retrieve all cross-referenced external disease IDs including MONDO, OMIM, MeSH, ...
+Given a disease ID (e.g. a MONDO ID), retrieve all cross-referenced external disease IDs includin...
 """
 
 from typing import Any, Optional, Callable
@@ -16,12 +16,12 @@ def OpenTargets_get_disease_ids_by_efoId(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Given an EFO ID, retrieve all cross-referenced external disease IDs including MONDO, OMIM, MeSH, ...
+    Given a disease ID (e.g. a MONDO ID), retrieve all cross-referenced external disease IDs includin...
 
     Parameters
     ----------
     efoId : str
-        The EFO ID of the disease or phenotype.
+        The disease ID (e.g. a MONDO ID such as MONDO_0008383). Legacy EFO disease IDs no longer resolve in OpenTargets.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

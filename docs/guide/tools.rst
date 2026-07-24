@@ -58,52 +58,52 @@ Tool Categories Summary
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. list-table:: Tool Distribution by Category
- :header-rows: 1
- :widths: 25 15 15 45
+   :header-rows: 1
+   :widths: 25 15 15 45
 
- * - Category
- - Count
- - Percentage
- - Primary Use Cases
- * - APIs
- - 281
- - 48.4%
- - External data access, real-time information
- * - Software Packages
- - 164
- - 28.3%
- - Computational analysis, local processing
- * - Databases
- - 84
- - 14.5%
- - Structured data storage and retrieval
- * - AI Agents
- - 33
- - 5.7%
- - Autonomous reasoning and planning
- * - ML Models
- - 15
- - 2.6%
- - Prediction and classification tasks
- * - Expert Feedback
- - 6
- - 1.0%
- - Human validation and guidance
- * - Embedding Stores
- - 4
- - 0.7%
- - Semantic search and similarity
- * - Robotics
- - 1
- - 0.2%
- - Laboratory automation
- * - **Total**
- - **588**
- - **100%**
- - **Comprehensive scientific ecosystem**
+   * - Category
+     - Count
+     - Percentage
+     - Primary Use Cases
+   * - APIs
+     - 281
+     - 48.4%
+     - External data access, real-time information
+   * - Software Packages
+     - 164
+     - 28.3%
+     - Computational analysis, local processing
+   * - Databases
+     - 84
+     - 14.5%
+     - Structured data storage and retrieval
+   * - AI Agents
+     - 33
+     - 5.7%
+     - Autonomous reasoning and planning
+   * - ML Models
+     - 15
+     - 2.6%
+     - Prediction and classification tasks
+   * - Expert Feedback
+     - 6
+     - 1.0%
+     - Human validation and guidance
+   * - Embedding Stores
+     - 4
+     - 0.7%
+     - Semantic search and similarity
+   * - Robotics
+     - 1
+     - 0.2%
+     - Laboratory automation
+   * - **Total**
+     - **588**
+     - **100%**
+     - **Comprehensive scientific ecosystem**
 
- Molecular & Genetic Data
-----------------------------
+Molecular & Genetic Data
+------------------------
 
 UniProt - Protein Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -166,7 +166,7 @@ Comprehensive gene set enrichment analysis.
        }
    }
 
- Disease & Target Data
+Disease & Target Data
 ------------------------
 
 OpenTargets Platform
@@ -188,7 +188,7 @@ Comprehensive disease-target association data.
    # Get targets for Alzheimer's disease
    query = {
        "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-       "arguments": {"efoId": "EFO_0000537"}  # hypertension
+       "arguments": {"efoId": "MONDO_0004975"}  # Alzheimer disease
    }
 
 EFO - Experimental Factor Ontology
@@ -210,7 +210,7 @@ Disease and experimental factor ontology.
        "arguments": {"query": "diabetes"}
    }
 
- Drug & Chemical Data
+Drug & Chemical Data
 -----------------------
 
 PubChem - Chemical Information
@@ -302,7 +302,7 @@ Official FDA drug labeling information.
        "arguments": {"medicinalproduct": "metformin"}
    }
 
- Clinical Research
+Clinical Research
 --------------------
 
 ClinicalTrials.gov
@@ -328,7 +328,7 @@ Clinical trial registry and results database.
        }
    }
 
- Literature & Publications
+Literature & Publications
 -----------------------------
 
 PubTator - Biomedical Literature
@@ -400,7 +400,7 @@ Open academic publication database.
 * ``OpenAlex_get_author_info`` - Author information and metrics
 * ``OpenAlex_get_institution_data`` - Institution research data
 
- Specialized Databases
+Specialized Databases
 ------------------------
 
 Human Protein Atlas
@@ -461,7 +461,7 @@ Consumer health information.
 * ``MedlinePlus_search_conditions`` - Search medical conditions
 * ``MedlinePlus_get_drug_info`` - Consumer drug information
 
- AI-Powered Tools
+AI-Powered Tools
 --------------------
 
 Machine Learning Models (15 tools)
@@ -579,7 +579,7 @@ AI tools for discovering and combining other tools.
        }
    }
 
- Search & Integration Tools
+Search & Integration Tools
 -----------------------------
 
 Tool Finder
@@ -811,7 +811,7 @@ Tool Composition Patterns
        else:
            break
 
- Tool Performance Tips
+Tool Performance Tips
 ------------------------
 
 Optimization Strategies
@@ -966,7 +966,7 @@ Future Extensions
 - Community voting and validation
 - Maintenance and updates
 
- Next Steps
+Next Steps
 -------------
 
 Now that you know what tools are available:

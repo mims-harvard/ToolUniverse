@@ -36,6 +36,10 @@
           "description": "Number of items per page, maximum 100, default 100.",
           "default": 100
         },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Alias for pagesize."
+        },
         "page": {
           "type": "integer",
           "description": "Page number, starts from 1, default 1.",
@@ -49,10 +53,7 @@
     "test_examples": [
       {
         "drug_name": "Aspirin",
-        "ndc": "0002-3228-30",
-        "rxcui": "1191",
-        "setid": "030d9bca-a934-6ef9-e063-6394a90a8277",
-        "pagesize": 1,
+        "pagesize": 2,
         "page": 1
       }
     ],
@@ -75,7 +76,7 @@
               "type": "string"
             },
             "next_page_url": {
-              "type": "string"
+              "type": ["string", "null"]
             },
             "total_elements": {
               "type": "integer"
@@ -87,13 +88,13 @@
               "type": "integer"
             },
             "previous_page": {
-              "type": "string"
+              "type": ["string", "integer", "null"]
             },
             "previous_page_url": {
-              "type": "string"
+              "type": ["string", "null"]
             },
             "next_page": {
-              "type": "string"
+              "type": ["string", "integer", "null"]
             }
           }
         }
@@ -134,101 +135,17 @@
     "return_schema": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string"
+        },
+        "xml": {
+          "type": "string"
+        },
         "error": {
           "type": "string"
         },
         "error_details": {
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string"
-            },
-            "message": {
-              "type": "string"
-            },
-            "retriable": {
-              "type": "boolean"
-            },
-            "next_steps": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "details": {
-              "type": "object",
-              "properties": {
-                "validation_error": {
-                  "type": "string"
-                },
-                "path": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string"
-                    },
-                    "properties": {
-                      "type": "object",
-                      "properties": {
-                        "setid": {
-                          "type": "object",
-                          "properties": {
-                            "type": {
-                              "type": "string"
-                            },
-                            "format": {
-                              "type": "string"
-                            },
-                            "description": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "format": {
-                          "type": "object",
-                          "properties": {
-                            "type": {
-                              "type": "string"
-                            },
-                            "enum": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              }
-                            },
-                            "default": {
-                              "type": "string"
-                            },
-                            "description": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "required": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "parameter": {
-                  "type": "string"
-                },
-                "expected": {
-                  "type": "string"
-                }
-              }
-            }
-          }
+          "type": "object"
         }
       }
     }
@@ -447,5 +364,172 @@
         "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
       }
     ]
+  },
+  {
+    "type": "GetSPLBySetIDTool",
+    "name": "DailyMed_get_spl_media",
+    "description": "Get the structured list of drug-label images (pill photos, packaging/carton images, figures) for a DailyMed SPL Set ID. Returns each media item's MIME type, file name, and a direct image URL. Useful for pill identification and label review. No API key required. Example: setid '43c94480-78d1-4a23-91d4-1d49fea72cb7' (Ibuprofen Capsule, Aurohealth) returns media including 'ibuprofen-fig1.jpg' (image/jpeg) with its image.cfm URL.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "setid": {
+          "type": "string",
+          "format": "uuid",
+          "description": "DailyMed SPL Set ID UUID. Example: '43c94480-78d1-4a23-91d4-1d49fea72cb7'."
+        }
+      },
+      "required": [
+        "setid"
+      ]
+    },
+    "fields": {
+      "resource": "media"
+    },
+    "test_examples": [
+      {
+        "setid": "43c94480-78d1-4a23-91d4-1d49fea72cb7"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "setid": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": ["string", "null"]
+                },
+                "spl_version": {
+                  "type": ["integer", "null"]
+                },
+                "media": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "mime_type": {
+                        "type": "string",
+                        "description": "Image MIME type, e.g., image/jpeg"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Media file name"
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "Direct image URL"
+                      }
+                    }
+                  }
+                }
+              },
+              "required": ["setid", "media"]
+            },
+            "metadata": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "type": "GetSPLBySetIDTool",
+    "name": "DailyMed_get_spl_history",
+    "description": "Get the full version history of a DailyMed SPL Set ID: every published SPL version with its version number and publication date. Useful for tracking label revisions over time. No API key required. Example: setid '43c94480-78d1-4a23-91d4-1d49fea72cb7' returns history including spl_version 2 (published 'Jun 09, 2026') and spl_version 1 (published 'Jul 22, 2022').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "setid": {
+          "type": "string",
+          "format": "uuid",
+          "description": "DailyMed SPL Set ID UUID. Example: '43c94480-78d1-4a23-91d4-1d49fea72cb7'."
+        }
+      },
+      "required": [
+        "setid"
+      ]
+    },
+    "fields": {
+      "resource": "history"
+    },
+    "test_examples": [
+      {
+        "setid": "43c94480-78d1-4a23-91d4-1d49fea72cb7"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "setid": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": ["string", "null"]
+                },
+                "history": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "spl_version": {
+                        "type": "integer",
+                        "description": "SPL version number"
+                      },
+                      "published_date": {
+                        "type": "string",
+                        "description": "Publication date, e.g., 'Jul 22, 2022'"
+                      }
+                    }
+                  }
+                }
+              },
+              "required": ["setid", "history"]
+            },
+            "metadata": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

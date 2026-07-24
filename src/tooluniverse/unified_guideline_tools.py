@@ -4,6 +4,7 @@ Unified Guideline Tools
 Consolidated clinical guidelines search tools from multiple sources.
 """
 
+import html
 import requests
 import time
 import re
@@ -268,7 +269,17 @@ class PubMedGuidelinesTool(BaseTool):
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
 
-        return self._search_pubmed_guidelines(query, limit, api_key)
+        result = self._search_pubmed_guidelines(query, limit, api_key)
+        # Fix-R9E-1: _search_pubmed_guidelines returns either a bare list of
+        # results or an {"status": "error", ...} dict on failure. The
+        # bare-list success case was never wrapped in the standard
+        # {"status": "success", "data": [...]} envelope every sibling tool
+        # (e.g. PubMed_search_articles) uses -- independently reported by
+        # personas across 4 separate rounds, since callers writing generic
+        # status-checking code broke specifically on this tool.
+        if isinstance(result, list):
+            return {"status": "success", "data": result}
+        return result
 
     def _search_pubmed_guidelines(self, query, limit, api_key):
         """Search PubMed for guideline publications."""
@@ -340,7 +351,13 @@ class PubMedGuidelinesTool(BaseTool):
                 if abstract_match:
                     # Clean HTML tags from abstract
                     abstract = re.sub(r"<[^>]+>", "", abstract_match.group(1))
-                    abstracts[pmid] = abstract.strip()
+                    # Fix-R7B-2/R7E-1: this regex-based extraction never
+                    # actually parses the XML, so entity references like
+                    # "&#x2265;" (confirmed present verbatim in PubMed's raw
+                    # efetch XML for "&#x2265;" / "&#xe7;" etc.) were left
+                    # undecoded, unlike PubMed_search_articles which uses a
+                    # real XML parser that resolves them automatically.
+                    abstracts[pmid] = html.unescape(abstract).strip()
                 else:
                     abstracts[pmid] = ""
 
@@ -359,6 +376,18 @@ class PubMedGuidelinesTool(BaseTool):
                     author_str = ", ".join(authors)
                     if len(article.get("authors", [])) > 3:
                         author_str += ", et al."
+                    # Fix-R10E-3: NCBI Bookshelf-type records (e.g. WHO
+                    # monographs/guidelines, doctype="book") store their
+                    # title under `booktitle` instead of `title`, and have
+                    # no individual `authors` list -- confirmed live via
+                    # raw esummary for PMID 34787987 ("WHO guideline for
+                    # clinical management of exposure to lead"), whose
+                    # `title`/`authors` were both empty while `booktitle`
+                    # and `publishername` had the real values. Fall back to
+                    # those fields instead of silently returning blanks.
+                    title = article.get("title") or article.get("booktitle") or ""
+                    if not author_str:
+                        author_str = article.get("publishername", "")
 
                     # Check publication types
                     pub_types = article.get("pubtype", [])
@@ -366,11 +395,7 @@ class PubMedGuidelinesTool(BaseTool):
 
                     abstract_text = abstracts.get(pmid, "")
                     searchable_text = " ".join(
-                        [
-                            article.get("title", ""),
-                            abstract_text or "",
-                            " ".join(pub_types),
-                        ]
+                        [title, abstract_text or "", " ".join(pub_types)]
                     ).lower()
 
                     if query_terms and not any(
@@ -380,7 +405,7 @@ class PubMedGuidelinesTool(BaseTool):
 
                     result = {
                         "pmid": pmid,
-                        "title": article.get("title", ""),
+                        "title": title,
                         "abstract": abstract_text,
                         "content": abstract_text,  # Copy abstract to content field
                         "authors": author_str,

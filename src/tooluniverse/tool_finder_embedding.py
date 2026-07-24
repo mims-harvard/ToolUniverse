@@ -9,6 +9,37 @@ from .tool_registry import register_tool
 
 logger = logging.getLogger(__name__)
 
+# Retrieval instruction used by instruction-tuned encoders (applied to the query only).
+_ENCODER_INSTRUCTION = (
+    "Instruct: Given a natural-language request from a scientist, retrieve the software "
+    "tool that can fulfill it\nQuery: "
+)
+
+# Built-in alternative encoders selectable at call time via the ``embedding_model`` argument.
+# Each maps to the ``configs`` used to build a ToolFinderEmbedding with that encoder. This lets a
+# single embedding Tool Finder switch encoders on demand instead of registering a separate tool
+# per encoder. "default" (or an unset argument) uses the tool's configured model (e.g. ToolRAG-T1).
+KNOWN_ENCODERS = {
+    "gte-qwen2-7b": {
+        "tool_finder_model": "Alibaba-NLP/gte-Qwen2-7B-instruct",
+        "trust_remote_code": True,
+        "query_prompt": _ENCODER_INSTRUCTION,
+    },
+    "e5-mistral-7b": {
+        "tool_finder_model": "intfloat/e5-mistral-7b-instruct",
+        "trust_remote_code": True,
+        "query_prompt": _ENCODER_INSTRUCTION,
+    },
+    "openai-3-large": {
+        "tool_finder_model": "text-embedding-3-large",
+        "embedding_backend": "openai",
+    },
+    "openai-3-small": {
+        "tool_finder_model": "text-embedding-3-small",
+        "embedding_backend": "openai",
+    },
+}
+
 
 @register_tool("ToolFinderEmbedding")
 class ToolFinderEmbedding(BaseTool):
@@ -41,8 +72,53 @@ class ToolFinderEmbedding(BaseTool):
         self.tool_desc_embedding = None
         self.tool_name = None
         self.tool_embedding_path = None
-        toolfinder_model = tool_config["configs"].get("tool_finder_model")
+        _configs = tool_config.get("configs", {})
+        toolfinder_model = _configs.get("tool_finder_model")
         self.toolfinder_model = toolfinder_model
+
+        # Embedding backend selection. Default is UNCHANGED: a local SentenceTransformer model
+        # (``tool_finder_model``, e.g. ToolRAG-T1). Set ``embedding_backend: "openai"`` (or
+        # "azure") to embed with a hosted model via ToolUniverse's shared embedding stack
+        # (``tooluniverse.database_setup``). In that case ``tool_finder_model`` is the hosted
+        # model name (a single model, not two), e.g.:
+        #     {"tool_finder_model": "text-embedding-3-large", "embedding_backend": "openai"}
+        # The legacy key ``openai_embedding_model`` is still accepted. Provider (azure vs openai)
+        # and credentials are resolved by ``provider_resolver``; with no hosted credentials the
+        # tool falls back to the local model.
+        _backend = str(_configs.get("embedding_backend", "local")).lower()
+        _legacy = _configs.get("openai_embedding_model") or _configs.get("embedding_model_openai")
+        if _legacy:
+            self.openai_embedding_model, _want_hosted = _legacy, True
+        elif _backend in ("openai", "azure", "hosted"):
+            self.openai_embedding_model, _want_hosted = toolfinder_model, True
+        else:
+            self.openai_embedding_model, _want_hosted = None, False
+        # Optional per-encoder instruction prompts (default empty = original behavior).
+        # Instruction-tuned retrievers (e.g. gte-Qwen2, E5-mistral) expect a short task
+        # instruction on the query; some also prefix documents.
+        self.query_prompt = _configs.get("query_prompt", "")
+        self.document_prompt = _configs.get("document_prompt", "")
+        # Some encoders ship their architecture as repo code and require trust_remote_code.
+        # Default False keeps the deployed ToolRAG-T1 behavior byte-identical.
+        self.trust_remote_code = bool(_configs.get("trust_remote_code", False))
+        self._embed_provider = None
+        self._embedder = None
+        if _want_hosted:
+            try:
+                from .database_setup.provider_resolver import resolve_provider
+
+                prov = resolve_provider(None)  # azure > openai > huggingface > local, by creds
+                if prov in ("azure", "openai"):
+                    self._embed_provider = prov
+            except Exception as e:  # noqa: BLE001
+                logger.warning("Could not resolve hosted embedding provider: %s", e)
+        self.use_openai_embedding = self._embed_provider is not None
+        if _want_hosted and not self.use_openai_embedding:
+            logger.warning(
+                "Hosted embedding requested (model=%s) but no Azure/OpenAI credentials found; "
+                "falling back to local model.",
+                self.openai_embedding_model,
+            )
         # Get exclude tools from config, with fallback to default list
         self.exclude_tools = tool_config.get(
             "exclude_tools",
@@ -52,6 +128,8 @@ class ToolFinderEmbedding(BaseTool):
         )
         self._dependencies_available = False
         self._dependency_error = None
+        # Cache of alternative-encoder finders built on demand (see _resolve_finder).
+        self._sub_finders = {}
 
         try:
             self.load_rag_model()
@@ -142,6 +220,23 @@ class ToolFinderEmbedding(BaseTool):
         Raises:
             ImportError: If sentence-transformers is not installed.
         """
+        # Hosted embedding backend: use the shared Embedder; no local SentenceTransformer needed.
+        if self.use_openai_embedding:
+            from .database_setup.embedder import Embedder
+            from .database_setup.provider_resolver import resolve_model
+
+            model_id = resolve_model(self._embed_provider, self.openai_embedding_model)
+            self.openai_embedding_model = model_id
+            self._embedder = Embedder(
+                provider=self._embed_provider, model=model_id, batch_size=100, max_retries=5
+            )
+            self.rag_model = None
+            logger.info(
+                "ToolFinderEmbedding using hosted embedding backend (%s): %s",
+                self._embed_provider, model_id,
+            )
+            return
+
         try:
             from sentence_transformers import SentenceTransformer
             import torch
@@ -161,9 +256,15 @@ class ToolFinderEmbedding(BaseTool):
             device = "cpu"
             logger.warning("CUDA is not available. Using CPU.")
 
-        # Load model on the appropriate device
+        # Load model on the appropriate device. trust_remote_code (default False, so the
+        # deployed ToolRAG-T1 behavior is unchanged) is required by some encoders whose custom
+        # architecture ships as repo code (e.g. gte-large-en-v1.5, gte-Qwen2-*'s bidirectional
+        # variant); set the config ``trust_remote_code: true`` to use those as the encoder.
         logger.info(f"Loading SentenceTransformer model on device: {device}")
-        self.rag_model = SentenceTransformer(self.toolfinder_model, device=device)
+        self.rag_model = SentenceTransformer(
+            self.toolfinder_model, device=device,
+            trust_remote_code=self.trust_remote_code,
+        )
         self.rag_model.max_seq_length = 4096
         self.rag_model.tokenizer.padding_side = "right"
 
@@ -177,6 +278,38 @@ class ToolFinderEmbedding(BaseTool):
             )
         else:
             logger.warning("Tool_RAG model loaded on CPU (GPU not available)")
+
+    # ------------------------------------------------------------------ hosted embedding backend
+    def _embed_model_id(self):
+        """Short id used in the on-disk embedding cache filename (backend-aware)."""
+        name = self.openai_embedding_model if self.use_openai_embedding else self.toolfinder_model
+        return str(name).split("/")[-1]
+
+    def _embed_texts(self, texts, prompt=""):
+        """Encode texts with the active backend. The local path defaults to the original
+        behavior (empty prompt); ``prompt`` lets instruction-tuned encoders receive their
+        recommended query/document instruction (configs ``query_prompt``/``document_prompt``).
+        The hosted path delegates to ToolUniverse's shared ``Embedder`` (batching,
+        retry/backoff, Azure's one-string-at-a-time handling) and returns an L2-normalized
+        CPU tensor; any prompt is prepended to each text since hosted APIs take no prompt arg."""
+        if self.use_openai_embedding:
+            import numpy as np
+            import torch
+
+            inputs = [prompt + t for t in texts] if prompt else texts
+            vecs = self._embedder.embed(inputs).astype("float32")
+            vecs /= np.linalg.norm(vecs, axis=1, keepdims=True) + 1e-12
+            return torch.from_numpy(vecs)
+        return self.rag_model.encode(
+            texts, prompt=prompt, normalize_embeddings=True, convert_to_tensor=True
+        )
+
+    def _similarity(self, query_embeddings, doc_embeddings):
+        """Cosine similarity. The local backend uses the SentenceTransformer helper (unchanged
+        behavior); the hosted backend uses a normalized dot product."""
+        if not self.use_openai_embedding:
+            return self.rag_model.similarity(query_embeddings, doc_embeddings)
+        return query_embeddings @ doc_embeddings.T
 
     def load_tool_desc_embedding(
         self,
@@ -221,14 +354,24 @@ class ToolFinderEmbedding(BaseTool):
             json.dumps(each)
             for each in tooluniverse.prepare_tool_prompts(filtered_tools)
         ]
-        md5_value = get_md5(str(all_tools_str))
-        logger.debug(f"MD5 hash of tools: {md5_value}")
+        # The cache key must include every setting that changes the DOCUMENT embeddings, not
+        # just the tool text: the backend, whether remote code is trusted (which can select a
+        # different model class for the same name), and any document prompt. Omitting these
+        # silently reuses mismatched vectors when the same model name is reloaded with different
+        # settings (e.g. gte-Qwen2 loaded with vs. without trust_remote_code).
+        cache_key = (
+            str(all_tools_str)
+            + f"|backend={self._embed_provider or 'local'}"
+            + f"|trc={self.trust_remote_code}|docprompt={self.document_prompt}"
+        )
+        md5_value = get_md5(cache_key)
+        logger.debug(f"MD5 hash of tools+config: {md5_value}")
 
         # Use ToolUniverse cache directory for embeddings
         cache_dir = Path(get_user_cache_dir()) / "embeddings"
         cache_dir.mkdir(parents=True, exist_ok=True)
         embedding_filename = (
-            self.toolfinder_model.split("/")[-1] + "tool_embedding_" + md5_value + ".pt"
+            self._embed_model_id() + "tool_embedding_" + md5_value + ".pt"
         )
         self.tool_embedding_path = str(cache_dir / embedding_filename)
 
@@ -241,7 +384,9 @@ class ToolFinderEmbedding(BaseTool):
             ) from None
 
         # Determine target device for loading embeddings
-        if hasattr(self.rag_model, "device"):
+        if self.use_openai_embedding:
+            target_device = "cpu"  # hosted backend has no GPU model; keep vectors on CPU
+        elif hasattr(self.rag_model, "device"):
             target_device = self.rag_model.device
         else:
             target_device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -286,13 +431,8 @@ class ToolFinderEmbedding(BaseTool):
             self.tool_desc_embedding = None
             logger.info("Inferring tool description embeddings...")
 
-            # Generate embeddings
-            self.tool_desc_embedding = self.rag_model.encode(
-                all_tools_str,
-                prompt="",
-                normalize_embeddings=True,
-                convert_to_tensor=True,
-            )
+            # Generate embeddings (local SentenceTransformer or hosted OpenAI/Azure backend)
+            self.tool_desc_embedding = self._embed_texts(all_tools_str, prompt=self.document_prompt)
 
             # Save embeddings to disk
             torch.save(self.tool_desc_embedding, self.tool_embedding_path)
@@ -360,9 +500,7 @@ class ToolFinderEmbedding(BaseTool):
             )
 
         queries = [query]
-        query_embeddings = self.rag_model.encode(
-            queries, prompt="", normalize_embeddings=True, convert_to_tensor=True
-        )
+        query_embeddings = self._embed_texts(queries, prompt=self.query_prompt)
 
         # Ensure both embeddings are on the same device before similarity calculation
         # Query embeddings are created on the model's device (GPU if available)
@@ -385,7 +523,7 @@ class ToolFinderEmbedding(BaseTool):
                         target_device
                     )
 
-        scores = self.rag_model.similarity(query_embeddings, self.tool_desc_embedding)
+        scores = self._similarity(query_embeddings, self.tool_desc_embedding)
         top_k = min(top_k, len(self.tool_name))
         top_k_indices = torch.topk(scores, top_k).indices.tolist()[0]
         top_k_tool_names = [self.tool_name[i] for i in top_k_indices]
@@ -443,6 +581,31 @@ class ToolFinderEmbedding(BaseTool):
             return picked_tools_prompt, picked_tool_names
         return picked_tools_prompt
 
+    def _resolve_finder(self, embedding_model):
+        """Return the finder to use for a request. Default (unset/"default") is this instance.
+        Otherwise pick a built-in alternative encoder (KNOWN_ENCODERS) and build/cache a finder
+        for it on demand, so one embedding Tool Finder can switch encoders per call rather than
+        exposing a separate registered tool per encoder."""
+        if not embedding_model or embedding_model in ("default", self.toolfinder_model):
+            return self
+        spec = KNOWN_ENCODERS.get(embedding_model)
+        if spec is None:
+            logger.warning(
+                "Unknown embedding_model %r; using the default encoder. Available options: %s",
+                embedding_model, ["default", *KNOWN_ENCODERS],
+            )
+            return self
+        if embedding_model not in self._sub_finders:
+            sub_config = {
+                "name": self.tool_config.get("name", self.__class__.__name__),
+                "type": "ToolFinderEmbedding",
+                "configs": {**spec, "exclude_tools": self.exclude_tools},
+            }
+            self._sub_finders[embedding_model] = ToolFinderEmbedding(
+                sub_config, self.tooluniverse
+            )
+        return self._sub_finders[embedding_model]
+
     def run(self, arguments):
         """
         Run the tool finder with given arguments following the standard tool interface.
@@ -457,14 +620,19 @@ class ToolFinderEmbedding(BaseTool):
                 - picked_tool_names (list, optional): Pre-selected tool names to process
                 - return_call_result (bool, optional): Whether to return both prompts and names. Defaults to False.
                 - categories (list, optional): List of tool categories to filter by
+                - embedding_model (str, optional): Select the embedding encoder for this search
+                  ('default', 'gte-qwen2-7b', 'e5-mistral-7b', 'openai-3-large', 'openai-3-small').
         """
         import copy
 
         arguments = copy.deepcopy(arguments)
 
+        # Optionally switch to an alternative encoder for this request.
+        finder = self._resolve_finder(arguments.get("embedding_model"))
+
         # Refresh embeddings if tool list has changed
         # This ensures Tool_RAG works correctly when tools are loaded after initialization
-        self._maybe_refresh_embeddings()
+        finder._maybe_refresh_embeddings()
 
         # Extract parameters from arguments with defaults
         message = arguments.get("description", None)
@@ -473,8 +641,8 @@ class ToolFinderEmbedding(BaseTool):
         return_call_result = arguments.get("return_call_result", False)
         categories = arguments.get("categories", None)
 
-        # Call the existing find_tools method
-        return self.find_tools(
+        # Call the existing find_tools method on the selected finder
+        return finder.find_tools(
             message=message,
             picked_tool_names=picked_tool_names,
             rag_num=rag_num,

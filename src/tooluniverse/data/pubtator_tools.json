@@ -94,20 +94,146 @@
     "return_schema": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "results": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "pmid": {
+                "type": [
+                  "integer",
+                  "null",
+                  "number"
+                ]
+              },
+              "title": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "journal": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                }
+              },
+              "date": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "doi": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "meta_date_publication": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "meta_volume": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "meta_issue": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "meta_pages": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "score": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "text_hl": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "citations": {
+                "type": "object",
+                "properties": {
+                  "NLM": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "BibTeX": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                }
+              }
+            }
+          }
         },
         "page_size": {
-          "type": "integer"
+          "type": [
+            "integer",
+            "null",
+            "number"
+          ]
         },
         "current": {
-          "type": "integer"
+          "type": [
+            "integer",
+            "null",
+            "number"
+          ]
         },
         "count": {
-          "type": "integer"
+          "type": [
+            "integer",
+            "null",
+            "number"
+          ]
         },
         "total_pages": {
-          "type": "integer"
+          "type": [
+            "integer",
+            "null",
+            "number"
+          ]
         }
       }
     }

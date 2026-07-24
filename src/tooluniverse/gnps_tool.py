@@ -17,6 +17,8 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 GNPS_USI_BASE_URL = "https://metabolomics-usi.gnps2.org"
+GNPS_SPECTRUM_URL = "https://external.gnps2.org/gnpsspectrum"
+GNPS_NPCLASSIFIER_URL = "https://npclassifier.gnps2.org/classify"
 
 
 @register_tool("GNPSTool")
@@ -68,6 +70,10 @@ class GNPSTool(BaseTool):
             return self._get_spectrum(arguments)
         elif self.endpoint_type == "compare_spectra":
             return self._compare_spectra(arguments)
+        elif self.endpoint_type == "get_library_record":
+            return self._get_library_record(arguments)
+        elif self.endpoint_type == "npclassifier":
+            return self._npclassifier(arguments)
         else:
             return {
                 "status": "error",
@@ -196,5 +202,113 @@ class GNPSTool(BaseTool):
             "metadata": {
                 "source": "GNPS Metabolomics USI",
                 "endpoint": "compare_spectra",
+            },
+        }
+
+    def _get_library_record(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Retrieve a full GNPS library reference record by SpectrumID/CCMSLIB accession."""
+        spectrum_id = (
+            arguments.get("spectrum_id")
+            or arguments.get("SpectrumID")
+            or arguments.get("accession")
+            or ""
+        )
+        if not spectrum_id:
+            return {
+                "status": "error",
+                "error": "spectrum_id parameter is required (e.g., 'CCMSLIB00005435737')",
+            }
+
+        response = requests.get(
+            GNPS_SPECTRUM_URL,
+            params={"SpectrumID": spectrum_id},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        annotations = raw.get("annotations") or []
+        if not annotations:
+            return {
+                "status": "error",
+                "error": f"No GNPS library record found for SpectrumID '{spectrum_id}'",
+            }
+
+        ann = annotations[0]
+        spectrum_info = raw.get("spectruminfo") or {}
+        record = {
+            "spectrum_id": ann.get("SpectrumID") or spectrum_id,
+            "compound_name": ann.get("Compound_Name"),
+            "adduct": ann.get("Adduct"),
+            "smiles": ann.get("Smiles"),
+            "inchi": ann.get("INCHI"),
+            "inchi_key": ann.get("INCHI_AUX"),
+            "ion_source": ann.get("Ion_Source"),
+            "instrument": ann.get("Instrument"),
+            "ion_mode": ann.get("Ion_Mode"),
+            "precursor_mz": ann.get("Precursor_MZ"),
+            "charge": ann.get("Charge"),
+            "compound_source": ann.get("Compound_Source"),
+            "pi": ann.get("PI"),
+            "data_collector": ann.get("Data_Collector"),
+            "cas_number": ann.get("CAS_Number"),
+            "pubmed_id": ann.get("Pubmed_ID"),
+            "library_membership": spectrum_info.get("library_membership"),
+            "ms_level": spectrum_info.get("ms_level"),
+            "annotations": annotations,
+        }
+
+        return {
+            "status": "success",
+            "data": record,
+            "metadata": {
+                "source": "GNPS Library (gnps2)",
+                "query": spectrum_id,
+                "endpoint": "get_library_record",
+            },
+        }
+
+    def _npclassifier(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """NP Classifier: de novo natural-product biosynthetic classification from SMILES."""
+        smiles = arguments.get("smiles") or arguments.get("SMILES") or ""
+        if not smiles:
+            return {
+                "status": "error",
+                "error": "smiles parameter is required (e.g., 'CN1C=NC2=C1C(=O)N(C)C(=O)N2C' for caffeine)",
+            }
+
+        response = requests.get(
+            GNPS_NPCLASSIFIER_URL,
+            params={"smiles": smiles},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        # NP Classifier returns empty result lists for SMILES it cannot classify.
+        class_results = raw.get("class_results") or []
+        superclass_results = raw.get("superclass_results") or []
+        pathway_results = raw.get("pathway_results") or []
+        if not (class_results or superclass_results or pathway_results):
+            return {
+                "status": "error",
+                "error": f"NP Classifier returned no classification for SMILES '{smiles}'. The structure may be invalid or out of scope for natural-product classification.",
+            }
+
+        record = {
+            "smiles": smiles,
+            "class": class_results,
+            "superclass": superclass_results,
+            "pathway": pathway_results,
+            "is_glycoside": raw.get("isglycoside"),
+        }
+
+        return {
+            "status": "success",
+            "data": record,
+            "metadata": {
+                "source": "NP Classifier (gnps2)",
+                "query": smiles,
+                "endpoint": "npclassifier",
             },
         }

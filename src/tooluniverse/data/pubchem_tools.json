@@ -191,6 +191,17 @@
         "cid": {
           "type": "integer",
           "description": "PubChem compound ID to query, e.g., 2244 (Aspirin)."
+        },
+        "properties": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional list of PubChem property names to retrieve (e.g. ['MolecularFormula','InChIKey','XLogP','IUPACName','MolecularWeight']). If omitted, returns a default set (MolecularWeight, IUPACName, SMILES). See PubChem PUG-REST property tables for valid names. Accepts a list or a comma-separated string."
         }
       },
       "required": [
@@ -409,14 +420,13 @@
         }
       },
       "required": [
-        "smiles",
-        "threshold"
+        "smiles"
       ]
     },
     "fields": {
       "endpoint": "/compound/fastsimilarity_2d/smiles/{smiles}/cids/JSON",
       "use_pugview": false,
-      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity \u2265 threshold.",
+      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity ≥ threshold.",
       "output_description": "Returns a JSON object with structure example:\n{\n  \"IdentifierList\": {\n    \"CID\": [2244, 2245, ...]\n  }\n}\n\nWhere: CID array contains compound IDs with similarity above specified threshold to target molecule. LLM can use this for chemical similarity analysis.",
       "property_list": []
     },
@@ -461,15 +471,14 @@
         }
       },
       "required": [
-        "cid",
-        "image_size"
+        "cid"
       ]
     },
     "fields": {
       "endpoint": "/compound/cid/{cid}/PNG?image_size={image_size}",
       "use_pugview": false,
       "input_description": "Input is:\n- cid: compound ID;\n- image_size: desired image pixel size, format is \"widthxheight\" (e.g., \"150x150\").",
-      "output_description": "Returns binary PNG image data, conforming to PNG file header format. LLM can save this binary as image file, or provide to downstream visualization.",
+      "output_description": "Returns {status, data: {image_base64, encoding: 'base64', format: 'png'}}. Decode image_base64 to get the raw PNG bytes (conforming to PNG file header format).",
       "return_format": "PNG"
     },
     "type": "PubChemRESTTool",
@@ -548,9 +557,26 @@
         },
         "xref_types": {
           "type": "array",
-          "description": "List of external database types to query, e.g., [\"RegistryID\", \"RN\", \"PubMedID\"].",
+          "description": "List of PubChem XRef types to query. Allowed values ONLY: RegistryID, RN, PubMedID, MMDBID, ProteinGI, NucleotideGI, TaxonomyID, MIMID, GeneID, ProbeID, PatentID, SourceName, SourceCategory, DBURL, SBURL. Database cross-references such as ChEBI, KEGG, ChEMBL and InChIKey are NOT xref types — they are listed inside the 'RegistryID' values, so use [\"RegistryID\"] to retrieve them.",
           "items": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "RegistryID",
+              "RN",
+              "PubMedID",
+              "MMDBID",
+              "ProteinGI",
+              "NucleotideGI",
+              "TaxonomyID",
+              "MIMID",
+              "GeneID",
+              "ProbeID",
+              "PatentID",
+              "SourceName",
+              "SourceCategory",
+              "DBURL",
+              "SBURL"
+            ]
           }
         }
       },
@@ -569,7 +595,9 @@
     "test_examples": [
       {
         "cid": 2244,
-        "xref_types": []
+        "xref_types": [
+          "PubMedID"
+        ]
       }
     ],
     "return_schema": {
@@ -1002,6 +1030,227 @@
           }
         }
       }
+    }
+  },
+  {
+    "name": "PubChem_get_substance_by_SID",
+    "description": "Retrieve a PubChem SUBSTANCE (SID, depositor-level) record by its Substance ID. Unlike the CID/compound tools, this returns the raw depositor submission: the source/depositor name, the depositor's own source identifier, deposited synonyms, comments (often SMILES/InChI), cross-references (registry IDs, patents), and the list of linked compound CIDs that PubChem standardized this substance into. Returns found=false when the SID does not exist.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "PubChem Substance ID (SID), a positive integer, e.g., 223766453."
+        }
+      },
+      "required": [
+        "sid"
+      ]
+    },
+    "fields": {
+      "endpoint": "/substance/sid/{sid}/JSON",
+      "use_pugview": false,
+      "substance_record": true,
+      "input_description": "Input is a PubChem Substance ID (sid). The tool fetches the raw PC_Substances record plus the linked compound CIDs.",
+      "output_description": "Returns {status, found, data, metadata}. On found=true, data has: sid, source_name (depositor source id), source_id (depositor's own record id), synonyms (list), comment (list, often SMILES/InChI), registry_ids (list), xrefs (raw list), linked_cids (list of CIDs). On a non-existent SID, found=false."
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "sid": 223766453
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "sid": {
+              "type": [
+                "integer",
+                "string"
+              ]
+            },
+            "source_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source_id": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "comment": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "registry_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "xrefs": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "linked_cids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          "required": [
+            "sid"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PubChem_get_substances_by_source",
+    "description": "Reverse sourcing: list ALL PubChem substance SIDs deposited/offered by a specific chemical vendor or data source (e.g., 'Combi-Blocks', 'Sigma-Aldrich', 'Enamine', 'TCI'). This is the inverse of the forward CID->vendor lookup (PubChem_get_compound_xrefs_by_CID): it answers 'what does vendor X actually stock/sell' by returning that depositor's full substance (SID) catalog. The 'source' name must match a PubChem registered substance source name exactly (case-sensitive) -- use PubChem_list_substance_sources first to validate/normalize the vendor name. Result lists can be very large (hundreds of thousands of SIDs).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Exact PubChem substance source / vendor name (case-sensitive), e.g., \"Combi-Blocks\", \"Sigma-Aldrich\", \"Enamine\". Multi-word names with spaces are accepted (e.g., \"Aaron Chemicals LLC\"). Validate the name with PubChem_list_substance_sources to avoid an empty/404 result."
+        },
+        "vendor": {
+          "type": "string",
+          "description": "Alias for source. The vendor/source name to retrieve SIDs for."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/substance/sourceall/{source}/sids/JSON",
+      "use_pugview": false,
+      "input_description": "Input is a single 'source' (vendor/depositor) name exactly as registered in PubChem. The tool requests every substance SID attributed to that source.",
+      "output_description": "Returns {status:'success', data:{IdentifierList:{SID:[...]}}}. data.IdentifierList.SID is the list of all PubChem Substance IDs offered/deposited by that source. Use each SID with PubChem_get_substance_by_SID to expand to the depositor record and linked compound CIDs. An unknown/misspelled source name yields a PubChem HTTP 404 returned as status:'error'."
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "source": "Combi-Blocks"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "IdentifierList": {
+              "type": "object",
+              "properties": {
+                "SID": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "IdentifierList"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PubChem_list_substance_sources",
+    "description": "Vendor/source directory: enumerate the full master roster of chemical vendors and data sources registered as PubChem SUBSTANCE depositors (~919 sources, including Enamine, Sigma-Aldrich, TCI, Combi-Blocks). Use this to discover which suppliers PubChem aggregates and to validate/normalize a vendor name (exact, case-sensitive) BEFORE a reverse-sourcing query with PubChem_get_substances_by_source. Takes no parameters.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/sources/substance/JSON",
+      "use_pugview": false,
+      "input_description": "No input parameters. Returns the complete substance source directory.",
+      "output_description": "Returns {status:'success', data:{InformationList:{SourceName:[...]}}}. data.InformationList.SourceName is the alphabetical list of every registered substance source/vendor name. Each name can be used verbatim as the 'source' argument of PubChem_get_substances_by_source."
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "InformationList": {
+              "type": "object",
+              "properties": {
+                "SourceName": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "InformationList"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     }
   }
 ]

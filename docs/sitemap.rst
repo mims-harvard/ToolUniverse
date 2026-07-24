@@ -1,9 +1,11 @@
+:orphan:
+
 Documentation Sitemap
 =====================
 
 **Complete navigation of all ToolUniverse documentation**
 
- Get Started
+Get Started
 --------------
 
 - :doc:`guide/python_guide` - Python Developer Guide
@@ -11,7 +13,7 @@ Documentation Sitemap
 - :doc:`guide/skills_showcase` - AI Agent Skills
 - :doc:`guide/api_keys` - API Keys Configuration
 
- Tutorials & Workflows
+Tutorials & Workflows
 -------------------------
 
 - :doc:`guide/index` - Tutorials Overview
@@ -42,7 +44,7 @@ Documentation Sitemap
 - :doc:`guide/http_api` - HTTP API
 - :doc:`help/wechat_community` - WeChat Community
 
- Expand ToolUniverse
+Expand ToolUniverse
 -----------------------
 
 - :doc:`expand_tooluniverse/index` - Overview
@@ -52,18 +54,18 @@ Documentation Sitemap
 - :doc:`expand_tooluniverse/contributing/index` - Contributing
 - :doc:`expand_tooluniverse/architecture` - Architecture
 
- Tools Catalog
+Tools Catalog
 -----------------
 
 - :doc:`tools/tools_config_index` - Tools Configuration Index
 - :doc:`tools/remote_tools` - Remote Tools
 
- API Reference
+API Reference
 -----------------
 
 - :doc:`api/modules` - API Modules
 
- Help & Reference
+Help & Reference
 -------------------
 
 - :doc:`reference/cli_tools` - CLI Tools
@@ -73,13 +75,6 @@ Documentation Sitemap
 - :doc:`help/index` - Help
 - :doc:`expand_tooluniverse/reference/index` - Reference
 - :doc:`about/index` - About
-
- Legacy Documentation
------------------------
-
-- :doc:`old/quickstart` - Quick Start (Legacy)
-- :doc:`old/installation` - Installation (Legacy)
-- :doc:`old/getting_started` - Getting Started (Legacy)
 
 Python API Pages
 ----------------

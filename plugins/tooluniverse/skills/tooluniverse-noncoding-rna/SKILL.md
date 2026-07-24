@@ -1,0 +1,256 @@
+---
+
+name: tooluniverse-noncoding-rna
+description: "Non-coding RNA analysis — miRNAs (miRBase, miRDB targets), lncRNAs (LNCipedia, RNAcentral), circRNAs, snoRNAs, and other ncRNA classes. Distinct mechanisms per class — miRNAs repress mRNA; lncRNAs scaffold/decoy/enhance. Use for ncRNA function prediction, miRNA-target prediction, lncRNA functional annotation, and ncRNA-disease association queries."
+---
+
+# Non-Coding RNA Analysis
+
+Pipeline for identifying, annotating, and interpreting non-coding RNAs and their biological roles. Covers microRNAs (miRNAs), long non-coding RNAs (lncRNAs), and other ncRNA classes.
+
+**Key principles**:
+1. **Class determines function** — miRNAs repress mRNA translation; lncRNAs have diverse mechanisms (scaffolds, guides, decoys, enhancers); rRNAs/tRNAs are structural
+2. **Targets matter more than the ncRNA itself** — for miRNAs, the regulated mRNA targets determine the phenotype
+3. **Expression context is critical** — ncRNAs are highly tissue/cell-type specific
+4. **Conservation indicates function** — deeply conserved ncRNAs (miR-let-7, MALAT1) have well-established roles
+5. **Evidence grading** — T1: validated targets (reporter assay, CLIP-seq), T2: high-confidence computational prediction, T3: expression correlation, T4: sequence-based prediction only
+
+**Type-based reasoning — look up, don't guess**:
+Non-coding RNA function depends on type: miRNA silences target mRNAs (look up targets in miRTarBase/TargetScan), lncRNA has diverse functions (scaffolding, guiding, decoying — check literature for the specific lncRNA), circRNA may sponge miRNAs.
+
+For any ncRNA query: first identify the class from the name/sequence, then select the appropriate evidence source. Do not assume function based on name alone — a gene named "LINC" may have a characterized mechanism, or none at all. Always search PubMed for the specific ncRNA before interpreting. For miRNAs, validated targets (T1) from miRTarBase outweigh any computational prediction — a predicted target with no experimental support is a hypothesis, not a finding. For lncRNAs, mechanism is almost always determined by experimental studies; use `PubMed_search_articles` with the lncRNA name + "mechanism" or "function" to find relevant evidence. For circRNAs, miRNA sponging is the most common proposed mechanism but is frequently over-claimed — look for CLIP-seq or reporter assay evidence before asserting it.
+
+---
+
+## When to Use
+
+- "What are the targets of miR-21?"
+- "Find lncRNAs associated with breast cancer"
+- "Is this lncRNA conserved across species?"
+- "What miRNAs regulate TP53?"
+- "Annotate these non-coding RNA IDs"
+- "Which miRNAs are biomarkers for [disease]?"
+
+**Not this skill**: For mRNA expression analysis, use `tooluniverse-rnaseq-deseq2`. For CRISPR screens, use `tooluniverse-crispr-screen-analysis`.
+
+---
+
+## Core Tools
+
+| Tool | Use For |
+|------|---------|
+| `miRBase_search_mirna` | Search miRNAs by name, accession, or sequence |
+| `miRBase_get_mirna` | Detailed miRNA info (sequence, genomic location, family) |
+| `miRBase_get_mirna` | Mature miRNA sequences and annotations |
+| `PubMed_search_articles` | Search for validated miRNA targets in literature (e.g., "miR-21 target validation") |
+| `LNCipedia_search_lncrna` | Search lncRNAs by name, gene symbol, or transcript ID |
+| `LNCipedia_get_lncrna` | Detailed lncRNA transcript info (sequence, structure, conservation) |
+| `LNCipedia_get_lncrna_xrefs` | lncRNA gene info with all transcript variants |
+| `LNCipedia_search_ncrna_by_type` | List all transcripts for a lncRNA gene |
+| `LNCipedia_get_lncrna_publications` | lncRNA sequence (FASTA format) |
+| `RNAcentral_search` | Search all ncRNA types across databases |
+| `RNAcentral_get_by_accession` | Detailed ncRNA annotations from 40+ databases |
+| `Rfam_get_family` | RNA family details (structure, alignment, species distribution) |
+| `Rfam_search_sequence` | Search RNA families by keyword |
+| `DisGeNET_search_gene` | ncRNA-disease associations |
+| `PubMed_search_articles` | ncRNA literature |
+| `GTEx_get_median_gene_expression` | Tissue expression of ncRNA genes |
+
+---
+
+## Workflow
+
+```
+Phase 0: ncRNA Identity & Classification
+  Name/ID → miRBase/LNCipedia/RNAcentral → class, sequence, genomic location
+    |
+Phase 1: Target & Interaction Analysis
+  miRNA → target mRNAs; lncRNA → interacting proteins/RNAs/chromatin
+    |
+Phase 2: Expression & Tissue Specificity
+  GTEx/GEO → where is it expressed? Tissue-specific or ubiquitous?
+    |
+Phase 3: Disease Associations
+  DisGeNET/PubMed/CTD → ncRNA-disease links with evidence
+    |
+Phase 4: Functional Interpretation
+  Pathway enrichment of targets → biological role → clinical significance
+```
+
+### Phase 0: ncRNA Identity & Classification
+
+ncRNA classes by size and database:
+- **miRNA** (~22 nt, miRBase): Post-transcriptional silencing via 3'UTR binding
+- **lncRNA** (>200 nt, LNCipedia): Diverse — chromatin remodeling, transcription regulation, miRNA sponges
+- **rRNA** (120-5000 nt, RNAcentral/Rfam): Ribosome components
+- **tRNA** (~76 nt, RNAcentral): Amino acid delivery
+- **snoRNA** (60-300 nt, Rfam): rRNA modification (methylation, pseudouridylation)
+- **snRNA** (~150 nt, Rfam): Spliceosome components
+- **piRNA** (26-31 nt, RNAcentral): Transposon silencing in germline
+- **circRNA** (variable, RNAcentral): miRNA sponges, protein scaffolds (experimental evidence required)
+
+**Identification workflow**:
+- Name starts with `miR-` or `hsa-mir-` → search miRBase
+- Name starts with `LINC`, `MALAT`, `HOTAIR`, `XIST`, or ends in `-AS1` → search LNCipedia
+- Any ncRNA type → search RNAcentral (aggregates all databases)
+- RNA family question → search Rfam
+
+### Phase 1: Target & Interaction Analysis
+
+**For miRNAs** — the targets determine the biology:
+
+**PRIMARY TOOL**: `ENCORI_get_miRNA_targets` looks up miRNA-target interactions from ENCORI/starBase (CLIP-seq-supported + computationally predicted), no download needed:
+
+1. **miRNA → targets**: `ENCORI_get_miRNA_targets(mirna="hsa-miR-21-5p", clip_min=1)` — each hit reports `clip_experiments` (CLIP-seq support; higher = stronger experimental evidence) and `predicted_by` (which programs call it). Results are ranked by CLIP support, so the top rows are the best-supported targets.
+2. **gene → miRNAs**: `ENCORI_get_miRNA_targets(gene="TP53")` — which miRNAs target a gene.
+
+Supporting/fallback approaches:
+3. **Literature** (for mechanism/validation context): `PubMed_search_articles(query="miR-21 target validation luciferase")`
+4. **Cross-references**: `miRBase_get_mirna_xrefs(accession="MIMAT0000076")`
+5. **For novel miRNAs** not in ENCORI: search PubMed for "[miRNA] target".
+
+Well-studied miRNA targets (for common oncomiRs/tumor suppressors):
+- **miR-21**: PTEN, PDCD4, TPM1, RECK, SPRY1, SPRY2, BTG2
+- **miR-155**: SOCS1, SHIP1, AID, TP53INP1
+- **miR-122**: SLC7A1, ADAM17 (also HCV IRES cofactor)
+- **let-7**: RAS, HMGA2, MYC, LIN28
+
+**Target interpretation framework**:
+- **Validated** (T1): Luciferase reporter, CLIP-seq, degradome-seq — base conclusions on these
+- **High-confidence prediction** (T2): TargetScan conserved sites, DIANA-microT score > 0.9 — support validated findings
+- **Prediction only** (T3-T4): miRanda, PicTar, RNA22 — hypothesis generation only; do not report as findings
+
+**For lncRNAs** — the mechanism varies:
+
+| lncRNA Mechanism | Example | How to Investigate |
+|---|---|---|
+| **Chromatin modifier** | HOTAIR, XIST | Check interacting proteins (PRC2, LSD1) via PubMed |
+| **Transcription regulator** | NEAT1, MEG3 | Check nearby genes (cis-regulation) via genomic location |
+| **miRNA sponge** | MALAT1, circRNAs | Search for miRNA binding sites |
+| **Scaffold** | NKILA, BCAR4 | Check protein interactions |
+| **Enhancer RNA** | eRNAs | Check ENCODE enhancer annotations |
+
+### Phase 2: Expression & Tissue Specificity
+
+```python
+GTEx_get_median_gene_expression(gene_symbol="MIR21")  # miRNA host gene expression
+# Note: GTEx measures RNA-seq; miRNA expression may need miRNA-seq data from GEO
+```
+
+**Interpretation**: Tissue-restricted ncRNAs are often functionally important in that tissue. Ubiquitous ncRNAs (like MALAT1) tend to have housekeeping roles.
+
+### Phase 3: Disease Associations
+
+```python
+DisGeNET_search_gene(query="MIR21")  # miR-21 disease associations
+PubMed_search_articles(query="miR-21 biomarker cancer")
+```
+
+**Key ncRNA-disease associations** (well-established T1 examples — always verify via DisGeNET or PubMed for the specific ncRNA):
+- miR-21: OncomiR in multiple cancers; targets PTEN, PDCD4, TPM1 (hundreds of T1 studies)
+- miR-155: B-cell lymphoma, inflammation — immune regulation
+- miR-122: Hepatitis C liver disease — HCV replication cofactor; therapeutic target (miravirsen)
+- let-7 family: Lung cancer, stem cell differentiation — tumor suppressor targeting RAS, HMGA2
+- HOTAIR: Breast/colorectal cancer — recruits PRC2, promotes metastasis
+- MALAT1: Lung cancer/metastasis — splicing regulation
+- XIST: X-inactivation, cancer — chromatin silencing
+- H19: Beckwith-Wiedemann syndrome, cancer — imprinted lncRNA, miR-675 host
+- ANRIL: CVD, diabetes, cancer — CDKN2A/B locus regulation (GWAS-validated)
+
+### Phase 4: Functional Interpretation
+
+After identifying miRNA targets (Phase 1), run pathway enrichment:
+
+```python
+# Collect validated target gene symbols
+targets = ["PTEN", "PDCD4", "TPM1", "RECK", "SPRY1"]  # miR-21 targets
+
+# Pathway enrichment
+ReactomeAnalysis_pathway_enrichment(identifiers="PTEN PDCD4 TPM1 RECK SPRY1")
+STRING_get_network(identifiers="PTEN\rPDCD4\rTPM1\rRECK\rSPRY1", species=9606)
+```
+
+**Interpretation**: If miR-21 targets are enriched in apoptosis and PI3K-AKT signaling → miR-21 is an oncomiR that promotes survival by simultaneously suppressing multiple tumor suppressors.
+
+**Report structure**:
+1. **ncRNA Identity** — class, sequence, genomic location, conservation
+2. **Targets/Interactions** — validated targets with evidence grades
+3. **Expression Profile** — tissue specificity, disease-specific expression changes
+4. **Disease Associations** — evidence-graded disease links
+5. **Pathway Analysis** — enriched pathways among targets
+6. **Mechanistic Model** — how this ncRNA contributes to disease biology
+7. **Clinical Potential** — biomarker utility, therapeutic target potential (antagomirs, ASOs)
+
+---
+
+## Limitations
+
+### Computational Procedure: TargetScan Predicted Targets (Download-and-Process)
+
+TargetScan provides the best computational miRNA target predictions but has no REST API. Download and process locally:
+
+```python
+# Step 1: Download TargetScan predicted targets (one-time, ~10MB zipped)
+# URL: https://www.targetscan.org/vert_80/vert_80_data_download/Summary_Counts.default_predictions.txt.zip
+import pandas as pd
+import zipfile, io, requests
+
+url = "https://www.targetscan.org/vert_80/vert_80_data_download/Summary_Counts.default_predictions.txt.zip"
+resp = requests.get(url, timeout=60)
+with zipfile.ZipFile(io.BytesIO(resp.content)) as z:
+    fname = z.namelist()[0]
+    df = pd.read_csv(z.open(fname), sep='\t')
+
+# Step 2: Query for a specific miRNA family
+mirna = "miR-21-5p"  # or "miR-21/590-5p" (TargetScan uses family names)
+targets = df[df['miRNA Family'].str.contains("miR-21", case=False, na=False)]
+
+# Step 3: Rank by cumulative weighted context++ score
+targets_ranked = targets.sort_values('Cumulative weighted context++ score', ascending=True)
+print(f"Top 20 predicted targets of {mirna}:")
+for _, row in targets_ranked.head(20).iterrows():
+    print(f"  {row['Target Gene']:10s} score={row['Cumulative weighted context++ score']:.3f}  "
+          f"sites={row['Total num conserved sites']}")
+```
+
+**Interpretation**: More negative context++ score = stronger predicted repression. Conserved sites (>1) are higher confidence.
+
+### Computational Procedure: miRTarBase Validated Targets (Download-and-Process)
+
+miRTarBase has Cloudflare protection blocking programmatic access. Use the R/Bioconductor data package or bulk download:
+
+```python
+# Option 1: Download from miRTarBase bulk export (requires browser download first)
+# Go to: https://mirtarbase.cuhk.edu.cn/~miRTarBase/miRTarBase_2025/
+# Download: hsa_MTI.xlsx (human miRNA-target interactions)
+
+# Option 2: Use the GitHub data dump
+# https://github.com/jorainer/mirtarbase — R package with cached data
+
+# Once you have the file:
+import pandas as pd
+mti = pd.read_excel("hsa_MTI.xlsx")  # or read_csv if TSV
+
+# Filter for your miRNA
+mir21_targets = mti[mti['miRNA'].str.contains('hsa-miR-21', case=False, na=False)]
+print(f"miR-21 validated targets: {len(mir21_targets)}")
+
+# Filter by evidence strength
+strong = mir21_targets[mir21_targets['Support Type'].str.contains(
+    'Luciferase|Reporter|Western|CLIP', case=False, na=False
+)]
+print(f"  Strong evidence (reporter/CLIP): {len(strong)}")
+for _, row in strong.head(10).iterrows():
+    print(f"    {row['Target Gene']:10s} — {row['Support Type']}")
+```
+
+**When download is not available**: Use the built-in reference table in Phase 1 for well-studied miRNAs, or search PubMed for validated targets.
+
+---
+
+## Limitations
+
+- **miRNA target prediction is noisy** — even the best algorithms have >50% false positive rates; always prioritize experimentally validated targets
+- **lncRNA function is poorly characterized** — only ~5% of annotated lncRNAs have known functions
+- **Expression measurement varies** — miRNA-seq, RNA-seq, and microarray capture different ncRNA classes; check the assay type
+- **Species differences** — miRNAs are often conserved but lncRNAs are frequently species-specific; cross-species lncRNA comparisons are unreliable

@@ -542,5 +542,179 @@
         }
       }
     }
+  },
+  {
+    "name": "AllenBrain_get_structure_expression_values",
+    "description": "Get quantified per-structure gene-expression values (StructureUnionize) for one Allen Mouse Brain ISH experiment (SectionDataSet). Returns the actual numeric spatial expression aggregated over each annotated brain structure: expression_energy (intensity x density), expression_density (fraction of expressing pixels), sum_expressing_pixels, plus the structure record (acronym, name). This is the real spatial expression signal, not just experiment metadata. Get a section_data_set_id from AllenBrain_get_expression_datasets. Example: section_data_set_id=75457539 (a Gad1 mouse-brain ISH dataset) returns 2406 per-structure rows.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "section_data_set_id": {
+          "type": "integer",
+          "description": "Allen Brain Atlas SectionDataSet (ISH experiment) ID. Get one from AllenBrain_get_expression_datasets. Example: 75457539 (a Gad1 mouse-brain ISH dataset)."
+        },
+        "include_structure": {
+          "type": "boolean",
+          "description": "Whether to include the linked brain structure record (acronym, name, hierarchy) for each row. Default: true.",
+          "default": true
+        },
+        "num_rows": {
+          "type": "integer",
+          "description": "Max per-structure rows to return. There are ~2400 structures per dataset. Default: 50.",
+          "default": 50
+        }
+      },
+      "required": [
+        "section_data_set_id"
+      ]
+    },
+    "fields": {
+      "query_type": "structure_unionize"
+    },
+    "type": "AllenBrainTool",
+    "test_examples": [
+      {
+        "section_data_set_id": 75457539,
+        "num_rows": 3
+      },
+      {
+        "section_data_set_id": 75457539,
+        "include_structure": false,
+        "num_rows": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Per-structure quantified expression values for the ISH dataset",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "StructureUnionize record ID"
+                  },
+                  "section_data_set_id": {
+                    "type": "integer",
+                    "description": "Source ISH experiment (SectionDataSet) ID"
+                  },
+                  "structure_id": {
+                    "type": "integer",
+                    "description": "Allen Brain Atlas structure (brain region) ID"
+                  },
+                  "expression_energy": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Expression energy = sum of expressing pixel intensity / total pixels (intensity x density)"
+                  },
+                  "expression_density": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Fraction of pixels in the structure that express the gene"
+                  },
+                  "sum_expressing_pixels": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Total number of expressing pixels in the structure"
+                  },
+                  "sum_expressing_pixel_intensity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sum_pixels": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sum_pixel_intensity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "voxel_energy_mean": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "voxel_energy_cv": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "structure": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Linked brain structure record (present when include_structure=true)",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "acronym": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "section_data_set_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

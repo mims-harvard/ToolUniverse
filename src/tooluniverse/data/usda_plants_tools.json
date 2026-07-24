@@ -1,0 +1,399 @@
+[
+    {
+        "name": "USDA_plants_get_profile",
+        "description": "Get a USDA PLANTS Database profile for a plant by its PLANTS symbol (e.g. 'ABBA' = balsam fir): scientific name, common name, taxonomic group/rank, duration (annual/perennial), growth habits (tree/shrub/forb), native status, synonyms, and US distribution FIPS codes. Authoritative US plant taxonomy. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": "string", "description": "USDA PLANTS symbol, e.g. 'ABBA' (balsam fir), 'ACRU' (red maple), 'QUAL' (white oak)."}
+        }, "required": ["symbol"]},
+        "fields": {"timeout": 30},
+        "type": "USDAPlantsProfileTool",
+        "test_examples": [{"symbol": "ABBA"}, {"symbol": "ACRU"}, {"symbol": "QUAL"}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "USDA_plants_get_characteristics",
+        "description": "Get the USDA PLANTS morphology/physiology, growth-requirement, and reproduction characteristics for a plant by its PLANTS symbol (e.g. 'ABBA'). Returns a list of characteristic name/value/category entries (e.g. active growth period, shade tolerance, drought tolerance, mature height, bloom period). Resolves the symbol to the plant id automatically. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": "string", "description": "USDA PLANTS symbol, e.g. 'ABBA', 'ACRU'."}
+        }, "required": ["symbol"]},
+        "fields": {"timeout": 30},
+        "type": "USDAPlantsCharacteristicsTool",
+        "test_examples": [{"symbol": "ABBA"}, {"symbol": "ACRU"}, {"symbol": "QUAL"}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "USDA_plants_search_by_name",
+        "description": "Resolve a plant scientific name, common name, or genus to USDA PLANTS symbol(s). The other USDA PLANTS tools (USDA_plants_get_profile, USDA_plants_get_characteristics) require a PLANTS symbol (e.g. 'ABBA') as input; use this tool first when you only know the plant by name. Returns a list of matching plants, each with its Symbol, ScientificName, CommonName, and Rank (Species/Genus/Variety). Example: 'white oak' -> QUAR / Quercus arizonica (Arizona white oak); 'red maple' -> ACRU / Acer rubrum; 'Quercus' -> QUERC (Genus). No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "searchText": {"type": "string", "description": "Plant scientific name, common name, or genus to search. Examples: 'white oak', 'red maple', 'Quercus', 'Acer rubrum'."},
+            "limit": {"type": ["integer", "null"], "description": "Maximum number of matches to return (default 25, max 200)."}
+        }, "required": ["searchText"]},
+        "fields": {"timeout": 30, "action": "search"},
+        "type": "USDAPlantsProfileTool",
+        "test_examples": [{"searchText": "white oak"}, {"searchText": "red maple"}, {"searchText": "Quercus"}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "USDA_plants_get_wetland_status",
+        "description": "Get USACE wetland indicator status by geographic region for a plant from the USDA PLANTS Database. Returns the wetland indicator code per region: OBL (obligate wetland), FACW (facultative wetland), FAC (facultative), FACU (facultative upland), or UPL (upland). Core data for wetland delineation, restoration ecology, and Clean Water Act jurisdictional determinations. Provide a PLANTS 'symbol' (e.g. 'TYLA' = common cattail, resolved to its plant Id automatically) or a numeric 'id' directly. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": ["string", "null"], "description": "USDA PLANTS symbol, e.g. 'TYLA' (Typha latifolia / common cattail). Resolved to the plant Id automatically. Use USDA_plants_search_by_name to find a symbol from a name."},
+            "id": {"type": ["integer", "null"], "description": "Numeric USDA PLANTS Id (e.g. 27001). Use instead of 'symbol' if known."}
+        }, "required": []},
+        "fields": {"timeout": 30, "action": "wetland"},
+        "type": "USDAPlantsProfileTool",
+        "test_examples": [{"symbol": "TYLA"}, {"id": 27001}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "wetland_designations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "region": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "sub_region": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "wetland_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "USDA_plants_get_invasive_status",
+        "description": "Get state-by-state invasive and noxious-weed legal status for a plant from the USDA PLANTS Database. Returns per-jurisdiction invasive listings (e.g. 'Invasive', 'Potentially Invasive', 'Prohibited' by state) and federal/state noxious-weed statuses. Critical for agriculture, land management, and regulatory compliance. Provide a PLANTS 'symbol' (e.g. 'PUMO' = kudzu, resolved to its plant Id automatically) or a numeric 'id' directly. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": ["string", "null"], "description": "USDA PLANTS symbol, e.g. 'PUMO' (Pueraria montana / kudzu). Resolved to the plant Id automatically. Use USDA_plants_search_by_name to find a symbol from a name."},
+            "id": {"type": ["integer", "null"], "description": "Numeric USDA PLANTS Id (e.g. 82047). Use instead of 'symbol' if known."}
+        }, "required": []},
+        "fields": {"timeout": 30, "action": "invasive"},
+        "type": "USDAPlantsProfileTool",
+        "test_examples": [{"symbol": "PUMO"}, {"id": 82047}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "invasive": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "locality_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "common_names": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "statuses": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "noxious": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "locality_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "common_names": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "statuses": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "invasive"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "USDA_plants_get_wildlife_value",
+        "description": "Get wildlife food and cover value ratings for a plant from the USDA PLANTS Database. Returns forage/cover importance ratings (e.g. Minor, Low, Moderate, High) to large mammals, small mammals, water birds, and terrestrial birds, by source, plus the cited sources. Used in habitat/restoration and conservation planning. Provide a PLANTS 'symbol' (e.g. 'SANIC4' = elderberry, resolved to its plant Id automatically) or a numeric 'id' directly. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": ["string", "null"], "description": "USDA PLANTS symbol, e.g. 'SANIC4' (Sambucus nigra ssp. canadensis / elderberry). Resolved to the plant Id automatically. Use USDA_plants_search_by_name to find a symbol from a name."},
+            "id": {"type": ["integer", "null"], "description": "Numeric USDA PLANTS Id (e.g. 42834). Use instead of 'symbol' if known."}
+        }, "required": []},
+        "fields": {"timeout": 30, "action": "wildlife"},
+        "type": "USDAPlantsProfileTool",
+        "test_examples": [{"symbol": "SANIC4"}, {"id": 42834}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "food": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "large_mammals": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "small_mammals": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "water_birds": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "terrestrial_birds": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "cover": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "large_mammals": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "small_mammals": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "water_birds": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "terrestrial_birds": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              },
+              "required": [
+                "food"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    }
+]

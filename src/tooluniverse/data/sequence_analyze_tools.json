@@ -164,7 +164,7 @@
   {
     "name": "Sequence_stats",
     "type": "SequenceAnalyzeTool",
-    "description": "Compute basic statistics for a DNA, RNA, or protein sequence. Auto-detects sequence type, reports length, full composition, and type-specific metrics (GC% for nucleotides, estimated molecular weight for proteins). Accepts sequence string or UniProt accession.",
+    "description": "Compute basic statistics for a DNA, RNA, or protein sequence. Auto-detects sequence type, reports length, full composition, and type-specific metrics (GC% for nucleotides, estimated monoisotopic molecular weight for proteins -- for the conventional average mass reported by ExPASy ProtParam/UniProt, use ProtParam_calculate instead). Accepts sequence string or UniProt accession.",
     "parameter": {
       "type": "object",
       "properties": {

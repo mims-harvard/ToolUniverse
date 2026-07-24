@@ -161,12 +161,40 @@ class ReactomeContentTool(BaseTool):
         response.raise_for_status()
         events = response.json()
 
-        # Count event types (some elements may be plain integer DB IDs, skip those)
+        # Fix-R18B-1: Reactome's containedEvents endpoint mixes full event
+        # dicts with plain integer DB IDs for some sub-pathways -- confirmed
+        # live for R-HSA-2219528 ("PI3K/AKT Signaling in Cancer"), where 2 of
+        # its 3 real sub-pathways (R-HSA-5674400, R-HSA-2219530) came back as
+        # bare ints. Silently skipping them (as before) both dropped real
+        # sub-pathways from the hierarchy and made total_events disagree with
+        # pathway_count + reaction_count. Batch-resolve any bare IDs via the
+        # /data/query/ids endpoint (confirmed live it accepts a comma-joined
+        # list and returns full records with schemaClass) instead of
+        # discarding them.
+        bare_ids = [e for e in events if not isinstance(e, dict)]
+        resolved_by_id = {}
+        if bare_ids:
+            ids_response = requests.post(
+                f"{REACTOME_CS_BASE_URL}/data/query/ids",
+                headers={
+                    "Accept": "application/json",
+                    "Content-Type": "text/plain",
+                },
+                data=",".join(str(i) for i in bare_ids),
+                timeout=self.timeout,
+            )
+            if ids_response.ok:
+                for item in ids_response.json():
+                    if isinstance(item, dict) and item.get("dbId") is not None:
+                        resolved_by_id[item["dbId"]] = item
+
         pathways = []
         reactions = []
         for e in events:
             if not isinstance(e, dict):
-                continue
+                e = resolved_by_id.get(e)
+                if e is None:
+                    continue
             schema = e.get("schemaClass", "")
             entry = {
                 "stId": e.get("stId"),
@@ -211,50 +239,45 @@ class ReactomeContentTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        # Extract sub-events
-        sub_events = []
-        for e in data.get("hasEvent", []):
-            sub_events.append(
-                {
-                    "stId": e.get("stId"),
-                    "name": e.get("displayName"),
-                    "schemaClass": e.get("schemaClass"),
-                }
-            )
+        # Extract sub-events (defensive: Reactome occasionally returns ints
+        # in hasEvent for terminal references — only descend into dicts).
+        sub_events = [
+            {
+                "stId": e.get("stId"),
+                "name": e.get("displayName"),
+                "schemaClass": e.get("schemaClass"),
+            }
+            for e in data.get("hasEvent", [])
+            if isinstance(e, dict)
+        ]
 
         # Extract literature
-        literature = []
-        for ref in data.get("literatureReference", []):
-            literature.append(
-                {
-                    "title": ref.get("title"),
-                    "pubMedIdentifier": ref.get("pubMedIdentifier"),
-                    "year": ref.get("year"),
-                    "journal": ref.get("journal", {}).get("title")
-                    if isinstance(ref.get("journal"), dict)
-                    else None,
-                }
-            )
+        literature = [
+            {
+                "title": ref.get("title"),
+                "pubMedIdentifier": ref.get("pubMedIdentifier"),
+                "year": ref.get("year"),
+                "journal": ref.get("journal", {}).get("title")
+                if isinstance(ref.get("journal"), dict)
+                else None,
+            }
+            for ref in data.get("literatureReference", [])
+            if isinstance(ref, dict)
+        ]
 
         # Extract GO terms
         go_terms = []
         go_bp = data.get("goBiologicalProcess")
-        if go_bp:
-            if isinstance(go_bp, list):
-                for g in go_bp:
-                    go_terms.append(
-                        {
-                            "accession": g.get("accession"),
-                            "name": g.get("displayName"),
-                        }
-                    )
-            elif isinstance(go_bp, dict):
-                go_terms.append(
-                    {
-                        "accession": go_bp.get("accession"),
-                        "name": go_bp.get("displayName"),
-                    }
-                )
+        if isinstance(go_bp, list):
+            go_terms.extend(
+                {"accession": g.get("accession"), "name": g.get("displayName")}
+                for g in go_bp
+                if isinstance(g, dict)
+            )
+        elif isinstance(go_bp, dict):
+            go_terms.append(
+                {"accession": go_bp.get("accession"), "name": go_bp.get("displayName")}
+            )
 
         # Extract summation (description)
         summation = ""

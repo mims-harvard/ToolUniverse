@@ -1,0 +1,192 @@
+[
+  {
+    "name": "IUPred3_predict_disorder",
+    "type": "IUPred3Tool",
+    "description": "Predict intrinsically disordered protein regions from sequence using the IUPred3 algorithm. Input a UniProt accession or ID (e.g. P04637 for human p53). Returns per-residue disorder scores (0-1, higher = more disordered), predicted disordered region segments (score >= 0.5), and summary statistics. The 'anchor' type additionally returns ANCHOR2 protein-binding region scores; 'redox' returns redox-state-dependent disorder. Unlike MobiDB/DisProt (database lookups), this runs the IUPred prediction on demand. No authentication required. Note: IUPred3 is free for academic/non-commercial use; commercial use requires a license from the authors.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "UniProt accession or entry ID, e.g. 'P04637' (human p53) or 'TP53_HUMAN'. The IUPred3 server links to the latest UniProt release and fetches the sequence automatically."
+        },
+        "iupred_type": {
+          "type": "string",
+          "enum": [
+            "long",
+            "short",
+            "anchor",
+            "glob",
+            "redox"
+          ],
+          "description": "Prediction mode. 'long' (default) = long disordered regions; 'short' = short disorder (e.g. missing PDB residues); 'anchor' = long disorder plus ANCHOR2 binding-region scores; 'glob' = globular-domain-aware disorder; 'redox' = redox-state-dependent disorder."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Successful disorder prediction (content of the data field).",
+              "properties": {
+                "accession": {
+                  "type": "string"
+                },
+                "iupred_type": {
+                  "type": "string"
+                },
+                "sequence_length": {
+                  "type": "integer"
+                },
+                "mean_disorder_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Mean per-residue disorder score (0-1)"
+                },
+                "disordered_residues": {
+                  "type": "integer",
+                  "description": "Count of residues with disorder score >= 0.5"
+                },
+                "disordered_fraction": {
+                  "type": "number",
+                  "description": "Fraction of the sequence predicted disordered"
+                },
+                "disordered_regions": {
+                  "type": "array",
+                  "description": "Contiguous disordered segments (score >= 0.5), 1-based inclusive positions.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "end": {
+                        "type": "integer"
+                      },
+                      "length": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "anchor_binding_regions": {
+                  "type": "array",
+                  "description": "ANCHOR2 protein-binding regions (only present when iupred_type='anchor').",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "end": {
+                        "type": "integer"
+                      },
+                      "length": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "redox_sensitive_regions": {
+                  "type": "array",
+                  "description": "Redox-sensitive regions (only present when iupred_type='redox')."
+                },
+                "per_residue": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "position": {
+                        "type": "integer"
+                      },
+                      "residue": {
+                        "type": "string"
+                      },
+                      "disorder_score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "anchor_score": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "sequence": {
+                  "type": "string",
+                  "description": "The amino acid sequence used for prediction"
+                }
+              },
+              "required": [
+                "accession",
+                "iupred_type",
+                "sequence_length",
+                "disordered_regions",
+                "per_residue"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response.",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "accession": "P04637"
+      },
+      {
+        "accession": "P04637",
+        "iupred_type": "anchor"
+      },
+      {
+        "accession": "P38398",
+        "iupred_type": "short"
+      }
+    ],
+    "label": [
+      "IUPred3",
+      "Protein Disorder",
+      "Intrinsically Disordered Regions",
+      "Sequence Analysis"
+    ],
+    "metadata": {
+      "tags": [
+        "protein disorder",
+        "IDR",
+        "IUPred3",
+        "ANCHOR2",
+        "sequence prediction",
+        "intrinsically disordered"
+      ],
+      "estimated_execution_time": "1-5 seconds"
+    }
+  }
+]

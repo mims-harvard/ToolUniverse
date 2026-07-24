@@ -378,6 +378,493 @@
     }
   },
   {
+    "name": "ReactomeAnalysis_expression_analysis",
+    "description": "Quantitative EXPRESSION analysis: map fold-change or numeric expression values onto Reactome pathways (analysis type=EXPRESSION). Unlike ReactomeAnalysis_pathway_enrichment (which only accepts a plain newline-separated identifier list and runs overrepresentation), this tool submits TAB-DELIMITED 'GENE\\tVALUE' rows so Reactome treats the input as an expression matrix and overlays each value per pathway. Each returned pathway carries 'entities_exp' (the matched expression values for that pathway) and the result reports the expression column names plus the min/max of the submitted values. Example: submitting 'PTEN\\t2.5\\nTP53\\t-1.8\\nEGFR\\t3.1' returns analysis_type=EXPRESSION with pathways such as 'Regulation of TP53 Expression' carrying entities_exp=[-1.8].",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "string",
+          "description": "Tab-delimited expression rows, one identifier per line as 'GENE<TAB>VALUE'. Newline-separated rows. Gene symbols, UniProt, or Ensembl IDs in the first column; numeric fold-change/expression value(s) in following tab-separated column(s). Example: 'PTEN\\t2.5\\nTP53\\t-1.8\\nEGFR\\t3.1'."
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of pathways to return (default 20, max 50)."
+        },
+        "include_disease": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Include disease pathways in results (default true)."
+        },
+        "projection": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Project identifiers to human pathways via orthology (default false; set true for non-human input)."
+        }
+      },
+      "required": [
+        "identifiers"
+      ]
+    },
+    "fields": {
+      "endpoint": "expression_analysis"
+    },
+    "type": "ReactomeAnalysisTool",
+    "test_examples": [
+      {
+        "identifiers": "PTEN\t2.5\nTP53\t-1.8\nEGFR\t3.1",
+        "page_size": 2
+      },
+      {
+        "identifiers": "TP53\t-1.8\nBRCA1\t2.2\nEGFR\t3.1\nKRAS\t-0.5",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "analysis_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Expected to be EXPRESSION"
+                },
+                "expression_column_names": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Names of the submitted expression value columns"
+                },
+                "expression_min": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "expression_max": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "identifiers_not_found": {
+                  "type": "integer"
+                },
+                "pathways_found": {
+                  "type": "integer"
+                },
+                "pathways": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pathway_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "entities_found": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "entities_exp": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "number"
+                        },
+                        "description": "Matched expression values overlaid on this pathway"
+                      },
+                      "p_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "fdr": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ReactomeAnalysis_species_comparison_v2",
+    "description": "True cross-species pathway comparison (analysis type=SPECIES_COMPARISON). Compares one species' pathways against another species by orthology projection using Reactome's genuine /species/{source}/{target} endpoint. This differs from ReactomeAnalysis_species_comparison (which actually runs overrepresentation on a submitted identifier list and ignores its species argument): this tool takes NO identifier list - it compares the ENTIRE pathway set of the source species against the target species given by its Reactome species dbId. Returns analysis_type=SPECIES_COMPARISON, total pathways found, and the count of identifiers not found (orthology gaps). Example: species=48892 (Mus musculus dbId), source_species=homoSapiens compares human vs mouse and returns pathwaysFound=2709 with identifiers_not_found=510.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "integer",
+          "description": "Reactome species dbId of the species to compare against the source. NOTE: this is the Reactome dbId, not the NCBI taxonomy id. Example: 48892 = Mus musculus, 49646 = Rattus norvegicus, 68323 = Danio rerio."
+        },
+        "source_species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source species name in Reactome lowerCamelCase form (default 'homoSapiens'). Examples: 'homoSapiens', 'musMusculus'."
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of pathways to return (default 20, max 50)."
+        }
+      },
+      "required": [
+        "species"
+      ]
+    },
+    "fields": {
+      "endpoint": "species_comparison_v2"
+    },
+    "type": "ReactomeAnalysisTool",
+    "test_examples": [
+      {
+        "species": 48892,
+        "page_size": 3
+      },
+      {
+        "species": 49646,
+        "source_species": "homoSapiens",
+        "page_size": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "analysis_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Expected to be SPECIES_COMPARISON"
+                },
+                "identifiers_not_found": {
+                  "type": "integer"
+                },
+                "pathways_found": {
+                  "type": "integer"
+                },
+                "pathways": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pathway_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "entities_found": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "p_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "fdr": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ReactomeAnalysis_pathway_found_entities",
+    "description": "Per-pathway found-entities drill-down: for an analysis token and a specific HIT pathway, list exactly which submitted identifiers matched that pathway and their Reactome cross-references (UniProt/ENSEMBL ids each input mapsTo). Standard token result tools return only the pathway summary table - they never reveal WHICH of your genes landed in a given pathway. Obtain the token from ReactomeAnalysis_pathway_enrichment / _expression_analysis (data.token), then pass that token plus a pathway stable id. Example: token from submitting PTEN,TP53,EGFR,BRCA1 with pathway 'R-HSA-3700989' returns identifiers including {id:'BRCA1', mapsTo:[{resource:'UNIPROT', ids:['P38398']},{resource:'ENSEMBL', ids:['ENST00000357654','ENSG00000012048']}]}.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Analysis token from a previous ReactomeAnalysis_pathway_enrichment or ReactomeAnalysis_expression_analysis call (the 'token' field in its data). Tokens expire after a period, so run the analysis first."
+        },
+        "pathway": {
+          "type": "string",
+          "description": "Reactome pathway stable id of a hit pathway from the analysis result (e.g. 'R-HSA-3700989')."
+        },
+        "resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Resource to map entities against (default 'TOTAL'). Other options: 'UNIPROT', 'ENSEMBL'."
+        }
+      },
+      "required": [
+        "token",
+        "pathway"
+      ]
+    },
+    "fields": {
+      "endpoint": "found_entities"
+    },
+    "type": "ReactomeAnalysisTool",
+    "test_examples": [],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "pathway": {
+                  "type": "string"
+                },
+                "found": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "total_entities_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "resources": {
+                  "type": "array"
+                },
+                "identifiers": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "exp": {
+                        "type": "array"
+                      },
+                      "mapsTo": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "resource": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "ids": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ReactomeAnalysis_not_found_identifiers",
+    "description": "List of submitted identifiers that did NOT map to any Reactome entity for an analysis token (mapping QC). Standard token result tools expose only a COUNT of unmatched identifiers (identifiers_not_found) but not the actual list, so users cannot see which inputs failed to map. Obtain the token from ReactomeAnalysis_pathway_enrichment / _expression_analysis / _species_comparison_v2 (data.token), then this tool returns the explicit unmapped identifier strings plus their count. Example: a run including junk ids like 'NOTAGENE123' and 'XYZZYFAKE' returns not_found=['NOTAGENE123','XYZZYFAKE']; an all-mapping run returns an empty list with not_found_count=0.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Analysis token from a previous ReactomeAnalysis_pathway_enrichment, _expression_analysis, or _species_comparison_v2 call (the 'token' field in its data). Tokens expire after a period, so run the analysis first."
+        }
+      },
+      "required": [
+        "token"
+      ]
+    },
+    "fields": {
+      "endpoint": "not_found_identifiers"
+    },
+    "type": "ReactomeAnalysisTool",
+    "test_examples": [],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string"
+                },
+                "not_found_count": {
+                  "type": "integer"
+                },
+                "not_found": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
     "name": "ReactomeAnalysis_token_result",
     "description": "Retrieve previously computed Reactome pathway analysis results using an analysis token. Tokens are returned from pathway_enrichment or species_comparison analyses and can be used to access results without rerunning the analysis. Useful for paginating through large result sets or sharing analysis results. The token contains the full analysis result and is valid for a limited time.",
     "parameter": {

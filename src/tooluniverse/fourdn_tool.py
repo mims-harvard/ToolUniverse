@@ -14,6 +14,32 @@ from .tool_registry import register_tool
 FOURDN_BASE_URL = "https://data.4dnucleome.org"
 
 
+def _format_request_error(exc: Exception) -> Dict[str, Any]:
+    """Turn a request exception into an actionable error payload.
+
+    The 4DN portal has periodically served an expired TLS certificate
+    (a server-side operational lapse, not a client problem). Detect that
+    case and explain it instead of leaking a raw connection-pool traceback,
+    so a caller knows the failure is transient and infrastructure-side rather
+    than a malformed query. Certificate verification is never disabled.
+    """
+    msg = str(exc)
+    if "CERTIFICATE_VERIFY_FAILED" in msg or "certificate has expired" in msg:
+        return {
+            "status": "error",
+            "data": {
+                "error": (
+                    "The 4DN Data Portal (data.4dnucleome.org) is presenting an "
+                    "invalid/expired TLS certificate, so the request could not be "
+                    "completed securely. This is a transient server-side issue at "
+                    "4DN, not a problem with the query -- retry later or check "
+                    "https://data.4dnucleome.org status."
+                )
+            },
+        }
+    return {"status": "error", "data": {"error": msg}}
+
+
 @register_tool("FourDNTool")
 class FourDNTool(BaseTool):
     """
@@ -24,7 +50,14 @@ class FourDNTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
         try:
-            operation = arguments.get("operation", "search")
+            # Fix-R39A-2: "operation" is optional in the schema (each config
+            # exposes exactly one valid value via enum+default), so a caller
+            # who omits it must still resolve to that tool instance's own
+            # operation -- the old bare "search" literal fallback was only
+            # coincidentally correct for FourDN_search_data and would
+            # silently mis-route the other 3 tools to a search instead of
+            # their own operation.
+            operation = arguments.get("operation") or self.get_schema_const_operation()
 
             if operation == "search":
                 return self._search(arguments)
@@ -41,7 +74,7 @@ class FourDNTool(BaseTool):
                 }
 
         except Exception as e:
-            return {"status": "error", "data": {"error": str(e)}}
+            return _format_request_error(e)
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search 4DN data portal for files or experiments."""
@@ -79,7 +112,7 @@ class FourDNTool(BaseTool):
             return {"status": "success", "data": result}
 
         except Exception as e:
-            return {"status": "error", "data": {"error": str(e)}}
+            return _format_request_error(e)
 
     def _get_file_metadata(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get metadata for a specific file."""
@@ -131,7 +164,7 @@ class FourDNTool(BaseTool):
             return {"status": "success", "data": result}
 
         except Exception as e:
-            return {"status": "error", "data": {"error": str(e)}}
+            return _format_request_error(e)
 
     def _get_experiment_metadata(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get metadata for a specific experiment."""
@@ -202,7 +235,7 @@ class FourDNTool(BaseTool):
             return {"status": "success", "data": result}
 
         except Exception as e:
-            return {"status": "error", "data": {"error": str(e)}}
+            return _format_request_error(e)
 
     def _download_file_url(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get download URL for file (requires authentication)."""
@@ -234,4 +267,4 @@ class FourDNTool(BaseTool):
             return {"status": "success", "data": result}
 
         except Exception as e:
-            return {"status": "error", "data": {"error": str(e)}}
+            return _format_request_error(e)

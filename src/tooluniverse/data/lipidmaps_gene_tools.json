@@ -1,0 +1,356 @@
+[
+  {
+    "name": "LipidMaps_get_gene",
+    "description": "Look up a lipid-metabolism gene in the LIPID MAPS Proteome Database (LMPD). Resolves a gene to its LMPD record (gene name, synonyms, alternative names, chromosome, cytogenetic map location, NCBI summary, and species). Set input_item to the namespace of input_value: 'gene_symbol' (e.g. 'FASN'), 'gene_id' (NCBI Gene ID, e.g. '2194'), 'gene_name' (exact gene-name substring), or 'lmp_id' (LIPID MAPS protein id, e.g. 'LMP002507'). A gene_symbol may match multiple species (e.g. 'FASN' returns mouse LMP001577 and human LMP002507); all matches are returned as a list. Use this for lipid-related enzymes such as fatty acid synthase (FASN) or stearoyl-CoA desaturase (SCD). Complements the LipidMaps_get_compound_* structure tools, which cover lipids, not the genes/enzymes that make them.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_value": {
+          "type": "string",
+          "description": "The gene identifier value to resolve, e.g. 'FASN' (gene symbol), '2194' (NCBI Gene ID), or 'LMP002507' (LIPID MAPS protein id)."
+        },
+        "input_item": {
+          "type": "string",
+          "description": "Namespace of input_value. One of: 'gene_symbol', 'gene_id', 'gene_name', 'lmp_id'.",
+          "enum": [
+            "gene_symbol",
+            "gene_id",
+            "gene_name",
+            "lmp_id"
+          ],
+          "default": "gene_symbol"
+        },
+        "output_item": {
+          "type": "string",
+          "description": "Which fields to return. 'all' (default) returns the complete record; a single field name (e.g. 'gene_name', 'summary', 'chromosome') returns just that field.",
+          "default": "all"
+        }
+      },
+      "required": [
+        "input_value"
+      ]
+    },
+    "fields": {
+      "context": "gene",
+      "input_item": "gene_symbol"
+    },
+    "type": "LipidMapsGeneTool",
+    "test_examples": [
+      {
+        "input_value": "FASN",
+        "input_item": "gene_symbol"
+      },
+      {
+        "input_value": "2194",
+        "input_item": "gene_id"
+      },
+      {
+        "input_value": "LMP002507",
+        "input_item": "lmp_id"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "lmp_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_synonyms": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "alt_names": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chromosome": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "map_location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "taxid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species_long": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error envelope returned when the request fails.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "LipidMaps_get_protein",
+    "description": "Look up a lipid-metabolism protein/enzyme in the LIPID MAPS Proteome Database (LMPD). Resolves a protein to its LMPD record including gene symbol/name, species, and cross-references (UniProt accession, RefSeq protein id, mRNA RefSeq id, protein GI, UniProt entry name) plus the amino-acid sequence. Set input_item to the namespace of input_value: 'uniprot_id' (e.g. 'P49327'), 'gene_symbol' (e.g. 'SCD'), 'gene_id' (NCBI Gene ID), 'refseq_id' (RefSeq protein id, e.g. 'NP_004095'), 'mrna_id' (RefSeq mRNA id), 'protein_entry' (UniProt entry name, e.g. 'FAS_HUMAN'), or 'lmp_id' (LIPID MAPS protein id). A gene_symbol may match multiple species; all matches are returned as a list. Use this to map a lipid-related enzyme (e.g. fatty acid synthase, stearoyl-CoA desaturase) to its sequence and database cross-references.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_value": {
+          "type": "string",
+          "description": "The protein identifier value to resolve, e.g. 'P49327' (UniProt), 'NP_004095' (RefSeq protein), 'SCD' (gene symbol), or 'LMP002507' (LIPID MAPS protein id)."
+        },
+        "input_item": {
+          "type": "string",
+          "description": "Namespace of input_value. One of: 'uniprot_id', 'gene_symbol', 'gene_id', 'gene_name', 'refseq_id', 'mrna_id', 'protein_entry', 'lmp_id'.",
+          "enum": [
+            "uniprot_id",
+            "gene_symbol",
+            "gene_id",
+            "gene_name",
+            "refseq_id",
+            "mrna_id",
+            "protein_entry",
+            "lmp_id"
+          ],
+          "default": "uniprot_id"
+        },
+        "output_item": {
+          "type": "string",
+          "description": "Which fields to return. 'all' (default) returns the complete record; a single field name (e.g. 'uniprot_id', 'protein_name', 'seq') returns just that field.",
+          "default": "all"
+        }
+      },
+      "required": [
+        "input_value"
+      ]
+    },
+    "fields": {
+      "context": "protein",
+      "input_item": "uniprot_id"
+    },
+    "type": "LipidMapsGeneTool",
+    "test_examples": [
+      {
+        "input_value": "P49327",
+        "input_item": "uniprot_id"
+      },
+      {
+        "input_value": "SCD",
+        "input_item": "gene_symbol"
+      },
+      {
+        "input_value": "NP_004095",
+        "input_item": "refseq_id"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "lmp_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "uniprot_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_entry": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "refseq_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mrna_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_gi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "seqlength": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "seq": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "taxid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species_long": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error envelope returned when the request fails.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

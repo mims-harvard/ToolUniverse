@@ -240,6 +240,70 @@
   },
   {
     "type": "BioModelsRESTTool",
+    "name": "BioModels_list_all_model_ids",
+    "description": "Enumerate ALL BioModels model identifiers - the complete registry of curated (BIOMD...) and non-curated (MODEL...) model IDs. Unlike biomodels_search (keyword search) or BioModels_search_parameters, this returns the full catalog of model IDs so you can iterate over every model in BioModels. Returns a 'hits' count and a 'models' array of identifier strings (e.g. 'BIOMD0000000001'). Use the returned IDs with BioModels_get_model, BioModels_list_files, or BioModels_download_model. The full registry currently contains ~3190 model identifiers.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biomodels/model/identifiers",
+      "method": "GET",
+      "params": {
+        "format": "json"
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "hits": {
+                  "type": "integer",
+                  "description": "Total number of model identifiers in the registry"
+                },
+                "models": {
+                  "type": "array",
+                  "description": "Array of all BioModels identifier strings",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "type": "BioModelsRESTTool",
     "name": "BioModels_search_parameters",
     "description": "Search for specific parameters within BioModels entries. Find models containing parameters matching your query (e.g., reaction rates, initial concentrations, kinetic constants). Returns models with parameter names, values, and units. Essential for finding models with specific parameter values or discovering parameter ranges across multiple models. Use this for comparative analysis or parameter estimation studies.",
     "parameter": {

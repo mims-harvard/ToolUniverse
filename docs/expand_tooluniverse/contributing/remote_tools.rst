@@ -65,6 +65,7 @@ Step 3: Create MCP Server
 Create server directory: ``src/tooluniverse/remote/my_service/``
 
 **Server Structure:**
+
 .. code-block:: text
 
    src/tooluniverse/remote/my_service/
@@ -76,6 +77,7 @@ Create server directory: ``src/tooluniverse/remote/my_service/``
    └── docker-compose.yml     # Optional: Docker setup
 
 **Example server.py:**
+
 .. code-block:: python
 
    from fastapi import FastAPI
@@ -113,6 +115,7 @@ Create server directory: ``src/tooluniverse/remote/my_service/``
        uvicorn.run(app, host="0.0.0.0", port=8000)
 
 **requirements.txt:**
+
 .. code-block:: text
 
    fastapi>=0.100.0
@@ -182,6 +185,7 @@ Step 5: Deploy Server
 - Document requirements and dependencies
 
 **Example deployment documentation (README.md):**
+
 .. code-block:: markdown
 
    # My Service MCP Server
@@ -285,6 +289,7 @@ Create ``tests/integration/test_my_remote_tool.py``:
            assert "my_remote_tool" in self.tu.all_tool_dict
 
 Run tests:
+
 .. code-block:: bash
 
    pytest tests/integration/test_my_remote_tool.py -v
@@ -304,6 +309,7 @@ Step 8: Documentation
 ~~~~~~~~~~~~~~~~~~~~~
 
 **Server Documentation (README.md):**
+
 .. code-block:: markdown
 
    # My Service
@@ -401,6 +407,7 @@ Step 10: Submit Pull Request
    git push origin feature/add-my-remote-tool
 
 **PR Template:**
+
 .. code-block:: markdown
 
    ## Description
@@ -445,14 +452,31 @@ Step 10: Submit Pull Request
 Key Differences from Local Tools
 ---------------------------------
 
-| Aspect | Local Tools | Remote Tools |
-|--------|-------------|--------------|
-| **__init__.py** | Must modify 4 locations | No modification needed |
-| **File Location** | ``src/tooluniverse/xxx_tool.py`` | ``src/tooluniverse/remote/xxx/`` |
-| **Config Location** | ``data/xxx_tools.json`` | ``data/remote_tools/xxx_tools.json`` |
-| **Server Deployment** | Not needed | Must provide public access |
-| **Testing** | Unit tests | Integration tests (mock server) |
-| **Dependencies** | Python only | Server + dependencies |
+.. list-table::
+   :header-rows: 1
+   :widths: 22 39 39
+
+   * - Aspect
+     - Local Tools
+     - Remote Tools
+   * - **__init__.py**
+     - Must modify 4 locations
+     - No modification needed
+   * - **File Location**
+     - ``src/tooluniverse/xxx_tool.py``
+     - ``src/tooluniverse/remote/xxx/``
+   * - **Config Location**
+     - ``data/xxx_tools.json``
+     - ``data/remote_tools/xxx_tools.json``
+   * - **Server Deployment**
+     - Not needed
+     - Must provide public access
+   * - **Testing**
+     - Unit tests
+     - Integration tests (mock server)
+   * - **Dependencies**
+     - Python only
+     - Server + dependencies
 
 Common Mistakes
 ----------------

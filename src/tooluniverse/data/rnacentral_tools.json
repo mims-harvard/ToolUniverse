@@ -95,5 +95,147 @@
       "tags": ["rna", "accession", "annotation"],
       "estimated_execution_time": "< 2 seconds"
     }
+  },
+  {
+    "name": "RNAcentral_get_xrefs_and_pubs",
+    "type": "RNAcentralGetTool",
+    "description": "Get the resolved per-source cross-references AND literature for an RNAcentral entry in one call. Returns the full xref list (with database name, taxid, accession id, NCBI gene id, miRBase mature/precursor products, Ensembl/GENCODE transcript ids, RefSeq, etc.) under data.xrefs, and the publications list (title, authors, PMID, DOI) under data.publications. Use after RNAcentral_search or RNAcentral_get_by_accession to map an URS id to external databases and supporting papers. Example: URS000063A371 returns 8 xrefs (database=Rfam, taxid=7955, accession id 'CR381647.10:84955..85035:rfam') and 8 publications (e.g. PMID 12844358, DOI 10.1186/gb-2003-4-7-r42).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "RNAcentral URS identifier (e.g., 'URS000063A371', 'URS000075C808')."
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://rnacentral.org/api/v1/rna/{accession}/[xrefs,publications]",
+      "sub_resources": ["xrefs", "publications"],
+      "format": "json"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "accession": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "xrefs": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "results": {"type": "array", "items": {"type": "object"}}
+                  }
+                },
+                "publications": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "results": {"type": "array", "items": {"type": "object"}}
+                  }
+                }
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"accession": "URS000063A371"}
+    ],
+    "label": ["RNAcentral", "ncRNA", "CrossReference"],
+    "metadata": {
+      "tags": ["rna", "xrefs", "publications", "annotation"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "RNAcentral_get_region_ncRNAs",
+    "type": "RNAcentralGetTool",
+    "description": "List all RNAcentral non-coding RNAs overlapping a genome locus, aggregated from 50+ member databases (miRBase, snoRNA, tRNA, lncRNA, piRNA, etc.). Provide a species (default 'homo_sapiens') and either a 'region' string ('2:39745816-39826679') or discrete 'chromosome'/'start'/'end'. Returns overlapping ncRNA transcripts and their exon features with biotype, strand and coordinates, split into data.transcripts and data.exons. Use to annotate what ncRNAs sit in a region of interest. Public, no authentication.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": ["string", "null"],
+          "description": "Locus as 'chr:start-end' (1-based), e.g. '2:39745816-39826679'. Omit if giving chromosome/start/end."
+        },
+        "species": {
+          "type": ["string", "null"],
+          "description": "Ensembl species slug (default 'homo_sapiens'). E.g. 'mus_musculus', 'danio_rerio'."
+        },
+        "chromosome": {
+          "type": ["string", "null"],
+          "description": "Chromosome name without 'chr' prefix, e.g. '2'. Used with start/end when 'region' is omitted."
+        },
+        "start": {
+          "type": ["integer", "null"],
+          "description": "Region start (1-based). Used with chromosome/end when 'region' is omitted."
+        },
+        "end": {
+          "type": ["integer", "null"],
+          "description": "Region end (1-based). Used with chromosome/start when 'region' is omitted."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://rnacentral.org/api/v1/overlap/region/{species}/{region}",
+      "region_overlap": true,
+      "format": "json"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "species": {"type": "string"},
+            "region": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "features": {"type": "array", "items": {"type": "object"}},
+                "transcripts": {"type": "array", "items": {"type": "object"}},
+                "exons": {"type": "array", "items": {"type": "object"}},
+                "transcript_count": {"type": "integer"},
+                "exon_count": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"region": "2:39745816-39826679", "species": "homo_sapiens"}
+    ],
+    "label": ["RNAcentral", "ncRNA", "GenomeRegion"],
+    "metadata": {
+      "tags": ["rna", "ncrna", "genome", "region", "annotation"],
+      "estimated_execution_time": "< 3 seconds"
+    }
   }
 ]

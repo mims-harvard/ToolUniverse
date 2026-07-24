@@ -85,6 +85,7 @@ npx skills add mims-harvard/ToolUniverse
 | Skill | Description |
 |-------|-------------|
 | `setup-tooluniverse` | Install and configure ToolUniverse (MCP, CLI, or SDK) |
+| `tooluniverse-cs-setup` | Install/update ToolUniverse in **Claude Science** (conda env + pip package + native skill; not MCP) |
 | `create-tooluniverse-skill` | Create new skills with test-driven methodology |
 | `devtu-auto-discover-apis` | Discover life science APIs and create tools automatically |
 | `devtu-create-tool` | Create new scientific tools with proper structure and testing |

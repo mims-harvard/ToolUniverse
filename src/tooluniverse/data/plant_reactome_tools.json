@@ -302,5 +302,207 @@
         }
       ]
     }
+  },
+  {
+    "name": "PlantReactome_get_pathway_participants",
+    "description": "List the gene/protein/molecule participants of a Plant Reactome pathway or reaction (the macromolecules that are IN the pathway), with UniProt accessions and gene names. PlantReactome_get_pathway returns only pathway metadata and 'hasEvent' sub-event IDs, not the participant gene products; use this tool to get the actual genes/proteins. Each participant carries its refEntities, where 'identifier' is the UniProt accession and 'gene_names' lists the gene symbols. Example: R-OSA-1119263 (Arginine biosynthesis, rice) returns 36 participants; the first refEntity is UniProt Q10MK5 with gene names including LOC_OS03G19280. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pathway_id": {
+          "type": "string",
+          "description": "Plant Reactome stable identifier of a pathway or reaction. Format: R-{species_code}-{number}. Example: 'R-OSA-1119263' (Arginine biosynthesis in rice)."
+        }
+      },
+      "required": [
+        "pathway_id"
+      ]
+    },
+    "fields": {
+      "action": "get_participants"
+    },
+    "type": "PlantReactomeTool",
+    "test_examples": [
+      {
+        "pathway_id": "R-OSA-1119263"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pe_db_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "schema_class": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ref_entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "identifier": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "UniProt accession (e.g. Q10MK5)"
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "gene_names": {
+                          "type": [
+                            "array",
+                            "null"
+                          ]
+                        },
+                        "schema_class": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PlantReactome_get_species_pathway_tree",
+    "description": "Retrieve the full hierarchical pathway/event tree for a plant species (top-level pathways down to reactions) in a single call, keyed by NCBI taxonomy id. Lets an agent browse or enumerate the complete pathway catalog for one crop, which keyword search (PlantReactome_search_pathways) and single-pathway fetch (PlantReactome_get_pathway) cannot do. Returns a list of top-level pathways, each with 'stId', 'name', 'type', and nested 'children'. Example: taxId 4530 (Oryza sativa) returns 6 top-level pathways, e.g. 'Cellular processes' (R-OSA-2894886) with nested Cell cycle (R-OSA-9640670). taxId 4577 = maize. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tax_id": {
+          "type": [
+            "string",
+            "integer"
+          ],
+          "description": "NCBI taxonomy id of the plant species. Examples: 4530 (Oryza sativa / rice), 4577 (Zea mays / maize), 3702 (Arabidopsis thaliana)."
+        }
+      },
+      "required": [
+        "tax_id"
+      ]
+    },
+    "fields": {
+      "action": "get_species_tree"
+    },
+    "type": "PlantReactomeTool",
+    "test_examples": [
+      {
+        "tax_id": 4530
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "children": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

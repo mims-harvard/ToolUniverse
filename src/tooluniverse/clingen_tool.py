@@ -14,6 +14,7 @@ gene-disease relationships for use in clinical genomics.
 import requests
 import csv
 import io
+from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -122,14 +123,18 @@ class ClinGenTool(BaseTool):
             # Parse CSV response
             curations = self._parse_csv(response.text)
 
-            # Filter by gene symbol (case-insensitive)
-            # Handle both "GENE SYMBOL" (from CSV) and "Gene Symbol" key formats
+            # Filter by gene symbol (case-insensitive, EXACT match -- this
+            # column holds a single precise HGNC symbol, not free text, and
+            # substring matching silently pulled in unrelated genes whose
+            # symbol happens to contain the query, e.g. "OTC" -> "NOTCH1"/
+            # "NOTCH2" (confirmed live). Mirrors _get_gene_validity's already-
+            # correct exact-match filter above.
             gene_upper = gene.upper()
-            matches = []
-            for c in curations:
-                gene_val = c.get("GENE SYMBOL", c.get("Gene Symbol", ""))
-                if gene_upper in gene_val.upper():
-                    matches.append(c)
+            matches = [
+                c
+                for c in curations
+                if c.get("GENE SYMBOL", c.get("Gene Symbol", "")).upper() == gene_upper
+            ]
 
             return {
                 "status": "success",
@@ -164,7 +169,11 @@ class ClinGenTool(BaseTool):
             # Parse CSV response
             curations = self._parse_csv(response.text)
 
-            # Optional filtering by gene
+            # Optional filtering by gene -- EXACT match (case-insensitive):
+            # this column holds a single precise HGNC symbol, not free text,
+            # and substring matching silently pulled in unrelated genes
+            # whose symbol happens to contain the query, e.g. "OTC" ->
+            # "NOTCH1"/"NOTCH2" (confirmed live).
             gene = arguments.get("gene")
             if gene:
                 gene_upper = gene.upper()
@@ -172,8 +181,8 @@ class ClinGenTool(BaseTool):
                 curations = [
                     c
                     for c in curations
-                    if gene_upper
-                    in c.get("GENE SYMBOL", c.get("Gene Symbol", "")).upper()
+                    if c.get("GENE SYMBOL", c.get("Gene Symbol", "")).upper()
+                    == gene_upper
                 ]
 
             return {
@@ -209,16 +218,21 @@ class ClinGenTool(BaseTool):
             # Parse CSV response
             curations = self._parse_csv(response.text)
 
-            # Filter by gene symbol (case-insensitive)
+            # Filter by gene symbol (case-insensitive, EXACT match -- this
+            # column holds a single precise HGNC symbol, not free text, and
+            # substring matching silently pulled in unrelated genes whose
+            # symbol happens to contain the query, e.g. "OTC" -> "NOTCH1"/
+            # "NOTCH2" (confirmed live).
             # Handle different column name formats from different endpoints
             gene_upper = gene.upper()
-            matches = []
-            for c in curations:
-                gene_val = c.get(
+            matches = [
+                c
+                for c in curations
+                if c.get(
                     "GENE SYMBOL", c.get("GENE/REGION", c.get("Gene Symbol", ""))
-                )
-                if gene_upper in gene_val.upper():
-                    matches.append(c)
+                ).upper()
+                == gene_upper
+            ]
 
             return {
                 "status": "success",
@@ -245,6 +259,28 @@ class ClinGenTool(BaseTool):
         """Get clinical actionability curations for pediatric context."""
         return self._get_actionability(arguments, "Pediatric")
 
+    @staticmethod
+    def _actionability_rows_to_dicts(data: Any) -> list:
+        """The ?flavor=flat actionability API returns a columnar table --
+        {"columns": [...], "rows": [[...], ...]} -- not a list of record
+        dicts (confirmed live). Neither older code path recognized this
+        shape (isinstance(data, list) is False and there's no "data" key),
+        so the gene filter silently matched nothing and the raw un-parsed
+        table was returned as-is. Zip columns with each row into dicts.
+        """
+        if isinstance(data, list):
+            return data
+        if isinstance(data, dict) and isinstance(data.get("columns"), list):
+            columns = data["columns"]
+            return [
+                dict(zip(columns, row))
+                for row in data.get("rows", [])
+                if isinstance(row, list)
+            ]
+        if isinstance(data, dict) and isinstance(data.get("data"), list):
+            return data["data"]
+        return []
+
     def _get_actionability(
         self, arguments: Dict[str, Any], context: str
     ) -> Dict[str, Any]:
@@ -263,27 +299,27 @@ class ClinGenTool(BaseTool):
             response = requests.get(url, headers=headers, timeout=self.timeout)
             response.raise_for_status()
 
-            data = response.json()
+            curations = self._actionability_rows_to_dicts(response.json())
 
-            # Extract curations from the response
-            curations = data if isinstance(data, list) else data.get("data", data)
-
-            # Optional filtering by gene
+            # Optional filtering by gene. geneOrVariant is a comma-joined
+            # multi-gene field for panel curations (e.g. "BRCA1,BRCA2"), so
+            # substring match rather than exact-match the whole field.
             gene = arguments.get("gene")
-            if gene and isinstance(curations, list):
+            if gene:
                 gene_upper = gene.upper()
                 curations = [
                     c
                     for c in curations
-                    if gene_upper in str(c.get("gene", "")).upper()
+                    if gene_upper in str(c.get("geneOrVariant", "")).upper()
+                    or gene_upper in str(c.get("gene", "")).upper()
                     or gene_upper in str(c.get("Gene", "")).upper()
                     or gene_upper in str(c.get("hgncId", "")).upper()
                 ]
 
             return {
                 "status": "success",
-                "data": curations[:100] if isinstance(curations, list) else curations,
-                "total": len(curations) if isinstance(curations, list) else 1,
+                "data": curations[:100],
+                "total": len(curations),
                 "context": context,
                 "source": f"ClinGen Clinical Actionability ({context})",
             }
@@ -297,6 +333,31 @@ class ClinGenTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    def _fetch_actionability_context(
+        self, base_url: str, gene: str
+    ) -> List[Dict[str, Any]]:
+        """Fetch and gene-filter one actionability context (Adult/Pediatric).
+        Raises on failure -- the caller decides how to handle a failed context."""
+        url = f"{base_url}/summ?flavor=flat"
+        headers = {"Accept": "application/json"}
+        response = requests.get(url, headers=headers, timeout=self.timeout)
+        response.raise_for_status()
+
+        curations = self._actionability_rows_to_dicts(response.json())
+
+        # Filter by gene. geneOrVariant is a comma-joined multi-gene field
+        # for panel curations, so substring match rather than exact-match
+        # the whole field.
+        gene_upper = gene.upper()
+        return [
+            c
+            for c in curations
+            if gene_upper in str(c.get("geneOrVariant", "")).upper()
+            or gene_upper in str(c.get("gene", "")).upper()
+            or gene_upper in str(c.get("Gene", "")).upper()
+            or gene_upper in str(c.get("hgncId", "")).upper()
+        ]
+
     def _search_actionability(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search clinical actionability across both adult and pediatric contexts."""
         gene = arguments.get("gene")
@@ -304,36 +365,34 @@ class ClinGenTool(BaseTool):
             return {"status": "error", "error": "Missing required parameter: gene"}
 
         try:
-            results = {"Adult": [], "Pediatric": []}
-
-            for context, base_url in [
+            # Fix-R53A-1: the Adult and Pediatric actionability endpoints are
+            # each independently slow (confirmed live: the Adult endpoint
+            # alone took ~124s for a 138KB response -- expensive server-side
+            # computation, not a network issue) but are fetched one after
+            # the other despite being fully independent requests, so a
+            # caller paid the sum of both (up to ~4 minutes, and close to
+            # this tool's own 120s per-request timeout budget even for a
+            # single context). Fetching them concurrently bounds the wait
+            # to the slower of the two instead of the sum of both.
+            contexts = [
                 ("Adult", ACTIONABILITY_ADULT_URL),
                 ("Pediatric", ACTIONABILITY_PEDIATRIC_URL),
-            ]:
-                try:
-                    url = f"{base_url}/summ?flavor=flat"
-                    headers = {"Accept": "application/json"}
-                    response = requests.get(url, headers=headers, timeout=self.timeout)
-                    response.raise_for_status()
-
-                    data = response.json()
-                    curations = (
-                        data if isinstance(data, list) else data.get("data", data)
-                    )
-
-                    # Filter by gene
-                    gene_upper = gene.upper()
-                    if isinstance(curations, list):
-                        matches = [
-                            c
-                            for c in curations
-                            if gene_upper in str(c.get("gene", "")).upper()
-                            or gene_upper in str(c.get("Gene", "")).upper()
-                        ]
-                        results[context] = matches
-                except Exception:
-                    # Continue with other context if one fails
-                    pass
+            ]
+            results = {"Adult": [], "Pediatric": []}
+            with ThreadPoolExecutor(max_workers=len(contexts)) as executor:
+                futures = {
+                    executor.submit(
+                        self._fetch_actionability_context, base_url, gene
+                    ): context
+                    for context, base_url in contexts
+                }
+                for future in futures:
+                    context = futures[future]
+                    try:
+                        results[context] = future.result()
+                    except Exception:
+                        # Continue with other context if one fails
+                        pass
 
             return {
                 "status": "success",
@@ -346,50 +405,88 @@ class ClinGenTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    @staticmethod
+    def _flatten_classification(item: Dict[str, Any]) -> Dict[str, Any]:
+        """Map one classifications?gene=/variant= JSON record to the tool's
+        declared 7-field return_schema (Variation, ClinVar Variation Id,
+        HGNC Gene Symbol, Disease, Mondo Id, Assertion, Expert Panel)."""
+        hgvs = item.get("hgvs") or []
+        gene = item.get("gene") or {}
+        condition = item.get("condition") or {}
+        guidelines = item.get("guidelines") or []
+        first_guideline = guidelines[0] if guidelines else {}
+        agents = first_guideline.get("agents") or []
+        first_agent = agents[0] if agents else {}
+        return {
+            # The last hgvs entry is the gene-and-protein-notation form,
+            # e.g. "NM_000277.2(PAH):c.1A>G (p.Met1Val)" -- matches the old
+            # TSV "Variation" column's format.
+            "Variation": hgvs[-1] if hgvs else None,
+            "ClinVar Variation Id": item.get("variationId"),
+            "HGNC Gene Symbol": gene.get("label"),
+            "Disease": condition.get("label"),
+            "Mondo Id": condition.get("@id"),
+            "Assertion": (first_guideline.get("outcome") or {}).get("label"),
+            "Expert Panel": first_agent.get("affiliation"),
+        }
+
     def _get_variant_classifications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get variant pathogenicity classifications from ClinGen Evidence Repository."""
+        """Get variant pathogenicity classifications from ClinGen Evidence Repository.
+
+        classifications/all fetches the *entire* ~22MB, ~10k-row repository
+        with no server-side filter and filters client-side -- confirmed live
+        this routinely took 2-5+ minutes (and sometimes hung past a 300s
+        client timeout) even for a gene with zero curated variants. The
+        classifications endpoint (no /all) supports server-side gene=/
+        variant= filtering and returns in ~1s -- confirmed live for both a
+        curated gene (PAH) and an uncurated one (empty result, still ~1s).
+        Calling it with neither gene nor variant set is just as unbounded as
+        classifications/all (confirmed live: also hangs past 30s with no
+        params), so require at least one.
+        """
+        gene = arguments.get("gene")
+        variant = arguments.get("variant")
+        if not gene and not variant:
+            return {
+                "status": "error",
+                "error": (
+                    "gene or variant parameter is required. The ClinGen "
+                    "Evidence Repository's classifications endpoint has no "
+                    "working unfiltered listing (an unfiltered request is "
+                    "just as unbounded as the bulk classifications/all "
+                    "download) -- query by gene and/or variant instead."
+                ),
+            }
         try:
-            url = f"{EREPO_BASE_URL}/classifications/all"
-
-            response = requests.get(url, timeout=self.timeout)
-            response.raise_for_status()
-
-            # API returns TSV (tab-separated) with first line starting with #
-            tsv_text = response.text
-            lines = tsv_text.strip().split("\n")
-
-            # Strip leading # from header line
-            if lines and lines[0].startswith("#"):
-                lines[0] = lines[0][1:]
-
-            data = []
-            if len(lines) > 1:
-                reader = csv.DictReader(io.StringIO("\n".join(lines)), delimiter="\t")
-                for row in reader:
-                    cleaned = {k.strip(): v.strip() for k, v in row.items() if k and v}
-                    if cleaned:
-                        data.append(cleaned)
-
-            # Optional filtering by gene
-            gene = arguments.get("gene")
+            params = {}
             if gene:
-                gene_upper = gene.upper()
-                data = [
-                    v
-                    for v in data
-                    if gene_upper in str(v.get("HGNC Gene Symbol", "")).upper()
-                ]
+                params["gene"] = gene
+            if variant:
+                params["variant"] = variant
 
-            # Optional filtering by variant
-            variant = arguments.get("variant")
+            response = requests.get(
+                f"{EREPO_BASE_URL}/classifications", params=params, timeout=self.timeout
+            )
+            response.raise_for_status()
+            payload = response.json()
+            items = payload.get("variantInterpretations", [])
+
+            # The upstream `variant=` param resolves to that variant's gene
+            # and returns every variant for the gene, not just the one
+            # requested (confirmed live: variant=CA114360 returns 25 PAH
+            # rows, not 1) -- narrow back down to an exact match on the
+            # variant's own identifiers/HGVS forms.
             if variant:
                 variant_str = str(variant).upper()
-                data = [
-                    v
-                    for v in data
-                    if variant_str in str(v.get("Variation", "")).upper()
-                    or variant_str in str(v.get("HGVS Expressions", "")).upper()
+                items = [
+                    item
+                    for item in items
+                    if variant_str in str(item.get("caid", "")).upper()
+                    or variant_str == str(item.get("variationId", "")).upper()
+                    or any(variant_str in h.upper() for h in item.get("hgvs") or [])
                 ]
+
+            data = [self._flatten_classification(item) for item in items]
 
             result = {
                 "status": "success",
@@ -397,9 +494,10 @@ class ClinGenTool(BaseTool):
                 "total": len(data),
                 "source": "ClinGen Evidence Repository",
             }
-            if not data and gene:
+            if not data:
+                queried = f"gene '{gene}'" if gene else f"variant '{variant}'"
                 result["note"] = (
-                    f"No variant classifications found for {gene}. "
+                    f"No variant classifications found for {queried}. "
                     "The ClinGen Evidence Repository only contains variants "
                     "curated by Variant Curation Expert Panels (VCEPs). "
                     "Not all genes have active VCEPs. Try ClinGen_get_gene_validity "

@@ -40,122 +40,173 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "Error": {
-          "type": "string"
-        },
-        "Total": {
-          "type": "integer"
-        },
-        "Query": {
-          "type": "object"
-        },
-        "Language": {
-          "type": "string"
-        },
-        "MyHFHeading": {
-          "type": "string"
-        },
-        "TakeAction": {
-          "type": "string"
-        },
-        "AboutTheseResults": {
-          "type": "string"
-        },
-        "Resources": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
-            "All": {
+            "Error": {
+              "type": "string"
+            },
+            "Total": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "Query": {
               "type": "object",
               "properties": {
-                "Resource": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "Type": {
-                        "type": "string"
-                      },
-                      "Id": {
-                        "type": "string"
-                      },
-                      "Title": {
-                        "type": "string"
-                      },
-                      "TranslationId": {
-                        "type": "string"
-                      },
-                      "TranslationTitle": {
-                        "type": "string"
-                      },
-                      "Categories": {
-                        "type": "string"
-                      },
-                      "MyHFTitle": {
-                        "type": "string"
-                      },
-                      "MyHFCategory": {
-                        "type": "string"
-                      },
-                      "MyHFCategoryHeading": {
-                        "type": "string"
-                      },
-                      "LastUpdate": {
-                        "type": "string"
-                      },
-                      "ImageUrl": {
-                        "type": "string"
-                      },
-                      "ImageAlt": {
-                        "type": "string"
-                      },
-                      "AccessibleVersion": {
-                        "type": "string"
-                      },
-                      "RelatedItems": {
+                "ApiVersion": {
+                  "type": "string"
+                },
+                "ApiType": {
+                  "type": "string"
+                },
+                "TopicId": {
+                  "type": "null"
+                },
+                "CategoryId": {
+                  "type": "null"
+                },
+                "Keyword": {
+                  "type": "null"
+                },
+                "Age": {
+                  "type": "string"
+                },
+                "Sex": {
+                  "type": "string"
+                },
+                "Pregnant": {
+                  "type": "string"
+                },
+                "Lang": {
+                  "type": "string"
+                },
+                "Type": {
+                  "type": "null"
+                },
+                "ReturnType": {
+                  "type": "string"
+                },
+                "Callback": {
+                  "type": "null"
+                }
+              }
+            },
+            "Language": {
+              "type": "string"
+            },
+            "MyHFHeading": {
+              "type": "string"
+            },
+            "AboutTheseResults": {
+              "type": "string"
+            },
+            "Resources": {
+              "type": "object",
+              "properties": {
+                "All": {
+                  "type": "object",
+                  "properties": {
+                    "Resource": {
+                      "type": "array",
+                      "items": {
                         "type": "object",
                         "properties": {
-                          "RelatedItem": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "Type": {
-                                  "type": "string"
-                                },
-                                "Id": {
-                                  "type": "string"
-                                },
-                                "Title": {
-                                  "type": "string"
-                                },
-                                "Url": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      },
-                      "Sections": {
-                        "type": "object",
-                        "properties": {
-                          "Section": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "Title": {
-                                  "type": "string"
-                                },
-                                "Content": {
-                                  "type": "string"
+                          "Type": {
+                            "type": "string"
+                          },
+                          "Id": {
+                            "type": "string"
+                          },
+                          "Title": {
+                            "type": "string"
+                          },
+                          "TranslationId": {
+                            "type": "string"
+                          },
+                          "Categories": {
+                            "type": "string"
+                          },
+                          "MyHFTitle": {
+                            "type": "string"
+                          },
+                          "MyHFCategory": {
+                            "type": "string"
+                          },
+                          "MyHFCategoryHeading": {
+                            "type": "string"
+                          },
+                          "LastUpdate": {
+                            "type": "string"
+                          },
+                          "ImageUrl": {
+                            "type": "string"
+                          },
+                          "ImageAlt": {
+                            "type": "string"
+                          },
+                          "AccessibleVersion": {
+                            "type": "string"
+                          },
+                          "RelatedItems": {
+                            "type": "object",
+                            "properties": {
+                              "RelatedItem": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "Type": {
+                                      "type": "string"
+                                    },
+                                    "Id": {
+                                      "type": "string"
+                                    },
+                                    "Title": {
+                                      "type": "string"
+                                    },
+                                    "Url": {
+                                      "type": "string"
+                                    }
+                                  }
                                 }
                               }
                             }
                           },
-                          "section": {
+                          "Sections": {
+                            "type": "object",
+                            "properties": {
+                              "section": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "Title": {
+                                      "type": "string"
+                                    },
+                                    "Content": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "HealthfinderLogo": {
+                            "type": "string"
+                          },
+                          "HealthfinderUrl": {
+                            "type": "string"
+                          },
+                          "MyHFLinkUrl": {
+                            "type": "string"
+                          },
+                          "MyHFPromoted": {
+                            "type": "boolean"
+                          },
+                          "PlainSections": {
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -163,149 +214,108 @@
                                 "Title": {
                                   "type": "string"
                                 },
-                                "Content": {
+                                "PlainContent": {
                                   "type": "string"
                                 }
                               }
                             }
                           }
                         }
-                      },
-                      "HealthfinderLogo": {
-                        "type": "string"
-                      },
-                      "HealthfinderUrl": {
-                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Callouts": {
+              "type": "object",
+              "properties": {
+                "All": {
+                  "type": "object",
+                  "properties": {
+                    "Resource": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "Type": {
+                            "type": "string"
+                          },
+                          "Id": {
+                            "type": "string"
+                          },
+                          "Title": {
+                            "type": "string"
+                          },
+                          "TranslationId": {
+                            "type": "string"
+                          },
+                          "Categories": {
+                            "type": "string"
+                          },
+                          "MyHFTitle": {
+                            "type": "string"
+                          },
+                          "MyHFCategory": {
+                            "type": "string"
+                          },
+                          "MyHFCategoryHeading": {
+                            "type": "string"
+                          },
+                          "LastUpdate": {
+                            "type": "string"
+                          },
+                          "ImageUrl": {
+                            "type": "string"
+                          },
+                          "ImageAlt": {
+                            "type": "string"
+                          },
+                          "AccessibleVersion": {
+                            "type": "string"
+                          },
+                          "RelatedItems": {
+                            "type": "null"
+                          },
+                          "Sections": {
+                            "type": "null"
+                          },
+                          "HealthfinderLogo": {
+                            "type": "string"
+                          },
+                          "HealthfinderUrl": {
+                            "type": "string"
+                          },
+                          "MyHFLinkUrl": {
+                            "type": "string"
+                          },
+                          "MyHFPromoted": {
+                            "type": "boolean"
+                          }
+                        }
                       }
                     }
                   }
                 }
               }
             }
-          }
+          },
+          "required": [
+            "Error"
+          ]
         },
-        "Callouts": {
+        {
           "type": "object",
           "properties": {
-            "All": {
-              "type": "object",
-              "properties": {
-                "Resource": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "Type": {
-                        "type": "string"
-                      },
-                      "Id": {
-                        "type": "string"
-                      },
-                      "Title": {
-                        "type": "string"
-                      },
-                      "TranslationId": {
-                        "type": "string"
-                      },
-                      "TranslationTitle": {
-                        "type": "string"
-                      },
-                      "Categories": {
-                        "type": "string"
-                      },
-                      "MyHFTitle": {
-                        "type": "string"
-                      },
-                      "MyHFCategory": {
-                        "type": "string"
-                      },
-                      "MyHFCategoryHeading": {
-                        "type": "string"
-                      },
-                      "LastUpdate": {
-                        "type": "string"
-                      },
-                      "ImageUrl": {
-                        "type": "string"
-                      },
-                      "ImageAlt": {
-                        "type": "string"
-                      },
-                      "AccessibleVersion": {
-                        "type": "string"
-                      },
-                      "RelatedItems": {
-                        "type": "object",
-                        "properties": {
-                          "RelatedItem": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "Type": {
-                                  "type": "string"
-                                },
-                                "Id": {
-                                  "type": "string"
-                                },
-                                "Title": {
-                                  "type": "string"
-                                },
-                                "Url": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      },
-                      "Sections": {
-                        "type": "object",
-                        "properties": {
-                          "Section": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "Title": {
-                                  "type": "string"
-                                },
-                                "Content": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          },
-                          "section": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "Title": {
-                                  "type": "string"
-                                },
-                                "Content": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      },
-                      "HealthfinderLogo": {
-                        "type": "string"
-                      },
-                      "HealthfinderUrl": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -343,49 +353,111 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "Error": {
-          "type": "string"
-        },
-        "Total": {
-          "type": "integer"
-        },
-        "Query": {
-          "type": "object"
-        },
-        "Language": {
-          "type": "string"
-        },
-        "Items": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
-            "Item": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "Type": {
-                    "type": "string"
-                  },
-                  "Id": {
-                    "type": "string"
-                  },
-                  "Title": {
-                    "type": "string"
-                  },
-                  "ParentId": {
-                    "type": "string"
-                  },
-                  "TranslationId": {
-                    "type": "string"
+            "Error": {
+              "type": "string"
+            },
+            "Total": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "Query": {
+              "type": "object",
+              "properties": {
+                "ApiVersion": {
+                  "type": "string"
+                },
+                "ApiType": {
+                  "type": "string"
+                },
+                "TopicId": {
+                  "type": "null"
+                },
+                "CategoryId": {
+                  "type": "null"
+                },
+                "Keyword": {
+                  "type": "null"
+                },
+                "Age": {
+                  "type": "null"
+                },
+                "Sex": {
+                  "type": "null"
+                },
+                "Pregnant": {
+                  "type": "null"
+                },
+                "Lang": {
+                  "type": "string"
+                },
+                "Type": {
+                  "type": "string"
+                },
+                "ReturnType": {
+                  "type": "string"
+                },
+                "Callback": {
+                  "type": "null"
+                },
+                "APiType": {
+                  "type": "string"
+                }
+              }
+            },
+            "Language": {
+              "type": "string"
+            },
+            "Items": {
+              "type": "object",
+              "properties": {
+                "Item": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Type": {
+                        "type": "string"
+                      },
+                      "Id": {
+                        "type": "string"
+                      },
+                      "Title": {
+                        "type": "string"
+                      },
+                      "ParentId": {
+                        "type": "string"
+                      },
+                      "TranslationId": {
+                        "type": "string"
+                      }
+                    }
                   }
                 }
               }
             }
-          }
+          },
+          "required": [
+            "Error"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -435,137 +507,83 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "Error": {
-          "type": "string"
-        },
-        "Total": {
-          "type": "integer"
-        },
-        "Query": {
-          "type": "object"
-        },
-        "Language": {
-          "type": "string"
-        },
-        "Resources": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
-            "Resource": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "Type": {
-                    "type": "string"
-                  },
-                  "Id": {
-                    "type": "string"
-                  },
-                  "Title": {
-                    "type": "string"
-                  },
-                  "TranslationId": {
-                    "type": "string"
-                  },
-                  "TranslationTitle": {
-                    "type": "string"
-                  },
-                  "Categories": {
-                    "type": "string"
-                  },
-                  "MyHFTitle": {
-                    "type": "string"
-                  },
-                  "MyHFCategory": {
-                    "type": "string"
-                  },
-                  "MyHFCategoryHeading": {
-                    "type": "string"
-                  },
-                  "LastUpdate": {
-                    "type": "string"
-                  },
-                  "ImageUrl": {
-                    "type": "string"
-                  },
-                  "ImageAlt": {
-                    "type": "string"
-                  },
-                  "AccessibleVersion": {
-                    "type": "string"
-                  },
-                  "RelatedItems": {
-                    "type": "object",
-                    "properties": {
-                      "RelatedItem": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "Type": {
-                              "type": "string"
-                            },
-                            "Id": {
-                              "type": "string"
-                            },
-                            "Title": {
-                              "type": "string"
-                            },
-                            "Url": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "Sections": {
-                    "type": "object",
-                    "properties": {
-                      "Section": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "Title": {
-                              "type": "string"
-                            },
-                            "Content": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "section": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "Title": {
-                              "type": "string"
-                            },
-                            "Content": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "HealthfinderLogo": {
-                    "type": "string"
-                  },
-                  "HealthfinderUrl": {
-                    "type": "string"
-                  }
+            "Error": {
+              "type": "string"
+            },
+            "Total": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "Query": {
+              "type": "object",
+              "properties": {
+                "ApiVersion": {
+                  "type": "string"
+                },
+                "ApiType": {
+                  "type": "string"
+                },
+                "TopicId": {
+                  "type": "string"
+                },
+                "CategoryId": {
+                  "type": "null"
+                },
+                "Keyword": {
+                  "type": "string"
+                },
+                "Age": {
+                  "type": "null"
+                },
+                "Sex": {
+                  "type": "null"
+                },
+                "Pregnant": {
+                  "type": "null"
+                },
+                "Lang": {
+                  "type": "string"
+                },
+                "Type": {
+                  "type": "null"
+                },
+                "ReturnType": {
+                  "type": "string"
+                },
+                "Callback": {
+                  "type": "null"
+                },
+                "APiType": {
+                  "type": "string"
                 }
               }
+            },
+            "Language": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "Error"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -622,7 +640,10 @@
                 "type": "string"
               },
               "status": {
-                "type": "integer"
+                "type": [
+                  "integer",
+                  "number"
+                ]
               },
               "content_type": {
                 "type": "string"
@@ -632,23 +653,34 @@
               },
               "text": {
                 "type": "string"
-              },
-              "html": {
-                "type": "string"
               }
             }
           }
         },
         "metadata": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            }
+          }
         }
       }
     },
     "test_examples": [
       {
-        "urls": [],
-        "max_chars": 1,
-        "return_html": true
+        "urls": [
+          "https://health.gov/myhealthfinder/api/v3/topicsearch.json?topicId=30606"
+        ],
+        "max_chars": 2000,
+        "return_html": false
+      },
+      {
+        "urls": [
+          "https://health.gov/myhealthfinder/api/v3/topicsearch.json?topicId=30606"
+        ],
+        "max_chars": 5000,
+        "return_html": false
       }
     ]
   }

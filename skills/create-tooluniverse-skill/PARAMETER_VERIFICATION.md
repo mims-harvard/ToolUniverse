@@ -6,7 +6,7 @@ From devtu-optimize-skills -- CRITICAL for avoiding common mistakes.
 
 | Pattern | Don't Assume | Always Verify |
 |---------|--------------|---------------|
-| Function name includes param name | `drugbank_get_drug_by_name(name=...)` | Test reveals uses `query` |
+| Function name includes param name | `drugbank_get_drug_basic_info_by_drug_name_or_id(name=...)` | Test reveals uses `query` |
 | Descriptive function name | `map_uniprot_to_pathways(uniprot_id=...)` | Test reveals uses `id` |
 | Consistent naming | All similar functions use same param | Each tool may differ |
 

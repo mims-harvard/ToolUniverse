@@ -110,6 +110,54 @@ class TestPubMedPMCID(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# Feature-007F-04: a zero-hit search returns the standard envelope
+# ---------------------------------------------------------------------------
+class TestPubMedZeroHitEnvelope(unittest.TestCase):
+    """A search that matches nothing must return {status,data,metadata},
+    not a bare id list (which the framework wraps as {"result": []})."""
+
+    def _make_tool(self):
+        from tooluniverse.pubmed_tool import PubMedRESTTool
+
+        return PubMedRESTTool(
+            {
+                "name": "PubMed_search_articles",
+                "type": "PubMedRESTTool",
+                "fields": {
+                    "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+                    "method": "GET",
+                    "db": "pubmed",
+                    "retmode": "json",
+                },
+                "parameter": {"type": "object", "properties": {}, "required": []},
+            }
+        )
+
+    def test_zero_hit_search_returns_envelope(self):
+        tool = self._make_tool()
+
+        # esearch response with an empty idlist (no matches)
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.url = "https://eutils.ncbi.nlm.nih.gov/...esearch..."
+        mock_resp.json.return_value = {
+            "esearchresult": {"idlist": [], "count": "0"}
+        }
+
+        with patch.object(tool, "_enforce_rate_limit"):
+            with patch(
+                "tooluniverse.pubmed_tool.request_with_retry", return_value=mock_resp
+            ):
+                result = tool.run({"query": "zzz_no_such_term_zzz", "limit": 2})
+
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["data"], [])
+        self.assertEqual(result["metadata"]["count"], 0)
+        self.assertEqual(result["metadata"]["total"], 0)
+
+
+# ---------------------------------------------------------------------------
 # Feature-81B-002: PubMed limit=0 honoured
 # ---------------------------------------------------------------------------
 class TestPubMedLimit(unittest.TestCase):
@@ -379,14 +427,17 @@ class TestSemanticScholarLimitZero(unittest.TestCase):
     def test_limit_zero(self):
         tool = self._make_tool()
         result = tool.run({"query": "cancer", "limit": 0})
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 0)
+        # Tool returns the standard {status, data, metadata} envelope.
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["data"], [])
+        self.assertEqual(result["metadata"]["total"], 0)
 
     def test_limit_negative(self):
         tool = self._make_tool()
         result = tool.run({"query": "cancer", "limit": -1})
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 0)
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["data"], [])
+        self.assertEqual(result["metadata"]["total"], 0)
 
 
 # ---------------------------------------------------------------------------
@@ -1397,7 +1448,7 @@ class TestGTExGeneSymbolResolution(unittest.TestCase):
             mock_resolve.assert_called_once_with(
                 "FBN1", "https://gtexportal.org/api/v2", 30
             )
-            self.assertTrue(result["success"])
+            self.assertEqual(result["status"], "success")
 
     def test_eqtl_tool_uses_gene_symbol(self):
         from tooluniverse.gtex_tool import GTExEQTLTool
@@ -1419,7 +1470,7 @@ class TestGTExGeneSymbolResolution(unittest.TestCase):
             mock_resolve.assert_called_once_with(
                 "TP53", "https://gtexportal.org/api/v2", 30
             )
-            self.assertTrue(result["success"])
+            self.assertEqual(result["status"], "success")
 
 
 # ---------------------------------------------------------------------------
@@ -1455,7 +1506,8 @@ class TestClinVarConditionQuoting(unittest.TestCase):
         }
         tool = self._make_tool()
         tool.run({"gene": "FBN1", "condition": "Marfan syndrome"})
-        call_args = mock_request.call_args
+        # First call is the esearch; a later esummary call has no "term".
+        call_args = mock_request.call_args_list[0]
         term = call_args[0][1]["term"]
         self.assertIn('"Marfan syndrome"', term)
 
@@ -1473,7 +1525,7 @@ class TestClinVarConditionQuoting(unittest.TestCase):
         }
         tool = self._make_tool()
         tool.run({"gene": "BRCA1", "condition": "cancer"})
-        call_args = mock_request.call_args
+        call_args = mock_request.call_args_list[0]
         term = call_args[0][1]["term"]
         self.assertIn("cancer", term)
         self.assertNotIn('"cancer"', term)
@@ -1492,7 +1544,7 @@ class TestClinVarConditionQuoting(unittest.TestCase):
         }
         tool = self._make_tool()
         tool.run({"condition": '"Marfan syndrome"'})
-        call_args = mock_request.call_args
+        call_args = mock_request.call_args_list[0]
         term = call_args[0][1]["term"]
         # Should not be double-quoted
         self.assertNotIn('""Marfan syndrome""', term)

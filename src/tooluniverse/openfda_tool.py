@@ -1449,12 +1449,18 @@ class FDADrugLabelFieldValueTool(BaseTool):
         # Build openFDA search_fields mapping expected by search_openfda()
         arguments["search_fields"] = {field: str(field_value)}
 
+        # `return_fields` is a PROJECTION (which fields to return), NOT a match
+        # filter. The user already pinned the record via field:value; do not add
+        # `_exists_:{return_field}` constraints — otherwise asking for a field the
+        # matched record lacks (e.g. boxed_warning for a drug with none) yields
+        # NOT_FOUND and the fallback returns a DIFFERENT drug. Missing projected
+        # fields should come back null for the requested record.
         return search_openfda(
             arguments,
             endpoint_url=self.endpoint_url,
             api_key=self.api_key,
             return_fields=return_fields,
-            exists=return_fields if return_fields != "ALL" else None,
+            exists=None,
             exist_option="OR",
         )
 

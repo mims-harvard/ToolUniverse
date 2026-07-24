@@ -17,6 +17,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 PROGENETIX_BASE_URL = "https://beacon.progenetix.org/beacon"
+PROGENETIX_SERVICES_URL = "https://progenetix.org/services"
 
 
 @register_tool("ProgenetixTool")
@@ -73,6 +74,8 @@ class ProgenetixTool(BaseTool):
             return self._get_cohorts(arguments)
         elif self.endpoint == "cnv_search":
             return self._cnv_search(arguments)
+        elif self.endpoint == "interval_frequencies":
+            return self._get_interval_frequencies(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -342,5 +345,90 @@ class ProgenetixTool(BaseTool):
             "metadata": {
                 "source": "Progenetix Beacon v2",
                 "query_region": f"{reference_name}:{start}-{end}",
+            },
+        }
+
+    def _get_interval_frequencies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Genome-wide aggregate CNV frequency profile per cancer type.
+
+        Returns, for each genomic interval bin (cytoband), the gain and loss
+        frequency aggregated across all samples of a Progenetix collation
+        (selected by NCIt code). This is the signature Progenetix output.
+        """
+        filters = arguments.get("filters", "")
+        if not filters:
+            return {
+                "status": "error",
+                "error": "filters parameter is required. Use NCIt codes like 'NCIT:C3058' (Glioblastoma) or 'NCIT:C4017' (Breast Ductal Carcinoma).",
+            }
+
+        dataset_ids = arguments.get("dataset_ids", "progenetix")
+        params = {"datasetIds": dataset_ids, "filters": filters}
+
+        url = f"{PROGENETIX_SERVICES_URL}/intervalFrequencies/"
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        resp_data = response.json()
+
+        results = resp_data.get("response", {}).get("results", []) or []
+        if not results:
+            return {
+                "status": "success",
+                "data": {
+                    "filters": filters,
+                    "sample_count": 0,
+                    "interval_count": 0,
+                    "intervals": [],
+                },
+                "metadata": {
+                    "source": "Progenetix intervalFrequencies",
+                    "query_filters": filters,
+                    "note": "No collation found for the supplied filter code.",
+                },
+            }
+
+        result = results[0]
+        raw_intervals = result.get("intervalFrequencies", []) or []
+
+        # Optional cap on the number of interval bins returned.
+        max_intervals = arguments.get("max_intervals")
+        intervals_slice = raw_intervals
+        if max_intervals is not None:
+            try:
+                intervals_slice = raw_intervals[: max(1, int(max_intervals))]
+            except (TypeError, ValueError):
+                intervals_slice = raw_intervals
+
+        intervals = [
+            {
+                "no": iv.get("no"),
+                "reference_name": iv.get("referenceName"),
+                "cytobands": iv.get("cytobands"),
+                "start": iv.get("start"),
+                "end": iv.get("end"),
+                "size": iv.get("size"),
+                "gain_frequency": iv.get("gainFrequency"),
+                "loss_frequency": iv.get("lossFrequency"),
+                "gain_hlfrequency": iv.get("gainHlfrequency"),
+                "loss_hlfrequency": iv.get("lossHlfrequency"),
+            }
+            for iv in intervals_slice
+        ]
+
+        return {
+            "status": "success",
+            "data": {
+                "filters": filters,
+                "label": result.get("label"),
+                "group_id": result.get("groupId"),
+                "dataset_id": result.get("datasetId"),
+                "sample_count": result.get("sampleCount", 0),
+                "interval_count": len(raw_intervals),
+                "returned_interval_count": len(intervals),
+                "intervals": intervals,
+            },
+            "metadata": {
+                "source": "Progenetix intervalFrequencies",
+                "query_filters": filters,
             },
         }

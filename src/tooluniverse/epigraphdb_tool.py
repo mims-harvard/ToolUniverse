@@ -87,8 +87,126 @@ class EpiGraphDBTool(BaseRESTTool):
             return self._get_gene_drugs(arguments)
         elif op == "opengwas_search":
             return self._search_opengwas(arguments)
+        elif op == "literature_evidence":
+            return self._get_literature_evidence(arguments)
         else:
             return {"status": "error", "error": f"Unknown operation: {op}"}
+
+    @staticmethod
+    def _split_triple(name: str, predicate: str) -> tuple:
+        """Split a SemMedDB triple 'name' into (subject, object).
+
+        EpiGraphDB returns the triple as a single string like
+        'troglitazone INHIBITS Leptin|LEP' plus a separate 'predicate' field.
+        Split on the predicate token (surrounded by spaces) to recover the
+        subject and object. Fall back to (name, None) when the split fails.
+        """
+        if predicate and name:
+            sep = f" {predicate} "
+            if sep in name:
+                subject, _, obj = name.partition(sep)
+                return subject.strip(), obj.strip()
+        return name, None
+
+    def _get_literature_evidence(self, arguments: dict) -> dict:
+        """Get SemMedDB literature triple evidence supporting a GWAS trait.
+
+        Surfaces the literature/support-path evidence (SemMedDB
+        subject-predicate-object triples linked to a GWAS trait via mined
+        PubMed articles), complementing the MR/gene-drug evidence paths.
+        """
+        trait = arguments.get("trait", "").strip()
+        if not trait:
+            return {
+                "status": "error",
+                "error": "trait parameter is required (e.g., 'body mass index')",
+            }
+
+        pval_threshold = float(arguments.get("pval_threshold", 1e-8))
+        params = {"trait": trait, "pval_threshold": pval_threshold}
+        resp = requests.get(
+            f"{EPIGRAPHDB_BASE}/literature/gwas",
+            params=params,
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        resp.raise_for_status()
+        results = resp.json().get("results", [])
+
+        rows = []
+        for r in results[:100]:
+            triple = r.get("triple", {})
+            gwas = r.get("gwas", {})
+            lit = r.get("lit", {})
+            predicate = triple.get("predicate")
+            subject, obj = self._split_triple(triple.get("name", ""), predicate)
+            rows.append(
+                {
+                    "triple_subject": subject,
+                    "triple_predicate": predicate,
+                    "triple_object": obj,
+                    "pubmed_id": lit.get("id"),
+                    "gwas_trait": gwas.get("trait"),
+                }
+            )
+
+        metadata = {
+            "trait": trait,
+            "pval_threshold": pval_threshold,
+            "source": "EpiGraphDB / SemMedDB",
+            "description": (
+                "SemMedDB literature triples (subject-predicate-object) mined "
+                "from PubMed and linked to GWAS hits for the trait. Each row "
+                "cites a supporting article (pubmed_id). This is the "
+                "literature/support-path evidence, complementing MR and "
+                "gene-drug evidence."
+            ),
+        }
+        if not results:
+            metadata["note"] = (
+                f"No SemMedDB literature triples for '{trait}' at "
+                f"pval_threshold={pval_threshold}. The trait is matched "
+                "case-insensitively as a substring of GWAS labels; try a "
+                "broader trait name or a less stringent pval_threshold."
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "literature_triples": rows,
+                "total_count": len(results),
+            },
+            "metadata": metadata,
+        }
+
+    @staticmethod
+    def _casing_variants(trait: str) -> list:
+        """Return trait label casing variants to try, original first.
+
+        EpiGraphDB's /mr endpoint matches GWAS trait labels exactly and
+        case-sensitively (e.g. 'coronary heart disease' returns nothing but
+        'Coronary heart disease' returns results). Try the sentence-case form
+        as a fallback so a lowercase input does not silently miss.
+        """
+        variants = [trait]
+        for variant in (trait.capitalize(), trait.title()):
+            if variant not in variants:
+                variants.append(variant)
+        return variants
+
+    def _query_mr(self, exposure: str, outcome: str, pval_threshold: float) -> list:
+        """Call the EpiGraphDB /mr endpoint for one exposure/outcome label pair."""
+        params = {
+            "exposure_trait": exposure,
+            "outcome_trait": outcome,
+            "pval_threshold": pval_threshold,
+            "mode": "table",
+        }
+        resp = requests.get(
+            f"{EPIGRAPHDB_BASE}/mr", params=params, timeout=self.timeout
+        )
+        resp.raise_for_status()
+        return resp.json().get("results", [])
 
     def _get_mr(self, arguments: dict) -> dict:
         """Get Mendelian Randomization results between exposure and outcome traits."""
@@ -101,19 +219,24 @@ class EpiGraphDBTool(BaseRESTTool):
             }
 
         pval_threshold = float(arguments.get("pval_threshold", 1e-5))
-        params = {
-            "exposure_trait": exposure_trait,
-            "outcome_trait": outcome_trait,
-            "pval_threshold": pval_threshold,
-            "mode": "table",
-        }
 
-        url = f"{EPIGRAPHDB_BASE}/mr"
-        resp = requests.get(url, params=params, timeout=self.timeout)
-        resp.raise_for_status()
-        data = resp.json()
+        results = self._query_mr(exposure_trait, outcome_trait, pval_threshold)
+        used_exposure, used_outcome = exposure_trait, outcome_trait
 
-        results = data.get("results", [])
+        # Fallback: EpiGraphDB trait labels are case-sensitive, so retry with
+        # sentence-case variants when the exact labels return nothing.
+        if not results:
+            for ex in self._casing_variants(exposure_trait):
+                for out in self._casing_variants(outcome_trait):
+                    if (ex, out) == (exposure_trait, outcome_trait):
+                        continue  # already tried the exact labels above
+                    retry = self._query_mr(ex, out, pval_threshold)
+                    if retry:
+                        results, used_exposure, used_outcome = retry, ex, out
+                        break
+                if results:
+                    break
+
         mr_results = []
         for r in results[:50]:
             exposure = r.get("exposure", {})
@@ -134,22 +257,37 @@ class EpiGraphDBTool(BaseRESTTool):
                 }
             )
 
+        metadata = {
+            "exposure_trait": used_exposure,
+            "outcome_trait": used_outcome,
+            "pval_threshold": pval_threshold,
+            "source": "EpiGraphDB",
+            "description": (
+                "Mendelian Randomization evidence. beta = causal effect estimate. "
+                "moescore > 0.9 suggests high-quality instruments."
+            ),
+        }
+        if not results:
+            # Don't let an exact-label miss read as 'no causal evidence'.
+            metadata["note"] = (
+                f"No MR results for exposure '{exposure_trait}' -> outcome "
+                f"'{outcome_trait}'. EpiGraphDB matches exact, case-sensitive GWAS "
+                "trait labels. Use EpiGraphDB_search_opengwas to find the exact "
+                "trait label, then retry with that label."
+            )
+        elif (used_exposure, used_outcome) != (exposure_trait, outcome_trait):
+            metadata["note"] = (
+                f"Input labels did not match exactly; matched on '{used_exposure}'"
+                f" -> '{used_outcome}' after case normalization."
+            )
+
         return {
             "status": "success",
             "data": {
                 "mr_results": mr_results,
                 "total_count": len(results),
             },
-            "metadata": {
-                "exposure_trait": exposure_trait,
-                "outcome_trait": outcome_trait,
-                "pval_threshold": pval_threshold,
-                "source": "EpiGraphDB",
-                "description": (
-                    "Mendelian Randomization evidence. beta = causal effect estimate. "
-                    "moescore > 0.9 suggests high-quality instruments."
-                ),
-            },
+            "metadata": metadata,
         }
 
     def _get_genetic_cor(self, arguments: dict) -> dict:
@@ -161,19 +299,21 @@ class EpiGraphDBTool(BaseRESTTool):
                 "error": "trait parameter is required (e.g., 'Body mass index')",
             }
 
-        pval_threshold = float(arguments.get("pval_threshold", 0.05))
-        params = {
-            "trait": trait,
-            "pval_threshold": pval_threshold,
-            "mode": "table",
-        }
+        # NOTE: the /genetic-cor endpoint ignores pval_threshold (it returns a
+        # fixed |rg| > 0.8 set), so it is intentionally not forwarded.
+        results = self._query_genetic_cor(trait)
+        used_trait = trait
+        # The /genetic-cor graph matches exact, case-sensitive trait labels;
+        # retry sentence-case variants when the exact label returns nothing.
+        if not results:
+            for variant in self._casing_variants(trait):
+                if variant == trait:
+                    continue
+                retry = self._query_genetic_cor(variant)
+                if retry:
+                    results, used_trait = retry, variant
+                    break
 
-        url = f"{EPIGRAPHDB_BASE}/genetic-cor"
-        resp = requests.get(url, params=params, timeout=self.timeout)
-        resp.raise_for_status()
-        data = resp.json()
-
-        results = data.get("results", [])
         cor_results = []
         for r in results[:50]:
             trait1 = r.get("trait1", {})
@@ -193,19 +333,48 @@ class EpiGraphDBTool(BaseRESTTool):
                 }
             )
 
+        metadata = {
+            "trait": used_trait,
+            "source": "EpiGraphDB",
+            "description": (
+                "rg = genetic correlation coefficient (-1 to 1). The /genetic-cor "
+                "endpoint returns only strong correlations (|rg| > 0.8); the "
+                "pval_threshold argument is not applied by the upstream API."
+            ),
+        }
+        if not results:
+            # Many common labels (e.g. 'Body mass index') have no node in the
+            # genetic-correlation graph even though they exist in OpenGWAS;
+            # don't let that read as 'no shared genetics'.
+            metadata["note"] = (
+                f"No genetic correlations found for '{trait}'. The /genetic-cor "
+                "graph matches exact, case-sensitive labels and only stores "
+                "|rg| > 0.8 edges, so many traits return empty. Try a related "
+                "label (e.g. 'Waist circumference' for adiposity) or rely on "
+                "bidirectional MR for triangulation instead."
+            )
+        elif used_trait != trait:
+            metadata["note"] = (
+                f"Matched on '{used_trait}' after case normalization of '{trait}'."
+            )
+
         return {
             "status": "success",
             "data": {
                 "correlations": cor_results,
                 "total_count": len(results),
             },
-            "metadata": {
-                "trait": trait,
-                "pval_threshold": pval_threshold,
-                "source": "EpiGraphDB",
-                "description": "rg = genetic correlation coefficient (-1 to 1)",
-            },
+            "metadata": metadata,
         }
+
+    def _query_genetic_cor(self, trait: str) -> list:
+        """Call the EpiGraphDB /genetic-cor endpoint for one trait label."""
+        params = {"trait": trait, "mode": "table"}
+        resp = requests.get(
+            f"{EPIGRAPHDB_BASE}/genetic-cor", params=params, timeout=self.timeout
+        )
+        resp.raise_for_status()
+        return resp.json().get("results", [])
 
     def _get_drugs_risk_factors(self, arguments: dict) -> dict:
         """Get drugs associated with a risk factor trait via genetic evidence."""

@@ -18,6 +18,7 @@ Usage:
     # Tools are automatically registered and available on startup
 """
 
+import os
 import threading
 import time
 import uuid
@@ -206,7 +207,9 @@ executor = ThreadPoolExecutor(max_workers=4)
     },
     mcp_config={
         "server_name": "Human Expert Consultation Server",
-        "host": "0.0.0.0",
+        # Loopback by default; remote exposure requires TOOLUNIVERSE_API_TOKEN
+        # (enforced by the SMCP bind guard at server start).
+        "host": "127.0.0.1",
         "port": 9876,
     },
 )
@@ -1781,11 +1784,20 @@ class ExpertInterface:
 # =============================================================================
 
 
-def start_http_api_server(port=9877):
-    """Start the HTTP API server for expert system communication"""
+def start_http_api_server(port=9877, host=None):
+    """Start the HTTP API server for expert system communication.
+
+    Defaults to loopback. Set TOOLUNIVERSE_EXPERT_HOST (or pass ``host``) to
+    bind elsewhere; a non-loopback bind requires TOOLUNIVERSE_API_TOKEN.
+    """
     if not FLASK_AVAILABLE:
         print("⚠️  Cannot start HTTP API server: Flask not installed")
         return
+
+    from tooluniverse.server_security import enforce_bind_security
+
+    host = host or os.getenv("TOOLUNIVERSE_EXPERT_HOST", "127.0.0.1")
+    enforce_bind_security(host)
 
     api_app = create_http_api_server()
     if api_app is None:
@@ -1796,9 +1808,9 @@ def start_http_api_server(port=9877):
 
     def run_api_server():
         print(f"🌐 Starting HTTP API server on port {port}")
-        print(f"📡 API endpoints available at http://0.0.0.0:{port}/api/")
+        print(f"📡 API endpoints available at http://{host}:{port}/api/")
         try:
-            api_app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
+            api_app.run(host=host, port=port, debug=False, use_reloader=False)
         except Exception as e:
             print(f"❌ HTTP API server failed: {e}")
 
@@ -1814,17 +1826,26 @@ def start_http_api_server(port=9877):
     return api_thread
 
 
-def start_web_server():
-    """Start the Flask web server for expert interface"""
+def start_web_server(host=None, port=8090):
+    """Start the Flask web server for expert interface.
+
+    Defaults to loopback. Set TOOLUNIVERSE_EXPERT_HOST (or pass ``host``) to
+    bind elsewhere; a non-loopback bind requires TOOLUNIVERSE_API_TOKEN.
+    """
     if not FLASK_AVAILABLE:
         print("❌ Cannot start web interface: Flask not installed")
         print("   Install with: pip install flask")
         return
 
+    from tooluniverse.server_security import enforce_bind_security
+
+    host = host or os.getenv("TOOLUNIVERSE_EXPERT_HOST", "127.0.0.1")
+    enforce_bind_security(host)
+
     app = create_web_app()
     if app:
-        print("🌐 Starting web interface on http://localhost:8090")
-        app.run(host="0.0.0.0", port=8090, debug=False, use_reloader=False)
+        print(f"🌐 Starting web interface on http://{host}:{port}")
+        app.run(host=host, port=port, debug=False, use_reloader=False)
 
 
 def run_expert_interface():

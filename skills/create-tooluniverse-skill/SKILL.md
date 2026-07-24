@@ -1,6 +1,7 @@
 ---
 name: create-tooluniverse-skill
-description: Create high-quality ToolUniverse skills following test-driven, implementation-agnostic methodology. Integrates tools from ToolUniverse's 1,264+ tool library, creates missing tools when needed, tests thoroughly, and produces skills with Python SDK + MCP support.
+description: Create high-quality ToolUniverse skills following test-driven, implementation-agnostic methodology.
+disable-model-invocation: true
 ---
 
 # Create ToolUniverse Skill

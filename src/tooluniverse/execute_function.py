@@ -279,6 +279,29 @@ class ToolNamespace:
         self.engine.eager_load_tools(names)
 
 
+def _load_global_dotenv(workspace_dotenv, logger=None):
+    """Load ~/.tooluniverse/.env as a global secrets store (override=False).
+
+    Skipped when the workspace .env already IS the global file (avoids a
+    redundant second load). Shell env and the workspace .env both win over
+    the global file because override=False.
+    """
+    from pathlib import Path
+
+    global_dotenv = Path.home() / ".tooluniverse" / ".env"
+    if global_dotenv == Path(workspace_dotenv) or not global_dotenv.exists():
+        return
+    try:
+        from dotenv import load_dotenv as _load_dotenv
+
+        _load_dotenv(global_dotenv, override=False)
+        if logger:
+            logger.debug(f"Loaded global .env: {global_dotenv}")
+    except Exception as exc:  # noqa: BLE001
+        if logger:
+            logger.debug(f"Could not load global .env: {exc}")
+
+
 class ToolUniverse:
     """
     A comprehensive tool management system for loading, organizing, and executing various scientific and data tools.
@@ -465,6 +488,10 @@ class ToolUniverse:
                 self.logger.debug(f"Loaded workspace .env: {_ws_dotenv}")
             except Exception as _exc:
                 self.logger.debug(f"Could not load workspace .env: {_exc}")
+
+        # Also load ~/.tooluniverse/.env so keys saved there are visible from
+        # any workspace (global secrets store). Shell env / workspace .env win.
+        _load_global_dotenv(_ws_dotenv, self.logger)
 
         # Seed workspace with default_profile.yaml on first use (if workspace dir exists
         # but has no profile.yaml). This gives the user a visible, editable starting point.
@@ -3880,13 +3907,20 @@ class ToolUniverse:
     def _classify_exception(
         self, exception: Exception, function_name: str, arguments: dict
     ) -> ToolError:
-        """Classify exception by delegating to BaseTool."""
+        """Classify exception by delegating to BaseTool.
+
+        Not every registered tool subclasses BaseTool (some are plain classes),
+        so ``handle_error`` may be absent. Guard for it instead of raising a
+        confusing ``AttributeError: ... has no attribute 'handle_error'`` that
+        masks the tool's real exception.
+        """
         tool_instance = self._get_tool_instance(function_name, cache=True)
 
-        if tool_instance:
-            return tool_instance.handle_error(exception)
+        handler = getattr(tool_instance, "handle_error", None)
+        if callable(handler):
+            return handler(exception)
 
-        # Fallback for tool instance creation failure
+        # Fallback for tool instance creation failure or non-BaseTool tools.
         return ToolServerError(f"Unexpected error calling {function_name}: {exception}")
 
     def _create_dual_format_error(self, error: ToolError) -> dict:

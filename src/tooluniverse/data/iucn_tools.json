@@ -1,0 +1,34 @@
+[
+  {
+    "name": "IUCN_get_conservation_status",
+    "description": "Get the IUCN Red List conservation (extinction-risk) status for a species by scientific name. Returns the Red List category (CR Critically Endangered, EN Endangered, VU Vulnerable, NT Near Threatened, LC Least Concern, DD Data Deficient, EX/EW Extinct), the assessment year, and assessment ID. The authoritative source for conservation status, which GBIF/occurrence tools do not provide. Requires a free IUCN token (IUCN_API_KEY env var; register at api.iucnredlist.org).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "scientific_name": {"type": ["string", "null"], "description": "Binomial 'Genus species', e.g. 'Panthera leo', 'Loxodonta africana'."},
+        "genus_name": {"type": ["string", "null"], "description": "Genus (alternative to scientific_name), e.g. 'Panthera'."},
+        "species_name": {"type": ["string", "null"], "description": "Species epithet (alternative to scientific_name), e.g. 'leo'."}
+      },
+      "required": []
+    },
+    "fields": {},
+    "type": "IUCNTool",
+    "test_examples": [{"scientific_name": "Panthera leo"}],
+    "optional_api_keys": ["IUCN_API_KEY"],
+    "api_key_info": {
+      "IUCN_API_KEY": {
+        "domain": "Ecology & Biodiversity",
+        "type": "secret",
+        "register_url": "https://api.iucnredlist.org/",
+        "purpose": "Retrieve IUCN Red List conservation status for species.",
+        "without": "The tool returns a clear error explaining how to register; no data without it."
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "properties": {"data": {"type": ["object", "null"], "properties": {"scientific_name": {"type": "string"}, "red_list_category_code": {"type": ["string", "null"]}, "red_list_category": {"type": ["string", "null"]}, "year_published": {"type": ["string", "integer", "null"]}}}, "metadata": {"type": "object"}}, "required": ["data"]},
+        {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+      ]
+    }
+  }
+]

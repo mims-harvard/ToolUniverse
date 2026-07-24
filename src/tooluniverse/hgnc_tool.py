@@ -72,7 +72,12 @@ class HGNCTool(BaseTool):
             return self._search(arguments, headers)
 
     def _fetch(self, arguments: Dict[str, Any], headers: Dict) -> Dict[str, Any]:
-        """Fetch a specific gene record by symbol or HGNC ID."""
+        """Fetch a specific gene record by symbol or HGNC ID.
+
+        For ``gene_group_id`` the fetch endpoint returns every member gene of
+        the family/group, so all docs are returned as a list rather than a
+        single record.
+        """
         search_field = self.default_search_field
 
         if search_field == "symbol":
@@ -86,6 +91,14 @@ class HGNCTool(BaseTool):
             # Ensure HGNC: prefix
             if not value.startswith("HGNC:"):
                 value = f"HGNC:{value}"
+        elif search_field == "gene_group_id":
+            value = arguments.get("gene_group_id", "")
+            if value is None or str(value).strip() == "":
+                return {
+                    "status": "error",
+                    "error": "gene_group_id parameter is required",
+                }
+            value = str(value).strip()
         else:
             return {"status": "error", "error": f"Unknown fetch field: {search_field}"}
 
@@ -96,6 +109,19 @@ class HGNCTool(BaseTool):
         data = response.json()
         resp = data.get("response", {})
         docs = resp.get("docs", [])
+
+        # gene_group_id enumerates every member gene of a family → return all
+        if search_field == "gene_group_id":
+            return {
+                "status": "success",
+                "data": docs,
+                "metadata": {
+                    "source": "HGNC",
+                    "query_field": search_field,
+                    "query_value": value,
+                    "num_found": resp.get("numFound", len(docs)),
+                },
+            }
 
         if not docs:
             return {

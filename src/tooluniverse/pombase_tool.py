@@ -70,6 +70,12 @@ class PomBaseTool(BaseTool):
             return self._gene_summary_search(arguments)
         elif self.endpoint_type == "gene_phenotypes":
             return self._gene_phenotypes(arguments)
+        elif self.endpoint_type == "gene_orthologs":
+            return self._gene_orthologs(arguments)
+        elif self.endpoint_type == "gene_interactions":
+            return self._gene_interactions(arguments)
+        elif self.endpoint_type == "gene_go_annotations":
+            return self._gene_go_annotations(arguments)
         else:
             return {
                 "status": "error",
@@ -254,5 +260,199 @@ class PomBaseTool(BaseTool):
                 "source": "PomBase",
                 "query": gene_id,
                 "endpoint": "gene_phenotypes",
+            },
+        }
+
+    def _fetch_gene(self, gene_id: str) -> Dict[str, Any]:
+        """Fetch the full PomBase gene record for the given systematic ID."""
+        url = f"{POMBASE_BASE_URL}/gene/{gene_id}"
+        response = requests.get(
+            url,
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def _gene_orthologs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get human and S. cerevisiae orthologs of a fission-yeast gene."""
+        gene_id = arguments.get("gene_id", "")
+        if not gene_id:
+            return {
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'SPBC11B10.09' for cdc2)",
+            }
+
+        raw = self._fetch_gene(gene_id)
+
+        taxon_names = {9606: "Homo sapiens", 4932: "Saccharomyces cerevisiae"}
+        orthologs = []
+        for o in raw.get("ortholog_annotations", []):
+            taxon_id = o.get("ortholog_taxonid")
+            orthologs.append(
+                {
+                    "ortholog_id": o.get("ortholog_uniquename"),
+                    "ortholog_taxon_id": taxon_id,
+                    "ortholog_species": taxon_names.get(taxon_id, str(taxon_id)),
+                }
+            )
+
+        result = {
+            "systematic_id": raw.get("uniquename"),
+            "gene_name": raw.get("name"),
+            "ortholog_count": len(orthologs),
+            "orthologs": orthologs,
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "PomBase",
+                "query": gene_id,
+                "endpoint": "gene_orthologs",
+            },
+        }
+
+    def _gene_interactions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get physical and genetic interactions for a fission-yeast gene."""
+        gene_id = arguments.get("gene_id", "")
+        if not gene_id:
+            return {
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'SPBC11B10.09' for cdc2)",
+            }
+
+        raw = self._fetch_gene(gene_id)
+        genes_lookup = raw.get("genes_by_uniquename", {})
+
+        def _gene_name(uniquename):
+            info = genes_lookup.get(uniquename) or {}
+            return info.get("name") if isinstance(info, dict) else None
+
+        physical = []
+        for i in raw.get("physical_interactions", [])[:75]:
+            if not isinstance(i, dict):
+                continue
+            partner = (
+                i.get("gene_uniquename")
+                if i.get("gene_uniquename") != gene_id
+                else i.get("interactor_uniquename")
+            )
+            physical.append(
+                {
+                    "interactor_id": partner,
+                    "interactor_name": _gene_name(partner),
+                    "evidence": i.get("evidence"),
+                    "reference": i.get("reference_uniquename"),
+                    "throughput": i.get("throughput"),
+                    "source_database": i.get("source_database"),
+                }
+            )
+
+        # genetic_interactions entries are [pair_dict, [evidence_dicts]] pairs.
+        genetic = []
+        for entry in raw.get("genetic_interactions", [])[:75]:
+            pair = None
+            evidence = None
+            if isinstance(entry, (list, tuple)) and entry:
+                pair = entry[0] if isinstance(entry[0], dict) else None
+                if len(entry) > 1 and isinstance(entry[1], list) and entry[1]:
+                    evidence = entry[1][0] if isinstance(entry[1][0], dict) else None
+            elif isinstance(entry, dict):
+                pair = entry
+            if not isinstance(pair, dict):
+                continue
+            gene_a = pair.get("gene_a_uniquename")
+            gene_b = pair.get("gene_b_uniquename")
+            partner = gene_b if gene_a == gene_id else gene_a
+            ev = evidence or {}
+            genetic.append(
+                {
+                    "interactor_id": partner,
+                    "interactor_name": _gene_name(partner),
+                    "interaction_type": pair.get("interaction_type"),
+                    "reference": ev.get("reference_uniquename"),
+                    "throughput": ev.get("throughput"),
+                    "source_database": ev.get("source_database"),
+                }
+            )
+
+        result = {
+            "systematic_id": raw.get("uniquename"),
+            "gene_name": raw.get("name"),
+            "physical_interaction_count": len(raw.get("physical_interactions", [])),
+            "physical_interactions": physical,
+            "genetic_interaction_count": len(raw.get("genetic_interactions", [])),
+            "genetic_interactions": genetic,
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "PomBase",
+                "query": gene_id,
+                "endpoint": "gene_interactions",
+            },
+        }
+
+    def _gene_go_annotations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get GO annotations (BP/MF/CC) for a fission-yeast gene."""
+        gene_id = arguments.get("gene_id", "")
+        if not gene_id:
+            return {
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'SPBC11B10.09' for cdc2)",
+            }
+
+        raw = self._fetch_gene(gene_id)
+        cv_annotations = raw.get("cv_annotations", {})
+        terms_lookup = raw.get("terms_by_termid", {})
+
+        aspects = {
+            "biological_process": "BP",
+            "molecular_function": "MF",
+            "cellular_component": "CC",
+        }
+
+        go_terms = []
+        aspect_counts = {}
+        for cv_name, code in aspects.items():
+            annotations = cv_annotations.get(cv_name, [])
+            aspect_counts[cv_name] = len(annotations)
+            for ann in annotations[:30]:
+                if not isinstance(ann, dict):
+                    continue
+                term_id = ann.get("term", "")
+                term_info = terms_lookup.get(term_id, {})
+                term_name = (
+                    term_info.get("name") if isinstance(term_info, dict) else None
+                )
+                go_terms.append(
+                    {
+                        "term_id": term_id,
+                        "term_name": term_name,
+                        "aspect": cv_name,
+                        "aspect_code": code,
+                        "is_not": ann.get("is_not", False),
+                    }
+                )
+
+        result = {
+            "systematic_id": raw.get("uniquename"),
+            "gene_name": raw.get("name"),
+            "aspect_counts": aspect_counts,
+            "go_term_count": len(go_terms),
+            "go_terms": go_terms,
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "PomBase",
+                "query": gene_id,
+                "endpoint": "gene_go_annotations",
             },
         }

@@ -1,0 +1,381 @@
+[
+  {
+    "name": "SGD_get_protein_domains",
+    "type": "SGDProteinTool",
+    "description": "Get mapped protein domains for a budding-yeast (Saccharomyces cerevisiae) gene from the Saccharomyces Genome Database (SGD). Returns domain hits from Pfam, InterPro, SMART, PROSITE, CDD, Gene3D, SUPERFAMILY, PANTHER, and PRINTS, each with the domain accession, description, source database, and start/end residue coordinates on the protein. The 'locus' argument accepts a standard gene name (e.g. 'ACT1'), a systematic name (e.g. 'YFL039C'), or an SGD ID (e.g. 'S000001855'). No API key required.",
+    "category": "sgd_protein",
+    "fields": {
+      "endpoint": "protein_domain_details"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "locus": {
+          "type": "string",
+          "description": "Yeast gene identifier: standard gene name (e.g. 'ACT1'), systematic/ORF name (e.g. 'YFL039C'), or SGD ID (e.g. 'S000001855')."
+        }
+      },
+      "required": [
+        "locus"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sgd_link": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "domain_count": {
+                  "type": "integer"
+                },
+                "domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "start": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "end": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "domain_link": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "domain_count",
+                "domains"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "locus": "ACT1"
+      },
+      {
+        "locus": "YAL001C"
+      },
+      {
+        "locus": "S000001855"
+      }
+    ]
+  },
+  {
+    "name": "SGD_get_ptm_sites",
+    "type": "SGDProteinTool",
+    "description": "Get curated post-translational modification (PTM) sites for a budding-yeast (Saccharomyces cerevisiae) gene from the Saccharomyces Genome Database (SGD). Returns modified residues such as phosphorylation, ubiquitination, acetylation, methylation, and succinylation, each with the modification type, the residue letter, its position in the protein sequence, and the supporting reference (citation + PubMed ID). The 'locus' argument accepts a standard gene name (e.g. 'ACT1'), a systematic name (e.g. 'YAL001C'), or an SGD ID (e.g. 'S000001855'). No API key required.",
+    "category": "sgd_protein",
+    "fields": {
+      "endpoint": "posttranslational_details"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "locus": {
+          "type": "string",
+          "description": "Yeast gene identifier: standard gene name (e.g. 'ACT1'), systematic/ORF name (e.g. 'YAL001C'), or SGD ID (e.g. 'S000001855')."
+        }
+      },
+      "required": [
+        "locus"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sgd_link": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "site_count": {
+                  "type": "integer"
+                },
+                "sites": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "modification": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "residue": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "position": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reference": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "pubmed_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "site_count",
+                "sites"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "locus": "ACT1"
+      },
+      {
+        "locus": "YAL001C"
+      },
+      {
+        "locus": "CDC28"
+      }
+    ]
+  },
+  {
+    "name": "SGD_get_literature",
+    "type": "SGDProteinTool",
+    "description": "Get categorized literature references for a budding-yeast (Saccharomyces cerevisiae) gene from the Saccharomyces Genome Database (SGD). Returns reference counts per curation category (primary, review, interaction, phenotype, GO, disease, PTM, regulation, additional, high-throughput) plus a capped list of the most relevant references for each category, each with citation, PubMed ID, year, and SGD reference link. Useful for surveying the curated literature behind a yeast gene's annotations. The 'locus' argument accepts a standard gene name (e.g. 'ACT1'), a systematic name (e.g. 'YAL001C'), or an SGD ID (e.g. 'S000001855'). No API key required.",
+    "category": "sgd_protein",
+    "fields": {
+      "endpoint": "literature_details"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "locus": {
+          "type": "string",
+          "description": "Yeast gene identifier: standard gene name (e.g. 'ACT1'), systematic/ORF name (e.g. 'YAL001C'), or SGD ID (e.g. 'S000001855')."
+        }
+      },
+      "required": [
+        "locus"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                },
+                "total_references": {
+                  "type": "integer"
+                },
+                "counts_by_category": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                },
+                "references": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pubmed_id": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "year": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "reference_link": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "truncated_per_category": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "total_references",
+                "counts_by_category",
+                "references"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "locus": "ACT1"
+      },
+      {
+        "locus": "YAL001C"
+      },
+      {
+        "locus": "CDC28"
+      }
+    ]
+  }
+]

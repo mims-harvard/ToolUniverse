@@ -1,0 +1,3 @@
+cell2location
+scanpy>=1.10
+anndata

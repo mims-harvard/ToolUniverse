@@ -1,190 +1,449 @@
 [
-    {
-        "name": "ExpressionAtlas_get_baseline",
-        "description": "Get baseline gene expression experiments from EBI Expression Atlas. Shows which tissues/cell types express a gene under normal conditions. Complements GTEx and HPA. No API key needed. Query by gene symbol or Ensembl ID.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "gene": {
-                    "type": "string",
-                    "description": "Gene symbol (e.g., 'TP53', 'WDR7') or Ensembl ID (e.g., 'ENSG00000141510')"
-                },
-                "species": {
-                    "type": "string",
-                    "description": "Species name (default: 'homo sapiens'). Also supports 'mus musculus', 'rattus norvegicus', etc.",
-                    "default": "homo sapiens"
-                }
-            },
-            "required": ["gene"]
+  {
+    "name": "ExpressionAtlas_get_baseline",
+    "description": "List baseline gene expression experiments in EBI Expression Atlas for a given species. The `gene` argument is used to label the request and suggest a follow-up call, but does NOT filter the returned experiment list (the underlying API has no reliable way to filter experiments by gene) -- use GxA_get_experiment_expression with an experiment_accession from the results and gene_id=<gene> to check whether a specific experiment actually has data for that gene. Complements GTEx and HPA. No API key needed.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'TP53', 'WDR7') or Ensembl ID (e.g., 'ENSG00000141510')"
         },
-        "fields": {
-            "operation": "get_baseline_expression"
-        },
-        "type": "ExpressionAtlasTool",
-        "test_examples": [
-            {"gene": "TP53", "species": "homo sapiens"},
-            {"gene": "BRCA1"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "gene": {"type": "string"},
-                        "species": {"type": "string"},
-                        "baseline_experiments": {"type": "array"},
-                        "total_baseline": {"type": "integer"},
-                        "gene_specific_count": {"type": "integer"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["Expression Atlas", "Baseline Expression", "Tissue Expression"],
-        "metadata": {
-            "tags": ["gene_expression", "baseline", "tissue", "rna_seq", "proteomics"],
-            "estimated_execution_time": "< 5 seconds"
+        "species": {
+          "type": "string",
+          "description": "Species name (default: 'homo sapiens'). Also supports 'mus musculus', 'rattus norvegicus', etc.",
+          "default": "homo sapiens"
         }
+      },
+      "required": [
+        "gene"
+      ]
     },
-    {
-        "name": "ExpressionAtlas_search_differential",
-        "description": "Search for differential expression experiments from EBI Expression Atlas. Find experiments where a gene is differentially expressed in disease vs. normal, treated vs. untreated, etc. Supports disease-context expression analysis.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "gene": {
-                    "type": "string",
-                    "description": "Gene symbol or Ensembl ID (e.g., 'TP53', 'ENSG00000141510')"
-                },
-                "condition": {
-                    "type": "string",
-                    "description": "Condition/disease to filter by (e.g., 'cancer', 'inflammation', 'breast')"
-                },
-                "species": {
-                    "type": "string",
-                    "description": "Species name (default: 'homo sapiens')",
-                    "default": "homo sapiens"
-                }
-            }
-        },
-        "fields": {
-            "operation": "search_differential_experiments"
-        },
-        "type": "ExpressionAtlasTool",
-        "test_examples": [
-            {"gene": "TP53", "species": "homo sapiens"},
-            {"gene": "EGFR", "condition": "cancer"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "gene": {"type": "string"},
-                        "condition": {"type": "string"},
-                        "experiments": {"type": "array"},
-                        "experiment_count": {"type": "integer"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["Expression Atlas", "Differential Expression", "Disease Expression"],
-        "metadata": {
-            "tags": ["differential_expression", "disease_context", "treatment_response"],
-            "estimated_execution_time": "< 5 seconds"
-        }
+    "fields": {
+      "operation": "get_baseline_expression"
     },
-    {
-        "name": "ExpressionAtlas_search_experiments",
-        "description": "Search all EBI Expression Atlas experiments (baseline + differential) by gene and/or condition. Returns experiment accessions, types, descriptions, and assay counts. Use to find relevant expression datasets.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "gene": {
-                    "type": "string",
-                    "description": "Gene symbol or Ensembl ID"
-                },
-                "condition": {
-                    "type": "string",
-                    "description": "Biological condition or tissue (e.g., 'brain', 'cancer', 'kidney')"
-                },
-                "species": {
-                    "type": "string",
-                    "description": "Species name (optional, e.g., 'homo sapiens')"
+    "type": "ExpressionAtlasTool",
+    "test_examples": [
+      {
+        "gene": "TP53",
+        "species": "homo sapiens"
+      },
+      {
+        "gene": "BRCA1"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "gene": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "baseline_experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "experiment_accession": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "experiment_description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "num_assays": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "last_update": {
+                    "type": "string"
+                  }
                 }
+              }
+            },
+            "total_baseline": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
+          },
+          "required": [
+            "gene"
+          ]
         },
-        "fields": {
-            "operation": "search_experiments"
-        },
-        "type": "ExpressionAtlasTool",
-        "test_examples": [
-            {"gene": "TP53", "species": "homo sapiens"},
-            {"condition": "Alzheimer", "species": "homo sapiens"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "gene": {"type": "string"},
-                        "condition": {"type": "string"},
-                        "experiments": {"type": "array"},
-                        "total_count": {"type": "integer"}
-                    }
-                },
-                "error": {"type": "string"}
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
             }
-        },
-        "label": ["Expression Atlas", "Experiment Search"],
-        "metadata": {
-            "tags": ["experiment_search", "expression_data", "dataset_discovery"],
-            "estimated_execution_time": "< 5 seconds"
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
     },
-    {
-        "name": "ExpressionAtlas_get_experiment",
-        "description": "Get detailed metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836). Returns experiment design, species, technology, contrasts, PubMed references, and number of assays.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "accession": {
-                    "type": "string",
-                    "description": "Expression Atlas experiment accession (e.g., 'E-MTAB-2836', 'E-GEOD-26284')"
-                }
-            },
-            "required": ["accession"]
-        },
-        "fields": {
-            "operation": "get_experiment"
-        },
-        "type": "ExpressionAtlasTool",
-        "test_examples": [
-            {"accession": "E-MTAB-2836"}
-        ],
-        "return_schema": {
-            "type": ["object", "null"],
-            "properties": {
-                "accession": {"type": "string"},
-                "type": {"type": "string"},
-                "description": {"type": "string"},
-                "species": {"type": "string"},
-                "factors": {"type": "array"},
-                "assay_count": {"type": "integer"}
-            },
-            "additionalProperties": true
-        },
-        "label": ["Expression Atlas", "Experiment Detail"],
-        "metadata": {
-            "tags": ["experiment_metadata", "study_design"],
-            "estimated_execution_time": "< 3 seconds"
-        }
+    "label": [
+      "Expression Atlas",
+      "Baseline Expression",
+      "Tissue Expression"
+    ],
+    "metadata": {
+      "tags": [
+        "gene_expression",
+        "baseline",
+        "tissue",
+        "rna_seq",
+        "proteomics"
+      ],
+      "estimated_execution_time": "< 5 seconds"
     }
+  },
+  {
+    "name": "ExpressionAtlas_search_differential",
+    "description": "Search for differential expression EXPERIMENTS from EBI Expression Atlas by condition text and/or a gene mentioned in the experiment description. Supports disease-context expression analysis. Caveat: `condition` does real text filtering, but `gene` is a text-search coincidence (experiment descriptions rarely name individual genes) and does not return actual per-gene differential-expression values -- treat gene-tagged results as a starting point for manual review, not a validated gene-specific result set.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol or Ensembl ID (e.g., 'TP53', 'ENSG00000141510')"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Condition/disease to filter by (e.g., 'cancer', 'inflammation', 'breast')"
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name (default: 'homo sapiens')",
+          "default": "homo sapiens"
+        }
+      }
+    },
+    "fields": {
+      "operation": "search_differential_experiments"
+    },
+    "type": "ExpressionAtlasTool",
+    "test_examples": [
+      {
+        "gene": "TP53",
+        "species": "homo sapiens"
+      },
+      {
+        "gene": "EGFR",
+        "condition": "cancer"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "gene": {
+              "type": "string"
+            },
+            "condition": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "experiment_accession": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "experiment_description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "num_assays": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "gene_mentioned": {
+                    "type": "boolean"
+                  },
+                  "factors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "experiment_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            }
+          },
+          "required": [
+            "gene"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "Expression Atlas",
+      "Differential Expression",
+      "Disease Expression"
+    ],
+    "metadata": {
+      "tags": [
+        "differential_expression",
+        "disease_context",
+        "treatment_response"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "ExpressionAtlas_search_experiments",
+    "description": "Search all EBI Expression Atlas experiments (baseline + differential) by condition text and/or a gene mentioned in the experiment description. Returns experiment accessions, types, descriptions, and assay counts. Caveat: `condition` does real text filtering, but `gene` is a text-search coincidence (experiment descriptions rarely name individual genes), so a gene-only query effectively returns the unfiltered catalog -- use to find relevant expression datasets, not as a validated per-gene result set.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol or Ensembl ID"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Biological condition or tissue (e.g., 'brain', 'cancer', 'kidney')"
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name (optional, e.g., 'homo sapiens')"
+        }
+      }
+    },
+    "fields": {
+      "operation": "search_experiments"
+    },
+    "type": "ExpressionAtlasTool",
+    "test_examples": [
+      {
+        "gene": "TP53",
+        "species": "homo sapiens"
+      },
+      {
+        "condition": "Alzheimer",
+        "species": "homo sapiens"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "gene": {
+              "type": "string"
+            },
+            "condition": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "experiment_accession": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "experiment_description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "num_assays": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "gene_mentioned": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "gene_specific_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            }
+          },
+          "required": [
+            "gene"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "Expression Atlas",
+      "Experiment Search"
+    ],
+    "metadata": {
+      "tags": [
+        "experiment_search",
+        "expression_data",
+        "dataset_discovery"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "ExpressionAtlas_get_experiment",
+    "description": "Get metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836): accession, type, species, and description/URLs. Caveat: the underlying GXA API does not expose per-experiment design/technology/contrasts/PubMed/assay-count data through this endpoint (confirmed live: those fields are always empty) -- for that level of detail, visit the experiment's page on https://www.ebi.ac.uk/gxa directly.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "Expression Atlas experiment accession (e.g., 'E-MTAB-2836', 'E-GEOD-26284')"
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "operation": "get_experiment"
+    },
+    "type": "ExpressionAtlasTool",
+    "test_examples": [
+      {
+        "accession": "E-MTAB-2836"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "factors": {
+              "type": "array"
+            },
+            "technology": {
+              "type": "array"
+            },
+            "contrasts": {
+              "type": "array"
+            },
+            "assay_count": {
+              "type": "null"
+            },
+            "last_update": {
+              "type": "null"
+            },
+            "pubmed_ids": {
+              "type": "array"
+            }
+          },
+          "required": [
+            "accession"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "Expression Atlas",
+      "Experiment Detail"
+    ],
+    "metadata": {
+      "tags": [
+        "experiment_metadata",
+        "study_design"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
 ]

@@ -1,0 +1,38 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_paga_trajectory",
+    "description": "Run PAGA (Partition-based Graph Abstraction; Wolf et al., Genome Biology 2019) on a single-cell AnnData to estimate connectivity between cell clusters and sketch the trajectory backbone. Builds a neighbors graph if one is absent (log-normalize -> PCA -> neighbors), runs scanpy.tl.paga, then returns the cluster x cluster connectivity matrix plus the strongest connected cluster pairs (edges above a threshold). Input is a server-accessible .h5ad whose obs contains the requested cluster_key.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData whose obs contains `cluster_key`."},
+        "cluster_key": {"type": "string", "description": "obs column holding the discrete cluster labels (e.g. 'leiden' or 'cell_type')."},
+        "threshold": {"type": "number", "description": "Minimum connectivity for an edge to be reported (default 0.1)."}
+      },
+      "required": ["adata_path", "cluster_key"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "clusters": {"type": "array", "items": {"type": "string"}, "description": "Cluster names (categories of cluster_key), in matrix order."},
+        "connectivity_matrix": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}, "description": "Dense cluster x cluster PAGA connectivity matrix."},
+        "edges": {"type": "array", "items": {"type": "object"}, "description": "Cluster pairs with connectivity >= threshold ({from, to, connectivity}), sorted strongest-first — the trajectory backbone."},
+        "note": {"type": "string"},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "PagaTrajectoryTool",
+      "url": "https://scanpy.readthedocs.io/en/stable/generated/scanpy.tl.paga.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/paga",
+      "mcp_tool_name": "run_paga_trajectory"
+    },
+    "test_examples": [
+      {"adata_path": "pbmc_3k.h5ad", "cluster_key": "leiden", "threshold": 0.1},
+      {"adata_path": "paul15_blood.h5ad", "cluster_key": "cell_type", "threshold": 0.2}
+    ]
+  }
+]

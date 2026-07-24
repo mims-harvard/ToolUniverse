@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # MCP Tasks: Async Operations in ToolUniverse
 
 **Status**: Production Ready

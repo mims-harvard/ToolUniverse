@@ -15,7 +15,6 @@ WSDL: https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl
 
 import hashlib
 import os
-import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -389,50 +388,71 @@ class BRENDATool(BaseTool):
     ) -> Dict[str, Any]:
         """Fetch kinetic parameters from SABIO-RK (no auth).
 
-        Reuses shared parsing from sabiork_tool module.
+        Fix-R73A-1: the legacy /sabioRestWebServices/searchKineticLaws/
+        entryIDs REST endpoint this used to call was retired by SABIO-RK in
+        2025 -- every request now 302-redirects to the sabiork.h-its.org
+        SPA's 404 page (confirmed live via raw curl), and the old status-
+        code/XML-parse checks below silently swallowed that as "0 entries,
+        success" instead of surfacing a failure. Confirmed live for EC
+        1.1.1.1 (alcohol dehydrogenase, one of the most-studied enzymes):
+        silently reported 0 SABIO-RK entries when the real count is 768.
+        Ports the same Solr-backed endpoint sabiork_tool.py's SABIORKTool
+        already migrated to (see its _search_reactions docstring) instead
+        of reimplementing a second copy of the fix. That endpoint doesn't
+        expose raw numeric parameter values (confirmed live -- SABIORKTool's
+        own "parameters" field is always empty too), so kinetic_laws entries
+        carry parameter_types/entry metadata but no Km/kcat/Ki numeric
+        values; the caller's numeric parameter_summary aggregation below
+        simply has nothing to aggregate, same as before this fix (never a
+        regression, since the old code always returned 0 entries anyway).
         """
-        from .sabiork_tool import (
-            SABIORK_BASE,
-            _is_no_data_response,
-            _parse_entry_ids,
-            _parse_sbml_kinetics,
-        )
-
-        query_parts = [f"ecnumber:{ec_number}"]
+        query_parts = [f"ECNumber:{ec_number}"]
         if organism:
             query_parts.append(f'Organism:"{organism}"')
         query = " AND ".join(query_parts)
 
         resp = requests.get(
-            f"{SABIORK_BASE}/searchKineticLaws/entryIDs?q={query}", timeout=20
+            "https://sabiork.h-its.org/api/ft/proxy-select",
+            params={
+                "q": query,
+                "df": "Everything",
+                "wt": "json",
+                "rows": limit,
+                "fl": "EntryID,ECNumber,EnzymeName,Organism,Tissue,Substrate,"
+                "Product,ParameterType,PubMedID",
+            },
+            timeout=20,
         )
-        if resp.status_code != 200:
-            return {"kinetic_laws": [], "total_count": 0}
+        resp.raise_for_status()
+        response = resp.json().get("response", {}) or {}
+        total_count = response.get("numFound", 0)
+        docs = response.get("docs", []) or []
 
-        if _is_no_data_response(resp.text):
-            return {"kinetic_laws": [], "total_count": 0}
+        def _first(v):
+            return v[0] if isinstance(v, list) and v else v
 
-        try:
-            entry_ids = _parse_entry_ids(resp.text)
-        except ET.ParseError:
-            return {"kinetic_laws": [], "total_count": 0}
-
-        total = len(entry_ids)
-        if total == 0:
-            return {"kinetic_laws": [], "total_count": 0}
-
-        fetch_ids = entry_ids[:limit]
-        resp2 = requests.get(
-            f"{SABIORK_BASE}/kineticLaws?kinlawids={','.join(fetch_ids)}", timeout=30
-        )
-        if resp2.status_code != 200:
-            return {"kinetic_laws": [], "total_count": total}
-
-        records = _parse_sbml_kinetics(resp2.text)
-        for i, rec in enumerate(records):
-            if i < len(fetch_ids):
-                rec["sabiork_entry_id"] = fetch_ids[i]
-        return {"kinetic_laws": records, "total_count": total}
+        kinetic_laws = [
+            {
+                "sabiork_entry_id": str(_first(d.get("EntryID")) or ""),
+                "ec_number": _first(d.get("ECNumber")),
+                "enzyme_name": _first(d.get("EnzymeName")),
+                "organism": _first(d.get("Organism")),
+                "tissue": _first(d.get("Tissue")),
+                "substrates": d.get("Substrate")
+                if isinstance(d.get("Substrate"), list)
+                else [],
+                "products": d.get("Product")
+                if isinstance(d.get("Product"), list)
+                else [],
+                "parameter_types": d.get("ParameterType")
+                if isinstance(d.get("ParameterType"), list)
+                else [],
+                "parameters": [],
+                "pubmed_id": _first(d.get("PubMedID")),
+            }
+            for d in docs
+        ]
+        return {"kinetic_laws": kinetic_laws, "total_count": total_count}
 
     def _get_enzyme_kinetics(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -466,6 +486,7 @@ class BRENDATool(BaseTool):
 
         sources_used = []
         result: Dict[str, Any] = {"ec_number": ec_number}
+        sabiork_error: Optional[str] = None
 
         # 1. ExPASy ENZYME: enzyme identity and catalytic activity
         try:
@@ -480,6 +501,13 @@ class BRENDATool(BaseTool):
             pass  # Non-fatal, continue with kinetics
 
         # 2. SABIO-RK: kinetic parameters (Km, kcat, Ki, Vmax)
+        # Fix-R14D-1: this whole block used to be one bare `except Exception:
+        # pass`, so any failure here (confirmed live: sabiork.h-its.org
+        # connection timeouts) silently dropped "kinetic_parameters" from
+        # the response entirely -- the tool's own headline capability --
+        # while still returning status:"success" with no indication that
+        # SABIO-RK was even attempted, let alone that it failed. Record the
+        # failure instead of erasing all trace of it.
         try:
             sabio = self._fetch_sabiork_kinetics(ec_number, organism, limit)
             result["kinetic_parameters"] = sabio.get("kinetic_laws", [])
@@ -516,8 +544,14 @@ class BRENDATool(BaseTool):
                     summary[ptype] = entry
                 if summary:
                     result["parameter_summary"] = summary
-        except Exception:
-            pass  # Non-fatal
+        except Exception as e:
+            result.setdefault("kinetic_parameters", [])
+            result.setdefault("sabiork_total_entries", 0)
+            sabiork_error = (
+                "SABIO-RK kinetics fetch timed out"
+                if isinstance(e, requests.exceptions.Timeout)
+                else f"SABIO-RK kinetics fetch failed: {type(e).__name__}: {e}"
+            )
 
         # 3. Optional BRENDA SOAP enrichment (if credentials available)
         creds = self._credentials()
@@ -621,15 +655,18 @@ class BRENDATool(BaseTool):
                 "error": f"No data found for EC {ec_number}. Verify the EC number is correct.",
             }
 
+        metadata: Dict[str, Any] = {
+            "sources": sources_used,
+            "note": (
+                "ExPASy ENZYME and SABIO-RK data require no authentication. "
+                "Set BRENDA_EMAIL/BRENDA_PASSWORD for additional pH, temperature, "
+                "and specific activity data from BRENDA."
+            ),
+        }
+        if sabiork_error:
+            metadata["sabiork_error"] = sabiork_error
         return {
             "status": "success",
             "data": result,
-            "metadata": {
-                "sources": sources_used,
-                "note": (
-                    "ExPASy ENZYME and SABIO-RK data require no authentication. "
-                    "Set BRENDA_EMAIL/BRENDA_PASSWORD for additional pH, temperature, "
-                    "and specific activity data from BRENDA."
-                ),
-            },
+            "metadata": metadata,
         }

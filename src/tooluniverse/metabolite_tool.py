@@ -19,10 +19,16 @@ PUBCHEM_API = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 CTD_API = "https://ctdbase.org/tools/batchQuery.go"
 
 # Regex to strip common stereochemistry prefixes so CTD can match the parent compound.
-# Example: "Beta-D-Glucose" → "Glucose", "L-Alanine" → "Alanine"
+# Example: "Beta-D-Glucose" → "Glucose", "L-Alanine" → "Alanine", "L-Lactic Acid" → "Lactic Acid"
+#
+# Each stereo descriptor must be followed by its own separator ([-\s]+). This
+# prevents over-stripping when the compound name itself starts with a stereo
+# letter: "L-Lactic Acid" must strip only "L-" (→ "Lactic Acid"), NOT "L-L"
+# (→ "actic Acid"). The trailing optional group only matches a *second*
+# descriptor that is itself separator-terminated (e.g. the "D-" in "Beta-D-").
+_STEREO_DESC = r"(?:alpha|beta|D|L|R|S|cis|trans|endo|exo)"
 _STEREO_PREFIX = re.compile(
-    r"^(alpha|beta|Alpha|Beta|D|L|R|S|cis|trans|endo|exo)[-\s]+"
-    r"(alpha|beta|Alpha|Beta|D|L|R|S|cis|trans|endo|exo)?[-\s]*",
+    rf"^{_STEREO_DESC}[-\s]+(?:{_STEREO_DESC}[-\s]+)?",
     re.IGNORECASE,
 )
 
@@ -159,22 +165,81 @@ class MetaboliteTool(BaseTool):
         return []
 
     def _ctd_diseases(self, chemical_term: str) -> List[Dict[str, Any]]:
-        """Query CTD for curated disease associations for a chemical term."""
-        resp = requests.get(
-            CTD_API,
-            params={
-                "inputType": "chem",
-                "inputTerms": chemical_term,
-                "report": "diseases_curated",
-                "format": "json",
-            },
-            timeout=self.timeout,
+        """Query CTD-via-RENCI Automat mirror for curated disease associations.
+
+        CTD's native batchQuery.go is altcha-CAPTCHA-blocked since early
+        2026 — see ctd_tool.py for the migration. The mirror at
+        automat.renci.org exposes the same chemical-disease edges; we
+        cypher-resolve the chemical name to a CURIE, then hit the typed
+        edge endpoint and flatten back to CTD-style rows so callers see no
+        change in shape.
+        """
+        # 1) Resolve the free-text chemical term to a graph CURIE
+        safe = chemical_term.replace('"', "").replace("\\", "")
+        cypher = (
+            'MATCH (n) WHERE n.id = "' + safe + '" OR "' + safe + '" IN '
+            'n.equivalent_identifiers OR toLower(n.name) = toLower("' + safe + '") '
+            "RETURN n.id AS id LIMIT 1"
         )
-        if resp.status_code != 200:
+        try:
+            r = requests.post(
+                "https://automat.renci.org/ctd/cypher",
+                headers={"Content-Type": "application/json"},
+                json={"query": cypher},
+                timeout=self.timeout,
+            )
+            r.raise_for_status()
+            payload = r.json()
+            curie = payload["results"][0]["data"][0]["row"][0]
+        except (requests.RequestException, KeyError, IndexError, TypeError, ValueError):
             return []
-        data = resp.json()
-        rows = data if isinstance(data, list) else []
-        return [r for r in rows if isinstance(r, dict) and r.get("DiseaseName")]
+
+        # 2) Fetch the SmallMolecule → Disease edges
+        try:
+            r = requests.get(
+                f"https://automat.renci.org/ctd/biolink:SmallMolecule/biolink:Disease/{curie}",
+                headers={"Accept": "application/json"},
+                timeout=self.timeout,
+            )
+            r.raise_for_status()
+            edges = r.json()
+        except (requests.RequestException, ValueError):
+            return []
+        if not isinstance(edges, list):
+            return []
+
+        # 3) Flatten [source, edge_props, target] back to CTD-style rows.
+        # Confirmed live (automat.renci.org/ctd chemical-disease edges):
+        # edge_props only ever carries agent_type/knowledge_level/
+        # primary_knowledge_source/publications -- there is no predicate/
+        # qualified_predicate field, so DirectEvidence (CTD's own
+        # "therapeutic"/"marker/mechanism" classification) is genuinely
+        # unavailable from this mirror, not a parsing bug. publications
+        # (PMID:xxxxx strings) IS present but was previously hardcoded to
+        # [] instead of being read.
+        rows = []
+        for edge in edges:
+            if not isinstance(edge, list) or len(edge) < 3:
+                continue
+            tgt = edge[2] if isinstance(edge[2], dict) else {}
+            props = edge[1] if isinstance(edge[1], dict) else {}
+            disease_name = tgt.get("name")
+            if not disease_name:
+                continue
+            pubmed_ids = [
+                p.split(":", 1)[-1]
+                for p in props.get("publications") or []
+                if isinstance(p, str)
+            ]
+            rows.append(
+                {
+                    "DiseaseName": disease_name,
+                    "DiseaseID": tgt.get("id"),
+                    "DirectEvidence": None,
+                    "PubMedIDs": pubmed_ids,
+                }
+            )
+        return rows
 
     def _resolve_ctd_term(
         self, title: str, synonyms: List[str]
@@ -371,7 +436,9 @@ class MetaboliteTool(BaseTool):
                     "disease_categories": r.get("DiseaseCategories"),
                     "direct_evidence": r.get("DirectEvidence"),
                     "pubmed_ids": (
-                        r["PubMedIDs"].split("|") if r.get("PubMedIDs") else []
+                        r["PubMedIDs"].split("|")
+                        if isinstance(r.get("PubMedIDs"), str)
+                        else (r.get("PubMedIDs") or [])
                     ),
                 }
                 for r in rows

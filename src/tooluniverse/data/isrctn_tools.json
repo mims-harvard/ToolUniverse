@@ -1,0 +1,239 @@
+[
+    {
+        "name": "ISRCTN_search_trials",
+        "description": "Search the ISRCTN clinical trial registry \u2014 a WHO-primary registry (UK-based, international scope) \u2014 by free text. Returns matching trials with ISRCTN id, title, scientific title, acronym, study hypothesis, primary study design, end date, and cross-reference ids (DOI, EudraCT, ClinicalTrials.gov). A third trial source alongside ClinicalTrials.gov and EU CTIS. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Free-text search, e.g. 'cystic fibrosis', 'diabetes prevention'."
+                },
+                "limit": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Max trials to return (default 10, max 100)."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "ISRCTNSearchTool",
+        "test_examples": [
+            {
+                "query": "cystic fibrosis",
+                "limit": 5
+            },
+            {
+                "query": "diabetes prevention",
+                "limit": 3
+            },
+            {
+                "query": "breast cancer",
+                "limit": 3
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "ISRCTN_search_trials_fielded",
+        "description": "Field-scoped (fielded) search of the ISRCTN clinical trial registry using its boolean query DSL. Unlike the free-text ISRCTN_search_trials, this lets you scope a query to specific registry fields so results are precise. Pass a raw 'q' DSL string such as 'condition:diabetes', 'phase:\"Phase III\"', or combine fields with AND/OR: 'gender:Female AND condition:asthma'. Alternatively pass field helpers (condition, phase, gender, intervention, sponsor, funder, country, drug_name) which are joined with AND. Returns detailed trial records (interventions, primary/secondary outcomes, inclusion/exclusion eligibility, sponsors, funders, recruitment countries and dates, drug names, enrolment, IPD-sharing, plain-English summary). No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "q": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Raw ISRCTN field-scoped boolean query, used verbatim. Examples: 'condition:diabetes', 'phase:\"Phase III\"', 'gender:Female AND condition:asthma'."
+                },
+                "query": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Alias for 'q'; a full field-scoped DSL string."
+                },
+                "condition": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Condition field helper (compiled to condition:VALUE), e.g. 'diabetes'."
+                },
+                "phase": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Phase field helper (compiled to phase:VALUE), e.g. 'Phase III'."
+                },
+                "gender": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Gender field helper (compiled to gender:VALUE), e.g. 'Female'."
+                },
+                "intervention": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Intervention field helper (compiled to intervention:VALUE)."
+                },
+                "sponsor": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Sponsor field helper (compiled to sponsor:VALUE)."
+                },
+                "funder": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Funder field helper (compiled to funder:VALUE)."
+                },
+                "country": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Recruitment country field helper (compiled to recruitmentCountry:VALUE)."
+                },
+                "drug_name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Drug name field helper (compiled to drugName:VALUE)."
+                },
+                "limit": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Max trials to return (default 10, max 100)."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "ISRCTNSearchTool",
+        "test_examples": [
+            {
+                "q": "condition:diabetes",
+                "limit": 2
+            },
+            {
+                "q": "phase:\"Phase III\"",
+                "limit": 2
+            },
+            {
+                "q": "gender:Female AND condition:asthma",
+                "limit": 2
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "ISRCTN_get_trial",
+        "description": "Retrieve a single ISRCTN clinical trial by its ISRCTN id (e.g. 'ISRCTN12336055'). Returns the full record: title, scientific title, acronym, study hypothesis, plain-English summary, primary and secondary study design, phase, conditions, interventions, primary and secondary outcomes, inclusion/exclusion eligibility (gender, age range, healthy volunteers), sponsors, funders, contacts, recruitment countries, recruitment start/end dates, drug names, target and final enrolment, IPD-sharing statement, end date, and cross-reference ids (DOI, EudraCT, ClinicalTrials.gov). No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "isrctn_id": {
+                    "type": "string",
+                    "description": "ISRCTN id, e.g. 'ISRCTN12336055' (the 'ISRCTN' prefix is optional)."
+                }
+            },
+            "required": [
+                "isrctn_id"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "ISRCTNGetTrialTool",
+        "test_examples": [
+            {
+                "isrctn_id": "ISRCTN12336055"
+            },
+            {
+                "isrctn_id": "ISRCTN30134752"
+            },
+            {
+                "isrctn_id": "18761383"
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    }
+]

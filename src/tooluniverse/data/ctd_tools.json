@@ -1,13 +1,13 @@
 [
   {
     "name": "CTD_get_chemical_gene_interactions",
-    "description": "Get curated chemical-gene interactions from CTD (Comparative Toxicogenomics Database). Given a chemical name, returns genes it interacts with, including organism, PubMed references, and interaction types. Example: 'bisphenol A' returns thousands of gene interactions across species.",
+    "description": "Get curated chemical-gene interactions from CTD (Comparative Toxicogenomics Database). Given a chemical name, returns genes it interacts with, including organism, PubMed references, and interaction types. Example: 'bisphenol A' returns thousands of gene interactions across species. Note: the result's top-level 'predicate' field is always null for this edge type -- the real interaction-type signal is in 'qualified_predicate' (e.g. 'biolink:causes') and 'object_direction_qualifier'. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_terms": {
           "type": "string",
-          "description": "Chemical name, MeSH name, synonym, CAS RN, or MeSH ID. Examples: 'bisphenol A', 'acetaminophen', 'D000082' (MeSH ID for acetaminophen)."
+          "description": "Chemical name, CAS RN, or MeSH ID. Examples: 'bisphenol A', 'paracetamol' (the RENCI mirror's canonical name -- common synonyms like 'acetaminophen' may not resolve), 'D000082' (MeSH ID, prefix optional). CAS RN and MeSH/NCBI Gene IDs are matched by exact string against the graph's canonical name/synonym list, not fuzzy-matched, so an uncommon synonym can fail even when the substance is covered."
         }
       },
       "required": [
@@ -24,75 +24,88 @@
         "input_terms": "bisphenol A"
       },
       {
-        "input_terms": "acetaminophen"
+        "input_terms": "CHEBI:46195"
       }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ChemicalName": {
-                    "type": "string",
-                    "description": "Name of the chemical"
-                  },
-                  "ChemicalId": {
-                    "type": "string",
-                    "description": "CTD chemical identifier"
-                  },
-                  "CasRN": {
-                    "type": "string",
-                    "description": "CAS Registry Number"
-                  },
-                  "GeneSymbol": {
-                    "type": "string",
-                    "description": "Gene symbol"
-                  },
-                  "GeneId": {
-                    "type": "string",
-                    "description": "NCBI Gene ID"
-                  },
-                  "Organism": {
-                    "type": "string",
-                    "description": "Species name"
-                  },
-                  "OrganismId": {
-                    "type": "string",
-                    "description": "NCBI Taxonomy ID"
-                  },
-                  "PubMedIds": {
-                    "type": "string",
-                    "description": "Pipe-delimited PubMed IDs"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -110,7 +123,7 @@
   },
   {
     "name": "CTD_get_chemical_diseases",
-    "description": "Get curated chemical-disease associations from CTD. Given a chemical name, returns diseases it is associated with, including direct evidence type (therapeutic, marker/mechanism) and disease categories. Example: 'bisphenol A' returns associations with cancer, reproductive disorders, etc.",
+    "description": "Get curated chemical-disease associations from CTD. Given a chemical name, returns diseases it is associated with, and disease categories. Example: 'bisphenol A' returns associations with cancer, reproductive disorders, etc. Note: unlike the sibling CTD_get_chemical_gene_interactions tool, the RENCI mirror's chemical-disease edges do not carry a direct evidence type (predicate/qualified_predicate) -- those fields are consistently null here, not a query error. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -133,70 +146,88 @@
         "input_terms": "bisphenol A"
       },
       {
-        "input_terms": "arsenic"
+        "input_terms": "CHEBI:27563"
       }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ChemicalName": {
-                    "type": "string"
-                  },
-                  "ChemicalID": {
-                    "type": "string"
-                  },
-                  "CasRN": {
-                    "type": "string"
-                  },
-                  "DiseaseName": {
-                    "type": "string"
-                  },
-                  "DiseaseID": {
-                    "type": "string",
-                    "description": "MeSH or OMIM disease ID"
-                  },
-                  "DirectEvidence": {
-                    "type": "string",
-                    "description": "Evidence type: therapeutic, marker/mechanism"
-                  },
-                  "DiseaseCategories": {
-                    "type": "string",
-                    "description": "Pipe-delimited disease categories"
-                  },
-                  "PubMedIDs": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -214,7 +245,7 @@
   },
   {
     "name": "CTD_get_gene_diseases",
-    "description": "Get curated gene-disease associations from CTD. Given a gene symbol, returns diseases associated with the gene, including direct evidence and disease categories. Example: 'TP53' returns associations with various cancers and other diseases.",
+    "description": "Gene -> disease relationships are NOT served by the RENCI CTD mirror (chemical-centric snapshot). This tool returns a structured error and redirects callers to OpenTargets_get_associated_diseases. Use that tool instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -238,69 +269,86 @@
       "report_type": "diseases_curated"
     },
     "type": "CTDTool",
-    "test_examples": [
-      {
-        "input_terms": "CYP1A1"
-      },
-      {
-        "input_terms": "TP53"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "GeneSymbol": {
-                    "type": "string"
-                  },
-                  "GeneID": {
-                    "type": "string"
-                  },
-                  "DiseaseName": {
-                    "type": "string"
-                  },
-                  "DiseaseID": {
-                    "type": "string"
-                  },
-                  "DirectEvidence": {
-                    "type": "string"
-                  },
-                  "DiseaseCategories": {
-                    "type": "string"
-                  },
-                  "PubMedIDs": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -318,7 +366,7 @@
   },
   {
     "name": "CTD_get_gene_chemicals",
-    "description": "Get curated gene-chemical interactions from CTD. Given a gene symbol, returns chemicals that interact with the gene product, with PubMed evidence. Example: 'TP53' returns over 2000 chemical interactions including drugs, environmental toxicants.",
+    "description": "Get curated gene-chemical interactions from CTD. Given a gene symbol, returns chemicals that interact with the gene product, with PubMed evidence. Example: 'TP53' returns over 2000 chemical interactions including drugs, environmental toxicants. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -347,61 +395,82 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ChemicalName": {
-                    "type": "string"
-                  },
-                  "ChemicalId": {
-                    "type": "string"
-                  },
-                  "CasRN": {
-                    "type": "string"
-                  },
-                  "GeneSymbol": {
-                    "type": "string"
-                  },
-                  "GeneId": {
-                    "type": "string"
-                  },
-                  "Organism": {
-                    "type": "string"
-                  },
-                  "OrganismId": {
-                    "type": "string"
-                  },
-                  "PubMedIds": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -419,13 +488,13 @@
   },
   {
     "name": "CTD_get_disease_chemicals",
-    "description": "Get curated disease-chemical associations from CTD. Given a disease name, returns chemicals associated with it, including evidence type. Example: 'Breast Neoplasms' returns chemicals linked to breast cancer including both therapeutic agents and toxicants.",
+    "description": "Get curated disease-chemical associations from CTD. Given a disease name, returns chemicals associated with it, including evidence type. Example: 'breast neoplasm' returns chemicals linked to breast cancer including both therapeutic agents and toxicants. Backed by the RENCI Automat CTD mirror (June-2024 snapshot, biolink-categorized); CTD's native batchQuery.go is currently CAPTCHA-blocked for programmatic clients.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_terms": {
           "type": "string",
-          "description": "Disease name, MeSH name, synonym, or MeSH/OMIM ID. Examples: 'Breast Neoplasms', 'asthma', 'MESH:D001249'."
+          "description": "Disease name, MeSH/OMIM ID. Examples: 'breast neoplasm' (singular -- the plural 'Breast Neoplasms' does not resolve), 'asthma', 'MESH:D001249'. Matched by exact string against the graph's canonical name, not fuzzy-matched, so an uncommon phrasing can fail even when the disease is covered."
         }
       },
       "required": [
@@ -442,64 +511,88 @@
         "input_terms": "asthma"
       },
       {
-        "input_terms": "Liver Neoplasms"
+        "input_terms": "MESH:D008113"
       }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ChemicalName": {
-                    "type": "string"
-                  },
-                  "ChemicalID": {
-                    "type": "string"
-                  },
-                  "CasRN": {
-                    "type": "string"
-                  },
-                  "DiseaseName": {
-                    "type": "string"
-                  },
-                  "DiseaseID": {
-                    "type": "string"
-                  },
-                  "DirectEvidence": {
-                    "type": "string"
-                  },
-                  "PubMedIDs": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "input_type": {
-                  "type": "string"
-                },
-                "report_type": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the subject node (e.g., CHEBI:15365)"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the subject"
+              },
+              "target_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CURIE of the object node (e.g., NCBIGene:7076)"
+              },
+              "target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name of the object"
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "biolink predicate (e.g., biolink:affects)"
+              },
+              "qualified_predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Causal flavour of the predicate (e.g., biolink:causes)"
+              },
+              "object_direction_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direction of effect on the object (e.g., increased, decreased)"
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the edge was obtained (e.g., knowledge_assertion)"
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who created the edge (e.g., manual_agent)"
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InfoRes id of the source database (e.g., infores:ctd)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

@@ -212,6 +212,13 @@ class NHANESTool(BaseTool):
                 return ""
 
         if dataset_name:
+            # Fix-R16B-2: nhanes_search_datasets' own results carry the
+            # cycle suffix already (e.g. file_name "BMX_J") -- confirmed
+            # live that passing that value straight through here appended
+            # the suffix a second time ("BMX_J" + "_J" -> 404 downloading
+            # BMX_J_J.XPT). Don't double it if it's already present.
+            if dataset_name.endswith(suffix):
+                return dataset_name
             return f"{dataset_name}{suffix}"
 
         prefix = self._COMPONENT_PREFIX.get(component)
@@ -306,6 +313,27 @@ class NHANESTool(BaseTool):
                 "error": (
                     "Laboratory component requires 'dataset_name' "
                     "(e.g., 'CBC', 'BIOPRO', 'GHB', 'GLU', 'TRIGLY', 'HDL', 'TCHOL'). "
+                    "Use nhanes_search_datasets to discover available dataset names."
+                ),
+            }
+        # Fix-R16B-1: Examination and Questionnaire, like Laboratory, each
+        # span many distinct files (Examination: BMX body measures, BPX
+        # blood pressure, AUX audiometry, OHXDEN oral health, ...). The old
+        # _COMPONENT_PREFIX fallback silently picked one arbitrary file
+        # (BPX for Examination) regardless of which `variables` were
+        # actually requested -- confirmed live that requesting BMXBMI/BMXWT
+        # without dataset_name silently downloaded the blood-pressure file
+        # instead and returned status:"success" with the requested
+        # variables missing. Require dataset_name here too, matching the
+        # precedent already set for Laboratory.
+        if component in ("Examination", "Questionnaire") and not dataset_name:
+            return {
+                "status": "error",
+                "error": (
+                    f"'{component}' component has multiple distinct files and "
+                    "requires 'dataset_name' to disambiguate which one to "
+                    "download (e.g., 'BMX' for body measures, 'BPX' for blood "
+                    "pressure under Examination). "
                     "Use nhanes_search_datasets to discover available dataset names."
                 ),
             }

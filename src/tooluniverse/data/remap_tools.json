@@ -84,5 +84,102 @@
         "limit": 5
       }
     ]
+  },
+  {
+    "type": "ReMapRESTTool",
+    "name": "ReMap_get_peaks_in_region",
+    "description": "Retrieve all ChIP-seq transcriptional-regulator (TR) binding peaks from the ReMap catalog that overlap a genomic interval. Give a region (chrom:start-end) and get back every overlapping peak with its genomic coordinates plus the bound TF, the cell line/tissue (biotype), the source experiment accession (GEO/ENCODE), and any treatments. This is the defining ReMap capability (region in -> all overlapping TR peaks out). Use for: enumerating which transcription factors bind a locus, finding regulatory occupancy of a promoter/enhancer interval, listing TFs near a variant. Keep regions modest (<=1 Mb) - large intervals can return tens of thousands of peaks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_peaks_in_region"],
+          "default": "get_peaks_in_region",
+          "description": "Operation selector. Must be 'get_peaks_in_region'."
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic interval as chrom:start-end (e.g. 'chr1:1000000-1100000'). Commas in coordinates are tolerated."
+        },
+        "assembly": {
+          "type": "string",
+          "description": "Genome assembly.",
+          "enum": ["hg38", "hg19", "mm10", "mm39"],
+          "default": "hg38"
+        },
+        "version": {
+          "type": "string",
+          "description": "ReMap catalog release year.",
+          "enum": ["2022", "2020", "2018"],
+          "default": "2022"
+        },
+        "datatype": {
+          "type": "string",
+          "description": "Peak datatype: 'all' for the non-redundant merged peak set across all TFs.",
+          "default": "all"
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Optional cap on the number of peaks returned (peak_count still reports the true total). Omit to return all overlapping peaks.",
+          "minimum": 1
+        }
+      },
+      "required": ["region"]
+    },
+    "fields": {
+      "operation": "get_peaks_in_region",
+      "endpoint": "https://remap-rest.univ-amu.fr/api/V1/get_peaks/{version}/{assembly}/{datatype}/{region}?format=json",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["region", "peak_count", "peaks"],
+          "properties": {
+            "region": {"type": "string"},
+            "assembly": {"type": "string"},
+            "version": {"type": "string"},
+            "datatype": {"type": "string"},
+            "size": {"type": ["integer", "string", "null"]},
+            "peak_count": {"type": "integer"},
+            "returned_count": {"type": "integer"},
+            "unique_tf_count": {"type": "integer"},
+            "unique_tfs": {"type": "array", "items": {"type": "string"}},
+            "peaks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chrom": {"type": ["string", "null"]},
+                  "chromStart": {"type": ["string", "integer", "null"]},
+                  "chromEnd": {"type": ["string", "integer", "null"]},
+                  "experiment": {"type": ["string", "null"]},
+                  "tf": {"type": ["string", "null"]},
+                  "biotype": {"type": ["string", "null"]},
+                  "treatments": {"type": "array", "items": {"type": "string"}}
+                }
+              }
+            },
+            "url": {"type": "string"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {"error": {"type": "string"}}
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_peaks_in_region",
+        "region": "chr1:1000000-1010000",
+        "assembly": "hg38",
+        "version": "2022",
+        "limit": 25
+      }
+    ]
   }
 ]

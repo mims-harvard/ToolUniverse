@@ -302,7 +302,10 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
@@ -368,79 +371,59 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success",
-                "error"
-              ]
+            "version": {
+              "type": "string"
             },
-            "data": {
+            "hitCount": {
+              "type": "integer"
+            },
+            "citationList": {
               "type": "object",
               "properties": {
-                "version": {
-                  "type": "string"
-                },
-                "hitCount": {
-                  "type": "integer"
-                },
-                "citationList": {
-                  "type": "object",
-                  "properties": {
-                    "citation": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "source": {
-                            "type": "string"
-                          },
-                          "title": {
-                            "type": "string"
-                          },
-                          "authorString": {
-                            "type": "string"
-                          },
-                          "journalAbbreviation": {
-                            "type": "string"
-                          },
-                          "pubYear": {
-                            "type": [
-                              "integer",
-                              "string"
-                            ]
-                          },
-                          "citedOrder": {
-                            "type": "integer"
-                          }
-                        }
+                "citation": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "authorString": {
+                        "type": "string"
+                      },
+                      "journalAbbreviation": {
+                        "type": "string"
+                      },
+                      "pubYear": {
+                        "type": [
+                          "integer",
+                          "string"
+                        ]
+                      },
+                      "citedOrder": {
+                        "type": "integer"
                       }
                     }
                   }
                 }
               }
-            },
-            "url": {
-              "type": "string"
-            },
-            "error": {
-              "type": "string"
-            },
-            "status_code": {
-              "type": "integer"
             }
-          }
+          },
+          "required": [
+            "version"
+          ]
         },
         {
           "type": "object",
-          "description": "Error response",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
           },
           "required": [
@@ -499,79 +482,59 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success",
-                "error"
-              ]
+            "version": {
+              "type": "string"
             },
-            "data": {
+            "hitCount": {
+              "type": "integer"
+            },
+            "referenceList": {
               "type": "object",
               "properties": {
-                "version": {
-                  "type": "string"
-                },
-                "hitCount": {
-                  "type": "integer"
-                },
-                "referenceList": {
-                  "type": "object",
-                  "properties": {
-                    "reference": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "source": {
-                            "type": "string"
-                          },
-                          "title": {
-                            "type": "string"
-                          },
-                          "authorString": {
-                            "type": "string"
-                          },
-                          "journalAbbreviation": {
-                            "type": "string"
-                          },
-                          "pubYear": {
-                            "type": [
-                              "integer",
-                              "string"
-                            ]
-                          },
-                          "citedOrder": {
-                            "type": "integer"
-                          }
-                        }
+                "reference": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "authorString": {
+                        "type": "string"
+                      },
+                      "journalAbbreviation": {
+                        "type": "string"
+                      },
+                      "pubYear": {
+                        "type": [
+                          "integer",
+                          "string"
+                        ]
+                      },
+                      "citedOrder": {
+                        "type": "integer"
                       }
                     }
                   }
                 }
               }
-            },
-            "url": {
-              "type": "string"
-            },
-            "error": {
-              "type": "string"
-            },
-            "status_code": {
-              "type": "integer"
             }
-          }
+          },
+          "required": [
+            "version"
+          ]
         },
         {
           "type": "object",
-          "description": "Error response",
           "properties": {
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
           },
           "required": [
@@ -657,11 +620,7 @@
           ],
           "properties": {
             "status": {
-              "type": "string",
-              "enum": [
-                "success",
-                "error"
-              ]
+              "const": "success"
             },
             "url": {
               "type": [
@@ -745,16 +704,13 @@
                 "null"
               ]
             },
-            "status_code": {
-              "type": "integer"
-            },
             "retryable": {
               "type": "boolean"
-            },
-            "error": {
-              "type": "string"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
@@ -860,11 +816,7 @@
           ],
           "properties": {
             "status": {
-              "type": "string",
-              "enum": [
-                "success",
-                "error"
-              ]
+              "const": "success"
             },
             "url": {
               "type": [
@@ -949,16 +901,13 @@
             "truncated": {
               "type": "boolean"
             },
-            "error": {
-              "type": "string"
-            },
-            "status_code": {
-              "type": "integer"
-            },
             "retryable": {
               "type": "boolean"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
@@ -1013,144 +962,174 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Structured full-text content",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["success"]
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Article title"
             },
-            "data": {
+            "abstract": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Article abstract text"
+            },
+            "sections": {
               "type": "object",
+              "description": "Body sections keyed by canonical name (introduction, methods, results, discussion, conclusions, acknowledgments, other_sections). Each value is a string (single section) or array of {title, text} objects (multiple subsections).",
               "properties": {
-                "title": {
-                  "type": ["string", "null"],
-                  "description": "Article title"
+                "introduction": {
+                  "type": [
+                    "string",
+                    "object"
+                  ],
+                  "description": "Introduction / background section text"
                 },
-                "abstract": {
-                  "type": ["string", "null"],
-                  "description": "Article abstract text"
+                "methods": {
+                  "type": [
+                    "string",
+                    "object"
+                  ],
+                  "description": "Methods / materials and methods section text"
                 },
-                "sections": {
-                  "type": "object",
-                  "description": "Body sections keyed by canonical name (introduction, methods, results, discussion, conclusions, acknowledgments, other_sections). Each value is a string (single section) or array of {title, text} objects (multiple subsections).",
-                  "properties": {
-                    "introduction": {
-                      "type": ["string", "object"],
-                      "description": "Introduction / background section text"
-                    },
-                    "methods": {
-                      "type": ["string", "object"],
-                      "description": "Methods / materials and methods section text"
-                    },
-                    "results": {
-                      "type": ["string", "object"],
-                      "description": "Results / findings section text"
-                    },
-                    "discussion": {
-                      "type": ["string", "object"],
-                      "description": "Discussion section text"
-                    },
-                    "conclusions": {
-                      "type": ["string", "object"],
-                      "description": "Conclusions / summary section text"
-                    },
-                    "acknowledgments": {
-                      "type": ["string", "object"],
-                      "description": "Acknowledgments section text"
-                    },
-                    "other_sections": {
-                      "type": "array",
-                      "description": "Sections that do not map to standard categories",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "title": {"type": "string"},
-                          "text": {"type": "string"}
-                        }
+                "results": {
+                  "type": [
+                    "string",
+                    "object"
+                  ],
+                  "description": "Results / findings section text"
+                },
+                "discussion": {
+                  "type": [
+                    "string",
+                    "object"
+                  ],
+                  "description": "Discussion section text"
+                },
+                "conclusions": {
+                  "type": [
+                    "string",
+                    "object"
+                  ],
+                  "description": "Conclusions / summary section text"
+                },
+                "acknowledgments": {
+                  "type": [
+                    "string",
+                    "object"
+                  ],
+                  "description": "Acknowledgments section text"
+                },
+                "other_sections": {
+                  "type": "array",
+                  "description": "Sections that do not map to standard categories",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
                       }
                     }
                   }
-                },
-                "figures": {
-                  "type": "array",
-                  "description": "Figure labels and captions",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {"type": "string"},
-                      "label": {"type": ["string", "null"]},
-                      "caption": {"type": ["string", "null"]}
-                    }
-                  }
-                },
-                "tables": {
-                  "type": "array",
-                  "description": "Table labels and captions",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {"type": "string"},
-                      "label": {"type": ["string", "null"]},
-                      "caption": {"type": ["string", "null"]}
-                    }
-                  }
-                },
-                "references": {
-                  "type": "array",
-                  "description": "List of references",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {"type": "string"},
-                      "text": {"type": "string"}
-                    }
-                  }
-                },
-                "figure_count": {
-                  "type": "integer",
-                  "description": "Number of figures"
-                },
-                "table_count": {
-                  "type": "integer",
-                  "description": "Number of tables"
-                },
-                "reference_count": {
-                  "type": "integer",
-                  "description": "Number of references"
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "pmcid": {"type": "string"},
-                "source": {"type": ["string", "null"]},
-                "format": {"type": ["string", "null"]}
+            "figures": {
+              "type": "array",
+              "description": "Figure labels and captions",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "caption": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
               }
+            },
+            "tables": {
+              "type": "array",
+              "description": "Table labels and captions",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "caption": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "references": {
+              "type": "array",
+              "description": "List of references",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "figure_count": {
+              "type": "integer",
+              "description": "Number of figures"
+            },
+            "table_count": {
+              "type": "integer",
+              "description": "Number of tables"
+            },
+            "reference_count": {
+              "type": "integer",
+              "description": "Number of references"
             }
-          }
+          },
+          "required": [
+            "title"
+          ]
         },
         {
           "type": "object",
-          "description": "Error response",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["error"]
-            },
             "error": {
-              "type": "string",
-              "description": "Error message describing why full text could not be retrieved or parsed"
-            },
-            "retrieval_trace": {
-              "type": "array",
-              "description": "Trace of retrieval attempts (when available)",
-              "items": {
-                "type": "object"
-              }
+              "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

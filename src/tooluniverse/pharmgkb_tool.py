@@ -55,6 +55,12 @@ class PharmGKBTool(BaseTool):
             return self._search_entity("Variant", arguments)
         elif operation == "dosing_guidelines":
             return self._get_dosing_guidelines(arguments)
+        elif operation == "drug_label_annotations":
+            return self._get_drug_label_annotations(arguments)
+        elif operation == "pathway":
+            return self._get_pathway(arguments)
+        elif operation == "variant_annotations":
+            return self._get_variant_annotations(arguments)
         else:
             return self._error(f"Unknown operation: {operation}")
 
@@ -269,3 +275,160 @@ class PharmGKBTool(BaseTool):
             "guideline_id is required. Use PharmGKB_search_genes or PharmGKB_search_drugs "
             "to find relevant guideline IDs."
         )
+
+    @staticmethod
+    def _is_no_results(status_code: int) -> bool:
+        """HTTP 404 from list endpoints means 'no matches', not a hard failure."""
+        return status_code == 404
+
+    def _get_drug_label_annotations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get FDA/EMA/HCSC/PMDA drug-label PGx annotations.
+
+        Two modes:
+        - By ID: pass label_id (e.g., 'PA166114907') for a single full annotation.
+        - By source: pass source (FDA/EMA/HCSC/PMDA, default FDA) to list
+          available label annotations (id + name), capped by limit.
+        """
+        label_id = arguments.get("label_id") or arguments.get("id")
+        if label_id:
+            status_code, api_response, error = self._request_json(
+                f"{PHARMGKB_BASE_URL}/data/label/{label_id}",
+                {"view": "base"},
+            )
+            if self._is_no_results(status_code):
+                return {
+                    "status": "success",
+                    "data": [],
+                    "note": f"No drug-label annotation found for id '{label_id}'.",
+                }
+            if error:
+                return self._error(error)
+            result = api_response.get("data", api_response)
+            return {"status": "success", "data": result}
+
+        source = (arguments.get("source") or "FDA").upper()
+        valid_sources = {"FDA", "EMA", "HCSC", "PMDA"}
+        if source not in valid_sources:
+            return self._error(
+                f"Invalid source '{source}'. Use one of: {', '.join(sorted(valid_sources))}."
+            )
+
+        try:
+            limit = int(arguments.get("limit", 50))
+        except (TypeError, ValueError):
+            limit = 50
+        limit = max(1, min(limit, 500))
+
+        status_code, api_response, error = self._request_json(
+            f"{PHARMGKB_BASE_URL}/data/label",
+            {"source": source, "view": "min"},
+        )
+        if self._is_no_results(status_code):
+            return {
+                "status": "success",
+                "data": [],
+                "note": f"No drug-label annotations found for source '{source}'.",
+            }
+        if error:
+            return self._error(error)
+
+        results = api_response.get("data", [])
+        if not isinstance(results, list):
+            results = [results]
+        total = len(results)
+        truncated = results[:limit]
+        out: Dict[str, Any] = {"status": "success", "data": truncated}
+        if total > limit:
+            out["note"] = (
+                f"Showing {limit} of {total} {source} drug-label annotations. "
+                f"Increase 'limit' or call with label_id=<id> for full details."
+            )
+        return out
+
+    def _get_pathway(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get a pharmacogenomic pathway by PharmGKB pathway ID (e.g., PA145011113)."""
+        pathway_id = arguments.get("pathway_id") or arguments.get("id")
+        if not pathway_id:
+            return self._error(
+                "pathway_id is required (e.g., 'PA145011113' for Warfarin Pathway, "
+                "Pharmacokinetics). Browse https://www.pharmgkb.org/pathways to find "
+                "pathway IDs."
+            )
+
+        status_code, api_response, error = self._request_json(
+            f"{PHARMGKB_BASE_URL}/data/pathway/{pathway_id}",
+            {"view": "base"},
+        )
+        if self._is_no_results(status_code):
+            return {
+                "status": "success",
+                "data": [],
+                "note": f"No pathway found for id '{pathway_id}'.",
+            }
+        if error:
+            return self._error(error)
+
+        result = api_response.get("data", api_response)
+        return {"status": "success", "data": result}
+
+    def _get_variant_annotations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get variant-level literature annotations filtered by gene or chemical.
+
+        Provide exactly one of:
+        - gene_id: PharmGKB Gene Accession ID (e.g., 'PA126' for CYP2C9),
+          queried via location.genes.accessionId.
+        - chemical_id: PharmGKB Chemical ID (e.g., 'PA451906' for warfarin),
+          queried via relatedChemicals.accessionId.
+        """
+        gene_id = arguments.get("gene_id") or arguments.get("gene_accession_id")
+        chemical_id = (
+            arguments.get("chemical_id")
+            or arguments.get("drug_id")
+            or arguments.get("chemical_accession_id")
+        )
+
+        if gene_id:
+            param_key = "location.genes.accessionId"
+            param_value = gene_id
+        elif chemical_id:
+            param_key = "relatedChemicals.accessionId"
+            param_value = chemical_id
+        else:
+            return self._error(
+                "gene_id (e.g., 'PA126' for CYP2C9) or chemical_id "
+                "(e.g., 'PA451906' for warfarin) is required. Use "
+                "PharmGKB_search_genes / PharmGKB_search_drugs to resolve a "
+                "name to its PharmGKB Accession ID."
+            )
+
+        try:
+            limit = int(arguments.get("limit", 50))
+        except (TypeError, ValueError):
+            limit = 50
+        limit = max(1, min(limit, 500))
+
+        status_code, api_response, error = self._request_json(
+            f"{PHARMGKB_BASE_URL}/data/variantAnnotation",
+            {param_key: param_value, "view": "min"},
+        )
+        if self._is_no_results(status_code):
+            return {
+                "status": "success",
+                "data": [],
+                "note": f"No variant annotations found for {param_key}={param_value}.",
+            }
+        if error:
+            return self._error(error)
+
+        results = api_response.get("data", [])
+        if not isinstance(results, list):
+            results = [results]
+        total = len(results)
+        truncated = results[:limit]
+        out: Dict[str, Any] = {"status": "success", "data": truncated}
+        if total > limit:
+            out["note"] = (
+                f"Showing {limit} of {total} variant annotations for "
+                f"{param_key}={param_value}. Increase 'limit' for more."
+            )
+        return out

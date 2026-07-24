@@ -68,6 +68,8 @@ class EBIProteinsCoordinatesTool(BaseTool):
         """Route to appropriate endpoint."""
         if self.endpoint == "get_coordinates":
             return self._get_coordinates(arguments)
+        elif self.endpoint == "glocation":
+            return self._get_proteins_by_genomic_loc(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -146,5 +148,76 @@ class EBIProteinsCoordinatesTool(BaseTool):
                 "source": "EBI Proteins API (ebi.ac.uk/proteins/api)",
                 "total_transcript_mappings": len(gn_coordinates),
                 "returned_mappings": len(mappings),
+            },
+        }
+
+    def _get_proteins_by_genomic_loc(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Reverse genome->protein lookup: genomic position -> overlapping proteins."""
+        taxonomy = arguments.get("taxonomy") or arguments.get("taxid") or "9606"
+        chromosome = arguments.get("chromosome")
+        position = arguments.get("position")
+        location = arguments.get("location")
+
+        # Accept either a combined "17:7676154" location string, or separate
+        # chromosome + position arguments.
+        if not location:
+            if chromosome is None or position is None:
+                return {
+                    "status": "error",
+                    "error": (
+                        "Provide 'location' (e.g., '17:7676154') or both "
+                        "'chromosome' and 'position' (e.g., chromosome='17', position=7676154)."
+                    ),
+                }
+            location = f"{str(chromosome).strip()}:{str(position).strip()}"
+        location = str(location).strip()
+
+        url = f"{EBI_PROTEINS_BASE_URL}/coordinates/glocation/{str(taxonomy).strip()}/{location}"
+        response = requests.get(
+            url, timeout=self.timeout, headers={"Accept": "application/json"}
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        if not isinstance(data, list):
+            data = [data] if isinstance(data, dict) else []
+
+        entries = []
+        for entry in data:
+            if not isinstance(entry, dict):
+                continue
+            for loc in entry.get("locations", []):
+                if not isinstance(loc, dict):
+                    continue
+                entries.append(
+                    {
+                        "accession": loc.get("accession"),
+                        "entry_type": loc.get("entryType"),
+                        "taxid": loc.get("taxid"),
+                        "ensembl_gene_id": loc.get("ensemblGeneId"),
+                        "ensembl_transcript_id": loc.get("ensemblTranscriptId"),
+                        "ensembl_translation_id": loc.get("ensemblTranslationId"),
+                        "protein_start": loc.get("proteinStart"),
+                        "protein_end": loc.get("proteinEnd"),
+                        "amino_acids": loc.get("aminoAcids"),
+                        "chromosome": loc.get("chromosome"),
+                        "gene_start": loc.get("geneStart"),
+                        "gene_end": loc.get("geneEnd"),
+                        "reverse_strand": loc.get("reverseStrand"),
+                        "assembly_name": loc.get("assemblyName"),
+                    }
+                )
+
+        return {
+            "status": "success",
+            "data": {
+                "taxonomy": str(taxonomy).strip(),
+                "location": location,
+                "proteins": entries,
+                "total_proteins": len(entries),
+            },
+            "metadata": {
+                "source": "EBI Proteins API - Genomic Location",
+                "url": url,
             },
         }

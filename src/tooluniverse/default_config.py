@@ -40,12 +40,18 @@ default_tool_files = {
     "enrichr_ext": os.path.join(current_dir, "data", "enrichr_ext_tools.json"),
     "HumanBase": os.path.join(current_dir, "data", "humanbase_tools.json"),
     "OpenAlex": os.path.join(current_dir, "data", "openalex_tools.json"),
+    # BGPT - structured full-text study evidence (methods, sample size,
+    # limitations, conflicts, how_to_falsify). Free for 50 results, then
+    # BGPT_API_KEY. Requested in issue #204.
+    "bgpt": os.path.join(current_dir, "data", "bgpt_tools.json"),
     # Literature search tools
     "literature_search": os.path.join(
         current_dir, "data", "literature_search_tools.json"
     ),
     "arxiv": os.path.join(current_dir, "data", "arxiv_tools.json"),
     "crossref": os.path.join(current_dir, "data", "crossref_tools.json"),
+    # Retraction / correction status check (Crossref + Retraction Watch data)
+    "retraction": os.path.join(current_dir, "data", "retraction_tools.json"),
     "simbad": os.path.join(current_dir, "data", "simbad_tools.json"),
     "dblp": os.path.join(current_dir, "data", "dblp_tools.json"),
     "pubmed": os.path.join(current_dir, "data", "pubmed_tools.json"),
@@ -113,6 +119,8 @@ default_tool_files = {
     "rxnorm": os.path.join(current_dir, "data", "rxnorm_tools.json"),
     "rxnorm_extended": os.path.join(current_dir, "data", "rxnorm_extended_tools.json"),
     "loinc": os.path.join(current_dir, "data", "loinc_tools.json"),
+    "clinical_tables": os.path.join(current_dir, "data", "clinical_tables_tools.json"),
+    "ipd_imgt_hla": os.path.join(current_dir, "data", "ipd_imgt_hla_tools.json"),
     "uniprot": os.path.join(current_dir, "data", "uniprot_tools.json"),
     "cellosaurus": os.path.join(current_dir, "data", "cellosaurus_tools.json"),
     # 'software': os.path.join(current_dir, 'data', 'software_tools.json'),
@@ -148,6 +156,114 @@ default_tool_files = {
     # New database tools
     "interpro": os.path.join(current_dir, "data", "interpro_tools.json"),
     "ebi_search": os.path.join(current_dir, "data", "ebi_search_tools.json"),
+    # EBI Job Dispatcher - de novo MSA (Clustal Omega/MUSCLE/MAFFT) + phylogeny
+    "ebi_alignment": os.path.join(current_dir, "data", "ebi_alignment_tools.json"),
+    # Clinical risk calculators - validated deterministic scores (ASCVD, MELD-Na, etc.)
+    "clinical_calculators": os.path.join(
+        current_dir, "data", "clinical_calculators_tools.json"
+    ),
+    # Canonical VCF/BCF variant statistics (bcftools-backed, local compute)
+    "vcf_stats": os.path.join(current_dir, "data", "vcf_stats_tools.json"),
+    # ROC / AUC diagnostic-accuracy analysis (numpy, local compute)
+    "roc_analysis": os.path.join(current_dir, "data", "roc_analysis_tools.json"),
+    # Network proximity between node sets (networkx, local compute)
+    "network_proximity": os.path.join(
+        current_dir, "data", "network_proximity_tools.json"
+    ),
+    # dN/dS (Ka/Ks) selection analysis between coding sequences (pure Python)
+    "dn_ds": os.path.join(current_dir, "data", "dn_ds_tools.json"),
+    # edgeR / limma-voom differential expression (Rscript, local compute)
+    "edger_limma": os.path.join(current_dir, "data", "edger_limma_tools.json"),
+    # gnomAD gene constraint (pLI / LOEUF / mis_z) via GraphQL
+    "gnomad_constraint": os.path.join(
+        current_dir, "data", "gnomad_constraint_tools.json"
+    ),
+    # HuggingFace Inference API (hosted ML models: classify / embed / fill-mask)
+    "huggingface_inference": os.path.join(
+        current_dir, "data", "huggingface_inference_tools.json"
+    ),
+    # Keyless ESM-2 masked-marginal missense variant scoring (via hf-inference)
+    "esm2_variant_effect": os.path.join(
+        current_dir, "data", "esm2_variant_effect_tools.json"
+    ),
+    # AlphaGenome regulatory-genomics prediction (DeepMind hosted API, key-gated)
+    "alphagenome": os.path.join(current_dir, "data", "alphagenome_tools.json"),
+    # Evo 2 zero-shot variant scoring (NVIDIA NIM forward endpoint, key-gated)
+    "evo2_variant_effect": os.path.join(
+        current_dir, "data", "evo2_variant_effect_tools.json"
+    ),
+    # Two-sample Mendelian randomization estimators (local-compute, pure NumPy)
+    "mendelian_randomization": os.path.join(
+        current_dir, "data", "mendelian_randomization_tools.json"
+    ),
+    # Bayesian colocalization coloc.abf (local-compute, pure NumPy)
+    "colocalization": os.path.join(current_dir, "data", "colocalization_tools.json"),
+    # Single-causal fine-mapping (Wakefield ABF; local-compute, pure NumPy)
+    "finemap_abf": os.path.join(current_dir, "data", "finemap_abf_tools.json"),
+    # Pre-ranked GSEA gene-set enrichment (local-compute, pure NumPy)
+    "gsea_prerank": os.path.join(current_dir, "data", "gsea_prerank_tools.json"),
+    # TF/pathway activity inference (decoupleR ULM; local-compute, pure NumPy)
+    "decoupler_ulm": os.path.join(current_dir, "data", "decoupler_ulm_tools.json"),
+    # Single-sample GSEA signature scoring (local-compute, pure NumPy)
+    "ssgsea": os.path.join(current_dir, "data", "ssgsea_tools.json"),
+    # Gene Set Variation Analysis (local-compute, pure NumPy)
+    "gsva": os.path.join(current_dir, "data", "gsva_tools.json"),
+    # S-PrediXcan summary-based TWAS (local-compute, pure NumPy)
+    "spredixcan": os.path.join(current_dir, "data", "spredixcan_tools.json"),
+    # Co-expression module detection (local-compute, NumPy + NetworkX)
+    "coexpression_module": os.path.join(
+        current_dir, "data", "coexpression_module_tools.json"
+    ),
+    # IUPred3 protein disorder prediction (sequence ML)
+    "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
+    # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)
+    "vep_pathogenicity": os.path.join(
+        current_dir, "data", "vep_pathogenicity_tools.json"
+    ),
+    # Therapeutics Data Commons ML oracles (QED/SA/LogP/bioactivity; PyTDC)
+    "tdc_oracle": os.path.join(current_dir, "data", "tdc_oracle_tools.json"),
+    # IBM RXN for Chemistry — reaction/retrosynthesis prediction (API key)
+    "rxn_chemistry": os.path.join(current_dir, "data", "rxn_chemistry_tools.json"),
+    # Replicate — hosted ML model inference gateway (API token)
+    "replicate": os.path.join(current_dir, "data", "replicate_tools.json"),
+    # DTU protein predictors (DeepTMHMM / SignalP via biolib)
+    "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
+    # Cellpose deep-learning cell/nucleus segmentation (local, cellpose pkg)
+    "cellpose": os.path.join(current_dir, "data", "cellpose_tools.json"),
+    # Therapeutics Data Commons benchmark dataset retrieval (PyTDC)
+    "tdc_dataset": os.path.join(current_dir, "data", "tdc_dataset_tools.json"),
+    # ENCODE SCREEN cCRE registry (candidate cis-regulatory elements, GraphQL)
+    "screen_ccre": os.path.join(current_dir, "data", "screen_ccre_tools.json"),
+    # RNAcentral ncRNA genome locations / sequence
+    "rnacentral_genome": os.path.join(
+        current_dir, "data", "rnacentral_genome_tools.json"
+    ),
+    # LIPID MAPS Proteome Database (lipid-metabolism gene/protein lookup)
+    "lipidmaps_gene": os.path.join(current_dir, "data", "lipidmaps_gene_tools.json"),
+    # InterPro member-database signatures (Pfam/SMART/PANTHER/... + PDB structures)
+    "interpro_member_db": os.path.join(
+        current_dir, "data", "interpro_member_db_tools.json"
+    ),
+    # Rhea biochemical-reaction detail (equation, ChEBI participants, EC, xrefs)
+    "rhea_reaction": os.path.join(current_dir, "data", "rhea_reaction_tools.json"),
+    # PanglaoDB single-cell marker genes per cell type
+    "panglaodb": os.path.join(current_dir, "data", "panglaodb_tools.json"),
+    # IDR (Image Data Resource) cross-study metadata search engine
+    "idr_searchengine": os.path.join(
+        current_dir, "data", "idr_searchengine_tools.json"
+    ),
+    # GBIF backbone-taxonomy tree navigation + name parsing
+    "gbif_taxonomy": os.path.join(current_dir, "data", "gbif_taxonomy_tools.json"),
+    # UniBind direct TF-DNA binding sites (curated ChIP-seq)
+    "unibind": os.path.join(current_dir, "data", "unibind_tools.json"),
+    # ZOOMA free-text -> ontology annotation (EBI)
+    "zooma": os.path.join(current_dir, "data", "zooma_tools.json"),
+    # RGD rat disease-model strain catalog + annotations
+    "rgd_strain": os.path.join(current_dir, "data", "rgd_strain_tools.json"),
+    # SGD yeast protein domains / PTM sites / literature
+    "sgd_protein": os.path.join(current_dir, "data", "sgd_protein_tools.json"),
+    # HuBMAP biospecimen layer (samples w/ CCF spatial registration + donors)
+    "hubmap_sample": os.path.join(current_dir, "data", "hubmap_sample_tools.json"),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),
@@ -190,6 +306,36 @@ default_tool_files = {
     ),
     "go": os.path.join(current_dir, "data", "gene_ontology_tools.json"),
     "compose": os.path.join(current_dir, "data", "compose_tools.json"),
+    # PhyKIT — phylogenetics batch analysis (treeness, saturation, dvmc, LB score)
+    "phykit": os.path.join(current_dir, "data", "phykit_tools.json"),
+    # Clinical trial AE severity testing (chi-square / ordinal) — wraps skill script
+    "clinical_trial_stats": os.path.join(
+        current_dir, "data", "clinical_trial_stats_tools.json"
+    ),
+    # Per-gene expression ANOVA / fold-change — wraps skill script
+    "expression_anova": os.path.join(
+        current_dir, "data", "expression_anova_tools.json"
+    ),
+    # Coding variant fraction (CODING denominator, VAF threshold) — wraps skill script
+    "variant_fraction": os.path.join(
+        current_dir, "data", "variant_fraction_tools.json"
+    ),
+    # Executed notebook reader — surface authoritative analysis outputs
+    "executed_notebook": os.path.join(
+        current_dir, "data", "executed_notebook_tools.json"
+    ),
+    # DESeq2 — R-based differential expression + enrichGO
+    "deseq2": os.path.join(current_dir, "data", "deseq2_tools.json"),
+    # Compound tools — multi-database queries in a single call
+    "compound_gene_disease": os.path.join(
+        current_dir, "data", "compound_gene_disease_tools.json"
+    ),
+    "compound_variant": os.path.join(
+        current_dir, "data", "compound_variant_tools.json"
+    ),
+    "compound_disease": os.path.join(
+        current_dir, "data", "compound_disease_tools.json"
+    ),
     "python_executor": os.path.join(current_dir, "data", "python_executor_tools.json"),
     "idmap": os.path.join(current_dir, "data", "idmap_tools.json"),
     "disease_target_score": os.path.join(
@@ -208,6 +354,9 @@ default_tool_files = {
     ),
     "cryoet": os.path.join(current_dir, "data", "cryoet_tools.json"),
     "esm": os.path.join(current_dir, "data", "esm_tools.json"),
+    "structure_annotation": os.path.join(
+        current_dir, "data", "structure_annotation_tools.json"
+    ),
     "url": os.path.join(current_dir, "data", "url_fetch_tools.json"),
     "file_download": os.path.join(current_dir, "data", "file_download_tools.json"),
     # 'langchain': os.path.join(current_dir, 'data', 'langchain_tools.json'),
@@ -218,6 +367,8 @@ default_tool_files = {
     ),
     "embedding": os.path.join(current_dir, "data", "embedding_tools.json"),
     "gwas": os.path.join(current_dir, "data", "gwas_tools.json"),
+    # PGS Catalog - published polygenic scores (EMBL-EBI)
+    "pgs_catalog": os.path.join(current_dir, "data", "pgs_catalog_tools.json"),
     # GWAS Summary Statistics - full variant-level summary stats from deposited studies
     "gwas_sumstats": os.path.join(current_dir, "data", "gwas_sumstats_tools.json"),
     "admetai": os.path.join(current_dir, "data", "admetai_tools.json"),
@@ -250,7 +401,12 @@ default_tool_files = {
     "kegg": os.path.join(current_dir, "data", "kegg_tools.json"),
     "ensembl": os.path.join(current_dir, "data", "ensembl_tools.json"),
     "clinvar": os.path.join(current_dir, "data", "clinvar_tools.json"),
+    "clinvar_submitted": os.path.join(
+        current_dir, "data", "clinvar_submitted_tools.json"
+    ),
     "intervar": os.path.join(current_dir, "data", "intervar_tools.json"),
+    # GeneBe - independent ACMG/AMP auto-classifier (+ AlphaMissense, gnomAD)
+    "genebe": os.path.join(current_dir, "data", "genebe_tools.json"),
     "cancervar": os.path.join(current_dir, "data", "cancervar_tools.json"),
     "geo": os.path.join(current_dir, "data", "geo_tools.json"),
     "dbsnp": os.path.join(current_dir, "data", "dbsnp_tools.json"),
@@ -345,11 +501,17 @@ default_tool_files = {
     "sabiork": os.path.join(current_dir, "data", "sabiork_tools.json"),
     # SAbDab - Structural Antibody Database
     "sabdab": os.path.join(current_dir, "data", "sabdab_tools.json"),
+    # Antibody Registry - RRID resolution + search for research antibodies
+    "antibody_registry": os.path.join(
+        current_dir, "data", "antibody_registry_tools.json"
+    ),
     # IMGT - International ImMunoGeneTics Information System
     "imgt": os.path.join(current_dir, "data", "imgt_tools.json"),
     # Metabolite tools - PubChem + CTD (replaces broken HMDB API)
     "metabolite": os.path.join(current_dir, "data", "metabolite_tools.json"),
     # MetaCyc - Metabolic Pathway Database
+    # BioCyc gates its web services behind a free account; set BIOCYC_EMAIL +
+    # BIOCYC_PASSWORD to authenticate (the tool logs in for a session cookie).
     "metacyc": os.path.join(current_dir, "data", "metacyc_tools.json"),
     # ZINC - Virtual Screening Library
     "zinc": os.path.join(current_dir, "data", "zinc_tools.json"),
@@ -399,6 +561,8 @@ default_tool_files = {
     "swissdock": os.path.join(current_dir, "data", "swissdock_tools.json"),
     # LIPID MAPS - Lipid Structure Database (lipidomics)
     "lipidmaps": os.path.join(current_dir, "data", "lipidmaps_tools.json"),
+    # SwissLipids - SIB lipid database (independent of LIPID MAPS; adds adduct m/z)
+    "swisslipids": os.path.join(current_dir, "data", "swisslipids_tools.json"),
     # USDA FoodData Central - Food composition and nutrient database
     "fooddata_central": os.path.join(
         current_dir, "data", "fooddata_central_tools.json"
@@ -463,6 +627,9 @@ default_tool_files = {
     # Install with: pip install tooluniverse[circuit]
     # HPO - Human Phenotype Ontology (phenotype terms, hierarchy, clinical genetics)
     "hpo": os.path.join(current_dir, "data", "hpo_tools.json"),
+    "encori": os.path.join(current_dir, "data", "encori_tools.json"),
+    "ldlink": os.path.join(current_dir, "data", "ldlink_tools.json"),
+    "iucn": os.path.join(current_dir, "data", "iucn_tools.json"),
     # Reactome Analysis Service - Pathway enrichment/overrepresentation analysis
     "reactome_analysis": os.path.join(
         current_dir, "data", "reactome_analysis_tools.json"
@@ -586,7 +753,9 @@ default_tool_files = {
     # MyDisease.info - BioThings disease annotation aggregator (MONDO, DO, CTD, HPO, DisGeNET)
     "mydisease": os.path.join(current_dir, "data", "mydisease_tools.json"),
     # EBI OxO - Ontology cross-reference mappings across biomedical databases
-    "oxo": os.path.join(current_dir, "data", "oxo_tools.json"),
+    # Archived at: src/tooluniverse/data/broken_apis/oxo_tools.json
+    # EBI retired the OxO service (all endpoints hang); use OLS (ols_* tools) instead.
+    # "oxo": os.path.join(current_dir, "data", "oxo_tools.json"),
     # InterPro Domain Architecture - Protein domain positions, structure mapping, clan members
     "interpro_domain_arch": os.path.join(
         current_dir, "data", "interpro_domain_arch_tools.json"
@@ -685,6 +854,8 @@ default_tool_files = {
     "bioportal": os.path.join(current_dir, "data", "bioportal_tools.json"),
     # FinnGen - Finnish population genomics (486K participants, 2470 phenotypes)
     "finngen": os.path.join(current_dir, "data", "finngen_tools.json"),
+    # PheWAS - cross-biobank phenome-wide association (BioBank Japan, UKB-TOPMed, TPMI, Genebass)
+    "pheweb_phewas": os.path.join(current_dir, "data", "pheweb_phewas_tools.json"),
     # FlyBase - Drosophila melanogaster genetics (via Alliance of Genome Resources)
     "flybase": os.path.join(current_dir, "data", "flybase_tools.json"),
     # ZFIN - Zebrafish Information Network (via Alliance of Genome Resources)
@@ -696,6 +867,8 @@ default_tool_files = {
     # ClinicalTrials.gov - World's largest clinical trial registry (572,000+ trials)
     # EpiGraphDB - Mendelian Randomization, genetic correlations, drug repurposing via GWAS
     "epigraphdb": os.path.join(current_dir, "data", "epigraphdb_tools.json"),
+    # OpenGWAS (IEU) - custom two-sample MR instruments (tophits + harmonized outcome effects)
+    "opengwas": os.path.join(current_dir, "data", "opengwas_tools.json"),
     # Foldseek - Fast protein structure similarity search (AlphaFold DB, PDB)
     "foldseek": os.path.join(current_dir, "data", "foldseek_tools.json"),
     # MedGen - NCBI medical genetics (conditions, genes, HPO, OMIM aggregation)
@@ -750,6 +923,25 @@ default_tool_files = {
     "idr": os.path.join(current_dir, "data", "idr_tools.json"),
     # OpenFDA - FDA drug labels, adverse events, and NDC directory
     "openfda": os.path.join(current_dir, "data", "openfda_tools.json"),
+    "opsin": os.path.join(current_dir, "data", "opsin_tools.json"),
+    "favor": os.path.join(current_dir, "data", "favor_tools.json"),
+    "tark": os.path.join(current_dir, "data", "tark_tools.json"),
+    "marrvel": os.path.join(current_dir, "data", "marrvel_tools.json"),
+    "ctis": os.path.join(current_dir, "data", "ctis_tools.json"),
+    "classyfire": os.path.join(current_dir, "data", "classyfire_tools.json"),
+    "npatlas": os.path.join(current_dir, "data", "npatlas_tools.json"),
+    "isrctn": os.path.join(current_dir, "data", "isrctn_tools.json"),
+    "epa_envirofacts": os.path.join(current_dir, "data", "epa_envirofacts_tools.json"),
+    "usda_plants": os.path.join(current_dir, "data", "usda_plants_tools.json"),
+    "allen_cell_types": os.path.join(
+        current_dir, "data", "allen_cell_types_tools.json"
+    ),
+    "idigbio": os.path.join(current_dir, "data", "idigbio_tools.json"),
+    "pathoplexus": os.path.join(current_dir, "data", "pathoplexus_tools.json"),
+    "open_genes": os.path.join(current_dir, "data", "open_genes_tools.json"),
+    "foodb": os.path.join(current_dir, "data", "foodb_tools.json"),
+    "togoid": os.path.join(current_dir, "data", "togoid_tools.json"),
+    "alphafill": os.path.join(current_dir, "data", "alphafill_tools.json"),
     # KLIFS - Kinase-Ligand Interaction Fingerprints and Structures
     "klifs": os.path.join(current_dir, "data", "klifs_tools.json"),
     # GeneNetwork - systems genetics QTL and gene expression for genetic crosses
@@ -814,7 +1006,9 @@ default_tool_files = {
     # eQTL Catalogue - Expression quantitative trait loci associations
     "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
     # OSDR - NASA Open Science Data Repository (space biology studies)
-    "osdr": os.path.join(current_dir, "data", "osdr_tools.json"),
+    # Removed: API unreachable/down (see commit c70493c6); data file deleted,
+    # this entry was left behind and has been silently loading 0 tools since.
+    # "osdr": os.path.join(current_dir, "data", "osdr_tools.json"),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts
@@ -883,8 +1077,6 @@ default_tool_files = {
     "opencitations": os.path.join(current_dir, "data", "opencitations_tools.json"),
     # Wikidata Entity API - search and retrieve Wikidata items/entities by ID
     "wikidata_entity": os.path.join(current_dir, "data", "wikidata_entity_tools.json"),
-    # iDigBio - Integrated Digitized Biocollections (130M+ natural history specimens)
-    "idigbio": os.path.join(current_dir, "data", "idigbio_tools.json"),
     # ELIXIR TeSS - Bioinformatics training materials and events aggregator
     "elixir_tess": os.path.join(current_dir, "data", "elixir_tess_tools.json"),
     # Wikimedia Stats - Wikipedia page views and top articles analytics
@@ -932,7 +1124,9 @@ default_tool_files = {
     "opentopodata": os.path.join(current_dir, "data", "opentopodata_tools.json"),
     # Disease.sh - COVID-19 global and country-level statistics
     # NASA NeoWs - Near Earth Object data (asteroids, close approaches)
-    "nasa_neows": os.path.join(current_dir, "data", "nasa_neows_tools.json"),
+    # Removed: API unreachable/down (see commit c70493c6); data file deleted,
+    # this entry was left behind and has been silently loading 0 tools since.
+    # "nasa_neows": os.path.join(current_dir, "data", "nasa_neows_tools.json"),
     # REST Countries Extended - country details by name, region, language
     # STRING Network - protein-protein interaction networks
     "string_network": os.path.join(current_dir, "data", "string_network_tools.json"),
@@ -1016,6 +1210,26 @@ default_tool_files = {
     # PDC - NCI Proteomics Data Commons (CPTAC, ICPC, APOLLO cancer proteomics)
     "pdc": os.path.join(current_dir, "data", "pdc_tools.json"),
     "proteomicsdb": os.path.join(current_dir, "data", "proteomicsdb_tools.json"),
+    # Keyless peptide-resource databases (AMP, therapeutic, venom, catalogs)
+    "ampsphere": os.path.join(current_dir, "data", "ampsphere_tools.json"),
+    "ampsphere_record": os.path.join(
+        current_dir, "data", "ampsphere_record_tools.json"
+    ),
+    "cancerppd2": os.path.join(current_dir, "data", "cancerppd2_tools.json"),
+    "dbaasp": os.path.join(current_dir, "data", "dbaasp_tools.json"),
+    "hemolytik2": os.path.join(current_dir, "data", "hemolytik2_tools.json"),
+    "hlaligandatlas": os.path.join(current_dir, "data", "hlaligandatlas_tools.json"),
+    "mhcmotifatlas": os.path.join(current_dir, "data", "mhcmotifatlas_tools.json"),
+    "norine": os.path.join(current_dir, "data", "norine_tools.json"),
+    "pepcalc": os.path.join(current_dir, "data", "pepcalc_tools.json"),
+    "peplife2": os.path.join(current_dir, "data", "peplife2_tools.json"),
+    "peptideatlas": os.path.join(current_dir, "data", "peptideatlas_tools.json"),
+    "tumorhope2": os.path.join(current_dir, "data", "tumorhope2_tools.json"),
+    "proteomicsdb_meltome": os.path.join(
+        current_dir, "data", "proteomicsdb_meltome_tools.json"
+    ),
+    "cluspro": os.path.join(current_dir, "data", "cluspro_tools.json"),
+    "conoserver": os.path.join(current_dir, "data", "conoserver_tools.json"),
     # MEME Suite - Motif analysis (FIMO scan, MEME discovery, TOMTOM comparison)
     "meme": os.path.join(current_dir, "data", "meme_tools.json"),
     # CellMarker 2.0 - Curated cell type markers for scRNA-seq annotation
