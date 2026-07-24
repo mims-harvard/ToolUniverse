@@ -49,10 +49,14 @@ class BaseMCPClient:
     def _get_mcp_endpoint(self, path: str) -> str:
         """Get the full MCP endpoint URL"""
         if self.transport == "http":
-            base_url = self.server_url.rstrip("/")
-            if not base_url.endswith("/mcp"):
-                base_url += "/mcp"
-            return urljoin(base_url + "/", path)
+            base_url = self.server_url
+            if not base_url.rstrip("/").endswith("/mcp"):
+                # Preserve the legacy generated endpoint for bare server URLs,
+                # but keep an explicitly configured /mcp slash shape exact.
+                base_url = base_url.rstrip("/") + "/mcp/"
+            if not path:
+                return base_url
+            return urljoin(base_url.rstrip("/") + "/", path)
         return self.server_url
 
     async def _make_mcp_request(

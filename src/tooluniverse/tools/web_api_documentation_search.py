@@ -1,7 +1,7 @@
 """
 web_api_documentation_search
 
-Specialized web search for API documentation, Python packages, and technical resources using DDGS...
+Specialized web search for API documentation, Python packages, and technical resources using Para...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def web_api_documentation_search(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Specialized web search for API documentation, Python packages, and technical resources using DDGS...
+    Specialized web search for API documentation, Python packages, and technical resources using Para...
 
     Parameters
     ----------

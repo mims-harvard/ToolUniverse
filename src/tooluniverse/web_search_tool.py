@@ -1,9 +1,4 @@
-"""
-Web search tools for ToolUniverse using DDGS (Dux Distributed Global Search).
-
-This module provides web search capabilities using the ddgs library,
-which supports multiple search engines including DuckDuckGo, Google, Bing, etc.
-"""
+"""Web search tools for ToolUniverse using Parallel Search MCP and DDGS."""
 
 import json
 import re
@@ -17,7 +12,10 @@ from urllib.parse import parse_qs, unquote, urlparse
 import requests
 
 from .base_tool import BaseTool
+from .mcp_client_tool import BaseMCPClient
 from .tool_registry import register_tool
+
+PARALLEL_SEARCH_MCP_URL = "https://search.parallel.ai/mcp"
 
 
 @register_tool("WebSearchTool")
@@ -117,6 +115,72 @@ print(json.dumps(results))
 
         return results
 
+    def _search_with_parallel(
+        self, query: str, max_results: int
+    ) -> List[Dict[str, Any]]:
+        """Search with Parallel Search MCP and normalize its structured results."""
+        client = BaseMCPClient(PARALLEL_SEARCH_MCP_URL, transport="http", timeout=30)
+        response = client._run_with_cleanup(
+            lambda: client._make_mcp_request(
+                "tools/call",
+                {
+                    "name": "web_search",
+                    "arguments": {
+                        "objective": query,
+                        "search_queries": [query],
+                    },
+                },
+            )
+        )
+
+        if response.get("isError"):
+            raise RuntimeError("Parallel Search MCP returned an error")
+
+        structured_content = response.get("structuredContent") or response.get(
+            "structured_content"
+        )
+        if not isinstance(structured_content, dict):
+            raise RuntimeError(
+                "Parallel Search MCP response did not include structured content"
+            )
+
+        search_results = structured_content.get("results")
+        if not isinstance(search_results, list):
+            raise RuntimeError(
+                "Parallel Search MCP structured content did not include results"
+            )
+
+        results = []
+        for result in search_results:
+            if not isinstance(result, dict):
+                continue
+
+            url = result.get("url")
+            if not isinstance(url, str) or not url:
+                continue
+
+            title = result.get("title")
+            excerpts = result.get("excerpts")
+            if isinstance(excerpts, list):
+                snippet = "\n\n".join(
+                    excerpt for excerpt in excerpts if isinstance(excerpt, str)
+                )
+            else:
+                snippet = ""
+
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": url,
+                    "snippet": snippet,
+                    "rank": len(results) + 1,
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
     def _search_with_fallback(
         self,
         query: str,
@@ -144,7 +208,29 @@ print(json.dumps(results))
         backends_to_try = [backend]
         stop_ddgs_backends = False
 
-        if backend == "auto":
+        if backend == "parallel":
+            attempted_backends.append("parallel")
+            try:
+                results = self._search_with_parallel(
+                    query=query, max_results=max_results
+                )
+                if results:
+                    return (
+                        results,
+                        "parallel",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["parallel"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding Parallel to the default provider chain.
+            backends_to_try = ["auto"]
+        elif backend == "auto":
             # Try the explicit DuckDuckGo backend first. It tends to fail with
             # regular Python exceptions in restricted environments, while some
             # other backends can trigger native panics.
