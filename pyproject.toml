@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tooluniverse"
-version = "1.1.11"
+version = "1.3.1"
 description = "A comprehensive collection of scientific tools for Agentic AI, offering integration with the ToolUniverse SDK and MCP Server to support advanced scientific workflows."
 authors = [
     { name = "Shanghua Gao", email = "shanghuagao@gmail.com" }
@@ -22,7 +22,6 @@ dependencies = [
     "openai>=1.107.0",
     "pyyaml>=6.0.0",
     "google-genai>=1.36.0",
-    "google-generativeai>=0.7.2",
     "mcp[cli]>=1.9.3",
     "fastmcp>=2.12.3,<4.0.0",
     "xmltodict>=1.0.0",
@@ -32,7 +31,8 @@ dependencies = [
     "rcsb-api>=1.4.0",
     "fitz>=0.0.1.dev2",
     "pandas>=2.2.3",
-    "setuptools>=70.0.0,<81.0.0", # Fix pkg_resources deprecation warnings
+    "openpyxl>=3.1.0", # Read .xlsx bulk downloads (CellMarker, dataset tools)
+    "setuptools>=70.0.0", # Fix pkg_resources deprecation warnings
     "pdfplumber>=0.11.0",
     "playwright>=1.55.0",
     "faiss-cpu==1.12.0",
@@ -85,10 +85,11 @@ docs = [
     "linkify-it-py>=2.0.0",
     "sphinx-autobuild>=2021.3.14",
     "sphinx-copybutton>=0.5.0",
-    "sphinx-tabs>=3.2.0",
+    "sphinx-tabs>=3.5.0",
     "sphinx-design>=0.3.0",
     "sphinx-notfound-page>=0.8",
     "sphinx-autodoc-typehints>=1.12.0",
+    "sphinx-reredirects>=0.1.5",
 ]
 embedding = [
     "sentence-transformers>=5.1.0",
@@ -127,6 +128,7 @@ space = [
 ]
 bioinformatics = [
     "biopython>=1.80",
+    "freesasa>=2.2.0",
 ]
 # circuit: install manually with `pip install git+https://github.com/tooluniverse/circuit.git`
 all = [

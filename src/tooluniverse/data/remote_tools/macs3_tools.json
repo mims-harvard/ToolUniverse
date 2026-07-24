@@ -1,0 +1,101 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_macs3_callpeak",
+    "description": "Call ChIP-seq / ATAC-seq peaks from an aligned reads file with MACS3 `callpeak` (Model-based Analysis of ChIP-Seq; Zhang et al., Genome Biology 2008; macs3-project successor). Models read enrichment over a background/input control to identify regions of significant signal \u2014 the field-standard first analysis step after alignment. Input is a server-accessible BAM/BED/BED-PE alignment file; returns the number of peaks, the top-N peaks by score, and summary statistics, parsed from the ENCODE narrowPeak output.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "treatment": {
+          "type": "string",
+          "description": "Server-accessible path to the treatment/ChIP alignment file (BAM/BED/BED-PE)."
+        },
+        "control": {
+          "type": "string",
+          "description": "Server-accessible path to the input/control alignment file (optional but recommended)."
+        },
+        "format": {
+          "type": "string",
+          "description": "Input format: AUTO (default), BAM, BED, BAMPE, or BEDPE. Use BAMPE/BEDPE for paired-end (e.g. ATAC-seq)."
+        },
+        "genome_size": {
+          "type": "string",
+          "description": "Effective genome size: 'hs' (human, default), 'mm' (mouse), 'ce' (worm), 'dm' (fly), or a number (e.g. '2.7e9')."
+        },
+        "qvalue": {
+          "type": "number",
+          "description": "q-value (minimum FDR) cutoff to call significant peaks (default 0.05)."
+        },
+        "top_n": {
+          "type": "integer",
+          "description": "Number of top peaks (by score) to return (default 50)."
+        },
+        "nomodel": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Skip the shift-model step (pass --nomodel --extsize). Required for ATAC-seq / single-end data where model building fails. Default false."
+        },
+        "extsize": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Fragment extension size used with nomodel (default 200; ~147 for ATAC)."
+        }
+      },
+      "required": [
+        "treatment"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_peaks": {
+          "type": "integer",
+          "description": "Total number of significant peaks called."
+        },
+        "top_peaks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Top-N peaks by score, each with chrom, start, end, score, signal_value, q_value."
+        },
+        "summary": {
+          "type": "object",
+          "description": "Summary stats: n_peaks, mean/median peak width, max/mean score."
+        },
+        "format": {
+          "type": "string"
+        },
+        "genome_size": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error description if the run failed."
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "Macs3CallpeakTool",
+      "url": "https://macs3-project.github.io/MACS/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/macs3",
+      "mcp_tool_name": "run_macs3_callpeak"
+    },
+    "test_examples": [
+      {
+        "treatment": "chip_h3k4me3.bam",
+        "control": "input_control.bam",
+        "format": "BAM",
+        "genome_size": "hs",
+        "qvalue": 0.05,
+        "top_n": 50
+      }
+    ]
+  }
+]

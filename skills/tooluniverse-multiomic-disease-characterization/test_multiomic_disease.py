@@ -256,7 +256,7 @@ def test_phase1_genomics(tu):
 
     # Test 15: ClinVar variants
     try:
-        r = tu.tools.clinvar_search_variants(gene="PSEN1", max_results=5)
+        r = tu.tools.ClinVar_search_variants(gene="PSEN1", max_results=5)
         assert r is not None, "No response"
         record("Phase1: ClinVar variants (PSEN1)", "PASS")
     except Exception as e:
@@ -828,7 +828,7 @@ def test_disease_specific_cystic_fibrosis(tu):
 
     # Test 59: CF ClinVar variants
     try:
-        r = tu.tools.clinvar_search_variants(gene="CFTR", max_results=10)
+        r = tu.tools.ClinVar_search_variants(gene="CFTR", max_results=10)
         assert r is not None
         record("DS-CF: ClinVar CFTR variants", "PASS")
     except Exception as e:

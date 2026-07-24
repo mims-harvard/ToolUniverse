@@ -354,5 +354,94 @@
                 }
             ]
         }
+    },
+    {
+        "name": "GenomeNexus_annotate_dbsnp",
+        "description": "Annotate a variant directly by its dbSNP rsID using Genome Nexus (Memorial Sloan Kettering). Genome Nexus resolves the rsID to genomic coordinates and returns aggregated annotation from VEP, SIFT, PolyPhen-2, AlphaMissense, and cancer hotspots, plus an annotation summary with the genomic location (chromosome/start/end) and HGVS protein notation. Use this when you have a dbSNP rsID rather than HGVS coordinates. Example: 'rs121913529' (KRAS G12 codon) returns 12 transcript consequences, gene KRAS, SIFT 'deleterious', PolyPhen 'probably_damaging', AlphaMissense score 0.9949 (pathogenic), genomic location chr12:25398284.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "rsid": {
+                    "type": "string",
+                    "description": "dbSNP reference SNP ID. Examples: 'rs121913529' (KRAS G12), 'rs113488022' (BRAF V600E), 'rs28934578' (TP53 R273H). A bare numeric id (e.g. '121913529') is accepted and prefixed with 'rs'."
+                }
+            },
+            "required": ["rsid"]
+        },
+        "fields": {
+            "endpoint": "annotate_dbsnp"
+        },
+        "type": "GenomeNexusTool",
+        "test_examples": [
+            {
+                "rsid": "rs121913529"
+            },
+            {
+                "rsid": "rs113488022"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "variant": {"type": "string", "description": "dbSNP rsID that was queried"},
+                                "hgvsg": {"type": ["string", "null"]},
+                                "assembly_name": {"type": ["string", "null"]},
+                                "most_severe_consequence": {"type": ["string", "null"]},
+                                "annotation_summary": {"type": ["object", "null"]},
+                                "transcript_consequences": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "gene_symbol": {"type": ["string", "null"]},
+                                            "transcript_id": {"type": ["string", "null"]},
+                                            "consequence_terms": {"type": "array", "items": {"type": "string"}},
+                                            "hgvsp": {"type": ["string", "null"]},
+                                            "hgvsc": {"type": ["string", "null"]},
+                                            "amino_acids": {"type": ["string", "null"]},
+                                            "polyphen_prediction": {"type": ["string", "null"]},
+                                            "polyphen_score": {"type": ["number", "null"]},
+                                            "sift_prediction": {"type": ["string", "null"]},
+                                            "sift_score": {"type": ["number", "null"]},
+                                            "alphaMissense": {
+                                                "type": ["object", "null"],
+                                                "properties": {
+                                                    "score": {"type": "number"},
+                                                    "pathogenicity": {"type": "string"}
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "hotspots": {"type": ["object", "null"]},
+                                "colocated_variants": {
+                                    "type": "array",
+                                    "items": {"type": "object"}
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
     }
 ]

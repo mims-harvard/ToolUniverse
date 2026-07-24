@@ -132,8 +132,17 @@ class OpenCRAVATTool(BaseTool):
                 "description": info.get("description", ""),
                 "type": info.get("type", ""),
             }
-            if category and category.lower() not in entry["type"].lower():
-                continue
+            if category:
+                needle = category.lower()
+                # The server currently reports "annotator" as the sole `type`
+                # value for every module, so matching on type alone can never
+                # find a specific annotator (e.g. "clinvar", "sift") -- also
+                # search name/title so the filter stays useful in practice.
+                haystack = " ".join(
+                    (entry["type"], entry["name"], entry["title"])
+                ).lower()
+                if needle not in haystack:
+                    continue
             annotators.append(entry)
 
         annotators.sort(key=lambda x: x["name"])

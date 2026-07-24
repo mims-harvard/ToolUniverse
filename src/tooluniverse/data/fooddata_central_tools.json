@@ -37,6 +37,15 @@
     "optional_api_keys": [
       "FDC_API_KEY"
     ],
+    "api_key_info": {
+      "FDC_API_KEY": {
+        "domain": "Clinical & Safety",
+        "type": "secret",
+        "register_url": "https://fdc.nal.usda.gov/api-guide.html",
+        "purpose": "Look up food and nutrient composition from USDA FoodData Central.",
+        "without": "Falls back to a shared, rate-limited DEMO_KEY without it."
+      }
+    },
     "test_examples": [
       {
         "query": "cheddar cheese",
@@ -55,23 +64,55 @@
           "items": {
             "type": "object",
             "properties": {
-              "fdcId": {"type": "integer"},
-              "description": {"type": "string"},
-              "dataType": {"type": "string"},
-              "brandOwner": {"type": ["string", "null"]},
-              "ingredients": {"type": ["string", "null"]},
-              "servingSize": {"type": ["number", "null"]},
-              "servingSizeUnit": {"type": ["string", "null"]},
-              "topNutrients": {"type": "array"}
+              "fdcId": {
+                "type": "integer"
+              },
+              "description": {
+                "type": "string"
+              },
+              "dataType": {
+                "type": "string"
+              },
+              "brandOwner": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ingredients": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "servingSize": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "servingSizeUnit": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "topNutrients": {
+                "type": "array"
+              }
             }
           }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -112,23 +153,83 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "fdcId": {"type": ["integer", "null"]},
-        "description": {"type": ["string", "null"]},
-        "dataType": {"type": ["string", "null"]},
-        "publicationDate": {"type": ["string", "null"]},
-        "brandOwner": {"type": ["string", "null"]},
-        "ingredients": {"type": ["string", "null"]},
-        "servingSize": {"type": ["number", "null"]},
-        "servingSizeUnit": {"type": ["string", "null"]},
+        "fdcId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dataType": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "publicationDate": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "brandOwner": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ingredients": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "servingSize": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "servingSizeUnit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "nutrients": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "name": {"type": ["string", "null"]},
-              "number": {"type": ["string", "null"]},
-              "amount": {"type": ["number", "null"]},
-              "unit": {"type": ["string", "null"]}
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "number": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "amount": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "unit": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         }

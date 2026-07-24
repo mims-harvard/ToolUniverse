@@ -55,12 +55,7 @@
           "default": true,
           "description": "Whether to include stereochemistry information"
         }
-      },
-      "required": [
-        "smiles",
-        "inchi",
-        "molecule_name"
-      ]
+      }
     },
     "default_width": 400,
     "default_height": 400,

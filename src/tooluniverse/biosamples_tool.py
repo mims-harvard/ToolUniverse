@@ -70,6 +70,10 @@ class BioSamplesTool(BaseTool):
             return self._search(arguments)
         elif self.endpoint_type == "search_by_filter":
             return self._search_by_filter(arguments)
+        elif self.endpoint_type == "get_relationships":
+            return self._get_relationships(arguments)
+        elif self.endpoint_type == "get_facets":
+            return self._get_facets(arguments)
         else:
             return {
                 "status": "error",
@@ -271,5 +275,136 @@ class BioSamplesTool(BaseTool):
                 "returned": len(results),
                 "filter": filter_str,
                 "endpoint": "search_by_filter",
+            },
+        }
+
+    def _get_relationships(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get the relationship/provenance graph for a BioSample.
+
+        The raw sample JSON already carries a 'relationships' array (e.g.
+        'derived from', 'has member', 'child of', 'same as', 'recurated into')
+        that the standard get_sample parser drops. This exposes that lineage so
+        sample-to-sample provenance (processed sample -> source tissue,
+        sample-group -> member samples) is reachable.
+        """
+        accession = arguments.get("accession", "")
+        if not accession:
+            return {
+                "status": "error",
+                "error": "accession parameter is required (e.g., 'SAMEA4451312')",
+            }
+
+        url = f"{BIOSAMPLES_BASE_URL}/samples/{accession}"
+        response = requests.get(
+            url,
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        relationships = []
+        for rel in raw.get("relationships", []) or []:
+            source = rel.get("source")
+            rel_type = rel.get("type")
+            target = rel.get("target")
+            # Indicate which side of the edge this sample is on so the
+            # direction of the lineage is unambiguous to consumers.
+            if source == accession:
+                direction = "outgoing"
+                related = target
+            elif target == accession:
+                direction = "incoming"
+                related = source
+            else:
+                direction = "other"
+                related = target
+            relationships.append(
+                {
+                    "source": source,
+                    "type": rel_type,
+                    "target": target,
+                    "direction": direction,
+                    "related_accession": related,
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "accession": raw.get("accession", accession),
+                "name": raw.get("name"),
+                "relationships": relationships,
+                "relationship_count": len(relationships),
+            },
+            "metadata": {
+                "source": "EBI BioSamples",
+                "query": accession,
+                "endpoint": "get_relationships",
+            },
+        }
+
+    def _get_facets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Discover the available attribute facets for a text query.
+
+        Returns the facet vocabulary (organism, status, SRA accession, external
+        reference, release date range, ...) with sample counts plus the top
+        values per facet, so a scientist learns which filterable attribute
+        keys/values exist before running a structured filter search.
+        """
+        query = arguments.get("text") or arguments.get("query") or ""
+        if not query:
+            return {
+                "status": "error",
+                "error": "text parameter is required (e.g., 'cancer', 'liver')",
+            }
+
+        max_values = min(int(arguments.get("max_values", 10)), 50)
+
+        url = f"{BIOSAMPLES_BASE_URL}/samples/facets"
+        response = requests.get(
+            url,
+            params={"text": query},
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        embedded = raw.get("_embedded", {})
+
+        def _format_facets(facet_list: Any) -> list:
+            formatted = []
+            for facet in facet_list or []:
+                values = [
+                    {"label": v.get("label"), "count": v.get("count")}
+                    for v in (facet.get("content") or [])[:max_values]
+                ]
+                formatted.append(
+                    {
+                        "attribute": facet.get("label"),
+                        "type": facet.get("type"),
+                        "count": facet.get("count"),
+                        "top_values": values,
+                    }
+                )
+            return formatted
+
+        facets = _format_facets(embedded.get("facets", []))
+        external_facets = _format_facets(
+            embedded.get("externalReferenceDataFacets", [])
+        )
+
+        return {
+            "status": "success",
+            "data": {
+                "facets": facets,
+                "external_reference_data_facets": external_facets,
+            },
+            "metadata": {
+                "source": "EBI BioSamples",
+                "query": query,
+                "facet_count": len(facets),
+                "endpoint": "get_facets",
             },
         }

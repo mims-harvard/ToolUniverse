@@ -1,0 +1,39 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_harmony_integrate",
+    "description": "Integrate single-cell data across batches/samples with Harmony (Korsunsky et al., Nature Methods 2019) — the default batch-correction baseline. Computes (or reuses an existing X_pca) a PCA embedding and returns the batch-corrected PCA embedding (X_pca_harmony), the standard input to neighbor graphs / clustering / UMAP. Harmony is fast and CPU-friendly even on large datasets. Input is a server-accessible .h5ad AnnData.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData."},
+        "batch_key": {"type": "string", "description": "obs column naming the batch/sample to integrate over."},
+        "n_pcs": {"type": "integer", "description": "Number of principal components to compute/use for Harmony (default 30)."}
+      },
+      "required": ["adata_path", "batch_key"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_cells": {"type": "integer"},
+        "n_pcs": {"type": "integer", "description": "Number of PCs in the corrected embedding (capped to what X_pca provides)."},
+        "batch_key": {"type": "string"},
+        "batches": {"type": "array", "items": {"type": "string"}, "description": "Distinct batch labels found in batch_key."},
+        "corrected_embedding": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}, "description": "Cells x n_pcs batch-corrected embedding (X_pca_harmony); returned inline only when n_cells <= 2000."},
+        "note": {"type": "string", "description": "Present when corrected_embedding is omitted for large datasets."},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "HarmonyIntegrateTool",
+      "url": "https://portals.broadinstitute.org/harmony/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/harmony",
+      "mcp_tool_name": "run_harmony_integrate"
+    },
+    "test_examples": [
+      {"adata_path": "pbmc_10k.h5ad", "batch_key": "sample", "n_pcs": 30}
+    ]
+  }
+]

@@ -7,19 +7,6 @@ tooluniverse package
    :show-inheritance:
    :private-members:
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   tooluniverse.cache
-   tooluniverse.compose_scripts
-   tooluniverse.data
-   tooluniverse.database_setup
-   tooluniverse.profile
-   tooluniverse.tools
-
 Submodules
 ----------
 

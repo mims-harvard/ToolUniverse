@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.abspath("../src"))
 project = "ToolUniverse"
 copyright = "2025, Shanghua Gao"
 author = "Shanghua Gao"
-release = "1.0.0"
+release = "1.3.1"
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -26,10 +26,42 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "myst_parser",
     "sphinx_copybutton",
-    # "sphinx_tabs.tabs",  # Temporarily disabled due to Sphinx 9.x compatibility issue
+    "sphinx_tabs.tabs",
     "sphinx_design",
     # "notfound.extension",  # Temporarily disabled due to theme compatibility issue
+    "sphinx_reredirects",
 ]
+
+# HTML redirects for paths that moved during a docs reshuffle.
+# Old path → new path. The ToolUniverse paper and external blog posts cite
+# legacy URLs from before the docs were reorganised. Without these redirects
+# every cited URL 404s. Each entry was verified against the live site:
+# the destination must already return HTTP 200.
+redirects = {
+    # /tutorials/* → /guide/*
+    "tutorials/tooluniverse_case_study": "../guide/tooluniverse_case_study.html",
+    "tutorials/agentic_tools_tutorial": "../guide/agentic_tools_tutorial.html",
+    "tutorials/literature_search_tools_tutorial": "../guide/literature_search_tools_tutorial.html",
+    "tutorials/literature_search_web_ui_tutorial": "../guide/literature_search_web_ui_tutorial.html",
+    "tutorials/visualization_tutorial": "../guide/visualization_tutorial.html",
+    "tutorials/expert_feedback": "../guide/expert_feedback.html",
+    "tutorials/finding_tools": "../guide/finding_tools.html",
+    "tutorials/make_your_data_searchable": "../guide/make_your_data_agent_searchable.html",
+    "tutorials/make_your_data_agent_searchable": "../guide/make_your_data_agent_searchable.html",
+    "tutorials/build_search_and_share_datastores": "../guide/make_your_data_agent_searchable.html",
+    "tutorials/skills": "../guide/skills_showcase.html",
+    "tutorials/tool_finder": "../guide/finding_tools.html",
+    "tutorials/overview": "../guide/index.html",
+    # /tutorials/* → /tools/* and /expand_tooluniverse/*
+    "tutorials/remote_tools": "../tools/remote_tools.html",
+    "tutorials/mcp_integration": "../expand_tooluniverse/remote_tools/mcp_integration.html",
+    # Top-level pages whose content moved into /about/ or /help/
+    "getting_started": "guide/python_guide.html",
+    "deployment": "about/deployment.html",
+    "contributing": "about/contributing.html",
+    "changelog": "about/changelog.html",
+    "faq": "help/faq.html",
+}
 
 templates_path = ["_templates"]
 exclude_patterns = [
@@ -44,6 +76,9 @@ exclude_patterns = [
     "tutorials/overview.md",
     "tutorials/optimization",
     "guide/ODPHPtools_tutorial.md",
+    # Internal meta-docs describing the folder structure or task list.
+    # Not user-facing; kept in-tree as a developer reference only.
+    "DOCUMENTATION_STRUCTURE.md",
 ]
 
 # -- Options for HTML output with Shibuya theme -----------------------------

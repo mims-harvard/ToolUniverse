@@ -7,6 +7,15 @@
     "required_api_keys": [
       "USPTO_MCP_SERVER_HOST"
     ],
+    "api_key_info": {
+      "USPTO_MCP_SERVER_HOST": {
+        "domain": "Models & Infrastructure",
+        "type": "endpoint",
+        "register_url": "https://developer.uspto.gov/",
+        "purpose": "URL of a self-hosted USPTO MCP server.",
+        "without": "Leave blank unless you run your own USPTO server."
+      }
+    },
     "test_examples": [
       {}
     ],

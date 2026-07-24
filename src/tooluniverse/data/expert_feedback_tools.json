@@ -8,6 +8,15 @@
     "required_api_keys": [
       "EXPERT_FEEDBACK_MCP_SERVER_URL"
     ],
+    "api_key_info": {
+      "EXPERT_FEEDBACK_MCP_SERVER_URL": {
+        "domain": "Models & Infrastructure",
+        "type": "endpoint",
+        "register_url": "https://github.com/mims-harvard/ToolUniverse",
+        "purpose": "URL of a self-hosted expert-feedback MCP service.",
+        "without": "Leave blank unless you run this service."
+      }
+    },
     "test_examples": [
       {}
     ],

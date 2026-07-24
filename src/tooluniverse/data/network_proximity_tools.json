@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Network_proximity",
+    "type": "NetworkProximityTool",
+    "description": "Graph distance between two node sets on a user-supplied network, with the standard measures from Guney/Barabasi (2016) and Menche (2015) plus a degree-matched random Z-score. Domain-agnostic: any two node sets on any graph (drug targets vs disease module, two pathways, two marker sets, …). Give the network as inline 'edges' pairs or a 2-column 'edgelist_path', plus two node sets ('set_a'/'set_b', or the drug-pharmacology aliases 'targets'/'disease_genes'). measure='closest' (default), 'shortest', or 'separation' (s_AB<0 = overlapping modules). Returns the value, Z-score, and empirical p. Pure networkx+numpy, no network call or API key.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "edges": {"type": ["array", "null"], "items": {"type": "array", "items": {"type": "string"}}, "description": "Network as inline [source, target] node-id pairs (undirected). Use for small/medium graphs."},
+        "edgelist_path": {"type": ["string", "null"], "description": "Alternative to inline: path to a 2-column edgelist (.tsv/.txt = tab, else comma)"},
+        "set_a": {"type": ["array", "null"], "items": {"type": "string"}, "description": "First node set"},
+        "set_b": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Second node set"},
+        "targets": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Alias for set_a (drug targets)"},
+        "disease_genes": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Alias for set_b (disease-module genes)"},
+        "measure": {"type": ["string", "null"], "enum": ["closest", "shortest", "separation", null], "description": "Distance measure: 'closest' (default, Guney), 'shortest' (all-pairs mean), or 'separation' (Menche s_AB)"},
+        "n_rand": {"type": ["integer", "null"], "description": "Degree-matched randomizations for the null (default 1000)"},
+        "seed": {"type": ["integer", "null"], "description": "Random seed for reproducibility (default 42)"}
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
+        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
+      ]
+    },
+    "test_examples": [
+      {"edges": [["A", "B"], ["B", "C"], ["C", "D"], ["D", "E"], ["A", "C"], ["B", "D"], ["E", "F"], ["F", "G"], ["A", "F"], ["C", "G"]], "set_a": ["A", "B"], "set_b": ["D", "E"], "measure": "closest", "n_rand": 200, "seed": 1}
+    ]
+  }
+]

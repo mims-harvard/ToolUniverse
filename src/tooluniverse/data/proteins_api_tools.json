@@ -252,6 +252,14 @@
         "reviewed": {
           "type": "boolean",
           "description": "If true, return only reviewed Swiss-Prot entries. If false or omitted, includes unreviewed TrEMBL entries."
+        },
+        "organism": {
+          "type": "string",
+          "description": "Restrict the search to an organism by name (e.g. 'Klebsiella pneumoniae', 'Escherichia coli'). By default a gene/protein-name search is biased toward human (taxid 9606); set this for non-human proteins. If omitted and no human match is found, the search auto-widens to all organisms."
+        },
+        "taxid": {
+          "type": "string",
+          "description": "Restrict the search to an NCBI taxonomy id (e.g. '573' for Klebsiella pneumoniae, '562' for E. coli). Alternative to 'organism' for precise scoping."
         }
       },
       "required": []
@@ -272,6 +280,10 @@
       {
         "query": "insulin",
         "size": 5
+      },
+      {
+        "query": "blaKPC",
+        "size": 3
       }
     ]
   },

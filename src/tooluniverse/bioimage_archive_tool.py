@@ -69,6 +69,8 @@ class BioImageArchiveTool(BaseTool):
             return self._get_study(arguments)
         elif self.action == "search_bioimages":
             return self._search_bioimages(arguments)
+        elif self.action == "list_study_files":
+            return self._list_study_files(arguments)
         else:
             return {"status": "error", "error": f"Unknown action: {self.action}"}
 
@@ -222,5 +224,66 @@ class BioImageArchiveTool(BaseTool):
                 "source": "BioImage Archive (EBI BioStudies - BioImages collection)",
                 "total_hits": data.get("totalHits", 0),
                 "query": query,
+            },
+        }
+
+    def _list_study_files(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List the file/image manifest of a study with per-file metadata.
+
+        Each returned record carries the file Name, relative download path, size,
+        and any per-image experimental annotations attached in the study (e.g.
+        staining, cells, treatment, channels, timepoint).
+        """
+        accession = arguments.get("accession", "")
+        if not accession:
+            return {"status": "error", "error": "accession parameter is required"}
+
+        # DataTables-style pagination: the files endpoint uses start/length.
+        length = min(int(arguments.get("limit") or 25), 500)
+        start = int(arguments.get("offset") or 0)
+
+        params = {"start": start, "length": length}
+        url = f"{BIOSTUDIES_BASE_URL}/files/{accession}"
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+
+        data = response.json()
+        files = data.get("data", []) if isinstance(data, dict) else []
+
+        results = []
+        # Structural keys present on every record; everything else is an
+        # experiment-specific annotation column (staining, cells, channels...).
+        structural = {"Name", "Size", "Section", "path", "type", "size"}
+        for row in files:
+            if not isinstance(row, dict):
+                continue
+            annotations = {
+                k: v
+                for k, v in row.items()
+                if k not in structural and v not in (None, "")
+            }
+            results.append(
+                {
+                    "Name": row.get("Name"),
+                    "path": row.get("path"),
+                    "size": row.get("size") or row.get("Size"),
+                    "type": row.get("type"),
+                    "section": row.get("Section"),
+                    "annotations": annotations,
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "source": "BioImage Archive (EBI BioStudies)",
+                "accession": accession,
+                "records_total": data.get("recordsTotal")
+                if isinstance(data, dict)
+                else None,
+                "returned": len(results),
+                "offset": start,
+                "limit": length,
             },
         }

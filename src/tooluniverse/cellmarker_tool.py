@@ -6,8 +6,13 @@ cell type marker genes from single-cell RNA-seq and experimental studies.
 
 CellMarker 2.0 is a comprehensive database of cell type markers curated
 from >26,000 publications, covering >500 cell types across >400 tissue types
-for human and mouse. Data sources include single-cell sequencing, experiments,
-reviews, and commercial antibody panels.
+for human and mouse.
+
+The CellMarker 2.0 web site was restructured and no longer exposes the JSP
+search endpoints this tool previously scraped; the only public interface now is
+the bulk marker download. This tool therefore downloads the full marker table
+once (`Cell_marker_All.xlsx`), caches it on disk, and answers all queries
+locally from the cached table.
 
 Website: http://bio-bigdata.hrbmu.edu.cn/CellMarker/
 No authentication required.
@@ -15,87 +20,132 @@ No authentication required.
 Reference: Hu et al., Nucleic Acids Research, 2023 (PMID: 36300619)
 """
 
-import re
-import requests
+import os
+import tempfile
+import threading
 from typing import Dict, Any, List, Optional
+
+import requests
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
-CELLMARKER_BASE_URL = "http://bio-bigdata.hrbmu.edu.cn/CellMarker"
+# Bulk marker table. The primary domain sometimes 404s the download path; the
+# published IP mirror is used as a fallback.
+_DOWNLOAD_URLS = [
+    "http://bio-bigdata.hrbmu.edu.cn/CellMarker/CellMarker_download_files/file/Cell_marker_All.xlsx",
+    "http://117.50.127.228/CellMarker/CellMarker_download_files/file/Cell_marker_All.xlsx",
+]
+_CACHE_PATH = os.path.join(tempfile.gettempdir(), "tooluniverse_cellmarker_all.xlsx")
+_BROWSER_UA = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
+
+_DF = None  # cached pandas DataFrame (loaded once per process)
+_LOAD_LOCK = threading.Lock()
 
 
-def _parse_html_table_rows(html: str) -> List[Dict[str, str]]:
-    """Parse HTML table rows from CellMarker JSP response.
-
-    CellMarker returns data as HTML table rows with columns:
-    Species | Tissue Class | Tissue Type | Cancer/Normal | Cell Name | Cell Marker | Source | Supports
-    """
-    results = []
-    # Match all table rows with data
-    row_pattern = re.compile(r"<tr><td>(.*?)</tr>", re.DOTALL)
-    for match in row_pattern.finditer(html):
-        row_html = match.group(1)
-        # Extract cell contents - handle cells with nested HTML
-        cells = re.findall(r"<td>(.*?)</td>", "<td>" + row_html, re.DOTALL)
-        if len(cells) >= 6:
-            # Extract source from nested HTML (e.g., <p class='noplay'>Experiment</p><img...>)
-            source_raw = cells[6] if len(cells) > 6 else ""
-            source_match = re.search(r"class='noplay'>(.*?)</p>", source_raw)
-            source = source_match.group(1) if source_match else source_raw.strip()
-
-            # Extract support count
-            supports = cells[7].strip() if len(cells) > 7 else "0"
-
-            record = {
-                "species": cells[0].strip(),
-                "tissue_class": cells[1].strip(),
-                "tissue_type": cells[2].strip(),
-                "cell_type": cells[3].strip(),  # "Normal cell" or "Cancer cell"
-                "cell_name": cells[4].strip(),
-                "cell_marker": cells[5].strip(),
-                "source": source,
-                "supports": int(supports) if supports.isdigit() else 0,
-            }
-            results.append(record)
-    return results
+def _download_marker_table(timeout: int) -> None:
+    """Download the bulk marker table to the on-disk cache."""
+    last_err: Optional[Exception] = None
+    for url in _DOWNLOAD_URLS:
+        try:
+            resp = requests.get(
+                url, headers={"User-Agent": _BROWSER_UA}, timeout=timeout
+            )
+            resp.raise_for_status()
+            with open(_CACHE_PATH, "wb") as fh:
+                fh.write(resp.content)
+            return
+        except requests.RequestException as err:  # try the next mirror
+            last_err = err
+    raise RuntimeError(f"Could not download the CellMarker marker table: {last_err}")
 
 
-def _parse_cell_type_list(js_text: str) -> List[Dict[str, str]]:
-    """Parse the JavaScript cell type list from CONTROL endpoint.
+def _load_dataframe(timeout: int = 180):
+    """Load (and cache) the CellMarker marker table as a normalized DataFrame."""
+    global _DF
+    if _DF is not None:
+        return _DF
+    with _LOAD_LOCK:
+        if _DF is not None:
+            return _DF
+        import pandas as pd
 
-    CONTROL returns pseudo-JSON like:
-    [{id:0,tissuet:"none",tissuec:"X",pId:0,name:"Y",namein:"Z",...},...]
-    """
-    results = []
-    # Extract name values from the JS object array
-    name_pattern = re.compile(r'namein:"(.*?)"')
-    tissuec_pattern = re.compile(r'tissuec:"(.*?)"')
+        if not os.path.exists(_CACHE_PATH) or os.path.getsize(_CACHE_PATH) == 0:
+            _download_marker_table(timeout)
 
-    names = name_pattern.findall(js_text)
-    tissues = tissuec_pattern.findall(js_text)
+        df = pd.read_excel(
+            _CACHE_PATH,
+            usecols=[
+                "species",
+                "tissue_class",
+                "tissue_type",
+                "cancer_type",
+                "cell_type",
+                "cell_name",
+                "marker",
+                "Symbol",
+                "marker_source",
+            ],
+        )
+        # Marker gene symbol: prefer the curated Symbol, fall back to marker.
+        df["cell_marker"] = (
+            df["Symbol"].fillna(df["marker"]).fillna("").astype(str).str.strip()
+        )
+        df["source"] = df["marker_source"].fillna("").astype(str).str.strip()
+        for col in ("species", "tissue_class", "tissue_type", "cell_type", "cell_name"):
+            df[col] = df[col].fillna("").astype(str).str.strip()
+        # "supports" = number of curated records for the same marker/cell/tissue,
+        # i.e. how many studies back the marker–cell assignment.
+        df["supports"] = df.groupby(
+            ["species", "tissue_type", "cell_name", "cell_marker"]
+        )["cell_marker"].transform("size")
+        _DF = df
+        return _DF
 
-    for i, name in enumerate(names):
-        if name == "ALL":
-            continue
-        tissue = tissues[i] if i < len(tissues) else ""
-        results.append(
+
+def _records(df, limit: int = 200) -> List[Dict[str, Any]]:
+    """Convert a filtered DataFrame to the tool's record dict list."""
+    out = []
+    for _, row in df.head(limit).iterrows():
+        out.append(
             {
-                "cell_name": name,
-                "tissue_class": tissue,
+                "species": row["species"],
+                "tissue_class": row["tissue_class"],
+                "tissue_type": row["tissue_type"],
+                "cell_type": row["cell_type"],
+                "cell_name": row["cell_name"],
+                "cell_marker": row["cell_marker"],
+                "source": row["source"],
+                "supports": int(row["supports"]),
             }
         )
-    return results
+    return out
+
+
+def _apply_species(df, species: Optional[str]):
+    if species:
+        return df[df["species"].str.lower() == species.strip().lower()]
+    return df
+
+
+def _apply_tissue(df, tissue_type: Optional[str]):
+    if tissue_type:
+        t = tissue_type.strip().lower()
+        return df[
+            df["tissue_type"].str.lower().str.contains(t, regex=False)
+            | df["tissue_class"].str.lower().str.contains(t, regex=False)
+        ]
+    return df
 
 
 @register_tool("CellMarkerTool")
 class CellMarkerTool(BaseTool):
     """
     Tool for querying the CellMarker 2.0 cell type marker database.
-
-    CellMarker 2.0 provides curated marker genes for hundreds of cell types
-    across tissues in human and mouse, sourced from single-cell RNA-seq
-    studies, experiments, reviews, and commercial antibody panels.
 
     Supported operations:
     - search_by_gene: Find cell types that express a given marker gene
@@ -108,216 +158,113 @@ class CellMarkerTool(BaseTool):
         super().__init__(tool_config)
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
-        self.session = requests.Session()
-        self.timeout = 30
+        self.timeout = 180
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute the CellMarker tool with given arguments."""
         operation = arguments.get("operation")
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
 
-        operation_handlers = {
+        handlers = {
             "search_by_gene": self._search_by_gene,
             "search_by_cell_type": self._search_by_cell_type,
             "list_cell_types": self._list_cell_types,
             "search_cancer_markers": self._search_cancer_markers,
         }
-
-        handler = operation_handlers.get(operation)
+        handler = handlers.get(operation)
         if not handler:
             return {
                 "status": "error",
                 "error": "Unknown operation: {}".format(operation),
-                "available_operations": list(operation_handlers.keys()),
+                "available_operations": list(handlers.keys()),
             }
 
         try:
-            return handler(arguments)
-        except requests.exceptions.Timeout:
-            return {"status": "error", "error": "CellMarker request timed out"}
-        except requests.exceptions.ConnectionError:
-            return {
-                "status": "error",
-                "error": "Could not connect to CellMarker server",
-            }
-        except Exception as e:
+            df = _load_dataframe(self.timeout)
+            return handler(arguments, df)
+        except Exception as e:  # noqa: BLE001 - report any failure via the envelope
             return {"status": "error", "error": "CellMarker error: {}".format(str(e))}
 
-    def _search_by_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Find cell types that express a given marker gene.
-
-        Uses Marker_table.jsp with POST: markerSpecies + markerMarker params.
-        Returns HTML table rows parsed into structured data.
-        """
+    def _search_by_gene(self, arguments, df) -> Dict[str, Any]:
         gene_symbol = arguments.get("gene_symbol")
         if not gene_symbol:
             return {
                 "status": "error",
                 "error": "Missing required parameter: gene_symbol",
             }
-
-        species = arguments.get("species", "")
+        species = arguments.get("species")
         tissue_type = arguments.get("tissue_type")
 
-        # Map species to API format
-        species_map = {
-            "Human": "human",
-            "Mouse": "mouse",
-            "human": "human",
-            "mouse": "mouse",
-        }
-        api_species = species_map.get(species, species.lower() if species else "")
+        sub = df[df["cell_marker"].str.lower() == gene_symbol.strip().lower()]
+        sub = _apply_species(sub, species)
+        sub = _apply_tissue(sub, tissue_type)
 
-        url = "{}/Marker_table.jsp".format(CELLMARKER_BASE_URL)
-        data = {
-            "markerSpecies": api_species,
-            "markerMarker": gene_symbol,
-        }
-
-        resp = self.session.post(url, data=data, timeout=self.timeout)
-        resp.raise_for_status()
-
-        records = _parse_html_table_rows(resp.text)
-
-        # Filter by tissue_type if specified
-        if tissue_type:
-            tissue_lower = tissue_type.lower()
-            records = [
-                r
-                for r in records
-                if tissue_lower in r["tissue_type"].lower()
-                or tissue_lower in r["tissue_class"].lower()
-            ]
-
-        # Deduplicate and summarize by cell type
         return {
             "status": "success",
             "data": {
                 "gene_symbol": gene_symbol,
                 "species": species if species else "all",
-                "total_records": len(records),
-                "records": records[:200],  # Limit to 200 records
+                "total_records": int(len(sub)),
+                "records": _records(sub),
             },
         }
 
-    def _search_by_cell_type(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Find marker genes for a specific cell type.
-
-        Uses Marker_table.jsp with quickkeyword + quick_v=yes for general search,
-        then filters results to match the target cell type.
-        """
+    def _search_by_cell_type(self, arguments, df) -> Dict[str, Any]:
         cell_name = arguments.get("cell_name")
         if not cell_name:
             return {"status": "error", "error": "Missing required parameter: cell_name"}
-
         species = arguments.get("species")
         tissue_type = arguments.get("tissue_type")
 
-        # Use quick search which searches across cell names, markers, and tissues
-        url = "{}/Marker_table.jsp".format(CELLMARKER_BASE_URL)
-        params = {
-            "quickkeyword": cell_name,
-            "quick_v": "yes",
-        }
+        sub = df[
+            df["cell_name"]
+            .str.lower()
+            .str.contains(cell_name.strip().lower(), regex=False)
+        ]
+        sub = _apply_species(sub, species)
+        sub = _apply_tissue(sub, tissue_type)
 
-        resp = self.session.get(url, params=params, timeout=self.timeout)
-        resp.raise_for_status()
-
-        records = _parse_html_table_rows(resp.text)
-
-        # Filter to records matching the cell name
-        cell_lower = cell_name.lower()
-        filtered = [r for r in records if cell_lower in r["cell_name"].lower()]
-
-        # Apply species filter
-        if species:
-            species_lower = species.lower()
-            filtered = [r for r in filtered if r["species"].lower() == species_lower]
-
-        # Apply tissue filter
-        if tissue_type:
-            tissue_lower = tissue_type.lower()
-            filtered = [
-                r
-                for r in filtered
-                if tissue_lower in r["tissue_type"].lower()
-                or tissue_lower in r["tissue_class"].lower()
-            ]
-
-        # Extract unique marker genes
-        marker_genes = sorted(set(r["cell_marker"] for r in filtered))
-
+        marker_genes = sorted(m for m in sub["cell_marker"].unique() if m)
         return {
             "status": "success",
             "data": {
                 "cell_name": cell_name,
                 "species": species if species else "all",
-                "total_records": len(filtered),
+                "total_records": int(len(sub)),
                 "unique_markers": len(marker_genes),
-                "marker_genes": marker_genes[:500],  # Limit list
-                "records": filtered[:200],
+                "marker_genes": marker_genes[:500],
+                "records": _records(sub),
             },
         }
 
-    def _list_cell_types(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """List available cell types in a tissue.
-
-        Uses the CONTROL endpoint which returns a JavaScript array of cell types
-        for a given tissue and species combination.
-        """
-        tissue_type = arguments.get("tissue_type", "")
+    def _list_cell_types(self, arguments, df) -> Dict[str, Any]:
+        tissue_type = arguments.get("tissue_type")
         species = arguments.get("species", "Human")
         cell_class = arguments.get("cell_class")
 
-        # Map species to API format
-        species_map = {
-            "Human": "human",
-            "Mouse": "mouse",
-            "human": "human",
-            "mouse": "mouse",
-        }
-        api_species = species_map.get(species, species.lower() if species else "human")
+        sub = _apply_species(df, species)
+        sub = _apply_tissue(sub, tissue_type)
+        if cell_class and cell_class.strip().lower() == "cancer":
+            sub = sub[sub["cell_type"] == "Cancer cell"]
 
-        # Determine cancer type filter
-        cancer_type = "all"  # "all" for normal+cancer, "cancer" for cancer only
-        if cell_class and cell_class.lower() == "cancer":
-            cancer_type = "cancer"
-
-        url = "{}/CONTROL".format(CELLMARKER_BASE_URL)
-        params = {
-            "spcies": api_species,
-            "cancertype": cancer_type,
-            "tissuet": tissue_type,
-            "tissuec": tissue_type,
-        }
-
-        resp = self.session.get(url, params=params, timeout=self.timeout)
-        resp.raise_for_status()
-
-        cell_types = _parse_cell_type_list(resp.text)
+        seen = {}
+        for _, row in sub.iterrows():
+            name = row["cell_name"]
+            if name and name not in seen:
+                seen[name] = {"cell_name": name, "tissue_class": row["tissue_class"]}
+        cell_types = list(seen.values())
 
         return {
             "status": "success",
             "data": {
-                "species": species,
+                "species": species if species else "all",
                 "tissue_type": tissue_type if tissue_type else "all",
                 "total_cell_types": len(cell_types),
                 "cell_types": cell_types,
             },
         }
 
-    def _search_cancer_markers(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search cancer-specific cell markers.
-
-        Searches for markers in cancer cell contexts. Can filter by:
-        - cancer_type (tissue where cancer occurs, e.g., "Breast", "Lung")
-        - gene_symbol (specific marker gene)
-        - cell_type (specific cancer cell type)
-
-        Uses Marker_table.jsp with markerSpecies/markerMarker for gene-based search,
-        or quickkeyword search for cell type / cancer type searches.
-        """
+    def _search_cancer_markers(self, arguments, df) -> Dict[str, Any]:
         cancer_type = arguments.get("cancer_type")
         gene_symbol = arguments.get("gene_symbol")
         cell_type = arguments.get("cell_type")
@@ -328,58 +275,18 @@ class CellMarkerTool(BaseTool):
                 "error": "At least one parameter required: cancer_type, gene_symbol, or cell_type",
             }
 
-        records = []
-
+        sub = df[df["cell_type"] == "Cancer cell"]
         if gene_symbol:
-            # Search by gene, then filter to cancer records
-            url = "{}/Marker_table.jsp".format(CELLMARKER_BASE_URL)
-            data = {
-                "markerSpecies": "human",
-                "markerMarker": gene_symbol,
-            }
-            resp = self.session.post(url, data=data, timeout=self.timeout)
-            resp.raise_for_status()
-            records = _parse_html_table_rows(resp.text)
-        elif cell_type:
-            # Search by cell type name
-            url = "{}/Marker_table.jsp".format(CELLMARKER_BASE_URL)
-            params = {"quickkeyword": cell_type, "quick_v": "yes"}
-            resp = self.session.get(url, params=params, timeout=self.timeout)
-            resp.raise_for_status()
-            records = _parse_html_table_rows(resp.text)
-        elif cancer_type:
-            # Search by cancer tissue type
-            url = "{}/Marker_table.jsp".format(CELLMARKER_BASE_URL)
-            params = {"quickkeyword": cancer_type, "quick_v": "yes"}
-            resp = self.session.get(url, params=params, timeout=self.timeout)
-            resp.raise_for_status()
-            records = _parse_html_table_rows(resp.text)
-
-        # Filter to cancer records only
-        cancer_records = [r for r in records if r["cell_type"] == "Cancer cell"]
-
-        # Apply additional filters
+            sub = sub[sub["cell_marker"].str.lower() == gene_symbol.strip().lower()]
         if cancer_type:
-            cancer_lower = cancer_type.lower()
-            cancer_records = [
-                r
-                for r in cancer_records
-                if cancer_lower in r["tissue_type"].lower()
-                or cancer_lower in r["tissue_class"].lower()
+            sub = _apply_tissue(sub, cancer_type)
+        if cell_type:
+            sub = sub[
+                sub["cell_name"]
+                .str.lower()
+                .str.contains(cell_type.strip().lower(), regex=False)
             ]
 
-        if cell_type and gene_symbol:
-            # If both provided, also filter by cell type name
-            cell_lower = cell_type.lower()
-            cancer_records = [
-                r for r in cancer_records if cell_lower in r["cell_name"].lower()
-            ]
-
-        if gene_symbol and cancer_type:
-            # Already filtered by gene, also filter by cancer tissue
-            pass  # cancer_type filter already applied above
-
-        # Build query summary, omitting None values
         query = {}
         if cancer_type:
             query["cancer_type"] = cancer_type
@@ -392,7 +299,7 @@ class CellMarkerTool(BaseTool):
             "status": "success",
             "data": {
                 "query": query,
-                "total_records": len(cancer_records),
-                "records": cancer_records[:200],
+                "total_records": int(len(sub)),
+                "records": _records(sub),
             },
         }

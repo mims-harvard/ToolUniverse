@@ -68,14 +68,59 @@ class SwissModelTool(BaseTool):
             return self._get_models(arguments)
         elif self.endpoint_type == "get_model_summary":
             return self._get_model_summary(arguments)
+        elif self.endpoint_type == "download_pdb":
+            return self._download_pdb(arguments)
+        elif self.endpoint_type == "get_models_batch":
+            return self._get_models_batch(arguments)
         else:
             return {
                 "status": "error",
                 "error": f"Unknown endpoint_type: {self.endpoint_type}",
             }
 
+    @staticmethod
+    def _flatten_structure(s: Dict[str, Any]) -> Dict[str, Any]:
+        """Flatten a SWISS-MODEL Repository structure record into a model dict."""
+        model = {
+            "template": s.get("template", ""),
+            "method": s.get("method", ""),
+            "coverage": s.get("coverage"),
+            "from_residue": s.get("from"),
+            "to_residue": s.get("to"),
+            "created_date": s.get("created_date", ""),
+            "provider": s.get("provider", ""),
+            "coordinates_url": s.get("coordinates", ""),
+        }
+        # Quality metrics
+        qmean = s.get("qmean")
+        if isinstance(qmean, dict):
+            model["qmean_global"] = qmean.get("qmean4_global_score")
+            model["qmean_z_score"] = qmean.get("qmean_z_score")
+        # Complex partners if any
+        complex_with = s.get("in_complex_with", {})
+        if complex_with:
+            partners = []
+            for chain_id, chain_proteins in complex_with.items():
+                if isinstance(chain_proteins, list):
+                    for p in chain_proteins:
+                        if isinstance(p, dict):
+                            partners.append(
+                                {
+                                    "chain": chain_id,
+                                    "uniprot_ac": p.get("uniprot_ac", ""),
+                                    "description": p.get("description", ""),
+                                }
+                            )
+            if partners:
+                model["complex_partners"] = partners[:10]
+        return model
+
     def _get_models(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get all available homology models for a UniProt accession."""
+        """Get available homology models for a UniProt accession.
+
+        Supports optional residue-range, provider, and template filtering via
+        the documented SWISS-MODEL Repository query parameters.
+        """
         uniprot_id = arguments.get("uniprot_id", "")
         if not uniprot_id:
             return {
@@ -83,49 +128,26 @@ class SwissModelTool(BaseTool):
                 "error": "uniprot_id parameter is required (e.g., 'P04637' for human p53)",
             }
 
+        # Optional documented query-string filters
+        params: Dict[str, Any] = {}
+        residue_range = arguments.get("range")
+        if residue_range:
+            params["range"] = residue_range
+        provider = arguments.get("provider")
+        if provider:
+            params["provider"] = provider
+        template = arguments.get("template")
+        if template:
+            params["template"] = template
+
         url = f"{SWISSMODEL_BASE_URL}/uniprot/{uniprot_id}.json"
-        response = requests.get(url, timeout=self.timeout)
+        response = requests.get(url, params=params or None, timeout=self.timeout)
         response.raise_for_status()
         raw = response.json()
 
         result_data = raw.get("result", {})
 
-        # Extract models
-        models = []
-        for s in result_data.get("structures", []):
-            model = {
-                "template": s.get("template", ""),
-                "method": s.get("method", ""),
-                "coverage": s.get("coverage"),
-                "from_residue": s.get("from"),
-                "to_residue": s.get("to"),
-                "created_date": s.get("created_date", ""),
-                "provider": s.get("provider", ""),
-            }
-            # Quality metrics
-            if "qmean" in s:
-                qmean = s["qmean"]
-                if isinstance(qmean, dict):
-                    model["qmean_global"] = qmean.get("qmean4_global_score")
-                    model["qmean_z_score"] = qmean.get("qmean_z_score")
-            # Complex partners if any
-            complex_with = s.get("in_complex_with", {})
-            if complex_with:
-                partners = []
-                for chain_id, chain_proteins in complex_with.items():
-                    if isinstance(chain_proteins, list):
-                        for p in chain_proteins:
-                            if isinstance(p, dict):
-                                partners.append(
-                                    {
-                                        "chain": chain_id,
-                                        "uniprot_ac": p.get("uniprot_ac", ""),
-                                        "description": p.get("description", ""),
-                                    }
-                                )
-                if partners:
-                    model["complex_partners"] = partners[:10]
-            models.append(model)
+        models = [self._flatten_structure(s) for s in result_data.get("structures", [])]
 
         result = {
             "uniprot_id": uniprot_id,
@@ -134,6 +156,11 @@ class SwissModelTool(BaseTool):
             "model_count": len(models),
             "models": models[:30],
         }
+        # Echo applied filters so the agent knows the result is scoped
+        if params:
+            result["filters_applied"] = {
+                k: v for k, v in params.items() if v is not None
+            }
 
         return {
             "status": "success",
@@ -141,8 +168,132 @@ class SwissModelTool(BaseTool):
             "metadata": {
                 "source": "SWISS-MODEL Repository",
                 "api_version": raw.get("api_version", ""),
-                "query": uniprot_id,
+                "query": raw.get("query", uniprot_id),
                 "endpoint": "get_models",
+            },
+        }
+
+    def _download_pdb(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Download SWISS-MODEL homology-model 3D coordinates (PDB format).
+
+        Fetches the actual atomic coordinates (ATOM/HETATM records) for a
+        UniProt accession, with optional sort/provider/template/range selectors.
+        """
+        uniprot_id = arguments.get("uniprot_id", "")
+        if not uniprot_id:
+            return {
+                "status": "error",
+                "error": "uniprot_id parameter is required (e.g., 'P04637' for human p53)",
+            }
+
+        params: Dict[str, Any] = {}
+        sort = arguments.get("sort")
+        if sort:
+            params["sort"] = sort
+        provider = arguments.get("provider")
+        if provider:
+            params["provider"] = provider
+        template = arguments.get("template")
+        if template:
+            params["template"] = template
+        residue_range = arguments.get("range")
+        if residue_range:
+            params["range"] = residue_range
+
+        url = f"{SWISSMODEL_BASE_URL}/uniprot/{uniprot_id}.pdb"
+        response = requests.get(url, params=params or None, timeout=self.timeout)
+        response.raise_for_status()
+        pdb_text = response.text
+
+        atom_count = sum(
+            1
+            for line in pdb_text.splitlines()
+            if line.startswith("ATOM") or line.startswith("HETATM")
+        )
+        if atom_count == 0:
+            return {
+                "status": "error",
+                "error": (
+                    f"No atomic coordinates returned for {uniprot_id}"
+                    + (f" with filters {params}" if params else "")
+                    + ". The accession may have no SWISS-MODEL model matching the filters."
+                ),
+            }
+
+        data = {
+            "uniprot_id": uniprot_id,
+            "format": "pdb",
+            "pdb_content": pdb_text,
+            "atom_count": atom_count,
+            "size_bytes": len(pdb_text.encode("utf-8")),
+        }
+        if params:
+            data["filters_applied"] = params
+
+        return {
+            "status": "success",
+            "data": data,
+            "metadata": {
+                "source": "SWISS-MODEL Repository",
+                "query": uniprot_id,
+                "endpoint": "download_pdb",
+                "content_type": response.headers.get("Content-Type", "text/plain"),
+            },
+        }
+
+    def _get_models_batch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Batch lookup of SWISS-MODEL models for up to 250 UniProt accessions."""
+        ids = arguments.get("uniprot_ids")
+        if isinstance(ids, str):
+            ids = [x.strip() for x in ids.replace(",", " ").split() if x.strip()]
+        if not ids:
+            return {
+                "status": "error",
+                "error": (
+                    "uniprot_ids parameter is required: a list (or comma-separated "
+                    "string) of up to 250 UniProt accessions, e.g. "
+                    "['P04637', 'P00533', 'P38398']."
+                ),
+            }
+        if len(ids) > 250:
+            return {
+                "status": "error",
+                "error": f"Too many accessions ({len(ids)}). SWISS-MODEL batch limit is 250.",
+            }
+
+        identifiers = ",".join(ids)
+        url = f"{SWISSMODEL_BASE_URL}/uniprot/{identifiers}.json"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        raw = response.json()
+
+        results = []
+        for entry in raw.get("resultset", []):
+            uniprot_entries = entry.get("uniprot_entries", []) or []
+            acs = [e.get("ac") for e in uniprot_entries if e.get("ac")]
+            structures = entry.get("structures", [])
+            results.append(
+                {
+                    "uniprot_ids": acs,
+                    "sequence_length": entry.get("sequence_length"),
+                    "crc64": entry.get("crc64"),
+                    "model_count": len(structures),
+                    "models": [self._flatten_structure(s) for s in structures[:30]],
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "requested_count": len(ids),
+                "returned_count": len(results),
+                "results": results,
+            },
+            "metadata": {
+                "source": "SWISS-MODEL Repository",
+                "api_version": raw.get("api_version", ""),
+                "query": identifiers,
+                "endpoint": "get_models_batch",
             },
         }
 

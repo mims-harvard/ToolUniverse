@@ -140,9 +140,27 @@ class STRINGRESTTool(BaseTool):
             and "data" in api_response
             and "header" in api_response
         ):
+            rows = api_response["data"]
+            metadata = {"columns": api_response["header"]}
+            # `limit` is documented as "Maximum number of interactions to return",
+            # but STRING interprets it as a network node-expansion count and then
+            # returns EVERY pairwise edge -- so limit=50 could yield 300+ rows,
+            # far more than asked. Honor the documented meaning by returning at
+            # most `limit` interactions, keeping the highest-confidence ones.
+            limit = arguments.get("limit")
+            if isinstance(rows, list) and isinstance(limit, int) and len(rows) > limit:
+
+                def _score(row):
+                    try:
+                        return float(row.get("score"))
+                    except (TypeError, ValueError):
+                        return -1.0
+
+                rows = sorted(rows, key=_score, reverse=True)[:limit]
+                metadata["truncated_to_limit"] = limit
             return {
                 "status": "success",
-                "data": api_response["data"],
-                "metadata": {"columns": api_response["header"]},
+                "data": rows,
+                "metadata": metadata,
             }
         return {"status": "success", "data": api_response}

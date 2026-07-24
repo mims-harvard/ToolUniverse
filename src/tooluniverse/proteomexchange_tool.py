@@ -17,6 +17,12 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 PX_BASE_URL = "https://proteomecentral.proteomexchange.org/cgi"
+PROXI_BASE_URL = "https://proteomecentral.proteomexchange.org/api/proxi/v0.1"
+
+# Maximum number of peaks (m/z + intensity pairs) returned per spectrum.
+# Spectra can contain thousands of peaks; cap the payload to keep responses
+# manageable for downstream agents.
+MAX_PEAKS = 200
 
 
 @register_tool("ProteomeXchangeTool")
@@ -69,6 +75,8 @@ class ProteomeXchangeTool(BaseTool):
             return self._get_dataset(arguments)
         elif self.endpoint_type == "search_datasets":
             return self._search_datasets(arguments)
+        elif self.endpoint_type == "get_spectrum_by_usi":
+            return self._get_spectrum_by_usi(arguments)
         else:
             return {
                 "status": "error",
@@ -174,6 +182,138 @@ class ProteomeXchangeTool(BaseTool):
                 "endpoint": "get_dataset",
             },
         }
+
+    def _get_spectrum_by_usi(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Retrieve a mass spectrum from the PROXI interface by USI.
+
+        A Universal Spectrum Identifier (USI) uniquely references a single
+        spectrum/PSM inside a ProteomeXchange dataset. This wraps the PROXI
+        v0.1 /spectra endpoint, which returns spectrum-level data (peak lists
+        plus CV-term attributes) rather than dataset-level metadata.
+        """
+        usi = arguments.get("usi", "")
+        if not usi or not isinstance(usi, str) or not usi.strip():
+            return {
+                "status": "error",
+                "error": (
+                    "usi parameter is required (e.g., 'mzspec:PXD000561:"
+                    "Adult_Frontalcortex_bRP_Elite_85_f09:scan:17555:"
+                    "VLHPLEGAVVIIFK/2')"
+                ),
+            }
+        usi = usi.strip()
+
+        result_type = arguments.get("resultType") or "full"
+
+        url = f"{PROXI_BASE_URL}/spectra"
+        params = {"usi": usi, "resultType": result_type}
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        raw = response.json()
+
+        # PROXI returns a JSON list of spectrum objects (usually one).
+        if isinstance(raw, dict):
+            # Error-shaped payloads come back as dicts (e.g. 404/400 detail).
+            detail = raw.get("detail") or raw.get("title")
+            return {
+                "status": "error",
+                "error": (
+                    f"PROXI returned no spectrum for USI '{usi}'"
+                    + (f": {detail}" if detail else "")
+                ),
+            }
+        if not isinstance(raw, list) or len(raw) == 0:
+            return {
+                "status": "error",
+                "error": f"No spectrum found for USI '{usi}'",
+            }
+
+        spectrum = raw[0]
+        attributes = (
+            spectrum.get("attributes", []) if isinstance(spectrum, dict) else []
+        )
+
+        # Pull common spectrum attributes by CV accession / name.
+        scan_number = self._extract_attribute(
+            attributes, accession="MS:1008025", name="scan number"
+        )
+        charge = self._extract_attribute(
+            attributes, accession="MS:1000041", name="charge state"
+        )
+        precursor_mz = self._extract_attribute(
+            attributes, accession="MS:1000744", name="selected ion m/z"
+        )
+        peptide = self._extract_attribute(
+            attributes,
+            accession="MS:1000888",
+            name="unmodified peptide sequence",
+        )
+
+        mzs = spectrum.get("mzs", []) if isinstance(spectrum, dict) else []
+        intensities = (
+            spectrum.get("intensities", []) if isinstance(spectrum, dict) else []
+        )
+        if not isinstance(mzs, list):
+            mzs = []
+        if not isinstance(intensities, list):
+            intensities = []
+
+        total_peaks = max(len(mzs), len(intensities))
+        # Pair m/z with intensity, capping the payload size.
+        peaks = [
+            {"mz": mzs[i], "intensity": intensities[i]}
+            for i in range(min(len(mzs), len(intensities), MAX_PEAKS))
+        ]
+        peaks_truncated = total_peaks > len(peaks)
+
+        result = {
+            "usi": usi,
+            "scan_number": scan_number,
+            "charge": charge,
+            "precursor_mz": precursor_mz,
+            "peptide_sequence": peptide,
+            "attributes": [
+                {
+                    "accession": a.get("accession", ""),
+                    "name": a.get("name", ""),
+                    "value": a.get("value", ""),
+                }
+                for a in attributes
+                if isinstance(a, dict)
+            ],
+            "total_peaks": total_peaks,
+            "returned_peaks": len(peaks),
+            "peaks_truncated": peaks_truncated,
+            "peaks": peaks,
+        }
+        if peaks_truncated:
+            result["note"] = (
+                f"Peak list truncated to the first {len(peaks)} of {total_peaks} peaks."
+            )
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "ProteomeXchange/PROXI",
+                "query": usi,
+                "result_type": result_type,
+                "endpoint": "get_spectrum_by_usi",
+            },
+        }
+
+    def _extract_attribute(self, attributes, accession=None, name=None):
+        """Return the value of a PROXI attribute by CV accession or name."""
+        if not isinstance(attributes, list):
+            return None
+        for attr in attributes:
+            if not isinstance(attr, dict):
+                continue
+            if accession and attr.get("accession") == accession:
+                return attr.get("value")
+            if name and name.lower() == str(attr.get("name", "")).lower():
+                return attr.get("value")
+        return None
 
     def _search_datasets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search ProteomeXchange datasets via ProteomeCentral API."""

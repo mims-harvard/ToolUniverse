@@ -1,0 +1,20 @@
+{
+  "name": "tooluniverse",
+  "owner": {
+    "name": "Shanghua Gao",
+    "url": "https://shgao.site"
+  },
+  "metadata": {
+    "description": "ToolUniverse marketplace \u2014 1000+ scientific research tools and 115 specialized skills for biology, chemistry, medicine, and data science.",
+    "version": "1.3.2"
+  },
+  "plugins": [
+    {
+      "name": "tooluniverse",
+      "source": "./plugin",
+      "description": "1000+ scientific tools (PubMed, UniProt, PubChem, TCGA, FAERS, ClinicalTrials.gov, etc.) + 120+ research skills + MCP server + research slash commands.",
+      "category": "science",
+      "strict": false
+    }
+  ]
+}

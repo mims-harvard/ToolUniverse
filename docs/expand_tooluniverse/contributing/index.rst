@@ -6,13 +6,28 @@ Welcome! Choose the type of tool you want to contribute and follow the detailed 
 Choose Your Tool Type
 ---------------------
 
-| Feature | Local Tools | Remote Tools |
-|---------|-------------|--------------|
-| **Runs** | In ToolUniverse process | Independent server |
-| **Language** | Python only | Any language |
-| **Setup** | Modify __init__.py in 4 locations | Deploy server publicly |
-| **Testing** | Unit tests (>90% coverage) | Integration tests |
-| **Best For** | API wrappers, data processing | Heavy computation, external services |
+.. list-table::
+   :header-rows: 1
+   :widths: 20 40 40
+
+   * - Feature
+     - Local Tools
+     - Remote Tools
+   * - **Runs**
+     - In ToolUniverse process
+     - Independent server
+   * - **Language**
+     - Python only
+     - Any language
+   * - **Setup**
+     - Modify ``__init__.py`` in 4 locations
+     - Deploy server publicly
+   * - **Testing**
+     - Unit tests (>90% coverage)
+     - Integration tests
+   * - **Best For**
+     - API wrappers, data processing
+     - Heavy computation, external services
 
 **Quick Decision Guide:**
 

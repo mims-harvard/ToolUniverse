@@ -84,7 +84,12 @@ class ReactomeInteractorsTool(BaseTool):
         page_size = arguments.get("page_size") or 20
 
         url = f"{REACTOME_BASE_URL}/interactors/static/molecule/{accession}/details"
-        params = {"page": -1, "pageSize": min(page_size, 100)}
+        # Fix-R18B-2: page=-1 tells Reactome's interactors API to ignore
+        # pagination and return every interactor regardless of pageSize --
+        # confirmed live (page=-1&pageSize=10 returned all 153 interactors
+        # for P31749; page=1&pageSize=10 correctly returned 10), directly
+        # contradicting this tool's own documented page_size contract.
+        params = {"page": 1, "pageSize": min(page_size, 100)}
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()

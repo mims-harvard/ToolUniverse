@@ -113,17 +113,28 @@ class EnsemblXrefsTool(BaseTool):
                 }
             )
 
+        # Fix-R19A-1: xrefs was silently truncated to 100 while
+        # database_summary was computed from the full, untruncated list --
+        # confirmed live for ENSG00000141510 (TP53, 157 real xrefs): the
+        # per-database counts in database_summary didn't match what was
+        # actually present in the truncated xrefs array, and there was no
+        # flag indicating truncation happened at all. Raised the cap high
+        # enough that this essentially never triggers in practice, and
+        # made truncation explicit when it does.
+        limit = 500
+        truncated = len(xrefs) > limit
         return {
             "status": "success",
             "data": {
                 "ensembl_id": ensembl_id,
-                "xrefs": xrefs[:100],
+                "xrefs": xrefs[:limit],
                 "database_summary": by_db,
+                "truncated": truncated,
             },
             "metadata": {
                 "source": "Ensembl REST API (rest.ensembl.org)",
                 "total_xrefs": len(data),
-                "returned": min(len(xrefs), 100),
+                "returned": min(len(xrefs), limit),
                 "databases_found": len(by_db),
             },
         }

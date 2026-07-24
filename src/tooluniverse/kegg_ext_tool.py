@@ -19,6 +19,30 @@ from .base_tool import BaseTool
 
 KEGG_BASE_URL = "https://rest.kegg.jp"
 
+# Cross-reference line prefixes recognized inside a KEGG variant's VARIATION
+# block, mapped to the result field they populate. COSF (COSMIC Fusion) and
+# OmimVar were added in Fix-R18E-5 (confirmed live in the raw record for
+# BCR-ABL, hsa_var:25v1); previously only ClinVar/dbSNP/COSM were captured.
+_VARIANT_XREF_FIELDS = {
+    "ClinVar:": "clinvar",
+    "dbSNP:": "dbsnp",
+    "COSM:": "cosmic",
+    "COSF:": "cosmic_fusion",
+    "OmimVar:": "omim_variant",
+}
+
+
+def _new_kegg_variation(mutation: str) -> Dict[str, Any]:
+    """A fresh KEGG variant record with all cross-reference lists empty."""
+    return {
+        "mutation": mutation,
+        "clinvar": [],
+        "dbsnp": [],
+        "cosmic": [],
+        "cosmic_fusion": [],
+        "omim_variant": [],
+    }
+
 
 def _parse_tsv_column(text: str, column: int = 0) -> list:
     """Extract a single column from KEGG tab-separated text output."""
@@ -72,7 +96,29 @@ class KEGGExtTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
-                return {"status": "error", "error": f"KEGG entry not found"}
+                if self.endpoint == "get_brite_hierarchy":
+                    # Fix-R18E-4: some BRITE files are KEGG's "(table)"-type
+                    # hierarchies (e.g. br08341, Pharmacogenomic
+                    # biomarkers), published only as flat text/HTML
+                    # upstream with no JSON tree representation -- their
+                    # /get/br:{id}/json endpoint 404s even though the
+                    # hierarchy itself exists and KEGG_list_brite_hierarchies
+                    # happily lists it (confirmed live via curl). A bare
+                    # "not found" wrongly implies the hierarchy_id itself
+                    # is wrong.
+                    hid = arguments.get("hierarchy_id", "")
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"KEGG BRITE hierarchy '{hid}' has no JSON tree "
+                            "representation (HTTP 404). This is common for "
+                            "KEGG's table-type BRITE files, which are only "
+                            "published as flat text/HTML upstream -- it "
+                            "does not necessarily mean hierarchy_id is "
+                            "wrong."
+                        ),
+                    }
+                return {"status": "error", "error": "KEGG entry not found"}
             return {"status": "error", "error": f"KEGG API HTTP error: {code}"}
         except Exception as e:
             return {
@@ -88,6 +134,8 @@ class KEGGExtTool(BaseTool):
             return self._get_pathway_genes(arguments)
         elif self.endpoint == "get_compound":
             return self._get_compound(arguments)
+        elif self.endpoint == "find_compound":
+            return self._find_compound(arguments)
         elif self.endpoint == "list_brite":
             return self._list_brite(arguments)
         elif self.endpoint == "get_brite_hierarchy":
@@ -116,6 +164,12 @@ class KEGGExtTool(BaseTool):
             return self._conv_ids(arguments)
         elif self.endpoint == "link_entries":
             return self._link_entries(arguments)
+        elif self.endpoint == "get_module":
+            return self._get_module(arguments)
+        elif self.endpoint == "get_reaction":
+            return self._get_reaction(arguments)
+        elif self.endpoint == "get_enzyme":
+            return self._get_enzyme(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -373,6 +427,98 @@ class KEGGExtTool(BaseTool):
             },
         }
 
+    def _find_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search the KEGG COMPOUND database (metabolite identification).
+
+        Inverse of get_compound: starting from an MS peak mass, a molecular
+        weight range, a molecular formula, or a name keyword, return candidate
+        KEGG compound IDs. Uses the KEGG /find/compound endpoint.
+
+        Supported query fields (provide exactly one):
+          - exact_mass: monoisotopic mass, single value (e.g. 174.05) or a
+            range "300-310" (.../find/compound/<value>/exact_mass)
+          - mol_weight: average molecular weight, single value or range
+            (.../find/compound/<value>/mol_weight)
+          - formula: molecular formula (.../find/compound/<formula>/formula)
+          - name / query: name or keyword (.../find/compound/<keyword>)
+        """
+        exact_mass = arguments.get("exact_mass")
+        mol_weight = arguments.get("mol_weight")
+        formula = arguments.get("formula")
+        keyword = arguments.get("name") or arguments.get("query")
+
+        provided = [
+            label
+            for label, val in (
+                ("exact_mass", exact_mass),
+                ("mol_weight", mol_weight),
+                ("formula", formula),
+                ("name", keyword),
+            )
+            if val is not None and str(val).strip() != ""
+        ]
+        if not provided:
+            return {
+                "status": "error",
+                "error": "One search field is required: exact_mass (e.g. 174.05 or '300-310'), "
+                "mol_weight (e.g. '300-310'), formula (e.g. 'C6H12O6'), or name (e.g. 'caffeine').",
+            }
+        if len(provided) > 1:
+            return {
+                "status": "error",
+                "error": f"Provide exactly one search field, got {len(provided)}: "
+                f"{', '.join(provided)}. exact_mass, mol_weight, formula and name are mutually exclusive.",
+            }
+
+        search_field = provided[0]
+        if search_field == "exact_mass":
+            value = str(exact_mass).strip()
+            url = f"{KEGG_BASE_URL}/find/compound/{value}/exact_mass"
+        elif search_field == "mol_weight":
+            value = str(mol_weight).strip()
+            url = f"{KEGG_BASE_URL}/find/compound/{value}/mol_weight"
+        elif search_field == "formula":
+            value = str(formula).strip()
+            url = f"{KEGG_BASE_URL}/find/compound/{value}/formula"
+        else:
+            value = str(keyword).strip()
+            url = f"{KEGG_BASE_URL}/find/compound/{value}"
+
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+
+        compounds = []
+        for line in response.text.strip().split("\n"):
+            if not line.strip():
+                continue
+            parts = line.split("\t", 1)
+            cid = parts[0].strip().replace("cpd:", "")
+            description = parts[1].strip() if len(parts) > 1 else ""
+            compounds.append({"compound_id": cid, "description": description})
+
+        max_results = arguments.get("max_results")
+        if max_results is not None:
+            try:
+                compounds = compounds[: int(max_results)]
+            except (TypeError, ValueError):
+                pass
+
+        return {
+            "status": "success",
+            "data": {
+                "search_field": search_field,
+                "query": value,
+                "count": len(compounds),
+                "compounds": compounds,
+            },
+            "metadata": {
+                "source": "KEGG COMPOUND (find)",
+                "search_field": search_field,
+                "query": value,
+                "total": len(compounds),
+            },
+        }
+
     def _list_brite(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List all available KEGG BRITE hierarchy classifications."""
         url = f"{KEGG_BASE_URL}/list/brite"
@@ -525,7 +671,12 @@ class KEGGExtTool(BaseTool):
                 gene_line = line[12:].strip()
                 if gene_line:
                     result["genes"].append(gene_line)
-            elif line.startswith("PATHWAY"):
+            elif line.startswith(("PATHWAY", "DIS_PATHWAY")):
+                # Fix-R18E-2: a KEGG disease flat file uses the field name
+                # DIS_PATHWAY (not PATHWAY) for its associated pathways --
+                # confirmed live via raw curl for H00004 (chronic myeloid
+                # leukemia), whose real DIS_PATHWAY entry was silently
+                # unrecognized and dropped entirely.
                 current_field = "PATHWAY"
                 parts = line[12:].strip().split("  ", 1)
                 if len(parts) >= 2:
@@ -712,12 +863,23 @@ class KEGGExtTool(BaseTool):
                 target_line = line[12:].strip()
                 if target_line:
                     result["targets"].append(target_line)
-            elif line.startswith("PATHWAY"):
+            elif line.startswith(("PATHWAY", "  PATHWAY")):
+                # Fix-R18E-1: in a KEGG drug flat file, PATHWAY is nested
+                # 2 spaces under TARGET (not a top-level 0-indent field
+                # like every other field this parser recognizes) --
+                # confirmed live via raw curl for D01441 (imatinib), whose
+                # 3 real pathways were silently dropped entirely, along
+                # with their continuation lines (current_field was reset
+                # to None on the unrecognized "  PATHWAY   ..." line, so
+                # even the follow-on indented rows never attributed).
+                # Content still starts at column 12 in both cases.
                 current_field = "PATHWAY"
                 parts = line[12:].strip().split("  ", 1)
                 if len(parts) >= 2:
                     result["pathways"][parts[0].strip()] = parts[1].strip()
-            elif line.startswith("DISEASE"):
+            elif line.startswith(("DISEASE", "  DISEASE")):
+                # Fix-R18E-1: DISEASE is likewise nested 2 spaces under
+                # EFFICACY in a KEGG drug flat file.
                 current_field = "DISEASE"
                 disease_line = line[12:].strip()
                 if disease_line:
@@ -841,7 +1003,19 @@ class KEGGExtTool(BaseTool):
                 "error": "network_id is required (e.g., 'N00001')",
             }
 
-        url = f"{KEGG_BASE_URL}/get/{network_id}"
+        # Fix-R18E-6: KEGG's REST API accepts a bare "N00001"-style
+        # perturbed-network ID directly, but 404s on a bare "nt06276"-style
+        # disease/map network ID -- it requires a "network:" prefix for
+        # that ID family (confirmed live: GET /get/nt06276 -> 404, GET
+        # /get/network:nt06276 -> 200). This nt###### format is exactly
+        # what this same tool family's other outputs surface (e.g.
+        # KEGG_get_disease's NETWORK field, KEGG_get_variant's networks
+        # list), making it a natural, undocumented chaining trap.
+        lookup_id = network_id
+        if lookup_id.lower().startswith("nt") and ":" not in lookup_id:
+            lookup_id = f"network:{lookup_id}"
+
+        url = f"{KEGG_BASE_URL}/get/{lookup_id}"
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
 
@@ -882,7 +1056,14 @@ class KEGGExtTool(BaseTool):
                 drug_line = line[12:].strip()
                 if drug_line:
                     result["drugs"].append(drug_line)
-            elif line.startswith("ELEMENT"):
+            elif line.startswith(("ELEMENT", "MEMBER")):
+                # Fix-R18E-7: KEGG's Map-type network entries (nt######
+                # IDs) list their child networks under MEMBER, not ELEMENT
+                # (that field name is only used by N#####-style perturbed
+                # networks) -- confirmed live for nt06276, whose 9 real
+                # MEMBER entries were silently dropped entirely. Both
+                # represent the same concept (child network elements) so
+                # they're merged into the one "elements" output field.
                 current_field = "ELEMENT"
                 result["elements"].append(line[12:].strip())
             elif line.startswith("///"):
@@ -997,12 +1178,7 @@ class KEGGExtTool(BaseTool):
             elif line.startswith("VARIATION"):
                 current_field = "VARIATION"
                 content = line[12:].strip()
-                current_variation = {
-                    "mutation": content,
-                    "clinvar": [],
-                    "dbsnp": [],
-                    "cosmic": [],
-                }
+                current_variation = _new_kegg_variation(content)
                 result["variations"].append(current_variation)
             elif line.startswith("NETWORK"):
                 current_field = "NETWORK"
@@ -1019,25 +1195,20 @@ class KEGGExtTool(BaseTool):
                 content = line[12:].strip()
                 if current_field == "VARIATION" and current_variation:
                     if content.startswith("mutation "):
-                        current_variation = {
-                            "mutation": content.replace("mutation ", ""),
-                            "clinvar": [],
-                            "dbsnp": [],
-                            "cosmic": [],
-                        }
+                        current_variation = _new_kegg_variation(
+                            content.replace("mutation ", "")
+                        )
                         result["variations"].append(current_variation)
-                    elif content.startswith("ClinVar:"):
-                        current_variation["clinvar"] = content.replace(
-                            "ClinVar: ", ""
-                        ).split()
-                    elif content.startswith("dbSNP:"):
-                        current_variation["dbsnp"] = content.replace(
-                            "dbSNP: ", ""
-                        ).split()
-                    elif content.startswith("COSM:"):
-                        current_variation["cosmic"] = content.replace(
-                            "COSM: ", ""
-                        ).split()
+                    else:
+                        # Capture any recognized cross-reference line (ClinVar,
+                        # dbSNP, COSM, and -- per Fix-R18E-5 -- COSF/OmimVar)
+                        # into its result field; unrecognized lines are ignored.
+                        for prefix, key in _VARIANT_XREF_FIELDS.items():
+                            if content.startswith(prefix):
+                                current_variation[key] = content.replace(
+                                    f"{prefix} ", ""
+                                ).split()
+                                break
                 elif current_field == "NETWORK":
                     result["networks"].append(content)
                 elif current_field == "DISEASE":
@@ -1051,6 +1222,226 @@ class KEGGExtTool(BaseTool):
             "status": "success",
             "data": result,
             "metadata": {"source": "KEGG Variant", "variant_id": variant_id},
+        }
+
+    @staticmethod
+    def _parse_kegg_record(text: str) -> Dict[str, list]:
+        """Parse a KEGG flat-file record into {FIELD: [lines]}.
+
+        KEGG records use a 12-char-wide field column; continuation lines are
+        indented with 12 spaces. Returns a dict mapping each top-level field
+        name to the list of its (de-indented) content lines, preserving order.
+        """
+        fields: Dict[str, list] = {}
+        current = None
+        for line in text.split("\n"):
+            if line.startswith("///"):
+                break
+            if not line.strip():
+                continue
+            if line.startswith(" "):
+                content = line[12:].rstrip() if len(line) > 12 else line.strip()
+                if current is not None:
+                    fields.setdefault(current, []).append(content)
+            else:
+                name = line[:12].strip()
+                content = line[12:].rstrip() if len(line) > 12 else ""
+                current = name
+                fields.setdefault(current, []).append(content)
+        return fields
+
+    @staticmethod
+    def _parse_id_map(lines: list) -> Dict[str, str]:
+        """Parse KEGG ``"ID  description"`` two-column lines into {id: description}.
+
+        Used for fields like PATHWAY/MODULE/ORTHOLOGY where each line is an entry
+        ID followed by a double-space and a human-readable label.
+        """
+        result: Dict[str, str] = {}
+        for line in lines:
+            parts = line.split("  ", 1)
+            entry_id = parts[0].strip()
+            if entry_id:
+                result[entry_id] = parts[1].strip() if len(parts) > 1 else ""
+        return result
+
+    def _get_module(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get a KEGG MODULE entry (reaction-step definition + members)."""
+        module_id = (arguments.get("module_id") or arguments.get("id") or "").strip()
+        if not module_id:
+            return {
+                "status": "error",
+                "error": "module_id is required (e.g., 'M00001' for glycolysis EM pathway)",
+            }
+        module_id = module_id.replace("md:", "")
+        if not module_id.upper().startswith("M"):
+            module_id = f"M{module_id}"
+
+        url = f"{KEGG_BASE_URL}/get/{module_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        text = response.text
+        if not text.strip():
+            return {"status": "error", "error": f"Module not found: {module_id}"}
+
+        fields = self._parse_kegg_record(text)
+        name = " ".join(fields.get("NAME", [])).strip()
+        definition = " ".join(fields.get("DEFINITION", [])).strip()
+        module_class = " ".join(fields.get("CLASS", [])).strip()
+
+        reactions = []
+        for line in fields.get("REACTION", []):
+            parts = line.split("  ", 1)
+            rid = parts[0].strip()
+            equation = parts[1].strip() if len(parts) > 1 else ""
+            if rid:
+                reactions.append({"reaction_id": rid, "definition": equation})
+
+        compounds = []
+        for line in fields.get("COMPOUND", []):
+            parts = line.split("  ", 1)
+            cid = parts[0].strip()
+            cname = parts[1].strip() if len(parts) > 1 else ""
+            if cid:
+                compounds.append({"compound_id": cid, "name": cname})
+
+        orthologs = []
+        for line in fields.get("ORTHOLOGY", []):
+            if line.strip():
+                orthologs.append(line.strip())
+
+        pathways = self._parse_id_map(fields.get("PATHWAY", []))
+
+        return {
+            "status": "success",
+            "data": {
+                "module_id": module_id,
+                "name": name,
+                "definition": definition,
+                "class": module_class,
+                "reactions": reactions,
+                "compounds": compounds,
+                "orthology": orthologs,
+                "pathways": pathways,
+            },
+            "metadata": {"source": "KEGG MODULE", "module_id": module_id},
+        }
+
+    def _get_reaction(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get a KEGG REACTION entry (balanced equation, EC, RCLASS, pathways)."""
+        reaction_id = (
+            arguments.get("reaction_id") or arguments.get("id") or ""
+        ).strip()
+        if not reaction_id:
+            return {
+                "status": "error",
+                "error": "reaction_id is required (e.g., 'R00200' for pyruvate kinase)",
+            }
+        reaction_id = reaction_id.replace("rn:", "")
+        if not reaction_id.upper().startswith("R"):
+            reaction_id = f"R{reaction_id}"
+
+        url = f"{KEGG_BASE_URL}/get/rn:{reaction_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        text = response.text
+        if not text.strip():
+            return {"status": "error", "error": f"Reaction not found: {reaction_id}"}
+
+        fields = self._parse_kegg_record(text)
+        name = " ".join(fields.get("NAME", [])).strip()
+        definition = " ".join(fields.get("DEFINITION", [])).strip()
+        equation = " ".join(fields.get("EQUATION", [])).strip()
+
+        enzymes = []
+        for line in fields.get("ENZYME", []):
+            enzymes.extend(line.split())
+
+        rclass = []
+        for line in fields.get("RCLASS", []):
+            if line.strip():
+                rclass.append(line.strip())
+
+        pathways = self._parse_id_map(fields.get("PATHWAY", []))
+        modules = self._parse_id_map(fields.get("MODULE", []))
+
+        return {
+            "status": "success",
+            "data": {
+                "reaction_id": reaction_id,
+                "name": name,
+                "definition": definition,
+                "equation": equation,
+                "enzymes": enzymes,
+                "rclass": rclass,
+                "pathways": pathways,
+                "modules": modules,
+            },
+            "metadata": {"source": "KEGG REACTION", "reaction_id": reaction_id},
+        }
+
+    def _get_enzyme(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get a KEGG ENZYME (EC number) entry: names, EC class, reaction, orthologs."""
+        ec_number = (
+            arguments.get("ec_number")
+            or arguments.get("enzyme_id")
+            or arguments.get("id")
+            or ""
+        ).strip()
+        if not ec_number:
+            return {
+                "status": "error",
+                "error": "ec_number is required (e.g., '2.7.1.1' for hexokinase)",
+            }
+        ec_number = ec_number.replace("ec:", "").replace("EC ", "").strip()
+
+        url = f"{KEGG_BASE_URL}/get/ec:{ec_number}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        text = response.text
+        if not text.strip():
+            return {"status": "error", "error": f"Enzyme not found: {ec_number}"}
+
+        fields = self._parse_kegg_record(text)
+
+        names = []
+        for line in fields.get("NAME", []):
+            nm = line.strip().rstrip(";")
+            if nm:
+                names.append(nm)
+
+        ec_class = [
+            line.strip().rstrip(";") for line in fields.get("CLASS", []) if line.strip()
+        ]
+        sysname = " ".join(fields.get("SYSNAME", [])).strip()
+        reaction = " ".join(fields.get("REACTION", [])).strip()
+
+        substrates = [
+            line.strip().rstrip(";")
+            for line in fields.get("SUBSTRATE", [])
+            if line.strip()
+        ]
+        products = [
+            line.strip().rstrip(";")
+            for line in fields.get("PRODUCT", [])
+            if line.strip()
+        ]
+
+        orthology = self._parse_id_map(fields.get("ORTHOLOGY", []))
+
+        return {
+            "status": "success",
+            "data": {
+                "ec_number": ec_number,
+                "names": names,
+                "class": ec_class,
+                "sysname": sysname,
+                "reaction": reaction,
+                "substrates": substrates,
+                "products": products,
+                "orthology": orthology,
+            },
+            "metadata": {"source": "KEGG ENZYME", "ec_number": ec_number},
         }
 
     def _conv_ids(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

@@ -34,16 +34,434 @@
       "operation": "annotate_variant"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {"type": "string", "enum": ["success", "error"]},
-        "data": {"type": "object"},
-        "error": {"type": "string"}
-      }
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "null"
+                },
+                "referenceGenome": {
+                  "type": "string"
+                },
+                "hugoSymbol": {
+                  "type": "string"
+                },
+                "entrezGeneId": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "alteration": {
+                  "type": "string"
+                },
+                "alterationType": {
+                  "type": "null"
+                },
+                "svType": {
+                  "type": "null"
+                },
+                "tumorType": {
+                  "type": "null"
+                },
+                "consequence": {
+                  "type": "null"
+                },
+                "proteinStart": {
+                  "type": "null"
+                },
+                "proteinEnd": {
+                  "type": "null"
+                },
+                "hgvs": {
+                  "type": "null"
+                },
+                "hgvsInfo": {
+                  "type": "null"
+                },
+                "canonicalTranscript": {
+                  "type": "null"
+                },
+                "germline": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "geneExist": {
+              "type": "boolean"
+            },
+            "variantExist": {
+              "type": "boolean"
+            },
+            "mutationEffect": {
+              "type": "object",
+              "properties": {
+                "knownEffect": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "citations": {
+                  "type": "object",
+                  "properties": {
+                    "pmids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "abstracts": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            },
+            "highestSensitiveLevel": {
+              "type": "string"
+            },
+            "highestResistanceLevel": {
+              "type": "null"
+            },
+            "highestDiagnosticImplicationLevel": {
+              "type": "string"
+            },
+            "highestPrognosticImplicationLevel": {
+              "type": "null"
+            },
+            "geneSummary": {
+              "type": "string"
+            },
+            "variantSummary": {
+              "type": "string"
+            },
+            "tumorTypeSummary": {
+              "type": "string"
+            },
+            "prognosticSummary": {
+              "type": "string"
+            },
+            "diagnosticSummary": {
+              "type": "string"
+            },
+            "diagnosticImplications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "levelOfEvidence": {
+                    "type": "string"
+                  },
+                  "alterations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tumorType": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "color": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "mainType": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "null"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "tumorForm": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "tissue": {
+                        "type": "string"
+                      },
+                      "children": {
+                        "type": "object"
+                      },
+                      "parent": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "tumorForm": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "pmids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "abstracts": {
+                    "type": "array"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "prognosticImplications": {
+              "type": "array"
+            },
+            "treatments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "alterations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "drugs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ncitCode": {
+                          "type": "string"
+                        },
+                        "drugName": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "approvedIndications": {
+                    "type": "array"
+                  },
+                  "level": {
+                    "type": "string"
+                  },
+                  "fdaLevel": {
+                    "type": "string"
+                  },
+                  "levelAssociatedCancerType": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "color": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "mainType": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "null"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "tumorForm": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "tissue": {
+                        "type": "string"
+                      },
+                      "children": {
+                        "type": "object"
+                      },
+                      "parent": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "level": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "tumorForm": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "levelExcludedCancerTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "color": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "mainType": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "null"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "tumorForm": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "tissue": {
+                          "type": "string"
+                        },
+                        "children": {
+                          "type": "object"
+                        },
+                        "parent": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "level": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "tumorForm": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "pmids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "abstracts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string"
+                        },
+                        "abstract": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "dataVersion": {
+              "type": "string"
+            },
+            "lastUpdate": {
+              "type": "string"
+            },
+            "alleleExist": {
+              "type": "boolean"
+            },
+            "oncogenic": {
+              "type": "string"
+            },
+            "hotspot": {
+              "type": "boolean"
+            },
+            "highestFdaLevel": {
+              "type": "string"
+            },
+            "otherSignificantSensitiveLevels": {
+              "type": "array"
+            },
+            "otherSignificantResistanceLevels": {
+              "type": "array"
+            },
+            "exon": {
+              "type": "null"
+            },
+            "vus": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     },
     "test_examples": [
-      {"query": "BRAF V600E"},
-      {"gene": "BRAF", "variant": "V600E"}
+      {
+        "query": "BRAF V600E"
+      },
+      {
+        "gene": "BRAF",
+        "variant": "V600E"
+      }
     ]
   },
   {
@@ -82,40 +500,431 @@
       "required": []
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "success",
-            "error"
-          ]
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
-            "oncogenic": {
-              "type": "string",
-              "description": "Oncogenicity classification (Oncogenic, Likely Oncogenic, etc.)"
+            "query": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "null"
+                },
+                "referenceGenome": {
+                  "type": "string"
+                },
+                "hugoSymbol": {
+                  "type": "string"
+                },
+                "entrezGeneId": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "alteration": {
+                  "type": "string"
+                },
+                "alterationType": {
+                  "type": "null"
+                },
+                "svType": {
+                  "type": "null"
+                },
+                "tumorType": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "consequence": {
+                  "type": "null"
+                },
+                "proteinStart": {
+                  "type": "null"
+                },
+                "proteinEnd": {
+                  "type": "null"
+                },
+                "hgvs": {
+                  "type": "null"
+                },
+                "hgvsInfo": {
+                  "type": "null"
+                },
+                "canonicalTranscript": {
+                  "type": "null"
+                },
+                "germline": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "geneExist": {
+              "type": "boolean"
+            },
+            "variantExist": {
+              "type": "boolean"
             },
             "mutationEffect": {
               "type": "object",
-              "description": "Mutation effect on protein function"
+              "properties": {
+                "knownEffect": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "citations": {
+                  "type": "object",
+                  "properties": {
+                    "pmids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "abstracts": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
             },
             "highestSensitiveLevel": {
-              "type": "string",
-              "description": "Highest level of evidence for drug sensitivity"
+              "type": "string"
+            },
+            "highestResistanceLevel": {
+              "type": "null"
+            },
+            "highestDiagnosticImplicationLevel": {
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            "highestPrognosticImplicationLevel": {
+              "type": "null"
+            },
+            "geneSummary": {
+              "type": "string"
+            },
+            "variantSummary": {
+              "type": "string"
+            },
+            "tumorTypeSummary": {
+              "type": "string"
+            },
+            "prognosticSummary": {
+              "type": "string"
+            },
+            "diagnosticSummary": {
+              "type": "string"
+            },
+            "diagnosticImplications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "levelOfEvidence": {
+                    "type": "string"
+                  },
+                  "alterations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tumorType": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "color": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "mainType": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "null"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "tumorForm": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "tissue": {
+                        "type": "string"
+                      },
+                      "children": {
+                        "type": "object"
+                      },
+                      "parent": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "tumorForm": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "pmids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "abstracts": {
+                    "type": "array"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "prognosticImplications": {
+              "type": "array"
             },
             "treatments": {
               "type": "array",
-              "description": "List of treatment options with evidence levels"
+              "items": {
+                "type": "object",
+                "properties": {
+                  "alterations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "drugs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ncitCode": {
+                          "type": "string"
+                        },
+                        "drugName": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "approvedIndications": {
+                    "type": "array"
+                  },
+                  "level": {
+                    "type": "string"
+                  },
+                  "fdaLevel": {
+                    "type": "string"
+                  },
+                  "levelAssociatedCancerType": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "color": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "mainType": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "null"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "tumorForm": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "tissue": {
+                        "type": "string"
+                      },
+                      "children": {
+                        "type": "object"
+                      },
+                      "parent": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "level": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "tumorForm": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "levelExcludedCancerTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "color": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "mainType": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "null"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "tumorForm": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "tissue": {
+                          "type": "string"
+                        },
+                        "children": {
+                          "type": "object"
+                        },
+                        "parent": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "level": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "tumorForm": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "pmids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "abstracts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string"
+                        },
+                        "abstract": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "dataVersion": {
+              "type": "string"
+            },
+            "lastUpdate": {
+              "type": "string"
+            },
+            "alleleExist": {
+              "type": "boolean"
+            },
+            "oncogenic": {
+              "type": "string"
+            },
+            "hotspot": {
+              "type": "boolean"
+            },
+            "highestFdaLevel": {
+              "type": "string"
+            },
+            "otherSignificantSensitiveLevels": {
+              "type": "array"
+            },
+            "otherSignificantResistanceLevels": {
+              "type": "array"
+            },
+            "exon": {
+              "type": "null"
+            },
+            "vus": {
+              "type": "boolean"
             }
-          }
+          },
+          "required": [
+            "query"
+          ]
         },
-        "error": {
-          "type": "string"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -130,7 +939,16 @@
     ],
     "optional_api_keys": [
       "ONCOKB_API_TOKEN"
-    ]
+    ],
+    "api_key_info": {
+      "ONCOKB_API_TOKEN": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.oncokb.org/apiAccess",
+        "purpose": "Annotate cancer variants with oncogenicity and matched therapy implications.",
+        "without": "Runs in demo mode (BRAF, TP53, ROS1 only) without a token."
+      }
+    }
   },
   {
     "name": "OncoKB_get_gene_info",
@@ -156,33 +974,66 @@
       "required": []
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
+            "grch37Isoform": {
+              "type": "string"
+            },
+            "grch37RefSeq": {
+              "type": "string"
+            },
+            "grch38Isoform": {
+              "type": "string"
+            },
+            "grch38RefSeq": {
+              "type": "string"
+            },
+            "entrezGeneId": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
             "hugoSymbol": {
-              "type": "string",
-              "description": "Official gene symbol"
+              "type": "string"
             },
-            "oncogene": {
-              "type": "boolean",
-              "description": "Whether gene is classified as oncogene"
+            "geneType": {
+              "type": "string"
             },
-            "tsg": {
-              "type": "boolean",
-              "description": "Whether gene is a tumor suppressor gene"
+            "highestSensitiveLevel": {
+              "type": "string"
             },
-            "geneAliases": {
-              "type": "array",
-              "description": "Alternative gene names"
+            "highestResistanceLevel": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "highestResistancLevel": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "grch37Isoform"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -212,29 +1063,80 @@
       "required": []
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
             "total_genes": {
-              "type": "integer",
-              "description": "Total genes in database"
+              "type": [
+                "integer",
+                "number"
+              ]
             },
             "cancer_genes_count": {
-              "type": "integer",
-              "description": "Number of cancer-related genes"
+              "type": [
+                "integer",
+                "number"
+              ]
             },
             "genes": {
               "type": "array",
-              "description": "List of cancer genes with classifications"
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entrezGeneId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "hugoSymbol": {
+                    "type": "string"
+                  },
+                  "geneType": {
+                    "type": "string"
+                  },
+                  "grch37Isoform": {
+                    "type": "string"
+                  },
+                  "grch37RefSeq": {
+                    "type": "string"
+                  },
+                  "grch38Isoform": {
+                    "type": "string"
+                  },
+                  "grch38RefSeq": {
+                    "type": "string"
+                  },
+                  "geneAliases": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "genesets": {
+                    "type": "array"
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "total_genes"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {}
@@ -259,28 +1161,75 @@
       "required": []
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "level": {
-                "type": "string",
-                "description": "Level code (LEVEL_1, LEVEL_2, etc.)"
-              },
-              "description": {
-                "type": "string",
-                "description": "Level description"
-              }
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "LEVEL_Dx2": {
+              "type": "string"
+            },
+            "LEVEL_Dx1": {
+              "type": "string"
+            },
+            "LEVEL_Dx3": {
+              "type": "string"
+            },
+            "LEVEL_1": {
+              "type": "string"
+            },
+            "LEVEL_Fda2": {
+              "type": "string"
+            },
+            "LEVEL_Fda3": {
+              "type": "string"
+            },
+            "LEVEL_3B": {
+              "type": "string"
+            },
+            "LEVEL_R1": {
+              "type": "string"
+            },
+            "LEVEL_R2": {
+              "type": "string"
+            },
+            "LEVEL_3A": {
+              "type": "string"
+            },
+            "LEVEL_Px3": {
+              "type": "string"
+            },
+            "LEVEL_2": {
+              "type": "string"
+            },
+            "LEVEL_Fda1": {
+              "type": "string"
+            },
+            "LEVEL_Px1": {
+              "type": "string"
+            },
+            "LEVEL_Px2": {
+              "type": "string"
+            },
+            "LEVEL_4": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "LEVEL_Dx2"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {}
@@ -331,26 +1280,174 @@
       ]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
-            "oncogenic": {
-              "type": "string"
+            "query": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "null"
+                },
+                "referenceGenome": {
+                  "type": "string"
+                },
+                "hugoSymbol": {
+                  "type": "string"
+                },
+                "entrezGeneId": {
+                  "type": "null"
+                },
+                "alteration": {
+                  "type": "string"
+                },
+                "alterationType": {
+                  "type": "null"
+                },
+                "svType": {
+                  "type": "null"
+                },
+                "tumorType": {
+                  "type": "null"
+                },
+                "consequence": {
+                  "type": "null"
+                },
+                "proteinStart": {
+                  "type": "null"
+                },
+                "proteinEnd": {
+                  "type": "null"
+                },
+                "hgvs": {
+                  "type": "null"
+                },
+                "hgvsInfo": {
+                  "type": "null"
+                },
+                "canonicalTranscript": {
+                  "type": "null"
+                },
+                "germline": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "geneExist": {
+              "type": "boolean"
+            },
+            "variantExist": {
+              "type": "boolean"
+            },
+            "mutationEffect": {
+              "type": "object",
+              "properties": {
+                "knownEffect": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "citations": {
+                  "type": "object",
+                  "properties": {
+                    "pmids": {
+                      "type": "array"
+                    },
+                    "abstracts": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
             },
             "highestSensitiveLevel": {
+              "type": "null"
+            },
+            "highestResistanceLevel": {
+              "type": "null"
+            },
+            "highestDiagnosticImplicationLevel": {
+              "type": "null"
+            },
+            "highestPrognosticImplicationLevel": {
+              "type": "null"
+            },
+            "geneSummary": {
               "type": "string"
+            },
+            "variantSummary": {
+              "type": "string"
+            },
+            "tumorTypeSummary": {
+              "type": "string"
+            },
+            "prognosticSummary": {
+              "type": "string"
+            },
+            "diagnosticSummary": {
+              "type": "string"
+            },
+            "diagnosticImplications": {
+              "type": "array"
+            },
+            "prognosticImplications": {
+              "type": "array"
             },
             "treatments": {
               "type": "array"
+            },
+            "dataVersion": {
+              "type": "string"
+            },
+            "lastUpdate": {
+              "type": "string"
+            },
+            "alleleExist": {
+              "type": "boolean"
+            },
+            "oncogenic": {
+              "type": "string"
+            },
+            "hotspot": {
+              "type": "boolean"
+            },
+            "highestFdaLevel": {
+              "type": "null"
+            },
+            "otherSignificantSensitiveLevels": {
+              "type": "array"
+            },
+            "otherSignificantResistanceLevels": {
+              "type": "array"
+            },
+            "exon": {
+              "type": "null"
+            },
+            "vus": {
+              "type": "boolean"
+            },
+            "warning": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {

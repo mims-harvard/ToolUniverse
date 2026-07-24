@@ -129,14 +129,4 @@ Full documentation: [zitniklab.hms.harvard.edu/ToolUniverse](https://zitniklab.h
       primaryClass={cs.AI},
       url={https://arxiv.org/abs/2509.23426}, 
 }
-
-@article{gao2025txagent,
-      title={TxAgent: An AI Agent for Therapeutic Reasoning Across a Universe of Tools},
-      author={Shanghua Gao and Richard Zhu and Zhenglun Kong and Ayush Noori and Xiaorui Su and Curtis Ginder and Theodoros Tsiligkaridis and Marinka Zitnik},
-      year={2025},
-      eprint={2503.10970},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2503.10970},
-}
 ```

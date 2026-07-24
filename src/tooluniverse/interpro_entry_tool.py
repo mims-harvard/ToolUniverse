@@ -93,19 +93,19 @@ class InterProEntryTool(BaseTool):
         entries = []
         for r in results:
             meta = r.get("metadata", {})
-            name_obj = meta.get("name", {})
-            if isinstance(name_obj, dict):
-                name = name_obj.get("name", "")
-                short_name = name_obj.get("short", "")
-            else:
-                name = str(name_obj) if name_obj else ""
-                short_name = ""
+            # The InterPro protein-entries endpoint returns metadata.name as a
+            # plain string; keep the dict guard in case the API shape changes.
+            name_obj = meta.get("name", "")
+            name = (
+                name_obj.get("name", "")
+                if isinstance(name_obj, dict)
+                else (str(name_obj) if name_obj else "")
+            )
 
             entries.append(
                 {
                     "accession": meta.get("accession"),
                     "name": name,
-                    "short_name": short_name,
                     "type": meta.get("type"),
                     "source_database": meta.get("source_database"),
                 }
@@ -157,20 +157,19 @@ class InterProEntryTool(BaseTool):
         entries = []
         for r in results:
             meta = r.get("metadata", {})
-            name_obj = meta.get("name", {})
-            if isinstance(name_obj, dict):
-                name = name_obj.get("name", "")
-                short_name = name_obj.get("short", "")
-            else:
-                name = str(name_obj) if name_obj else ""
-                short_name = ""
+            # metadata.name is a plain string here; keep the dict guard for safety.
+            name_obj = meta.get("name", "")
+            name = (
+                name_obj.get("name", "")
+                if isinstance(name_obj, dict)
+                else (str(name_obj) if name_obj else "")
+            )
 
             counters = meta.get("counters", {})
             entries.append(
                 {
                     "accession": meta.get("accession"),
                     "name": name,
-                    "short_name": short_name,
                     "type": meta.get("type"),
                     "protein_count": counters.get("proteins"),
                     "structure_count": counters.get("structures"),

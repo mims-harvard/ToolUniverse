@@ -45,6 +45,26 @@
       "type": "object",
       "description": "Output of the tool execution.",
       "properties": {}
+    },
+    "optional_api_keys": [
+      "GEMINI_API_KEY",
+      "OPENROUTER_API_KEY"
+    ],
+    "api_key_info": {
+      "GEMINI_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "secret",
+        "register_url": "https://aistudio.google.com/apikey",
+        "purpose": "Use Google Gemini models for LLM-backed (agentic) tools.",
+        "without": "Only needed if you select Gemini as the agentic LLM provider."
+      },
+      "OPENROUTER_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "secret",
+        "register_url": "https://openrouter.ai/keys",
+        "purpose": "Use OpenRouter-hosted models for LLM-backed (agentic) tools.",
+        "without": "Only needed if you select OpenRouter as the agentic LLM provider."
+      }
     }
   },
   {

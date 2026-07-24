@@ -1,0 +1,76 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_scvi_integration",
+    "description": "Train scVI (single-cell Variational Inference; Lopez 2018 / scvi-tools, Gayoso 2022) on a single-cell RNA-seq count matrix and return the batch-corrected low-dimensional latent representation of cells — the standard input to clustering/UMAP. Corrects batch effects across samples/technologies when a batch key is supplied. Input is a server-accessible .h5ad of raw UMI counts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData of RAW UMI counts."},
+        "batch_key": {"type": "string", "description": "obs column naming the batch/sample for integration (optional; empty = no batch correction)."},
+        "n_latent": {"type": "integer", "description": "Latent dimensionality (default 10)."},
+        "max_epochs": {"type": "integer", "description": "Training epochs (default: scVI heuristic min(round(20000/n_cells*400), 400))."},
+        "n_top_genes": {"type": "integer", "description": "Subset to this many highly-variable genes before training (default 2000; 0 = all)."},
+        "accelerator": {"type": "string", "description": "'auto' (default), 'cpu', or 'gpu'."}
+      },
+      "required": ["adata_path"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_cells": {"type": "integer"},
+        "n_latent": {"type": "integer"},
+        "latent_representation": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}, "description": "Cells x n_latent batch-corrected embedding."},
+        "cell_ids": {"type": "array", "items": {"type": "string"}},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "ScviIntegrationTool",
+      "url": "https://docs.scvi-tools.org/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/scvi",
+      "mcp_tool_name": "run_scvi_integration"
+    },
+    "test_examples": [
+      {"adata_path": "pbmc_10k.h5ad", "batch_key": "sample", "n_latent": 10, "n_top_genes": 2000}
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "run_scvi_differential_expression",
+    "description": "Train scVI on a single-cell count matrix and run Bayesian differential expression between two groups of cells, returning per-gene log-fold-changes and probabilities of differential expression (proba_de). Input is a server-accessible .h5ad of raw UMI counts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData of RAW UMI counts."},
+        "groupby": {"type": "string", "description": "obs column defining the groups to compare (e.g. 'cell_type')."},
+        "group1": {"type": "string", "description": "Value in groupby for the foreground group."},
+        "group2": {"type": "string", "description": "Value in groupby for the reference group (optional; default = rest)."},
+        "batch_key": {"type": "string", "description": "obs column naming the batch/sample (optional)."},
+        "max_epochs": {"type": "integer", "description": "Training epochs (default: scVI heuristic)."}
+      },
+      "required": ["adata_path", "groupby", "group1"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_genes": {"type": "integer"},
+        "differential_expression": {"type": "array", "items": {"type": "object"}, "description": "Per-gene DE records (lfc_mean, proba_de, bayes_factor, ...)."},
+        "error": {"type": "string"}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "ScviDifferentialExpressionTool",
+      "url": "https://docs.scvi-tools.org/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/scvi",
+      "mcp_tool_name": "run_scvi_differential_expression"
+    },
+    "test_examples": [
+      {"adata_path": "pbmc_10k.h5ad", "groupby": "cell_type", "group1": "B cells", "group2": "CD4 T cells"}
+    ]
+  }
+]

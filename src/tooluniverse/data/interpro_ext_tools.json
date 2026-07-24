@@ -43,92 +43,56 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "domain_id": {
-                  "type": "string",
-                  "description": "InterPro domain accession queried"
-                },
-                "total_proteins": {
-                  "type": "integer",
-                  "description": "Total number of proteins with this domain"
-                },
-                "proteins": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "UniProt accession"
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Protein name"
-                      },
-                      "source_database": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Source (reviewed=Swiss-Prot, unreviewed=TrEMBL)"
-                      },
-                      "length": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "Sequence length"
-                      },
-                      "source_organism": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Species scientific name"
-                      },
-                      "tax_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "NCBI taxonomy ID"
-                      }
-                    }
+            "domain_id": {
+              "type": "string"
+            },
+            "total_proteins": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "proteins": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
                   },
-                  "description": "Proteins containing this domain"
-                },
-                "page_size": {
-                  "type": "integer",
-                  "description": "Page size used"
-                },
-                "reviewed_only": {
-                  "type": "boolean",
-                  "description": "Whether only Swiss-Prot entries were returned"
+                  "name": {
+                    "type": "string"
+                  },
+                  "source_database": {
+                    "type": "string"
+                  },
+                  "length": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "source_organism": {
+                    "type": "string"
+                  },
+                  "tax_id": {
+                    "type": "string"
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "domain_id": {
-                  "type": "string"
-                }
-              }
+            "page_size": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "reviewed_only": {
+              "type": "boolean"
             }
           },
           "required": [
-            "data"
+            "domain_id"
           ]
         },
         {

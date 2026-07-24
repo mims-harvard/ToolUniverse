@@ -164,9 +164,17 @@ class TestESMToolInputValidation:
         assert result.get("status") == "error"
 
     def test_unknown_operation(self, tool_config, esm_tool_cls):
-        """Unknown operation returns informative error."""
+        """Unknown operation returns informative error.
+
+        Each registered ESM_* tool config pins a fixed `fields.operation`
+        (see ESMTool.__init__), which always wins over a caller-supplied
+        `operation` argument — so an unrecognized operation can only reach
+        the dispatcher's error branch on a config with no fixed operation.
+        Using a real tool config here would instead exercise its fixed
+        operation and fail on the missing `esm` package, not on validation.
+        """
+        config = dict(tool_config["ESM_get_protein_embedding"], fields={})
         with patch.dict(os.environ, {"ESM_API_KEY": "dummy"}):
-            config = tool_config["ESM_get_protein_embedding"]
             tool = esm_tool_cls(config)
             result = tool.run({"operation": "fly_to_the_moon"})
         assert result.get("status") == "error"
@@ -259,8 +267,11 @@ class TestESMToolJsonConfig:
             assert len(examples) > 0, f"{name}: should have at least one test_example"
 
     def test_test_examples_have_operation_field(self, tool_config):
-        """Each test_example includes an 'operation' field."""
+        """Each test_example includes an 'operation' field, for tools whose
+        schema actually declares one (ESM tools are single-purpose and don't)."""
         for name, cfg in tool_config.items():
+            if "operation" not in cfg.get("parameter", {}).get("properties", {}):
+                continue
             for i, ex in enumerate(cfg.get("test_examples", [])):
                 assert "operation" in ex, (
                     f"{name} example {i}: test_example should include 'operation' field"

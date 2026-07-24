@@ -193,9 +193,10 @@ Set up AI model settings:
 
 - ``api_type``: "CHATGPT", "GEMINI", "OPENROUTER", "VLLM", or "BEDROCK"
 - ``model_id``: Choose your model (see Step 2)
- - For vLLM: Must match the model name loaded on your vLLM server
- - Set ``VLLM_SERVER_URL`` environment variable when using vLLM
- - For Bedrock: Use a Bedrock model ID or inference profile ID
+
+  - For vLLM: Must match the model name loaded on your vLLM server
+  - Set ``VLLM_SERVER_URL`` environment variable when using vLLM
+  - For Bedrock: Use a Bedrock model ID or inference profile ID
 - ``temperature``: 0.0-2.0 (higher = more creative)
 - ``return_json``: true for structured data, false for text
 

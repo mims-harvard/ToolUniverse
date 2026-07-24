@@ -1,7 +1,24 @@
 from .graphql_tool import GraphQLTool, remove_none_and_empty_values
+import re
 import requests
 import copy
 from .tool_registry import register_tool
+
+_UNDERSCORE_CURIE_RE = re.compile(r"^([A-Za-z]+)_(\d+)$")
+
+
+def _normalize_curie(value):
+    """Convert an underscore ontology CURIE ('HP_0000639', 'MONDO_0008765') to
+    the colon form Monarch requires ('HP:0000639'). OpenTargets phenotype/disease
+    tools emit the underscore form, but Monarch's /entity/{id} 404s on it and
+    returns "Entity not found" wrapped in status:success -- a silent false-empty
+    that breaks the OpenTargets -> Monarch phenotype chain. Non-CURIE values
+    (search terms, colon CURIEs) pass through unchanged."""
+    if not isinstance(value, str):
+        return value
+    stripped = value.strip()
+    m = _UNDERSCORE_CURIE_RE.match(stripped)
+    return f"{m.group(1)}:{m.group(2)}" if m else stripped
 
 
 def execute_RESTful_query(endpoint_url, variables=None):
@@ -52,8 +69,11 @@ class MonarchTool(RESTfulTool):
                 query_schema_runtime[key] = arguments[key]
         if "url_key" in query_schema_runtime:
             url_key_name = query_schema_runtime["url_key"]
+            # Normalize an underscore ontology CURIE (HP_0000639) to the colon
+            # form Monarch's /entity/{id} needs; otherwise it 404s and returns
+            # "Entity not found" as a silent status:success false-empty.
             formatted_endpoint_url = self.endpoint_url.format(
-                url_key=query_schema_runtime[url_key_name]
+                url_key=_normalize_curie(query_schema_runtime[url_key_name])
             )
             del query_schema_runtime["url_key"]
         else:
@@ -63,6 +83,14 @@ class MonarchTool(RESTfulTool):
                 query_schema_runtime["q"] = query_schema_runtime[
                     "query"
                 ]  # match with the api
+        result_id_prefix = self.tool_config.get("result_id_prefix")
+        requested_limit = query_schema_runtime.get("limit")
+        if result_id_prefix and isinstance(requested_limit, int):
+            # Over-fetch since client-side filtering below removes
+            # cross-ontology matches; still truncated back to
+            # requested_limit after filtering so the returned count
+            # matches what the caller asked for.
+            query_schema_runtime["limit"] = requested_limit * 3
         response = execute_RESTful_query(
             endpoint_url=formatted_endpoint_url, variables=query_schema_runtime
         )
@@ -70,6 +98,32 @@ class MonarchTool(RESTfulTool):
             del response["facet_fields"]
 
         response = remove_none_and_empty_values(response)
+        # Fix-R16A-2: Monarch's search endpoint has no server-side namespace
+        # filter (confirmed live: a "prefix" query param is silently
+        # ignored) and its "category" filter (e.g. biolink:PhenotypicFeature)
+        # matches equivalent terms across multiple ontologies (HP, MP,
+        # UPHENO, ...) -- so a tool promising a specific ontology's IDs (like
+        # get_HPO_ID_by_phenotype) could return a non-HPO term as its
+        # top-ranked hit. Opt-in, config-driven client-side filter: a tool
+        # config may declare `result_id_prefix` to restrict returned items
+        # to IDs starting with that prefix, without hardcoding any ontology
+        # into this shared class used by other Monarch tools. Combined with
+        # the over-fetch above, the returned count still matches what the
+        # caller asked for.
+        if (
+            result_id_prefix
+            and isinstance(response, dict)
+            and isinstance(response.get("items"), list)
+        ):
+            filtered = [
+                item
+                for item in response["items"]
+                if isinstance(item, dict)
+                and str(item.get("id", "")).startswith(result_id_prefix)
+            ]
+            if isinstance(requested_limit, int):
+                filtered = filtered[:requested_limit]
+            response["items"] = filtered
         if isinstance(response, dict) and "status" not in response:
             return {"status": "success", "data": response}
         return response

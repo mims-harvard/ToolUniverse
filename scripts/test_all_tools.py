@@ -23,6 +23,7 @@ Options:
 """
 
 import argparse
+import concurrent.futures
 import fnmatch
 import json
 import subprocess
@@ -32,18 +33,28 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Tuple, Any
 
+# run_test_for_pattern spawns an independent subprocess per pattern (I/O-bound:
+# mostly waiting on live HTTP calls), so a moderate thread pool speeds up
+# --parallel substantially without hammering any single upstream API too hard.
+DEFAULT_PARALLEL_WORKERS = 10
+
 
 def find_all_tool_configs(data_dir: Path) -> List[Path]:
     """Find all JSON configuration files."""
     json_files = list(data_dir.glob("*.json"))
     json_files.extend(data_dir.glob("**/*.json"))
-    
+
     # Remove duplicates and sort
     json_files = sorted(set(json_files))
-    
+
     # Filter out non-tool files if needed
     json_files = [f for f in json_files if not f.name.startswith('.')]
-    
+
+    # Skip broken_apis/ — those configs document non-functional upstream APIs
+    # and the tools are not registered at runtime, so testing them produces
+    # only false-positive "Tool not found" failures.
+    json_files = [f for f in json_files if "broken_apis" not in f.parts]
+
     return json_files
 
 
@@ -58,12 +69,15 @@ def extract_tool_patterns(config_files: List[Path]) -> Dict[str, List[Path]]:
         # Get base name without extension
         base_name = config_file.stem
         
-        # Extract pattern (typically prefix before _tools or first underscore)
+        # Extract pattern (typically the prefix before _tools).
         if '_tools' in base_name:
             pattern = base_name.replace('_tools', '')
-        elif '_' in base_name:
-            pattern = base_name.split('_')[0]
         else:
+            # Use the full stem for non-_tools files. Splitting on the first
+            # underscore produced over-broad patterns: e.g. tool_page_index.json
+            # and tool_discovery_agents.json both yielded "tool", and downstream
+            # test_new_tools.py globs *tool* — which matches every *_tools.json
+            # (500+ files) and times that "category" out on every run.
             pattern = base_name
         
         patterns[pattern].append(config_file)
@@ -142,6 +156,90 @@ def run_test_for_pattern(
             "error": str(e),
             "exit_code": -1
         }
+
+
+def _format_result_status(result: Dict[str, Any]) -> str:
+    """One-line human-readable status for a single pattern's test result."""
+    if result.get("error"):
+        return f"🔥 ERROR: {result['error']}"
+    if result.get("failed", 0) > 0:
+        return f"❌ {result['failed']} failures"
+    if result.get("schema_invalid", 0) > 0:
+        return f"⚠️  {result['schema_invalid']} schema issues"
+    tests = result.get("tests_run", 0)
+    return f"✅ {tests} tests passed"
+
+
+def run_all_patterns(
+    patterns: List[str],
+    repo_root: Path,
+    verbose: bool = False,
+    fail_fast: bool = False,
+    parallel: bool = False,
+    max_workers: int = DEFAULT_PARALLEL_WORKERS,
+) -> Dict[str, Dict[str, Any]]:
+    """Run run_test_for_pattern for every pattern, sequentially or in parallel.
+
+    Returns a dict of pattern -> result, in the same shape either way.
+    Progress is printed as each result becomes available; in parallel mode
+    that's completion order, not pattern order, since patterns run
+    concurrently.
+
+    --fail-fast semantics under --parallel: patterns already running when a
+    failure is detected are allowed to finish (they're independent
+    subprocesses already in flight), but no further not-yet-started patterns
+    are submitted. This is the closest parallel analogue to the sequential
+    "stop after first failure" behavior.
+    """
+    total = len(patterns)
+    results: Dict[str, Dict[str, Any]] = {}
+
+    if not parallel:
+        for i, pattern in enumerate(patterns, 1):
+            print(f"[{i}/{total}] Testing {pattern}...", end=" ", flush=True)
+            result = run_test_for_pattern(
+                pattern, repo_root, verbose=verbose, fail_fast=fail_fast
+            )
+            results[pattern] = result
+            print(_format_result_status(result))
+            if fail_fast and result.get("failed", 0) > 0:
+                print("\n⚠️  Stopping due to --fail-fast")
+                break
+        return results
+
+    workers = max(1, min(max_workers, total)) if total else 1
+    print(f"⚡ Running {total} pattern(s) in parallel (workers={workers})")
+    print()
+
+    stop_requested = False
+    completed = 0
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+        future_to_pattern = {
+            executor.submit(
+                run_test_for_pattern, pattern, repo_root, verbose, fail_fast
+            ): pattern
+            for pattern in patterns
+        }
+        for future in concurrent.futures.as_completed(future_to_pattern):
+            pattern = future_to_pattern[future]
+            if future.cancelled():
+                # Cancelled while still queued (fail-fast) -- never ran, so
+                # it's simply omitted from results rather than recorded as
+                # a failure.
+                continue
+            completed += 1
+            result = future.result()
+            results[pattern] = result
+            print(f"[{completed}/{total}] {pattern}: {_format_result_status(result)}", flush=True)
+
+            if fail_fast and result.get("failed", 0) > 0 and not stop_requested:
+                stop_requested = True
+                print("\n⚠️  --fail-fast: not starting any remaining not-yet-started patterns "
+                      "(already-running patterns will still finish)")
+                for f in future_to_pattern:
+                    f.cancel()
+
+    return results
 
 
 # Maps a label found in test output to the stats key it populates.
@@ -411,7 +509,7 @@ def main():
     parser.add_argument(
         "--parallel",
         action="store_true",
-        help="Run tests in parallel (experimental)"
+        help=f"Run tests in parallel across patterns (up to {DEFAULT_PARALLEL_WORKERS} workers)"
     )
     parser.add_argument(
         "--output",
@@ -534,35 +632,16 @@ def main():
     print()
     
     # Run tests for each pattern
-    results = {}
     start_time = time.time()
-    
-    for i, pattern in enumerate(sorted(config_patterns.keys()), 1):
-        print(f"[{i}/{len(config_patterns)}] Testing {pattern}...", end=" ", flush=True)
-        
-        result = run_test_for_pattern(
-            pattern, 
-            repo_root, 
-            verbose=args.verbose,
-            fail_fast=args.fail_fast
-        )
-        
-        results[pattern] = result
-        
-        # Print quick status
-        if result.get("error"):
-            print(f"🔥 ERROR: {result['error']}")
-        elif result.get("failed", 0) > 0:
-            print(f"❌ {result['failed']} failures")
-            if args.fail_fast:
-                print("\n⚠️  Stopping due to --fail-fast")
-                break
-        elif result.get("schema_invalid", 0) > 0:
-            print(f"⚠️  {result['schema_invalid']} schema issues")
-        else:
-            tests = result.get("tests_run", 0)
-            print(f"✅ {tests} tests passed")
-    
+
+    results = run_all_patterns(
+        sorted(config_patterns.keys()),
+        repo_root,
+        verbose=args.verbose,
+        fail_fast=args.fail_fast,
+        parallel=args.parallel,
+    )
+
     total_duration = time.time() - start_time
     
     print()

@@ -178,5 +178,126 @@
         }
       ]
     }
+  },
+  {
+    "name": "LitVar_get_variant_details",
+    "type": "BaseRESTTool",
+    "description": "Get the full structured variant record from NCBI LitVar2 by rsID (the 'variant/get' endpoint, WITHOUT the publications list). Given a dbSNP rsID, returns a single normalized record combining: ClinGen canonical allele IDs (CA...), associated gene(s), variant name and HGVS notation, genomic chromosome:position (data_chromosome_base_position), allele, SNP class (e.g. snv), species and NCBI tax id, the literature-derived clinical-significance set (data_clinical_significance), and, when available, ALFA minor allele frequency (data_maf). This is the variant 'profile' record - use LitVar_get_variant_publications for the list of citing PMIDs, or LitVar_search_variants to find an rsID from a gene or HGVS query.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP rsID of the variant (e.g., 'rs113488022' = BRAF V600E, 'rs121913529' = KRAS G12, 'rs328', 'rs7903146'). Provide the rsID only; the litvar@...## wrapper is added automatically."
+        }
+      },
+      "required": [
+        "rsid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ncbi.nlm.nih.gov/research/litvar2-api/variant/get/litvar%40{rsid}%23%23"
+    },
+    "test_examples": [
+      {
+        "rsid": "rs113488022"
+      },
+      {
+        "rsid": "rs121913529"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Full structured LitVar2 variant record.",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "LitVar internal identifier (e.g. 'litvar@rs113488022##')."
+            },
+            "rsid": {
+              "type": "string"
+            },
+            "clingen_ids": {
+              "type": "array",
+              "description": "ClinGen canonical allele identifiers (CA...).",
+              "items": {
+                "type": "string"
+              }
+            },
+            "gene": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "name": {
+              "type": "string"
+            },
+            "hgvs": {
+              "type": "string"
+            },
+            "data_species": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_tax_id": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_allele": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_snp_class": {
+              "type": "array",
+              "description": "SNP class, e.g. 'snv'.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_chromosome_base_position": {
+              "type": "array",
+              "description": "Genomic position as 'chrom:position' (e.g. '7:140753336').",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_clinical_significance": {
+              "type": "array",
+              "description": "Literature-derived clinical significance set (e.g. 'pathogenic', 'drug-response').",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_maf": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ALFA minor allele frequency data, when available."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

@@ -1,0 +1,59 @@
+[
+  {
+    "name": "Evo2_score_variant",
+    "type": "Evo2VariantEffectTool",
+    "description": "Zero-shot variant-effect scoring with NVIDIA-hosted Evo 2 (Arc Institute genome foundation model). Runs the model's forward pass on the reference and alternate DNA windows and returns the delta log-likelihood (alt - ref). Negative = variant disfavored by the genome model (candidate deleterious). Two hosted sizes are selectable via `model`: evo2-40b (default, most accurate) and evo2-7b (smaller, faster). Hosted NIM API; requires NVIDIA_API_KEY. Complements NvidiaNIM_evo2 (which only generates sequences).",
+    "fields": {"operation": "score_variant"},
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "api_key_info": {
+      "NVIDIA_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "secret",
+        "register_url": "https://build.nvidia.com/",
+        "purpose": "Call NVIDIA NIM model endpoints (hosted inference for bio/chem models).",
+        "without": "NIM tools are blocked without it."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ref_sequence": {"type": ["string", "null"], "description": "Reference DNA window (A/C/G/T/N). Use with alt_sequence (same length)."},
+        "alt_sequence": {"type": ["string", "null"], "description": "Alternate DNA window, same length/centering as ref_sequence."},
+        "sequence": {"type": ["string", "null"], "description": "Reference DNA window for point-substitution mode (use with position + alternate)."},
+        "position": {"type": ["integer", "null"], "description": "1-based position of the substituted base within `sequence`."},
+        "reference": {"type": ["string", "null"], "description": "Optional reference base (single letter) at `position`, validated against `sequence`."},
+        "alternate": {"type": ["string", "null"], "description": "Alternate base (single letter) substituted at `position`."},
+        "model": {"type": "string", "enum": ["evo2-40b", "evo2-7b"], "default": "evo2-40b", "description": "Hosted Evo 2 model size: evo2-40b (default, most accurate) or evo2-7b (smaller, faster)."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "delta_loglik": {"type": "number"},
+                "ref_loglik": {"type": "number"},
+                "alt_loglik": {"type": "number"},
+                "direction": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"sequence": "ACGTACGTACGTACGTACGTGGGCCCAAATTTACGTACGTACGT", "position": 21, "reference": "G", "alternate": "T"},
+      {"sequence": "ACGTACGTACGTACGTACGTGGGCCCAAATTTACGTACGTACGT", "position": 21, "reference": "G", "alternate": "T", "model": "evo2-7b"}
+    ]
+  }
+]

@@ -128,20 +128,27 @@ class DrugCentralTool(BaseTool):
 
         hits = data.get("hits", [])
         results = []
-        seen_inchikeys = set()
+        seen_ids = set()
         for hit in hits:
             dc = hit.get("drugcentral", {})
             if not dc:
                 continue
             structures = dc.get("structures", {})
-            inchikey = structures.get("inchikey") or hit.get("_id", "")
-            if inchikey in seen_inchikeys:
+            # Biologics (e.g. monoclonal antibodies like pembrolizumab) have
+            # no small-molecule structure and legitimately no InChIKey
+            # upstream -- falling back to MyChem's internal "_id" here
+            # silently mislabeled that unrelated identifier as "inchikey"
+            # (confirmed live: e.g. "DPT0O3T46P", not a valid InChIKey).
+            # Dedup on "_id" (always present, always unique per hit)
+            # instead, and only ever report a real InChIKey or None.
+            hit_id = hit.get("_id", "")
+            if hit_id in seen_ids:
                 continue
-            seen_inchikeys.add(inchikey)
+            seen_ids.add(hit_id)
             xrefs = dc.get("xrefs", {})
             results.append(
                 {
-                    "inchikey": inchikey,
+                    "inchikey": structures.get("inchikey"),
                     "name": structures.get("inn"),
                     "cas_rn": structures.get("cas_rn"),
                     "smiles": structures.get("smiles"),
@@ -226,7 +233,11 @@ class DrugCentralTool(BaseTool):
         return {
             "status": "success",
             "data": {
-                "inchikey": data.get("_id"),
+                # MyChem's internal "_id" is not an InChIKey (confirmed live)
+                # -- biologics with no small-molecule structure legitimately
+                # have no InChIKey upstream; report that as None rather than
+                # mislabeling _id as one.
+                "inchikey": structures.get("inchikey"),
                 "name": structures.get("inn"),
                 "cas_rn": structures.get("cas_rn"),
                 "smiles": structures.get("smiles"),

@@ -294,7 +294,7 @@ class SwissADMETool(BaseTool):
         result = {}
 
         for csv_header, key in CSV_FIELD_MAP.items():
-            raw_value = row.get(csv_header, "").strip()
+            raw_value = (row.get(csv_header) or "").strip()
             if not raw_value:
                 result[key] = None
                 continue

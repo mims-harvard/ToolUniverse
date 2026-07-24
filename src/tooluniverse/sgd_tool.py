@@ -71,6 +71,12 @@ class SGDTool(BaseTool):
             return self._locus_go(arguments)
         elif self.endpoint_type == "locus" and self.query_mode == "interaction":
             return self._locus_interactions(arguments)
+        elif self.endpoint_type == "locus" and self.query_mode == "regulation":
+            return self._locus_regulation(arguments)
+        elif self.endpoint_type == "locus" and self.query_mode == "sequence":
+            return self._locus_sequence(arguments)
+        elif self.endpoint_type == "locus" and self.query_mode == "disease":
+            return self._locus_disease(arguments)
         elif self.endpoint_type == "search":
             return self._search(arguments)
         else:
@@ -263,6 +269,168 @@ class SGDTool(BaseTool):
                 "returned": len(results),
                 "query": sgd_id,
                 "endpoint": "locus/interaction_details",
+            },
+        }
+
+    @staticmethod
+    def _sgdid_from_link(link: str) -> str:
+        """Extract the SGD identifier (S0000...) from a '/locus/S000...' link."""
+        return link.split("/")[-1] if link else None
+
+    def _locus_regulation(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get transcriptional regulation network (regulator<->target pairs)."""
+        sgd_id = arguments.get("sgd_id", "")
+        if not sgd_id:
+            return {
+                "status": "error",
+                "error": "sgd_id parameter is required (e.g., S000000364 for CDC28)",
+            }
+
+        url = f"{SGD_BASE_URL}/locus/{sgd_id}/regulation_details"
+        response = requests.get(
+            url, headers={"Accept": "application/json"}, timeout=self.timeout
+        )
+        response.raise_for_status()
+        raw = response.json() or []
+
+        results = []
+        for r in raw[:100]:
+            locus1 = r.get("locus1") or {}
+            locus2 = r.get("locus2") or {}
+            evidence = r.get("evidence") or {}
+            reference = r.get("reference") or {}
+            results.append(
+                {
+                    "regulator": locus1.get("display_name"),
+                    "regulator_sgdid": self._sgdid_from_link(locus1.get("link")),
+                    "target": locus2.get("display_name"),
+                    "target_sgdid": self._sgdid_from_link(locus2.get("link")),
+                    "regulation_of": r.get("regulation_of"),
+                    "direction": r.get("direction"),
+                    "happens_during": r.get("happens_during"),
+                    "evidence": evidence.get("display_name"),
+                    "annotation_type": r.get("annotation_type"),
+                    "reference": reference.get("display_name"),
+                    "pubmed_id": reference.get("pubmed_id"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "source": "SGD",
+                "total_results": len(raw),
+                "returned": len(results),
+                "query": sgd_id,
+                "endpoint": "locus/regulation_details",
+            },
+        }
+
+    def _locus_sequence(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get genomic/coding/protein sequence and coordinates for a yeast gene."""
+        sgd_id = arguments.get("sgd_id", "")
+        if not sgd_id:
+            return {
+                "status": "error",
+                "error": "sgd_id parameter is required (e.g., S000000364 for CDC28)",
+            }
+
+        url = f"{SGD_BASE_URL}/locus/{sgd_id}/sequence_details"
+        response = requests.get(
+            url, headers={"Accept": "application/json"}, timeout=self.timeout
+        )
+        response.raise_for_status()
+        raw = response.json() or {}
+
+        def _first_block(entries):
+            """Take the reference (S288C) sequence block, falling back to first."""
+            if not isinstance(entries, list) or not entries:
+                return {}
+            for e in entries:
+                strain = e.get("strain") or {}
+                if "S288C" in (strain.get("display_name") or ""):
+                    return e
+            return entries[0]
+
+        genomic = _first_block(raw.get("genomic_dna"))
+        coding = _first_block(raw.get("coding_dna"))
+        protein = _first_block(raw.get("protein"))
+
+        result = {
+            "sgd_id": sgd_id,
+            "genomic_dna": {
+                "start": genomic.get("start"),
+                "end": genomic.get("end"),
+                "strand": genomic.get("strand"),
+                "length": len(genomic.get("residues") or ""),
+                "residues": genomic.get("residues"),
+            },
+            "coding_dna": {
+                "length": len(coding.get("residues") or ""),
+                "residues": coding.get("residues"),
+            },
+            "protein": {
+                "length": len(protein.get("residues") or ""),
+                "residues": protein.get("residues"),
+            },
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "SGD",
+                "query": sgd_id,
+                "endpoint": "locus/sequence_details",
+            },
+        }
+
+    def _locus_disease(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get curated gene-disease (DOID) associations for a yeast gene."""
+        sgd_id = arguments.get("sgd_id", "")
+        if not sgd_id:
+            return {
+                "status": "error",
+                "error": "sgd_id parameter is required (e.g., S000000364 for CDC28)",
+            }
+
+        url = f"{SGD_BASE_URL}/locus/{sgd_id}/disease_details"
+        response = requests.get(
+            url, headers={"Accept": "application/json"}, timeout=self.timeout
+        )
+        response.raise_for_status()
+        raw = response.json() or []
+
+        results = []
+        for r in raw[:50]:
+            disease = r.get("disease") or {}
+            locus = r.get("locus") or {}
+            reference = r.get("reference") or {}
+            source = r.get("source") or {}
+            results.append(
+                {
+                    "disease_name": disease.get("display_name"),
+                    "disease_id": disease.get("disease_id"),
+                    "annotation_type": r.get("annotation_type"),
+                    "qualifier": r.get("qualifier"),
+                    "locus": locus.get("display_name"),
+                    "locus_sgdid": self._sgdid_from_link(locus.get("link")),
+                    "source": source.get("display_name"),
+                    "reference": reference.get("display_name"),
+                    "pubmed_id": reference.get("pubmed_id"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "source": "SGD",
+                "total_results": len(raw),
+                "returned": len(results),
+                "query": sgd_id,
+                "endpoint": "locus/disease_details",
             },
         }
 

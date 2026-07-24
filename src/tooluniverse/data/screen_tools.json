@@ -34,41 +34,62 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "regulatory_elements": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "accession": {
-                "type": "string"
-              },
-              "assay_title": {
-                "type": "string"
-              },
-              "target": {
-                "type": "object"
-              },
-              "biosample_ontology": {
-                "type": "object"
-              },
-              "description": {
-                "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "gene_name": {
+              "type": "string"
+            },
+            "element_type": {
+              "type": "string"
+            },
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "regulatory_elements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "assay_title": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "biosample": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
               }
             }
-          }
+          },
+          "required": [
+            "gene_name"
+          ]
         },
-        "gene_name": {
-          "type": "string"
-        },
-        "element_type": {
-          "type": "string"
-        },
-        "count": {
-          "type": "integer"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {

@@ -181,7 +181,7 @@ class GrepToolsTool(BaseTool):
             if limit == 0
             else (limit is not None and (offset + len(matching_tools)) < total_matches)
         )
-        return {
+        result = {
             "total_matches": total_matches,
             "limit": limit,
             "offset": offset,
@@ -200,6 +200,25 @@ class GrepToolsTool(BaseTool):
             "search_mode": search_mode,
             "tools": matching_tools,
         }
+        # Fix-R13D-1: a tool with unmet required_api_keys is dropped from
+        # all_tool_dict entirely, so e.g. `tu grep uspto` returned 0 matches
+        # with no hint that USPTO tools exist but are gated -- confirmed
+        # live this makes a real tool look nonexistent to the documented
+        # "grep -> info -> run" discovery workflow. Only attempt this
+        # name-substring fallback (matches what a plain-text `field=name`
+        # search would have found) when the normal search truly found
+        # nothing, to keep the common case unaffected.
+        if total_matches == 0 and field == "name" and search_mode == "text":
+            excluded = getattr(self.tooluniverse, "_excluded_api_key_tools", {})
+            gated_matches = sorted(
+                name for name in excluded if pattern.lower() in name.lower()
+            )
+            if gated_matches:
+                result["gated_matches"] = [
+                    {"name": name, "missing_api_keys": excluded[name]}
+                    for name in gated_matches
+                ]
+        return result
 
 
 @register_tool("ListTools")
@@ -703,6 +722,26 @@ class GetToolInfoTool(BaseTool):
         super().__init__(tool_config)
         self.tooluniverse = tooluniverse
 
+    def _not_found_error(self, tool_name: str) -> str:
+        """Fix-R13D-1: a tool with unmet required_api_keys is dropped from
+        all_tool_dict entirely during loading, so this previously reported a
+        flat "not found" -- indistinguishable from a genuinely nonexistent
+        tool name and misleading the "grep/info -> run" discovery workflow,
+        since `tu run` on the exact same tool already gives an actionable
+        "requires API key(s) not set" message via _excluded_api_key_tools
+        (confirmed live: this contradicted `tu run`'s own error for the same
+        tool name). Mirror that message here instead of a bare "not found".
+        """
+        missing_keys = getattr(self.tooluniverse, "_excluded_api_key_tools", {}).get(
+            tool_name
+        )
+        if missing_keys:
+            return (
+                f"requires API key(s) not set: {', '.join(missing_keys)}. "
+                "Set them as environment variables and retry."
+            )
+        return "not found"
+
     def run(self, arguments):
         """
         Get tool information with configurable detail level.
@@ -757,7 +796,12 @@ class GetToolInfoTool(BaseTool):
                     tool_config = self.tooluniverse.all_tool_dict.get(tool_name)
                     if not tool_config:
                         # tool_name is already shortened (primary identifier)
-                        results.append({"name": tool_name, "error": "not found"})
+                        results.append(
+                            {
+                                "name": tool_name,
+                                "error": self._not_found_error(tool_name),
+                            }
+                        )
                     else:
                         # tool_name is already shortened (primary identifier)
                         results.append(
@@ -789,9 +833,18 @@ class GetToolInfoTool(BaseTool):
                         tool_names[0], return_prompt=False
                     )
                     if not tool_config:
+                        error = self._not_found_error(tool_names[0])
+                        # Fix-R13D-1: this dict has no "name" key (unlike the
+                        # per-tool entries elsewhere), so a bare "not found"
+                        # would drop the tool name from the message entirely.
+                        # Restore the original name-embedded wording for the
+                        # genuine-not-found case; the gated-tool message
+                        # already names the tool.
+                        if error == "not found":
+                            error = f"Tool '{tool_names[0]}' not found"
                         return {
                             "status": "error",
-                            "error": f"Tool '{tool_names[0]}' not found",
+                            "error": error,
                         }
                     return tool_config
                 else:
@@ -805,7 +858,7 @@ class GetToolInfoTool(BaseTool):
                         tool.get("name") for tool in tools_definitions if tool
                     }
                     missing_tools = [
-                        {"name": name, "error": "not found"}
+                        {"name": name, "error": self._not_found_error(name)}
                         for name in tool_names
                         if name not in found_names
                     ]

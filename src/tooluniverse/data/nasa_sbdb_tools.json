@@ -45,107 +45,262 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Small body database record",
           "properties": {
-            "object": {
+            "orbit": {
               "type": "object",
-              "description": "Object identification and classification",
               "properties": {
-                "des": {
-                  "type": "string",
-                  "description": "Primary designation"
+                "data_arc": {
+                  "type": "string"
                 },
-                "fullname": {
-                  "type": "string",
-                  "description": "Full name (e.g., '1 Ceres (A801 AA)')"
+                "not_valid_after": {
+                  "type": "null"
                 },
-                "shortname": {
+                "n_dop_obs_used": {
                   "type": [
-                    "string",
-                    "null"
+                    "integer",
+                    "number"
                   ]
                 },
-                "kind": {
-                  "type": "string",
-                  "description": "Object kind: 'an' (numbered asteroid), 'au' (unnumbered asteroid), 'cn' (numbered comet), 'cu' (unnumbered comet)"
+                "soln_date": {
+                  "type": "string"
                 },
-                "neo": {
-                  "type": "boolean",
-                  "description": "Near-Earth Object classification"
+                "cov_epoch": {
+                  "type": "string"
                 },
-                "pha": {
-                  "type": "boolean",
-                  "description": "Potentially Hazardous Asteroid classification"
+                "producer": {
+                  "type": "string"
                 },
-                "spkid": {
-                  "type": "string",
-                  "description": "JPL SPK body ID"
+                "epoch": {
+                  "type": "string"
+                },
+                "moid": {
+                  "type": "string"
+                },
+                "moid_jup": {
+                  "type": "string"
+                },
+                "sb_used": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "not_valid_before": {
+                  "type": "null"
+                },
+                "orbit_id": {
+                  "type": "string"
+                },
+                "two_body": {
+                  "type": "null"
+                },
+                "n_obs_used": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "last_obs": {
+                  "type": "string"
+                },
+                "model_pars": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "units": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "desc": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "n": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "sigma": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "kind": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "t_jup": {
+                  "type": "string"
+                },
+                "rms": {
+                  "type": "string"
+                },
+                "elements": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "sigma": {
+                        "type": "string"
+                      },
+                      "units": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "pe_used": {
+                  "type": "string"
+                },
+                "first_obs": {
+                  "type": "string"
+                },
+                "n_del_obs_used": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "equinox": {
+                  "type": "string"
+                },
+                "condition_code": {
+                  "type": "string"
+                },
+                "comment": {
+                  "type": "null"
+                }
+              }
+            },
+            "signature": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                }
+              }
+            },
+            "object": {
+              "type": "object",
+              "properties": {
+                "des": {
+                  "type": "string"
+                },
+                "fullname": {
+                  "type": "string"
                 },
                 "orbit_class": {
                   "type": "object",
                   "properties": {
                     "name": {
-                      "type": "string",
-                      "description": "Orbit class name (e.g., 'Main-belt Asteroid', 'Near-Earth Object, Atira')"
+                      "type": "string"
                     },
                     "code": {
                       "type": "string"
                     }
                   }
+                },
+                "orbit_id": {
+                  "type": "string"
+                },
+                "spkid": {
+                  "type": "string"
+                },
+                "prefix": {
+                  "type": "null"
+                },
+                "pha": {
+                  "type": "boolean"
+                },
+                "shortname": {
+                  "type": "string"
+                },
+                "neo": {
+                  "type": "boolean"
+                },
+                "kind": {
+                  "type": "string"
                 }
               }
             },
             "phys_par": {
               "type": "array",
-              "description": "Physical parameters list",
               "items": {
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string",
-                    "description": "Parameter name (H=absolute magnitude, G=slope, diameter, albedo, rot_per)"
-                  },
-                  "title": {
                     "type": "string"
                   },
                   "value": {
+                    "type": "string"
+                  },
+                  "notes": {
                     "type": [
-                      "string",
-                      "null"
+                      "null",
+                      "string"
                     ]
                   },
                   "sigma": {
                     "type": [
-                      "string",
-                      "null"
+                      "null",
+                      "string"
                     ]
                   },
                   "units": {
                     "type": [
-                      "string",
-                      "null"
+                      "null",
+                      "string"
                     ]
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
                   },
                   "desc": {
                     "type": "string"
-                  },
-                  "ref": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
                   }
                 }
               }
-            },
-            "orbit": {
-              "type": "object",
-              "description": "Orbital elements and solution details"
-            },
-            "signature": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "orbit"
+          ]
         },
         {
           "type": "object",
@@ -239,41 +394,49 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Close approach data results",
           "properties": {
             "signature": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
             },
             "count": {
-              "type": ["string", "integer"],
-              "description": "Number of results returned"
+              "type": [
+                "integer",
+                "number"
+              ]
             },
             "total": {
-              "type": ["string", "integer", "null"],
-              "description": "Total matching events"
+              "type": [
+                "integer",
+                "number"
+              ]
             },
             "fields": {
               "type": "array",
-              "description": "Column names for data rows: des (designation), orbit_id, jd (Julian date), cd (calendar date), dist (distance AU), dist_min, dist_max, v_rel (relative velocity km/s), v_inf, t_sigma_f, h (absolute magnitude)",
               "items": {
                 "type": "string"
               }
             },
             "data": {
               "type": "array",
-              "description": "Close approach records as arrays matching field order",
               "items": {
                 "type": "array",
-                "description": "Row: [designation, orbit_id, Julian_date, calendar_date, distance_AU, dist_min_AU, dist_max_AU, v_rel_km_s, v_inf_km_s, time_sigma, h_magnitude]",
                 "items": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             }
-          }
+          },
+          "required": [
+            "signature"
+          ]
         },
         {
           "type": "object",

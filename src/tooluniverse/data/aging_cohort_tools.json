@@ -34,57 +34,71 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {"type": "string"},
-                  "full_name": {"type": "string"},
-                  "country": {"type": "string"},
-                  "design": {"type": "string"},
-                  "sample_size": {"type": "integer"},
-                  "sample_size_note": {"type": "string"},
-                  "age_range": {"type": "string"},
-                  "start_year": {"type": "integer"},
-                  "waves_or_follow_up": {"type": "string"},
-                  "key_variable_categories": {
-                    "type": "array",
-                    "items": {"type": "string"}
-                  },
-                  "description": {"type": "string"},
-                  "access_method": {"type": "string"},
-                  "access_url": {"type": "string"},
-                  "key_publications": {
-                    "type": "array",
-                    "items": {"type": "string"}
-                  }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "full_name": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "design": {
+                "type": "string"
+              },
+              "sample_size": {
+                "type": "integer"
+              },
+              "sample_size_note": {
+                "type": "string"
+              },
+              "age_range": {
+                "type": "string"
+              },
+              "start_year": {
+                "type": "integer"
+              },
+              "waves_or_follow_up": {
+                "type": "string"
+              },
+              "key_variable_categories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": "string"
+              },
+              "access_method": {
+                "type": "string"
+              },
+              "access_url": {
+                "type": "string"
+              },
+              "key_publications": {
+                "type": "array",
+                "items": {
+                  "type": "string"
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "query": {"type": "string"},
-                "filters_applied": {"type": "object"},
-                "total_matched": {"type": "integer"},
-                "total_in_registry": {"type": "integer"}
-              }
             }
-          },
-          "required": ["status", "data"]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "retryable": {"type": "boolean"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

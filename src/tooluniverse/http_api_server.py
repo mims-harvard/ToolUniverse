@@ -8,7 +8,16 @@ Uses Python introspection to automatically discover methods - no manual updates 
 When you add/modify methods in ToolUniverse, they automatically work over HTTP.
 
 Usage:
-    python -m tooluniverse.http_api_server --host 0.0.0.0 --port 8080
+    # Loopback only (default, no authentication needed):
+    python -m tooluniverse.http_api_server
+
+    # Network exposure requires a Bearer token (see TOOLUNIVERSE_API_TOKEN);
+    # binding to a non-loopback host without it is refused:
+    TOOLUNIVERSE_API_TOKEN=secret TOOLUNIVERSE_HTTP_HOST=0.0.0.0 \
+        python -m tooluniverse.http_api_server
+
+    # Or use the CLI entry point for more options:
+    tooluniverse-http-api --host 0.0.0.0 --port 8080
 """
 
 import asyncio
@@ -26,6 +35,7 @@ from pydantic import BaseModel, Field
 
 from .execute_function import ToolUniverse
 from .logging_config import get_logger
+from .server_security import enforce_bind_security, get_api_token, token_matches
 
 logger = get_logger("HTTPAPIServer")
 
@@ -172,6 +182,35 @@ app = FastAPI(
     description="Auto-generated API exposing all ToolUniverse methods via HTTP",
     version="1.0.0",
 )
+
+# Paths reachable without authentication (liveness checks only).
+_PUBLIC_PATHS = {"/health"}
+
+
+@app.middleware("http")
+async def require_bearer_token(request, call_next):
+    """Require a Bearer token on every request when one is configured.
+
+    This endpoint can execute arbitrary ToolUniverse methods (including the
+    Python code executor), so it must never be reachable unauthenticated over
+    the network. When ``TOOLUNIVERSE_API_TOKEN`` is set, all routes except
+    ``/health`` require ``Authorization: Bearer <token>``. The bind guard in the
+    server entry points ensures a token is set before binding to a non-loopback
+    interface, so an unauthenticated server is only ever reachable from
+    localhost.
+    """
+    token = get_api_token()
+    if token is not None and request.url.path not in _PUBLIC_PATHS:
+        if not token_matches(request.headers.get("authorization", ""), token):
+            return JSONResponse(
+                status_code=401,
+                content={
+                    "success": False,
+                    "error": "Unauthorized: a valid Bearer token is required",
+                    "error_type": "AuthenticationError",
+                },
+            )
+    return await call_next(request)
 
 
 @app.get("/", tags=["Health"])
@@ -374,4 +413,9 @@ async def reset_instance(config: Optional[Dict[str, Any]] = None):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    # Default to loopback. Remote exposure (e.g. 0.0.0.0) requires a token and
+    # is refused otherwise by enforce_bind_security().
+    host = os.getenv("TOOLUNIVERSE_HTTP_HOST", "127.0.0.1")
+    port = int(os.getenv("TOOLUNIVERSE_HTTP_PORT", "8080"))
+    enforce_bind_security(host)
+    uvicorn.run(app, host=host, port=port)

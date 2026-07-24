@@ -62,6 +62,14 @@ class MetabolomicsWorkbenchTool(BaseTool):
                 return self._search_moverz(arguments)
             elif context == "exactmass":
                 return self._search_exactmass(arguments)
+            elif context == "metstat":
+                return self._query_metstat(arguments)
+            elif context == "gene":
+                return self._query_gene(arguments)
+            elif context == "protein":
+                return self._query_protein(arguments)
+            elif context == "gene_protein":
+                return self._query_gene_protein(arguments)
             else:
                 return {"status": "error", "error": f"Unknown context: {context}"}
         except Exception as e:
@@ -114,11 +122,40 @@ class MetabolomicsWorkbenchTool(BaseTool):
 
                 return {"status": "success", "data": data}
             except ValueError:
-                # Return as text if not JSON (though we requested JSON)
+                # Some endpoints (confirmed live: moverz/REFMET exact-mass
+                # search, and study "metabolites" output) ignore the
+                # requested "/json" suffix and return plain tab-separated
+                # text instead. Parse that into structured rows rather
+                # than handing back one giant string with literal \t/\n
+                # characters embedded -- harder for any downstream
+                # consumer to use than the JSON every sibling endpoint
+                # returns.
+                parsed = self._parse_tsv_text(response.text)
+                if parsed is not None:
+                    return {"status": "success", "data": parsed}
                 return {"status": "success", "data": response.text}
 
         except requests.RequestException as e:
             raise self.handle_error(e)
+
+    @staticmethod
+    def _parse_tsv_text(text: str):
+        """Parse a tab-separated response body into a list of row dicts.
+
+        Returns None (caller falls back to the raw string) if the text
+        doesn't actually look like a tab-delimited table.
+        """
+        lines = [ln for ln in text.strip().split("\n") if ln]
+        if len(lines) < 2 or "\t" not in lines[0]:
+            return None
+        headers = lines[0].split("\t")
+        rows = []
+        for line in lines[1:]:
+            values = line.split("\t")
+            rows.append(
+                {h: values[i] if i < len(values) else "" for i, h in enumerate(headers)}
+            )
+        return rows
 
     def _normalize_numeric_fields(self, data: Any) -> Any:
         """Convert numeric string fields to actual numbers."""
@@ -183,3 +220,107 @@ class MetabolomicsWorkbenchTool(BaseTool):
             return {"status": "error", "error": "mass_value parameter is required"}
         # exactmass endpoint is non-functional; use moverz/REFMET with neutral adduct M
         return self._make_request(f"moverz/REFMET/{mass_value}/M/{tolerance}")
+
+    # METSTAT slot order matches the REST API path:
+    # analysis;polarity;chromatography;species;source;disease;kegg_id;refmet_name
+    _METSTAT_SLOTS = (
+        "analysis",
+        "polarity",
+        "chromatography",
+        "species",
+        "source",
+        "disease",
+        "kegg_id",
+        "refmet_name",
+    )
+
+    def _query_metstat(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Discover studies by phenotype via the METSTAT context.
+
+        Builds the 8-slot semicolon-delimited filter path. Every slot is
+        optional; empty slots act as wildcards. At least one filter must be
+        provided so the query is not fully unconstrained.
+        """
+        slots = [str(arguments.get(name) or "").strip() for name in self._METSTAT_SLOTS]
+        if not any(slots):
+            return {
+                "status": "error",
+                "error": (
+                    "At least one filter is required for METSTAT. Provide one or more of: "
+                    + ", ".join(self._METSTAT_SLOTS)
+                ),
+            }
+        # URL-encode each slot value (e.g. spaces) but keep the ';' separators literal.
+        encoded = ";".join(quote(s, safe="") for s in slots)
+        result = self._make_request(f"metstat/{encoded}")
+        return self._rows_to_list(result)
+
+    def _query_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Look up a Metabolomics Workbench gene (MGP) record."""
+        input_item = arguments.get("id_type") or self.tool_config.get("fields", {}).get(
+            "input_item", "gene_symbol"
+        )
+        input_value = arguments.get("input_value", "")
+        if not input_value:
+            return {
+                "status": "error",
+                "error": "input_value parameter is required (gene symbol, gene_id, or mgp_id)",
+            }
+        encoded = quote(str(input_value), safe="")
+        result = self._make_request(f"gene/{input_item}/{encoded}/all")
+        return self._rows_to_list(result)
+
+    def _query_protein(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Look up a Metabolomics Workbench protein (MGP) record."""
+        input_item = arguments.get("id_type") or self.tool_config.get("fields", {}).get(
+            "input_item", "uniprot_id"
+        )
+        input_value = arguments.get("input_value", "")
+        if not input_value:
+            return {
+                "status": "error",
+                "error": "input_value parameter is required (uniprot_id, gene_symbol, mgp_id, or refseq_id)",
+            }
+        encoded = quote(str(input_value), safe="")
+        result = self._make_request(f"protein/{input_item}/{encoded}/all")
+        return self._rows_to_list(result)
+
+    def _query_gene_protein(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Combined gene/protein MGP lookup; routes on the 'entity' argument.
+
+        entity='gene' (default) queries the gene endpoint; entity='protein'
+        queries the protein endpoint. id_type selects the lookup namespace.
+        """
+        entity = str(arguments.get("entity") or "gene").strip().lower()
+        if entity == "protein":
+            return self._query_protein(arguments)
+        if entity == "gene":
+            return self._query_gene(arguments)
+        return {
+            "status": "error",
+            "error": "entity must be 'gene' or 'protein'",
+        }
+
+    @staticmethod
+    def _rows_to_list(result: Dict[str, Any]) -> Dict[str, Any]:
+        """Flatten the Workbench 'Row1','Row2',... dict into a list under data.
+
+        Multi-result Workbench endpoints return {"Row1": {...}, "Row2": {...}}.
+        Single-result endpoints return a bare object. Normalize both to a list
+        so consuming agents get a consistent shape.
+        """
+        if result.get("status") != "success":
+            return result
+        data = result.get("data")
+        if isinstance(data, dict) and any(
+            k.lower().startswith("row") for k in data.keys()
+        ):
+            rows = [v for k, v in data.items() if k.lower().startswith("row")]
+            result = dict(result)
+            result["data"] = rows
+            result["count"] = len(rows)
+        elif isinstance(data, dict):
+            result = dict(result)
+            result["data"] = [data]
+            result["count"] = 1
+        return result

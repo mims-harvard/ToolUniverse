@@ -42,7 +42,7 @@
           "maximum": 100
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -87,7 +87,7 @@
           "default": false
         }
       },
-      "required": ["operation", "file_accession"]
+      "required": ["file_accession"]
     },
     "return_schema": {
       "type": "object",
@@ -133,7 +133,7 @@
           "default": false
         }
       },
-      "required": ["operation", "experiment_accession"]
+      "required": ["experiment_accession"]
     },
     "return_schema": {
       "type": "object",
@@ -176,7 +176,7 @@
           "description": "4DN file accession (e.g., '4DNFIIA7E3HL'). Obtain by searching with FourDN_search_data (item_type='File')."
         }
       },
-      "required": ["operation", "file_accession"]
+      "required": ["file_accession"]
     },
     "return_schema": {
       "type": "object",

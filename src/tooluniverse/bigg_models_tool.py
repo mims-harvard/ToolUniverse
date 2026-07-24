@@ -14,6 +14,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 BIGG_BASE_URL = "http://bigg.ucsd.edu/api/v2"
+BIGG_STATIC_URL = "http://bigg.ucsd.edu/static/models"
 
 
 @register_tool("BiGGModelsTool")
@@ -60,6 +61,7 @@ class BiGGModelsTool(BaseTool):
             "get_gene": self._get_gene,
             "search": self._search,
             "get_database_version": self._get_database_version,
+            "download_model": self._download_model,
         }
 
         handler = operation_handlers.get(operation)
@@ -341,6 +343,101 @@ class BiGGModelsTool(BaseTool):
                     "detail": response.text[:500],
                 },
             }
+
+    def _download_model(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Download a full FBA-ready COBRA model from BiGG.
+
+        Retrieves the complete constraint-based model (reactions with flux
+        bounds + objective coefficients, metabolites with stoichiometry, genes,
+        compartments) so the result can be loaded directly into COBRApy / used
+        for flux balance analysis. The default JSON format returns the parsed
+        model dict; the SBML/XML format returns the raw model text.
+        """
+        model_id = arguments.get("model_id")
+        if not model_id:
+            return {"status": "error", "data": {"error": "model_id is required"}}
+
+        fmt = str(arguments.get("format", "json")).lower()
+        if fmt in ("sbml", "xml"):
+            url = f"{BIGG_STATIC_URL}/{model_id}.xml"
+        elif fmt == "json":
+            url = f"{BIGG_STATIC_URL}/{model_id}.json"
+        else:
+            return {
+                "status": "error",
+                "data": {
+                    "error": f"Unsupported format '{fmt}'. Use 'json' (COBRA JSON) or 'sbml'/'xml' (SBML)."
+                },
+            }
+
+        response = requests.get(url, timeout=30)
+
+        if response.status_code == 404:
+            return {
+                "status": "error",
+                "data": {
+                    "error": f"Model {model_id} not found at {url}. "
+                    "Verify the BiGG model ID (e.g., 'e_coli_core', 'iJO1366', 'iMM904')."
+                },
+            }
+        if response.status_code != 200:
+            return {
+                "status": "error",
+                "data": {
+                    "error": f"Download failed with status {response.status_code}",
+                    "detail": response.text[:500],
+                },
+            }
+
+        if fmt in ("sbml", "xml"):
+            sbml_text = response.text
+            return {
+                "status": "success",
+                "data": {
+                    "model_id": model_id,
+                    "format": "sbml",
+                    "sbml": sbml_text,
+                    "size_bytes": len(response.content),
+                    "source_url": url,
+                },
+            }
+
+        try:
+            model = response.json()
+        except ValueError:
+            return {
+                "status": "error",
+                "data": {
+                    "error": f"Model {model_id} did not return valid JSON",
+                    "detail": response.text[:500],
+                },
+            }
+
+        reactions = model.get("reactions", [])
+        metabolites = model.get("metabolites", [])
+        genes = model.get("genes", [])
+        objective_reactions = [
+            r.get("id")
+            for r in reactions
+            if isinstance(r, dict) and r.get("objective_coefficient")
+        ]
+
+        return {
+            "status": "success",
+            "data": {
+                "model_id": model.get("id", model_id),
+                "format": "json",
+                "model": model,
+                "reaction_count": len(reactions),
+                "metabolite_count": len(metabolites),
+                "gene_count": len(genes),
+                "compartments": model.get("compartments", {}),
+                "objective_reactions": objective_reactions,
+                "version": model.get("version"),
+                "size_bytes": len(response.content),
+                "source_url": url,
+            },
+        }
 
     def _get_database_version(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get BiGG database version information."""

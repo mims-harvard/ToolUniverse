@@ -5,8 +5,13 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'pyproject.toml'
+    # NOTE: deliberately no `paths:` filter. GitHub Actions has occasionally
+    # missed firing this workflow on large squash-merges that did modify
+    # pyproject.toml (observed for PR #161 merge: 727 files changed, the
+    # path filter did not trigger publish-pypi.yml even though pyproject.toml
+    # was in the diff). The version-check step below is cheap (~10s) and
+    # short-circuits on every push that doesn't actually bump the version,
+    # so always-fire is the safer default.
 
 jobs:
   check-version-change:
@@ -20,38 +25,66 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Check if version changed
+      - name: Check if version is newer than what's on PyPI
         id: check_version
         run: |
-          # Get current version using Python (portable, no grep -P dependency)
+          # Compare current pyproject.toml version against PyPI's published latest.
+          #
+          # This used to compare HEAD vs HEAD~1, which had two failure modes:
+          #   1. Large squash-merges sometimes don't fire the path filter on
+          #      pyproject.toml — the workflow never runs, and the version
+          #      bump is silently missed. There is no recovery on the next
+          #      push because HEAD~1 will then equal HEAD.
+          #   2. workflow_dispatch reruns hit the same gate (HEAD~1==HEAD),
+          #      so manual recovery was impossible without surgery.
+          #
+          # Comparing against PyPI directly makes the gate self-healing: any
+          # push to main with a pyproject version newer than PyPI's latest
+          # will publish, regardless of how it got into this state.
+
           CURRENT_VERSION=$(python3 -c "
           import re
           with open('pyproject.toml') as f:
               m = re.search(r'version\s*=\s*\"([^\"]+)\"', f.read())
               print(m.group(1) if m else '')
           ")
-          echo "Current version: $CURRENT_VERSION"
+          echo "Current pyproject.toml version: $CURRENT_VERSION"
 
-          # Get previous commit version
-          git checkout HEAD~1 -- pyproject.toml 2>/dev/null || true
-          PREVIOUS_VERSION=$(python3 -c "
-          import re
-          with open('pyproject.toml') as f:
-              m = re.search(r'version\s*=\s*\"([^\"]+)\"', f.read())
-              print(m.group(1) if m else 'none')
-          " 2>/dev/null || echo "none")
-          echo "Previous version: $PREVIOUS_VERSION"
+          # Query PyPI for the published latest. Tolerate transient outages
+          # by treating any failure as "publish allowed" — the publish step
+          # itself will reject duplicate uploads via twine, so a false
+          # positive here just makes that step fail loudly instead of
+          # silently skipping a real release.
+          PYPI_VERSION=$(curl -fsSL "https://pypi.org/pypi/tooluniverse/json" 2>/dev/null \
+              | python3 -c "import json, sys; print(json.load(sys.stdin)['info']['version'])" 2>/dev/null \
+              || echo "")
+          echo "PyPI latest version: ${PYPI_VERSION:-<unavailable>}"
 
-          # Restore current version
-          git checkout HEAD -- pyproject.toml
+          # Use packaging.Version for PEP 440-aware comparison (handles
+          # 1.10.0 > 1.9.0, pre-releases, etc.). packaging ships with pip.
+          python3 -m pip install --quiet packaging || true
 
-          # Check if version has changed
-          if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
-            echo "Version changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
+          NEWER=$(python3 - <<PYEOF
+          from packaging.version import Version, InvalidVersion
+          cur, pypi = "$CURRENT_VERSION", "$PYPI_VERSION"
+          if not pypi:
+              # PyPI unavailable: allow publish, let twine arbitrate.
+              print("true")
+          else:
+              try:
+                  print("true" if Version(cur) > Version(pypi) else "false")
+              except InvalidVersion:
+                  # Unparseable version in pyproject — fail safely (don't publish).
+                  print("false")
+          PYEOF
+          )
+
+          if [ "$NEWER" = "true" ]; then
+            echo "Version $CURRENT_VERSION > PyPI latest ($PYPI_VERSION) — will publish"
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           else
-            echo "Version not changed"
+            echo "Version $CURRENT_VERSION not newer than PyPI ($PYPI_VERSION) — skipping publish"
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 

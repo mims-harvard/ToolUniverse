@@ -7,6 +7,15 @@
     "required_api_keys": [
       "TXAGENT_MCP_SERVER_HOST"
     ],
+    "api_key_info": {
+      "TXAGENT_MCP_SERVER_HOST": {
+        "domain": "Models & Infrastructure",
+        "type": "endpoint",
+        "register_url": "https://github.com/mims-harvard/TxAgent",
+        "purpose": "URL of a self-hosted TxAgent MCP server.",
+        "without": "Leave blank unless you run your own TxAgent."
+      }
+    },
     "test_examples": [
       {}
     ],

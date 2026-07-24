@@ -1,0 +1,75 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_chrombpnet_predict",
+    "description": "Predict chromatin accessibility (ATAC/DNase) from a DNA sequence with a trained ChromBPNet model (Pampari 2025) — the bias-corrected, base-resolution successor to DeepSEA/Basset. The sequence is center-cropped/N-padded to 2,114 bp; returns predicted log total counts (coverage magnitude), total counts, and the base-resolution accessibility profile (1,000 bp). Requires a server-side cell-type-specific model_path (.h5).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "model_path": {"type": "string", "description": "Server-accessible path to a trained ChromBPNet Keras model (.h5), cell-type-specific."},
+        "sequence": {"type": "string", "description": "DNA sequence (A/C/G/T/N); cropped/padded to 2,114 bp around its center."},
+        "return_profile": {"type": "boolean", "description": "Include the full 1,000-bp profile array in the response (default false; summary stats always returned)."}
+      },
+      "required": ["model_path", "sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "log_total_counts": {"type": "number", "description": "Predicted natural-log total accessibility counts."},
+        "total_counts": {"type": "number"},
+        "profile_length": {"type": "integer"},
+        "peak_offset": {"type": "integer", "description": "bp offset of the peak accessibility position from the profile center."},
+        "profile": {"type": "array", "items": {"type": "number"}, "description": "1,000-bp base-resolution accessibility probability profile (only if return_profile=true)."},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "ChrombpnetPredictTool",
+      "url": "https://github.com/kundajelab/chrombpnet",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/chrombpnet",
+      "mcp_tool_name": "run_chrombpnet_predict"
+    },
+    "test_examples": [
+      {"model_path": "/models/chrombpnet_GM12878.h5", "sequence": "ACGTACGTACGTACGTACGT", "return_profile": false}
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "run_chrombpnet_variant_effect",
+    "description": "Score a non-coding regulatory variant with ChromBPNet (Pampari 2025): predict accessibility for the reference and alternate sequences (each 2,114 bp, variant at center) and return the count log2 fold-change (alt vs ref accessibility magnitude) and the profile Jensen-Shannon divergence (change in base-resolution accessibility shape) — the canonical ChromBPNet variant-effect scores for interpreting non-coding GWAS/eQTL variants. Requires a server-side cell-type-specific model_path (.h5).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "model_path": {"type": "string", "description": "Server-accessible path to a trained ChromBPNet Keras model (.h5), cell-type-specific."},
+        "ref_sequence": {"type": "string", "description": "Reference DNA sequence centered on the variant (cropped/padded to 2,114 bp)."},
+        "alt_sequence": {"type": "string", "description": "Alternate DNA sequence (same length/centering as ref)."}
+      },
+      "required": ["model_path", "ref_sequence", "alt_sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "ref_log_total_counts": {"type": "number"},
+        "alt_log_total_counts": {"type": "number"},
+        "count_log2fc": {"type": "number", "description": "log2(alt/ref) of predicted total accessibility counts (the magnitude effect)."},
+        "profile_jsd": {"type": "number", "description": "Jensen-Shannon divergence (base-2) between ref and alt accessibility profiles (the shape effect)."},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "ChrombpnetVariantEffectTool",
+      "url": "https://github.com/kundajelab/chrombpnet",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/chrombpnet",
+      "mcp_tool_name": "run_chrombpnet_variant_effect"
+    },
+    "test_examples": [
+      {"model_path": "/models/chrombpnet_GM12878.h5", "ref_sequence": "ACGTACGTACGTACGTACGT", "alt_sequence": "ACGTACGTACGAACGTACGT"}
+    ]
+  }
+]

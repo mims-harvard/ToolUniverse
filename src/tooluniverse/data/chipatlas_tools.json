@@ -249,5 +249,229 @@
         "genome": "hg38"
       }
     ]
+  },
+  {
+    "name": "ChIPAtlas_get_colocalization",
+    "type": "ChIPAtlasTool",
+    "description": "ChIP-Atlas Colocalization: for a given antigen/transcription factor in a specific tissue class, return the other proteins whose ChIP-seq peaks co-occur (co-bind) genome-wide, ranked by overlap score. Reveals protein complexes and co-regulators (e.g. CTCF in Blood co-binds the cohesin subunits RAD21, SMC1A, SMC3, STAG1 and ZNF143). Requires both an antigen and a cell-type/tissue class because the matrix is precomputed per antigen-per-tissue. To discover which tissue classes exist for an antigen, consult the index at https://chip-atlas.org/data/colo_analysis.json?genome=<genome>. Use for: identifying co-binding partners, inferring TF complexes, finding co-regulators of a factor in a tissue.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_colocalization"],
+          "default": "get_colocalization"
+        },
+        "antigen": {
+          "type": "string",
+          "description": "Antigen / transcription factor symbol (e.g. 'CTCF', 'AFF4')."
+        },
+        "cell_type_class": {
+          "type": "string",
+          "description": "Tissue / cell-type class for which the colocalization matrix was computed (e.g. 'Blood', 'Breast', 'Liver', 'Digestive tract'). Spaces are allowed."
+        },
+        "genome": {
+          "type": "string",
+          "description": "Genome assembly.",
+          "enum": ["hg38", "hg19", "mm10", "mm9", "rn6", "dm6", "dm3", "ce11", "ce10", "sacCer3"],
+          "default": "hg38"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of ranked partner proteins to return.",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000
+        }
+      },
+      "required": ["antigen", "cell_type_class"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["antigen", "cell_type_class", "partners"],
+          "properties": {
+            "antigen": {"type": "string"},
+            "cell_type_class": {"type": "string"},
+            "genome": {"type": "string"},
+            "partner_count": {"type": "integer"},
+            "partners": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "protein": {"type": "string"},
+                  "best_overlap_score": {"type": "number"},
+                  "best_experiment": {"type": "string"},
+                  "best_cell_subclass": {"type": "string"}
+                }
+              }
+            },
+            "url": {"type": "string"},
+            "note": {"type": "string"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {"error": {"type": "string"}, "url": {"type": "string"}}
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_colocalization",
+        "antigen": "CTCF",
+        "cell_type_class": "Blood",
+        "genome": "hg38",
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "name": "ChIPAtlas_get_target_genes",
+    "type": "ChIPAtlasTool",
+    "description": "ChIP-Atlas Target Genes: for a transcription factor, return its ranked list of potential target genes - genes whose TSS-proximal region is bound by the TF - scored as the average binding strength across all ChIP-seq experiments for that TF. Choose the TSS-distance window with the 'distance' parameter (1, 5, or 10 kb). Use for: predicting which genes a TF regulates, building TF-target gene sets, prioritizing direct targets. To check which TFs have target-gene data for a genome, see https://chip-atlas.org/data/target_genes_analysis.json. Note: a few antigens (including CTCF on hg38) are served with a header but no scored rows; in that case the tool returns gene_count 0 with an explanatory note - pick another factor (e.g. 'GATA1').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_target_genes"],
+          "default": "get_target_genes"
+        },
+        "antigen": {
+          "type": "string",
+          "description": "Transcription factor / antigen symbol (e.g. 'GATA1', 'CTCF')."
+        },
+        "genome": {
+          "type": "string",
+          "description": "Genome assembly.",
+          "enum": ["hg38", "hg19", "mm10", "mm9", "rn6", "dm6", "dm3", "ce11", "ce10", "sacCer3"],
+          "default": "hg38"
+        },
+        "distance": {
+          "type": "string",
+          "description": "TSS-distance window in kb defining 'bound near a gene'. '1' (±1kb, strict promoter), '5' (±5kb, default), '10' (±10kb, includes nearby enhancers).",
+          "enum": ["1", "5", "10"],
+          "default": "5"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of top-scoring target genes to return.",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 5000
+        }
+      },
+      "required": ["antigen"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["antigen", "target_genes"],
+          "properties": {
+            "antigen": {"type": "string"},
+            "genome": {"type": "string"},
+            "distance_kb": {"type": "string"},
+            "gene_count": {"type": "integer"},
+            "target_genes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene": {"type": "string"},
+                  "average_binding_score": {"type": "number"}
+                }
+              }
+            },
+            "url": {"type": "string"},
+            "note": {"type": "string"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {"error": {"type": "string"}, "url": {"type": "string"}}
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_target_genes",
+        "antigen": "GATA1",
+        "genome": "hg38",
+        "distance": "5",
+        "limit": 25
+      }
+    ]
+  },
+  {
+    "name": "ChIPAtlas_get_experiment_metadata",
+    "type": "ChIPAtlasTool",
+    "description": "ChIP-Atlas single-experiment structured metadata: given one experiment accession (SRX/DRX/ERX), return its antigen class and antigen, cell-type class and cell type, title, and the full parsed sample attributes (antibody, source, cell line, etc.). One accession can map to multiple genome assemblies; filter with the optional 'genome' parameter. Use for: resolving what an SRX experiment actually measured, looking up the antibody/cell line behind a peak set, validating experiment IDs returned by other ChIP-Atlas tools.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_experiment_metadata"],
+          "default": "get_experiment_metadata"
+        },
+        "experiment_id": {
+          "type": "string",
+          "description": "Experiment accession in SRX/DRX/ERX format (e.g. 'SRX080331')."
+        },
+        "genome": {
+          "type": "string",
+          "description": "Optional: restrict to one genome assembly (an experiment can have records for several, e.g. hg38 and hg19).",
+          "enum": ["hg38", "hg19", "mm10", "mm9", "rn6", "dm6", "dm3", "ce11", "ce10", "sacCer3"]
+        }
+      },
+      "required": ["experiment_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["experiment_id", "experiments"],
+          "properties": {
+            "experiment_id": {"type": "string"},
+            "count": {"type": "integer"},
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "expid": {"type": "string"},
+                  "genome": {"type": "string"},
+                  "antigen_class": {"type": ["string", "null"]},
+                  "antigen": {"type": ["string", "null"]},
+                  "cell_type_class": {"type": ["string", "null"]},
+                  "cell_type": {"type": ["string", "null"]},
+                  "title": {"type": ["string", "null"]},
+                  "attributes": {"type": "object", "additionalProperties": {"type": "string"}}
+                }
+              }
+            },
+            "url": {"type": "string"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {"error": {"type": "string"}, "url": {"type": "string"}}
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_experiment_metadata",
+        "experiment_id": "SRX080331",
+        "genome": "hg38"
+      }
+    ]
   }
 ]

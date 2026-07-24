@@ -34,7 +34,7 @@ Choose your platform
 
       **Claude Code**
       ^^^
-      Terminal-based AI coding agent
+      Terminal AI coding agent — one-step plugin install
 
    .. grid-item-card::
       :link: cursor

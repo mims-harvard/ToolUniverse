@@ -85,6 +85,8 @@ class OmniPathTool(BaseTool):
             return self._get_complexes(arguments)
         elif self.endpoint == "annotations":
             return self._get_annotations(arguments)
+        elif self.endpoint == "annotation_resource_geneset":
+            return self._get_annotation_resource_geneset(arguments)
         elif self.endpoint == "enz_sub":
             return self._get_enzyme_substrate(arguments)
         elif self.endpoint == "tf_target":
@@ -398,6 +400,99 @@ class OmniPathTool(BaseTool):
                 "source": "OmniPath Annotations (omnipathdb.org)",
                 "databases_queried": databases,
                 "total_annotations": len(annotations),
+            },
+        }
+
+    def _get_annotation_resource_geneset(
+        self, arguments: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Retrieve the full annotated gene/protein SET for an OmniPath annotation
+        resource, with NO protein filter (resource-wide reverse lookup).
+
+        Calls /annotations?resources=<X> with no 'proteins' argument, returning the
+        entire membership of any OmniPath annotation resource (80+ available), e.g.
+        all cell-surface proteins (Surfaceome), all kinases (kinase.com), all
+        transcription factors (TFcensus), all phosphatases (Phosphatome), or all
+        CancerGeneCensus driver genes. Records are returned in long format (one
+        label/value pair per row); this method also groups them per protein.
+        """
+        resource = arguments.get("resource") or arguments.get("resources")
+        if not resource:
+            return {
+                "status": "error",
+                "error": (
+                    "'resource' is required: the OmniPath annotation resource whose "
+                    "full gene/protein set to retrieve (e.g., 'CancerGeneCensus', "
+                    "'Surfaceome', 'TFcensus', 'kinase.com', 'Phosphatome')."
+                ),
+            }
+
+        params = {"resources": resource}
+        if arguments.get("entity_types"):
+            params["entity_types"] = arguments["entity_types"]
+
+        data = self._make_request("annotations/", params)
+
+        if not isinstance(data, list):
+            return {
+                "status": "error",
+                "error": f"Unexpected response format from OmniPath: {type(data)}",
+            }
+
+        # Long-format rows -> group label/value pairs per (uniprot, genesymbol)
+        grouped: Dict[Any, Dict[str, Any]] = {}
+        order = []
+        for item in data:
+            uniprot = item.get("uniprot")
+            genesymbol = item.get("genesymbol")
+            key = (uniprot, genesymbol)
+            if key not in grouped:
+                grouped[key] = {
+                    "uniprot": uniprot,
+                    "genesymbol": genesymbol,
+                    "entity_type": item.get("entity_type"),
+                    "annotations": {},
+                }
+                order.append(key)
+            label = item.get("label")
+            value = item.get("value")
+            if label is not None:
+                grouped[key]["annotations"][label] = value
+
+        members = [grouped[k] for k in order]
+
+        if not members:
+            return {
+                "status": "success",
+                "data": [],
+                "metadata": {
+                    "source": "OmniPath Annotations (omnipathdb.org)",
+                    "resource": resource,
+                    "total_members": 0,
+                    "total_records": 0,
+                    "note": (
+                        f"No annotations returned for resource '{resource}'. The "
+                        "resource name may be misspelled or unavailable. Verify the "
+                        "exact name via https://omnipathdb.org/queries/annotations "
+                        "(examples: CancerGeneCensus, Surfaceome, TFcensus, "
+                        "kinase.com, Phosphatome, TFcensus)."
+                    ),
+                },
+            }
+
+        return {
+            "status": "success",
+            "data": members,
+            "metadata": {
+                "source": "OmniPath Annotations (omnipathdb.org)",
+                "resource": resource,
+                "total_members": len(members),
+                "total_records": len(data),
+                "description": (
+                    "Full annotated gene/protein set (resource-wide membership) for "
+                    f"the OmniPath annotation resource '{resource}'. Each member lists "
+                    "its label/value annotations from that resource."
+                ),
             },
         }
 

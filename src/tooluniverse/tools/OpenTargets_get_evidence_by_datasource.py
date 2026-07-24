@@ -26,7 +26,7 @@ def OpenTargets_get_evidence_by_datasource(
     Parameters
     ----------
     efoId : str
-        Disease EFO ID (e.g., 'EFO_0000384' for Crohn's disease). Alternative to dise...
+        Disease EFO ID (e.g., 'MONDO_0005011' for Crohn disease). Alternative to dise...
     ensemblId : str
         Target Ensembl gene ID (e.g., 'ENSG00000141510' for TP53). Alternative to gen...
     gene_symbol : str
@@ -34,7 +34,7 @@ def OpenTargets_get_evidence_by_datasource(
     disease_name : str
         Disease or phenotype name (e.g., 'Crohn disease'). Auto-resolved to efoId.
     datasourceIds : list[str]
-        List of datasource IDs to filter evidence. Examples: ['chembl', 'europepmc'],...
+        List of datasource IDs to filter evidence. Examples: ['clinical_precedence', 'europepmc'],...
     size : int
         Maximum evidence rows to return (default: 50)
     stream_callback : Callable, optional

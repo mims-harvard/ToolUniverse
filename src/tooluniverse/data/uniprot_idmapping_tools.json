@@ -53,57 +53,42 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "from_db": {
-                  "type": "string"
-                },
-                "to_db": {
-                  "type": "string"
-                },
-                "result_count": {
-                  "type": "integer"
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "from": {
-                        "type": "string"
-                      },
-                      "to": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "failed_ids": {
-                  "type": "array",
-                  "items": {
+            "from_db": {
+              "type": "string"
+            },
+            "to_db": {
+              "type": "string"
+            },
+            "result_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
                     "type": "string"
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "job_id": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "truncated": {
+              "type": "boolean",
+              "description": "True if more than 500 mapped results exist and were cut off from the results array (result_count still reflects the true total)."
+            },
+            "failed_ids": {
+              "type": "array"
             }
           },
           "required": [
-            "data"
+            "from_db"
           ]
         },
         {
@@ -152,45 +137,36 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "query_ids": {
-                  "type": "string"
-                },
-                "result_count": {
-                  "type": "integer"
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "from": {
-                        "type": "string"
-                      },
-                      "to": {
-                        "type": "string"
-                      }
-                    }
+            "query_ids": {
+              "type": "string"
+            },
+            "result_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "truncated": {
+              "type": "boolean",
+              "description": "True if more than 500 mapped results exist and were cut off from the results array (result_count still reflects the true total)."
             }
           },
           "required": [
-            "data"
+            "query_ids"
           ]
         },
         {
@@ -254,48 +230,42 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_names": {
-                  "type": "string"
-                },
-                "species_taxid": {
-                  "type": "integer"
-                },
-                "result_count": {
-                  "type": "integer"
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "from": {
-                        "type": "string"
-                      },
-                      "to": {
-                        "type": "string"
-                      }
-                    }
+            "gene_names": {
+              "type": "string"
+            },
+            "species_taxid": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "result_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "truncated": {
+              "type": "boolean",
+              "description": "True if more than 500 mapped results exist and were cut off from the results array (result_count still reflects the true total)."
             }
           },
           "required": [
-            "data"
+            "gene_names"
           ]
         },
         {
@@ -332,56 +302,43 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "group_count": {
-                  "type": "integer"
-                },
-                "groups": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "group_name": {
-                        "type": "string"
-                      },
-                      "databases": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "string"
-                            },
-                            "display_name": {
-                              "type": "string"
-                            },
-                            "from_supported": {
-                              "type": "boolean"
-                            }
-                          }
+            "group_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "groups": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "group_name": {
+                    "type": "string"
+                  },
+                  "databases": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "display_name": {
+                          "type": "string"
+                        },
+                        "from_supported": {
+                          "type": "boolean"
                         }
                       }
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
           },
           "required": [
-            "data"
+            "group_count"
           ]
         },
         {

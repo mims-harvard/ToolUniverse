@@ -1,0 +1,37 @@
+{
+  "skill_name": "tooluniverse-phewas",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have the SNP rs7903146 near TCF7L2. What phenotypes is it associated with, and does the association replicate across European and East Asian populations?",
+      "expected_output": "A cross-biobank PheWAS report identifying Type 2 diabetes as the top, replicated association across UKB-TOPMed (European), BioBank Japan (Japanese), and TPMI (Taiwanese) with concordant positive effect direction, noting the weaker TPMI p-value reflects lower case count rather than weaker biology.",
+      "assertions": [
+        {"text": "Calls UKBTOPMed_phewas_by_variant and at least one East-Asian biobank tool (BioBankJapan_phewas_by_variant or TPMI_phewas_by_variant) for rs7903146", "passed": null, "evidence": ""},
+        {"text": "Identifies Type 2 diabetes / diabetes mellitus as the top association", "passed": null, "evidence": ""},
+        {"text": "Concludes the association replicates across ancestries (concordant direction), not from memory but from the returned p-values", "passed": null, "evidence": ""}
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "What happens phenotypically when you knock out PCSK9? I'm interested in rare loss-of-function burden, not common variants.",
+      "expected_output": "A gene-burden PheWAS via Genebass_gene_burden_phewas(gene='PCSK9', burden_set='pLoF') reporting lipid/LDL-cholesterol phenotypes as the strongest burden associations, correctly using the gene-level rare-variant tool rather than a single-variant lookup.",
+      "assertions": [
+        {"text": "Calls Genebass_gene_burden_phewas with gene PCSK9 and a loss-of-function burden_set (pLoF)", "passed": null, "evidence": ""},
+        {"text": "Reports LDL / cholesterol / lipid phenotypes as top burden associations", "passed": null, "evidence": ""},
+        {"text": "Does NOT treat this as a single-variant lookup (recognizes the rare-burden framing)", "passed": null, "evidence": ""}
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Is the association of rs671 (ALDH2) with alcohol-related traits something seen only in East Asians, or does it show up in Europeans too?",
+      "expected_output": "A cross-biobank comparison noting rs671 is common in East Asian biobanks (BBJ/TPMI) but rare/monomorphic in Europeans, so the apparent East-Asian specificity is driven largely by allele frequency/power — the skill should check af/num_cases before concluding biology.",
+      "assertions": [
+        {"text": "Queries both an East-Asian biobank (BBJ or TPMI) and UKB-TOPMed for rs671", "passed": null, "evidence": ""},
+        {"text": "Invokes the allele-frequency / power caveat (checks af or notes the variant is rare in Europeans) rather than declaring pure biological specificity", "passed": null, "evidence": ""}
+      ],
+      "files": []
+    }
+  ]
+}

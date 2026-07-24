@@ -57,9 +57,14 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        }
+      ]
     }
   },
   {
@@ -122,8 +127,35 @@
     ],
     "return_schema": {
       "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "original_length": {
+          "type": [
+            "integer",
+            "number"
+          ]
+        },
+        "summary_length": {
+          "type": [
+            "integer",
+            "number"
+          ]
+        },
+        "chunks_processed": {
+          "type": [
+            "integer",
+            "number"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "tool_name": {
+          "type": "string"
+        }
+      }
     }
   }
 ]

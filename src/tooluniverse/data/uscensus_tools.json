@@ -1,7 +1,7 @@
 [
   {
     "name": "USCensus_get_population",
-    "description": "Get population and demographic data from the US Census Bureau API. Access decennial census and American Community Survey (ACS) data at national, state, county, and city levels. No authentication key required for basic usage. Variables include total population, housing units, age groups, and race/ethnicity breakdowns. Useful for demographic research, urban planning, and social science analysis.",
+    "description": "Get population and demographic data from the US Census Bureau API. Access decennial census and American Community Survey (ACS) data at national, state, county, and city levels. No authentication key required for basic usage. Variables include total population, housing units, age groups, and race/ethnicity breakdowns. Useful for demographic research, urban planning, and social science analysis. Note: requires CENSUS_API_KEY env (free, register at https://api.census.gov/data/key_signup.html).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -87,6 +87,18 @@
           ]
         }
       ]
+    },
+    "required_api_keys": [
+      "CENSUS_API_KEY"
+    ],
+    "api_key_info": {
+      "CENSUS_API_KEY": {
+        "domain": "Clinical & Safety",
+        "type": "secret",
+        "register_url": "https://api.census.gov/data/key_signup.html",
+        "purpose": "Pull population, demographic, and economic data from the US Census Bureau (decennial + ACS).",
+        "without": "Census endpoints return an HTML rate-limit page that breaks the tool's JSON parser. Free to register."
+      }
     }
   }
 ]

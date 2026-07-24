@@ -134,11 +134,20 @@ def _count_aa(seq: str) -> Dict[str, int]:
 
 
 def _calc_mw(seq: str) -> float:
-    """Calculate molecular weight using average isotopic masses."""
+    """Calculate molecular weight using average isotopic masses.
+
+    _MW_AVG holds free-amino-acid masses; each peptide bond formed loses
+    one water, so an n-residue chain loses (n-1) waters relative to the
+    sum of free residues. Starting the accumulator at _WATER_MW and then
+    subtracting it once per residue implements exactly that (the loop
+    subtracts n waters, the initial term adds one back = -(n-1) net).
+    A stray trailing `total += _WATER_MW` here previously added a second,
+    unwanted water, overshooting every result by 18.02 Da regardless of
+    sequence length (confirmed live).
+    """
     total = _WATER_MW
     for ch in seq.upper():
         total += _MW_AVG.get(ch, 0) - _WATER_MW
-    total += _WATER_MW
     return round(total, 2)
 
 

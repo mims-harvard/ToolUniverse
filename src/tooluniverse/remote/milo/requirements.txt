@@ -1,0 +1,4 @@
+pertpy>=0.9
+pydeseq2
+scanpy>=1.10
+anndata

@@ -78,7 +78,7 @@
   },
   {
     "name": "OpenTargets_get_disease_ids_by_efoId",
-    "description": "Given an EFO ID, retrieve all cross-referenced external disease IDs including MONDO, OMIM, MeSH, MedDRA, NCIt, ICD10, Orphanet, UMLS.",
+    "description": "Given a disease ID (e.g. a MONDO ID), retrieve all cross-referenced external disease IDs including EFO, OMIM, MeSH, MedDRA, NCIt, ICD10, Orphanet, UMLS.",
     "label": [
       "Disease",
       "EFO",
@@ -92,7 +92,7 @@
       "properties": {
         "efoId": {
           "type": "string",
-          "description": "The EFO ID of the disease or phenotype."
+          "description": "The disease ID (e.g. a MONDO ID such as MONDO_0008383). Legacy EFO disease IDs no longer resolve in OpenTargets."
         }
       },
       "required": [
@@ -103,7 +103,7 @@
     "type": "OpenTarget",
     "test_examples": [
       {
-        "efoId": "EFO_0000685"
+        "efoId": "MONDO_0008383"
       }
     ],
     "return_schema": {
@@ -150,7 +150,7 @@
       "properties": {
         "inputId": {
           "type": "string",
-          "description": "Any known disease ID (e.g. OMIM:604302, UMLS:C0003873, ICD10:M05, EFO_0000685, etc.)"
+          "description": "Any known disease ID (e.g. OMIM:604302, UMLS:C0003873, ICD10:M05, MONDO_0008383, etc.)"
         }
       },
       "required": [

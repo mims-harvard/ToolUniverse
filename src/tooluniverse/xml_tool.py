@@ -156,6 +156,22 @@ class XMLDatasetTool(BaseTool):
             ]
         return self._record_cache
 
+    def _declared_limit_default(self, fallback):
+        # _search and _filter each back multiple registered tool names with
+        # different declared `limit` defaults (e.g. mesh_* tools default 50,
+        # drugbank_*_search-style tools default 10, sharing _search; only
+        # drugbank_filter_drugs_by_name uses _filter, default 10 vs the
+        # hardcoded 100). Read the per-instance declared default instead of
+        # hardcoding one limit for every tool routed through the same
+        # handler, or tools with a smaller declared default silently return
+        # more rows than documented whenever `limit` is omitted.
+        return (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("limit", {})
+            .get("default", fallback)
+        )
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Main entry point for the tool."""
         if not self.records:
@@ -184,7 +200,9 @@ class XMLDatasetTool(BaseTool):
         # Parse search parameters with sensible defaults
         case_sensitive = arguments.get("case_sensitive", False)
         exact_match = arguments.get("exact_match", False)
-        limit = min(arguments.get("limit", 50), 1000)  # Cap at 1000
+        limit = min(
+            arguments.get("limit", self._declared_limit_default(50)), 1000
+        )  # Cap at 1000
 
         search_query = query if case_sensitive else query.lower()
         results = []
@@ -271,7 +289,9 @@ class XMLDatasetTool(BaseTool):
         field = self.filter_field
         condition = arguments.get("condition")
         value = arguments.get("value", "")
-        limit = min(arguments.get("limit", 100), 1000)  # Cap at 1000
+        limit = min(
+            arguments.get("limit", self._declared_limit_default(100)), 1000
+        )  # Cap at 1000
 
         if not field or not condition:
             return {

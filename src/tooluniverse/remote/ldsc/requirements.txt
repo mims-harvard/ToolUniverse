@@ -1,0 +1,5 @@
+numpy
+scipy
+pandas
+bitarray
+# plus a clone of https://github.com/CBIIT/ldsc (set LDSC_DIR) and LD-score panels (set LDSC_REF_DIR)

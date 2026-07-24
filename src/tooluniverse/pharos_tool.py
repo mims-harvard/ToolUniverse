@@ -55,6 +55,12 @@ class PharosTool(BaseTool):
             return self._get_tdl_summary(arguments)
         elif operation == "get_disease_targets":
             return self._get_disease_targets(arguments)
+        elif operation == "get_target_ligands":
+            return self._get_target_ligands(arguments)
+        elif operation == "get_ligand_targets":
+            return self._get_ligand_targets(arguments)
+        elif operation == "get_target_expression":
+            return self._get_target_expression(arguments)
         else:
             return {"status": "error", "error": f"Unknown operation: {operation}"}
 
@@ -167,14 +173,21 @@ class PharosTool(BaseTool):
         """
         query_term = arguments.get("query")
         top = arguments.get("top", 10)
+        tdl = arguments.get("tdl")
 
         if not query_term:
             return {"status": "error", "error": "query parameter is required"}
 
-        # Simple term-based search
+        # Simple term-based search. Pharos' IFilter input has no direct
+        # "tdl" scalar field -- TDL filtering is expressed through its
+        # generic facets mechanism instead (confirmed live via GraphQL
+        # introspection: IFilter.facets: [IFilterFacet], and the "Target
+        # Development Level" facet on the targets query returns exactly
+        # Tclin/Tchem/Tbio/Tdark). Passing tdl straight into the filter
+        # object (or ignoring it, as before) both silently fail to filter.
         query = """
-        query SearchTargets($term: String!, $top: Int!) {
-            targets(filter: {term: $term}, top: $top) {
+        query SearchTargets($term: String!, $top: Int!, $facets: [IFilterFacet!]) {
+            targets(filter: {term: $term, facets: $facets}, top: $top) {
                 count
                 targets {
                     name
@@ -189,9 +202,13 @@ class PharosTool(BaseTool):
         }
         """
 
+        facets = (
+            [{"facet": "Target Development Level", "values": [tdl]}] if tdl else None
+        )
         variables = {
             "term": query_term,
             "top": min(top, 100),  # Cap at 100
+            "facets": facets,
         }
 
         result = self._execute_graphql(query, variables)
@@ -215,17 +232,37 @@ class PharosTool(BaseTool):
         - Tbio: Targets with biological annotations
         - Tdark: Understudied targets with minimal information
         """
-        # Return a static description since aggregation queries are slow
-        # We can query individual TDL counts if needed
+        # An unfiltered targets query's own facet breakdown gives exact,
+        # whole-proteome TDL counts in a single request (confirmed live:
+        # {Tbio: 12303, Tdark: 5501, Tchem: 1904, Tclin: 704}). Pharos'
+        # IFilter has no way to request only the "Target Development
+        # Level" facet, so a minimal top:1 targets query is used purely to
+        # reach its facets field -- the single returned target itself is
+        # discarded.
         query = """
         query {
             dbVersion
+            targets(top: 1) {
+                facets {
+                    facet
+                    values { name value }
+                }
+            }
         }
         """
 
         result = self._execute_graphql(query)
 
         if result["status"] == "success":
+            counts = {"Tclin": 0, "Tchem": 0, "Tbio": 0, "Tdark": 0}
+            facets = result["data"].get("targets", {}).get("facets", [])
+            for facet in facets:
+                if facet.get("facet") == "Target Development Level":
+                    for v in facet.get("values", []):
+                        if v.get("name") in counts:
+                            counts[v["name"]] = v.get("value", 0)
+                    break
+
             result["data"] = {
                 "tdl_levels": ["Tclin", "Tchem", "Tbio", "Tdark"],
                 "description": {
@@ -234,8 +271,9 @@ class PharosTool(BaseTool):
                     "Tbio": "Targets with GO annotations, OMIM phenotypes, or publications",
                     "Tdark": "Understudied targets with minimal information",
                 },
+                "counts": counts,
+                "total_targets": sum(counts.values()),
                 "db_version": result["data"].get("dbVersion"),
-                "note": "For target counts by TDL, use search_targets with specific TDL filter or visit https://pharos.nih.gov",
             }
 
         return result
@@ -279,6 +317,151 @@ class PharosTool(BaseTool):
                 "disease": disease,
                 "count": targets_data.get("count", 0),
                 "targets": targets_data.get("targets", []),
+            }
+
+        return result
+
+    def _resolve_target_q(self, arguments: Dict[str, Any]):
+        """Build the ITarget input filter ({sym} or {uniprot}) from arguments.
+
+        Returns (q_dict, label) on success or (None, error_message) when neither
+        a gene symbol nor a UniProt accession is provided.
+        """
+        gene = arguments.get("gene") or arguments.get("sym")
+        uniprot = arguments.get("uniprot")
+        if uniprot:
+            return {"uniprot": uniprot}, f"UniProt {uniprot}"
+        if gene:
+            return {"sym": gene}, f"gene {gene}"
+        return None, "Either 'gene' or 'uniprot' parameter is required"
+
+    def _get_target_ligands(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get per-target ligand/drug bioactivities for a drug target.
+
+        Returns ligandCounts (total ligand and drug counts) plus the top
+        ligands with their synonyms and bioactivities (type IC50/Ki/EC50,
+        value, and mechanism of action).
+        """
+        q, label = self._resolve_target_q(arguments)
+        if q is None:
+            return {"status": "error", "error": label}
+
+        top = arguments.get("top", 3)
+        try:
+            top = min(max(int(top), 1), 50)
+        except (TypeError, ValueError):
+            top = 3
+
+        query = """
+        query TargetLigands($q: ITarget!, $top: Int!) {
+            target(q: $q) {
+                sym
+                tdl
+                fam
+                ligandCounts { name value }
+                ligands(top: $top) {
+                    name
+                    isdrug
+                    synonyms { name value }
+                    activities { type moa value }
+                }
+            }
+        }
+        """
+        result = self._execute_graphql(query, {"q": q, "top": top})
+
+        if result["status"] == "success":
+            target = result["data"].get("target")
+            if not target:
+                return {
+                    "status": "success",
+                    "data": None,
+                    "message": f"No target found for {label}",
+                }
+            result["data"] = target
+
+        return result
+
+    def _get_ligand_targets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get all protein targets for a drug/ligand (reverse polypharmacology).
+
+        Returns the ligand's targetCount plus every recorded activity with its
+        target (sym, tdl, fam), activity type, value, and mechanism of action.
+        """
+        ligid = (
+            arguments.get("ligid") or arguments.get("ligand") or arguments.get("name")
+        )
+        if not ligid:
+            return {
+                "status": "error",
+                "error": "ligid parameter is required (ligand name or Pharos ligand ID)",
+            }
+
+        query = """
+        query LigandTargets($ligid: String!) {
+            ligand(ligid: $ligid) {
+                name
+                isdrug
+                smiles
+                targetCount
+                activities {
+                    target { sym tdl fam }
+                    type
+                    value
+                    moa
+                }
+            }
+        }
+        """
+        result = self._execute_graphql(query, {"ligid": ligid})
+
+        if result["status"] == "success":
+            ligand = result["data"].get("ligand")
+            if not ligand:
+                return {
+                    "status": "success",
+                    "data": None,
+                    "message": f"No ligand found for '{ligid}'",
+                }
+            result["data"] = ligand
+
+        return result
+
+    def _get_target_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get GTEx baseline tissue expression (per-tissue TPM) for a target.
+
+        Returns one record per GTEx tissue with tissue name, TPM value, and
+        gender stratification (when available).
+        """
+        q, label = self._resolve_target_q(arguments)
+        if q is None:
+            return {"status": "error", "error": label}
+
+        query = """
+        query TargetExpression($q: ITarget!) {
+            target(q: $q) {
+                sym
+                gtex { tissue tpm gender }
+            }
+        }
+        """
+        result = self._execute_graphql(query, {"q": q})
+
+        if result["status"] == "success":
+            target = result["data"].get("target")
+            if not target:
+                return {
+                    "status": "success",
+                    "data": None,
+                    "message": f"No target found for {label}",
+                }
+            result["data"] = {
+                "sym": target.get("sym"),
+                "count": len(target.get("gtex") or []),
+                "gtex": target.get("gtex") or [],
             }
 
         return result

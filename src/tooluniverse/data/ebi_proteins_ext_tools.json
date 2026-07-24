@@ -31,101 +31,67 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Gene name"
-                },
-                "features": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (MUTAGEN)"
-                      },
-                      "position_start": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start position"
-                      },
-                      "position_end": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End position"
-                      },
-                      "original_sequence": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Mutant sequence"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Functional effect of mutation"
-                      },
-                      "evidences": {
-                        "type": "array",
-                        "items": {
-                          "type": "object"
+            "accession": {
+              "type": "string"
+            },
+            "entry_name": {
+              "type": "string"
+            },
+            "gene_name": {
+              "type": "null"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "position_start": {
+                    "type": "string"
+                  },
+                  "position_end": {
+                    "type": "string"
+                  },
+                  "original_sequence": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "evidences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
                         },
-                        "description": "Literature evidence (PMID, etc.)"
+                        "source_name": {
+                          "type": "string"
+                        },
+                        "source_id": {
+                          "type": "string"
+                        },
+                        "source_url": {
+                          "type": "string"
+                        }
                       }
                     }
-                  },
-                  "description": "Mutagenesis features (max 100)"
-                },
-                "total_features": {
-                  "type": "integer",
-                  "description": "Total number of mutagenesis features"
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+            "total_features": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
           },
           "required": [
-            "data"
+            "accession"
           ]
         },
         {
@@ -174,87 +140,69 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "features": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (PROTEOMICS_PTM)"
-                      },
-                      "position_start": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start position"
-                      },
-                      "position_end": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End position"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "PTM description"
-                      },
-                      "evidences": {
-                        "type": "array",
-                        "items": {
-                          "type": "object"
+            "accession": {
+              "type": "string"
+            },
+            "entry_name": {
+              "type": "string"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "position_start": {
+                    "type": "string"
+                  },
+                  "position_end": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "null"
+                  },
+                  "evidences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "source": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
                         },
-                        "description": "Evidence from proteomics databases"
+                        "id": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "type": "object",
+                          "properties": {
+                            "PEP": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       }
                     }
-                  },
-                  "description": "PTM features (max 100)"
-                },
-                "total_features": {
-                  "type": "integer",
-                  "description": "Total number of PTM features"
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+            "total_features": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
           },
           "required": [
-            "data"
+            "accession"
           ]
         },
         {
@@ -315,125 +263,139 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "variants": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "position_start": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start residue position"
-                      },
-                      "position_end": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End residue position"
-                      },
-                      "wild_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Wild-type amino acid"
-                      },
-                      "alternative": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Alternative amino acid (mutant)"
-                      },
-                      "source_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Variant source (large_scale_study, mixed, uniprot)"
-                      },
-                      "clinical_significances": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
-                        "items": {
-                          "type": "object"
+            "accession": {
+              "type": "string"
+            },
+            "entry_name": {
+              "type": "string"
+            },
+            "variants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "position_start": {
+                    "type": "string"
+                  },
+                  "position_end": {
+                    "type": "string"
+                  },
+                  "wild_type": {
+                    "type": "string"
+                  },
+                  "alternative": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "source_type": {
+                    "type": "string"
+                  },
+                  "clinical_significances": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
                         },
-                        "description": "Clinical significance (pathogenic, benign, VUS, etc.)"
-                      },
-                      "associations": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
-                        "items": {
-                          "type": "object"
-                        },
-                        "description": "Disease/phenotype associations"
-                      },
-                      "xrefs": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
-                        "items": {
-                          "type": "object"
-                        },
-                        "description": "Cross-references (dbSNP, COSMIC, ClinVar)"
+                        "sources": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
                       }
                     }
                   },
-                  "description": "Protein sequence variants (max 100)"
-                },
-                "total_variants": {
-                  "type": "integer",
-                  "description": "Total variants matching filter"
-                },
-                "total_all_sources": {
-                  "type": "integer",
-                  "description": "Total variants across all sources"
-                },
-                "source_counts": {
-                  "type": "object",
-                  "description": "Count of variants by source type"
+                  "associations": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "is_disease": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  },
+                  "xrefs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "database": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
+                    }
+                  }
                 }
               }
             },
-            "metadata": {
+            "total_variants": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "total_all_sources": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "source_counts": {
               "type": "object",
               "properties": {
-                "source": {
-                  "type": "string"
+                "large_scale_study": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 },
-                "accession": {
-                  "type": "string"
+                "mixed": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "uniprot": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 }
               }
             }
           },
           "required": [
-            "data"
+            "accession"
           ]
         },
         {
@@ -488,108 +450,82 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "sequence_length": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Protein sequence length"
-                },
-                "category_queried": {
-                  "type": "string",
-                  "description": "Category that was queried"
-                },
-                "features": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (DOMAIN, BINDING, REGION, etc.)"
-                      },
-                      "category": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature category"
-                      },
-                      "position_start": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start position"
-                      },
-                      "position_end": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End position"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature description"
-                      },
-                      "evidences": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
-                        "items": {
-                          "type": "object"
+            "accession": {
+              "type": "string"
+            },
+            "entry_name": {
+              "type": "string"
+            },
+            "sequence_length": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "category_queried": {
+              "type": "string"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "position_start": {
+                    "type": "string"
+                  },
+                  "position_end": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
                         },
-                        "description": "Evidence references"
+                        "source_name": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "source_id": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
                       }
                     }
-                  },
-                  "description": "Protein features (max 100)"
-                },
-                "total_features": {
-                  "type": "integer",
-                  "description": "Total features in category"
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+            "total_features": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
           },
           "required": [
-            "data"
+            "accession"
           ]
         },
         {
@@ -638,87 +574,64 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "antigenic_regions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (ANTIGEN)"
-                      },
-                      "position_start": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start position"
-                      },
-                      "position_end": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End position"
-                      },
-                      "match_score": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "Match score (0-100)"
-                      },
-                      "antigen_sequence": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Antigen sequence"
+            "accession": {
+              "type": "string"
+            },
+            "entry_name": {
+              "type": "string"
+            },
+            "antigenic_regions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "position_start": {
+                    "type": "string"
+                  },
+                  "position_end": {
+                    "type": "string"
+                  },
+                  "match_score": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "antigen_sequence": {
+                    "type": "string"
+                  },
+                  "evidences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "source_name": {
+                          "type": "string"
+                        },
+                        "source_id": {
+                          "type": "string"
+                        }
                       }
                     }
-                  },
-                  "description": "Antigenic regions"
-                },
-                "total_regions": {
-                  "type": "integer",
-                  "description": "Total antigenic regions"
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+            "total_regions": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
           },
           "required": [
-            "data"
+            "accession"
           ]
         },
         {
@@ -767,108 +680,65 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Protein name"
-                },
-                "sequence_length": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Protein sequence length"
-                },
-                "genomic_mappings": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "ensembl_gene_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Ensembl gene ID"
-                      },
-                      "ensembl_transcript_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Ensembl transcript ID"
-                      },
-                      "chromosome": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Chromosome number"
-                      },
-                      "start": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "Genomic start position"
-                      },
-                      "end": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "Genomic end position"
-                      },
-                      "reverseStrand": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ],
-                        "description": "Whether on reverse strand"
-                      },
-                      "num_exons": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "Number of exons"
-                      }
-                    }
+            "accession": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "sequence_length": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "genomic_mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ensembl_gene_id": {
+                    "type": "string"
                   },
-                  "description": "Genomic coordinate mappings"
-                },
-                "total_mappings": {
-                  "type": "integer",
-                  "description": "Total number of coordinate mappings"
+                  "ensembl_transcript_id": {
+                    "type": "string"
+                  },
+                  "chromosome": {
+                    "type": "string"
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "reverseStrand": {
+                    "type": "boolean"
+                  },
+                  "num_exons": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+            "total_mappings": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
           },
           "required": [
-            "data"
+            "accession"
           ]
         },
         {
@@ -917,87 +787,512 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "peptides": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (PROTEOMICS)"
-                      },
-                      "position_start": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Peptide start position"
-                      },
-                      "position_end": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Peptide end position"
-                      },
-                      "peptide": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Peptide sequence"
-                      },
-                      "unique": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ],
-                        "description": "Whether peptide is unique to this protein"
+            "accession": {
+              "type": "string"
+            },
+            "entry_name": {
+              "type": "string"
+            },
+            "peptides": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "position_start": {
+                    "type": "string"
+                  },
+                  "position_end": {
+                    "type": "string"
+                  },
+                  "peptide": {
+                    "type": "string"
+                  },
+                  "unique": {
+                    "type": "boolean"
+                  },
+                  "evidences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "source": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "id": {
+                          "type": "string"
+                        }
                       }
                     }
-                  },
-                  "description": "Detected peptides (max 100)"
-                },
-                "total_peptides": {
-                  "type": "integer",
-                  "description": "Total number of detected peptides"
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+            "total_peptides": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
           },
           "required": [
-            "data"
+            "accession"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBIProteins_get_rna_editing",
+    "description": "Get RNA editing annotations (A-to-I / Q->R recoding sites) for a UniProt protein from the EBI Proteins API. Returns post-transcriptional RNA editing sites where a genomic adenosine is read as guanosine, recoding the protein. Each site includes the protein position, genomic location, codon, consequence type, wild-type and edited amino acid, and tissue/sample editing statistics. Distinct from DNA-level variation. Example: P42262 (GRIA2) returns 3 sites including the canonical Q/R site at residue 607 (Q->R, genomic NC_000004.12:g.157336723A>G, missense). P28335 (HTR2C) returns 5 sites.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "UniProt accession. Examples: 'P42262' (GRIA2, canonical Q/R editing site), 'P28335' (HTR2C, 5 editing sites)."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "rna_editing"
+    },
+    "type": "EBIProteinsExtTool",
+    "test_examples": [
+      {
+        "accession": "P42262"
+      },
+      {
+        "accession": "P28335"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "string"
+            },
+            "entry_name": {
+              "type": "string"
+            },
+            "rna_editing_sites": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "genomic_location": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "variant_locations": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "codon": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "consequence_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "wild_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mutated_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "somatic_status": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "rna_editing_info": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_sites": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            }
+          },
+          "required": [
+            "accession"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBIProteins_get_variation_by_dbsnp",
+    "description": "Reverse variation lookup by dbSNP rsID from the EBI Proteins API. Given a dbSNP rsID, returns every UniProt protein (including isoforms) that carries that variant, each with the mapped natural-variant features (wild-type and alternative residue, protein position, genomic location, clinical significances, cross-references to ClinVar/COSMIC/dbSNP). Inverse of looking up variants by protein accession. Example: 'rs1042522' (TP53 codon 72 Pro/Arg) returns 11 UniProt entries including TP53 isoforms and A0AAQ5BHX5, each with the position-72 variant feature.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dbsnp_id": {
+          "type": "string",
+          "description": "dbSNP reference SNP ID (rsID). Examples: 'rs1042522' (TP53 Pro72Arg), 'rs429358' (APOE)."
+        }
+      },
+      "required": [
+        "dbsnp_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "variation_dbsnp"
+    },
+    "type": "EBIProteinsExtTool",
+    "test_examples": [
+      {
+        "dbsnp_id": "rs1042522"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "dbsnp_id": {
+              "type": "string"
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "entry_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "taxid": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "features": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "total_features": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_entries": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            }
+          },
+          "required": [
+            "dbsnp_id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBIProteins_get_variation_by_hgvs",
+    "description": "Reverse variation lookup by HGVS genomic expression from the EBI Proteins API. Given an HGVS genomic-level expression (e.g. 'NC_000017.11:g.7676154G>A'), returns every overlapping UniProt protein with the resulting variant consequence projected onto the protein sequence (wild-type and alternative residue, protein position, genomic location). Use to translate a genomic DNA change into its protein consequence across all affected UniProt entries. Example: 'NC_000017.11:g.7676154G>A' returns 4 UniProt entries; the TP53 (P04637) entry reports VARIANT P->L at residue 72 (the Pro72Leu protein consequence).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hgvs": {
+          "type": "string",
+          "description": "HGVS genomic expression using a RefSeq NC_ accession. Example: 'NC_000017.11:g.7676154G>A' (TP53 region)."
+        }
+      },
+      "required": [
+        "hgvs"
+      ]
+    },
+    "fields": {
+      "endpoint": "variation_hgvs"
+    },
+    "type": "EBIProteinsExtTool",
+    "test_examples": [
+      {
+        "hgvs": "NC_000017.11:g.7676154G>A"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "hgvs": {
+              "type": "string"
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "entry_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "taxid": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "features": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "total_features": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_entries": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            }
+          },
+          "required": [
+            "hgvs"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBIProteins_get_hpp_peptides",
+    "description": "Get Human Proteome Project (HPP) peptide-level mass-spectrometry evidence mapped to a protein from the EBI Proteins API. Returns HPP-curated peptides that confirm protein expression, each with sequence, start/end position, uniqueness flag, and source (e.g. HppPeptideAtlas). This is the stringent HPP evidence set, distinct from and larger than the generic proteomics peptide set for the same protein. Example: P04637 (TP53) returns 237 HPP features (vs 82 from generic /proteomics), e.g. peptide 'SDSDGLAPPQHLI' at residues 183-195, unique.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "proteomics_hpp"
+    },
+    "type": "EBIProteinsExtTool",
+    "test_examples": [
+      {
+        "accession": "P04637"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "string"
+            },
+            "entry_name": {
+              "type": "string"
+            },
+            "peptides": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "position_start": {
+                    "type": "string"
+                  },
+                  "position_end": {
+                    "type": "string"
+                  },
+                  "peptide": {
+                    "type": "string"
+                  },
+                  "unique": {
+                    "type": "boolean"
+                  },
+                  "evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "source": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "id": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "total_peptides": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            }
+          },
+          "required": [
+            "accession"
           ]
         },
         {

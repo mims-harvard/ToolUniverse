@@ -266,7 +266,8 @@
             "string",
             "null"
           ],
-          "description": "Country name or 'all' for global data. Examples: 'USA', 'India', 'all'. If omitted, returns global data."
+          "description": "Country name or 'all' for global data. Examples: 'USA', 'India', 'all'. If omitted, returns global data.",
+          "default": "all"
         },
         "lastdays": {
           "type": [

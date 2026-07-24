@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Activity_infer_ulm",
+    "type": "DecouplerULMTool",
+    "description": "Infer transcription-factor / pathway activities from a per-gene statistic (e.g. a DESeq2/edgeR t-stat or logFC) and a regulatory network (source=TF/pathway, target=gene, weight=mode of regulation), using decoupleR's univariate-linear-model (ULM) method. Returns per-source activity (slope t-value; +=active) and p-value. Pure-compute; pairs with the DoRothEA/PROGENy networks from OmniPath_get_dorothea_regulon.",
+    "parameter": {
+      "type": "object",
+      "required": ["network"],
+      "properties": {
+        "gene_stats": {"type": ["object", "null"], "description": "{gene: statistic} mapping (e.g. DE t-statistic per gene). Alternative to genes+stats."},
+        "genes": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Gene identifiers (use with `stats`, same order)."},
+        "stats": {"type": ["array", "null"], "items": {"type": "number"}, "description": "Per-gene statistic (same order as `genes`)."},
+        "network": {"type": "array", "items": {"type": "object"}, "description": "Regulatory edges: [{source, target, weight}] (weight defaults to 1; 'mor' accepted as an alias)."},
+        "min_targets": {"type": ["integer", "null"], "description": "Minimum targets present in the gene list for a source to be tested (default 5)."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "n_genes": {"type": "integer"},
+                "n_sources_tested": {"type": "integer"},
+                "activities": {"type": "array", "items": {"type": "object"}}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "gene_stats": {"G1": 4.0, "G2": 3.5, "G3": 3.0, "G4": 2.8, "G5": 2.5, "G6": 2.2, "G7": 2.0, "G8": 1.8, "G9": 0.2, "G10": 0.0, "G11": -0.1, "G12": 0.1, "G13": -1.8, "G14": -2.0, "G15": -2.4, "G16": -2.7, "G17": -3.0, "G18": -3.3, "G19": -3.6, "G20": -4.0},
+        "network": [
+          {"source": "TF_A", "target": "G1", "weight": 1}, {"source": "TF_A", "target": "G2", "weight": 1}, {"source": "TF_A", "target": "G3", "weight": 1}, {"source": "TF_A", "target": "G4", "weight": 1}, {"source": "TF_A", "target": "G5", "weight": 1}, {"source": "TF_A", "target": "G6", "weight": 1},
+          {"source": "TF_B", "target": "G15", "weight": 1}, {"source": "TF_B", "target": "G16", "weight": 1}, {"source": "TF_B", "target": "G17", "weight": 1}, {"source": "TF_B", "target": "G18", "weight": 1}, {"source": "TF_B", "target": "G19", "weight": 1}, {"source": "TF_B", "target": "G20", "weight": 1}
+        ]
+      }
+    ]
+  }
+]

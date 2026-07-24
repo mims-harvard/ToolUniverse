@@ -1,134 +1,333 @@
 [
-    {
-        "name": "InterProScan_scan_sequence",
-        "description": "Run InterProScan analysis on a protein sequence to predict domains, families, and functional sites. Unlike InterPro lookup (pre-computed), this runs actual sequence analysis. Returns domains, GO terms, and pathway annotations.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "sequence": {
-                    "type": "string",
-                    "description": "Protein sequence in single-letter amino acid code (e.g., 'MVLSPADKTNVKAAWGKVGAHAG...')"
-                },
-                "email": {
-                    "type": "string",
-                    "description": "Email for job notifications (optional)"
-                },
-                "title": {
-                    "type": "string",
-                    "description": "Job title for tracking (optional)"
-                },
-                "go_terms": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Include GO term predictions"
-                },
-                "pathways": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Include pathway annotations"
-                }
-            },
-            "required": ["sequence"]
+  {
+    "name": "InterProScan_scan_sequence",
+    "description": "Run InterProScan analysis on a protein sequence to predict domains, families, and functional sites. Unlike InterPro lookup (pre-computed), this runs actual sequence analysis. Returns domains, GO terms, and pathway annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein sequence in single-letter amino acid code (e.g., 'MVLSPADKTNVKAAWGKVGAHAG...')"
         },
-        "fields": {
-            "operation": "scan_sequence"
+        "email": {
+          "type": "string",
+          "description": "Email for job notifications (optional)"
         },
-        "type": "InterProScanTool",
-        "test_examples": [
-            {
-                "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "job_id": {"type": "string"},
-                "status": {"type": "string"},
-                "message": {"type": "string"},
-                "domains": {"type": "array"},
-                "domain_count": {"type": "integer"},
-                "go_annotations": {"type": "array"},
-                "pathways": {"type": "array"}
-            }
+        "title": {
+          "type": "string",
+          "description": "Job title for tracking (optional)"
         },
-        "label": ["InterProScan", "Domain", "Prediction"],
-        "metadata": {
-            "tags": ["domain_prediction", "sequence_analysis", "functional_annotation"],
-            "estimated_execution_time": "30-120 seconds (job-based)"
+        "go_terms": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include GO term predictions"
+        },
+        "pathways": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include pathway annotations"
         }
+      },
+      "required": [
+        "sequence"
+      ]
     },
-    {
-        "name": "InterProScan_get_job_status",
-        "description": "Check status of an InterProScan analysis job. Use if scan_sequence returns before completion. Status: RUNNING, FINISHED, FAILURE, ERROR, NOT_FOUND.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "job_id": {
-                    "type": "string",
-                    "description": "InterProScan job ID returned from scan_sequence"
-                }
-            },
-            "required": ["job_id"]
-        },
-        "fields": {
-            "operation": "get_job_status"
-        },
-        "type": "InterProScanTool",
-        "test_examples": [
-            {
-                "job_id": "iprscan5-R20240101-123456-0001-12345678"
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "job_id": {"type": "string"},
-                "job_status": {"type": "string"},
-                "is_finished": {"type": "boolean"}
-            }
-        },
-        "label": ["InterProScan", "Job", "Status"],
-        "metadata": {
-            "tags": ["job_status", "async"],
-            "estimated_execution_time": "< 3 seconds"
-        }
+    "fields": {
+      "operation": "scan_sequence"
     },
-    {
-        "name": "InterProScan_get_job_results",
-        "description": "Retrieve results from a completed InterProScan job. Returns domain predictions, GO annotations, and pathway mappings. Results available for 7 days after completion.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "job_id": {
-                    "type": "string",
-                    "description": "InterProScan job ID"
-                }
+    "type": "InterProScanTool",
+    "test_examples": [
+      {
+        "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string"
             },
-            "required": ["job_id"]
-        },
-        "fields": {
-            "operation": "get_job_results"
-        },
-        "type": "InterProScanTool",
-        "test_examples": [
-            {
-                "job_id": "iprscan5-R20240101-123456-0001-12345678"
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "database": {
+                    "type": "string"
+                  },
+                  "interpro_accession": {
+                    "type": "string"
+                  },
+                  "interpro_name": {
+                    "type": "string"
+                  },
+                  "interpro_type": {
+                    "type": "string"
+                  },
+                  "locations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "score": {
+                          "type": [
+                            "null",
+                            "number"
+                          ]
+                        },
+                        "evalue": {
+                          "type": [
+                            "null",
+                            "number"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "domain_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "go_annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "pathways": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "sequence_length": {
+              "type": "null"
             }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "job_id": {"type": "string"},
-                "domains": {"type": "array"},
-                "domain_count": {"type": "integer"},
-                "go_annotations": {"type": "array"},
-                "pathways": {"type": "array"}
-            }
+          },
+          "required": [
+            "job_id"
+          ]
         },
-        "label": ["InterProScan", "Results", "Domains"],
-        "metadata": {
-            "tags": ["results", "domains", "annotations"],
-            "estimated_execution_time": "< 5 seconds"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
+    },
+    "label": [
+      "InterProScan",
+      "Domain",
+      "Prediction"
+    ],
+    "metadata": {
+      "tags": [
+        "domain_prediction",
+        "sequence_analysis",
+        "functional_annotation"
+      ],
+      "estimated_execution_time": "30-120 seconds (job-based)"
     }
+  },
+  {
+    "name": "InterProScan_get_job_status",
+    "description": "Check status of an InterProScan analysis job. Use if scan_sequence returns before completion. Status: RUNNING, FINISHED, FAILURE, ERROR, NOT_FOUND.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "job_id": {
+          "type": "string",
+          "description": "InterProScan job ID returned from scan_sequence"
+        }
+      },
+      "required": [
+        "job_id"
+      ]
+    },
+    "fields": {
+      "operation": "get_job_status"
+    },
+    "type": "InterProScanTool",
+    "test_examples": [
+      {
+        "job_id": "iprscan5-R20240101-123456-0001-12345678"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string"
+            },
+            "job_status": {
+              "type": "string"
+            },
+            "is_finished": {
+              "type": "boolean"
+            },
+            "has_error": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "job_id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "InterProScan",
+      "Job",
+      "Status"
+    ],
+    "metadata": {
+      "tags": [
+        "job_status",
+        "async"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "InterProScan_get_job_results",
+    "description": "Retrieve results from a completed InterProScan job. Returns domain predictions, GO annotations, and pathway mappings. Results available for 7 days after completion.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "job_id": {
+          "type": "string",
+          "description": "InterProScan job ID"
+        }
+      },
+      "required": [
+        "job_id"
+      ]
+    },
+    "fields": {
+      "operation": "get_job_results"
+    },
+    "type": "InterProScanTool",
+    "test_examples": [
+      {
+        "job_id": "iprscan5-R20240101-123456-0001-12345678"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string"
+            },
+            "job_status": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "job_id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "InterProScan",
+      "Results",
+      "Domains"
+    ],
+    "metadata": {
+      "tags": [
+        "results",
+        "domains",
+        "annotations"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  }
 ]

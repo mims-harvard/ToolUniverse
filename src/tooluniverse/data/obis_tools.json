@@ -15,21 +15,20 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of records to return (1–100)."
+          "description": "Number of records to return (1\u2013100)."
         }
       },
-      "required": ["scientificname"]
+      "required": [
+        "scientificname"
+      ]
     },
     "fields": {
       "endpoint": "https://api.obis.org/v3/taxon",
       "format": "json"
     },
     "return_schema": {
-      "type": "object",
-      "description": "OBIS taxon search response",
-      "properties": {
-        "status": {"type": "string"},
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
             "results": {
@@ -37,23 +36,80 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "scientificName": {"type": "string"},
-                  "aphiaID": {"type": "integer"},
-                  "rank": {"type": "string"}
+                  "scientificName": {
+                    "type": "string"
+                  },
+                  "aphiaID": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "rank": {
+                    "type": "null"
+                  },
+                  "kingdom": {
+                    "type": "string"
+                  },
+                  "phylum": {
+                    "type": "string"
+                  },
+                  "class": {
+                    "type": "null"
+                  },
+                  "order": {
+                    "type": "string"
+                  },
+                  "family": {
+                    "type": "string"
+                  },
+                  "genus": {
+                    "type": "string"
+                  }
                 }
               }
+            },
+            "total": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "results"
+          ]
         },
-        "url": {"type": "string"}
-      }
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     },
     "test_examples": [
-      {"scientificname": "Gadus", "size": 1}
+      {
+        "scientificname": "Gadus",
+        "size": 1
+      }
     ],
-    "label": ["OBIS", "Taxonomy", "Marine"],
+    "label": [
+      "OBIS",
+      "Taxonomy",
+      "Marine"
+    ],
     "metadata": {
-      "tags": ["marine", "taxonomy", "aphia"],
+      "tags": [
+        "marine",
+        "taxonomy",
+        "aphia"
+      ],
       "estimated_execution_time": "< 2 seconds"
     }
   },
@@ -77,7 +133,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of records to return (1–100)."
+          "description": "Number of records to return (1\u2013100)."
         }
       }
     },
@@ -86,36 +142,313 @@
       "format": "json"
     },
     "return_schema": {
-      "type": "object",
-      "description": "OBIS occurrence search response",
-      "properties": {
-        "status": {"type": "string"},
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
+            "total": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
             "results": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "scientificName": {"type": "string"},
-                  "decimalLatitude": {"type": "number"},
-                  "decimalLongitude": {"type": "number"},
-                  "eventDate": {"type": "string"}
+                  "basisOfRecord": {
+                    "type": "string"
+                  },
+                  "class": {
+                    "type": "string"
+                  },
+                  "classid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "collectionCode": {
+                    "type": "string"
+                  },
+                  "coordinateUncertaintyInMeters": {
+                    "type": "number"
+                  },
+                  "dataGeneralizations": {
+                    "type": "string"
+                  },
+                  "datasetID": {
+                    "type": "string"
+                  },
+                  "datasetName": {
+                    "type": "string"
+                  },
+                  "date_end": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "date_mid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "date_start": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "date_year": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "decimalLatitude": {
+                    "type": "number"
+                  },
+                  "decimalLongitude": {
+                    "type": "number"
+                  },
+                  "eventDate": {
+                    "type": "string"
+                  },
+                  "eventID": {
+                    "type": "string"
+                  },
+                  "eventType": {
+                    "type": "string"
+                  },
+                  "family": {
+                    "type": "string"
+                  },
+                  "familyid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "genus": {
+                    "type": "string"
+                  },
+                  "genusid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "geodeticDatum": {
+                    "type": "string"
+                  },
+                  "infraphylum": {
+                    "type": "string"
+                  },
+                  "infraphylumid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "institutionCode": {
+                    "type": "string"
+                  },
+                  "kingdom": {
+                    "type": "string"
+                  },
+                  "kingdomid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "license": {
+                    "type": "string"
+                  },
+                  "locationRemarks": {
+                    "type": "string"
+                  },
+                  "marine": {
+                    "type": "boolean"
+                  },
+                  "maximumElevationInMeters": {
+                    "type": "string"
+                  },
+                  "megaclass": {
+                    "type": "string"
+                  },
+                  "megaclassid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "minimumElevationInMeters": {
+                    "type": "string"
+                  },
+                  "occurrenceID": {
+                    "type": "string"
+                  },
+                  "occurrenceStatus": {
+                    "type": "string"
+                  },
+                  "order": {
+                    "type": "string"
+                  },
+                  "orderid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "organismID": {
+                    "type": "string"
+                  },
+                  "organismName": {
+                    "type": "string"
+                  },
+                  "parentEventID": {
+                    "type": "string"
+                  },
+                  "phylum": {
+                    "type": "string"
+                  },
+                  "phylumid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "rightsHolder": {
+                    "type": "string"
+                  },
+                  "samplingProtocol": {
+                    "type": "string"
+                  },
+                  "scientificName": {
+                    "type": "string"
+                  },
+                  "scientificNameID": {
+                    "type": "string"
+                  },
+                  "sex": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "speciesid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "subphylum": {
+                    "type": "string"
+                  },
+                  "subphylumid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "superclass": {
+                    "type": "string"
+                  },
+                  "superclassid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "dataset_id": {
+                    "type": "string"
+                  },
+                  "node_id": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "dropped": {
+                    "type": "boolean"
+                  },
+                  "absence": {
+                    "type": "boolean"
+                  },
+                  "originalScientificName": {
+                    "type": "string"
+                  },
+                  "aphiaID": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "flags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "bathymetry": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "shoredistance": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  }
                 }
               }
             }
-          }
+          },
+          "required": [
+            "total"
+          ]
         },
-        "url": {"type": "string"}
-      }
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     },
     "test_examples": [
-      {"size": 1}
+      {
+        "size": 1
+      }
     ],
-    "label": ["OBIS", "Occurrence", "Marine"],
+    "label": [
+      "OBIS",
+      "Occurrence",
+      "Marine"
+    ],
     "metadata": {
-      "tags": ["marine", "occurrence", "geospatial"],
+      "tags": [
+        "marine",
+        "occurrence",
+        "geospatial"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   }

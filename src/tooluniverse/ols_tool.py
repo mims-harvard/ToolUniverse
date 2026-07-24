@@ -148,6 +148,7 @@ class OLSTool(BaseTool):
         "get_term_children": "_handle_get_term_children",
         "get_term_ancestors": "_handle_get_term_ancestors",
         "find_similar_terms": "_handle_find_similar_terms",
+        "get_term_xrefs": "_handle_get_term_xrefs",
     }
 
     def __init__(self, tool_config):
@@ -345,6 +346,87 @@ class OLSTool(BaseTool):
         term = DetailedTermInfo.model_validate(term_data)
         # Convert HttpUrl objects to strings for JSON compatibility
         return term.model_dump(by_alias=True, mode="json")
+
+    def _handle_get_term_xrefs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Return the obo_xref (database cross-references) of an OLS term.
+
+        Translates any OLS term (EFO/MONDO/UBERON/CL/GO/CHEBI/ORDO/...) to its
+        equivalent IDs in external vocabularies (DOID, ICD10, OMIM, UMLS, MeSH,
+        NCIt, SNOMED/SCTID, MedDRA, etc.). This is the OxO-replacement mapping
+        use case: the OLS4 term record carries an ``obo_xref`` array that the
+        other OLS-family tools strip when they whitelist fields.
+        """
+        identifier = (
+            arguments.get("id")
+            or arguments.get("term_id")
+            or arguments.get("obo_id")
+            or arguments.get("term_iri")
+        )
+        if not identifier:
+            return {
+                "status": "error",
+                "error": "`id` (or `term_id`/`obo_id`) is required for `get_term_xrefs`. Use CURIE style IDs, e.g. EFO:0004611 or MONDO:0005148.",
+            }
+
+        ontology = arguments.get("ontology") or _infer_ontology_from_term_id(identifier)
+        terms = None
+        # Prefer the ontology-scoped endpoint with obo_id, which reliably returns
+        # the canonical record (and its obo_xref) for that ontology.
+        if ontology:
+            data = self._get_json(
+                f"/api/ontologies/{ontology}/terms", params={"obo_id": identifier}
+            )
+            embedded = data.get("_embedded", {})
+            terms = embedded.get("terms") if isinstance(embedded, dict) else None
+        if not terms:
+            data = self._get_json("/api/terms", params={"id": identifier})
+            embedded = data.get("_embedded", {})
+            terms = embedded.get("terms") if isinstance(embedded, dict) else None
+        if not terms:
+            return {
+                "status": "error",
+                "error": f"Term with ID '{identifier}' was not found in OLS.",
+            }
+
+        term_data = terms[0]
+        raw_xrefs = term_data.get("obo_xref") or []
+        xrefs: List[Dict[str, Any]] = []
+        for entry in raw_xrefs:
+            if not isinstance(entry, dict):
+                continue
+            database = entry.get("database")
+            local_id = entry.get("id")
+            curie = (
+                f"{database}:{local_id}" if database and local_id is not None else None
+            )
+            xrefs.append(
+                {
+                    "database": database,
+                    "id": local_id,
+                    "curie": curie,
+                    "url": entry.get("url"),
+                    "description": entry.get("description"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "obo_id": term_data.get("obo_id") or identifier,
+                "iri": term_data.get("iri"),
+                "label": term_data.get("label"),
+                "ontology_name": term_data.get("ontology_name")
+                or term_data.get("ontologyName")
+                or ontology,
+                "is_obsolete": term_data.get("is_obsolete", False),
+                "xrefs": xrefs,
+            },
+            "metadata": {
+                "query_id": identifier,
+                "ontology": ontology or None,
+                "xref_count": len(xrefs),
+            },
+        }
 
     def _handle_get_term_children(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         raw_term_id = arguments.get("term_iri") or arguments.get("term_id", "")

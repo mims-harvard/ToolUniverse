@@ -76,10 +76,104 @@ class EnsemblPhenotypeTool(BaseTool):
             return self._phenotype_region(arguments)
         elif self.endpoint_type == "variant":
             return self._phenotype_variant(arguments)
+        elif self.endpoint_type == "term":
+            return self._phenotype_term(arguments)
         return {
             "status": "error",
             "error": f"Unknown endpoint_type: {self.endpoint_type}",
         }
+
+    def _phenotype_term(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Reverse phenotype lookup: trait/disease name OR ontology accession.
+
+        Given a phenotype term (e.g. 'Alzheimer disease') or an ontology
+        accession (e.g. 'EFO:0000249', 'HP:0002511', 'MONDO:0004975'), return
+        all associated variants/genes with risk allele, p-value, source, etc.
+        Uses the Ensembl phenotype/term and phenotype/accession endpoints.
+        """
+        species = arguments.get("species", "homo_sapiens")
+        term = arguments.get("term")
+        accession = arguments.get("accession")
+
+        # Allow callers to pass the single query under either key, and
+        # auto-detect ontology accessions (PREFIX:NUMBER) passed as 'term'.
+        if not accession and term and self._looks_like_accession(term):
+            accession = term
+            term = None
+
+        if accession:
+            query = accession
+            url = f"{ENSEMBL_BASE_URL}/phenotype/accession/{species}/{accession}"
+            endpoint = f"phenotype/accession/{species}/{accession}"
+            query_kind = "accession"
+        elif term:
+            query = term
+            url = f"{ENSEMBL_BASE_URL}/phenotype/term/{species}/{term}"
+            endpoint = f"phenotype/term/{species}/{term}"
+            query_kind = "term"
+        else:
+            return {
+                "status": "error",
+                "error": (
+                    "Provide 'term' (e.g. 'Alzheimer disease') or 'accession' "
+                    "(e.g. 'EFO:0000249', 'HP:0002511')."
+                ),
+            }
+
+        params = {"content-type": "application/json"}
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        if not isinstance(raw, list):
+            raw = []
+
+        associations = []
+        for entry in raw:
+            attrs = entry.get("attributes", {}) or {}
+            associations.append(
+                {
+                    "description": entry.get("description", ""),
+                    "variant": entry.get("Variation"),
+                    "gene": attrs.get("associated_gene"),
+                    "risk_allele": attrs.get("risk_allele"),
+                    "p_value": attrs.get("p_value"),
+                    "beta": attrs.get("beta_coefficient") or attrs.get("beta"),
+                    "odds_ratio": attrs.get("odds_ratio"),
+                    "clinical_significance": attrs.get("clinical_significance"),
+                    "source": entry.get("source", ""),
+                    "location": entry.get("location"),
+                    "mapped_to_accession": entry.get("mapped_to_accession"),
+                    "external_reference": attrs.get("external_reference")
+                    or attrs.get("external_id"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "query": query,
+                "query_kind": query_kind,
+                "species": species,
+                "association_count": len(associations),
+                "associations": associations[:500],
+            },
+            "metadata": {
+                "source": "Ensembl REST API",
+                "endpoint": endpoint,
+                "total_returned": min(len(associations), 500),
+            },
+        }
+
+    @staticmethod
+    def _looks_like_accession(value: str) -> bool:
+        """Heuristic: ontology accessions look like 'EFO:0000249' / 'HP:0002511'."""
+        if not isinstance(value, str) or ":" not in value:
+            return False
+        prefix, _, rest = value.partition(":")
+        return prefix.isalpha() and bool(rest) and rest.replace("_", "").isalnum()
 
     def _phenotype_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get phenotype associations for a gene."""

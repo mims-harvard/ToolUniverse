@@ -35,6 +35,7 @@ class TestBindingDBToolDirect:
     @patch("tooluniverse.bindingdb_tool.requests.get")
     def test_get_by_uniprot_success(self, mock_get, tool):
         mock_response = MagicMock()
+        mock_response.status_code = 200
         mock_response.json.return_value = {
             "getLindsByUniprotResponse": {
                 "bdb.affinities": [

@@ -19,8 +19,28 @@ import uuid
 from typing import Dict, Optional
 from fastmcp import FastMCP
 
+
+def _optional_token_auth():
+    """Require a Bearer token only when TOOLUNIVERSE_API_TOKEN is set.
+
+    Returns None (no authentication, unchanged behavior) when the variable is
+    not set, so existing deployments are unaffected.
+    """
+    token = os.getenv("TOOLUNIVERSE_API_TOKEN")
+    if not token:
+        return None
+    try:
+        from fastmcp.server.auth import StaticTokenVerifier
+
+        return StaticTokenVerifier(
+            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
+        )
+    except Exception:
+        return None
+
+
 # Initialize MCP Server for DepMap gene correlation analysis
-server = FastMCP("DepMap Gene Correlation SMCP Server")
+server = FastMCP("DepMap Gene Correlation SMCP Server", auth=_optional_token_auth())
 
 
 class DepmapCorrelationTool:

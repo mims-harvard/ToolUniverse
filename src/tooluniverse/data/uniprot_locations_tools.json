@@ -31,145 +31,87 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "definition": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "note": {
+              "type": "null"
+            },
+            "synonyms": {
+              "type": "array"
+            },
+            "keyword": {
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Location ID (SL-XXXX)"
+                  "type": "string"
                 },
                 "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Location name"
-                },
-                "definition": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Full text definition"
-                },
-                "content": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Content descriptor"
-                },
-                "category": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Category (Cellular component, Topology, Orientation)"
-                },
-                "note": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Additional notes"
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Alternative names"
-                },
-                "keyword": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string"
-                    }
-                  },
-                  "description": "Associated UniProt keyword"
-                },
-                "gene_ontologies": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "go_id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "description": "Mapped Gene Ontology terms"
-                },
-                "reviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of reviewed (Swiss-Prot) proteins in this location"
-                },
-                "unreviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of unreviewed (TrEMBL) proteins"
-                },
-                "part_of": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "description": "Parent locations"
-                },
-                "children": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "description": "Child (sub-)locations"
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
                   "type": "string"
                 }
               }
+            },
+            "gene_ontologies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "reviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "unreviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "part_of": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "children": {
+              "type": "array"
             }
           },
           "required": [
-            "data"
+            "id"
           ]
         },
         {
@@ -222,108 +164,107 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "definition": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string"
+              },
+              "note": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "keyword": {
+                "type": [
+                  "null",
+                  "object"
+                ],
                 "properties": {
                   "id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Location ID"
+                    "type": "string"
                   },
                   "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Location name"
-                  },
-                  "definition": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Definition"
-                  },
-                  "content": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Content descriptor"
-                  },
-                  "category": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Category"
-                  },
-                  "note": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "synonyms": {
-                    "type": "array",
-                    "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "gene_ontologies": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "go_id": {
+                      "type": "string"
+                    },
+                    "name": {
                       "type": "string"
                     }
-                  },
-                  "keyword": {
-                    "type": [
-                      "object",
-                      "null"
-                    ]
-                  },
-                  "gene_ontologies": {
-                    "type": "array"
-                  },
-                  "reviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "unreviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "part_of": {
-                    "type": "array"
-                  },
-                  "children": {
-                    "type": "array"
+                  }
+                }
+              },
+              "reviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "unreviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "part_of": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "children": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "returned": {
-                  "type": "integer"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

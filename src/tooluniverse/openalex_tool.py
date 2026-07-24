@@ -1,8 +1,24 @@
+import os
 import requests
 from typing import Any, Dict, Optional
 from .base_tool import BaseTool
 from .http_utils import request_with_retry
 from .tool_registry import register_tool
+
+
+def _with_api_key(params):
+    """Add the OpenAlex API key when configured.
+
+    OpenAlex requires an API key as of 2026-02-13 (the polite-pool `mailto`
+    parameter was discontinued); anonymous requests now return HTTP 503. The
+    key is a query parameter named `api_key` (free at openalex.org/settings/api)
+    and is read from the OPENALEX_API_KEY environment variable.
+    """
+    key = os.environ.get("OPENALEX_API_KEY")
+    if key:
+        params = dict(params or {})
+        params["api_key"] = key
+    return params
 
 
 @register_tool("OpenAlexTool")
@@ -109,7 +125,7 @@ class OpenAlexTool(BaseTool):
             params["filter"] = ",".join(filters)
 
         try:
-            response = requests.get(self.base_url, params=params)
+            response = requests.get(self.base_url, params=_with_api_key(params))
             response.raise_for_status()
             data = response.json()
 
@@ -255,7 +271,7 @@ class OpenAlexTool(BaseTool):
             url = f"https://api.openalex.org/works/https://doi.org/{doi}"
             params = {"mailto": "support@openalex.org"}
 
-            response = requests.get(url, params=params)
+            response = requests.get(url, params=_with_api_key(params))
             response.raise_for_status()
             work = response.json()
 
@@ -284,7 +300,7 @@ class OpenAlexTool(BaseTool):
                 "mailto": "support@openalex.org",
             }
 
-            response = requests.get(self.base_url, params=params)
+            response = requests.get(self.base_url, params=_with_api_key(params))
             response.raise_for_status()
             data = response.json()
 
@@ -449,7 +465,7 @@ class OpenAlexRESTTool(BaseTool):
                 self.session,
                 "GET",
                 url,
-                params=params,
+                params=_with_api_key(params),
                 timeout=self.timeout,
                 max_attempts=3,
             )

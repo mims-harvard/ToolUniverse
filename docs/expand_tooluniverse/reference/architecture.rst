@@ -10,19 +10,19 @@ ToolUniverse is built around a modular, registry-based architecture that support
 
 **Core Components:**
 
-.. graphviz::
+.. code-block:: text
 
    graph TD
        A[ToolUniverse] --> B[Tool Registry]
        A --> C[MCP Tool Registry]
        A --> D[Tool Executor]
-       
+
        B --> E[Local Tools]
        C --> F[Remote Tools]
-       
+
        E --> G[BaseTool Classes]
        F --> H[MCP Servers]
-       
+
        D --> I[Parameter Validation]
        D --> J[Error Handling]
        D --> K[Result Processing]

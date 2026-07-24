@@ -1,7 +1,7 @@
 [
   {
     "name": "SynBioHub_search_parts",
-    "description": "Search the SynBioHub synthetic biology parts repository for genetic parts and designs by keyword. SynBioHub hosts the iGEM Registry of Standard Biological Parts (20,000+ BioBricks) and other public SBOL collections. Parts include promoters, coding sequences (CDS/genes), terminators, ribosome binding sites (RBS), reporters (GFP, RFP, LacZ), regulatory elements, and composite genetic devices. Returns part IDs, names, descriptions, SBOL types, and functional roles. Example: search 'GFP' finds green fluorescent protein parts; search 'lac promoter' finds lac operon regulatory parts.",
+    "description": "Search the SynBioHub synthetic biology parts repository for genetic parts and designs by keyword. SynBioHub hosts the iGEM Registry of Standard Biological Parts (20,000+ BioBricks) and other public SBOL collections. Parts include promoters, coding sequences (CDS/genes), terminators, ribosome binding sites (RBS), reporters (GFP, RFP, LacZ), regulatory elements, and composite genetic devices. Returns part IDs, names, descriptions, SBOL types, and functional roles. Example: search 'GFP' finds green fluorescent protein parts; search 'lac promoter' finds lac operon regulatory parts. Note: SynBioHub anonymous REST access was disabled upstream. Every /public/... read returns 401 'Login required'. The tool returns a structured error; users with a SynBioHub account can supply the auth token via SYNBIOHUB_API_TOKEN.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -32,16 +32,7 @@
       "endpoint": "search"
     },
     "type": "SynBioHubTool",
-    "test_examples": [
-      {
-        "query": "GFP",
-        "limit": 5
-      },
-      {
-        "query": "lac promoter",
-        "limit": 3
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "oneOf": [
         {
@@ -128,7 +119,7 @@
   },
   {
     "name": "SynBioHub_get_collections",
-    "description": "List all public collections available on SynBioHub. Collections are curated sets of genetic parts and designs, including the iGEM Parts Registry, CIDAR Lab parts, Free Genes feature libraries, and organism-specific collections. Returns collection names, descriptions, URIs, and member counts. Use this to discover available part libraries before searching for specific parts.",
+    "description": "List all public collections available on SynBioHub. Collections are curated sets of genetic parts and designs, including the iGEM Parts Registry, CIDAR Lab parts, Free Genes feature libraries, and organism-specific collections. Returns collection names, descriptions, URIs, and member counts. Use this to discover available part libraries before searching for specific parts. Note: SynBioHub anonymous REST access was disabled upstream. Every /public/... read returns 401 'Login required'. The tool returns a structured error; users with a SynBioHub account can supply the auth token via SYNBIOHUB_API_TOKEN.",
     "parameter": {
       "type": "object",
       "properties": {},
@@ -138,9 +129,7 @@
       "endpoint": "get_collections"
     },
     "type": "SynBioHubTool",
-    "test_examples": [
-      {}
-    ],
+    "test_examples": [],
     "return_schema": {
       "oneOf": [
         {
@@ -220,7 +209,7 @@
   },
   {
     "name": "SynBioHub_get_part",
-    "description": "Get detailed SBOL (Synthetic Biology Open Language) information for a specific genetic part from SynBioHub. Returns the part's title, description, DNA sequence, sequence length, functional roles, creation date, and provenance. Can look up by full URI or by iGEM BioBrick display ID (e.g., BBa_E0040 for GFP). Example: get details for BBa_E0040 (GFP coding sequence, 720bp) including its full DNA sequence.",
+    "description": "Get detailed SBOL (Synthetic Biology Open Language) information for a specific genetic part from SynBioHub. Returns the part's title, description, DNA sequence, sequence length, functional roles, creation date, and provenance. Can look up by full URI or by iGEM BioBrick display ID (e.g., BBa_E0040 for GFP). Example: get details for BBa_E0040 (GFP coding sequence, 720bp) including its full DNA sequence. Note: SynBioHub anonymous REST access was disabled upstream. Every /public/... read returns 401 'Login required'. The tool returns a structured error; users with a SynBioHub account can supply the auth token via SYNBIOHUB_API_TOKEN.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -245,14 +234,7 @@
       "endpoint": "get_part"
     },
     "type": "SynBioHubTool",
-    "test_examples": [
-      {
-        "display_id": "BBa_E0040"
-      },
-      {
-        "display_id": "BBa_R0010"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "oneOf": [
         {

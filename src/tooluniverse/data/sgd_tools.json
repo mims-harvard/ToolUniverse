@@ -554,5 +554,417 @@
         }
       ]
     }
+  },
+  {
+    "name": "SGD_get_regulation",
+    "description": "Get the transcriptional regulation network for a yeast gene from SGD: curated regulator->target relationships with evidence, direction, and references. Returns pairs where the queried gene is regulator or target. Example: S000000364 (CDC28) is regulated by IXR1 (S000001515) with 'DNA to cDNA expression microarray evidence', regulation_of=transcription.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sgd_id": {
+          "type": "string",
+          "description": "SGD locus identifier. Examples: 'S000000364' (CDC28), 'S000000259' (GAL4)."
+        }
+      },
+      "required": [
+        "sgd_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "locus",
+      "query_mode": "regulation"
+    },
+    "type": "SGDTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "sgd_id": "S000000364"
+      },
+      {
+        "sgd_id": "S000000259"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "regulator": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Regulator gene name"
+                  },
+                  "regulator_sgdid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "target": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Target gene name"
+                  },
+                  "target_sgdid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "regulation_of": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What is regulated (e.g., transcription)"
+                  },
+                  "direction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "happens_during": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotation_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pubmed_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SGD_get_sequence",
+    "description": "Get genomic, coding, and protein sequences plus genomic coordinates for a yeast gene from SGD (reference strain S288C). Returns the genomic DNA start/end/strand and full residue strings for genomic_dna, coding_dna, and protein. Example: S000000364 (CDC28) returns genomic_dna start=560078 end=560974 with residues 'ATGAGCGGTGAATTAGCAAAT...'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sgd_id": {
+          "type": "string",
+          "description": "SGD locus identifier. Examples: 'S000000364' (CDC28), 'S000005564' (ACT1)."
+        }
+      },
+      "required": [
+        "sgd_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "locus",
+      "query_mode": "sequence"
+    },
+    "type": "SGDTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "sgd_id": "S000000364"
+      },
+      {
+        "sgd_id": "S000005564"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "sgd_id": {
+                  "type": "string"
+                },
+                "genomic_dna": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "end": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "strand": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "length": {
+                      "type": "integer"
+                    },
+                    "residues": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "coding_dna": {
+                  "type": "object",
+                  "properties": {
+                    "length": {
+                      "type": "integer"
+                    },
+                    "residues": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "protein": {
+                  "type": "object",
+                  "properties": {
+                    "length": {
+                      "type": "integer"
+                    },
+                    "residues": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SGD_get_disease_annotations",
+    "description": "Get curated gene-disease (Disease Ontology / DOID) associations for a yeast gene from SGD, inferred by orthology to human genes. Returns disease name, DOID, annotation type, evidence, and references. Example: S000000364 (CDC28) is associated with 'cancer' (DOID:162), manually curated.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sgd_id": {
+          "type": "string",
+          "description": "SGD locus identifier. Examples: 'S000000364' (CDC28), 'S000000259' (GAL4)."
+        }
+      },
+      "required": [
+        "sgd_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "locus",
+      "query_mode": "disease"
+    },
+    "type": "SGDTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "sgd_id": "S000000364"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "disease_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "disease_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Disease Ontology ID (e.g., DOID:162)"
+                  },
+                  "annotation_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "qualifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "locus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "locus_sgdid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pubmed_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

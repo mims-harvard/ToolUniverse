@@ -30,20 +30,16 @@
             "type": "object",
             "properties": {
               "accession": {
-                "type": "string",
-                "description": "MIBiG accession with version (e.g., BGC0000455.6)"
+                "type": "string"
               },
               "quality": {
-                "type": "string",
-                "description": "Data quality: questionable, good, or excellent"
+                "type": "string"
               },
               "completeness": {
-                "type": "string",
-                "description": "BGC completeness: complete, partial, or unknown"
+                "type": "string"
               },
               "status": {
-                "type": "string",
-                "description": "Entry status: active or retired"
+                "type": "string"
               },
               "products": {
                 "type": "array",
@@ -51,31 +47,33 @@
                   "type": "object",
                   "properties": {
                     "name": {
-                      "type": "string",
-                      "description": "Natural product name"
+                      "type": "string"
                     }
                   }
                 }
               },
               "classes": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "null"
+                ],
                 "items": {
                   "type": "object",
                   "properties": {
                     "name": {
-                      "type": "string",
-                      "description": "Biosynthetic class: PKS, NRPS, Terpene, Saccharide, RiPP, Other"
+                      "type": "string"
+                    },
+                    "css_class": {
+                      "type": "string"
                     }
                   }
                 }
               },
               "organism": {
-                "type": "string",
-                "description": "Source organism name"
+                "type": "string"
               }
             }
-          },
-          "description": "Array of BGC entries"
+          }
         },
         {
           "type": "object",
@@ -115,23 +113,40 @@
               "type": "object",
               "properties": {
                 "total": {
-                  "type": "integer",
-                  "description": "Total number of BGC entries"
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 },
                 "complete": {
-                  "type": "integer"
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 },
                 "partial": {
-                  "type": "integer"
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 },
                 "pending": {
-                  "type": "integer"
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 },
                 "active": {
-                  "type": "integer"
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 },
                 "retired": {
-                  "type": "integer"
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 }
               }
             },
@@ -141,14 +156,19 @@
                 "type": "object",
                 "properties": {
                   "type": {
-                    "type": "string",
-                    "description": "Biosynthetic class name"
+                    "type": "string"
                   },
                   "description": {
                     "type": "string"
                   },
                   "count": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "css_class": {
+                    "type": "string"
                   }
                 }
               }
@@ -159,16 +179,21 @@
                 "type": "object",
                 "properties": {
                   "description": {
-                    "type": "string",
-                    "description": "Phylum name"
+                    "type": "string"
                   },
                   "count": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   }
                 }
               }
             }
-          }
+          },
+          "required": [
+            "counts"
+          ]
         },
         {
           "type": "object",

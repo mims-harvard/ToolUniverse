@@ -48,6 +48,15 @@ class ChIPAtlasTool(BaseTool):
             elif operation == "search_datasets":
                 return self._search_datasets(arguments)
 
+            elif operation == "get_colocalization":
+                return self._get_colocalization(arguments)
+
+            elif operation == "get_target_genes":
+                return self._get_target_genes(arguments)
+
+            elif operation == "get_experiment_metadata":
+                return self._get_experiment_metadata(arguments)
+
             else:
                 return {
                     "status": "error",
@@ -299,6 +308,279 @@ class ChIPAtlasTool(BaseTool):
                 "data": {
                     "error": "Request timeout - ChIP-Atlas server may be slow. Try again later."
                 },
+            }
+        except Exception as e:
+            return {"status": "error", "data": {"error": str(e)}}
+
+    def _get_colocalization(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Colocalization: proteins whose ChIP-seq peaks co-occur with an antigen.
+
+        Reads the per-antigen/tissue co-binding matrix (one row per
+        co-occurring experiment, scored in the '<antigen>|Average' column) and
+        returns the partner proteins ranked by their best overlap score.
+        """
+        try:
+            antigen = arguments.get("antigen") or arguments.get("protein")
+            cell_type_class = arguments.get("cell_type_class") or arguments.get(
+                "tissue"
+            )
+            genome = arguments.get("genome", "hg38")
+            limit = int(arguments.get("limit", 50))
+
+            if not antigen:
+                return {
+                    "status": "error",
+                    "data": {"error": "antigen (e.g. 'CTCF') is required"},
+                }
+            if not cell_type_class:
+                return {
+                    "status": "error",
+                    "data": {
+                        "error": "cell_type_class is required (e.g. 'Blood'). "
+                        "Query ChIPAtlas_get_experiments first to find tissue classes for an antigen."
+                    },
+                }
+
+            # Tissue class uses spaces in the index but underscores in the path.
+            tissue_path = str(cell_type_class).replace(" ", "_")
+            url = f"{CHIPATLAS_DATA_URL}/{genome}/colo/{antigen}.{tissue_path}.tsv"
+            response = requests.get(url, timeout=30)
+            if response.status_code == 404:
+                return {
+                    "status": "error",
+                    "data": {
+                        "error": f"No colocalization data for antigen='{antigen}', "
+                        f"cell_type_class='{cell_type_class}', genome='{genome}'. "
+                        "Check available tissue classes via colo_analysis.json.",
+                        "url": url,
+                    },
+                }
+            response.raise_for_status()
+
+            lines = response.text.split("\n")
+            if not lines or not lines[0].strip():
+                return {
+                    "status": "success",
+                    "data": {
+                        "antigen": antigen,
+                        "cell_type_class": cell_type_class,
+                        "genome": genome,
+                        "partner_count": 0,
+                        "partners": [],
+                        "url": url,
+                        "note": "Colocalization matrix was empty.",
+                    },
+                }
+
+            # header: Experiment | Cell_subclass | Protein | <antigen>|Average | ...
+            best: Dict[str, Dict[str, Any]] = {}
+            for line in lines[1:]:
+                if not line.strip():
+                    continue
+                cols = line.split("\t")
+                if len(cols) < 4:
+                    continue
+                protein = cols[2]
+                try:
+                    score = float(cols[3])
+                except (ValueError, IndexError):
+                    continue
+                prev = best.get(protein)
+                if prev is None or score > prev["best_overlap_score"]:
+                    best[protein] = {
+                        "protein": protein,
+                        "best_overlap_score": score,
+                        "best_experiment": cols[0],
+                        "best_cell_subclass": cols[1],
+                    }
+
+            partners = sorted(
+                best.values(), key=lambda d: d["best_overlap_score"], reverse=True
+            )
+
+            return {
+                "status": "success",
+                "data": {
+                    "antigen": antigen,
+                    "cell_type_class": cell_type_class,
+                    "genome": genome,
+                    "partner_count": len(partners),
+                    "partners": partners[:limit],
+                    "url": url,
+                },
+            }
+
+        except requests.exceptions.Timeout:
+            return {
+                "status": "error",
+                "data": {"error": "Request timeout - ChIP-Atlas server may be slow."},
+            }
+        except Exception as e:
+            return {"status": "error", "data": {"error": str(e)}}
+
+    def _get_target_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Target genes: genes bound by a TF near their TSS, ranked by score.
+
+        Reads the per-TF target-gene matrix (rows = target genes, col2 =
+        '<TF>|Average' binding score) at a chosen TSS distance (1/5/10 kb).
+        """
+        try:
+            antigen = arguments.get("antigen") or arguments.get("tf")
+            genome = arguments.get("genome", "hg38")
+            distance = str(arguments.get("distance", "5"))
+            limit = int(arguments.get("limit", 100))
+
+            if not antigen:
+                return {
+                    "status": "error",
+                    "data": {"error": "antigen / tf (e.g. 'GATA1') is required"},
+                }
+            if distance not in ("1", "5", "10"):
+                return {
+                    "status": "error",
+                    "data": {
+                        "error": f"distance must be '1', '5', or '10' (kb), got '{distance}'"
+                    },
+                }
+
+            url = f"{CHIPATLAS_DATA_URL}/{genome}/target/{antigen}.{distance}.tsv"
+            response = requests.get(url, timeout=30)
+            if response.status_code == 404:
+                return {
+                    "status": "error",
+                    "data": {
+                        "error": f"No target-gene data for antigen='{antigen}', "
+                        f"distance='{distance}', genome='{genome}'. "
+                        "Check availability via target_genes_analysis.json.",
+                        "url": url,
+                    },
+                }
+            response.raise_for_status()
+
+            lines = response.text.split("\n")
+            if not lines or not lines[0].strip():
+                return {
+                    "status": "error",
+                    "data": {"error": "Empty target-gene file.", "url": url},
+                }
+
+            # header: Target_genes | <antigen>|Average | <SRX>|<cell> ...
+            genes = []
+            for line in lines[1:]:
+                if not line.strip():
+                    continue
+                cols = line.split("\t")
+                if len(cols) < 2:
+                    continue
+                try:
+                    avg = float(cols[1])
+                except (ValueError, IndexError):
+                    continue
+                genes.append({"gene": cols[0], "average_binding_score": avg})
+
+            genes.sort(key=lambda d: d["average_binding_score"], reverse=True)
+
+            note = None
+            if not genes:
+                note = (
+                    "The target-gene matrix for this antigen currently contains only "
+                    "a header (no scored rows on the server). Try another antigen or distance."
+                )
+
+            return {
+                "status": "success",
+                "data": {
+                    "antigen": antigen,
+                    "genome": genome,
+                    "distance_kb": distance,
+                    "gene_count": len(genes),
+                    "target_genes": genes[:limit],
+                    "url": url,
+                    **({"note": note} if note else {}),
+                },
+            }
+
+        except requests.exceptions.Timeout:
+            return {
+                "status": "error",
+                "data": {"error": "Request timeout - ChIP-Atlas server may be slow."},
+            }
+        except Exception as e:
+            return {"status": "error", "data": {"error": str(e)}}
+
+    def _get_experiment_metadata(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Structured metadata for a single ChIP-Atlas experiment (SRX/DRX/ERX)."""
+        try:
+            experiment_id = arguments.get("experiment_id") or arguments.get("expid")
+            if not experiment_id:
+                return {
+                    "status": "error",
+                    "data": {"error": "experiment_id is required (e.g. 'SRX080331')"},
+                }
+
+            url = f"{CHIPATLAS_BASE_URL}/data/exp_metadata.json"
+            response = requests.get(url, params={"expid": experiment_id}, timeout=30)
+            response.raise_for_status()
+            records = response.json()
+
+            if not isinstance(records, list) or len(records) == 0:
+                return {
+                    "status": "error",
+                    "data": {
+                        "error": f"No metadata found for experiment '{experiment_id}'.",
+                        "url": response.url,
+                    },
+                }
+
+            genome_filter = arguments.get("genome")
+            experiments = []
+            for rec in records:
+                if genome_filter and rec.get("genome") != genome_filter:
+                    continue
+                # attributes is a tab-delimited "key=value" string; parse to dict.
+                attr_raw = rec.get("attributes", "") or ""
+                attributes = {}
+                for field in attr_raw.split("\t"):
+                    if "=" in field:
+                        key, _, val = field.partition("=")
+                        attributes[key.strip()] = val.strip()
+                experiments.append(
+                    {
+                        "expid": rec.get("expid"),
+                        "genome": rec.get("genome"),
+                        "antigen_class": rec.get("agClass"),
+                        "antigen": rec.get("agSubClass"),
+                        "cell_type_class": rec.get("clClass"),
+                        "cell_type": rec.get("clSubClass"),
+                        "title": rec.get("title"),
+                        "attributes": attributes,
+                    }
+                )
+
+            if not experiments:
+                return {
+                    "status": "error",
+                    "data": {
+                        "error": f"No metadata for experiment '{experiment_id}' "
+                        f"with genome='{genome_filter}'.",
+                        "url": response.url,
+                    },
+                }
+
+            return {
+                "status": "success",
+                "data": {
+                    "experiment_id": experiment_id,
+                    "count": len(experiments),
+                    "experiments": experiments,
+                    "url": response.url,
+                },
+            }
+
+        except requests.exceptions.Timeout:
+            return {
+                "status": "error",
+                "data": {"error": "Request timeout - ChIP-Atlas server may be slow."},
             }
         except Exception as e:
             return {"status": "error", "data": {"error": str(e)}}

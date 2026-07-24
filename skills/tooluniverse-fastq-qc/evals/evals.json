@@ -1,0 +1,23 @@
+{
+  "skill_name": "tooluniverse-fastq-qc",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have paired-end reads at reads/sample_R1.fastq.gz and reads/sample_R2.fastq.gz. Run QC and tell me whether adapter trimming is needed.",
+      "expected_output": "Agent should: (1) PREFLIGHT FastQC (and seqkit) via command -v / shutil.which before doing anything; (2) if FastQC is present, run it into a separate workdir (NOT the reads/ input dir) and inspect the report; if FastQC is absent, emit the bioconda/conda install plan and STOP without fabricating any PASS/FAIL numbers; (3) interpret the Adapter content module specifically — a rising 3' adapter ramp means adapter trimming IS needed (recommend fastp auto-detect or Cutadapt with the explicit adapter), a flat curve means no adapter trimming needed; (4) NOT auto-trim (mode stays qc unless the user opts in) and NOT overwrite the raw FASTQs. Should run scripts/run_fastq_qc.py --fastq reads/sample_R1.fastq.gz reads/sample_R2.fastq.gz --workdir /tmp/<run>.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "FastQC flagged 'Overrepresented sequences' as FAIL and 'Sequence Duplication Levels' as FAIL on my RNA-seq FASTQ. Do I need to clean the reads?",
+      "expected_output": "Agent should distinguish the two flags rather than blindly trimming: (1) Overrepresented sequences — identify the source; if it is an adapter or primer-dimer, trim it (fastp/Cutadapt); if it is rRNA or a genuinely abundant transcript, that is expected biology in RNA-seq, so proceed (optionally rRNA-deplete next prep). (2) High duplication in RNA-seq is EXPECTED (abundant transcripts) and is NOT fixed by trimming; PCR-duplicate removal is an alignment-stage decision (Picard/samtools markdup), never a raw-FASTQ dedup. Should reference the INTERPRETATION table, advise investigating the overrepresented hit (e.g. BLAST it) before any trimming, and not propose deduplicating raw reads.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Run QC on these FASTQs but I don't have FastQC or fastp installed yet.",
+      "expected_output": "Agent should run the preflight, detect that FastQC/fastp are MISSING on PATH, and emit a copy-paste conda/mamba install plan (e.g. 'mamba install -c bioconda -c conda-forge fastqc fastp seqkit multiqc'), then STOP. It must explicitly state that no QC results were produced and nothing was fabricated, and that the raw FASTQs are untouched. The bundled scripts/run_fastq_qc.py exits 0 in this case (clean 'cannot run yet', not an error). The agent must NOT invent any per-base quality / adapter content / PASS-FAIL numbers.",
+      "files": []
+    }
+  ]
+}

@@ -34,88 +34,50 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "UniProt disease ID (e.g. DI-01559)"
-                  },
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Disease name"
-                  },
-                  "acronym": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Disease acronym"
-                  },
-                  "definition": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Disease definition"
-                  },
-                  "alternative_names": {
-                    "type": "array",
-                    "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "acronym": {
+                "type": "string"
+              },
+              "definition": {
+                "type": "string"
+              },
+              "alternative_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "cross_references": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "database": {
                       "type": "string"
                     },
-                    "description": "Alternative disease names"
-                  },
-                  "cross_references": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "database": {
-                          "type": "string"
-                        },
-                        "id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "description": "Cross-references to OMIM, MeSH, MedGen, SNOMED"
-                  },
-                  "reviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of reviewed (Swiss-Prot) proteins linked to this disease"
+                    "id": {
+                      "type": "string"
+                    }
                   }
                 }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+              },
+              "reviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -163,89 +125,59 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "UniProt disease ID"
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Disease name"
-                },
-                "acronym": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Disease acronym"
-                },
-                "definition": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Full disease definition"
-                },
-                "alternative_names": {
-                  "type": "array",
-                  "items": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "acronym": {
+              "type": "string"
+            },
+            "definition": {
+              "type": "string"
+            },
+            "alternative_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cross_references": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
                     "type": "string"
                   },
-                  "description": "Alternative disease names"
-                },
-                "cross_references": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "database": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "string"
-                      },
-                      "properties": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
+                  "id": {
+                    "type": "string"
                   },
-                  "description": "Cross-references to external databases"
-                },
-                "reviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of reviewed proteins linked to this disease"
-                },
-                "unreviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of unreviewed (TrEMBL) proteins linked"
+                  "properties": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                }
-              }
+            "reviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "unreviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
           },
           "required": [
-            "data"
+            "id"
           ]
         },
         {
@@ -297,66 +229,30 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Keyword ID (e.g. KW-0053)"
-                  },
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Keyword name"
-                  },
-                  "category": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Category: Biological process, Molecular function, Cellular component, Disease, etc."
-                  },
-                  "definition": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Keyword definition"
-                  },
-                  "reviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of reviewed proteins with this keyword"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string"
+              },
+              "definition": {
+                "type": "string"
+              },
+              "reviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -404,91 +300,61 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Keyword ID"
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Keyword name"
-                },
-                "category": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Keyword category"
-                },
-                "definition": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Full keyword definition"
-                },
-                "parents": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "definition": {
+              "type": "string"
+            },
+            "parents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
                   },
-                  "description": "Parent keywords in hierarchy"
-                },
-                "go_mappings": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "go_id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "description": "Mapped Gene Ontology terms"
-                },
-                "reviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of reviewed proteins annotated with this keyword"
-                },
-                "unreviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of unreviewed proteins annotated with this keyword"
+                  "name": {
+                    "type": "string"
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
+            "go_mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
                 }
               }
+            },
+            "reviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "unreviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
           },
           "required": [
-            "data"
+            "id"
           ]
         },
         {
@@ -537,95 +403,64 @@
         {
           "type": "object",
           "properties": {
-            "data": {
+            "id": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "organism": {
               "type": "object",
               "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Proteome ID"
+                "scientific_name": {
+                  "type": "string"
                 },
-                "description": {
+                "common_name": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Proteome description"
+                    "null",
+                    "string"
+                  ]
                 },
-                "organism": {
-                  "type": "object",
-                  "properties": {
-                    "scientific_name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "common_name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "taxon_id": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    }
-                  },
-                  "description": "Organism taxonomy information"
-                },
-                "proteome_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Type: Reference and representative proteome, Representative proteome, etc."
-                },
-                "components": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "protein_count": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "genome_accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "Chromosome/component level protein counts"
-                },
-                "total_protein_count": {
+                "taxon_id": {
                   "type": [
                     "integer",
-                    "null"
-                  ],
-                  "description": "Total number of proteins in proteome"
+                    "number"
+                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
+            "proteome_type": {
+              "type": "string"
+            },
+            "components": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "protein_count": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "genome_accession": {
+                    "type": "string"
+                  }
                 }
               }
+            },
+            "total_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
           },
           "required": [
-            "data"
+            "id"
           ]
         },
         {
@@ -677,73 +512,39 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Proteome ID"
-                  },
-                  "organism": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Organism scientific name"
-                  },
-                  "common_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Organism common name"
-                  },
-                  "taxon_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "NCBI taxonomy ID"
-                  },
-                  "proteome_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Proteome type classification"
-                  },
-                  "protein_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Total number of proteins"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "organism": {
+                "type": "string"
+              },
+              "common_name": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "taxon_id": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "proteome_type": {
+                "type": "string"
+              },
+              "protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

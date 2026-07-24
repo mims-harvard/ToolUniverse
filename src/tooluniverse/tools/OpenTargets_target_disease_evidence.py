@@ -24,7 +24,7 @@ def OpenTargets_target_disease_evidence(
     Parameters
     ----------
     efoId : str
-        EFO/MONDO disease ID (e.g., EFO_0000384). Alternative to disease_name.
+        EFO/MONDO disease ID (e.g., MONDO_0005011). Alternative to disease_name.
     ensemblId : str
         Ensembl gene ID (e.g., ENSG00000141510). Alternative to gene_symbol.
     gene_symbol : str

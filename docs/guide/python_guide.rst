@@ -54,9 +54,10 @@ Check that ToolUniverse is installed correctly:
    print(f"ToolUniverse version: {tooluniverse.__version__}")
    print("✅ Installation successful!")
 
-.. success:: **Installation Complete**
- 
- You're ready to start using ToolUniverse!
+.. admonition:: Installation Complete
+   :class: tip
+
+   You're ready to start using ToolUniverse!
 
 Quick Start
 -----------
@@ -96,7 +97,7 @@ Get your first scientific query running in 5 minutes:
       .. code-block:: python
 
          # Load only specific tool categories
-         tu.load_tools(tool_type=['uniprot', 'ChEMBL', 'opentarget'])
+         tu.load_tools(categories=['uniprot', 'ChEMBL', 'opentarget'])
 
 .. card:: Step 3: Execute Your First Tool
  :class-card: step-card current
@@ -148,7 +149,7 @@ All tools follow a **consistent structure**:
          # Method 1: Dictionary API
          result = tu.run({
              "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-             "arguments": {"efoId": "EFO_0000537"}
+             "arguments": {"efoId": "MONDO_0005044"}  # hypertension
          })
 
    .. tab-item:: Direct Import
@@ -162,7 +163,7 @@ All tools follow a **consistent structure**:
          
          # Call directly
          result = OpenTargets_get_associated_targets_by_disease_efoId(
-             efoId="EFO_0000537"
+             efoId="MONDO_0005044"  # hypertension
          )
 
 Tool Finders
@@ -171,15 +172,15 @@ Tool Finders
 ToolUniverse has **three ways** to find tools. Don't browse 1000+ tools manually—use Tool Finder!
 
 .. grid:: 1 1 2 2
- :gutter: 3
+   :gutter: 3
 
- .. grid-item-card:: Keyword Search
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Keyword Search
+      :class-card: hover-lift
+      :shadow: md
 
- **Fast text matching**
- 
- Best for: Exact terms you know
+      **Fast text matching**
+
+      Best for: Exact terms you know
 
       .. code-block:: python
 
@@ -276,7 +277,7 @@ Common Examples
    # Find therapeutic targets
    result = tu.run({
        "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-       "arguments": {"efoId": "EFO_0000685"}  # Rheumatoid arthritis
+       "arguments": {"efoId": "MONDO_0008383"}  # Rheumatoid arthritis
    })
 
 **Literature Search**
@@ -285,7 +286,7 @@ Common Examples
 
    # Search scientific papers
    result = tu.run({
-       "name": "PubTator_search_publications",
+       "name": "PubTator3_LiteratureSearch",
        "arguments": {
            "query": "CRISPR cancer therapy",
            "limit": 10
@@ -341,7 +342,7 @@ Multi-Step Pipeline
    # Step 2: Get disease targets
    targets = tu.run({
        "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-       "arguments": {"efoId": "EFO_0000685"}
+       "arguments": {"efoId": "MONDO_0008383"}  # Rheumatoid arthritis
    })
 
    # Step 3: For each target, get protein info
@@ -423,7 +424,7 @@ Tool Loading Options
    tu.load_tools()
 
    # Load specific categories
-   tu.load_tools(tool_type=['uniprot', 'ChEMBL', 'opentarget'])
+   tu.load_tools(categories=['uniprot', 'ChEMBL', 'opentarget'])
 
    # Load only specific tools by name
    tu.load_tools(include_tools=['UniProt_get_function_by_accession', 'PubMed_search_articles'])
@@ -451,61 +452,61 @@ Advanced Features
 -----------------
 
 .. grid:: 1 1 2 2
- :gutter: 3
+   :gutter: 3
 
- .. grid-item-card:: Tool Composition
- :link: tool_composition
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Tool Composition
+      :link: tool_composition
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Chain multiple tools into scientific workflows
+      Chain multiple tools into scientific workflows
 
- .. grid-item-card:: Hooks System
- :link: hooks/index
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Hooks System
+      :link: hooks/index
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Intelligent output processing and summarization
+      Intelligent output processing and summarization
 
- .. grid-item-card:: Cache System
- :link: cache_system
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Cache System
+      :link: cache_system
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Optimize performance with smart caching
+      Optimize performance with smart caching
 
- .. grid-item-card:: HTTP API
- :link: http_api
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: HTTP API
+      :link: http_api
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Deploy ToolUniverse as a remote service
+      Deploy ToolUniverse as a remote service
 
- .. grid-item-card:: ChatGPT API
- :link: chatgpt_api
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: ChatGPT API
+      :link: chatgpt_api
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Use ToolUniverse tools as OpenAI function calls
+      Use ToolUniverse tools as OpenAI function calls
 
 .. button-ref:: tooluniverse_case_study
- :color: primary
- :shadow:
- :expand:
+   :color: primary
+   :shadow:
+   :expand:
 
- **Complete Case Study**: Drug discovery workflow with Gemini 2.5 Pro
+   **Complete Case Study**: Drug discovery workflow with Gemini 2.5 Pro
 
-.. button-ref:: ../api/modules
- :color: secondary
- :shadow:
- :expand:
+.. button-ref:: /api/modules
+   :color: secondary
+   :shadow:
+   :expand:
 
- **API Reference**: Detailed Python API documentation
+   **API Reference**: Detailed Python API documentation
 
 .. toctree::
    :maxdepth: 2

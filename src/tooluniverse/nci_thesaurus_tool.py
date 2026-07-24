@@ -71,6 +71,10 @@ class NCIThesaurusTool(BaseTool):
             return self._get_concept(arguments)
         elif self.endpoint == "get_children":
             return self._get_children(arguments)
+        elif self.endpoint == "get_parents":
+            return self._get_parents(arguments)
+        elif self.endpoint == "get_maps":
+            return self._get_maps(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -200,5 +204,82 @@ class NCIThesaurusTool(BaseTool):
                 "source": "NCI Thesaurus (NCIt)",
                 "parent_code": code,
                 "total_children": len(results),
+            },
+        }
+
+    def _get_parents(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get direct parent concepts (upward hierarchy) for a given code."""
+        code = arguments.get("code", "")
+        if not code:
+            return {"status": "error", "error": "code parameter is required"}
+
+        url = f"{NCI_BASE_URL}/concept/ncit/{code}/parents"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+
+        data = response.json()
+
+        results = []
+        for c in data:
+            results.append(
+                {
+                    "code": c.get("code", ""),
+                    "name": c.get("name", ""),
+                    "leaf": c.get("leaf"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "source": "NCI Thesaurus (NCIt)",
+                "child_code": code,
+                "total_parents": len(results),
+            },
+        }
+
+    def _get_maps(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get cross-vocabulary maps (MedDRA, SNOMED, GDC, ICD) for a concept."""
+        code = arguments.get("code", "")
+        if not code:
+            return {"status": "error", "error": "code parameter is required"}
+
+        url = f"{NCI_BASE_URL}/concept/ncit/{code}"
+        params = {"include": "maps"}
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+
+        data = response.json()
+        maps_raw = data.get("maps", []) or []
+
+        maps = []
+        terminologies = set()
+        for m in maps_raw:
+            target_terminology = m.get("targetTerminology")
+            if target_terminology:
+                terminologies.add(target_terminology)
+            maps.append(
+                {
+                    "type": m.get("type"),
+                    "target_name": m.get("targetName"),
+                    "target_code": m.get("targetCode"),
+                    "target_term_type": m.get("targetTermType"),
+                    "target_terminology": target_terminology,
+                    "target_terminology_version": m.get("targetTerminologyVersion"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "code": data.get("code", code),
+                "name": data.get("name", ""),
+                "maps": maps,
+            },
+            "metadata": {
+                "source": "NCI Thesaurus (NCIt)",
+                "total_maps": len(maps),
+                "target_terminologies": sorted(terminologies),
             },
         }

@@ -52,8 +52,10 @@ class BasePythonExecutor:
         "reversed",
         "slice",
         "type",
-        "getattr",
-        "setattr",
+        # Note: getattr/setattr are intentionally NOT exposed. They allow
+        # string-based attribute access (e.g. getattr(obj, "__class__")) that
+        # bypasses the AST-level dunder check below and enables sandbox escape
+        # through the interpreter's class hierarchy.
         "hasattr",
         "callable",
         "__import__",  # Needed for import statements
@@ -87,6 +89,127 @@ class BasePythonExecutor:
         "Attribute": ["__import__", "open", "file"],
     }
 
+    # Dangerous attribute names that pivot out of the sandbox.
+    #
+    # The allowed scientific modules (numpy, scipy, matplotlib, ...) transitively
+    # expose dangerous stdlib modules as PLAIN, non-dunder attributes — e.g.
+    # `numpy.ctypeslib` (-> ctypes -> CDLL -> native code), `matplotlib.os`,
+    # `matplotlib.subprocess`, `random._os`, `collections._sys`. Reaching any of
+    # them is arbitrary code execution (`ctypes.CDLL(None).system(...)`), and none
+    # require a dunder, a forbidden import, or a forbidden call — so the existing
+    # checks did not catch them.
+    #
+    # Because `getattr`/`globals`/`vars`/`eval`/`exec`/`compile` are all withheld
+    # from the builtins whitelist, the ONLY way user code can reach an attribute is
+    # the literal `obj.name` syntax, which is visible in the AST. Denying these
+    # attribute names (normalized: leading underscores stripped, lower-cased, so
+    # `_os`/`_sys` alias forms are also caught) therefore soundly blocks the pivot.
+    #
+    # Legitimate numeric attributes are deliberately NOT listed: numpy.random,
+    # scipy.signal, scipy.fft, numpy.linalg, numpy.trace, re.compile, etc.
+    DANGEROUS_ATTRIBUTE_NAMES = frozenset(
+        {
+            # OS / process / system modules
+            "os",
+            "sys",
+            "subprocess",
+            "posix",
+            "nt",
+            "socket",
+            "platform",
+            "shutil",
+            "pathlib",
+            "pty",
+            "multiprocessing",
+            "mmap",
+            "fcntl",
+            "resource",
+            "termios",
+            "tty",
+            # import / introspection -> builtins, frames, code objects
+            "importlib",
+            "imp",
+            "builtins",
+            "runpy",
+            "gc",
+            "inspect",
+            "types",
+            "ctypes",
+            "ctypeslib",
+            "cffi",
+            "pickle",
+            "marshal",
+            "pdb",
+            "sysconfig",
+            "distutils",
+            "f2py",
+            # FFI loaders (defense in depth; normally reached only via ctypes)
+            "cdll",
+            "windll",
+            "oledll",
+            "pydll",
+            "libraryloader",
+            "loadlibrary",
+            "dlopen",
+            # process-exec primitives (defense in depth)
+            "system",
+            "popen",
+            "fork",
+            "forkpty",
+            "kill",
+            "killpg",
+            "execl",
+            "execle",
+            "execlp",
+            "execlpe",
+            "execv",
+            "execve",
+            "execvp",
+            "execvpe",
+            "spawnl",
+            "spawnle",
+            "spawnlp",
+            "spawnlpe",
+            "spawnv",
+            "spawnve",
+            "spawnvp",
+            "spawnvpe",
+            "getoutput",
+            "getstatusoutput",
+            "check_output",
+            "check_call",
+            # code-generation pivot that exec()s generated source
+            "lambdify",
+            # builtins module + its aliases (e.g. the enum module exposes it as
+            # `bltns`): reaching it hands back getattr/eval/exec and re-enables
+            # the class-hierarchy escape.
+            "builtin",
+            "bltns",
+            # introspection builtins that re-enable string-based dunder traversal
+            # or frame walking if reached through any module attribute.
+            "getattr",
+            "setattr",
+            "delattr",
+            "vars",
+            "globals",
+            "locals",
+            "memoryview",
+            "breakpoint",
+            "currentframe",
+        }
+    )
+
+    @classmethod
+    def _is_dangerous_attribute(cls, name: Any) -> bool:
+        """True for attribute names that pivot to native code / os / subprocess.
+
+        Normalizes leading underscores and case so alias forms like ``_os`` and
+        ``CDLL`` are caught the same as ``os`` / ``cdll``.
+        """
+        if not isinstance(name, str):
+            return False
+        return name.lstrip("_").lower() in cls.DANGEROUS_ATTRIBUTE_NAMES
+
     def __init__(self, tool_config: Dict[str, Any]):
         """Initialize the executor with tool configuration."""
         self.tool_config = tool_config
@@ -95,6 +218,21 @@ class BasePythonExecutor:
         # Add custom allowed modules if specified
         if "allowed_imports" in tool_config:
             self.allowed_modules.update(tool_config["allowed_imports"])
+
+    @staticmethod
+    def _is_dunder(name: Any) -> bool:
+        """Return True for double-underscore names like ``__class__``.
+
+        These names are the entry points used to walk out of the sandbox via the
+        interpreter's class hierarchy (``__class__`` -> ``__bases__`` ->
+        ``__subclasses__`` -> ``__init__`` -> ``__globals__`` -> ``__builtins__``).
+        """
+        return (
+            isinstance(name, str)
+            and len(name) > 4
+            and name.startswith("__")
+            and name.endswith("__")
+        )
 
     def _check_ast_safety(self, code: str) -> tuple[bool, List[str]]:
         """
@@ -130,10 +268,34 @@ class BasePythonExecutor:
                     if node.func.attr in self.FORBIDDEN_AST_NODES["Call"]:
                         warnings.append(f"Forbidden method call: {node.func.attr}")
 
-            # Check for forbidden attribute access
+            # Block ALL dunder attribute access (e.g. obj.__class__). A name-based
+            # denylist of specific dangerous attributes is not sound; any dunder
+            # can be chained to reach a live os/subprocess reference, so deny the
+            # whole class of attribute access rather than enumerate it.
             elif isinstance(node, ast.Attribute):
-                if node.attr in self.FORBIDDEN_AST_NODES["Attribute"]:
+                if self._is_dunder(node.attr):
+                    warnings.append(f"Forbidden dunder attribute access: {node.attr}")
+                elif node.attr in self.FORBIDDEN_AST_NODES["Attribute"]:
                     warnings.append(f"Forbidden attribute access: {node.attr}")
+                elif self._is_dangerous_attribute(node.attr):
+                    # Blocks module-pivot / FFI escapes such as numpy.ctypeslib,
+                    # matplotlib.subprocess, random._os, ...CDLL, os.system.
+                    warnings.append(
+                        f"Forbidden attribute access (sandbox escape): {node.attr}"
+                    )
+
+            # Block bare dunder names (e.g. __builtins__, __import__) so they
+            # cannot be read directly out of the execution namespace.
+            elif isinstance(node, ast.Name):
+                if self._is_dunder(node.id):
+                    warnings.append(f"Forbidden dunder name: {node.id}")
+
+            # Block dunder string literals. With getattr removed this is defense
+            # in depth: it stops string-based traversal such as
+            # globals()["__builtins__"] or vars(obj)["__class__"].
+            elif isinstance(node, ast.Constant):
+                if self._is_dunder(node.value):
+                    warnings.append(f"Forbidden dunder string literal: {node.value}")
 
         return len(warnings) == 0, warnings
 
@@ -531,9 +693,10 @@ class PythonCodeExecutor(BasePythonExecutor, BaseTool):
             return_variable = arguments.get("return_variable", "result")
             additional_vars = arguments.get("arguments", {})
 
-            # Update allowed modules if specified
-            if "allowed_imports" in arguments:
-                self.allowed_modules.update(arguments["allowed_imports"])
+            # SECURITY: The set of importable modules is a server-side trust
+            # boundary configured via tool_config["allowed_imports"]. It must
+            # NOT be widened by caller-supplied arguments, or a caller could
+            # allowlist os/subprocess and disable the sandbox before it runs.
 
             # Check AST safety
             is_safe, ast_warnings = self._check_ast_safety(code)

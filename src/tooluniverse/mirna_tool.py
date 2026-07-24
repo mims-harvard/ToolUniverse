@@ -206,29 +206,56 @@ class miRNAGetTool(BaseTool):
         rnacentral_id = arguments.get("rnacentral_id", "")
         taxid = arguments.get("taxid")
 
-        # Build URL: /api/v1/rna/{URS}/{taxid} or /api/v1/rna/{URS}
-        if taxid:
-            url = f"{RNACENTRAL_BASE}/rna/{rnacentral_id}/{taxid}?format=json"
-        else:
-            url = f"{RNACENTRAL_BASE}/rna/{rnacentral_id}?format=json"
-
+        # The /rna/{URS}/{taxid} path now serves an HTML species view rather
+        # than JSON, so fetch the JSON record (sequence, length, ...) and derive
+        # the species-specific fields (rna_type, species, description) from the
+        # xrefs endpoint, filtered by taxid when provided.
+        url = f"{RNACENTRAL_BASE}/rna/{rnacentral_id}/?format=json"
         resp = requests.get(url, timeout=self.timeout)
         resp.raise_for_status()
         result = resp.json()
 
+        rna_type = species = description = ""
+        try:
+            xr = requests.get(
+                f"{RNACENTRAL_BASE}/rna/{rnacentral_id}/xrefs/?format=json&page_size=100",
+                timeout=self.timeout,
+            )
+            if xr.ok:
+                xrefs = xr.json().get("results", [])
+                match = None
+                if taxid:
+                    match = next(
+                        (x for x in xrefs if str(x.get("taxid")) == str(taxid)), None
+                    )
+                match = match or (xrefs[0] if xrefs else None)
+                # Species-specific annotation lives under the xref's accession.
+                acc = (match or {}).get("accession") or {}
+                rna_type = acc.get("rna_type") or ""
+                species = acc.get("species") or ""
+                description = acc.get("description") or ""
+        except (requests.RequestException, ValueError):
+            pass
+
         return {
             "status": "success",
             "data": {
-                "rnacentral_id": result.get("rnacentral_id", ""),
-                "description": result.get("description", ""),
+                "rnacentral_id": result.get("rnacentral_id", rnacentral_id),
+                "description": description,
                 "short_description": result.get("short_description", ""),
                 "sequence": result.get("sequence", ""),
                 "length": result.get("length", 0),
-                "rna_type": result.get("rna_type", ""),
-                "species": result.get("species", ""),
-                "taxid": result.get("taxid"),
+                "rna_type": rna_type,
+                "species": species,
+                "taxid": taxid,
                 "genes": result.get("genes", []),
-                "publications_count": result.get("publications", 0),
+                # The record's "publications" field is a URL, not a count; only
+                # keep it when the API returns an integer count.
+                "publications_count": (
+                    result.get("publications")
+                    if isinstance(result.get("publications"), int)
+                    else 0
+                ),
                 "is_active": result.get("is_active", True),
                 "distinct_databases": result.get("distinct_databases", ""),
             },

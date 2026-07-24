@@ -1,5 +1,6 @@
 # dailymed_tool.py
 
+import json
 import requests
 from typing import Dict, Any, List
 from .base_tool import BaseTool
@@ -42,7 +43,11 @@ class SearchSPLTool(BaseTool):
         if arguments.get("published_date_eq"):
             params["published_date[eq]"] = arguments["published_date_eq"]
 
-        params["pagesize"] = arguments.get("pagesize", 100)
+        # Fix-R33A-1: "limit" is the dominant pagination param name across
+        # ToolUniverse (CPIC, ClinVar, GWAS, ...), so a caller guessing it
+        # here instead of DailyMed's own "pagesize" was silently ignored --
+        # confirmed live (limit=3 still returned all 44 isoniazid labels).
+        params["pagesize"] = arguments.get("pagesize") or arguments.get("limit") or 100
         params["page"] = arguments.get("page", 1)
 
         try:
@@ -69,11 +74,21 @@ class SearchSPLTool(BaseTool):
                 "content": resp.text,
             }
 
+        # Fix-R6A-2/R6D-3/R6E-3: DailyMed's own API literally serializes
+        # absent pagination links as the JSON string "null" rather than a
+        # real null, so a caller's `if metadata["next_page_url"]:` truthy
+        # check treats a missing next page as present. Normalize before
+        # returning instead of passing the upstream quirk straight through.
+        metadata = {
+            k: (None if v == "null" else v)
+            for k, v in result.get("metadata", {}).items()
+        }
+
         # Return with standard status envelope
         return {
             "status": "success",
             "data": result.get("data", []),
-            "metadata": result.get("metadata", {}),
+            "metadata": metadata,
         }
 
 
@@ -81,14 +96,80 @@ class SearchSPLTool(BaseTool):
 class GetSPLBySetIDTool(BaseTool):
     """
     Get complete SPL label based on SPL Set ID, returns content in XML or JSON format.
+
+    When configured with a ``resource`` field (e.g. 'media' or 'history'), fetches
+    the corresponding DailyMed JSON sub-resource for the Set ID instead of the
+    full SPL XML document.
     """
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
         # Different suffixes for XML and JSON
         self.endpoint_template = f"{DAILYMED_BASE}/spls/{{setid}}.{{fmt}}"
+        # Optional sub-resource (media / history) served as JSON
+        self.resource = tool_config.get("fields", {}).get("resource")
 
     def run(self, arguments):
+        if self.resource in ("media", "history"):
+            return self._get_resource(arguments)
+        return self._get_full_spl(arguments)
+
+    def _get_resource(self, arguments):
+        """Fetch a JSON sub-resource (media or history) for an SPL Set ID."""
+        setid = arguments.get("setid")
+        if not setid or not str(setid).strip():
+            return {"status": "error", "error": "setid parameter is required"}
+
+        url = f"{DAILYMED_BASE}/spls/{str(setid).strip()}/{self.resource}.json"
+        try:
+            resp = requests.get(url, timeout=30)
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": f"Failed to request DailyMed {self.resource}: {str(e)}",
+            }
+
+        if resp.status_code == 404:
+            return {
+                "status": "error",
+                "error": f"SPL {self.resource} not found for Set ID={setid}.",
+            }
+        if resp.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"DailyMed API access failed, HTTP {resp.status_code}",
+            }
+
+        try:
+            result = resp.json()
+        except ValueError:
+            return {
+                "status": "error",
+                "error": f"Unable to parse DailyMed {self.resource} JSON.",
+            }
+
+        data = result.get("data", {})
+        if self.resource == "media":
+            payload = {
+                "setid": data.get("setid", str(setid).strip()),
+                "title": data.get("title"),
+                "spl_version": data.get("spl_version"),
+                "media": data.get("media", []) or [],
+            }
+        else:  # history
+            payload = {
+                "setid": (data.get("spl") or {}).get("setid", str(setid).strip()),
+                "title": (data.get("spl") or {}).get("title"),
+                "history": data.get("history", []) or [],
+            }
+
+        return {
+            "status": "success",
+            "data": payload,
+            "metadata": result.get("metadata", {}),
+        }
+
+    def _get_full_spl(self, arguments):
         setid = arguments.get("setid")
         fmt = arguments.get("format", "xml")
 
@@ -125,6 +206,23 @@ class GetSPLBySetIDTool(BaseTool):
             }
 
         return {"status": "success", "xml": resp.text}
+
+
+def _dedupe_items(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Fix-R4C-1: SPL documents often expose the same section content
+    through multiple matching <section> elements (e.g. a Highlights summary
+    plus the Full Prescribing Information), so a parser can walk the
+    identical paragraph/table text more than once. Dedupe by content,
+    preserving first-seen order, so the same statement never appears twice
+    in one response. A no-op when there's no duplication to begin with."""
+    seen = set()
+    deduped = []
+    for item in items:
+        key = json.dumps(item, sort_keys=True)
+        if key not in seen:
+            seen.add(key)
+            deduped.append(item)
+    return deduped
 
 
 @register_tool("DailyMedSPLParserTool")
@@ -172,6 +270,19 @@ class DailyMedSPLParserTool(BaseTool):
                     pass
 
         if not setid:
+            if arguments.get("drug_name"):
+                # Fix-R4C-2: drug_name WAS provided but the lookup above found
+                # no matching SPL (or the lookup call itself failed) -- the old
+                # generic "setid missing" message told the user to do exactly
+                # what they already did, instead of reporting the real problem.
+                return {
+                    "status": "error",
+                    "error": (
+                        f"No DailyMed SPL found for drug_name="
+                        f"'{arguments['drug_name']}'. Check the spelling, or "
+                        "supply an exact `setid` (DailyMed Set ID UUID) instead."
+                    ),
+                }
             return {
                 "status": "error",
                 "error": (
@@ -214,10 +325,25 @@ class DailyMedSPLParserTool(BaseTool):
 
         result = self._with_data_payload(operation_result)
         if result.get("status") == "success":
+            # Fix-R9A-2/R9D-3: metadata.drug_name was only ever populated
+            # from the caller's own `drug_name` argument, so it was always
+            # null for the common case of calling with `setid` directly
+            # (e.g. after a prior search_spls call) -- even though the SPL
+            # itself already names the product. Fall back to the SPL's own
+            # manufacturedProduct name, which is already available on the
+            # parsed XML at no extra network cost.
+            drug_name = arguments.get("drug_name")
+            if not drug_name:
+                name_el = root.xpath(
+                    "//hl7:manufacturedProduct/hl7:manufacturedProduct/hl7:name",
+                    namespaces=self.ns,
+                )
+                if name_el and name_el[0].text:
+                    drug_name = name_el[0].text.strip()
             result["metadata"] = {
                 "source": "DailyMed",
                 "setid": setid,
-                "drug_name": arguments.get("drug_name"),
+                "drug_name": drug_name,
                 "operation": operation,
             }
         return result
@@ -271,27 +397,13 @@ class DailyMedSPLParserTool(BaseTool):
 
             adverse_reactions = []
             for section in sections:
-                # Extract text content
                 text_elements = section.xpath(".//hl7:text", namespaces=self.ns)
                 for text_el in text_elements:
-                    # Look for tables
-                    tables = text_el.xpath(".//hl7:table", namespaces=self.ns)
-                    for table in tables:
-                        table_data = self._extract_table_data(table)
-                        if table_data:
-                            adverse_reactions.extend(table_data)
+                    adverse_reactions.extend(
+                        self._extract_ordered_content(text_el, "text")
+                    )
 
-                    # If no tables, extract paragraph text
-                    if not tables:
-                        paragraphs = text_el.xpath(
-                            ".//hl7:paragraph", namespaces=self.ns
-                        )
-                        for para in paragraphs:
-                            text_content = "".join(para.itertext()).strip()
-                            if text_content and len(text_content) > 10:
-                                adverse_reactions.append(
-                                    {"type": "text", "content": text_content}
-                                )
+            adverse_reactions = _dedupe_items(adverse_reactions)
 
             return {
                 "status": "success",
@@ -324,29 +436,11 @@ class DailyMedSPLParserTool(BaseTool):
             for section in sections:
                 text_elements = section.xpath(".//hl7:text", namespaces=self.ns)
                 for text_el in text_elements:
-                    # Extract tables
-                    tables = text_el.xpath(".//hl7:table", namespaces=self.ns)
-                    for table in tables:
-                        table_data = self._extract_table_data(table)
-                        if table_data:
-                            dosing_info.extend(table_data)
+                    dosing_info.extend(
+                        self._extract_ordered_content(text_el, "dosing_text")
+                    )
 
-                    # Extract paragraphs
-                    paragraphs = text_el.xpath(".//hl7:paragraph", namespaces=self.ns)
-                    for para in paragraphs:
-                        text_content = "".join(para.itertext()).strip()
-                        if text_content and len(text_content) > 10:
-                            dosing_info.append(
-                                {"type": "dosing_text", "content": text_content}
-                            )
-
-                    # Extract list items (some drugs encode dosing as <list><item> elements)
-                    for item in text_el.xpath(".//hl7:item", namespaces=self.ns):
-                        text_content = "".join(item.itertext()).strip()
-                        if text_content and len(text_content) > 5:
-                            dosing_info.append(
-                                {"type": "dosing_text", "content": text_content}
-                            )
+            dosing_info = _dedupe_items(dosing_info)
 
             return {
                 "status": "success",
@@ -403,6 +497,8 @@ class DailyMedSPLParserTool(BaseTool):
                                     }
                                 )
 
+            contraindications = _dedupe_items(contraindications)
+
             return {
                 "status": "success",
                 "contraindications": contraindications,
@@ -434,21 +530,11 @@ class DailyMedSPLParserTool(BaseTool):
             for section in sections:
                 text_elements = section.xpath(".//hl7:text", namespaces=self.ns)
                 for text_el in text_elements:
-                    # Extract tables
-                    tables = text_el.xpath(".//hl7:table", namespaces=self.ns)
-                    for table in tables:
-                        table_data = self._extract_table_data(table)
-                        if table_data:
-                            interactions.extend(table_data)
+                    interactions.extend(
+                        self._extract_ordered_content(text_el, "interaction_text")
+                    )
 
-                    # Extract paragraphs
-                    paragraphs = text_el.xpath(".//hl7:paragraph", namespaces=self.ns)
-                    for para in paragraphs:
-                        text_content = "".join(para.itertext()).strip()
-                        if text_content and len(text_content) > 10:
-                            interactions.append(
-                                {"type": "interaction_text", "content": text_content}
-                            )
+            interactions = _dedupe_items(interactions)
 
             return {
                 "status": "success",
@@ -481,21 +567,11 @@ class DailyMedSPLParserTool(BaseTool):
             for section in sections:
                 text_elements = section.xpath(".//hl7:text", namespaces=self.ns)
                 for text_el in text_elements:
-                    # Extract tables
-                    tables = text_el.xpath(".//hl7:table", namespaces=self.ns)
-                    for table in tables:
-                        table_data = self._extract_table_data(table)
-                        if table_data:
-                            pharmacology.extend(table_data)
+                    pharmacology.extend(
+                        self._extract_ordered_content(text_el, "pharmacology_text")
+                    )
 
-                    # Extract paragraphs
-                    paragraphs = text_el.xpath(".//hl7:paragraph", namespaces=self.ns)
-                    for para in paragraphs:
-                        text_content = "".join(para.itertext()).strip()
-                        if text_content and len(text_content) > 10:
-                            pharmacology.append(
-                                {"type": "pharmacology_text", "content": text_content}
-                            )
+            pharmacology = _dedupe_items(pharmacology)
 
             return {
                 "status": "success",
@@ -509,6 +585,62 @@ class DailyMedSPLParserTool(BaseTool):
                 "error": f"Failed to parse clinical pharmacology: {str(e)}",
             }
 
+    def _extract_ordered_content(
+        self, text_el, text_type: str, min_len: int = 10
+    ) -> List[Dict[str, Any]]:
+        """Fix-R5B-1/R7A-1: walk a <text> element's direct children
+        (paragraph/list/table) in document order instead of the old
+        approach of extracting all tables, then all paragraphs, then all
+        list items in three separate passes. That old approach broke in
+        two independent ways: (1) SPL sections routinely interleave a
+        heading paragraph immediately before the table or list it
+        introduces (e.g. "Juvenile Idiopathic Arthritis (2.3):" followed
+        by its dosing table), and grouping every table before every
+        paragraph destroyed that association; (2) some methods had no
+        <list>/<item> handling at all, so e.g. warfarin's adverse-reactions
+        section -- whose actual reaction list is encoded as <list><item>
+        blocks alongside intro <paragraph> sentences -- silently dropped
+        every list item, leaving only the generic intro sentences."""
+        items: List[Dict[str, Any]] = []
+        for child in text_el.iterchildren():
+            tag = etree.QName(child).localname
+            if tag == "table":
+                # _extract_table_data always returns a list, so extend()
+                # handles the empty case without a separate guard.
+                items.extend(self._extract_table_data(child))
+            elif tag == "paragraph":
+                text_content = "".join(child.itertext()).strip()
+                if text_content and len(text_content) > min_len:
+                    items.append({"type": text_type, "content": text_content})
+            elif tag == "list":
+                for item_el in child.xpath(".//hl7:item", namespaces=self.ns):
+                    text_content = "".join(item_el.itertext()).strip()
+                    if text_content and len(text_content) > 5:
+                        items.append({"type": text_type, "content": text_content})
+        return items
+
+    def _cell_text(self, element) -> str:
+        """Fix-R6E-2: SPL table cells use <br/> as an in-cell line break
+        (e.g. "TRIKAFTA" on one line, "N=202" on the next, "n (%)" on a
+        third), but joining itertext() with no separator collapsed these
+        into a single run like "TRIKAFTAN=202n (%)". Walk the cell's mixed
+        content and insert a space at each <br/> boundary instead."""
+        parts: List[str] = []
+
+        def walk(el) -> None:
+            if el.text:
+                parts.append(el.text)
+            for child in el:
+                if etree.QName(child).localname == "br":
+                    parts.append(" ")
+                else:
+                    walk(child)
+                if child.tail:
+                    parts.append(child.tail)
+
+        walk(element)
+        return " ".join("".join(parts).split())
+
     def _extract_table_data(self, table_element) -> List[Dict[str, Any]]:
         """Extract structured data from table element."""
         try:
@@ -519,7 +651,7 @@ class DailyMedSPLParserTool(BaseTool):
             thead = table_element.xpath(".//hl7:thead", namespaces=self.ns)
             if thead:
                 header_cells = thead[0].xpath(".//hl7:th", namespaces=self.ns)
-                headers = ["".join(cell.itertext()).strip() for cell in header_cells]
+                headers = [self._cell_text(cell) for cell in header_cells]
 
             # Get table rows
             tbody = table_element.xpath(".//hl7:tbody", namespaces=self.ns)
@@ -527,7 +659,7 @@ class DailyMedSPLParserTool(BaseTool):
                 rows = tbody[0].xpath(".//hl7:tr", namespaces=self.ns)
                 for row in rows:
                     cells = row.xpath(".//hl7:td", namespaces=self.ns)
-                    cell_data = ["".join(cell.itertext()).strip() for cell in cells]
+                    cell_data = [self._cell_text(cell) for cell in cells]
 
                     if cell_data:
                         # Create dict if we have headers

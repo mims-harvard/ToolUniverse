@@ -1,5 +1,5 @@
 Troubleshooting Tutorial
-=====================
+========================
 
 Quick Diagnostic
 ----------------
@@ -680,8 +680,8 @@ If none of these solutions work:
 4. **Join our community**: Discord server link
 
 .. note::
-=========
- When reporting issues, please run the diagnostic script first:
+
+   When reporting issues, please run the diagnostic script first:
 
    .. code-block:: python
 

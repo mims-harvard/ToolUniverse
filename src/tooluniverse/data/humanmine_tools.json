@@ -372,5 +372,89 @@
         }
       ]
     }
+  },
+  {
+    "name": "InterMine_run_pathquery",
+    "description": "Run an arbitrary InterMine PathQuery against HumanMine (an InterMine data warehouse) to traverse the data model graph: gene->pathways, gene->protein domains, region->features, etc. The 'query' argument is an InterMine XML PathQuery string (with model, view columns, and constraints) \u2014 results come back as JSON rows in the order of the 'view' columns. Example: query '<query model=\"genomic\" view=\"Gene.symbol Gene.pathways.name Gene.pathways.dataSets.name\"><constraint path=\"Gene.symbol\" op=\"=\" value=\"PAX6\"/></query>' returns PAX6 Reactome pathways like 'Activation of HOX genes during differentiation'. A second view 'Gene.proteins.proteinDomainRegions.proteinDomain.name' returns protein domains such as 'Homeobox domain'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "InterMine XML PathQuery. Must include model, view (space-separated paths), and constraints. Example: '<query model=\"genomic\" view=\"Gene.symbol Gene.pathways.name\"><constraint path=\"Gene.symbol\" op=\"=\" value=\"PAX6\"/></query>'."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.humanmine.org/humanmine/service/query/results",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "query": "<query model=\"genomic\" view=\"Gene.symbol Gene.pathways.name Gene.pathways.dataSets.name\"><constraint path=\"Gene.symbol\" op=\"=\" value=\"PAX6\"/></query>"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "InterMine PathQuery JSON result",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "views": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Column paths in result order"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "array"
+                  },
+                  "description": "Result rows; each row is a list of cell values matching 'views'"
+                },
+                "rootClass": {
+                  "type": "string"
+                },
+                "wasSuccessful": {
+                  "type": "boolean"
+                },
+                "executionTime": {
+                  "type": "string"
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

@@ -186,5 +186,123 @@
         "pageSize": 5
       }
     ]
+  },
+  {
+    "name": "EuropePMC_get_article_datalinks",
+    "type": "BaseRESTTool",
+    "description": "Retrieve the Europe PMC 'datalinks' for an article: the text-mined and curated cross-references from a paper to associated data records, databases, and external resources. Given a PubMed ID (PMID, the default), or a PMCID/other source ID, returns the linked data grouped into categories such as BioProject, Nucleotide Sequences (GenBank/ENA accessions), BioStudies supplementary/supporting data, Protein Data Bank, Clinical Trials, Altmetric, and Wikipedia, each with the count of links and the individual link records (identifiers, titles, and target URLs). This answers 'what data did this paper deposit, and what records/resources is it linked to' - complementary to citations (papers citing it) and references (papers it cites). Use a PMID from a Europe PMC or PubMed search.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "Article identifier whose data cross-references to retrieve. By default interpreted as a PubMed ID (MED source). Examples: '23193287' (links to BioProject, Nucleotide Sequences, Altmetric, BioStudies, Wikipedia), '26198247' (Clinical Trials, Altmetric, BioStudies). To look up a PMC article, pass the numeric PMCID here and set source='PMC'."
+        },
+        "source": {
+          "type": "string",
+          "default": "MED",
+          "description": "Europe PMC source database for the id. 'MED' (PubMed/MEDLINE, default), 'PMC' (PubMed Central), 'PPR' (preprints), 'AGR', 'CBA', etc."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for paginated results (1-based). Default: 1."
+        },
+        "pageSize": {
+          "type": "integer",
+          "default": 25,
+          "description": "Number of data-link records to return per page (1-1000). Default: 25."
+        }
+      },
+      "required": [
+        "pmid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/{source}/{pmid}/datalinks?format=json&page={page}&pageSize={pageSize}"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Data cross-reference (datalinks) records for the queried article, grouped by category.",
+          "properties": {
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hitCount": {
+              "type": "integer",
+              "description": "Total number of data-link records across all categories."
+            },
+            "request": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "dataLinkList": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "Category": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Category name, e.g. 'BioProject', 'Nucleotide Sequences', 'Clinical Trials', 'Altmetric', 'Wikipedia'."
+                      },
+                      "CountTotal": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "Section": {
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "hitCount"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pmid": "23193287"
+      },
+      {
+        "pmid": "26198247"
+      }
+    ]
   }
 ]

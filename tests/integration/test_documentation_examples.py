@@ -40,7 +40,7 @@ class TestToolUniverseExamplesValidation:
             # Test tool execution
             result = tu.run({
                 "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-                "arguments": {"efoId": "EFO_0000537"}  # hypertension
+                "arguments": {"efoId": "MONDO_0005044"}  # hypertension
             })
             
             assert result is not None
@@ -218,7 +218,7 @@ class TestToolUniverseExamplesValidation:
             # Snippet 3: Query scientific databases
             result = tu.run({
                 "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-                "arguments": {"efoId": "EFO_0000537"}  # hypertension
+                "arguments": {"efoId": "MONDO_0005044"}  # hypertension
             })
             assert result is not None
         finally:
@@ -429,7 +429,7 @@ class TestToolUniverseExamplesValidation:
         # Target identification
         workflow_results['targets'] = self.tu.run({
             "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-            "arguments": {"efoId": "EFO_0000537"}  # hypertension
+            "arguments": {"efoId": "MONDO_0005044"}  # hypertension
         })
         
         # Compound search

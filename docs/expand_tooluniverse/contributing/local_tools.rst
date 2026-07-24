@@ -134,7 +134,7 @@ Create or edit ``src/tooluniverse/data/xxx_tools.json``:
    ]
 
 Step 5: No Modifications Needed in __init__.py!
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With the new automated discovery system, **you do NOT need to modify `src/tooluniverse/__init__.py`**. 
 
@@ -180,6 +180,7 @@ Create tests in ``tests/unit/test_my_new_tool.py``:
            assert result["result"] == ""
 
 Run tests with coverage:
+
 .. code-block:: bash
 
    pytest tests/unit/test_my_new_tool.py --cov=tooluniverse --cov-report=html
@@ -222,7 +223,6 @@ Add comprehensive docstrings to your tool class:
            >>> print(result["result"])
            HELLO
        """
-```
 
 Step 9: Create Examples
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -321,6 +321,7 @@ Step 10: Submit Pull Request
    git push origin feature/add-my-new-tool
 
 **PR Template:**
+
 .. code-block:: markdown
 
    ## Description

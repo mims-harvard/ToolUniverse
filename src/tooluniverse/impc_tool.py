@@ -155,6 +155,26 @@ class IMPCTool(BaseTool):
             }
 
         gene_data = docs[0]
+
+        # The 'gene' core's phenotype-summary fields (imits_phenotype_complete,
+        # mp_id, ...) are inconsistently populated -- confirmed live that App
+        # (MGI:88059) has none of them set here despite having 9 real
+        # significant phenotype calls in the 'genotype-phenotype' core. A
+        # cheap rows=0 existence check against that core catches what the
+        # 'gene' core's summary fields silently miss.
+        resolved_mgi_id = gene_data.get("mgi_accession_id") or mgi_id
+        has_real_phenotype_calls = False
+        if resolved_mgi_id:
+            gp_check = self._solr_query(
+                core="genotype-phenotype",
+                query=f'marker_accession_id:"{resolved_mgi_id}"',
+                rows=0,
+            )
+            has_real_phenotype_calls = (
+                gp_check.get("status") == "success"
+                and gp_check["response"].get("numFound", 0) > 0
+            )
+
         return {
             "status": "success",
             "data": {
@@ -168,7 +188,8 @@ class IMPCTool(BaseTool):
                 "production_status": gene_data.get("latest_production_status"),
                 "phenotyping_centre": gene_data.get("latest_phenotyping_centre"),
                 "production_centre": gene_data.get("latest_production_centre"),
-                "has_phenotype_data": gene_data.get("imits_phenotype_complete") == "1"
+                "has_phenotype_data": has_real_phenotype_calls
+                or gene_data.get("imits_phenotype_complete") == "1"
                 or bool(gene_data.get("mp_id")),
                 "mp_terms": gene_data.get("mp_term", []),
                 "mp_ids": gene_data.get("mp_id", []),
@@ -266,7 +287,8 @@ class IMPCTool(BaseTool):
         return {
             "status": "success",
             "data": {
-                "gene_symbol": gene_symbol or docs[0].get("marker_symbol", ""),
+                "gene_symbol": gene_symbol
+                or (docs[0].get("marker_symbol", "") if docs else ""),
                 "mgi_id": mgi_id
                 or (docs[0].get("marker_accession_id", "") if docs else ""),
                 "total_phenotype_calls": num_found,
@@ -291,8 +313,12 @@ class IMPCTool(BaseTool):
         if not query_str:
             return {"status": "error", "error": "query parameter is required"}
 
-        # Search across multiple fields
+        # Search across multiple fields. Without an exact-match boost, Solr's
+        # default relevance scoring can rank an exact gene-symbol match well
+        # below unrelated fuzzy/substring matches (confirmed live: querying
+        # "App" put the exact match 12th out of 20) -- boost it to the front.
         query = (
+            f'marker_symbol:"{query_str}"^100 OR '
             f"marker_symbol:{query_str}* OR "
             f"marker_name:*{query_str}* OR "
             f"marker_synonym:*{query_str}* OR "

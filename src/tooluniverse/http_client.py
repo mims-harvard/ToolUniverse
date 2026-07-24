@@ -28,6 +28,8 @@ Documentation:
     https://zitniklab.hms.harvard.edu/ToolUniverse/guide/http_api.html
 """
 
+import os
+
 import requests
 from typing import Any, Dict, Optional, List
 
@@ -59,16 +61,27 @@ class ToolUniverseClient:
         client.your_new_method(param="value")
     """
 
-    def __init__(self, base_url: str = "http://localhost:8080"):
+    def __init__(
+        self, base_url: str = "http://localhost:8080", api_token: Optional[str] = None
+    ):
         """
         Initialize client.
 
         Args:
             base_url: Base URL of ToolUniverse HTTP API server
+            api_token: Bearer token for servers that require authentication.
+                Defaults to the ``TOOLUNIVERSE_API_TOKEN`` environment variable.
+                When set, it is sent as ``Authorization: Bearer <token>`` on
+                every request.
         """
         self.base_url = base_url.rstrip("/")
         self.session = requests.Session()
         self.session.headers.update({"Content-Type": "application/json"})
+        token = (
+            api_token if api_token is not None else os.getenv("TOOLUNIVERSE_API_TOKEN")
+        )
+        if token:
+            self.session.headers.update({"Authorization": f"Bearer {token}"})
         self._methods_cache: Optional[List[Dict]] = None
 
     def _get_available_methods(self) -> List[Dict]:
@@ -136,7 +149,7 @@ class ToolUniverseClient:
                     raise Exception(f"[{error_type}] {error_msg}")
 
                 return result.get("result")
-            
+
             except requests.exceptions.ReadTimeout:
                 print(method_name, kwargs, "timed out")
                 return f"Error: Tool execution timed out after 30 seconds"
@@ -338,5 +351,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         print("\n💡 Make sure the ToolUniverse HTTP API server is running:")
-        print("   tooluniverse-http-api --host 0.0.0.0 --port 8080")
+        print("   tooluniverse-http-api --port 8080")
         sys.exit(1)

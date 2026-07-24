@@ -136,8 +136,9 @@ Many scientific APIs have rate limits. ToolUniverse implements automatic rate li
          # Caching is enabled by default
          tu = ToolUniverse()
          result = tu.run(..., use_cache=True)
+
 Tool returns empty results?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Check these common issues:**
 

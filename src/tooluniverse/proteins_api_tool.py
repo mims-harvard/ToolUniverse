@@ -5,11 +5,18 @@ This tool provides access to the EBI Proteins API for comprehensive protein
 annotations, variation data, proteomics, and reference genome mappings.
 """
 
+import re
 import requests
 from typing import Any, Dict, Optional, List, Union
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+
+# Canonical UniProtKB accession format (6 or 10 characters), per UniProt's own spec:
+# https://www.uniprot.org/help/accession_numbers
+_UNIPROT_ACCESSION_RE = re.compile(
+    r"^([A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})$" r"|^([OPQ][0-9][A-Z0-9]{3}[0-9])$"
+)
 
 
 @register_tool("ProteinsAPIRESTTool")
@@ -79,11 +86,17 @@ class ProteinsAPIRESTTool(BaseTool):
             # gene, protein, accession, organism, taxid, etc.
             if "query" in args:
                 query = args["query"]
+                # Fix-T3A-008: match the canonical UniProt accession format (e.g.
+                # 'P05067') before falling back to the Feature-81B-007 gene-name
+                # heuristic below. Without this, accessions were indistinguishable
+                # from short gene names like 'CYP2D6' and always misrouted to
+                # gene=, contradicting this tool's own documented behavior.
+                if query and _UNIPROT_ACCESSION_RE.match(query.strip().upper()):
+                    params["accession"] = query.strip().upper()
                 # Feature-81B-007: always use gene param for short queries —
                 # gene names like CYP2D6 are 6 chars and were incorrectly
-                # classified as UniProt accessions. For accession lookup,
-                # use proteins_api_get_protein with an explicit accession.
-                if query and len(query) <= 10 and any(c.isalpha() for c in query):
+                # classified as UniProt accessions.
+                elif query and len(query) <= 10 and any(c.isalpha() for c in query):
                     params["gene"] = query
                 else:
                     # For longer queries, try protein parameter
@@ -455,27 +468,63 @@ class ProteinsAPIRESTTool(BaseTool):
 
             response.raise_for_status()
             data = response.json()
+            widened_organism = False
 
-            # Feature-81B-fallback: if gene-name search returns empty,
-            # retry with protein= param (e.g. "insulin" is a protein name, not gene symbol)
+            # If a name search came back empty, progressively widen it before
+            # giving up. Two reasons a search returns nothing:
+            #   1. the query is a protein name, not a gene symbol ("insulin")
+            #   2. the default human filter (taxid=9606, Feature-69A-007) drops
+            #      every hit for a non-human query (e.g. bacterial "blaKPC",
+            #      "Klebsiella pneumoniae KPC carbapenemase") — a silent empty.
+            # Retry with protein=/gene= and without the human-only filter so
+            # non-human proteins surface instead of a silent empty success.
+            auto_human = (
+                "organism" not in arguments
+                and "taxid" not in arguments
+                and params.get("taxid") == "9606"
+            )
             if (
                 tool_name == "proteins_api_search"
                 and isinstance(data, list)
                 and len(data) == 0
-                and "gene" in params
             ):
-                retry_params = dict(params)
-                retry_params.pop("gene")
-                retry_params["protein"] = arguments.get("query", "")
-                retry_resp = self.session.get(
-                    url, params=retry_params, timeout=self.timeout
-                )
-                if retry_resp.status_code == 200:
+                query = arguments.get("query", "")
+                used_gene = "gene" in params
+
+                def _retry_params(use_gene: bool, keep_human: bool) -> Dict[str, Any]:
+                    p = {"format": params.get("format", "json")}
+                    if "size" in params:
+                        p["size"] = params["size"]
+                    p["gene" if use_gene else "protein"] = query
+                    if keep_human and auto_human:
+                        p["taxid"] = "9606"
+                    return p
+
+                # Order: swap field but keep human; then drop the human filter
+                # (same field, then swapped field) so any-organism hits surface.
+                candidates = []
+                if used_gene:
+                    candidates.append(_retry_params(use_gene=False, keep_human=True))
+                if auto_human:
+                    candidates.append(
+                        _retry_params(use_gene=used_gene, keep_human=False)
+                    )
+                    candidates.append(
+                        _retry_params(use_gene=not used_gene, keep_human=False)
+                    )
+
+                for cand in candidates:
+                    retry_resp = self.session.get(
+                        url, params=cand, timeout=self.timeout
+                    )
+                    if retry_resp.status_code != 200:
+                        continue
                     retry_data = retry_resp.json()
                     if isinstance(retry_data, list) and len(retry_data) > 0:
                         data = retry_data
-                        # Update response for URL tracking
                         response = retry_resp
+                        widened_organism = "taxid" not in cand
+                        break
 
             # Cap features per entry to avoid 25MB+ responses for heavily-annotated proteins
             if tool_name == "proteins_api_get_variants" and isinstance(data, list):
@@ -511,6 +560,12 @@ class ProteinsAPIRESTTool(BaseTool):
                 "data": data,
                 "url": response.url,
             }
+            if widened_organism:
+                response_data["note"] = (
+                    "No human matches found; the search was automatically "
+                    "widened to all organisms. Pass an explicit 'organism' "
+                    "(e.g. 'Klebsiella pneumoniae') or 'taxid' to scope it."
+                )
 
             if isinstance(data, list):
                 response_data["count"] = len(data)

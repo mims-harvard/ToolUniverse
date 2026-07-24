@@ -1,0 +1,177 @@
+[
+  {
+    "name": "dtu_protein_predict",
+    "type": "DTUProteinTool",
+    "description": "Run DTU Health Tech machine-learning protein predictors on a protein sequence via the BioLib cloud runner (pybiolib). Choose a model: 'deeptmhmm' (DTU/DeepTMHMM transmembrane topology -> per-residue topology string of inside/outside/TM-helix/beta-strand/signal plus TM region table), 'signalp' (DTU/SignalP_6 signal-peptide detection + cleavage site), or 'deeploc' (KU/DeepLocPro subcellular localization, prokaryotic). Input is a protein FASTA: pass 'sequence'/'fasta' as inline FASTA text or a bare amino-acid string, or 'fasta_path' as a path to a .fasta file. IMPORTANT: jobs run on the shared BioLib cloud (anonymously, no account needed) and commonly take 2-5 minutes; raise 'max_wait_time' for many/large sequences. NOTE: the original eukaryotic DeepLoc 2.0 is not published on BioLib; 'deeploc' maps to the prokaryotic DeepLocPro model, whose upstream BioLib app currently crashes during embedding (device-mismatch) and returns a clean error until fixed -- 'deeptmhmm' and 'signalp' are the reliably working models. Prerequisite: pip install pybiolib. Use for: predicting membrane protein topology, finding signal peptides/secretion signals, and bacterial protein subcellular location.",
+    "required_packages": [
+      "pybiolib"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Which predictor to run: 'deeptmhmm' (transmembrane topology), 'signalp' (signal peptide), or 'deeploc' (prokaryotic subcellular localization).",
+          "enum": [
+            "deeptmhmm",
+            "signalp",
+            "deeploc"
+          ],
+          "default": "deeptmhmm"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Protein input as inline FASTA text (one or more '>header' records) or a bare single-letter amino-acid string (it will be wrapped as '>query'). Mutually exclusive with fasta_path. Example: 'MELAALCRWGLLLALLPPGAAS'."
+        },
+        "fasta": {
+          "type": "string",
+          "description": "Alias for 'sequence'. Inline FASTA text or a bare amino-acid string."
+        },
+        "fasta_path": {
+          "type": "string",
+          "description": "Path to a local FASTA (.fasta/.fa) file containing one or more protein records. Use instead of 'sequence' when the input is already on disk."
+        },
+        "max_wait_time": {
+          "type": "integer",
+          "description": "Maximum seconds to wait for the BioLib cloud job to finish (default 600, min 30, max 1800). Increase for many/long sequences.",
+          "default": 600
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string",
+              "description": "Model that was run (deeptmhmm/signalp/deeploc)."
+            },
+            "app": {
+              "type": "string",
+              "description": "BioLib app URI that was executed."
+            },
+            "num_sequences": {
+              "type": "integer"
+            },
+            "predictions": {
+              "type": "array",
+              "description": "One entry per input protein record. Fields present depend on the model.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Sequence identifier (FASTA header first token)."
+                  },
+                  "sequence_length": {
+                    "type": "integer"
+                  },
+                  "classification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "deeptmhmm: overall class (e.g. SP, TM, GLOB, SP+TM, BETA)."
+                  },
+                  "topology": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "deeptmhmm: per-residue topology string (I=inside, O=outside, M=TM helix, B=beta strand, S=signal)."
+                  },
+                  "regions": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "deeptmhmm: list of annotated regions.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "end": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "signalp: predicted class (e.g. OTHER, SP, LIPO, TAT)."
+                  },
+                  "has_signal_peptide": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "signalp: true when a signal peptide is predicted (prediction != OTHER)."
+                  },
+                  "cleavage_site": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "signalp: predicted signal-peptide cleavage position (residue index)."
+                  },
+                  "localization": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "deeploc: predicted subcellular localization."
+                  },
+                  "details": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "deeploc: full parsed result row (per-compartment scores etc.)."
+                  }
+                },
+                "required": [
+                  "id",
+                  "sequence_length"
+                ]
+              }
+            }
+          },
+          "required": [
+            "model",
+            "app",
+            "num_sequences",
+            "predictions"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "model": "deeptmhmm",
+        "sequence": "MELAALCRWGLLLALLPPGAASTQVCTGTDMKLRLPASPETHLDMLRHLYQGCQVV",
+        "max_wait_time": 600
+      }
+    ]
+  }
+]

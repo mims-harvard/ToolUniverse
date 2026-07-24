@@ -8,25 +8,12 @@ functional annotations, population frequencies, pathogenicity predictions
 import json
 import re
 from typing import Any, Dict
+from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from tooluniverse.tool_registry import register_tool
 
 _BASE = "https://www.ebi.ac.uk/ProtVar/api"
-
-
-def _post_json(url: str, body: Any, timeout: int = 30) -> Any:
-    data = json.dumps(body).encode("utf-8")
-    req = Request(
-        url,
-        data=data,
-        headers={
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        },
-    )
-    with urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8", errors="ignore"))
 
 
 def _get_json(url: str, timeout: int = 30) -> Any:
@@ -62,9 +49,14 @@ def _get_json(url: str, timeout: int = 30) -> Any:
                         "use space-separated VCF format instead."
                     ),
                 },
+                "assembly": {
+                    "type": "string",
+                    "description": "Genome assembly for genomic inputs/outputs: 'GRCh38' (default) or 'GRCh37'.",
+                },
             },
             "required": ["variant"],
         },
+        "test_examples": [{"variant": "P04637 R175H"}],
         "settings": {"base_url": _BASE, "timeout": 30},
     },
 )
@@ -88,26 +80,26 @@ class ProtVarMapTool:
             return {"status": "error", "error": "variant is required"}
 
         variant = self._normalize_variant(variant)
+        assembly = arguments.get("assembly") or "GRCh38"
 
         base = self.tool_config.get("settings", {}).get("base_url", _BASE)
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
-        url = f"{base}/mappings"
+        # ProtVar 2.x: GET /mapping?q=<input>&assembly=<GRCh38|GRCh37>. (The old
+        # batch POST /mappings endpoint was removed when the API was restructured.)
+        url = f"{base}/mapping?" + urlencode({"q": variant, "assembly": assembly})
 
         try:
-            result = _post_json(url, [variant], timeout=timeout)
+            result = _get_json(url, timeout=timeout)
         except Exception as e:
             return {"status": "error", "error": f"ProtVar API error: {e}"}
 
-        if not result:
+        content = result.get("content") if isinstance(result, dict) else None
+        inputs = content.get("inputs", []) if isinstance(content, dict) else []
+        if not inputs:
             return {"status": "error", "error": f"No mapping found for '{variant}'"}
 
-        # Flatten the nested response into a useful summary.
-        # Two response structures:
-        # - protein/rsID input: inputs[].derivedGenomicInputs[].mappings[].genes[].isoforms[]
-        # - VCF/genomic input: inputs[].mappings[].genes[].isoforms[]  (no derivedGenomicInputs)
-        inputs = result.get("inputs", []) if isinstance(result, dict) else result
-        if not isinstance(inputs, list):
-            inputs = [inputs]
+        # Surface any parser messages (e.g. unrecognised variant format).
+        messages = [m for inp in inputs for m in (inp.get("messages") or [])]
 
         def _extract_isoform(iso, gene):
             entry = {
@@ -121,6 +113,7 @@ class ProtVarMapTool:
                 "position": iso.get("isoformPosition"),
                 "codon_change": iso.get("codonChange"),
                 "protein_name": iso.get("proteinName"),
+                "cadd_score": gene.get("caddScore"),
             }
             am = iso.get("amScore")
             if am:
@@ -128,58 +121,44 @@ class ProtVarMapTool:
                     "score": am.get("amPathogenicity"),
                     "class": am.get("amClass"),
                 }
-            eve = iso.get("eveScore")
-            if eve:
-                entry["eve"] = {"score": eve.get("score"), "class": eve.get("eveClass")}
-            esm = iso.get("esmScore")
-            if esm:
-                entry["esm_score"] = esm.get("score")
-            cs = iso.get("conservScore")
-            if cs:
-                entry["conservation_score"] = cs.get("score")
+            # ProtVar 2.x merges EVE/ESM-1v into a single popEveScore object.
+            pev = iso.get("popEveScore")
+            if pev:
+                entry["eve_score"] = pev.get("eve")
+                entry["esm1v_score"] = pev.get("esm1v")
+                entry["popeve_score"] = pev.get("popeve")
             return entry
 
         mappings = []
+        genomic: Dict[str, Any] = {}
         for inp in inputs:
-            # Path 1: derivedGenomicInputs (protein/rsID input)
-            for gi in inp.get("derivedGenomicInputs", []):
-                for m in gi.get("mappings", []):
-                    for gene in m.get("genes", []):
-                        for iso in gene.get("isoforms", []):
-                            mappings.append(_extract_isoform(iso, gene))
-            # Path 2: direct mappings (VCF/genomic input)
-            for m in inp.get("mappings", []):
-                for gene in m.get("genes", []):
+            for gv in inp.get("derivedGenomicVariants", []):
+                if not genomic:
+                    genomic = {
+                        "chr": gv.get("chromosome"),
+                        "pos": gv.get("position"),
+                        "ref": gv.get("refBase"),
+                        "alt": gv.get("altBase"),
+                    }
+                for gene in gv.get("genes", []):
                     for iso in gene.get("isoforms", []):
                         mappings.append(_extract_isoform(iso, gene))
 
-        # Build genomic coordinates from whichever path has them
-        genomic = {}
-        if inputs:
-            inp0 = inputs[0]
-            gi_list = inp0.get("derivedGenomicInputs", [])
-            if gi_list:
-                gi = gi_list[0]
-                genomic = {
-                    "chr": gi.get("chr"),
-                    "pos": gi.get("pos"),
-                    "ref": gi.get("ref"),
-                    "alt": gi.get("alt"),
-                }
-            elif inp0.get("chr") is not None:
-                genomic = {
-                    "chr": inp0.get("chr"),
-                    "pos": inp0.get("pos"),
-                    "ref": inp0.get("ref"),
-                    "alt": inp0.get("alt"),
-                }
+        if not mappings and not genomic:
+            return {
+                "status": "error",
+                "error": f"No mapping found for '{variant}'"
+                + (f": {messages[0]}" if messages else ""),
+            }
 
         return {
             "status": "success",
             "data": {
                 "input": variant,
+                "assembly": assembly,
                 "genomic_coordinates": genomic,
                 "isoform_mappings": mappings,
+                "messages": messages,
             },
         }
 
@@ -241,18 +220,26 @@ class ProtVarFunctionTool:
         except Exception as e:
             return {"status": "error", "error": f"ProtVar API error: {e}"}
 
+        if not isinstance(result, dict):
+            return {
+                "status": "error",
+                "error": f"No ProtVar function annotation for {acc} position {pos}",
+            }
+
         # Extract key information
         data = {
             "accession": result.get("accession"),
             "position": result.get("position"),
             "protein_name": result.get("name"),
-            "gene_names": result.get("geneNames", []),
+            "gene_names": result.get("geneNames") or [],
             "protein_existence": result.get("proteinExistence"),
         }
 
-        # Extract features at this position
+        # Extract features at this position. Use `or []` throughout: the upstream
+        # UniProt-derived payload may carry explicit null for an absent list,
+        # which `.get(key, [])` would not catch (it returns the null).
         features = []
-        for f in result.get("features", []):
+        for f in result.get("features") or []:
             features.append(
                 {
                     "type": f.get("type"),
@@ -266,17 +253,17 @@ class ProtVarFunctionTool:
 
         # Extract function comments
         comments = []
-        for c in result.get("comments", []):
+        for c in result.get("comments") or []:
             ctype = c.get("type")
             if ctype == "FUNCTION":
-                for t in c.get("text", []):
+                for t in c.get("text") or []:
                     comments.append({"type": ctype, "value": t.get("value")})
             elif ctype == "CATALYTIC_ACTIVITY":
-                rxn = c.get("reaction", {})
+                rxn = c.get("reaction") or {}
                 if rxn:
                     comments.append({"type": ctype, "value": rxn.get("name")})
             elif ctype in ("SUBCELLULAR_LOCATION", "DISEASE", "TISSUE_SPECIFICITY"):
-                for t in c.get("text", []):
+                for t in c.get("text") or []:
                     comments.append({"type": ctype, "value": t.get("value")})
         data["comments"] = comments
 

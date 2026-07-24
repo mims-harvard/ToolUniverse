@@ -14,7 +14,18 @@
         "register_url": "https://www.pharmvar.org/"
       }
     },
-    "required_api_keys": ["PHARMVAR_API_KEY"],
+    "required_api_keys": [
+      "PHARMVAR_API_KEY"
+    ],
+    "api_key_info": {
+      "PHARMVAR_API_KEY": {
+        "domain": "Genomics & Variants",
+        "type": "secret",
+        "register_url": "https://www.pharmvar.org/",
+        "purpose": "Resolve pharmacogene star-allele definitions (e.g. CYP2D6, CYP2C19).",
+        "without": "PharmVar tools are blocked without it."
+      }
+    },
     "type": "BaseRESTTool",
     "test_examples": [
       {}
@@ -79,7 +90,9 @@
         "register_url": "https://www.pharmvar.org/"
       }
     },
-    "required_api_keys": ["PHARMVAR_API_KEY"],
+    "required_api_keys": [
+      "PHARMVAR_API_KEY"
+    ],
     "type": "BaseRESTTool",
     "test_examples": [
       {
@@ -109,10 +122,16 @@
                 "description": "PharmVar unique ID"
               },
               "legacyLabel": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "coreAllele": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "evidenceLevel": {
                 "type": "string"
@@ -129,7 +148,10 @@
                 ]
               },
               "variants": {
-                "type": ["array", "null"],
+                "type": [
+                  "array",
+                  "null"
+                ],
                 "description": "Genetic variants defining this allele",
                 "items": {
                   "type": "object",
@@ -139,11 +161,17 @@
                       "description": "HGVS notation"
                     },
                     "rsId": {
-                      "type": ["string", "null"],
+                      "type": [
+                        "string",
+                        "null"
+                      ],
                       "description": "dbSNP rsID"
                     },
                     "impact": {
-                      "type": ["string", "null"],
+                      "type": [
+                        "string",
+                        "null"
+                      ],
                       "description": "Amino acid change"
                     },
                     "referenceSequence": {

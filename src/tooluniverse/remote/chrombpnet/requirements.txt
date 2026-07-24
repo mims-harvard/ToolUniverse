@@ -1,0 +1,14 @@
+tensorflow>=2.12
+tf-keras
+numpy
+huggingface_hub
+# A trained, cell-type-specific ChromBPNet model (.h5) is referenced at call time
+# via model_path. Get models from the HF ENCODE ChromBPNet zoo
+# (huggingface.co/kundajelab, e.g. encode-chrombpnet-DNASE-<ENCSR...>; use the
+# model.chrombpnet_nobias.fold_N.*.h5 bias-corrected model), or train your own
+# with the `chrombpnet` package (https://github.com/kundajelab/chrombpnet).
+#
+# The ENCODE zoo models are saved with Keras 2, so on TensorFlow >= 2.16 (Keras 3)
+# the server MUST install `tf-keras` AND set TF_USE_LEGACY_KERAS=1 so that
+# tf.keras.models.load_model can read the legacy .h5 (validated this way against a
+# real ENCODE DNASE model). GPU recommended for throughput.

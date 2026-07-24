@@ -1,0 +1,3 @@
+scvelo>=0.3
+scanpy>=1.10
+anndata

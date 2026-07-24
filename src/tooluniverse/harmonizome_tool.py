@@ -66,6 +66,7 @@ class HarmonizomeTool(BaseTool):
             "get_dataset": self._get_dataset,
             "search": self._search,
             "search_genes": self._search_genes,
+            "get_gene_set_members": self._get_gene_set_members,
         }
         handler = handlers.get(self.endpoint)
         if handler:
@@ -311,6 +312,114 @@ class HarmonizomeTool(BaseTool):
                 "entity_type": "attribute",
                 "query": query,
                 "total_suggestions": len(suggestions),
+            },
+        }
+
+    def _get_gene_set_members(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Retrieve Harmonizome gene-set members or per-gene associations.
+
+        Two modes via `mode`:
+        - "gene_set" (default): member genes of a curated attribute set, each with
+          thresholdValue + standardizedValue. Requires `attribute` and `dataset`.
+          Endpoint: /gene_set/{attribute}/{dataset}
+        - "gene": the full per-gene association table across all datasets.
+          Requires `gene_symbol`. Endpoint: /gene/{symbol}?showAssociations=true
+        """
+        mode = arguments.get("mode", "gene_set")
+        limit = arguments.get("limit") or 100
+
+        def _encode(value: str) -> str:
+            # Harmonizome path encoding: spaces -> '+'. Other reserved chars are
+            # already correctly URL-encoded in the hrefs the API returns.
+            return requests.utils.quote(value, safe="+/").replace("%20", "+")
+
+        if mode == "gene":
+            gene_symbol = arguments.get("gene_symbol", "")
+            if not gene_symbol:
+                return {
+                    "status": "error",
+                    "error": "gene_symbol is required for mode='gene' (e.g., 'DTD2').",
+                }
+            url = f"{HARMONIZOME_BASE_URL}/gene/{requests.utils.quote(gene_symbol, safe='')}"
+            response = requests.get(
+                url, params={"showAssociations": "true"}, timeout=self.timeout
+            )
+            response.raise_for_status()
+            data = response.json()
+            if data.get("status") == 404 or "message" in data:
+                return {
+                    "status": "error",
+                    "error": f"Gene '{gene_symbol}' not found: {data.get('message', 'unknown')}",
+                }
+            associations_raw = data.get("associations", [])
+            associations = [
+                {
+                    "gene_set": (a.get("geneSet") or {}).get("name"),
+                    "gene_set_href": (a.get("geneSet") or {}).get("href"),
+                    "threshold_value": a.get("thresholdValue"),
+                    "standardized_value": a.get("standardizedValue"),
+                }
+                for a in associations_raw[:limit]
+            ]
+            return {
+                "status": "success",
+                "data": {
+                    "symbol": data.get("symbol"),
+                    "name": data.get("name"),
+                    "ncbi_entrez_gene_id": data.get("ncbiEntrezGeneId"),
+                    "associations": associations,
+                },
+                "metadata": {
+                    "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
+                    "mode": "gene",
+                    "gene_symbol": gene_symbol,
+                    "total_associations": len(associations_raw),
+                    "returned": len(associations),
+                },
+            }
+
+        # mode == "gene_set"
+        attribute = arguments.get("attribute", "")
+        dataset = arguments.get("dataset", "")
+        if not attribute or not dataset:
+            return {
+                "status": "error",
+                "error": "attribute and dataset are required for mode='gene_set' "
+                "(e.g., attribute='heart', dataset='GTEx Tissue Gene Expression Profiles').",
+            }
+        url = f"{HARMONIZOME_BASE_URL}/gene_set/{_encode(attribute)}/{_encode(dataset)}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+        if "message" in data:
+            return {
+                "status": "error",
+                "error": f"Gene set not found: {data.get('message', f'{attribute}/{dataset}')}",
+            }
+        associations_raw = data.get("associations", [])
+        members = [
+            {
+                "gene": (a.get("gene") or {}).get("symbol"),
+                "gene_href": (a.get("gene") or {}).get("href"),
+                "threshold_value": a.get("thresholdValue"),
+                "standardized_value": a.get("standardizedValue"),
+            }
+            for a in associations_raw[:limit]
+        ]
+        return {
+            "status": "success",
+            "data": {
+                "attribute": (data.get("attribute") or {}).get("name", attribute),
+                "dataset": (data.get("dataset") or {}).get("name", dataset),
+                "members": members,
+            },
+            "metadata": {
+                "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
+                "mode": "gene_set",
+                "attribute": attribute,
+                "dataset": dataset,
+                "total_associations": len(associations_raw),
+                "returned": len(members),
             },
         }
 

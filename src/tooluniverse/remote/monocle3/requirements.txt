@@ -1,0 +1,16 @@
+# Python side
+scanpy>=1.10
+anndata
+scipy
+# R side (install separately on the server):
+#   R >= 4.2 with monocle3 (+ Matrix, jsonlite). monocle3 is installed from
+#   GitHub and pulls a heavy spatial/stats R stack that needs SYSTEM LIBRARIES.
+#   Validated install (macOS; apt-get equivalents on Linux):
+#     brew install gdal geos proj udunits nlopt cmake     # for terra/sf/units/nloptr
+#     Rscript -e 'install.packages(c("terra","units","nloptr","sf","lme4","spdep"))'
+#     Rscript -e 'BiocManager::install(c("SingleCellExperiment","batchelor","leidenbase","ggrastr"))'
+#     Rscript -e 'remotes::install_github("cole-trapnell-lab/monocle3")'
+#   Rscript must be on PATH (or set RSCRIPT_BIN).
+#   Validated end-to-end on the pancreas dataset: roots at Ngn3-low EP and recovers
+#   the endocrine pseudotime ordering (Ngn3 low EP -> Ngn3 high EP -> Fev+ ->
+#   Delta/Epsilon/Beta/Alpha).

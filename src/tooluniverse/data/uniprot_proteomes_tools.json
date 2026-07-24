@@ -15,7 +15,9 @@
           "description": "Number of results to return (default 10, max 500)"
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://rest.uniprot.org/proteomes/search",
@@ -25,71 +27,390 @@
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"query": "organism_name:human", "size": 3},
-      {"query": "organism_name:escherichia coli", "size": 3},
-      {"query": "organism_name:mouse", "size": 3}
+      {
+        "query": "organism_name:human",
+        "size": 3
+      },
+      {
+        "query": "organism_name:escherichia coli",
+        "size": 3
+      },
+      {
+        "query": "organism_name:mouse",
+        "size": 3
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "UniProt proteome search results",
           "properties": {
             "results": {
               "type": "array",
-              "description": "Array of proteome objects",
               "items": {
                 "type": "object",
                 "properties": {
                   "id": {
-                    "type": "string",
-                    "description": "UniProt proteome ID (e.g., 'UP000005640')"
+                    "type": "string"
                   },
                   "description": {
-                    "type": ["string", "null"],
-                    "description": "Description of the organism"
+                    "type": "string"
                   },
                   "taxonomy": {
-                    "type": ["object", "null"],
-                    "description": "Taxonomy information",
+                    "type": "object",
                     "properties": {
-                      "taxonId": {"type": "integer"},
-                      "scientificName": {"type": "string"},
-                      "commonName": {"type": ["string", "null"]},
-                      "mnemonic": {"type": ["string", "null"]}
+                      "scientificName": {
+                        "type": "string"
+                      },
+                      "commonName": {
+                        "type": "string"
+                      },
+                      "taxonId": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "mnemonic": {
+                        "type": "string"
+                      },
+                      "synonyms": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
                     }
                   },
-                  "proteomeType": {
-                    "type": ["string", "null"],
-                    "description": "Type: 'Reference and representative proteome', 'Representative proteome', 'Other proteome', 'Redundant proteome', 'Excluded'"
+                  "modified": {
+                    "type": "string"
                   },
-                  "geneCount": {
-                    "type": ["integer", "null"],
-                    "description": "Number of genes in the proteome"
+                  "proteomeType": {
+                    "type": "string"
+                  },
+                  "components": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "proteinCount": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "genomeAnnotation": {
+                          "type": "object",
+                          "properties": {
+                            "source": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "proteomeCrossReferences": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "database": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "citations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "citationType": {
+                          "type": "string"
+                        },
+                        "authors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "citationCrossReferences": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "database": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "publicationDate": {
+                          "type": "string"
+                        },
+                        "journal": {
+                          "type": "string"
+                        },
+                        "firstPage": {
+                          "type": "string"
+                        },
+                        "lastPage": {
+                          "type": "string"
+                        },
+                        "volume": {
+                          "type": "string"
+                        },
+                        "authoringGroup": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "submissionDatabase": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "annotationScore": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "superkingdom": {
-                    "type": ["string", "null"],
-                    "description": "Taxonomic superkingdom (Eukaryota, Bacteria, Archaea, Viruses)"
+                    "type": "string"
                   },
                   "proteomeCompletenessReport": {
-                    "type": ["object", "null"],
-                    "description": "BUSCO completeness assessment"
+                    "type": "object",
+                    "properties": {
+                      "buscoReport": {
+                        "type": "object",
+                        "properties": {
+                          "complete": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "completeSingle": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "completeDuplicated": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "fragmented": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "missing": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "total": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "lineageDb": {
+                            "type": "string"
+                          },
+                          "score": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "cpdReport": {
+                        "type": "object",
+                        "properties": {
+                          "proteomeCount": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "stdCdss": {
+                            "type": "number"
+                          },
+                          "averageCdss": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "confidence": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
                   },
                   "genomeAssembly": {
-                    "type": ["object", "null"],
-                    "description": "Genome assembly details"
+                    "type": "object",
+                    "properties": {
+                      "assemblyId": {
+                        "type": "string"
+                      },
+                      "genomeAssemblyUrl": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "geneCount": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "proteinCount": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "genomeAnnotation": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "taxonLineage": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "scientificName": {
+                          "type": "string"
+                        },
+                        "taxonId": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "rank": {
+                          "type": "string"
+                        },
+                        "hidden": {
+                          "type": "boolean"
+                        },
+                        "commonName": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "proteomeStatistics": {
+                    "type": "object",
+                    "properties": {
+                      "reviewedProteinCount": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "unreviewedProteinCount": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "isoformProteinCount": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      }
+                    }
+                  },
+                  "panproteome": {
+                    "type": "string"
+                  },
+                  "strain": {
+                    "type": "string"
+                  },
+                  "redundantProteomes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "similarity": {
+                          "type": "number"
+                        }
+                      }
+                    }
                   }
                 }
               }
             }
-          }
+          },
+          "required": [
+            "results"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -105,7 +426,9 @@
           "description": "UniProt proteome ID (e.g., 'UP000005640' for human, 'UP000000589' for mouse, 'UP000000625' for E. coli)"
         }
       },
-      "required": ["proteome_id"]
+      "required": [
+        "proteome_id"
+      ]
     },
     "fields": {
       "endpoint": "https://rest.uniprot.org/proteomes/{proteome_id}",
@@ -115,66 +438,370 @@
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"proteome_id": "UP000005640"},
-      {"proteome_id": "UP000000589"},
-      {"proteome_id": "UP000000625"}
+      {
+        "proteome_id": "UP000005640"
+      },
+      {
+        "proteome_id": "UP000000589"
+      },
+      {
+        "proteome_id": "UP000000625"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Detailed proteome metadata",
           "properties": {
             "id": {
-              "type": "string",
-              "description": "UniProt proteome ID"
+              "type": "string"
             },
             "description": {
-              "type": ["string", "null"],
-              "description": "Organism description"
+              "type": "string"
             },
             "taxonomy": {
-              "type": ["object", "null"],
+              "type": "object",
               "properties": {
-                "taxonId": {"type": "integer"},
-                "scientificName": {"type": "string"},
-                "commonName": {"type": ["string", "null"]},
-                "lineage": {"type": ["array", "null"], "items": {"type": "string"}}
-              }
-            },
-            "proteomeType": {"type": ["string", "null"]},
-            "geneCount": {"type": ["integer", "null"]},
-            "superkingdom": {"type": ["string", "null"]},
-            "proteomeCompletenessReport": {
-              "type": ["object", "null"],
-              "description": "BUSCO completeness (complete, duplicated, fragmented, missing percentages)"
-            },
-            "genomeAssembly": {
-              "type": ["object", "null"],
-              "description": "Genome assembly details (GCA/GCF accession, level, source)"
-            },
-            "components": {
-              "type": ["array", "null"],
-              "description": "Proteome components (chromosomes, scaffolds, etc.)",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {"type": "string"},
-                  "proteinCount": {"type": ["integer", "null"]},
-                  "genomeAnnotation": {"type": ["object", "null"]}
+                "scientificName": {
+                  "type": "string"
+                },
+                "commonName": {
+                  "type": "string"
+                },
+                "taxonId": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "mnemonic": {
+                  "type": "string"
                 }
               }
             },
-            "annotationScore": {"type": ["number", "null"]},
-            "panproteome": {"type": ["object", "string", "null"]}
-          }
+            "modified": {
+              "type": "string"
+            },
+            "proteomeType": {
+              "type": "string"
+            },
+            "components": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "proteinCount": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "genomeAnnotation": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "proteomeCrossReferences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "database": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "citationType": {
+                    "type": "string"
+                  },
+                  "authors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "citationCrossReferences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "database": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "publicationDate": {
+                    "type": "string"
+                  },
+                  "journal": {
+                    "type": "string"
+                  },
+                  "firstPage": {
+                    "type": "string"
+                  },
+                  "lastPage": {
+                    "type": "string"
+                  },
+                  "volume": {
+                    "type": "string"
+                  },
+                  "authoringGroup": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "annotationScore": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "superkingdom": {
+              "type": "string"
+            },
+            "proteomeCompletenessReport": {
+              "type": "object",
+              "properties": {
+                "buscoReport": {
+                  "type": "object",
+                  "properties": {
+                    "complete": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "completeSingle": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "completeDuplicated": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "fragmented": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "missing": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "total": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "lineageDb": {
+                      "type": "string"
+                    },
+                    "score": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    }
+                  }
+                },
+                "cpdReport": {
+                  "type": "object",
+                  "properties": {
+                    "proteomeCount": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "stdCdss": {
+                      "type": "number"
+                    },
+                    "averageCdss": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "confidence": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "genomeAssembly": {
+              "type": "object",
+              "properties": {
+                "assemblyId": {
+                  "type": "string"
+                },
+                "genomeAssemblyUrl": {
+                  "type": "string"
+                },
+                "level": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            },
+            "geneCount": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "proteinCount": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "genomeAnnotation": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            },
+            "taxonLineage": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scientificName": {
+                    "type": "string"
+                  },
+                  "taxonId": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "rank": {
+                    "type": "string"
+                  },
+                  "hidden": {
+                    "type": "boolean"
+                  },
+                  "commonName": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "proteomeStatistics": {
+              "type": "object",
+              "properties": {
+                "reviewedProteinCount": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "unreviewedProteinCount": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "isoformProteinCount": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "strain": {
+              "type": "string"
+            },
+            "redundantProteomes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "similarity": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "panproteome": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

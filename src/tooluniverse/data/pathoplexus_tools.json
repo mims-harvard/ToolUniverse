@@ -1,0 +1,319 @@
+[
+    {
+        "name": "Pathoplexus_count_sequences",
+        "description": "Count and aggregate open pathogen genome sequences in Pathoplexus (LAPIS) for genomic-epidemiology surveillance of emerging pathogens. Returns sequence counts for an organism, optionally filtered by country and lineage and grouped by a metadata field (e.g. geoLocCountry, lineage, sampleCollectionDate) to see geographic/temporal distribution. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf' (Crimean-Congo hemorrhagic fever), 'mpox'. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "organism": {
+                    "type": "string",
+                    "description": "Pathoplexus organism slug: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'."
+                },
+                "country": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Filter by country (geoLocCountry), e.g. 'USA'."
+                },
+                "lineage": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Filter by lineage."
+                },
+                "group_by": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Metadata field to group counts by, e.g. 'geoLocCountry', 'lineage', 'sampleCollectionDate'."
+                }
+            },
+            "required": [
+                "organism"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "PathoplexusCountTool",
+        "test_examples": [
+            {
+                "organism": "west-nile",
+                "group_by": "geoLocCountry"
+            },
+            {
+                "organism": "mpox",
+                "country": "USA"
+            },
+            {
+                "organism": "cchf",
+                "group_by": "geoLocCountry"
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "Pathoplexus_get_mutations",
+        "description": "Get characteristic amino-acid (default) or nucleotide mutations for a Pathoplexus organism above a proportion threshold, optionally filtered by country/lineage \u2014 for surveillance of mutation prevalence in emerging pathogens. Returns each mutation with gene, position, from/to residue, proportion (fraction of sequences carrying it), count, and coverage. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "organism": {
+                    "type": "string",
+                    "description": "Pathoplexus organism slug, e.g. 'west-nile', 'mpox'."
+                },
+                "country": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Filter by country (geoLocCountry)."
+                },
+                "lineage": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Filter by lineage."
+                },
+                "min_proportion": {
+                    "type": [
+                        "number",
+                        "null"
+                    ],
+                    "description": "Minimum proportion of sequences carrying the mutation (default 0.8)."
+                },
+                "mutation_type": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "'aminoAcid' (default) or 'nucleotide'."
+                },
+                "limit": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Max mutations (default 50, max 500)."
+                }
+            },
+            "required": [
+                "organism"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "PathoplexusMutationsTool",
+        "test_examples": [
+            {
+                "organism": "west-nile",
+                "country": "USA",
+                "min_proportion": 0.9
+            },
+            {
+                "organism": "mpox",
+                "min_proportion": 0.95
+            },
+            {
+                "organism": "ebola-zaire",
+                "min_proportion": 0.9,
+                "limit": 10
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "Pathoplexus_get_sequence_details",
+        "description": "List the individual sequence records (not aggregated counts) behind a Pathoplexus organism, from the LAPIS /details endpoint. Returns a per-sequence metadata table — accession, country (geoLocCountry), collection date (sampleCollectionDate), host, lineage, clade and any other requested fields — so you can enumerate the actual surveilled genomes rather than only their totals. Optionally filter by country and lineage and select which fields to return. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "organism": {
+                    "type": "string",
+                    "description": "Pathoplexus organism slug: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'."
+                },
+                "country": {
+                    "type": ["string", "null"],
+                    "description": "Filter by country (geoLocCountry), e.g. 'USA'."
+                },
+                "lineage": {
+                    "type": ["string", "null"],
+                    "description": "Filter by lineage."
+                },
+                "fields": {
+                    "type": ["string", "null"],
+                    "description": "Comma-separated metadata fields to return, e.g. 'accession,geoLocCountry,sampleCollectionDate,lineage'. Omit to return all available fields."
+                },
+                "limit": {
+                    "type": ["integer", "null"],
+                    "description": "Max sequence rows (default 50, max 1000)."
+                },
+                "offset": {
+                    "type": ["integer", "null"],
+                    "description": "Row offset for pagination (default 0)."
+                }
+            },
+            "required": ["organism"]
+        },
+        "fields": {
+            "timeout": 30,
+            "mode": "details"
+        },
+        "type": "PathoplexusCountTool",
+        "test_examples": [
+            {
+                "organism": "west-nile",
+                "fields": "accession,geoLocCountry,sampleCollectionDate,lineage",
+                "limit": 2
+            },
+            {
+                "organism": "mpox",
+                "limit": 3
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "Pathoplexus_get_sequences_fasta",
+        "description": "Download the actual genome sequences (FASTA) from Pathoplexus/LAPIS for a surveilled pathogen. Returns unaligned (default) or aligned nucleotide or amino-acid sequences as FASTA text, optionally filtered by country and lineage. This is the only way in ToolUniverse to retrieve the nucleotide/protein sequence of Pathoplexus genomes — the other tools expose only counts and mutations. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "organism": {
+                    "type": "string",
+                    "description": "Pathoplexus organism slug: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'."
+                },
+                "country": {
+                    "type": ["string", "null"],
+                    "description": "Filter by country (geoLocCountry), e.g. 'USA'."
+                },
+                "lineage": {
+                    "type": ["string", "null"],
+                    "description": "Filter by lineage."
+                },
+                "sequence_type": {
+                    "type": ["string", "null"],
+                    "description": "'nucleotide' (default) or 'aminoAcid'."
+                },
+                "aligned": {
+                    "type": ["boolean", "null"],
+                    "description": "Return aligned sequences instead of unaligned (default false)."
+                },
+                "limit": {
+                    "type": ["integer", "null"],
+                    "description": "Number of sequences to download (default 1, max 100)."
+                }
+            },
+            "required": ["organism"]
+        },
+        "fields": {
+            "timeout": 30,
+            "mode": "fasta"
+        },
+        "type": "PathoplexusCountTool",
+        "test_examples": [
+            {
+                "organism": "west-nile",
+                "limit": 1
+            },
+            {
+                "organism": "mpox",
+                "limit": 1
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "fasta": {
+                  "type": "string"
+                },
+                "num_records": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "fasta"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    }
+]

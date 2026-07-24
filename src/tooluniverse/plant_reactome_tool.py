@@ -71,6 +71,10 @@ class PlantReactomeTool(BaseTool):
             return self._get_pathway(arguments)
         elif self.action == "list_species":
             return self._list_species(arguments)
+        elif self.action == "get_participants":
+            return self._get_participants(arguments)
+        elif self.action == "get_species_tree":
+            return self._get_species_tree(arguments)
         else:
             return {"status": "error", "error": f"Unknown action: {self.action}"}
 
@@ -167,5 +171,88 @@ class PlantReactomeTool(BaseTool):
             "metadata": {
                 "source": "Plant Reactome (Gramene)",
                 "total_species": len(species_list),
+            },
+        }
+
+    def _get_participants(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List the gene/protein/molecule participants of a pathway or reaction."""
+        pathway_id = arguments.get("pathway_id") or arguments.get("event_id") or ""
+        pathway_id = pathway_id.strip() if isinstance(pathway_id, str) else ""
+        if not pathway_id:
+            return {"status": "error", "error": "pathway_id parameter is required"}
+
+        url = f"{PLANT_REACTOME_BASE_URL}/data/participants/{pathway_id}"
+        response = requests.get(
+            url, headers={"Accept": "application/json"}, timeout=self.timeout
+        )
+        response.raise_for_status()
+
+        data = response.json()
+        if not isinstance(data, list):
+            data = []
+
+        participants = []
+        for item in data:
+            if not isinstance(item, dict):
+                continue
+            ref_entities = []
+            for ref in item.get("refEntities") or []:
+                if not isinstance(ref, dict):
+                    continue
+                ref_entities.append(
+                    {
+                        "identifier": ref.get("identifier"),
+                        "display_name": ref.get("displayName"),
+                        "gene_names": ref.get("geneName"),
+                        "schema_class": ref.get("schemaClass"),
+                        "url": ref.get("url"),
+                    }
+                )
+            participants.append(
+                {
+                    "pe_db_id": item.get("peDbId"),
+                    "display_name": item.get("displayName"),
+                    "schema_class": item.get("schemaClass"),
+                    "ref_entities": ref_entities,
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": participants,
+            "metadata": {
+                "source": "Plant Reactome (Gramene)",
+                "pathway_id": pathway_id,
+                "total_participants": len(participants),
+            },
+        }
+
+    def _get_species_tree(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Retrieve the full hierarchical pathway/event tree for a species by NCBI taxId."""
+        tax_id = arguments.get("tax_id")
+        if tax_id is None or (isinstance(tax_id, str) and not tax_id.strip()):
+            return {
+                "status": "error",
+                "error": "tax_id parameter is required (NCBI taxonomy id, e.g. 4530 for Oryza sativa)",
+            }
+        tax_id = str(tax_id).strip()
+
+        url = f"{PLANT_REACTOME_BASE_URL}/data/eventsHierarchy/{tax_id}"
+        response = requests.get(
+            url, headers={"Accept": "application/json"}, timeout=self.timeout
+        )
+        response.raise_for_status()
+
+        data = response.json()
+        if not isinstance(data, list):
+            data = []
+
+        return {
+            "status": "success",
+            "data": data,
+            "metadata": {
+                "source": "Plant Reactome (Gramene)",
+                "tax_id": tax_id,
+                "total_top_level_pathways": len(data),
             },
         }

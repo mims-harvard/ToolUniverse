@@ -82,6 +82,7 @@ class PDCTool(BaseTool):
             "list_programs": self._list_programs,
             "get_study_summary": self._get_study_summary,
             "get_clinical_data": self._get_clinical_data,
+            "get_quant_data_matrix": self._get_quant_data_matrix,
         }
 
         handler = handlers.get(operation)
@@ -355,5 +356,77 @@ class PDCTool(BaseTool):
                 "limit": limit,
                 "cases": cases,
                 "num_returned": len(cases),
+            },
+        }
+
+    def _get_quant_data_matrix(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get the quantitative protein abundance matrix (gene x aliquot) for a study.
+
+        Returns the actual CPTAC/PDC quantitative expression values (e.g. log2
+        ratios) - the core proteomic output - rather than spectral counts. The
+        full matrix can be very large (thousands of genes x hundreds of aliquots),
+        so the gene rows are truncated to max_genes; the column header (aliquot
+        identifiers) is always returned in full.
+        """
+        pdc_study_id = arguments.get("pdc_study_id")
+        if not pdc_study_id:
+            return {
+                "status": "error",
+                "error": "pdc_study_id parameter is required (e.g., 'PDC000127')",
+            }
+
+        data_type = arguments.get("data_type", "log2_ratio")
+        max_genes = arguments.get("max_genes", 50)
+        try:
+            max_genes = int(max_genes)
+        except (TypeError, ValueError):
+            max_genes = 50
+        if max_genes < 0:
+            max_genes = 0
+
+        # quantDataMatrix returns a 2D array: row 0 is the header
+        # (first cell label + aliquot identifiers), each subsequent row is a
+        # gene followed by its per-aliquot quantitative values.
+        gql = '{ quantDataMatrix(pdc_study_id: "%s" data_type: "%s") }' % (
+            pdc_study_id.replace('"', '\\"'),
+            data_type.replace('"', '\\"'),
+        )
+
+        result = _execute_graphql(gql, timeout=30)
+        if not result["ok"]:
+            return {"status": "error", "error": result["error"]}
+
+        matrix = result["data"].get("quantDataMatrix")
+        if not matrix or not isinstance(matrix, list):
+            return {
+                "status": "error",
+                "error": "No quantitative matrix returned for study '%s' (data_type '%s'). "
+                "Verify the PDC study ID and that data_type is valid "
+                "(e.g. 'log2_ratio', 'unshared_log2_ratio', 'precursor_area')."
+                % (pdc_study_id, data_type),
+            }
+
+        header = matrix[0] if matrix else []
+        gene_rows = matrix[1:]
+        num_genes = len(gene_rows)
+        # Header is [row-label, aliquot_1, aliquot_2, ...]; aliquots are columns.
+        aliquots = header[1:] if len(header) > 1 else []
+
+        truncated = num_genes > max_genes
+        returned_rows = gene_rows[:max_genes]
+
+        return {
+            "status": "success",
+            "data": {
+                "pdc_study_id": pdc_study_id,
+                "data_type": data_type,
+                "num_genes": num_genes,
+                "num_aliquots": len(aliquots),
+                "header": header,
+                "aliquots": aliquots,
+                "matrix": returned_rows,
+                "num_genes_returned": len(returned_rows),
+                "truncated": truncated,
+                "max_genes": max_genes,
             },
         }

@@ -18,7 +18,27 @@ except FileNotFoundError as e:
     )
     sys.exit(1)
 
-server = FastMCP("Your MCP Server")
+
+def _optional_token_auth():
+    """Require a Bearer token only when TOOLUNIVERSE_API_TOKEN is set.
+
+    Returns None (no authentication, unchanged behavior) when the variable is
+    not set, so existing deployments are unaffected.
+    """
+    token = os.getenv("TOOLUNIVERSE_API_TOKEN")
+    if not token:
+        return None
+    try:
+        from fastmcp.server.auth import StaticTokenVerifier
+
+        return StaticTokenVerifier(
+            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
+        )
+    except Exception:
+        return None
+
+
+server = FastMCP("Your MCP Server", auth=_optional_token_auth())
 agents = {}
 for tool_config in uspto_downloader_tools:
     agents[tool_config["name"]] = USPTOPatentDocumentDownloader(tool_config=tool_config)

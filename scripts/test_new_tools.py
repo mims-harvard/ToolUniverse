@@ -17,6 +17,7 @@ Examples:
     python scripts/test_new_tools.py hpa -v   # Test "hpa" tools with verbose output
     python scripts/test_new_tools.py cbioportal  # Test cBioPortal tools
 """
+
 import argparse
 import json
 import os
@@ -34,6 +35,7 @@ from tooluniverse import ToolUniverse  # noqa: E402
 
 try:
     from jsonschema import validate, ValidationError
+
     JSONSCHEMA_AVAILABLE = True
 except ImportError:
     JSONSCHEMA_AVAILABLE = False
@@ -63,6 +65,11 @@ def load_all_tool_configs(
     # Filter out known non-tool files or problematic ones if necessary
     # files = [f for f in files if "boltz" not in f.name] # Example exclusion if needed
 
+    # Skip broken_apis/ — those configs document non-functional upstream APIs
+    # and the tools are not registered at runtime, so testing them produces
+    # only false-positive "Tool not found" failures.
+    files = [f for f in files if "broken_apis" not in f.parts]
+
     print(f"🔍 Found {len(files)} config files matching '{search_pattern}'")
 
     for file_path in files:
@@ -78,7 +85,10 @@ def load_all_tool_configs(
 
     return configs
 
-def validate_against_schema(data: Any, schema: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
+
+def validate_against_schema(
+    data: Any, schema: Dict[str, Any]
+) -> Tuple[bool, Optional[str]]:
     """Validate data against JSON schema."""
     if not JSONSCHEMA_AVAILABLE or not schema:
         return True, None
@@ -97,12 +107,40 @@ def validate_against_schema(data: Any, schema: Dict[str, Any]) -> Tuple[bool, Op
     except Exception as e:
         return False, str(e)
 
+
+def _schema_describes_envelope(schema: Dict[str, Any]) -> bool:
+    """Heuristic: schema describes the {status,data,error,metadata} envelope.
+
+    Many tool configs declare return_schema at the envelope level (top-level
+    properties include 'data' or 'status'). For those, validating the
+    unwrapped result.get('data') against the schema always fails ("Schema
+    Mismatch: At root: ..."). Detect that style and validate the full result
+    instead. Inner-data schemas (no 'data'/'status' at top) keep the
+    historical unwrapped behaviour.
+
+    Looking for 'error' alone is NOT enough — many inner-data schemas pair an
+    inner array with a {'error': str} error wrapper but still describe the
+    inner data shape, not the envelope.
+    """
+    if not isinstance(schema, dict):
+        return False
+    branches = schema.get("oneOf") or schema.get("anyOf") or [schema]
+    for br in branches:
+        if not isinstance(br, dict):
+            continue
+        props = br.get("properties") or {}
+        if "data" in props or "status" in props:
+            return True
+    return False
+
+
 def format_result(val: Any, max_len: int = 100) -> str:
     """Format result for display."""
     s = str(val)
     if len(s) > max_len:
         return s[:max_len] + "..."
     return s
+
 
 def check_for_404_error(result: Any) -> bool:
     """Check if result contains a 404 error."""
@@ -113,7 +151,9 @@ def check_for_404_error(result: Any) -> bool:
     return False
 
 
-def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) -> Dict[str, Any]:
+def run_tests(
+    tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args
+) -> Dict[str, Any]:
     stats = {
         "files": 0,
         "tools": 0,
@@ -124,9 +164,9 @@ def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) ->
         "schema_valid": 0,
         "schema_invalid": 0,
         "errors_404": 0,
-        "errors_other": 0
+        "errors_other": 0,
     }
-    
+
     start_time = time.time()
 
     for file_path, tools in configs:
@@ -150,14 +190,65 @@ def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) ->
             stats["tools"] += 1
             examples = tool.get("test_examples", [])
             schema = tool.get("return_schema")
-            
+
+            # Skip tools that require user-supplied local files (no fixture
+            # we can ship covers the realistic use case). Tools that declare
+            # `requires_local_input: true` are still loadable and runnable;
+            # the harness just can't exercise them without real input data.
+            if tool.get("requires_local_input"):
+                if args.verbose:
+                    print(
+                        f"  ⏭️  {name}: Skipped (requires user-supplied local input file)"
+                    )
+                stats["skipped"] += 1
+                continue
+
             # Check if tool requires API keys that are not available
             required_keys = tool.get("required_api_keys", [])
             if required_keys:
                 missing_keys = [key for key in required_keys if not os.getenv(key)]
                 if missing_keys:
                     if args.verbose:
-                        print(f"  ⏭️  {name}: Skipped (missing API keys: {', '.join(missing_keys)})")
+                        print(
+                            f"  ⏭️  {name}: Skipped (missing API keys: {', '.join(missing_keys)})"
+                        )
+                    stats["skipped"] += 1
+                    continue
+
+            # Skip LLM-backed AgenticTool/SmolAgent tools if no LLM provider env
+            # is set. Otherwise they show as "Schema Mismatch: None is not of
+            # type object" once the provider call fails silently inside the agent.
+            if tool.get("type") in (
+                "AgenticTool",
+                "SmolAgent",
+                "SmolAgentTool",
+                "ToolFinderLLM",
+                "ToolFinderEmbedding",
+                "ComposeTool",
+                "EmbeddingDatabase",
+            ):
+                # Gemini fallback fails AgenticTool callers with
+                # 'JSON mode not supported here' — agentic framework requires
+                # structured-output support. Only count JSON-mode providers.
+                providers = (
+                    "OPENAI_API_KEY",
+                    "AZURE_OPENAI_API_KEY",
+                    "OPENROUTER_API_KEY",
+                    "ANTHROPIC_API_KEY",
+                    "BEDROCK_ACCESS_KEY_ID",
+                )
+                # Even if a key env is present, the actual key may be
+                # invalid/expired (e.g. AZURE_OPENAI_API_KEY 401s). The
+                # AgenticTool init prints those errors but the call still
+                # returns None, failing schema validation. Require an opt-in
+                # env LLM_PROVIDER_WORKING=1 to actually run these tests.
+                if not os.getenv("LLM_PROVIDER_WORKING") or not any(
+                    os.getenv(pk) for pk in providers
+                ):
+                    if args.verbose:
+                        print(
+                            f"  ⏭️  {name}: Skipped (set LLM_PROVIDER_WORKING=1 to run AgenticTool tests)"
+                        )
                     stats["skipped"] += 1
                     continue
 
@@ -175,7 +266,7 @@ def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) ->
 
                 # Check for placeholders
                 if any("example_string" in str(v) for v in inputs.values()):
-                    print(f"  ⚠️  {name} Example {idx+1}: Contains placeholder input")
+                    print(f"  ⚠️  {name} Example {idx + 1}: Contains placeholder input")
 
                 try:
                     # Execute
@@ -187,7 +278,7 @@ def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) ->
                         stats["failed"] += 1
                         stats["errors_404"] += 1
                         error = result.get("error", "Unknown 404 error")
-                        print(f"    ❌ {name} Ex {idx+1}: 404 ERROR - {error}")
+                        print(f"    ❌ {name} Ex {idx + 1}: 404 ERROR - {error}")
                         if args.fail_fast:
                             print("Stopping due to --fail-fast")
                             return stats
@@ -226,22 +317,31 @@ def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) ->
 
                     if success:
                         stats["passed"] += 1
-                        # Validate Schema
-                        is_valid, schema_err = validate_against_schema(data, schema)
+                        # Validate Schema: envelope-style schemas describe the
+                        # whole {status,data,...} return; inner-data schemas
+                        # describe only the data payload. Pick the right target.
+                        validation_target = (
+                            result if _schema_describes_envelope(schema) else data
+                        )
+                        is_valid, schema_err = validate_against_schema(
+                            validation_target, schema
+                        )
                         if is_valid:
                             stats["schema_valid"] += 1
                             if args.verbose:
-                                print(f"    ✅ Ex {idx+1}: Passed")
+                                print(f"    ✅ Ex {idx + 1}: Passed")
                         else:
                             stats["schema_invalid"] += 1
-                            print(f"    ⚠️  {name} Ex {idx+1}: Schema Mismatch: {schema_err}")
+                            print(
+                                f"    ⚠️  {name} Ex {idx + 1}: Schema Mismatch: {schema_err}"
+                            )
                             if args.verbose:
                                 print(f"       Data: {format_result(data)}")
 
                     else:
                         stats["failed"] += 1
                         stats["errors_other"] += 1
-                        print(f"    ❌ {name} Ex {idx+1}: Failed - {error}")
+                        print(f"    ❌ {name} Ex {idx + 1}: Failed - {error}")
                         if args.fail_fast:
                             print("Stopping due to --fail-fast")
                             return stats
@@ -249,13 +349,14 @@ def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) ->
                 except Exception as e:
                     stats["failed"] += 1
                     stats["errors_other"] += 1
-                    print(f"    🔥 {name} Ex {idx+1}: Exception - {e}")
+                    print(f"    🔥 {name} Ex {idx + 1}: Exception - {e}")
                     if args.fail_fast:
                         return stats
 
     duration = time.time() - start_time
     stats["duration"] = duration
     return stats
+
 
 def main():
     parser = argparse.ArgumentParser(description="Test ToolUniverse tools.")
@@ -270,7 +371,9 @@ def main():
         action="store_true",
         help="Show passed tests detailed output",
     )
-    parser.add_argument("--fail-fast", action="store_true", help="Stop after first failure")
+    parser.add_argument(
+        "--fail-fast", action="store_true", help="Stop after first failure"
+    )
     parser.add_argument(
         "--dir",
         default="src/tooluniverse/data",
@@ -308,9 +411,9 @@ def main():
     stats = run_tests(tu, configs, args)
 
     # Summary
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("TEST SUMMARY")
-    print("="*50)
+    print("=" * 50)
     print(f"Files Scanned:    {stats['files']}")
     print(f"Tools Tested:     {stats['tools']}")
     print(f"Tests Run:        {stats['tests']}")
@@ -329,10 +432,11 @@ def main():
     print(f"Schema Valid:     {stats['schema_valid']}")
     print(f"Schema Invalid:   {stats['schema_invalid']}")
     print(f"Duration:         {stats['duration']:.2f}s")
-    print("="*50)
-    
+    print("=" * 50)
+
     if stats["failed"] > 0:
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

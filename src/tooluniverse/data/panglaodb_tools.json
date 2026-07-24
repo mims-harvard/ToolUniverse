@@ -1,0 +1,424 @@
+[
+  {
+    "name": "PanglaoDB_markers_for_cell_type",
+    "type": "PanglaoDBMarkerTool",
+    "description": "Get curated marker genes for a single-cell type from PanglaoDB (panglaodb.se). Returns marker genes used to annotate scRNA-seq clusters, each with canonical-marker flag, ubiquitousness index, and per-gene sensitivity/specificity for human and mouse. Useful for cell-type annotation and validating cluster identity. cell_type must match a PanglaoDB cell-type label (use PanglaoDB_list_cell_types to discover them; examples: 'B cells', 'Hepatocytes', 'T cells', 'Macrophages'). Optionally filter by species ('human' or 'mouse'), organ, or canonical_only. Results are sorted canonical-first, then by descending human specificity. Note: the marker set is the frozen 2020 PanglaoDB release (no longer updated) \u2014 reliable for canonical markers, but not for cell types/markers described since.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cell_type": {
+          "type": "string",
+          "description": "PanglaoDB cell-type label, e.g. 'B cells', 'Hepatocytes', 'T cells'. Case-insensitive exact match. Required."
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional species filter: 'human' (Hs) or 'mouse' (Mm). If omitted, returns markers for all species."
+        },
+        "organ": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional organ filter, e.g. 'Liver', 'Immune system', 'Pancreas'. Case-insensitive exact match."
+        },
+        "canonical_only": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, return only canonical marker genes. Default false."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of marker genes to return. Default 50."
+        }
+      },
+      "required": [
+        "cell_type"
+      ]
+    },
+    "fields": {
+      "operation": "markers_for_cell_type"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {
+                    "type": "string"
+                  },
+                  "cell_type": {
+                    "type": "string"
+                  },
+                  "organ": {
+                    "type": "string"
+                  },
+                  "germ_layer": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "canonical_marker": {
+                    "type": "boolean"
+                  },
+                  "nicknames": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "product_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ubiquitousness_index": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sensitivity_human": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sensitivity_mouse": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "specificity_human": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "specificity_mouse": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "gene_symbol",
+                  "cell_type",
+                  "organ",
+                  "canonical_marker"
+                ]
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "cell_type": "B cells",
+        "species": "human",
+        "canonical_only": true,
+        "limit": 10
+      },
+      {
+        "cell_type": "Hepatocytes",
+        "limit": 15
+      },
+      {
+        "cell_type": "Acinar cells",
+        "organ": "Pancreas",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "PanglaoDB_cell_types_for_gene",
+    "type": "PanglaoDBMarkerTool",
+    "description": "Reverse cell-type lookup for a gene using PanglaoDB (panglaodb.se). Given an official human gene symbol (e.g. 'CD19', 'ALB', 'EPCAM'), return every cell type for which that gene is a curated marker, with organ, canonical-marker flag, and per-gene sensitivity/specificity for human and mouse. Use this to interpret a marker gene found in a scRNA-seq cluster (e.g. 'which cell type does CD19 indicate?'). Optionally filter by species ('human' or 'mouse'). Results are sorted by descending human specificity. Note: the marker set is the frozen 2020 PanglaoDB release (no longer updated) \u2014 reliable for canonical markers, but not for cell types/markers described since.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Official human gene symbol, e.g. 'CD19', 'ALB', 'EPCAM', 'INS'. Case-insensitive. Required."
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional species filter: 'human' (Hs) or 'mouse' (Mm). If omitted, returns all species."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of cell-type records to return. Default 50."
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "fields": {
+      "operation": "cell_types_for_gene"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {
+                    "type": "string"
+                  },
+                  "cell_type": {
+                    "type": "string"
+                  },
+                  "organ": {
+                    "type": "string"
+                  },
+                  "germ_layer": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "canonical_marker": {
+                    "type": "boolean"
+                  },
+                  "nicknames": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "product_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ubiquitousness_index": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sensitivity_human": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sensitivity_mouse": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "specificity_human": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "specificity_mouse": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "gene_symbol",
+                  "cell_type",
+                  "organ",
+                  "canonical_marker"
+                ]
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "gene": "CD19"
+      },
+      {
+        "gene": "ALB",
+        "species": "human"
+      },
+      {
+        "gene": "EPCAM",
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "name": "PanglaoDB_list_cell_types",
+    "type": "PanglaoDBMarkerTool",
+    "description": "List the cell types catalogued in PanglaoDB (panglaodb.se), each with the organ(s) it appears in and the number of curated marker genes. Optionally filter by organ. Use this to discover valid cell_type labels for PanglaoDB_markers_for_cell_type, or to browse which cell types PanglaoDB covers for a given organ. PanglaoDB covers 178 cell types across 30 organs. Note: the marker set is the frozen 2020 PanglaoDB release (no longer updated) \u2014 reliable for canonical markers, but not for cell types/markers described since.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "organ": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional organ filter, e.g. 'Liver', 'Immune system', 'Brain', 'GI tract'. Case-insensitive exact match. If omitted, all cell types are returned. The full organ list is included in metadata.all_organs."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "list_cell_types"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "cell_type": {
+                    "type": "string"
+                  },
+                  "organs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "marker_count": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "cell_type",
+                  "marker_count"
+                ]
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {},
+      {
+        "organ": "Liver"
+      },
+      {
+        "organ": "Immune system"
+      }
+    ]
+  }
+]

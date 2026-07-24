@@ -1,0 +1,520 @@
+[
+  {
+    "name": "ClinicalCalc_CHA2DS2_VASc",
+    "description": "CHA2DS2-VASc score: stroke risk in non-valvular atrial fibrillation, used to decide oral anticoagulation. Deterministic point score (0-9). Provide age plus boolean risk factors. Returns score, anticoagulation interpretation, and per-component points.",
+    "parameter": {"type": "object", "properties": {
+      "age": {"type": "number", "description": "Age in years"},
+      "chf": {"type": "boolean", "description": "Congestive heart failure / LV dysfunction"},
+      "hypertension": {"type": "boolean", "description": "History of hypertension"},
+      "diabetes": {"type": "boolean", "description": "Diabetes mellitus"},
+      "stroke_history": {"type": "boolean", "description": "Prior stroke, TIA, or thromboembolism (2 points)"},
+      "vascular_disease": {"type": "boolean", "description": "Vascular disease (prior MI, PAD, aortic plaque)"},
+      "female": {"type": "boolean", "description": "Female sex"}
+    }, "required": ["age"]},
+    "fields": {"calculator": "cha2ds2_vasc"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"age": 80, "female": true, "hypertension": true, "diabetes": true},
+      {"age": 55, "chf": false, "hypertension": false}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinicalCalc_HAS_BLED",
+    "description": "HAS-BLED score: 1-year major bleeding risk in patients with atrial fibrillation on anticoagulation. Point score (0-9); >=3 indicates high risk warranting caution and review of reversible factors. Complements CHA2DS2-VASc.",
+    "parameter": {"type": "object", "properties": {
+      "age": {"type": "number", "description": "Age in years (>65 scores 1 point)"},
+      "hypertension": {"type": "boolean", "description": "Uncontrolled hypertension (SBP >160)"},
+      "renal_disease": {"type": "boolean", "description": "Abnormal renal function (dialysis, transplant, Cr >2.26 mg/dL)"},
+      "liver_disease": {"type": "boolean", "description": "Abnormal liver function (cirrhosis, bilirubin >2x or AST/ALT >3x normal)"},
+      "stroke_history": {"type": "boolean", "description": "Prior stroke"},
+      "bleeding_history": {"type": "boolean", "description": "Prior major bleeding or predisposition"},
+      "labile_inr": {"type": "boolean", "description": "Labile INR (unstable/high, TTR <60%)"},
+      "drugs": {"type": "boolean", "description": "Concomitant antiplatelet or NSAID use"},
+      "alcohol": {"type": "boolean", "description": "Alcohol >=8 drinks/week"}
+    }, "required": ["age"]},
+    "fields": {"calculator": "has_bled"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"age": 70, "hypertension": true, "bleeding_history": true, "labile_inr": true},
+      {"age": 60}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinicalCalc_CURB_65",
+    "description": "CURB-65 score: community-acquired pneumonia severity and disposition (outpatient vs inpatient vs ICU). Point score (0-5) from confusion, urea, respiratory rate, blood pressure, and age >=65.",
+    "parameter": {"type": "object", "properties": {
+      "age": {"type": "number", "description": "Age in years (>=65 scores 1)"},
+      "confusion": {"type": "boolean", "description": "New-onset confusion / altered mental status"},
+      "elevated_urea": {"type": "boolean", "description": "Blood urea nitrogen >7 mmol/L (>19 mg/dL BUN)"},
+      "high_resp_rate": {"type": "boolean", "description": "Respiratory rate >=30/min"},
+      "low_bp": {"type": "boolean", "description": "SBP <90 mmHg or DBP <=60 mmHg"}
+    }, "required": ["age"]},
+    "fields": {"calculator": "curb_65"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"age": 72, "confusion": true, "elevated_urea": true, "high_resp_rate": false, "low_bp": false},
+      {"age": 40, "confusion": false}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinicalCalc_qSOFA",
+    "description": "qSOFA (quick SOFA): bedside identification of patients with suspected infection at higher risk of poor outcome. Point score (0-3); >=2 is concerning for sepsis. Uses respiratory rate, mentation, and systolic blood pressure only.",
+    "parameter": {"type": "object", "properties": {
+      "high_resp_rate": {"type": "boolean", "description": "Respiratory rate >=22/min"},
+      "altered_mentation": {"type": "boolean", "description": "Altered mental status (GCS <15)"},
+      "low_sbp": {"type": "boolean", "description": "Systolic blood pressure <=100 mmHg"}
+    }, "required": []},
+    "fields": {"calculator": "qsofa"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"high_resp_rate": true, "altered_mentation": true, "low_sbp": false},
+      {"high_resp_rate": false, "altered_mentation": false, "low_sbp": false}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinicalCalc_Child_Pugh",
+    "description": "Child-Pugh score and class (A/B/C): severity of chronic liver disease / cirrhosis and surgical risk. Sum (5-15) of bilirubin, albumin, INR, ascites, and encephalopathy points. Provide lab values and clinical grades.",
+    "parameter": {"type": "object", "properties": {
+      "bilirubin": {"type": "number", "description": "Total bilirubin in mg/dL"},
+      "albumin": {"type": "number", "description": "Serum albumin in g/dL"},
+      "inr": {"type": "number", "description": "INR (prothrombin time ratio)"},
+      "ascites": {"type": "string", "enum": ["none", "absent", "mild", "slight", "moderate", "severe"], "description": "Ascites severity. Accepted: 'none'/'absent' (1 pt), 'mild'/'slight' (2 pts), 'moderate'/'severe' (3 pts). Unrecognized values are rejected (no silent best-case default).", "default": "none"},
+      "encephalopathy": {"type": "string", "enum": ["none", "absent", "grade1", "grade2", "grade1-2", "grade3", "grade4", "grade3-4"], "description": "Hepatic encephalopathy grade. Accepted: 'none'/'absent' (1 pt), 'grade1-2' (2 pts), 'grade3-4' (3 pts). Unrecognized values are rejected (no silent best-case default).", "default": "none"}
+    }, "required": ["bilirubin", "albumin", "inr"]},
+    "fields": {"calculator": "child_pugh"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"bilirubin": 1.0, "albumin": 4.0, "inr": 1.0, "ascites": "none", "encephalopathy": "none"},
+      {"bilirubin": 3.5, "albumin": 2.5, "inr": 2.4, "ascites": "moderate", "encephalopathy": "grade3-4"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            },
+            "child_pugh_class": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinicalCalc_Wells_DVT",
+    "description": "Wells score for deep vein thrombosis (DVT) pretest probability. Sum of clinical features (minus 2 if an alternative diagnosis is as likely); score >=2 means DVT likely. Guides D-dimer vs ultrasound workup.",
+    "parameter": {"type": "object", "properties": {
+      "active_cancer": {"type": "boolean", "description": "Active cancer (treatment within 6 months or palliative)"},
+      "immobilization": {"type": "boolean", "description": "Paralysis, paresis, or recent lower-limb immobilization"},
+      "recent_surgery": {"type": "boolean", "description": "Recently bedridden >=3 days or major surgery within 12 weeks"},
+      "localized_tenderness": {"type": "boolean", "description": "Localized tenderness along deep venous system"},
+      "leg_swollen": {"type": "boolean", "description": "Entire leg swollen"},
+      "calf_swelling": {"type": "boolean", "description": "Calf swelling >3 cm vs asymptomatic side"},
+      "pitting_edema": {"type": "boolean", "description": "Pitting edema confined to symptomatic leg"},
+      "collateral_veins": {"type": "boolean", "description": "Collateral superficial (non-varicose) veins"},
+      "previous_dvt": {"type": "boolean", "description": "Previously documented DVT"},
+      "alternative_diagnosis": {"type": "boolean", "description": "Alternative diagnosis at least as likely as DVT (subtracts 2)"}
+    }, "required": []},
+    "fields": {"calculator": "wells_dvt"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"active_cancer": true, "localized_tenderness": true, "leg_swollen": true},
+      {"alternative_diagnosis": true, "calf_swelling": true}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinicalCalc_Wells_PE",
+    "description": "Wells score for pulmonary embolism (PE) pretest probability. Weighted score giving three-tier (low/moderate/high) and two-tier (PE unlikely <=4 / likely >4) risk to guide D-dimer vs CT pulmonary angiography.",
+    "parameter": {"type": "object", "properties": {
+      "clinical_dvt": {"type": "boolean", "description": "Clinical signs/symptoms of DVT (3 points)"},
+      "pe_most_likely": {"type": "boolean", "description": "PE is the most likely diagnosis (3 points)"},
+      "tachycardia": {"type": "boolean", "description": "Heart rate >100 bpm (1.5)"},
+      "immobilization": {"type": "boolean", "description": "Immobilization >=3 days or surgery within 4 weeks (1.5)"},
+      "previous_vte": {"type": "boolean", "description": "Previous DVT or PE (1.5)"},
+      "hemoptysis": {"type": "boolean", "description": "Hemoptysis (1)"},
+      "malignancy": {"type": "boolean", "description": "Malignancy treated within 6 months or palliative (1)"}
+    }, "required": []},
+    "fields": {"calculator": "wells_pe"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"clinical_dvt": true, "pe_most_likely": true, "tachycardia": true},
+      {"hemoptysis": true}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            },
+            "three_tier": {
+              "type": "string"
+            },
+            "two_tier": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinicalCalc_MELD_Na",
+    "description": "MELD-Na score (UNOS/OPTN 2016): 90-day mortality risk in chronic liver disease and liver transplant allocation priority. Range 6-40. Uses creatinine, bilirubin, INR, and sodium (with the standard lower/upper bounds and dialysis rule).",
+    "parameter": {"type": "object", "properties": {
+      "creatinine": {"type": "number", "description": "Serum creatinine in mg/dL (bounded 1.0-4.0; set to 4.0 if on dialysis)"},
+      "bilirubin": {"type": "number", "description": "Total bilirubin in mg/dL (lower-bounded at 1.0)"},
+      "inr": {"type": "number", "description": "INR (lower-bounded at 1.0)"},
+      "sodium": {"type": "number", "description": "Serum sodium in mmol/L (bounded 125-137)"},
+      "dialysis": {"type": "boolean", "description": "Two or more dialysis sessions in the past week (forces creatinine to 4.0)"}
+    }, "required": ["creatinine", "bilirubin", "inr", "sodium"]},
+    "fields": {"calculator": "meld_na"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"creatinine": 1.5, "bilirubin": 2.0, "inr": 1.5, "sodium": 130},
+      {"creatinine": 2.0, "bilirubin": 5.0, "inr": 2.0, "sodium": 128, "dialysis": false}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinicalCalc_eGFR_CKD_EPI",
+    "description": "Estimated glomerular filtration rate (eGFR) by the CKD-EPI 2021 creatinine equation (race-free, Inker 2021), with CKD stage (G1-G5). Inputs: serum creatinine, age, sex. Reported in mL/min/1.73m^2.",
+    "parameter": {"type": "object", "properties": {
+      "creatinine": {"type": "number", "description": "Serum creatinine in mg/dL"},
+      "age": {"type": "number", "description": "Age in years"},
+      "female": {"type": "boolean", "description": "Female sex"}
+    }, "required": ["creatinine", "age"]},
+    "fields": {"calculator": "ckd_epi"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"creatinine": 0.9, "age": 60, "female": true},
+      {"creatinine": 1.3, "age": 60, "female": false}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            },
+            "unit": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinicalCalc_ASCVD_risk",
+    "description": "10-year atherosclerotic cardiovascular disease (ASCVD) risk by the 2013 ACC/AHA Pooled Cohort Equations (Goff 2013). Validated for ages 40-79. Returns risk percent and category (low/borderline/intermediate/high) used to guide statin therapy. Inputs: age, total and HDL cholesterol, systolic BP (treated or not), smoking, diabetes, sex, and race (White/African American).",
+    "parameter": {"type": "object", "properties": {
+      "age": {"type": "number", "description": "Age in years (40-79)"},
+      "total_cholesterol": {"type": "number", "description": "Total cholesterol in mg/dL"},
+      "hdl_cholesterol": {"type": "number", "description": "HDL cholesterol in mg/dL"},
+      "systolic_bp": {"type": "number", "description": "Systolic blood pressure in mmHg"},
+      "bp_treated": {"type": "boolean", "description": "Currently on blood-pressure-lowering medication"},
+      "smoker": {"type": "boolean", "description": "Current smoker"},
+      "diabetes": {"type": "boolean", "description": "Diabetes mellitus"},
+      "female": {"type": "boolean", "description": "Female sex"},
+      "race": {"type": "string", "description": "'white' (or other) vs 'black'/'African American'; affects the coefficient set", "default": "white"}
+    }, "required": ["age", "total_cholesterol", "hdl_cholesterol", "systolic_bp"]},
+    "fields": {"calculator": "ascvd"},
+    "type": "ClinicalCalculatorTool",
+    "test_examples": [
+      {"age": 55, "total_cholesterol": 213, "hdl_cholesterol": 50, "systolic_bp": 120, "bp_treated": false, "smoker": false, "diabetes": false, "female": false, "race": "white"},
+      {"age": 60, "total_cholesterol": 240, "hdl_cholesterol": 40, "systolic_bp": 140, "bp_treated": true, "smoker": true, "diabetes": true, "female": true, "race": "black"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "components": {
+              "type": "object"
+            },
+            "unit": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

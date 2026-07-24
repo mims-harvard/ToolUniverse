@@ -4,9 +4,12 @@ FDA GSRS Tool
 Substance registration and identification tools using the FDA Global Substance
 Registration System (GSRS / Substance Registration System) public API:
 
-  - search_substances:  Search for substances by name, UNII, or InChIKey
-  - get_substance:      Get full substance record by UNII code or UUID
-  - get_structure:      Get structure (SMILES, molfile, formula) for a substance
+  - search_substances:       Search for substances by name, UNII, or InChIKey
+  - get_substance:           Get full substance record by UNII code or UUID
+  - get_structure:           Get structure (SMILES, molfile, formula) for a substance
+  - get_substance_relationships: Get the relationship graph (salts/solvates,
+                             impurities, metabolites, prodrug links, active moiety)
+                             plus regulatory references from the ?view=full record
 
 API base: https://gsrs.ncats.nih.gov/api/v1
 No authentication required. Free public FDA/NLM API.
@@ -32,6 +35,7 @@ class FDAGSRSTool(BaseTool):
       - search_substances: Search substances by name, UNII, InChIKey, or formula
       - get_substance:     Retrieve full substance record by UNII or UUID
       - get_structure:     Get structure data (SMILES, formula, InChI) by UNII
+      - get_substance_relationships: Relationship graph + references (view=full)
     """
 
     def __init__(self, tool_config: Dict[str, Any]):
@@ -49,6 +53,8 @@ class FDAGSRSTool(BaseTool):
             return self._get_substance(arguments)
         if op == "get_structure":
             return self._get_structure(arguments)
+        if op == "get_substance_relationships":
+            return self._get_substance_relationships(arguments)
         return {"status": "error", "error": f"Unknown operation: {op}"}
 
     # ------------------------------------------------------------------
@@ -270,3 +276,128 @@ class FDAGSRSTool(BaseTool):
             },
             "metadata": {"unii": unii},
         }
+
+    # ------------------------------------------------------------------
+    # operation: get_substance_relationships
+    # ------------------------------------------------------------------
+
+    def _get_substance_relationships(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Return the relationship graph + regulatory references for a substance.
+
+        The default substance view leaves the ``relationships`` and
+        ``references`` collections as unexpanded link stubs. Requesting
+        ``?view=full`` materializes the full graph (salts/solvates, impurities,
+        metabolites, prodrug->metabolite links, active moiety, ...).
+        """
+        unii = arguments.get("unii") or arguments.get("id")
+        if not unii:
+            return {
+                "status": "error",
+                "error": "Provide 'unii' (e.g., 'R16CO5Y76E' for aspirin).",
+            }
+
+        rel_type_filter = arguments.get("relationship_type") or arguments.get("type")
+        include_references = arguments.get("include_references", True)
+        max_refs = min(int(arguments.get("max_references", 100)), 500)
+
+        result = self._api_get(
+            f"{GSRS_BASE}/substances/{unii.strip().upper()}",
+            {"view": "full"},
+        )
+        if not result["ok"]:
+            result.pop("ok", None)
+            return {"status": "error", **result}
+
+        r = result["data"]
+        if not isinstance(r, dict) or not r.get("uuid"):
+            return {
+                "status": "error",
+                "error": f"No substance found for UNII: {unii}",
+                "suggestion": "Use FDAGSRS_search_substances to find the correct UNII code.",
+            }
+
+        raw_rels = r.get("relationships", []) or []
+        relationships = []
+        type_counts: Dict[str, int] = {}
+        for rel in raw_rels:
+            rel_type = rel.get("type", "")
+            if (
+                rel_type_filter
+                and rel_type_filter.strip().upper() not in rel_type.upper()
+            ):
+                continue
+            related = rel.get("relatedSubstance", {}) or {}
+            relationships.append(
+                {
+                    "type": rel_type,
+                    "relatedSubstanceName": related.get("name", "")
+                    or related.get("refPname", ""),
+                    "relatedSubstanceUnii": related.get("approvalID", "")
+                    or related.get("linkingID", ""),
+                    "relatedSubstanceClass": related.get("substanceClass", ""),
+                    "interactionType": rel.get("interactionType", ""),
+                    "qualification": rel.get("qualification", ""),
+                    "amount": self._format_amount(rel.get("amount")),
+                    "comments": rel.get("comments", ""),
+                }
+            )
+            type_counts[rel_type] = type_counts.get(rel_type, 0) + 1
+
+        references = []
+        raw_refs = r.get("references", []) or []
+        if include_references:
+            for ref in raw_refs[:max_refs]:
+                references.append(
+                    {
+                        "docType": ref.get("docType", ""),
+                        "citation": ref.get("citation", ""),
+                        "publicDomain": ref.get("publicDomain", False),
+                        "tags": ref.get("tags", []),
+                    }
+                )
+
+        return {
+            "status": "success",
+            "data": {
+                "uuid": r.get("uuid", ""),
+                "unii": r.get("approvalID") or r.get("unii", ""),
+                "name": r.get("_name", ""),
+                "substanceClass": r.get("substanceClass", ""),
+                "relationships": relationships,
+                "references": references,
+            },
+            "metadata": {
+                "unii": unii,
+                "relationship_count": len(relationships),
+                "relationship_type_counts": type_counts,
+                "total_relationships": len(raw_rels),
+                "reference_count": len(references),
+                "total_references": len(raw_refs),
+                "relationship_type_filter": rel_type_filter or None,
+            },
+        }
+
+    @staticmethod
+    def _format_amount(amount: Any) -> str:
+        """Render a GSRS amount object as a short human-readable string."""
+        if not isinstance(amount, dict) or not amount:
+            return ""
+        parts = []
+        if amount.get("average") not in (None, ""):
+            parts.append(str(amount["average"]))
+        elif amount.get("highLimit") not in (None, "") or amount.get(
+            "lowLimit"
+        ) not in (None, ""):
+            low = amount.get("lowLimit", "")
+            high = amount.get("highLimit", "")
+            parts.append(f"{low}-{high}".strip("-"))
+        elif amount.get("nonNumericValue"):
+            parts.append(str(amount["nonNumericValue"]))
+        units = amount.get("units", "")
+        amt_type = amount.get("type", "")
+        rendered = " ".join(p for p in parts if p)
+        if units:
+            rendered = f"{rendered} {units}".strip()
+        if amt_type:
+            rendered = f"{rendered} ({amt_type})".strip()
+        return rendered

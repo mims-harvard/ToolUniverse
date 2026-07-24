@@ -160,5 +160,93 @@
                 }
             ]
         }
+    },
+    {
+        "name": "WikiPathways_get_pathway_metabolites",
+        "description": "Get the metabolite/compound participants (wp:Metabolite nodes) of a WikiPathways pathway. Unlike WikiPathways_get_pathway_genes (which returns gene products only), this returns the small-molecule metabolites that are the central entities of a metabolic pathway, each with its canonical cross-reference identifier (HMDB, ChEBI, KEGG, ChemSpider, etc.), the dc:source datasource, and a representative label. Example: WP534 (Glycolysis & Gluconeogenesis, human) returns metabolites including D-Glucose (https://identifiers.org/hmdb/HMDB0000122), Aspartate (HMDB0000191), and D-Glyceraldehyde 3-phosphate (HMDB0001112). Use for metabolic-network reconstruction, metabolite-set enrichment, and mapping measured metabolites onto curated pathways.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pathway_id": {
+                    "type": "string",
+                    "description": "WikiPathways pathway identifier. Examples: 'WP534' (Glycolysis & Gluconeogenesis), 'WP78' (TCA cycle), 'WP143' (Fatty acid beta-oxidation), 'WP550' (Biogenic amine synthesis)."
+                }
+            },
+            "required": [
+                "pathway_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "get_pathway_metabolites"
+        },
+        "type": "WikiPathwaysExtTool",
+        "test_examples": [
+            {
+                "pathway_id": "WP534"
+            },
+            {
+                "pathway_id": "WP78"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pathway_id": {
+                                    "type": "string",
+                                    "description": "WikiPathways pathway ID"
+                                },
+                                "metabolite_count": {
+                                    "type": "integer",
+                                    "description": "Number of distinct metabolites in the pathway"
+                                },
+                                "metabolites": {
+                                    "type": "array",
+                                    "description": "Distinct metabolite participants",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "identifier": {
+                                                "type": "string",
+                                                "description": "Canonical metabolite identifier (e.g. identifiers.org HMDB/ChEBI/KEGG URI or bare ID)"
+                                            },
+                                            "source": {
+                                                "type": "string",
+                                                "description": "Datasource of the identifier (HMDB, ChEBI, KEGG Compound, etc.)"
+                                            },
+                                            "label": {
+                                                "type": "string",
+                                                "description": "Metabolite name/label"
+                                            },
+                                            "node": {
+                                                "type": "string",
+                                                "description": "RDF node URI for the metabolite"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
     }
 ]

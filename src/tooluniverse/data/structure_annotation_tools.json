@@ -1,0 +1,205 @@
+[
+  {
+    "name": "Structure_annotate_per_residue",
+    "type": "StructureAnnotationTool",
+    "required_packages": [
+      "biopython",
+      "freesasa"
+    ],
+    "description": "Per-residue structural annotation from a PDB structure: which residues sit at a binding interface (vs a partner chain), which line a ligand pocket, which are buried (core) vs solvent-exposed (surface). For each residue of the target chain returns: 1-letter amino acid, min side-chain-heavy-atom distance to the partner chain(s), min distance to ligand heavy atoms, relative SASA (computed with freesasa on the ISOLATED target chain \u2014 partner chains would bias the call by burying interface residues), a region label in {interface, ligand, both, other}, and an is_core boolean. Optionally fetches secondary structure (helix/strand/coil) from PDBe REST. This is the structural annotation track plotted under a DMS heatmap and the structural prior SAE feature drops are read against. Methodology adapted from an upstream research workflow.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "annotate_per_residue"
+          ],
+          "default": "annotate_per_residue"
+        },
+        "pdb_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "4-character PDB ID (e.g. '6VJJ'). If provided, the structure is downloaded from RCSB. Exactly one of pdb_id or pdb_content must be supplied."
+        },
+        "pdb_content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Raw PDB file content (string). Use when the structure is local (e.g. AlphaFold-predicted, in-memory)."
+        },
+        "target_chain": {
+          "type": "string",
+          "description": "Chain ID of the protein to annotate (e.g. 'A').",
+          "default": "A"
+        },
+        "partner_chains": {
+          "type": "array",
+          "description": "Chain IDs that define the binding partner(s). Used to compute the interface. Empty list = no interface analysis (all dist_partner values null).",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "ligand_resnames": {
+          "type": "array",
+          "description": "Three-letter residue names of bound ligands to define the ligand pocket (e.g. ['GNP', 'MG'] for GTP-analogue + magnesium). Searched across all chains. Empty list = no ligand-pocket analysis.",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "distance_cutoff": {
+          "type": "number",
+          "description": "Distance cutoff in angstroms for interface and ligand-pocket classification.",
+          "default": 5.0
+        },
+        "core_rsa_cutoff": {
+          "type": "number",
+          "description": "Relative solvent accessibility threshold below which a residue is classified as 'core'.",
+          "default": 0.25
+        },
+        "include_secondary_structure": {
+          "type": "boolean",
+          "description": "If true and pdb_id is provided, fetch per-residue secondary structure (helix/strand/coil) from PDBe REST. Only meaningful for deposited PDB entries; ignored when pdb_content is supplied.",
+          "default": false
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "pdb_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "target_chain": {
+              "type": "string"
+            },
+            "partner_chains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ligand_resnames": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "distance_cutoff": {
+              "type": "number"
+            },
+            "core_rsa_cutoff": {
+              "type": "number"
+            },
+            "n_residues": {
+              "type": "integer"
+            },
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "position": {
+                    "type": "integer"
+                  },
+                  "aa": {
+                    "type": "string"
+                  },
+                  "dist_partner": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "dist_ligand": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "rsa": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "region": {
+                    "type": "string",
+                    "enum": [
+                      "interface",
+                      "ligand",
+                      "both",
+                      "other"
+                    ]
+                  },
+                  "is_core": {
+                    "type": "boolean"
+                  },
+                  "ss_element": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "method": {
+              "type": "object"
+            },
+            "provenance": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "target_chain",
+            "n_residues",
+            "annotations"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "annotate_per_residue",
+        "pdb_id": "1CRN"
+      }
+    ]
+  }
+]

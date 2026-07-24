@@ -319,7 +319,7 @@ Complete working examples are available in the `examples/remote_tools/` director
 cd examples/remote_tools
 python create_remote_tool.py  # In one terminal
 python use_remote_tool.py     # In another terminal
-```
+```````````````````````````````````````````````````
 
 Next Steps
 ----------

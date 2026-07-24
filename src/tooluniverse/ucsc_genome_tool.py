@@ -70,11 +70,127 @@ class UCSCGenomeTool(BaseTool):
             return self._get_sequence(arguments)
         elif self.endpoint_type == "get_track":
             return self._get_track(arguments)
+        elif self.endpoint_type == "list_tracks":
+            return self._list_tracks(arguments)
         else:
             return {
                 "status": "error",
                 "error": f"Unknown endpoint_type: {self.endpoint_type}",
             }
+
+    def _list_tracks(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List annotation tracks for a genome, or the column schema of a track.
+
+        With only ``genome`` set, returns every available track (leaf tracks
+        only) with shortLabel/type/longLabel/parent so callers can discover
+        valid track names for UCSC_get_track. When ``track`` is also provided,
+        returns that track's column schema (name/sqlType/jsonType/description)
+        from the list/schema endpoint.
+        """
+        genome = arguments.get("genome", "")
+        track = arguments.get("track")
+        name_filter = arguments.get("name_filter")
+        max_tracks = arguments.get("max_tracks", 500)
+
+        if not genome:
+            return {
+                "status": "error",
+                "error": "genome parameter is required (e.g., 'hg38', 'mm39').",
+            }
+
+        # Schema mode: a specific track's column definitions.
+        if track:
+            url = f"{UCSC_BASE_URL}/list/schema?genome={genome};track={track}"
+            response = requests.get(url, timeout=self.timeout)
+            response.raise_for_status()
+            raw = response.json()
+
+            column_types = raw.get("columnTypes", [])
+            if not isinstance(column_types, list):
+                column_types = []
+
+            result = {
+                "genome": genome,
+                "track": track,
+                "track_type": raw.get("type"),
+                "short_label": raw.get("shortLabel"),
+                "long_label": raw.get("longLabel"),
+                "column_count": len(column_types),
+                "columns": column_types,
+            }
+            return {
+                "status": "success",
+                "data": result,
+                "metadata": {
+                    "source": "UCSC Genome Browser",
+                    "query": f"{genome}:{track}",
+                    "endpoint": "list/schema",
+                },
+            }
+
+        # Listing mode: all leaf tracks for the genome.
+        url = f"{UCSC_BASE_URL}/list/tracks?genome={genome};trackLeavesOnly=1"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        raw = response.json()
+
+        track_dict = raw.get(genome, {})
+        if not isinstance(track_dict, dict):
+            track_dict = {}
+
+        try:
+            max_tracks = int(max_tracks)
+        except (TypeError, ValueError):
+            max_tracks = 500
+        if max_tracks <= 0:
+            max_tracks = 500
+
+        nf = (
+            name_filter.lower()
+            if isinstance(name_filter, str) and name_filter
+            else None
+        )
+
+        tracks = []
+        for name, info in track_dict.items():
+            if not isinstance(info, dict):
+                info = {}
+            short_label = info.get("shortLabel", "")
+            long_label = info.get("longLabel", "")
+            if nf and (
+                nf not in name.lower()
+                and nf not in str(short_label).lower()
+                and nf not in str(long_label).lower()
+            ):
+                continue
+            tracks.append(
+                {
+                    "track": name,
+                    "type": info.get("type"),
+                    "short_label": short_label,
+                    "long_label": long_label,
+                    "parent": info.get("parent"),
+                    "group": info.get("group"),
+                }
+            )
+
+        total_matched = len(tracks)
+        result = {
+            "genome": genome,
+            "name_filter": name_filter,
+            "track_count": total_matched,
+            "returned_count": min(total_matched, max_tracks),
+            "tracks": tracks[:max_tracks],
+        }
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "UCSC Genome Browser",
+                "query": genome,
+                "endpoint": "list/tracks",
+            },
+        }
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search UCSC Genome Browser for genes, transcripts, or features."""

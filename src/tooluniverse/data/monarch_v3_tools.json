@@ -237,5 +237,238 @@
     "return_schema": {
       "type": "array"
     }
+  },
+  {
+    "name": "MonarchV3_phenotype_profile_compare",
+    "description": "Compare two explicit phenotype profiles (HPO term sets) pairwise using Monarch Initiative semantic similarity. Given a subject term set (e.g., a patient's observed phenotypes) and an object term set (e.g., a candidate disease's known phenotypes), returns the overall similarity scores (average_score, best_score, metric) plus the per-term best matches in BOTH directions, each match including the matched phenotype, the shared ancestor term, Jaccard similarity, and Phenodigm score. Unlike MonarchV3_phenotype_similarity_search (which ranks diseases against a profile), this compares two specific profiles directly. Example: subjects=[HP:0001250 (Seizure), HP:0004322 (Short stature)] vs objects=[HP:0001263 (Global developmental delay), HP:0000252 (Microcephaly)] returns average_score ~8.16, best_score ~8.70, metric 'AncestorInformationContent', with HP:0001250 best-matching HP:0001263 at score ~8.03. Keyless HTTP 200.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Subject phenotype profile: list of HPO term CURIEs (e.g., ['HP:0001250', 'HP:0004322']). A comma-separated string is also accepted."
+        },
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Object phenotype profile to compare against: list of HPO term CURIEs (e.g., ['HP:0001263', 'HP:0000252']). A comma-separated string is also accepted."
+        }
+      },
+      "required": [
+        "subjects",
+        "objects"
+      ]
+    },
+    "fields": {
+      "endpoint": "semsim_compare"
+    },
+    "type": "MonarchV3Tool",
+    "test_examples": [
+      {
+        "subjects": [
+          "HP:0001250",
+          "HP:0004322"
+        ],
+        "objects": [
+          "HP:0001263",
+          "HP:0000252"
+        ]
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "average_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "best_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "metric": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "subject_best_matches": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "query_phenotype": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "query_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "matched_phenotype": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "matched_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "ancestor_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ancestor_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "jaccard_similarity": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "phenodigm_score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "object_best_matches": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "query_phenotype": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "query_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "matched_phenotype": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "matched_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "ancestor_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ancestor_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "jaccard_similarity": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "phenodigm_score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "subjects": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "objects": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

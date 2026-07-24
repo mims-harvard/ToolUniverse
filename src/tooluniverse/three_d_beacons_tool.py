@@ -67,6 +67,8 @@ class ThreeDBeaconsTool(BaseTool):
             return self._get_structure_summary(arguments)
         elif self.endpoint == "structures":
             return self._get_structures(arguments)
+        elif self.endpoint == "annotations":
+            return self._get_annotations(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -194,5 +196,133 @@ class ThreeDBeaconsTool(BaseTool):
                 "accession": accession,
                 "category_filter": category_filter,
                 "provider_filter": provider_filter,
+            },
+        }
+
+    # Valid annotation type enum accepted by the 3D Beacons annotations endpoint.
+    VALID_ANNOTATION_TYPES = {
+        "CARBOHYD",
+        "DOMAIN",
+        "ACT_SITE",
+        "METAL",
+        "BINDING",
+        "NON_STD",
+        "MOD_RES",
+        "DISULFID",
+        "MUTAGEN",
+        "HELIX",
+        "STRAND",
+        "DISORDERED",
+        "INTERFACE",
+        "CHANNEL",
+    }
+
+    def _get_annotations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get residue-level structural/functional annotations for a protein."""
+        accession = arguments.get("accession", "")
+        if not accession:
+            return {
+                "status": "error",
+                "error": "accession parameter is required (UniProt accession, e.g., 'P38398')",
+            }
+
+        annotation_type = arguments.get("type")
+        provider = arguments.get("provider")
+
+        # Confirmed live: the upstream endpoint 422s with "Field required"
+        # when `type` is omitted -- it is not actually optional, despite
+        # this tool's own schema previously claiming "omit to return all
+        # annotation types". Give a clear, actionable error instead of
+        # letting the raw 422 through.
+        if not annotation_type:
+            return {
+                "status": "error",
+                "error": (
+                    "type parameter is required by the 3D Beacons annotations "
+                    f"endpoint. Valid types: {', '.join(sorted(self.VALID_ANNOTATION_TYPES))}"
+                ),
+            }
+
+        if annotation_type.upper() not in self.VALID_ANNOTATION_TYPES:
+            return {
+                "status": "error",
+                "error": (
+                    f"Invalid annotation type '{annotation_type}'. "
+                    f"Valid types: {', '.join(sorted(self.VALID_ANNOTATION_TYPES))}"
+                ),
+            }
+
+        url = f"{BEACONS_BASE_URL}/annotations/{accession}.json"
+        params: Dict[str, Any] = {"type": annotation_type.upper()}
+        if provider:
+            params["provider"] = provider
+
+        response = requests.get(url, params=params, timeout=self.timeout)
+        # The annotations endpoint returns 404 when the protein has no
+        # annotations of the requested type (e.g. P04637 has DOMAIN but no
+        # BINDING). That is a valid empty result, not an error — distinguish it
+        # from a genuine failure rather than reporting "no structures found".
+        if response.status_code == 404:
+            return {
+                "status": "success",
+                "data": {
+                    "accession": accession,
+                    "type_filter": annotation_type,
+                    "annotation_count": 0,
+                    "annotations": [],
+                    "note": (
+                        f"No {annotation_type or 'matching'} annotations for "
+                        f"{accession} in 3D Beacons (the accession may also be "
+                        "absent from the annotations index)."
+                    ),
+                },
+                "metadata": {
+                    "source": "3D Beacons Hub API",
+                    "accession": accession,
+                    "type_filter": annotation_type,
+                    "provider_filter": provider,
+                },
+            }
+        response.raise_for_status()
+        data = response.json()
+
+        # The API may return a single annotation object or a list of them.
+        if isinstance(data, list):
+            records = data
+        else:
+            records = [data]
+
+        annotations = []
+        for record in records:
+            for ann in record.get("annotation", []) or []:
+                annotations.append(
+                    {
+                        "type": ann.get("type"),
+                        "description": ann.get("description"),
+                        "source_name": ann.get("source_name"),
+                        "evidence": ann.get("evidence"),
+                        "residues": ann.get("residues"),
+                        "regions": ann.get("regions"),
+                    }
+                )
+
+        first = records[0] if records else {}
+        return {
+            "status": "success",
+            "data": {
+                "accession": first.get("accession", accession),
+                "id": first.get("id"),
+                "sequence_length": (
+                    len(first.get("sequence", "")) if first.get("sequence") else None
+                ),
+                "type_filter": annotation_type,
+                "annotation_count": len(annotations),
+                "annotations": annotations,
+            },
+            "metadata": {
+                "source": "3D Beacons Hub API",
+                "accession": accession,
+                "type_filter": annotation_type,
+                "provider_filter": provider,
             },
         }

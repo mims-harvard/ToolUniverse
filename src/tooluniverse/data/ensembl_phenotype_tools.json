@@ -244,6 +244,175 @@
     }
   },
   {
+    "name": "EnsemblPheno_get_by_term",
+    "description": "Reverse phenotype lookup from the Ensembl REST API: given a trait/disease NAME (e.g. 'Alzheimer disease') OR an ontology accession (EFO/HP/MONDO, e.g. 'EFO:0000249', 'HP:0002511'), return ALL associated variants and genes with their risk allele, p-value, beta, clinical significance, and source (NHGRI-EBI GWAS catalog, ClinVar, dbGaP, etc.). This is the inverse of the gene/region/variant -> phenotype tools: it starts from a phenotype and finds the underlying genetics. Provide the query under 'term' (name) or 'accession' (ontology ID); an ontology-looking value passed as 'term' is auto-routed to the accession endpoint. Example: 'Alzheimer disease' returns 4450 records (e.g. rs201377759 in APP); 'EFO:0000249' returns 3111 records (e.g. rs7810606 in EPHA1, GWAS p=4e-11). Up to 500 associations are returned.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species name. Use 'homo_sapiens' for human. Default: 'homo_sapiens'.",
+          "default": "homo_sapiens"
+        },
+        "term": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Trait or disease name. Examples: 'Alzheimer disease', 'Coronary artery disease', 'Type 2 diabetes mellitus'. If you pass an ontology accession (e.g. 'EFO:0000249') here it is auto-detected and routed correctly."
+        },
+        "accession": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ontology accession (EFO, HP, MONDO, Orphanet). Examples: 'EFO:0000249' (Alzheimer disease), 'HP:0002511' (Alzheimer disease phenotype), 'MONDO:0004975'. Mutually exclusive with 'term'."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "term"
+    },
+    "type": "EnsemblPhenotypeTool",
+    "test_examples": [
+      {
+        "term": "Alzheimer disease"
+      },
+      {
+        "accession": "EFO:0000249"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                },
+                "query_kind": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "association_count": {
+                  "type": "integer"
+                },
+                "associations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": "string"
+                      },
+                      "variant": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gene": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "risk_allele": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "p_value": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "beta": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "odds_ratio": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "clinical_significance": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "mapped_to_accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "external_reference": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                },
+                "total_returned": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
     "name": "EnsemblPheno_get_by_variant",
     "description": "Get phenotype associations for a specific variant (by rsID) from the Ensembl REST API. Returns traits, diseases, and phenotypes associated with the variant from NHGRI-EBI GWAS catalog, ClinVar, and other sources. Includes risk alleles, beta coefficients/odds ratios, p-values, and study references. Example: rs429358 (APOE epsilon 4 variant) returns 1004 phenotype associations including Alzheimer disease, LDL cholesterol levels, and metabolite measurements.",
     "parameter": {

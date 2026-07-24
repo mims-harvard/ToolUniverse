@@ -30,25 +30,25 @@ Strategic Trade-offs
 Each method offers different advantages:
 
 .. list-table:: Tool Finder Comparison
- :header-rows: 1
- :widths: 20 25 25 25
+   :header-rows: 1
+   :widths: 20 25 25 25
 
- * - Method
- - Speed
- - Semantic Understanding
- - Resource Usage
- * - **Keyword Search**
- - Very Fast
- - Basic
- - Very Low
- * - **LLM Search**
- - Moderate
- - Excellent
- - High
- * - **Embedding Search**
- - Fast
- - Good
- - Moderate
+   * - Method
+     - Speed
+     - Semantic Understanding
+     - Resource Usage
+   * - **Keyword Search**
+     - Very Fast
+     - Basic
+     - Very Low
+   * - **LLM Search**
+     - Moderate
+     - Excellent
+     - High
+   * - **Embedding Search**
+     - Fast
+     - Good
+     - Moderate
 
 When to Use Each Method
 ------------------------
@@ -80,10 +80,11 @@ How Keyword Search Works
 Keyword search uses a sophisticated text processing pipeline:
 
 1. **Query Processing**:
- - Tokenization via regular expressions
- - Removal of 45+ common English stop words
- - Suffix-based stemming using 20 morphological rules
- - Generation of n-grams (bigrams and trigrams)
+
+   - Tokenization via regular expressions
+   - Removal of 45+ common English stop words
+   - Suffix-based stemming using 20 morphological rules
+   - Generation of n-grams (bigrams and trigrams)
 
 2. **Relevance Scoring**:
 

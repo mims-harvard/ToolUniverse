@@ -1,0 +1,253 @@
+[
+  {
+    "type": "ScreenCcreTool",
+    "name": "SCREEN_search_cCREs_by_region",
+    "description": "Query the ENCODE SCREEN Registry of candidate cis-Regulatory Elements (cCREs) overlapping a genomic region. Returns experimentally grounded regulatory annotations: each cCRE's element type (PLS=promoter-like, pELS/dELS=proximal/distal enhancer-like, CTCF-only, DNase-H3K4me3) and its DNase, H3K4me3 (promoter), H3K27ac (enhancer), and CTCF z-scores aggregated across ENCODE biosamples. This is the curated regulatory-genomics counterpart to sequence-to-track deep-learning predictors (Enformer/Borzoi), which have no public REST endpoint. Use it to find which regulatory elements lie in a locus and how strong their chromatin signals are. Coordinates are genome-build specific; default assembly is GRCh38. Reliability note: queries the SCREEN staging GraphQL endpoint (the production host is rate-limited/unavailable for the API), so it may be intermittently unstable.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chrom": {
+          "type": "string",
+          "description": "Chromosome, e.g. 'chr8' or '8' (the 'chr' prefix is added automatically)."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Region start coordinate (1-based)."
+        },
+        "end": {
+          "type": "integer",
+          "description": "Region end coordinate (1-based, must be greater than start)."
+        },
+        "assembly": {
+          "type": "string",
+          "description": "Genome assembly: 'GRCh38' (human, default) or 'mm10' (mouse).",
+          "default": "GRCh38"
+        },
+        "element_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional element-type hint to bias results toward a class: 'PLS', 'pELS', 'dELS', 'CTCF-only', or 'DNase-H3K4me3'. Omit (null) to return all overlapping cCREs.",
+          "default": null
+        }
+      },
+      "required": [
+        "chrom",
+        "start",
+        "end"
+      ]
+    },
+    "fields": {
+      "operation": "search_region"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SCREEN cCRE accession (e.g. EH38E2666166)."
+          },
+          "chrom": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "start": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "end": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "element_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "cCRE classification (PLS, pELS, dELS, CTCF-only, DNase-H3K4me3)."
+          },
+          "is_proximal": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Whether the cCRE is proximal to a TSS."
+          },
+          "dnase_zscore": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "promoter_zscore": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "H3K4me3 (promoter) signal z-score."
+          },
+          "enhancer_zscore": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "H3K27ac (enhancer) signal z-score."
+          },
+          "ctcf_zscore": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "k4me3_max": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "k27ac_max": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "ctcf_max": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "required_packages": [
+      "requests"
+    ],
+    "test_examples": [
+      {
+        "chrom": "chr8",
+        "start": 127735000,
+        "end": 127742000,
+        "assembly": "GRCh38"
+      },
+      {
+        "chrom": "chr11",
+        "start": 5225000,
+        "end": 5230000,
+        "assembly": "GRCh38",
+        "element_type": "PLS"
+      }
+    ]
+  },
+  {
+    "type": "ScreenCcreTool",
+    "name": "SCREEN_get_cCRE_by_accession",
+    "description": "Look up one or more candidate cis-Regulatory Elements (cCREs) in the ENCODE SCREEN registry by SCREEN accession (e.g. 'EH38E2666166'). Returns the element classification (PLS=promoter-like, pELS/dELS=proximal/distal enhancer-like, CTCF-only, DNase-H3K4me3), its genomic coordinates, the underlying representative DNase hypersensitive site (rDHS) accession, and whether it is CTCF-bound. Default assembly is GRCh38. Accessions are obtained from SCREEN_search_cCREs_by_region. Reliability note: queries the SCREEN staging GraphQL endpoint (the production host is rate-limited/unavailable for the API), so it may be intermittently unstable.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "A single SCREEN cCRE accession string, or a list of accession strings (e.g. 'EH38E2666166')."
+        },
+        "assembly": {
+          "type": "string",
+          "description": "Genome assembly: 'GRCh38' (human, default) or 'mm10' (mouse).",
+          "default": "GRCh38"
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "operation": "get_ccre"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "element_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "cCRE classification group (PLS, pELS, dELS, CTCF-only, DNase-H3K4me3)."
+          },
+          "rdhs": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Representative DNase hypersensitive site accession."
+          },
+          "ctcf_bound": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "chrom": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "start": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "end": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "required_packages": [
+      "requests"
+    ],
+    "test_examples": [
+      {
+        "accession": "EH38E2666166",
+        "assembly": "GRCh38"
+      },
+      {
+        "accession": [
+          "EH38E2666166",
+          "EH38E2666180"
+        ],
+        "assembly": "GRCh38"
+      }
+    ]
+  }
+]

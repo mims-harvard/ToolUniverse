@@ -14,7 +14,7 @@ Verified tool behaviors:
 - gwas_get_associations_for_trait: Returns error; use gwas_search_associations instead
 - cBioPortal: Has {limit} URL bug; cBioPortal_get_cancer_studies broken
 - Enrichr: Returns huge JSON string with connected_paths (107MB), not standard enrichment format
-- clinical_trials_search: Returns total_count=None; check studies list length instead
+- ClinicalTrials_search_studies: Returns total_count=None; check studies list length instead
 - fda_pharmacogenomic_biomarkers: No entry for simvastatin; SLCO1B1 not in simvastatin FDA label via this tool
 """
 
@@ -156,7 +156,7 @@ def test_phase2_clinvar_pathogenicity(tu):
 
     for gene, significance, desc in test_cases:
         try:
-            result = tu.tools.clinvar_search_variants(gene=gene, significance=significance, limit=10)
+            result = tu.tools.ClinVar_search_variants(gene=gene, significance=significance, limit=10)
             if isinstance(result, list):
                 has_variants = len(result) > 0
                 log_test(f"ClinVar {desc}", has_variants,
@@ -839,9 +839,9 @@ def test_phase8_clinical_trials(tu):
         except Exception as e:
             log_test(f"Clinical trials: {search['desc']}", False, str(e)[:100])
 
-    # clinical_trials_search (alternative, handles total_count=None)
+    # ClinicalTrials_search_studies (alternative, handles total_count=None)
     try:
-        result = tu.tools.clinical_trials_search(
+        result = tu.tools.ClinicalTrials_search_studies(
             action='search_studies',
             condition='breast cancer',
             intervention='olaparib',
@@ -849,13 +849,13 @@ def test_phase8_clinical_trials(tu):
         )
         if isinstance(result, dict):
             studies = result.get('studies', [])
-            log_test("clinical_trials_search: breast cancer olaparib",
+            log_test("ClinicalTrials_search_studies: breast cancer olaparib",
                     len(studies) > 0,
                     f"Found {len(studies)} studies")
         else:
-            log_test("clinical_trials_search: breast cancer olaparib", bool(result))
+            log_test("ClinicalTrials_search_studies: breast cancer olaparib", bool(result))
     except Exception as e:
-        log_test("clinical_trials_search: breast cancer olaparib", False, str(e)[:100])
+        log_test("ClinicalTrials_search_studies: breast cancer olaparib", False, str(e)[:100])
 
 
 # ============================================================
@@ -892,7 +892,7 @@ def test_integration_breast_cancer_brca1(tu):
 
     # Step 3: ClinVar pathogenic variants
     try:
-        result = tu.tools.clinvar_search_variants(gene='BRCA1', significance='pathogenic', limit=5)
+        result = tu.tools.ClinVar_search_variants(gene='BRCA1', significance='pathogenic', limit=5)
         has_pathogenic = (isinstance(result, list) and len(result) > 0) or bool(result)
         log_test("Integration BC: BRCA1 ClinVar pathogenic", has_pathogenic)
         score_components['genetic'] = 30 if has_pathogenic else 15
@@ -1003,7 +1003,7 @@ def test_integration_cvd_statin_pgx(tu):
 
     # Step 1: LDLR ClinVar check (FH screening)
     try:
-        result = tu.tools.clinvar_search_variants(gene='LDLR', significance='pathogenic', limit=5)
+        result = tu.tools.ClinVar_search_variants(gene='LDLR', significance='pathogenic', limit=5)
         # ClinVar returns either a list or {status, data: {esearchresult: {idlist: [...]}}}
         if isinstance(result, list):
             has_variants = len(result) > 0
@@ -1095,7 +1095,7 @@ def test_integration_rare_disease(tu):
 
     # Step 3: FBN1 ClinVar pathogenic
     try:
-        result = tu.tools.clinvar_search_variants(gene='FBN1', significance='pathogenic', limit=5)
+        result = tu.tools.ClinVar_search_variants(gene='FBN1', significance='pathogenic', limit=5)
         # ClinVar returns either a list or {status, data: {esearchresult: {count, idlist}}}
         if isinstance(result, list):
             has_variants = len(result) > 0

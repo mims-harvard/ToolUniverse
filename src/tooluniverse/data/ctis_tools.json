@@ -1,0 +1,328 @@
+[
+    {
+        "name": "CTIS_search_trials",
+        "description": "Search the EU Clinical Trials Information System (CTIS) \u2014 the European clinical-trials register under the Clinical Trials Regulation (since 2022), complementing ClinicalTrials.gov. Free-text search returns matching authorized trials with CT number, title, status, conditions, therapeutic areas, phase, sponsor, participating countries, enrollment, and dates. Use to find EU/EEA clinical trials for a condition, drug, or sponsor. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Free-text search, e.g. 'breast cancer', 'pembrolizumab', 'cystic fibrosis'."
+                },
+                "limit": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Results per page (default 10, max 100)."
+                },
+                "page": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Page number (default 1)."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "CTISSearchTrialsTool",
+        "test_examples": [
+            {
+                "query": "breast cancer",
+                "limit": 5
+            },
+            {
+                "query": "cystic fibrosis",
+                "limit": 3
+            },
+            {
+                "query": "pembrolizumab",
+                "limit": 3
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "CTIS_search_trials_filtered",
+        "description": "Structured (filtered) search of the EU Clinical Trials Information System (CTIS) — the European clinical-trials register under the Clinical Trials Regulation. Unlike the free-text CTIS_search_trials, this narrows results with registry filters: medical condition, trial status code, trial phase code, age group code, gender code, has-results flag, sponsor name, therapeutic area, and country/member-state-concerned (MSC) or trial region. Combine filters to count and list precisely matching authorized EU/EEA trials. Status codes: 1=under evaluation, 2=authorised/not started, 3=ongoing/recruiting, 4=ended, 5=expired, etc. Phase codes are strings like '1','2','3','4'. Age group codes: '1'=in utero, '2'=preterm/newborn through children, '3'=adults, '4'=elderly (use the CTIS public portal facet for exact codes). No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Optional free-text term applied as CTIS 'containAll' (e.g. 'cancer', 'pembrolizumab'). Combine with structured filters below."
+                },
+                "medical_condition": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Medical condition / indication filter, e.g. 'breast cancer', 'leukemia'."
+                },
+                "status": {
+                    "type": [
+                        "array",
+                        "integer",
+                        "string",
+                        "null"
+                    ],
+                    "items": {
+                        "type": [
+                            "integer",
+                            "string"
+                        ]
+                    },
+                    "description": "Trial status code(s), e.g. [3] for ongoing. Accepts a single value or a list."
+                },
+                "trial_phase_code": {
+                    "type": [
+                        "array",
+                        "string",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Trial phase code(s) as strings, e.g. ['3'] for Phase III. Accepts a single value or a list."
+                },
+                "age_group_code": {
+                    "type": [
+                        "array",
+                        "string",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Age group code(s) as strings, e.g. ['2']. Accepts a single value or a list."
+                },
+                "gender_code": {
+                    "type": [
+                        "array",
+                        "string",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Gender code(s) as strings. Accepts a single value or a list."
+                },
+                "therapeutic_area": {
+                    "type": [
+                        "array",
+                        "string",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Therapeutic area code(s). Accepts a single value or a list."
+                },
+                "has_study_results": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ],
+                    "description": "If true, return only trials that have posted study results."
+                },
+                "sponsor": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Sponsor name filter, e.g. 'Pfizer'."
+                },
+                "sponsor_type_code": {
+                    "type": [
+                        "array",
+                        "string",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Sponsor type code(s). Accepts a single value or a list."
+                },
+                "country": {
+                    "type": [
+                        "array",
+                        "string",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Member State Concerned (MSC) country code(s). Accepts a single value or a list (alias for msc)."
+                },
+                "msc": {
+                    "type": [
+                        "array",
+                        "string",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Member State Concerned (MSC) code(s). Accepts a single value or a list."
+                },
+                "trial_region_code": {
+                    "type": [
+                        "array",
+                        "string",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Trial region code(s) (e.g. EU/EEA vs partly outside). Accepts a single value or a list."
+                },
+                "sort_by": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Optional CTIS sort key (e.g. by decision date)."
+                },
+                "limit": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Results per page (default 10, max 100)."
+                },
+                "page": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Page number (default 1)."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "CTISSearchTrialsTool",
+        "test_examples": [
+            {
+                "medical_condition": "breast cancer",
+                "status": [
+                    3
+                ],
+                "limit": 3
+            },
+            {
+                "query": "cancer",
+                "has_study_results": true,
+                "limit": 2
+            },
+            {
+                "query": "cancer",
+                "trial_phase_code": [
+                    "3"
+                ],
+                "limit": 2
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "CTIS_get_trial",
+        "description": "Retrieve a single EU CTIS clinical trial by its CT number (format like '2022-503001-38-01'). Returns the trial's status, key dates, trial region, the authorized application (Part I/II details, member states concerned, EudraCT link), events, and results availability. Use after CTIS_search_trials to get full detail on a specific EU trial. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ct_number": {
+                    "type": "string",
+                    "description": "CTIS CT number, e.g. '2022-503001-38-01'."
+                }
+            },
+            "required": [
+                "ct_number"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "CTISGetTrialTool",
+        "test_examples": [
+            {
+                "ct_number": "2022-503001-38-01"
+            },
+            {
+                "ct_number": "2022-501024-20-00"
+            },
+            {
+                "ct_number": "2024-514022-23-00"
+            }
+        ],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    }
+]

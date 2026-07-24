@@ -142,10 +142,23 @@ class GWASRESTTool(BaseTool):
     @staticmethod
     def _empty_result_note(efo_id: str) -> str:
         """Return a suggestion note when no associations are found for an EFO ID."""
+        # Fix-R11B-2: this note previously suggested retrying with a
+        # different disease_trait text query, using a hardcoded, unrelated
+        # example ("colorectal cancer") that didn't adapt to the caller's
+        # actual query. Confirmed live that for a real empty-result case
+        # (LCT/lactase persistence), the trait itself was resolvable but
+        # simply had no directly-tagged associations -- the associations
+        # existed under other EFO terms, and the tool that actually found
+        # them was GWAS_search_associations_by_gene/gwas_get_snps_for_gene
+        # (gene-based lookup), not a reworded trait string. Point to that
+        # real fallback instead of a generic, non-adaptive example.
         return (
             f"No associations found for EFO ID '{efo_id}'. "
-            "GWAS Catalog may use a broader parent term — try disease_trait "
-            "with a text query (e.g., 'colorectal cancer') to find related associations."
+            "GWAS Catalog may tag related associations under a different "
+            "EFO/MONDO term, or under pleiotropic traits rather than this "
+            "specific one. If you know the gene of interest, try "
+            "GWAS_search_associations_by_gene or gwas_get_snps_for_gene "
+            "instead, which search by gene rather than by trait term."
         )
 
     def _add_empty_result_note(
@@ -260,10 +273,23 @@ class GWASAssociationSearch(GWASRESTTool):
             params["accession_id"] = accession_id
 
         sort = self._coerce_str(arguments.get("sort"))
+        direction = self._coerce_str(arguments.get("direction"))
+        # A p_value threshold is applied CLIENT-SIDE to the fetched page (the API
+        # has no server-side p-value filter), but the API returns associations
+        # UNSORTED -- so without sorting by significance the fetched window omits
+        # the strongest loci and a strict threshold falsely returns 0 (SLE
+        # p<=1e-100 -> 0 even though hits exist at p=2e-298). When a p-value
+        # filter is requested and the caller gave no explicit sort, fetch
+        # most-significant-first so the threshold actually sees the top hits.
+        if not sort and (
+            arguments.get("p_value") is not None
+            or arguments.get("p_value_threshold") is not None
+        ):
+            sort = "p_value"
+            if not direction:
+                direction = "asc"
         if sort:
             params["sort"] = sort
-
-        direction = self._coerce_str(arguments.get("direction"))
         if direction:
             params["direction"] = direction
 

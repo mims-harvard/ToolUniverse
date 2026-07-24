@@ -41,9 +41,18 @@ class dbSNPGetVariantByRsID(dbSNPRESTTool):
             data = result.get("data", {})
             if isinstance(data, dict) and "result" in data:
                 result_data = data["result"]
-                if rsid in result_data:
-                    variant_data = result_data[rsid]
-
+                variant_data = result_data.get(rsid)
+                # Fix-R14E-1: NCBI's esummary.fcgi doesn't 404 or omit the ID
+                # for a nonexistent rsID -- it returns a per-ID entry shaped
+                # {"uid": "...", "error": "cannot get document summary"}
+                # (confirmed live). The old check only tested key presence,
+                # so this error-shaped entry was treated as a real record and
+                # every field below silently defaulted to null/empty,
+                # returning status:"success" for a variant that doesn't
+                # exist. `.get()` already makes the isinstance check below
+                # False for a missing key (returns None), so no separate
+                # membership check is needed.
+                if isinstance(variant_data, dict) and "error" not in variant_data:
                     # Extract key information
                     parsed_data = {
                         "refsnp_id": f"rs{rsid}",
@@ -161,9 +170,12 @@ class dbSNPGetFrequencies(dbSNPRESTTool):
             data = result.get("data", {})
             if isinstance(data, dict) and "result" in data:
                 result_data = data["result"]
-                if rsid in result_data:
-                    variant_data = result_data[rsid]
-
+                variant_data = result_data.get(rsid)
+                # Fix-R14E-1: see dbSNPGetVariantByRsID.run() -- the same
+                # error-shaped entry (no "error" key check) causes a
+                # nonexistent rsID to silently return an empty-but-"success"
+                # frequencies list here too.
+                if isinstance(variant_data, dict) and "error" not in variant_data:
                     # Extract allele frequency data
                     frequencies = []
                     global_mafs = variant_data.get("global_mafs", [])

@@ -13,22 +13,26 @@
       "description": "Output of the tool execution.",
       "properties": {}
     },
-    "test_examples": [
-      {}
-    ]
+    "test_examples": []
   },
   {
     "type": "UsageTipsTool",
     "name": "ToolUniverse_get_usage_tips",
     "category": "special_tools",
-    "description": "Return concise usage tips for the ToolUniverse SDK. Use topic='all' (default) to get all tips, or specify a topic: 'loading', 'running', 'searching', 'workspace'. No API keys or network access required — always available offline.",
+    "description": "Return concise usage tips for the ToolUniverse SDK. Use topic='all' (default) to get all tips, or specify a topic: 'loading', 'running', 'searching', 'workspace'. No API keys or network access required \u2014 always available offline.",
     "parameter": {
       "type": "object",
       "properties": {
         "topic": {
           "type": "string",
           "description": "Topic to filter tips. One of: 'loading', 'running', 'searching', 'workspace', or 'all' (default) to return every topic.",
-          "enum": ["loading", "running", "searching", "workspace", "all"],
+          "enum": [
+            "loading",
+            "running",
+            "searching",
+            "workspace",
+            "all"
+          ],
           "default": "all"
         }
       },
@@ -38,15 +42,31 @@
       "type": "object",
       "description": "Usage tips for the specified topic.",
       "properties": {
-        "topic": {"type": "string"},
-        "tips": {"type": ["array", "object"]},
-        "available_topics": {"type": "array", "items": {"type": "string"}}
+        "topic": {
+          "type": "string"
+        },
+        "tips": {
+          "type": [
+            "array",
+            "object"
+          ]
+        },
+        "available_topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "test_examples": [
       {},
-      {"topic": "running"},
-      {"topic": "all"}
+      {
+        "topic": "running"
+      },
+      {
+        "topic": "all"
+      }
     ]
   },
   {
@@ -70,10 +90,6 @@
       "description": "Output of the tool execution.",
       "properties": {}
     },
-    "test_examples": [
-      {
-        "solution": "Step 1: Search for gene data. Step 2: Analyze mutations."
-      }
-    ]
+    "test_examples": []
   }
 ]

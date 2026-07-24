@@ -1,0 +1,415 @@
+[
+  {
+    "type": "RGDStrainTool",
+    "name": "RGD_search_strains",
+    "description": "Search the Rat Genome Database (RGD) rat strain catalog by keyword and/or strain type. Rat inbred/congenic/transgenic strains are RGD's flagship rat-specific resource (not in Alliance of Genome Resources or MGI). Provide 'query' (a keyword matched against symbol, name, full strain name, genetics, and description) and/or 'strain_type' (one of: inbred, congenic, mutant, transgenic, recombinant_inbred, outbred, consomic, coisogenic, segregating_inbred, hybrid, wild, conplastic, advanced_intercross_line, transchromosomal). At least one of the two must be supplied. Returns matching strains with their RGD ID, symbol, name, type, genetics, and origin.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Keyword to match against strain symbol, name, genetics, and description (case-insensitive substring). Example: 'hypertensive' or 'Dahl'."
+        },
+        "strain_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by strain type, e.g. 'inbred', 'congenic', 'transgenic', 'recombinant_inbred', 'consomic'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of strains to return (default 25, max 200)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search_strains"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rgd_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "full_strain_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "substrain": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "strain_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "genetics": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "origin": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "background_strain_rgd_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "research_use": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "hypertensive",
+        "strain_type": "inbred"
+      },
+      {
+        "query": "Dahl",
+        "limit": 10
+      },
+      {
+        "strain_type": "consomic",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "type": "RGDStrainTool",
+    "name": "RGD_get_strain",
+    "description": "Get the full Rat Genome Database (RGD) record for a single rat strain by its exact strain symbol (e.g. 'SHR', 'BN', 'SS', 'WKY', 'GK'). Returns the strain RGD ID, name, full strain name, substrain, strain type, genetics formula, origin, background strain, and description. Use RGD_search_strains first if you only know a keyword.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "description": "Exact rat strain symbol (case-insensitive), e.g. 'SHR' (spontaneously hypertensive rat), 'BN' (Brown Norway), 'SS' (Dahl salt-sensitive)."
+        }
+      },
+      "required": [
+        "symbol"
+      ]
+    },
+    "fields": {
+      "operation": "get_strain"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "rgd_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "full_strain_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "substrain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "strain_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "genetics": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "origin": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "background_strain_rgd_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "research_use": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "symbol": "SHR"
+      },
+      {
+        "symbol": "BN"
+      },
+      {
+        "symbol": "SS"
+      }
+    ]
+  },
+  {
+    "type": "RGDStrainTool",
+    "name": "RGD_get_strain_annotations",
+    "description": "Get curated disease, phenotype, and variant-trait ontology annotations for a rat strain from the Rat Genome Database (RGD), by strain symbol (e.g. 'SHR', 'BN', 'SS'). This exposes RGD's rat disease-MODEL annotations - for example SHR is annotated to 'Left Ventricular Hypertrophy' (disease, MODEL: spontaneous) and 'arterial blood pressure trait' (phenotype). Each annotation includes the ontology term, accession (DOID/VT/CMO/MP/RS), category, qualifier, and evidence code. Optional 'category' filter: disease, phenotype, strain, pathway, biological_process, molecular_function, cellular_component.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "description": "Exact rat strain symbol (case-insensitive), e.g. 'SHR', 'BN', 'SS'."
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional annotation category filter: 'disease', 'phenotype', 'strain', 'pathway', etc. Omit to return all categories."
+        }
+      },
+      "required": [
+        "symbol"
+      ]
+    },
+    "fields": {
+      "operation": "get_strain_annotations"
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "term": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "term_acc": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "aspect": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "qualifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data_source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ref_rgd_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "symbol": "SHR",
+        "category": "disease"
+      },
+      {
+        "symbol": "SHR"
+      },
+      {
+        "symbol": "BN"
+      }
+    ]
+  }
+]

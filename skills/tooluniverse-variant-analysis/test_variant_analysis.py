@@ -798,6 +798,124 @@ def test_consequence_to_mutation_type_coverage():
 
 
 # ---------------------------------------------------------------------------
+# Phase 10: Bundled scripts --help smoke tests
+# ---------------------------------------------------------------------------
+
+import subprocess
+
+
+def _run_script(script_name, *args):
+    """Run a bundled script with the given args, return CompletedProcess."""
+    script_path = os.path.join(SKILL_DIR, "scripts", script_name)
+    return subprocess.run(
+        [sys.executable, script_path, *args],
+        capture_output=True, text=True, timeout=30,
+    )
+
+
+def test_gatk_pipeline_help():
+    proc = _run_script("gatk_haplotypecaller_pipeline.py", "--help")
+    assert proc.returncode == 0, f"--help should exit 0; got {proc.returncode}\n{proc.stderr}"
+    assert "HaplotypeCaller" in proc.stdout, "expected --help to mention HaplotypeCaller"
+    assert "--ploidy" in proc.stdout
+    assert "--workdir" in proc.stdout
+
+
+def test_coding_filter_help():
+    proc = _run_script("coding_variant_filter.py", "--help")
+    assert proc.returncode == 0, f"--help should exit 0; got {proc.returncode}\n{proc.stderr}"
+    assert "intronic" in proc.stdout.lower()
+    assert "--header-rows" in proc.stdout
+
+
+def test_coding_filter_refuses_canonical_workdir():
+    """Workspace-isolation guard: capsule paths must be rejected."""
+    proc = _run_script(
+        "coding_variant_filter.py",
+        "--dir", "/tmp",
+        "--workdir", "/some/CapsuleFolder-deadbeef/scratch",
+    )
+    assert proc.returncode == 2, "should refuse with exit 2"
+    assert "Refusing to write" in proc.stderr
+
+
+def test_gatk_pipeline_refuses_canonical_workdir():
+    proc = _run_script(
+        "gatk_haplotypecaller_pipeline.py",
+        "--reference", "/tmp/nonexistent.fna",
+        "--bam", "/tmp/nonexistent.bam",
+        "--workdir", "/scratch/CapsuleFolder-cafef00d/wd",
+    )
+    assert proc.returncode == 2, "should refuse with exit 2"
+    assert "Refusing to write" in proc.stderr
+
+
+def test_variant_fraction_help():
+    proc = _run_script("variant_fraction.py", "--help")
+    assert proc.returncode == 0
+    assert "VAF" in proc.stdout or "vaf" in proc.stdout.lower()
+
+
+def test_gatk_pipeline_stages_capsule_reference():
+    """Reference inside a CapsuleFolder must be staged into workdir before
+    indexing — otherwise samtools/gatk write .fai/.dict/bwa-index files into
+    the canonical capsule and trip the harness checksum guard.
+    """
+    import tempfile
+    from pathlib import Path
+    with tempfile.TemporaryDirectory(prefix="capsule_stage_") as td:
+        td = Path(td)
+        capsule = td / "CapsuleFolder-deadbeef-0000-0000-0000-000000000000"
+        capsule.mkdir()
+        ref = capsule / "tiny.fna"
+        ref.write_text(">chr1\n" + "ACGT" * 25 + "\n")
+        # nonexistent BAM forces early abort AFTER the staging branch but
+        # BEFORE samtools index runs — this lets us verify the staging copy
+        # without needing a real bam/index.
+        bam = td / "no_such.bam"
+        workdir = td / "wd"
+        proc = _run_script(
+            "gatk_haplotypecaller_pipeline.py",
+            "--reference", str(ref),
+            "--bam", str(bam),
+            "--workdir", str(workdir),
+        )
+        # Either the script fails on missing BAM (rc=1) or finishes — either
+        # way, no .fai/.dict should land in the capsule itself.
+        for ext in (".fai", ".dict"):
+            assert not (capsule / f"tiny.fna{ext}").exists(), (
+                f"capsule contaminated with tiny.fna{ext} — workspace isolation broken"
+            )
+        # And the staged copy in the workdir should exist.
+        assert (workdir / "tiny.fna").exists(), \
+            f"expected staged reference in workdir; rc={proc.returncode} stderr={proc.stderr[:300]}"
+
+
+def test_gatk_pipeline_count_only():
+    """End-to-end count on a tiny VCF written into /tmp."""
+    import tempfile
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".vcf", delete=False) as fh:
+        fh.write("##fileformat=VCFv4.2\n")
+        fh.write("##contig=<ID=chr1,length=1000>\n")
+        fh.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tS\n")
+        # 3 SNPs, 2 indels, 1 multi-allelic SNP (counts twice)
+        fh.write("chr1\t10\t.\tA\tG\t50\tPASS\t.\tGT\t0/1\n")
+        fh.write("chr1\t20\t.\tC\tT\t50\tPASS\t.\tGT\t0/1\n")
+        fh.write("chr1\t30\t.\tG\tA,T\t50\tPASS\t.\tGT\t0/1\n")
+        fh.write("chr1\t40\t.\tA\tAT\t50\tPASS\t.\tGT\t0/1\n")
+        fh.write("chr1\t50\t.\tCG\tC\t50\tPASS\t.\tGT\t0/1\n")
+        tmp_vcf = fh.name
+    try:
+        proc = _run_script("gatk_haplotypecaller_pipeline.py", "--vcf", tmp_vcf)
+        assert proc.returncode == 0, proc.stderr
+        out = proc.stdout
+        assert "SNP_COUNT_ALLELES=4" in out, f"expected 4 SNP alleles, got:\n{out}"
+        assert "INDEL_COUNT_ALLELES=2" in out, f"expected 2 indel alleles, got:\n{out}"
+    finally:
+        os.unlink(tmp_vcf)
+
+
+# ---------------------------------------------------------------------------
 # Main runner
 # ---------------------------------------------------------------------------
 
@@ -883,6 +1001,14 @@ def run_all_tests():
             ("Multi-allelic", test_multiallelic),
             ("No VAF available", test_no_vaf_available),
             ("Consequence mapping coverage", test_consequence_to_mutation_type_coverage),
+        ]),
+        ("Phase 10: Bundled scripts", [
+            ("gatk_haplotypecaller_pipeline --help", test_gatk_pipeline_help),
+            ("coding_variant_filter --help", test_coding_filter_help),
+            ("variant_fraction --help", test_variant_fraction_help),
+            ("coding_variant_filter rejects capsule workdir", test_coding_filter_refuses_canonical_workdir),
+            ("gatk_haplotypecaller_pipeline rejects capsule workdir", test_gatk_pipeline_refuses_canonical_workdir),
+            ("gatk_haplotypecaller_pipeline count-only on tiny VCF", test_gatk_pipeline_count_only),
         ]),
     ]
 

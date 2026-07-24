@@ -193,9 +193,174 @@ class GtoPdbRESTTool(BaseTool):
                 pass
         return results[:limit]
 
+    def _fetch_json(self, url: str):
+        """GET a single GtoPdb endpoint and return (data, error_dict).
+
+        On success: (parsed_json, None).
+        On HTTP error / network failure: (None, {status,error,...}) so callers
+        can decide whether the error is fatal or recoverable (e.g. a 404 from an
+        endpoint that legitimately has no records).
+        """
+        try:
+            response = request_with_retry(
+                self.session, "GET", url, timeout=self.timeout, max_attempts=3
+            )
+        except Exception as exc:
+            return None, {
+                "status": "error",
+                "error": f"GtoPdb API error: {exc}",
+                "url": url,
+            }
+        if response.status_code != 200:
+            raw_detail = (response.text or "")[:500]
+            try:
+                import json as _json
+
+                api_msg = _json.loads(raw_detail).get("error", raw_detail)
+            except Exception:
+                api_msg = raw_detail
+            return None, {
+                "status": "error",
+                "error": f"GtoPdb API error: {api_msg} (HTTP {response.status_code})",
+                "url": url,
+                "status_code": response.status_code,
+            }
+        try:
+            return response.json(), None
+        except Exception as exc:
+            return None, {
+                "status": "error",
+                "error": f"GtoPdb API error: invalid JSON response: {exc}",
+                "url": url,
+            }
+
+    def _run_ligand_properties(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """GtoPdb_get_ligand_properties: merge a ligand's structure +
+        molecularProperties into a single record.
+
+        Endpoints (keyless):
+          GET /services/ligands/{id}/molecularProperties
+          GET /services/ligands/{id}/structure
+        Invalid ligand IDs return HTTP 404 (molecularProperties) or HTTP 500
+        (structure); we surface that as a structured error, never raise.
+        """
+        ligand_id = arguments.get("ligand_id", arguments.get("ligandId"))
+        if ligand_id is None:
+            return {
+                "status": "error",
+                "error": "Missing required parameter 'ligand_id'.",
+            }
+
+        props_url = f"{self.base_url}/ligands/{ligand_id}/molecularProperties"
+        struct_url = f"{self.base_url}/ligands/{ligand_id}/structure"
+
+        props, props_err = self._fetch_json(props_url)
+        structure, struct_err = self._fetch_json(struct_url)
+
+        # If BOTH calls failed, the ligand ID is almost certainly invalid.
+        if props_err and struct_err:
+            err = dict(struct_err)
+            err["error"] = (
+                f"No GtoPdb ligand found for ligand_id={ligand_id}. "
+                f"{struct_err['error']}"
+            )
+            return err
+
+        data: Dict[str, Any] = {"ligandId": ligand_id}
+        if isinstance(structure, dict):
+            for key, value in structure.items():
+                data[key] = _strip_html(value) if key == "ligandName" else value
+        if isinstance(props, dict):
+            data["molecularProperties"] = props
+
+        result: Dict[str, Any] = {
+            "status": "success",
+            "data": data,
+            "ligand_id": ligand_id,
+        }
+        notes = []
+        if props_err:
+            notes.append("molecularProperties unavailable for this ligand.")
+        if struct_err:
+            notes.append("structure (SMILES/InChI) unavailable for this ligand.")
+        if notes:
+            result["note"] = " ".join(notes)
+        return result
+
+    def _run_disease_associations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """GtoPdb_get_disease_associations: return a disease's curated target and
+        ligand associations together.
+
+        Endpoints (keyless):
+          GET /services/diseases/{id}/diseaseTargets
+          GET /services/diseases/{id}/diseaseLigands
+        An empty list ([]) is a valid response (e.g. disease 1161 has targets but
+        no ligands). Invalid disease IDs return HTTP 500 with an error body.
+        """
+        disease_id = arguments.get("disease_id", arguments.get("diseaseId"))
+        if disease_id is None:
+            return {
+                "status": "error",
+                "error": "Missing required parameter 'disease_id'.",
+            }
+
+        targets_url = f"{self.base_url}/diseases/{disease_id}/diseaseTargets"
+        ligands_url = f"{self.base_url}/diseases/{disease_id}/diseaseLigands"
+
+        targets, targets_err = self._fetch_json(targets_url)
+        ligands, ligands_err = self._fetch_json(ligands_url)
+
+        # Invalid disease IDs: diseaseTargets returns HTTP 500 (server-side null
+        # disease) while diseaseLigands quirkily returns HTTP 200 with []. Treat a
+        # 500 on diseaseTargets together with no ligand records as "disease not
+        # found" so callers don't mistake an invalid ID for an empty valid disease.
+        targets_500 = bool(targets_err) and targets_err.get("status_code") == 500
+        no_ligand_records = not (isinstance(ligands, list) and ligands)
+        if targets_err and (ligands_err or (targets_500 and no_ligand_records)):
+            err = dict(targets_err)
+            err["error"] = (
+                f"No GtoPdb disease found for disease_id={disease_id}. "
+                f"{targets_err['error']}"
+            )
+            return err
+
+        targets_list = targets if isinstance(targets, list) else []
+        ligands_list = ligands if isinstance(ligands, list) else []
+
+        data = {
+            "diseaseId": disease_id,
+            "diseaseTargets": targets_list,
+            "diseaseLigands": ligands_list,
+        }
+        result: Dict[str, Any] = {
+            "status": "success",
+            "data": data,
+            "disease_id": disease_id,
+            "target_count": len(targets_list),
+            "ligand_count": len(ligands_list),
+        }
+        notes = []
+        if targets_err:
+            notes.append("diseaseTargets unavailable for this disease.")
+        if ligands_err:
+            notes.append("diseaseLigands unavailable for this disease.")
+        if notes:
+            result["note"] = " ".join(notes)
+        return result
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         url = None
         self._pending_ligand_id_filter = None  # Feature-38B-02: reset per call
+
+        # Feature-65A: two composite tools fetch + merge a pair of per-ID endpoints
+        # (structure+molecularProperties, diseaseTargets+diseaseLigands). They are
+        # dispatched here by their endpoint marker rather than through _build_url,
+        # which only handles single-endpoint tools.
+        endpoint = self.tool_config.get("fields", {}).get("endpoint", "")
+        if endpoint.endswith("/ligandProperties"):
+            return self._run_ligand_properties(arguments)
+        if endpoint.endswith("/diseaseAssociations"):
+            return self._run_disease_associations(arguments)
 
         # Feature-61B-001: GtoPdb species filter is case-sensitive ("Human" not "human").
         # Normalize species to Title Case so users can pass any case variant.

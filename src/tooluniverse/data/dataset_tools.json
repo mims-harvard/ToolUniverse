@@ -22,29 +22,28 @@
           "items": {
             "type": "string"
           },
-          "description": "Fields to search in. Available fields: 'DrugBank ID', 'Accession Numbers', 'Common name', 'CAS', 'UNII', 'Synonyms', 'Standard InChI Key'."
+          "description": "Fields to search in. Available fields: 'DrugBank ID', 'Accession Numbers', 'Common name', 'CAS', 'UNII', 'Synonyms', 'Standard InChI Key'. Defaults to ['Common name', 'Synonyms', 'DrugBank ID']."
         },
         "case_sensitive": {
           "type": "boolean",
-          "description": "Whether the search should be case sensitive."
+          "description": "Whether the search should be case sensitive.",
+          "default": false
         },
         "exact_match": {
           "type": "boolean",
-          "description": "Whether to perform exact matching instead of substring matching."
+          "description": "Whether to perform exact matching instead of substring matching.",
+          "default": false
         },
         "limit": {
           "type": "integer",
           "description": "Maximum number of results to return.",
           "minimum": 1,
-          "maximum": 1000
+          "maximum": 1000,
+          "default": 10
         }
       },
       "required": [
-        "query",
-        "search_fields",
-        "case_sensitive",
-        "exact_match",
-        "limit"
+        "query"
       ]
     },
     "query_schema": {
@@ -164,7 +163,7 @@
       "properties": {
         "field": {
           "type": "string",
-          "description": "The field to filter on",
+          "description": "The field to filter on. Defaults to 'Common name'.",
           "enum": [
             "DrugBank ID",
             "Accession Numbers",
@@ -173,18 +172,20 @@
             "UNII",
             "Synonyms",
             "Standard InChI Key"
-          ]
+          ],
+          "default": "Common name"
         },
         "condition": {
           "type": "string",
-          "description": "The type of filtering condition to apply. Filter is case-insensitive.",
+          "description": "The type of filtering condition to apply. Filter is case-insensitive. Defaults to 'contains'.",
           "enum": [
             "contains",
             "starts_with",
             "ends_with",
             "exact",
             "not_empty"
-          ]
+          ],
+          "default": "contains"
         },
         "value": {
           "type": "string",
@@ -194,14 +195,11 @@
           "type": "integer",
           "description": "Maximum number of results to return.",
           "minimum": 1,
-          "maximum": 1000
+          "maximum": 1000,
+          "default": 10
         }
       },
-      "required": [
-        "field",
-        "condition",
-        "limit"
-      ]
+      "required": []
     },
     "query_schema": {
       "field": "Common name",
@@ -315,29 +313,28 @@
           "items": {
             "type": "string"
           },
-          "description": "Columns to search in. Choose from: 'drugbank_id', 'name', 'synonyms'."
+          "description": "Columns to search in. Choose from: 'drugbank_id', 'name', 'synonyms'. Defaults to ['name', 'synonyms', 'drugbank_id']."
         },
         "case_sensitive": {
           "type": "boolean",
-          "description": "Match text with exact case if true."
+          "description": "Match text with exact case if true.",
+          "default": false
         },
         "exact_match": {
           "type": "boolean",
-          "description": "Field value must equal query exactly if true; otherwise substring match."
+          "description": "Field value must equal query exactly if true; otherwise substring match.",
+          "default": false
         },
         "limit": {
           "type": "integer",
           "description": "Max number of rows to return.",
           "minimum": 1,
-          "maximum": 1000
+          "maximum": 1000,
+          "default": 10
         }
       },
       "required": [
-        "query",
-        "search_fields",
-        "case_sensitive",
-        "exact_match",
-        "limit"
+        "query"
       ]
     },
     "query_schema": {
@@ -518,29 +515,28 @@
           "items": {
             "type": "string"
           },
-          "description": "Columns to search. Choose from: 'DrugBank ID', 'Name', 'CAS Number', 'Drug Type', 'KEGG Compound ID', 'KEGG Drug ID', 'PubChem Compound ID', 'PubChem Substance ID', 'ChEBI ID', 'PharmGKB ID', 'HET ID', 'UniProt ID', 'Wikipedia ID', 'Drugs.com Link', 'NDC ID', 'ChemSpider ID', 'BindingDB ID', 'TTD ID'."
+          "description": "Columns to search. Choose from: 'DrugBank ID', 'Name', 'CAS Number', 'Drug Type', 'KEGG Compound ID', 'KEGG Drug ID', 'PubChem Compound ID', 'PubChem Substance ID', 'ChEBI ID', 'PharmGKB ID', 'HET ID', 'UniProt ID', 'Wikipedia ID', 'Drugs.com Link', 'NDC ID', 'ChemSpider ID', 'BindingDB ID', 'TTD ID'. Defaults to ['DrugBank ID', 'Name']."
         },
         "case_sensitive": {
           "type": "boolean",
-          "description": "Match text with exact case if true."
+          "description": "Match text with exact case if true.",
+          "default": false
         },
         "exact_match": {
           "type": "boolean",
-          "description": "Field value must equal query exactly if true; otherwise substring match."
+          "description": "Field value must equal query exactly if true; otherwise substring match.",
+          "default": false
         },
         "limit": {
           "type": "integer",
           "description": "Maximum number of rows to return.",
           "minimum": 1,
-          "maximum": 1000
+          "maximum": 1000,
+          "default": 10
         }
       },
       "required": [
-        "query",
-        "search_fields",
-        "case_sensitive",
-        "exact_match",
-        "limit"
+        "query"
       ]
     },
     "query_schema": {
@@ -766,29 +762,28 @@
           "items": {
             "type": "string"
           },
-          "description": "Columns to search. Choose from: 'Trade Name', 'Generic/Proper Name(s)', 'Active Ingredient(s)'."
+          "description": "Columns to search. Choose from: 'Trade Name', 'Generic/Proper Name(s)', 'Active Ingredient(s)'. Defaults to all three."
         },
         "case_sensitive": {
           "type": "boolean",
-          "description": "Match text with exact case if true."
+          "description": "Match text with exact case if true.",
+          "default": false
         },
         "exact_match": {
           "type": "boolean",
-          "description": "Field value must equal query exactly if true; otherwise substring match."
+          "description": "Field value must equal query exactly if true; otherwise substring match.",
+          "default": false
         },
         "limit": {
           "type": "integer",
           "description": "Maximum number of rows to return.",
           "minimum": 1,
-          "maximum": 1000
+          "maximum": 1000,
+          "default": 10
         }
       },
       "required": [
-        "query",
-        "search_fields",
-        "case_sensitive",
-        "exact_match",
-        "limit"
+        "query"
       ]
     },
     "query_schema": {
@@ -916,29 +911,28 @@
           "items": {
             "type": "string"
           },
-          "description": "Columns to search. Choose from: 'Compound Name'."
+          "description": "Columns to search. Choose from: 'Compound Name'. Defaults to ['Compound Name']."
         },
         "case_sensitive": {
           "type": "boolean",
-          "description": "Match text with exact case if true."
+          "description": "Match text with exact case if true.",
+          "default": false
         },
         "exact_match": {
           "type": "boolean",
-          "description": "Field value must equal query exactly if true; otherwise substring match."
+          "description": "Field value must equal query exactly if true; otherwise substring match.",
+          "default": false
         },
         "limit": {
           "type": "integer",
           "description": "Maximum number of rows to return.",
           "minimum": 1,
-          "maximum": 1000
+          "maximum": 1000,
+          "default": 10
         }
       },
       "required": [
-        "query",
-        "search_fields",
-        "case_sensitive",
-        "exact_match",
-        "limit"
+        "query"
       ]
     },
     "query_schema": {
@@ -1045,29 +1039,28 @@
           "items": {
             "type": "string"
           },
-          "description": "Columns to search. Choose from: 'Generic/Proper Name(s)', 'DrugBank ID'."
+          "description": "Columns to search. Choose from: 'Generic/Proper Name(s)', 'DrugBank ID'. Defaults to both."
         },
         "case_sensitive": {
           "type": "boolean",
-          "description": "Match text with exact case if true."
+          "description": "Match text with exact case if true.",
+          "default": false
         },
         "exact_match": {
           "type": "boolean",
-          "description": "Field value must equal query exactly if true; otherwise substring match."
+          "description": "Field value must equal query exactly if true; otherwise substring match.",
+          "default": false
         },
         "limit": {
           "type": "integer",
           "description": "Maximum number of rows to return.",
           "minimum": 1,
-          "maximum": 1000
+          "maximum": 1000,
+          "default": 100
         }
       },
       "required": [
-        "query",
-        "search_fields",
-        "case_sensitive",
-        "exact_match",
-        "limit"
+        "query"
       ]
     },
     "query_schema": {

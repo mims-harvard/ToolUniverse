@@ -422,5 +422,211 @@
         }
       ]
     }
+  },
+  {
+    "name": "PDBeSIFTS_get_scop_mapping",
+    "description": "Get the SCOP (Structural Classification of Proteins) structural classification for a PDB entry from PDBe SIFTS. Returns the SCOP hierarchy - class (e.g., 'All beta proteins'), fold (e.g., 'Lipocalins'), superfamily, SCCS code, and SCOP domain identifier - together with per-chain residue-range mappings showing which residues of each chain form each SCOP domain. SCOP classifies protein domains by evolutionary and structural relationships; this fold/superfamily information is otherwise absent from ToolUniverse. Use to determine the structural fold class of a crystal/EM structure and locate the domain boundaries per chain. Example: 1cbs -> SCOP sunid 50847, class 'All beta proteins', fold 'Lipocalins', superfamily 'Lipocalins', SCCS 'b.60.1.2', chain A residues 1-137.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (4-character code). Examples: '1cbs' (cellular retinoic acid binding protein), '1tup' (p53-DNA), '4hhb' (hemoglobin), '1m17' (EGFR kinase)."
+        }
+      },
+      "required": [
+        "pdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "scop"
+    },
+    "type": "PDBeSIFTSTool",
+    "test_examples": [
+      {
+        "pdb_id": "1cbs"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "pdb_id": {
+                  "type": "string"
+                },
+                "scop_domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "scop_sunid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "SCOP sunid (stable unique identifier) for the domain"
+                      },
+                      "sccs": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "SCOP Concise Classification String (e.g., 'b.60.1.2')"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "identifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "class": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "SCOP class (e.g., 'All beta proteins')"
+                      },
+                      "class_sunid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "fold": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "SCOP fold (e.g., 'Lipocalins')"
+                      },
+                      "fold_sunid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "superfamily": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "SCOP superfamily"
+                      },
+                      "superfamily_sunid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "mappings": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "chain_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "struct_asym_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "entity_id": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "scop_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "start_residue": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "end_residue": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "start_author_residue": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "end_author_residue": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            }
+                          }
+                        },
+                        "description": "Per-chain residue-range mappings for this SCOP domain"
+                      }
+                    }
+                  }
+                },
+                "total_domains": {
+                  "type": "integer"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "pdb_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

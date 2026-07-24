@@ -159,7 +159,16 @@
     ],
     "optional_api_keys": [
       "FDA_API_KEY"
-    ]
+    ],
+    "api_key_info": {
+      "FDA_API_KEY": {
+        "domain": "Clinical & Safety",
+        "type": "secret",
+        "register_url": "https://open.fda.gov/apis/authentication/",
+        "purpose": "Query FDA drug labels, adverse-event reports (FAERS), and recalls.",
+        "without": "Works at 240 requests/min without it; the key raises it to 120,000/day."
+      }
+    }
   },
   {
     "name": "OpenFDA_get_approval_history",

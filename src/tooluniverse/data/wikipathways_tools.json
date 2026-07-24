@@ -24,50 +24,39 @@
       "format": "json"
     },
     "return_schema": {
-      "type": "object",
-      "description": "WikiPathways API response with pathway search results",
-      "properties": {
-        "result": {
+      "oneOf": [
+        {
           "type": "array",
-          "description": "Array of matching pathways",
           "items": {
             "type": "object",
             "properties": {
-              "id": {
-                "type": "string",
-                "description": "WikiPathways ID (WPID)"
+              "wpid": {
+                "type": "string"
               },
-              "name": {
-                "type": "string",
-                "description": "Pathway name"
+              "uri": {
+                "type": "string"
               },
-              "species": {
-                "type": "string",
-                "description": "Organism name"
+              "title": {
+                "type": "string"
               },
-              "url": {
-                "type": "string",
-                "description": "Pathway URL"
-              },
-              "revision": {
-                "type": "string",
-                "description": "Revision number"
-              },
-              "score": {
-                "type": [
-                  "object",
-                  "null"
-                ],
-                "description": "Search relevance score"
-              },
-              "fields": {
-                "type": "array",
-                "description": "Additional fields"
+              "organism": {
+                "type": "string"
               }
             }
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {

@@ -179,19 +179,22 @@ Core Components
 **Engine & Registry**
 
 - `execute_function.py`: Core `ToolUniverse` engine class responsible for:
- - Reading tool configurations (local JSON, default configs) and building `all_tools`/`all_tool_dict`
- - Mapping tool types to concrete classes (`tool_type_mappings`) and instantiation
- - Tool execution routing (`run_tool`), validation, and result processing
- - Handling MCP auto-loaders, temporary clients (with `mcp_integration.py`)
+
+  - Reading tool configurations (local JSON, default configs) and building `all_tools`/`all_tool_dict`
+  - Mapping tool types to concrete classes (`tool_type_mappings`) and instantiation
+  - Tool execution routing (`run_tool`), validation, and result processing
+  - Handling MCP auto-loaders, temporary clients (with `mcp_integration.py`)
 
 - `base_tool.py`: `BaseTool` base class and exception types. Supports:
- - Loading default configurations from `tooluniverse.data` package
- - Parameter validation, required parameter extraction, function call validation
+
+  - Loading default configurations from `tooluniverse.data` package
+  - Parameter validation, required parameter extraction, function call validation
 
 - `tool_registry.py`: Tool registration and discovery:
- - `@register_tool` decorator for registering tool classes
- - Lazy loading registry (on-demand module imports) and full discovery
- - Smart matching of configuration JSON to modules and tool types
+
+  - `@register_tool` decorator for registering tool classes
+  - Lazy loading registry (on-demand module imports) and full discovery
+  - Smart matching of configuration JSON to modules and tool types
 
 - `default_config.py`: Default tool configuration file list
 - `logging_config.py`, `utils.py`: Logging setup and utility functions
@@ -220,39 +223,45 @@ Available tool classes (alphabetically organized):
 **External Ecosystem & Extension Examples**
 
 - `remote/`: External system integrations including:
- - `expert_feedback/`: Human expert feedback system
- - `expert_feedback_mcp/`: MCP-enabled expert feedback
- - `boltz/`: Boltz protein folding integration
- - `depmap_24q2/`: DepMap cancer dependency data integration
- - `immune_compass/`: Immune system analysis tools
- - `pinnacle/`: Pinnacle platform integration
- - `transcriptformer/`: Transcriptformer model integration
- - `uspto_downloader/`: USPTO patent downloader service
+
+  - `expert_feedback/`: Human expert feedback system
+  - `expert_feedback_mcp/`: MCP-enabled expert feedback
+  - `boltz/`: Boltz protein folding integration
+  - `depmap_24q2/`: DepMap cancer dependency data integration
+  - `immune_compass/`: Immune system analysis tools
+  - `pinnacle/`: Pinnacle platform integration
+  - `transcriptformer/`: Transcriptformer model integration
+  - `uspto_downloader/`: USPTO patent downloader service
 
 Execution Flow (Configuration to Invocation)
 ---------------------------------------------
 
 1. **Configuration Loading**
- - Engine startup reads `default_tool_files` and `data/*.json` to build tool manifest
- - Each JSON entry defines a tool instance: `name`, `type`, `description`, `parameter` (JSON Schema), endpoints, etc.
+
+   - Engine startup reads `default_tool_files` and `data/*.json` to build tool manifest
+   - Each JSON entry defines a tool instance: `name`, `type`, `description`, `parameter` (JSON Schema), endpoints, etc.
 
 2. **Tool Registration & Mapping**
- - `tool_registry.py` maintains "tool type → tool class" mappings
- - Supports both full import discovery and lazy loading mappings (smart config-to-module matching)
+
+   - `tool_registry.py` maintains "tool type → tool class" mappings
+   - Supports both full import discovery and lazy loading mappings (smart config-to-module matching)
 
 3. **Instantiation & Default Configuration**
- - Based on `type`, finds corresponding class (e.g., `FDADrugLabelTool`)
- - Merges `BaseTool` default configurations with entry-specific config
+
+   - Based on `type`, finds corresponding class (e.g., `FDADrugLabelTool`)
+   - Merges `BaseTool` default configurations with entry-specific config
 
 4. **Execution & Validation**
- - `ToolUniverse.tools.tool_name(**params)`:
- - Locate instance by name → Parameter validation (required fields) → Call concrete implementation
- - Unified error handling and return structure
+
+   - `ToolUniverse.tools.tool_name(**params)`:
+   - Locate instance by name → Parameter validation (required fields) → Call concrete implementation
+   - Unified error handling and return structure
 
 5. **Composition/Discovery & Graphs**
- - Use `compose_tool.py` or `compose_scripts/` for orchestration
- - Leverage `tool_finder_*` (keyword/embedding/LLM) for tool retrieval
- - Visualize tool relationships and call chains via scripts or `tool_graph_web_ui.py`
+
+   - Use `compose_tool.py` or `compose_scripts/` for orchestration
+   - Leverage `tool_finder_*` (keyword/embedding/LLM) for tool retrieval
+   - Visualize tool relationships and call chains via scripts or `tool_graph_web_ui.py`
 
 MCP Integration
 ---------------

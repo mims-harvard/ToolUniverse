@@ -1,0 +1,238 @@
+---
+
+name: tooluniverse-vaccine-design
+description: "Computational vaccine candidate design: peptide/subunit vaccines via MHC-I/MHC-II epitope prediction (IEDB), population HLA coverage optimization, B-cell epitope identification, and cross-strain conservation analysis. Use for vaccine epitope prediction, HLA allele coverage, multi-epitope construct design, and immunogenicity assessment. Combines predicted MHC binding with experimentally validated IEDB epitopes for higher-confidence designs."
+---
+
+# Vaccine Design
+
+Computational pipeline for designing peptide/subunit vaccine candidates through epitope prediction, population coverage optimization, and immunogenicity assessment.
+
+## Reasoning Strategy
+
+Vaccine design requires presenting the right epitopes to elicit protective immunity — not just any immune response, but one that is neutralizing, durable, and broadly applicable. For T-cell vaccines, the core tool is MHC binding prediction (IEDB tools): predict peptide-MHC affinity across multiple HLA alleles, then select epitopes with broad coverage of the target population. For antibody vaccines, prioritize surface-exposed conserved regions — a deeply buried or hypervariable region makes a poor antibody target. MHC binding does not equal immunogenicity; many good binders are not immunogenic in vivo due to tolerance, poor processing, or lack of T-cell help. A multi-epitope strategy (combining MHC-I for CD8+ CTL response, MHC-II for CD4+ helper response, and B-cell epitopes for antibody induction) is more robust than any single epitope. Conservation across pathogen strains is critical — an epitope that mutates under immune pressure (like HIV envelope hypervariable regions) is a poor vaccine target.
+
+**LOOK UP DON'T GUESS**: Do not predict MHC binding or population coverage from memory — use `IEDB_predict_mhci_binding` / `IEDB_predict_mhcii_binding` for T-cell predictions, `IEDB_predict_bcell_epitopes` for antibody (B-cell) epitope prediction, and `iedb_search_epitopes` for validated experimental data. Do not assume what's on the pathogen surface; retrieve annotated sequences from UniProt or BVBRC.
+
+**Key principles**:
+1. **Epitope-driven** — vaccines work by presenting epitopes to T/B cells; start with epitope prediction
+2. **Population coverage matters** — HLA diversity means no single epitope covers everyone; design for breadth
+3. **Multi-epitope is better** — combine CD8+ (MHC-I) and CD4+ (MHC-II) epitopes for robust immunity
+4. **Conservation = broad protection** — conserved epitopes across strains provide cross-protective immunity
+5. **Evidence grading** — T1: clinical trial data, T2: in-vivo immunogenicity, T3: in-vitro binding, T4: computational prediction only
+
+---
+
+## When to Use
+
+- "Design a vaccine against [pathogen]"
+- "Predict T-cell epitopes for [protein]"
+- "What MHC-I epitopes does [protein] have?"
+- "Assess population coverage of these epitopes"
+- "Find conserved epitopes across [pathogen] strains"
+
+**Not this skill**: For HLA typing or allele frequency only, use `tooluniverse-hla-immunogenomics`. For antibody engineering, use `tooluniverse-antibody-engineering`.
+
+---
+
+## Core Tools
+
+| Tool | Use For |
+|------|---------|
+| `IEDB_predict_bcell_epitopes` | De-novo predict linear B-cell (antibody) epitopes from sequence (BepiPred/Emini/…) |
+| `iedb_search_epitopes` | Search experimentally validated epitopes |
+| `iedb_get_epitope_mhc` | Get detailed epitope data (assay results, MHC restriction) |
+| `iedb_search_mhc` | Search validated MHC binding assay data |
+| `IEDB_predict_mhci_binding` | **Predict MHC-I binding** (NetMHCpan EL; rank < 0.5% = strong binder) |
+| `IEDB_predict_mhcii_binding` | **Predict MHC-II binding** (NetMHCIIpan EL; CD4+ helper epitopes) |
+| `UniProt_get_entry_by_accession` | Get antigen protein sequence |
+| `UniProt_search` | Find pathogen protein sequences |
+| `BVBRC_search_genome_features` | Search pathogen proteomes |
+| `alphafold_get_prediction` | Get/predict antigen 3D structure |
+| `EnsemblVEP_annotate_hgvs` | Check epitope conservation across variants |
+| `PubMed_search_articles` | Find published vaccine studies |
+| `search_clinical_trials` | Find ongoing vaccine clinical trials |
+
+---
+
+## Workflow
+
+```
+Phase 0: Antigen Selection
+  Pathogen → essential surface proteins → sequence retrieval
+    |
+Phase 1: T-Cell Epitope Prediction
+  MHC-I (CD8+ CTL) and MHC-II (CD4+ helper) binding prediction
+    |
+Phase 2: B-Cell Epitope Prediction
+  Linear and conformational B-cell epitopes for antibody response
+    |
+Phase 3: Population Coverage
+  HLA allele frequencies → design for target population
+    |
+Phase 4: Conservation Analysis
+  Cross-strain epitope conservation → broad protection
+    |
+Phase 5: Candidate Assembly & Report
+  Multi-epitope construct design → immunogenicity assessment
+```
+
+### Phase 0: Antigen Selection
+
+**Best antigens for vaccines**: Surface-exposed, essential for pathogen function, conserved across strains.
+
+```python
+# Find pathogen surface proteins
+UniProt_search(query="[organism] AND locations:(location:cell surface) AND reviewed:true")
+# Or search BVBRC for annotated pathogen proteomes
+BVBRC_search_genome_features(keyword="surface protein", genome_id="[taxon_id]")
+```
+
+**Antigen prioritization**: prefer surface-exposed (secreted/outer membrane) over cytoplasmic; >95% conserved across strains; essential for pathogen viability; known immunogen in natural infection. Use UniProt subcellular location annotations and PubMed to verify these properties.
+
+### Phase 1: T-Cell Epitope Prediction
+
+**MHC-I epitopes** (CD8+ cytotoxic T cells — kill infected cells):
+
+```python
+# Option A: Search for KNOWN validated epitopes from IEDB
+iedb_search_mhc(
+    mhc_class="I",
+    qualitative_measure="Positive",
+    filters={"source_organism_iri": "eq.NCBITaxon:2697049"},  # SARS-CoV-2
+    select=["linear_sequence", "mhc_restriction", "qualitative_measure"],
+    limit=50
+)
+
+# Option B: PREDICT novel peptide binding (recommended for new proteins)
+IEDB_predict_mhci_binding(
+    sequence="YOUR_PROTEIN_SEQUENCE",  # full protein or peptide
+    allele="HLA-A*02:01",             # or H-2-Kd for mouse
+    method="netmhcpan_el",            # EL = eluted ligand (recommended)
+    length=9                           # 8-11 for MHC-I
+)
+# Returns peptides ranked by percentile_rank:
+# < 0.5% = strong binder (include in vaccine)
+# 0.5-2% = moderate binder (consider)
+# > 2% = weak/non-binder (exclude)
+```
+
+**MHC-II epitopes** (CD4+ helper T cells — activate B cells and CD8+ T cells):
+
+```python
+iedb_search_mhc(
+    mhc_class="II",
+    qualitative_measure="Positive",
+    filters={"source_organism_iri": "eq.NCBITaxon:2697049"},
+    limit=50
+)
+```
+
+**Binding affinity interpretation**:
+
+| IC50 (nM) | Classification | Vaccine Relevance |
+|-----------|---------------|-------------------|
+| < 50 | Strong binder | Include — high presentation probability |
+| 50-500 | Moderate binder | Consider — may contribute to response |
+| 500-5000 | Weak binder | Exclude — unlikely to be presented |
+| > 5000 | Non-binder | Exclude |
+
+**HLA supertype strategy**: For broad coverage, predict against HLA supertypes:
+- **A2 supertype** (A*02:01, A*02:06, A*68:02) — covers ~40% globally
+- **A3 supertype** (A*03:01, A*11:01, A*31:01) — covers ~25%
+- **B7 supertype** (B*07:02, B*35:01, B*51:01) — covers ~25%
+- **A2 + A3 + B7 + B44** combined — covers >90% of most populations
+
+### Phase 2: B-Cell Epitope Prediction
+
+B-cell epitopes trigger antibody production. Look for:
+- **Linear epitopes**: Continuous peptide sequences (easier to synthesize)
+- **Conformational epitopes**: 3D surface patches (requires structural data)
+
+```python
+# De-novo predict LINEAR B-cell epitopes along the antigen sequence (BepiPred).
+# Returns contiguous predicted epitope regions + per-residue scores.
+IEDB_predict_bcell_epitopes(sequence="[antigen_aa_sequence]", method="Bepipred")
+# Cross-check against KNOWN experimentally validated epitopes
+iedb_search_epitopes(query="[protein_name]", epitope_type="B cell")
+# Get structure for conformational epitope prediction
+alphafold_get_prediction(uniprot_id="[accession]")
+```
+
+**B-cell epitope criteria**: Surface-exposed loops, hydrophilic regions, flexible regions (high B-factor). Prefer `IEDB_predict_bcell_epitopes` regions that also fall on surface-exposed loops in the structure; the `method` arg also supports Emini (surface accessibility), Kolaskar-Tongaonkar (antigenicity), and Parker (hydrophilicity).
+
+### Phase 3: Population Coverage
+
+No HLA-frequency tool exists in ToolUniverse, but the coverage math is packaged in
+`scripts/population_coverage.py`. Pass the HLA alleles your selected epitopes bind
+(from the `IEDB_predict_mhci/mhcii_binding` results) and get the % of the
+population covered:
+
+```bash
+# Broad first-pass estimate (bundled average frequencies):
+python scripts/population_coverage.py --alleles "HLA-A*02:01,HLA-A*01:01,HLA-A*03:01,HLA-A*24:02,HLA-B*07:02,HLA-B*08:01,HLA-B*44:02"
+# -> {"overall_coverage": 73.6, "per_locus_coverage_pct": {"A": 62.9, "B": 28.9}, ...}
+
+# Population-SPECIFIC: supply real allele frequencies (ALLELE<TAB>FREQ) for the
+# target ethnicity from the Allele Frequency Net Database (allelefrequencies.net)
+# or the IEDB population-coverage tool (tools.iedb.org/population):
+python scripts/population_coverage.py --alleles-file covered.txt --freq-file afnd_han_chinese.tsv
+```
+The bundled default is an approximate broad average — do NOT report it as coverage
+for a specific ethnicity; use `--freq-file` with AFND/IEDB data for that. Also use
+the HLA supertype strategy to ensure your epitope set spans the common supertypes.
+
+**Population coverage targets**:
+
+| Coverage Level | Interpretation | Action |
+|---------------|---------------|--------|
+| >90% | Excellent — vaccine will work in most individuals | Proceed to development |
+| 70-90% | Good — most people covered; some populations underserved | Add more epitopes for uncovered HLA types |
+| 50-70% | Moderate — significant gaps | Redesign with broader HLA coverage |
+| <50% | Poor — vaccine will miss too many people | Fundamental redesign needed |
+
+### Phase 4: Conservation Analysis
+
+Check if epitopes are conserved across pathogen strains/variants:
+
+```python
+# Search for protein variants across strains
+PubMed_search_articles(query="[pathogen] [protein] sequence variation strains")
+# Check specific mutations in epitope regions
+EnsemblVEP_annotate_hgvs(hgvs_notation="[variant_in_epitope]")
+```
+
+**Conservation interpretation**:
+- **100% conserved** across all known strains → ideal vaccine target
+- **>95% conserved** → good target; monitor emerging variants
+- **80-95% conserved** → may need strain-specific variants in construct
+- **<80% conserved** → avoid; pathogen evolves to escape this epitope
+
+### Phase 5: Candidate Assembly & Report
+
+**Multi-epitope construct design principles**:
+1. Include 3-5 MHC-I epitopes (CD8+ response)
+2. Include 2-3 MHC-II epitopes (CD4+ helper response)
+3. Include 1-2 B-cell epitopes (antibody response)
+4. Connect with appropriate linkers (AAY for MHC-I, GPGPG for MHC-II)
+5. Add adjuvant sequence if needed (e.g., flagellin domain for TLR5)
+
+**Report structure**:
+1. **Antigen Selection** — rationale, conservation, essentiality
+2. **Epitope Map** — all predicted epitopes with binding affinities and HLA restrictions
+3. **Top Epitopes** — ranked by binding strength × conservation × population coverage
+4. **Population Coverage** — % coverage per major world population
+5. **Conservation Analysis** — strain coverage, escape risk assessment
+6. **Construct Design** — multi-epitope sequence with linkers
+7. **Clinical Precedent** — existing vaccines/trials for related antigens
+8. **Limitations** — predicted only (T4 evidence); needs experimental validation
+
+---
+
+## Limitations
+
+- **All predictions are computational** (T4 evidence) — experimental validation (binding assays, immunogenicity studies) is required before any clinical development
+- **No immunogenicity guarantee** — MHC binding ≠ immunogenicity; many good binders are not immunogenic in vivo
+- **B-cell epitope prediction is less reliable** than T-cell; conformational epitopes require accurate structures
+- **No adjuvant optimization** — adjuvant selection requires empirical testing
+- **Pathogen evasion** — rapidly evolving pathogens (HIV, influenza) may escape epitope-based vaccines

@@ -1,0 +1,60 @@
+# Categories the weekly tool sweep is known to flag for NON-code reasons
+# (upstream API down/slow, rate-limited, env-only deps, or flaky-transient).
+#
+# Purpose: turn the weekly report from "37 categories failed" into the one
+# actionable line — "a category failed that is NOT listed here". Anything not
+# in this file is the signal to investigate; it usually means an upstream API
+# just changed.
+#
+# Maintainers:
+#   - Remove a line when an upstream recovers (so a future failure flags again).
+#   - Add a line when a new chronic/expected failure is accepted.
+#   - One bare category token per line; everything after '#' is a comment.
+#
+# Seeded from the 2026-06-02 full sweep (4282/4357 passed).
+
+# --- slow APIs: complete but exceed the per-category timeout under load ---
+clingen
+glygen
+gprofiler
+nci_thesaurus
+ols
+
+# --- upstream down / erroring at sweep time (sites flaky or in maintenance) ---
+flymine
+openml
+rnacentral
+dfam                 # /families works; /annotations backend returns 405 Invalid Input
+dynamut2             # upstream HTTP 500
+immport              # upstream HTTP 400 on some terms
+fourdn               # TLS certificate periodically expires upstream
+oxo                  # EBI retired OxO (now in broken_apis/; OLS is the replacement)
+
+# --- env / key dependent ---
+esm                  # needs the optional `esm` ML package (heavy, not installed)
+semantic_scholar     # anonymous ~1 req/s limit; 429s under the parallel sweep
+semantic_scholar_ext
+metaboanalyst        # already documented in broken_apis/
+
+# --- transient / flaky (passed on re-run); listed to keep noise down ---
+arrayexpress
+arxiv
+ensembl_phenotype
+enrichr_ext
+interpro
+lncrna
+mibig
+mirna
+oncotree
+protacdb
+sabdab
+sasbdb
+umls
+url_fetch
+unified_guideline
+
+# --- schema-validation warnings only (not hard failures) ---
+civic
+dailymed
+disease_target_score
+finder

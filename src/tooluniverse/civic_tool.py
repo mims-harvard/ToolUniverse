@@ -17,6 +17,45 @@ from .tool_registry import register_tool
 CIVIC_BASE_URL = "https://civicdb.org/api"
 CIVIC_GRAPHQL_URL = f"{CIVIC_BASE_URL}/graphql"
 
+# Fixed CIViC GraphQL enum vocabularies. An invalid value was passed straight to
+# the API and came back as an opaque "GraphQL query errors" with no hint; we
+# validate up front and name the allowed values instead.
+CIVIC_EVIDENCE_TYPES = {
+    "DIAGNOSTIC",
+    "PROGNOSTIC",
+    "PREDICTIVE",
+    "PREDISPOSING",
+    "FUNCTIONAL",
+    "ONCOGENIC",
+}
+CIVIC_EVIDENCE_SIGNIFICANCES = {
+    "SENSITIVITYRESPONSE",
+    "RESISTANCE",
+    "BETTER_OUTCOME",
+    "POOR_OUTCOME",
+    "POSITIVE",
+    "NEGATIVE",
+    "NA",
+    "ADVERSE_RESPONSE",
+    "PATHOGENIC",
+    "LIKELY_PATHOGENIC",
+    "BENIGN",
+    "LIKELY_BENIGN",
+    "UNCERTAIN_SIGNIFICANCE",
+    "REDUCED_SENSITIVITY",
+    "GAIN_OF_FUNCTION",
+    "LOSS_OF_FUNCTION",
+    "UNALTERED_FUNCTION",
+    "NEOMORPHIC",
+    "UNKNOWN",
+    "DOMINANT_NEGATIVE",
+    "PREDISPOSITION",
+    "PROTECTIVENESS",
+    "ONCOGENICITY",
+    "LIKELY_ONCOGENIC",
+}
+CIVIC_EVIDENCE_DIRECTIONS = {"SUPPORTS", "DOES_NOT_SUPPORT", "NA"}
+
 
 @register_tool("CIViCTool")
 class CIViCTool(BaseTool):
@@ -251,6 +290,25 @@ class CIViCTool(BaseTool):
         # Feature-61A-001: extend to catch ANY unrecognized parameter that would be silently
         # ignored, causing unfiltered evidence dumps (e.g. description="ESR1", gene_id=38).
         if tool_name == "civic_search_evidence_items":
+            # Validate enum-valued filters up front: an invalid value (e.g.
+            # evidence_type="BANANA") was passed straight to the CIViC GraphQL API
+            # and returned an opaque "GraphQL query errors" with no hint of what
+            # was wrong or what is valid.
+            for _enum_arg, _valid in (
+                ("evidence_type", CIVIC_EVIDENCE_TYPES),
+                ("significance", CIVIC_EVIDENCE_SIGNIFICANCES),
+                ("evidence_direction", CIVIC_EVIDENCE_DIRECTIONS),
+            ):
+                _val = arguments.get(_enum_arg)
+                if _val is not None and str(_val).upper() not in _valid:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"Invalid {_enum_arg} '{_val}'. Allowed values: "
+                            + ", ".join(sorted(_valid))
+                            + "."
+                        ),
+                    }
             _known_params = {
                 "molecular_profile",
                 "disease",
@@ -310,6 +368,31 @@ class CIViCTool(BaseTool):
                         f" the CIViC GraphQL API, returning unfiltered results."
                         f" Supported filters: molecular_profile, disease, therapy, status,"
                         f" evidence_type, significance, limit."
+                    ),
+                }
+
+        # civic_search_molecular_profiles only filters by query/name (free-text)
+        # + limit; the GraphQL query binds nothing else. A param like variant_id
+        # (a very natural thing to pass -- "profiles for CIViC variant 78") was
+        # silently ignored, returning the full unfiltered profile list (BRAF
+        # V600E, ERBB2 Amplification, ...) as a plausible-but-wrong "success".
+        # Reject unrecognized params with an actionable hint, mirroring
+        # civic_search_evidence_items.
+        if tool_name == "civic_search_molecular_profiles":
+            _known = {"query", "name", "limit", "operation", "after"}
+            _known.update(self.param_map.keys())
+            _known.update(self.array_wrap.keys())
+            unknown = sorted(k for k in arguments if k not in _known)
+            if unknown:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Unrecognized parameter(s) for civic_search_molecular_profiles:"
+                        f" {', '.join(unknown)}. These are silently ignored by the CIViC"
+                        f" GraphQL API, returning the full unfiltered profile list."
+                        f" Supported filters: query (or name, free-text e.g. 'KRAS G12C'),"
+                        f" limit. To get profiles for a specific variant id, use"
+                        f" civic_get_variant with that id."
                     ),
                 }
 

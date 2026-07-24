@@ -83,8 +83,8 @@ Examples
 When to Use This Feature
 =========================
 
- USE in These Scenarios
---------------------------
+USE in These Scenarios
+----------------------
 
 MCP Integration (Automatic)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -147,8 +147,8 @@ External API Integration with Length Constraints
 When NOT to Use This Feature
 =============================
 
- DO NOT USE in These Scenarios
----------------------------------
+DO NOT USE in These Scenarios
+-----------------------------
 
 Direct Python API Usage (Default)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -439,7 +439,7 @@ For MCP Users
       }
     }
 
-.. critical::
+.. important::
    Change the JSON key from ``"tooluniverse"`` to ``"tu"`` in your configuration!
 
 For Python API Users
@@ -523,7 +523,7 @@ Key Takeaways
 4. **Simple implementation** - 380 lines, well-tested
 5. **Production ready** - All tests passing, validated with real tools
 
- When to Use
+When to Use
 --------------
 
 - **MCP integration** (automatic)
@@ -531,7 +531,7 @@ Key Takeaways
 - **External systems with name length limits**
 - **Testing and validation**
 
- When NOT to Use
+When NOT to Use
 ------------------
 
 - **Direct Python API** (no constraints)

@@ -401,28 +401,31 @@ class AzureOpenAIClient(BaseLLMClient):
 class GeminiClient(BaseLLMClient):
     def __init__(self, model_name: str, logger):
         try:
-            import google.generativeai as genai  # type: ignore
+            from google import genai  # type: ignore
+            from google.genai import types as genai_types  # type: ignore
         except Exception as e:  # pragma: no cover
-            raise RuntimeError("google.generativeai not available") from e
+            raise RuntimeError("google-genai not available") from e
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             raise ValueError("GEMINI_API_KEY not found")
-        self._genai = genai
-        self._genai.configure(api_key=api_key)
+        self._client = genai.Client(api_key=api_key)
+        self._types = genai_types
         self.model_name = model_name
         self.logger = logger
 
-    def _build_model(self):
-        return self._genai.GenerativeModel(self.model_name)
+    def _build_config(self, temperature: Optional[float], max_tokens: Optional[int]):
+        kwargs: Dict[str, Any] = {
+            "temperature": (temperature if temperature is not None else 0)
+        }
+        if max_tokens is not None:
+            kwargs["max_output_tokens"] = max_tokens
+        return self._types.GenerateContentConfig(**kwargs)
 
     def test_api(self) -> None:
-        model = self._build_model()
-        model.generate_content(
-            "ping",
-            generation_config={
-                "max_output_tokens": 8,
-                "temperature": 0,
-            },
+        self._client.models.generate_content(
+            model=self.model_name,
+            contents="ping",
+            config=self._build_config(temperature=0, max_tokens=8),
         )
 
     def infer(
@@ -444,13 +447,11 @@ class GeminiClient(BaseLLMClient):
         retries = 0
         while retries < max_retries:
             try:
-                gen_cfg: Dict[str, Any] = {
-                    "temperature": (temperature if temperature is not None else 0)
-                }
-                if max_tokens is not None:
-                    gen_cfg["max_output_tokens"] = max_tokens
-                model = self._build_model()
-                resp = model.generate_content(contents, generation_config=gen_cfg)
+                resp = self._client.models.generate_content(
+                    model=self.model_name,
+                    contents=contents,
+                    config=self._build_config(temperature, max_tokens),
+                )
                 return getattr(resp, "text", None) or getattr(resp, "candidates", [{}])[
                     0
                 ].get("content")
@@ -520,15 +521,10 @@ class GeminiClient(BaseLLMClient):
         retries = 0
         while retries < max_retries:
             try:
-                gen_cfg: Dict[str, Any] = {
-                    "temperature": (temperature if temperature is not None else 0)
-                }
-                if max_tokens is not None:
-                    gen_cfg["max_output_tokens"] = max_tokens
-
-                model = self._build_model()
-                stream = model.generate_content(
-                    contents, generation_config=gen_cfg, stream=True
+                stream = self._client.models.generate_content_stream(
+                    model=self.model_name,
+                    contents=contents,
+                    config=self._build_config(temperature, max_tokens),
                 )
                 for chunk in stream:
                     text = self._extract_text_from_stream_chunk(chunk)

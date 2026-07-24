@@ -258,6 +258,21 @@ def _render_grep(d: dict) -> str:
             if d.get("limit") == 0:
                 return f"0 of {total} matches (limit=0, no results shown)"
             return f"0 of {total} matches (offset past end — use --offset < {total})"
+        # Fix-R13D-1: surface tools that exist but are hidden because a
+        # required API key is unset -- without this, `tu grep uspto` looked
+        # identical to "no such tools exist" (confirmed live), when in fact
+        # the tools are real and just need a key set.
+        gated = d.get("gated_matches")
+        if gated:
+            lines = [
+                f"0 loaded matches, but {len(gated)} gated tool(s) matched by name:"
+            ]
+            for g in gated:
+                lines.append(
+                    f"  {g['name']}  (requires: {', '.join(g['missing_api_keys'])})"
+                )
+            lines.append("  Set the API key(s) as environment variables, then retry.")
+            return "\n".join(lines)
         # Feature-R13A-01 / R21B-03: context-sensitive hints for 0 name-field matches.
         if d.get("field") == "name":
             pattern = d.get("pattern", "")
@@ -377,7 +392,16 @@ def _render_info(d: dict) -> str:
     """Render get_tool_info result as human-readable tool card."""
     if "error" in d:
         name = d.get("name", "")
+        error_msg = d.get("error", "")
         suggestions = d.get("suggestions", [])
+        # Fix-R13D-1: this used to hardcode "not found" for every error here,
+        # discarding a more specific message like "requires API key(s) not
+        # set: X" (confirmed live this contradicted `tu run`'s own error for
+        # the exact same tool name, which does surface the real reason).
+        # Only fall back to the generic not-found/"did you mean" framing when
+        # the tool is genuinely absent from the registry.
+        if name and error_msg and "not found" not in error_msg:
+            return f"Error: Tool '{name}' {error_msg}"
         # R22B-04: append "Did you mean?" hint when suggestions are available.
         if name:
             hint = ""
@@ -453,6 +477,38 @@ def _render_info(d: dict) -> str:
     return "\n".join(lines)
 
 
+def _extract_detail_hint(raw_detail: Any) -> str | None:
+    """Pull a human-readable hint out of an error envelope's `detail` field.
+
+    Different tools populate `detail` inconsistently: a dict with hint/
+    message keys, or (very commonly, since many tools just pass through
+    `resp.text`) a raw response-body string that is often itself a
+    JSON-encoded object, e.g. '{"code": "404", "status": "The Uniprot code
+    p00698 does not exist in the SASBDB"}'. The default (non---json) CLI
+    output previously dropped this entirely, showing only the generic
+    top-level error string and leaving the actually-useful upstream
+    message discoverable only via --json (confirmed live for SASBDB 404s
+    and AlphaFold 400s).
+    """
+    if isinstance(raw_detail, dict):
+        return raw_detail.get("hint") or raw_detail.get("message")
+    if isinstance(raw_detail, str) and raw_detail.strip():
+        try:
+            parsed = json.loads(raw_detail)
+        except (json.JSONDecodeError, TypeError):
+            parsed = None
+        if isinstance(parsed, dict):
+            for key in ("message", "error", "status", "detail", "reason"):
+                val = parsed.get(key)
+                if isinstance(val, str) and val.strip():
+                    return val
+        # Not JSON, or no usable field inside it -- fall back to the raw
+        # string, capped so a huge HTML error page doesn't flood the
+        # terminal.
+        return raw_detail if len(raw_detail) <= 300 else raw_detail[:297] + "..."
+    return None
+
+
 def _render_run(d: dict) -> str:
     """Feature-23B-02: human-friendly renderer for `tu run` errors.
 
@@ -464,14 +520,40 @@ def _render_run(d: dict) -> str:
         return str(d)
     if d.get("status") != "error" and "error" not in d:
         return json.dumps(d, indent=2, ensure_ascii=False)
-    # Short, actionable error summary
-    short_err = d.get("error", "unknown error")
+    # Short, actionable error summary. The project's standard envelope nests
+    # the error message under d["data"]["error"]; older tools put it at the
+    # top level. Check both so the CLI never falls back to "unknown error"
+    # when the message is actually present.
+    nested = d.get("data") or {}
+    short_err = (
+        d.get("error")
+        or (nested.get("error") if isinstance(nested, dict) else None)
+        or "unknown error"
+    )
     lines = [f"Error: {short_err}"]
+    # Fix-R3B-007/R3E-002: BaseRESTTool-backed tools (openFDA, EPA, etc.) put
+    # the raw upstream HTTP response body in `detail` on non-2xx responses.
+    # That's often the only place the *actionable* explanation lives (e.g.
+    # openFDA's "use a .exact keyword field" hint) — short_err is usually
+    # just a generic "<Tool> API error". Surface it instead of dropping it.
+    detail = d.get("detail")
+    detail_already_shown = False
+    if isinstance(detail, str) and detail.strip() and detail.strip() not in short_err:
+        lines.append(f"Detail: {detail.strip()[:300]}")
+        detail_already_shown = True
     details = d.get("error_details") or {}
 
     # Feature-25B-02: for "tool not found" errors, replace generic network tips
     # with tool-discovery tips and include fuzzy suggestions when available.
-    is_not_found = "not found" in short_err.lower()
+    # Fix-R18A-2/R18C-6: a plain "not found" substring match also fires on a
+    # tool's own HTTP-404-shaped error message (e.g. "PDBe API error: 404
+    # Client Error: Not Found for url: ..." or CTD's "'cadmium' was not found
+    # in the RENCI CTD mirror") -- confirmed live these produced misleading
+    # "check tool name spelling" tips for a perfectly valid tool call with a
+    # bad parameter VALUE, not a bad tool name. A genuine unknown-tool-name
+    # error is reliably tagged error_details.type == "ToolUnavailableError"
+    # (confirmed live); use that structured signal instead of the message text.
+    is_not_found = details.get("type") == "ToolUnavailableError"
     is_api_key_error = "requires api key" in short_err.lower()
     suggestions = d.get("suggestions") or details.get("suggestions") or []
     if is_api_key_error:
@@ -492,6 +574,44 @@ def _render_run(d: dict) -> str:
         next_steps = details.get("next_steps") or []
         # Feature-25B-07: filter out Python SDK-specific tips not relevant to CLI users
         cli_steps = [s for s in next_steps if "tu.tools.refresh()" not in s]
+        # Surface a tool-provided hint (top-level or nested under data) so
+        # actionable auth/usage guidance reaches CLI users, not just JSON consumers.
+        hint = d.get("hint") or (
+            nested.get("hint") if isinstance(nested, dict) else None
+        )
+        if hint:
+            cli_steps = [*cli_steps, hint]
+        # Fix-R18C-1: some tools put a single actionable redirect at the
+        # top-level "suggestion" key (e.g. CTD_get_gene_diseases pointing
+        # callers at OpenTargets) -- confirmed live this was silently
+        # dropped since only the plural "suggestions" (fuzzy tool-name
+        # matches) and error_details.next_steps were ever surfaced.
+        suggestion = d.get("suggestion")
+        if suggestion:
+            cli_steps = [*cli_steps, suggestion]
+        # Fix-R18D-3/R20: BaseRESTTool-backed tools put the actionable
+        # upstream error in a top-level (or nested) "detail" field, distinct
+        # from error_details -- confirmed live this was silently dropped,
+        # leaving only the generic "Error: HTTP request failed" with no
+        # indication of the real cause.
+        raw_detail = d.get("detail") or (
+            nested.get("detail") if isinstance(nested, dict) else None
+        )
+        detail_hint = _extract_detail_hint(raw_detail)
+        # When `detail` is a plain (non-JSON) string, _extract_detail_hint's
+        # fallback returns that exact string (capped the same way), which
+        # would just repeat the "Detail: ..." line above -- both come from
+        # the same d["detail"] value. Skip in that case; still show it when
+        # extraction actually pulled a more specific sub-field out of JSON.
+        is_raw_passthrough_of_shown_detail = detail_already_shown and detail_hint == (
+            detail if len(detail) <= 300 else detail[:297] + "..."
+        )
+        if (
+            detail_hint
+            and detail_hint != hint
+            and not is_raw_passthrough_of_shown_detail
+        ):
+            cli_steps = [*cli_steps, f"Upstream detail: {detail_hint}"]
         if cli_steps:
             lines.append("Tips:")
             for step in cli_steps:
@@ -966,10 +1086,13 @@ def cmd_info(args: argparse.Namespace) -> None:
         )
     # R22B-04: inject "did you mean" suggestions into each not-found error entry so
     # _render_info can display them without needing direct access to `tu`.
+    # Fix-R13D-1: skip this for a gated tool (error != "not found") -- the
+    # tool name is already exact, so suggesting near-miss alternatives is
+    # noise, not help.
     if isinstance(result, dict) and "tools" in result:
         all_names = list(tu.all_tool_dict.keys())
         for tool in result["tools"]:
-            if isinstance(tool, dict) and "error" in tool:
+            if isinstance(tool, dict) and tool.get("error") == "not found":
                 name = tool.get("name", "")
                 if name:
                     # Feature-23B-04: raised cutoff from 0.5 → 0.62 to avoid spurious
@@ -1688,6 +1811,15 @@ def main() -> None:
     p.add_argument(
         "--categories", nargs="+", metavar="CAT", help="Filter by category names"
     )
+    # Fix-R4E-2: users reflexively type grep's -i flag; accept it instead of
+    # an unrecognized-arguments error. text mode (the default) already does
+    # case-insensitive matching, so this is a no-op rather than a real toggle.
+    p.add_argument(
+        "-i",
+        "--ignore-case",
+        action="store_true",
+        help="No-op: text mode (the default) is already case-insensitive",
+    )
     p.set_defaults(func=cmd_grep)
 
     # ── info ──────────────────────────────────────────────────────────────────
@@ -1817,7 +1949,10 @@ def main() -> None:
     # ── build ─────────────────────────────────────────────────────────────────
     p = sub.add_parser(
         "build",
-        help="Rebuild the static tool registry (run after adding new built-in tools)",
+        help=(
+            "Rebuild the static tool registry and regenerate coding-API "
+            "wrapper files (run after adding new built-in tools)"
+        ),
     )
     p.add_argument(
         "--output",
@@ -1825,7 +1960,9 @@ def main() -> None:
         default=None,
         help=(
             "Directory to write coding-API wrapper files into "
-            "(default: .tooluniverse/coding_api/)"
+            "(default: .tooluniverse/coding_api/). Only affects the wrapper "
+            "files — the static lazy registry is always regenerated in "
+            "place inside the installed package, regardless of --output."
         ),
     )
     p.set_defaults(func=cmd_build)

@@ -31,11 +31,7 @@
         }
       },
       "required": [
-        "tool_config",
-        "save_to_file",
-        "output_file",
-        "max_iterations",
-        "satisfaction_threshold"
+        "tool_config"
       ]
     },
     "auto_load_dependencies": true,

@@ -1140,5 +1140,103 @@
         "tf_gene": "TP53"
       }
     ]
+  },
+  {
+    "name": "OmniPath_get_annotation_resource_geneset",
+    "type": "OmniPathTool",
+    "description": "Retrieve the ENTIRE annotated gene/protein set (resource-wide membership) for an OmniPath annotation resource, with NO protein filter. This is the reverse of per-protein annotation lookup: instead of 'what does OmniPath say about gene X', it answers 'list every gene/protein in resource Y'. Use it to fetch curated functional gene sets such as all cell-surface proteins (Surfaceome), all kinases (kinase.com), all transcription factors (TFcensus), all phosphatases (Phosphatome), or all cancer driver genes (CancerGeneCensus). OmniPath integrates 80+ such annotation resources. Each returned member lists its label/value annotations from the resource (grouped from OmniPath's long-format rows). Example: resource='CancerGeneCensus' returns 752 unique driver genes from 9755 records, including KRAS (UniProt P01116, tier=1, hallmark=True); resource='Surfaceome' returns the full surfaceome including SLC12A8 (A0AV02, mainclass=Transporters); resource='kinase.com' returns PRKCB (P05771, group=AGC); resource='TFcensus' returns HIVEP2 (P31629, tfcensus_class=a).",
+    "fields": {
+      "endpoint": "annotation_resource_geneset"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "resource": {
+          "type": "string",
+          "description": "Name of the OmniPath annotation resource whose full gene/protein set to retrieve. Examples: 'CancerGeneCensus' (cancer driver genes), 'Surfaceome' (cell-surface proteins), 'TFcensus' (transcription factors), 'kinase.com' (kinases), 'Phosphatome' (phosphatases). Many others available (80+ resources). Verify exact names via https://omnipathdb.org/queries/annotations."
+        },
+        "entity_types": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional filter on entity type, comma-separated. Options: 'protein', 'complex', 'mirna'. Default: all entity types in the resource."
+        }
+      },
+      "required": [
+        "resource"
+      ]
+    },
+    "test_examples": [
+      {
+        "resource": "CancerGeneCensus"
+      },
+      {
+        "resource": "Surfaceome"
+      },
+      {
+        "resource": "kinase.com"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "data",
+            "metadata"
+          ],
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uniprot": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt accession of the resource member"
+                  },
+                  "genesymbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene symbol of the resource member"
+                  },
+                  "entity_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Entity type (protein, complex, mirna)"
+                  },
+                  "annotations": {
+                    "type": "object",
+                    "description": "Label/value annotation pairs for this member from the resource (e.g., {\"tier\": \"1\", \"hallmark\": \"True\"} for CancerGeneCensus; {\"mainclass\": \"Transporters\"} for Surfaceome; {\"group\": \"AGC\"} for kinase.com)."
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]

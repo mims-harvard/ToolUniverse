@@ -1,0 +1,39 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_squidpy_nhood_enrichment",
+    "description": "Run Squidpy (Palla et al., Nature Methods 2022) neighborhood enrichment on spatial single-cell data. Builds a spatial neighbors graph from cell coordinates in adata.obsm['spatial'], then permutation-tests which pairs of cluster categories (e.g. cell types) are co-localized (enriched, positive z-score) or segregated (depleted, negative z-score). Returns the category x category z-score matrix plus the category labels. Input is a server-accessible spatial .h5ad with adata.obsm['spatial'] coordinates and `cluster_key` in adata.obs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to a spatial .h5ad AnnData with adata.obsm['spatial'] coordinates and `cluster_key` in adata.obs."},
+        "cluster_key": {"type": "string", "description": "obs column with the categorical cluster/cell-type labels to test for co-localization (e.g. 'cell_type')."},
+        "n_neighs": {"type": "integer", "description": "Number of nearest spatial neighbors per cell when building the graph (default 6)."}
+      },
+      "required": ["adata_path", "cluster_key"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "cluster_key": {"type": "string"},
+        "n_cells": {"type": "integer"},
+        "n_neighs": {"type": "integer"},
+        "categories": {"type": "array", "items": {"type": "string"}, "description": "Category labels; row/column order of the z-score matrix."},
+        "zscore_matrix": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}, "description": "Symmetric n_categories x n_categories neighborhood-enrichment z-scores (positive = co-localized, negative = segregated)."},
+        "note": {"type": "string"},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "SquidpyNhoodEnrichmentTool",
+      "url": "https://squidpy.readthedocs.io/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/squidpy",
+      "mcp_tool_name": "run_squidpy_nhood_enrichment"
+    },
+    "test_examples": [
+      {"adata_path": "visium_brain.h5ad", "cluster_key": "cell_type", "n_neighs": 6}
+    ]
+  }
+]

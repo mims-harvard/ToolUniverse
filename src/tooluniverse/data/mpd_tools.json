@@ -2,7 +2,7 @@
   {
     "type": "MPDRESTTool",
     "name": "MPD_get_phenotype_data",
-    "description": "Get mouse phenotype data from Mouse Phenome Database for specific strains and phenotypes",
+    "description": "Search ENCODE experiment records mentioning a given mouse strain (used as a Mouse Phenome Database alternative -- MPD's own REST API has no simple strain+category phenotype search; see https://phenome.jax.org/api for genuine curated MPD phenotype data). 'phenotype_category' is not applied -- ENCODE has no equivalent concept.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,7 +13,7 @@
         },
         "phenotype_category": {
           "type": "string",
-          "description": "Phenotype category (behavior, physiology, morphology)",
+          "description": "Not currently applied to the query -- ENCODE (this tool's data source) has no phenotype-category concept. Retained for forward compatibility with a future genuine MPD-backed implementation.",
           "default": "behavior"
         },
         "limit": {
@@ -24,21 +24,15 @@
           "maximum": 50
         }
       },
-      "required": [
-        "strain"
-      ]
+      "required": []
     },
     "fields": {
-      "endpoint": "https://www.encodeproject.org/search/?type=Experiment&biosample_ontology.term_name={strain}&biosample_ontology.classification=primary_cell&format=json&limit={limit}",
+      "endpoint": "https://www.encodeproject.org/search/?type=Experiment&searchTerm={strain}&format=json&limit={limit}",
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
             "@context": {
@@ -82,7 +76,39 @@
                               "type": "string"
                             },
                             "level": {
-                              "type": "integer"
+                              "type": [
+                                "integer",
+                                "number"
+                              ]
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "detail": {
+                              "type": "string"
+                            },
+                            "category": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "NOT_COMPLIANT": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "path": {
+                              "type": "string"
+                            },
+                            "level_name": {
+                              "type": "string"
+                            },
+                            "level": {
+                              "type": [
+                                "integer",
+                                "number"
+                              ]
                             },
                             "name": {
                               "type": "string"
@@ -108,7 +134,10 @@
                               "type": "string"
                             },
                             "level": {
-                              "type": "integer"
+                              "type": [
+                                "integer",
+                                "number"
+                              ]
                             },
                             "name": {
                               "type": "string"
@@ -193,86 +222,12 @@
                                     }
                                   }
                                 },
-                                "applied_modifications": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "modified_site_by_target_id": {
-                                        "type": "object",
-                                        "properties": {
-                                          "organism": {
-                                            "type": "object",
-                                            "properties": {
-                                              "schema_version": {
-                                                "type": "string"
-                                              },
-                                              "@type": {
-                                                "type": "array",
-                                                "items": {
-                                                  "type": "string"
-                                                }
-                                              },
-                                              "name": {
-                                                "type": "string"
-                                              },
-                                              "taxon_id": {
-                                                "type": "string"
-                                              },
-                                              "scientific_name": {
-                                                "type": "string"
-                                              },
-                                              "@id": {
-                                                "type": "string"
-                                              },
-                                              "uuid": {
-                                                "type": "string"
-                                              },
-                                              "status": {
-                                                "type": "string"
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
                                 "life_stage": {
                                   "type": "string"
                                 },
                                 "accession": {
                                   "type": "string"
-                                },
-                                "treatments": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "duration": {
-                                        "type": "integer"
-                                      },
-                                      "treatment_term_name": {
-                                        "type": "string"
-                                      },
-                                      "amount": {
-                                        "type": "integer"
-                                      },
-                                      "duration_units": {
-                                        "type": "string"
-                                      },
-                                      "amount_units": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
                                 }
-                              }
-                            },
-                            "construction_method": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
                               }
                             }
                           }
@@ -281,10 +236,16 @@
                           "type": "string"
                         },
                         "technical_replicate_number": {
-                          "type": "integer"
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
                         },
                         "biological_replicate_number": {
-                          "type": "integer"
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
                         }
                       }
                     }
@@ -672,16 +633,29 @@
                       "type": "object",
                       "properties": {
                         "key": {
-                          "type": "string"
+                          "type": [
+                            "integer",
+                            "number",
+                            "string"
+                          ]
                         },
                         "doc_count": {
-                          "type": "integer"
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "key_as_string": {
+                          "type": "string"
                         }
                       }
                     }
                   },
                   "total": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "type": {
                     "type": "string"
@@ -757,28 +731,28 @@
               "type": "string"
             },
             "total": {
-              "type": "integer"
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "@context"
+          ]
         },
-        "url": {
-          "type": "string"
-        },
-        "query_info": {
+        {
           "type": "object",
           "properties": {
-            "strain": {
-              "type": "string"
-            },
-            "limit": {
-              "type": "integer"
-            },
-            "data_source": {
+            "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {

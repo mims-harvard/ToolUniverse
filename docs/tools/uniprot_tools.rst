@@ -386,10 +386,10 @@ Search UniProtKB database with flexible query syntax. Returns protein entries wi
      Maximum number of results to return (default: 25, max: 500). Accepts string or integer.
 
    * ``min_length`` (integer) (optional)
-     Minimum sequence length. Auto-converts to 'length:[min TO *]' range query.
+     Minimum sequence length. Auto-converts to an open-ended length range query (min to unbounded).
 
    * ``max_length`` (integer) (optional)
-     Maximum sequence length. Auto-converts to 'length:[* TO max]' range query.
+     Maximum sequence length. Auto-converts to an open-ended length range query (unbounded to max).
 
    * ``fields`` (array) (optional)
      List of field names to return (e.g., ['accession','gene_primary','length','organism_name']). When specified, returns raw API response with requested fields. Common fields: accession, id, gene_names, gene_primary, protein_name, organism_name, organism_id, length, mass, sequence, reviewed, cc_function. See UniProt API docs for full list. Default (no fields): returns formatted response with accession, id, protein_name, gene_names, organism, length.

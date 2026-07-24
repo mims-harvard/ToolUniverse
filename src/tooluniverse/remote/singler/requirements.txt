@@ -1,0 +1,8 @@
+# Python side
+scanpy>=1.10
+anndata
+scipy
+# R side (install separately on the server):
+#   R >= 4.2 with Bioconductor packages: SingleR, celldex, Matrix, jsonlite
+#   Rscript must be on PATH (or set RSCRIPT_BIN).
+#   BiocManager::install(c("SingleR", "celldex"))

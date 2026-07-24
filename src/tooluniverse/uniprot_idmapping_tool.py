@@ -109,7 +109,15 @@ class UniProtIDMappingTool(BaseTool):
                 "error": "Failed to get job ID from UniProt ID Mapping",
             }
 
-        # Poll for completion (max 60 seconds)
+        # Poll for completion (max 60 seconds). The status endpoint sometimes
+        # 303-redirects straight into a results page instead of ever
+        # reporting jobStatus=="FINISHED" -- that redirected page uses its
+        # own default page size (25), not the size=500 this tool needs, so
+        # treat its presence as "job done" and always re-fetch the full,
+        # paginated result set via _fetch_all_results() below rather than
+        # returning that first small page directly. Confirmed live:
+        # P00533 -> PDB has 354 real mappings, but the redirected status
+        # response only ever carries the first 25 of them.
         max_polls = 20
         for _ in range(max_polls):
             status_resp = requests.get(
@@ -118,11 +126,15 @@ class UniProtIDMappingTool(BaseTool):
             )
             status_data = status_resp.json()
 
-            if status_data.get("jobStatus") == "FINISHED":
+            # For jobs that complete almost instantly, the status endpoint can
+            # return results embedded directly instead of a "FINISHED"
+            # jobStatus (confirmed live) -- either way, treat it as done and
+            # fall through to the paginated results fetch below (size=500).
+            # Returning this embedded copy directly previously silently
+            # truncated to UniProt's unpaginated default page size (25),
+            # even when the job actually had hundreds of matches.
+            if status_data.get("jobStatus") == "FINISHED" or "results" in status_data:
                 break
-            if "results" in status_data:
-                # Some responses include results directly
-                return {"results": status_data["results"], "job_id": job_id}
             if status_data.get("jobStatus") == "ERROR":
                 msg = status_data.get("errorMessage", "Unknown error")
                 return {
@@ -137,22 +149,46 @@ class UniProtIDMappingTool(BaseTool):
                 "error": "UniProt ID mapping job did not complete within timeout",
             }
 
-        # Get results
-        results_resp = requests.get(
-            f"{UNIPROT_BASE_URL}/idmapping/results/{job_id}",
-            params={"size": 500},
-            timeout=self.timeout,
-        )
-        results_resp.raise_for_status()
-        results_data = results_resp.json()
-
-        # Feature-68B-003: extract failedIds so callers can detect unmapped input IDs
+        results, failed_ids = self._fetch_all_results(job_id)
         return {
             "status": "success",
-            "results": results_data.get("results", []),
+            "results": results,
             "job_id": job_id,
-            "failed_ids": results_data.get("failedIds", []),
+            "failed_ids": failed_ids,
         }
+
+    def _fetch_all_results(self, job_id: str, max_pages: int = 20):
+        """Fetch every page of a completed mapping job's results, following
+        the Link header's rel="next" URL so large result sets (e.g. a
+        heavily-studied protein with hundreds of PDB structures) aren't
+        silently truncated to a single page."""
+        results = []
+        failed_ids = []
+        url = f"{UNIPROT_BASE_URL}/idmapping/results/{job_id}"
+        params = {"size": 500}
+        for _ in range(max_pages):
+            resp = requests.get(url, params=params, timeout=self.timeout)
+            resp.raise_for_status()
+            page = resp.json()
+            results.extend(page.get("results", []))
+            failed_ids.extend(page.get("failedIds", []))
+
+            next_url = self._parse_next_link(resp.headers.get("Link"))
+            if not next_url:
+                break
+            url, params = next_url, None
+        return results, failed_ids
+
+    @staticmethod
+    def _parse_next_link(link_header):
+        """Extract the rel="next" URL from an RFC 5988 Link header."""
+        if not link_header:
+            return None
+        for part in link_header.split(","):
+            segments = part.split(";")
+            if len(segments) >= 2 and 'rel="next"' in segments[1]:
+                return segments[0].strip().strip("<>")
+        return None
 
     def _convert(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Generic ID conversion between any supported databases."""
@@ -194,6 +230,7 @@ class UniProtIDMappingTool(BaseTool):
                 "to_db": to_db,
                 "result_count": len(parsed),
                 "results": parsed[:500],
+                "truncated": len(parsed) > 500,
                 "failed_ids": result.get("failed_ids", []),
             },
             "metadata": {
@@ -228,6 +265,7 @@ class UniProtIDMappingTool(BaseTool):
                 "query_ids": uniprot_ids,
                 "result_count": len(parsed),
                 "results": parsed[:500],
+                "truncated": len(parsed) > 500,
             },
             "metadata": {
                 "source": "UniProt ID Mapping Service",
@@ -268,6 +306,7 @@ class UniProtIDMappingTool(BaseTool):
                 "species_taxid": tax_id,
                 "result_count": len(parsed),
                 "results": parsed[:500],
+                "truncated": len(parsed) > 500,
             },
             "metadata": {
                 "source": "UniProt ID Mapping Service",

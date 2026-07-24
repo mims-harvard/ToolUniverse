@@ -11,12 +11,30 @@ API: https://api.monarchinitiative.org/v3/api/
 No authentication required. Free public access.
 """
 
-import requests
+import re
 from typing import Dict, Any
+
+import requests
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 MONARCH_BASE_URL = "https://api.monarchinitiative.org/v3/api"
+
+_UNDERSCORE_CURIE_RE = re.compile(r"^([A-Za-z]+)_(\d+)$")
+
+
+def _normalize_curie(entity_id: str) -> str:
+    """Convert an underscore-delimited ontology CURIE to the colon form Monarch
+    requires. OpenTargets and other tools emit 'MONDO_0004995' / 'EFO_0008572' /
+    'Orphanet_238583', but Monarch's /entity endpoint 404s on those and needs
+    'MONDO:0004995'. Feeding one tool's output into Mondo_get_disease broke with
+    a bare 404 that never revealed the delimiter was the cause."""
+    if not isinstance(entity_id, str):
+        return entity_id
+    stripped = entity_id.strip()
+    m = _UNDERSCORE_CURIE_RE.match(stripped)
+    return f"{m.group(1)}:{m.group(2)}" if m else stripped
 
 
 @register_tool("MonarchV3Tool")
@@ -77,6 +95,7 @@ class MonarchV3Tool(BaseTool):
             "histopheno": self._histopheno,
             "mappings": self._get_mappings,
             "semsim_search": self._semsim_search,
+            "semsim_compare": self._semsim_compare,
         }
         handler = handlers.get(self.endpoint)
         if handler:
@@ -85,7 +104,9 @@ class MonarchV3Tool(BaseTool):
 
     def _get_entity(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed entity information by CURIE identifier."""
-        entity_id = arguments.get("entity_id") or arguments.get("id", "")
+        entity_id = _normalize_curie(
+            arguments.get("entity_id") or arguments.get("id", "")
+        )
         if not entity_id:
             return {
                 "status": "error",
@@ -119,8 +140,8 @@ class MonarchV3Tool(BaseTool):
 
     def _get_associations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get associations for an entity with optional filtering by category."""
-        subject = arguments.get("subject", "")
-        obj = arguments.get("object", "")
+        subject = _normalize_curie(arguments.get("subject", ""))
+        obj = _normalize_curie(arguments.get("object", ""))
         if not subject and not obj:
             return {
                 "status": "error",
@@ -263,7 +284,7 @@ class MonarchV3Tool(BaseTool):
 
     def _mondo_get_disease(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed Mondo disease information including hierarchy and cross-references."""
-        disease_id = arguments.get("disease_id", "").strip()
+        disease_id = _normalize_curie(arguments.get("disease_id", ""))
         if not disease_id:
             return {
                 "status": "error",
@@ -343,7 +364,7 @@ class MonarchV3Tool(BaseTool):
 
     def _mondo_get_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get HPO phenotypes associated with a Mondo disease."""
-        disease_id = arguments.get("disease_id", "").strip()
+        disease_id = _normalize_curie(arguments.get("disease_id", ""))
         if not disease_id:
             return {
                 "status": "error",
@@ -391,7 +412,7 @@ class MonarchV3Tool(BaseTool):
 
     def _histopheno(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get phenotype counts by body system for a disease."""
-        entity_id = arguments.get("entity_id", "").strip()
+        entity_id = _normalize_curie(arguments.get("entity_id", ""))
         if not entity_id:
             return {
                 "status": "error",
@@ -428,7 +449,7 @@ class MonarchV3Tool(BaseTool):
 
     def _get_mappings(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get cross-ontology mappings for an entity."""
-        entity_id = arguments.get("entity_id", "").strip()
+        entity_id = _normalize_curie(arguments.get("entity_id", ""))
         if not entity_id:
             return {
                 "status": "error",
@@ -522,5 +543,96 @@ class MonarchV3Tool(BaseTool):
                 "query_phenotypes": phenotypes,
                 "group": group,
                 "total_results": len(results),
+            },
+        }
+
+    @staticmethod
+    def _normalize_termset(value: Any) -> list:
+        """Accept a list of HPO CURIEs or a comma-separated string."""
+        if isinstance(value, str):
+            return [t.strip() for t in value.split(",") if t.strip()]
+        if isinstance(value, list):
+            return [str(t).strip() for t in value if str(t).strip()]
+        return []
+
+    @staticmethod
+    def _flatten_best_matches(matches: Any) -> list:
+        """Flatten a best-matches mapping into a simple list of pairs."""
+        flat = []
+        if not isinstance(matches, dict):
+            return flat
+        for entry in matches.values():
+            if not isinstance(entry, dict):
+                continue
+            sim = entry.get("similarity") or {}
+            flat.append(
+                {
+                    "query_phenotype": entry.get("match_source"),
+                    "query_label": entry.get("match_source_label"),
+                    "matched_phenotype": entry.get("match_target"),
+                    "matched_label": entry.get("match_target_label"),
+                    "score": entry.get("score"),
+                    "ancestor_id": sim.get("ancestor_id"),
+                    "ancestor_label": sim.get("ancestor_label"),
+                    "jaccard_similarity": sim.get("jaccard_similarity"),
+                    "phenodigm_score": sim.get("phenodigm_score"),
+                }
+            )
+        return flat
+
+    def _semsim_compare(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Compare two explicit phenotype profiles (HPO term sets) pairwise.
+
+        Computes semantic similarity (Phenodigm / Jaccard / information
+        content) between a subject term set and an object term set, returning
+        the overall scores and the per-term best matches in each direction.
+        """
+        subjects = self._normalize_termset(
+            arguments.get("subjects") or arguments.get("subject_terms")
+        )
+        objects = self._normalize_termset(
+            arguments.get("objects") or arguments.get("object_terms")
+        )
+        if not subjects:
+            return {
+                "status": "error",
+                "error": (
+                    "subjects is required: a list of HPO CURIEs "
+                    "(e.g., ['HP:0001250', 'HP:0004322'])"
+                ),
+            }
+        if not objects:
+            return {
+                "status": "error",
+                "error": (
+                    "objects is required: a list of HPO CURIEs "
+                    "(e.g., ['HP:0001263', 'HP:0000252'])"
+                ),
+            }
+
+        subject_path = ",".join(subjects)
+        object_path = ",".join(objects)
+        url = f"{MONARCH_BASE_URL}/semsim/compare/{subject_path}/{object_path}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        return {
+            "status": "success",
+            "data": {
+                "average_score": data.get("average_score"),
+                "best_score": data.get("best_score"),
+                "metric": data.get("metric"),
+                "subject_best_matches": self._flatten_best_matches(
+                    data.get("subject_best_matches")
+                ),
+                "object_best_matches": self._flatten_best_matches(
+                    data.get("object_best_matches")
+                ),
+            },
+            "metadata": {
+                "source": "Monarch Initiative V3 - Semantic Similarity Compare",
+                "subjects": subjects,
+                "objects": objects,
             },
         }

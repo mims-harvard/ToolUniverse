@@ -35,6 +35,26 @@ class DGIdbTool(BaseTool):
         self.timeout = tool_config.get("timeout", 30)
         self.operation = tool_config.get("fields", {}).get("operation", "interactions")
 
+    @staticmethod
+    def _envelope(payload: Dict[str, Any], collection: str) -> Dict[str, Any]:
+        """Unwrap the GraphQL ``data`` key into the standard envelope.
+
+        DGIdb's GraphQL responses are shaped ``{"data": {<collection>:
+        {"nodes": [...]}}, "errors": [...]}``. Forwarding that verbatim under
+        another ``data`` key produced an awkward ``data.data.<collection>``
+        shape with no metadata. Unwrap one level so ``data`` holds the payload
+        directly and attach a ``metadata.total`` node count.
+        """
+        if payload.get("errors"):
+            return {"status": "error", "error": payload["errors"]}
+        inner = payload.get("data", {}) or {}
+        nodes = (inner.get(collection) or {}).get("nodes", []) or []
+        return {
+            "status": "success",
+            "data": inner,
+            "metadata": {"total": len(nodes)},
+        }
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the DGIdb API call."""
         operation = self.operation
@@ -137,8 +157,7 @@ class DGIdbTool(BaseTool):
                         filtered.append(interaction)
                     node["interactions"] = filtered
 
-            # Feature-68A-002: wrap in status envelope consistent with other ToolUniverse tools
-            return {"status": "success", "data": data}
+            return self._envelope(data, "genes")
         except requests.RequestException as e:
             return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}
 
@@ -181,8 +200,7 @@ class DGIdbTool(BaseTool):
                 timeout=self.timeout,
             )
             response.raise_for_status()
-            # Feature-68A-002: wrap in status envelope
-            return {"status": "success", "data": response.json()}
+            return self._envelope(response.json(), "genes")
         except requests.RequestException as e:
             return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}
 
@@ -218,8 +236,7 @@ class DGIdbTool(BaseTool):
                 timeout=self.timeout,
             )
             response.raise_for_status()
-            # Feature-68A-002: wrap in status envelope
-            return {"status": "success", "data": response.json()}
+            return self._envelope(response.json(), "drugs")
         except requests.RequestException as e:
             return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}
 
@@ -262,7 +279,6 @@ class DGIdbTool(BaseTool):
                 timeout=self.timeout,
             )
             response.raise_for_status()
-            # Feature-68A-002: wrap in status envelope
-            return {"status": "success", "data": response.json()}
+            return self._envelope(response.json(), "genes")
         except requests.RequestException as e:
             return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}

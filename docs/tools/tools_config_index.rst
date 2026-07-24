@@ -95,6 +95,11 @@ Packages Tools
 .. toctree::
    :maxdepth: 1
 
+   SIMBAD Astronomy Tools <simbad_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Scientific Computing Tools <scientific_computing_tools>
 
 .. toctree::

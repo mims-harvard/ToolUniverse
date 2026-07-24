@@ -69,6 +69,8 @@ class ClinGenARTool(BaseTool):
             return self._lookup_allele(arguments)
         elif self.endpoint == "get_external_records":
             return self._get_external_records(arguments)
+        elif self.endpoint == "lookup_by_external_id":
+            return self._lookup_by_external_id(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -167,5 +169,83 @@ class ClinGenARTool(BaseTool):
             "metadata": {
                 "source": "ClinGen Allele Registry",
                 "query_allele_id": allele_id,
+            },
+        }
+
+    def _lookup_by_external_id(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Reverse-resolve a dbSNP rsID or ClinVar variation id to the canonical allele.
+
+        Queries ``GET /alleles?dbSNP.rs=<n>`` or ``?ClinVar.variationId=<n>`` and
+        returns the canonical allele (CA id) plus all cross-references. The
+        ``/alleles`` endpoint returns a JSON array (one record per matching allele).
+        """
+        rs = arguments.get("dbsnp_rs")
+        if rs in (None, ""):
+            rs = arguments.get("rs")
+        clinvar_variation_id = arguments.get("clinvar_variation_id")
+        if clinvar_variation_id in (None, ""):
+            clinvar_variation_id = arguments.get("variation_id")
+
+        if rs not in (None, ""):
+            query_key = "dbSNP.rs"
+            query_value = str(rs).lower().lstrip("rs") or str(rs)
+            query_label = f"dbSNP.rs={query_value}"
+        elif clinvar_variation_id not in (None, ""):
+            query_key = "ClinVar.variationId"
+            query_value = str(clinvar_variation_id)
+            query_label = f"ClinVar.variationId={query_value}"
+        else:
+            return {
+                "status": "error",
+                "error": "Provide either dbsnp_rs (a dbSNP rsID, e.g. 113488022) "
+                "or clinvar_variation_id (a ClinVar VariationID, e.g. 13961).",
+            }
+
+        url = f"{CLINGEN_AR_BASE_URL}/alleles"
+        params = {query_key: query_value}
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+
+        records = response.json()
+        if not isinstance(records, list):
+            records = [records] if records else []
+        if not records:
+            return {
+                "status": "error",
+                "error": f"No ClinGen allele found for {query_label}.",
+            }
+
+        alleles = []
+        for rec in records:
+            allele_url = rec.get("@id", "")
+            allele_id = allele_url.split("/")[-1] if allele_url else None
+            titles = rec.get("communityStandardTitle", [])
+            title = titles[0] if titles else None
+            alleles.append(
+                {
+                    "allele_id": allele_id,
+                    "allele_url": allele_url,
+                    "community_standard_title": title,
+                    "external_records": rec.get("externalRecords", {}),
+                    "genomic_alleles": [
+                        {
+                            "hgvs": (ga.get("hgvs") or [None])[0],
+                            "reference_genome": ga.get("referenceGenome"),
+                        }
+                        for ga in rec.get("genomicAlleles", [])
+                    ],
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "query": query_label,
+                "allele_count": len(alleles),
+                "alleles": alleles,
+            },
+            "metadata": {
+                "source": "ClinGen Allele Registry",
+                "query": query_label,
             },
         }

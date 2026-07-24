@@ -1,222 +1,216 @@
 [
-  {
-    "name": "iDigBio_search_records",
-    "description": "Search iDigBio (Integrated Digitized Biocollections) for natural history specimen records from 800+ museums and herbaria worldwide. iDigBio contains 130M+ digitized specimens including plants, animals, fungi, and fossils. Returns specimen records with taxonomic names, collection locations (GPS coordinates), institution codes, collection dates, and catalog numbers. Essential for biodiversity research, biogeography, and ecological studies.",
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "scientificname": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Scientific name to search for. Examples: 'Quercus robur', 'Homo sapiens', 'Drosophila melanogaster'"
-        },
-        "kingdom": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Kingdom filter. Values: 'Plantae', 'Animalia', 'Fungi', 'Bacteria', 'Chromista'"
-        },
-        "phylum": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Phylum filter. Examples: 'Chordata', 'Arthropoda', 'Magnoliophyta'"
-        },
-        "family": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Family filter. Examples: 'Rosaceae', 'Felidae', 'Orchidaceae'"
-        },
-        "genus": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Genus filter. Examples: 'Rosa', 'Quercus', 'Drosophila'"
-        },
-        "country": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Country filter. Examples: 'United States', 'Germany', 'Brazil'"
-        },
-        "stateprovince": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "State or province filter. Examples: 'California', 'Bavaria', 'Minas Gerais'"
-        },
-        "institutioncode": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Institution code filter. Examples: 'USNM' (Smithsonian), 'CAS' (California Academy), 'NHMUK' (Natural History Museum London)"
-        },
-        "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Maximum number of records to return (default 10, max 5000)"
-        },
-        "offset": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Offset for pagination"
-        }
-      },
-      "required": []
-    },
-    "fields": {
-      "endpoint": "https://search.idigbio.org/v2/search/records"
-    },
-    "type": "BaseRESTTool",
-    "test_examples": [
-      {
-        "kingdom": "Plantae",
-        "stateprovince": "California",
-        "limit": 5
-      },
-      {
-        "family": "Orchidaceae",
-        "country": "Brazil",
-        "limit": 5
-      },
-      {
-        "genus": "Quercus",
-        "country": "United States",
-        "limit": 5
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "iDigBio specimen search results",
-          "properties": {
-            "itemCount": {
-              "type": "integer",
-              "description": "Total number of matching records"
-            },
-            "limit": {
-              "type": "integer"
-            },
-            "offset": {
-              "type": "integer"
-            },
-            "items": {
+    {
+        "name": "iDigBio_search_records",
+        "description": "Search iDigBio (130M+ digitized biodiversity specimen records from museums, herbaria, and paleo collections) by taxon and/or locality. Filter by scientificname, genus, family, phylum, class, order, country, stateprovince, recordedby, catalognumber, or collectioncode. Returns specimen records with taxon, collector, locality, and catalog identifiers. Use for occurrence/specimen lookup, collection research, and biodiversity/biogeography studies. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "scientificname": {"type": ["string", "null"], "description": "Full scientific name, e.g. 'Puma concolor'."},
+            "genus": {"type": ["string", "null"], "description": "Genus, e.g. 'Quercus'."},
+            "family": {"type": ["string", "null"], "description": "Family name."},
+            "country": {"type": ["string", "null"], "description": "Country, e.g. 'United States'."},
+            "stateprovince": {"type": ["string", "null"], "description": "State/province."},
+            "recordedby": {"type": ["string", "null"], "description": "Collector name."},
+            "catalognumber": {"type": ["string", "null"], "description": "Catalog number."},
+            "collectioncode": {"type": ["string", "null"], "description": "Collection code."},
+            "phylum": {"type": ["string", "null"], "description": "Phylum."},
+            "class": {"type": ["string", "null"], "description": "Class."},
+            "order": {"type": ["string", "null"], "description": "Order."},
+            "limit": {"type": ["integer", "null"], "description": "Max records (default 10, max 100)."}
+        }, "required": []},
+        "fields": {"timeout": 30},
+        "type": "iDigBioSearchTool",
+        "test_examples": [{"genus": "Quercus", "limit": 5}, {"scientificname": "Puma concolor", "limit": 3}, {"family": "Fabaceae", "country": "Mexico", "limit": 3}],
+        "return_schema": {
+          "oneOf": [
+            {
               "type": "array",
-              "description": "List of specimen records",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "iDigBio_get_record",
+        "description": "Retrieve a single iDigBio biodiversity specimen record by its UUID. Returns the curated summary plus the full Darwin Core data record (all collection/locality/taxonomy fields). No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "uuid": {"type": "string", "description": "iDigBio record UUID (from iDigBio_search_records)."}
+        }, "required": ["uuid"]},
+        "fields": {"timeout": 30},
+        "type": "iDigBioRecordTool",
+        "test_examples": [{"uuid": "b659bd7f-7fa7-434b-80e7-2be10d1c4e80"}, {"uuid": "25e65e9a-8ca8-4477-8802-001fb51e459f"}, {"uuid": "9d0283aa-e6be-4b7e-a810-1ad0ec8df79a"}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "iDigBio_summary_facets",
+        "description": "Get aggregate specimen statistics from iDigBio for a Darwin Core query: the exact total record count plus top-value facet breakdowns (e.g. specimens per country, institution, or collector). Unlike iDigBio_search_records (which only paginates raw records, max 100), this returns counts over the entire matching set, enabling distribution/abundance statistics without full pagination. Filter with scientificname, genus, family, country, etc.; set top_fields to the field(s) to break down by. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "scientificname": {"type": ["string", "null"], "description": "Full scientific name, e.g. 'Puma concolor'."},
+            "genus": {"type": ["string", "null"], "description": "Genus, e.g. 'Puma'."},
+            "family": {"type": ["string", "null"], "description": "Family name."},
+            "country": {"type": ["string", "null"], "description": "Country, e.g. 'United States'."},
+            "stateprovince": {"type": ["string", "null"], "description": "State/province."},
+            "recordedby": {"type": ["string", "null"], "description": "Collector name."},
+            "phylum": {"type": ["string", "null"], "description": "Phylum."},
+            "class": {"type": ["string", "null"], "description": "Class."},
+            "order": {"type": ["string", "null"], "description": "Order."},
+            "top_fields": {"type": ["string", "null"], "description": "Darwin Core field(s) to break down counts by, e.g. 'country', 'institutioncode', or 'recordedby'. Comma-separate multiple fields. If omitted, only the total count is returned."},
+            "count": {"type": ["integer", "null"], "description": "Number of top values to return per facet field (default 10, max 100)."}
+        }, "required": []},
+        "fields": {"timeout": 30, "mode": "summary"},
+        "type": "iDigBioSearchTool",
+        "test_examples": [{"genus": "puma", "top_fields": "country", "count": 5}, {"scientificname": "puma concolor"}, {"family": "Felidae", "top_fields": "country", "count": 3}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "itemCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "facets": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "itemCount"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
+    },
+    {
+        "name": "iDigBio_search_media",
+        "description": "Search the iDigBio specimen MEDIA index (specimen photographs and scans) for a Darwin Core query. Distinct from iDigBio_search_records (occurrence records): returns image/media records with media type (StillImage), provider-managed ID, creator, rights owner, usage/licensing terms (e.g. CC BY-NC-SA), and access URIs. Filter with scientificname, genus, family, country, etc. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "scientificname": {"type": ["string", "null"], "description": "Full scientific name, e.g. 'Puma concolor'."},
+            "genus": {"type": ["string", "null"], "description": "Genus, e.g. 'Puma'."},
+            "family": {"type": ["string", "null"], "description": "Family name."},
+            "country": {"type": ["string", "null"], "description": "Country, e.g. 'United States'."},
+            "stateprovince": {"type": ["string", "null"], "description": "State/province."},
+            "recordedby": {"type": ["string", "null"], "description": "Collector name."},
+            "catalognumber": {"type": ["string", "null"], "description": "Catalog number."},
+            "collectioncode": {"type": ["string", "null"], "description": "Collection code."},
+            "phylum": {"type": ["string", "null"], "description": "Phylum."},
+            "class": {"type": ["string", "null"], "description": "Class."},
+            "order": {"type": ["string", "null"], "description": "Order."},
+            "limit": {"type": ["integer", "null"], "description": "Max media records (default 10, max 100)."}
+        }, "required": []},
+        "fields": {"timeout": 30, "mode": "media"},
+        "type": "iDigBioSearchTool",
+        "test_examples": [{"scientificname": "puma concolor", "limit": 2}, {"genus": "Quercus", "limit": 2}, {"family": "Felidae", "limit": 2}],
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
                   "uuid": {
-                    "type": "string",
-                    "description": "Unique record identifier"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
-                  "indexTerms": {
-                    "type": "object",
-                    "description": "Indexed searchable fields",
-                    "properties": {
-                      "scientificname": {
-                        "type": "string",
-                        "description": "Scientific name"
-                      },
-                      "kingdom": {
-                        "type": "string"
-                      },
-                      "phylum": {
-                        "type": "string"
-                      },
-                      "class": {
-                        "type": "string"
-                      },
-                      "order": {
-                        "type": "string"
-                      },
-                      "family": {
-                        "type": "string"
-                      },
-                      "genus": {
-                        "type": "string"
-                      },
-                      "country": {
-                        "type": "string"
-                      },
-                      "stateprovince": {
-                        "type": "string"
-                      },
-                      "county": {
-                        "type": "string"
-                      },
-                      "municipality": {
-                        "type": "string"
-                      },
-                      "continent": {
-                        "type": "string"
-                      },
-                      "catalognumber": {
-                        "type": "string"
-                      },
-                      "institutioncode": {
-                        "type": "string",
-                        "description": "Museum/institution code"
-                      },
-                      "collectioncode": {
-                        "type": "string"
-                      },
-                      "eventdate": {
-                        "type": "string",
-                        "description": "Collection date"
-                      },
-                      "geopoint": {
-                        "type": "object",
-                        "properties": {
-                          "lat": {
-                            "type": "number"
-                          },
-                          "lon": {
-                            "type": "number"
-                          }
-                        }
-                      },
-                      "individualcount": {
-                        "type": "integer"
-                      }
-                    }
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
-                  "data": {
-                    "type": "object",
-                    "description": "Original verbatim data from institution"
+                  "format": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "provider_managed_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "creator": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rights_owner": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "usage_terms": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "access_uri": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
             }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
           ]
         }
-      ]
     }
-  }
 ]

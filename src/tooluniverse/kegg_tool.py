@@ -206,27 +206,32 @@ class KEGGListOrganisms(KEGGRESTTool):
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
-        self.endpoint = "/list/organism"
+        # KEGG retired /list/organism (confirmed live: HTTP 400) -- /list/genome
+        # returns the same organism catalog under a "T-number\tcode; description"
+        # format instead of the old 3-column layout.
+        self.endpoint = "/list/genome"
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List organisms."""
         result = self._make_request(self.endpoint)
 
-        # Parse organism list
+        # Parse organism list: each line is "T01001\thsa; Homo sapiens (human)".
         if result.get("status") == "success" and isinstance(result.get("data"), str):
             lines = result["data"].split("\n")
             organisms = []
             for line in lines:
-                if "\t" in line:
-                    parts = line.split("\t")
-                    if len(parts) >= 3:
-                        organisms.append(
-                            {
-                                "organism_code": parts[0],
-                                "organism_name": parts[1],
-                                "description": parts[2] if len(parts) > 2 else "",
-                            }
-                        )
+                if "\t" not in line:
+                    continue
+                genome_id, rest = line.split("\t", 1)
+                organism_code, _, description = rest.partition("; ")
+                organisms.append(
+                    {
+                        "organism_code": organism_code,
+                        "organism_name": description or organism_code,
+                        "description": description,
+                        "kegg_genome_id": genome_id,
+                    }
+                )
             result["data"] = organisms
             result["count"] = len(organisms)
 

@@ -1,0 +1,144 @@
+[
+  {
+    "name": "TDC_predict_oracle_score",
+    "description": "Score one or more molecules (SMILES) with a pretrained Therapeutics Data Commons (TDC) oracle, computed locally via the PyTDC package. Oracles are ML/medicinal-chemistry scorers used for molecular property prediction and goal-directed optimization. Supported oracles: 'QED' (drug-likeness 0-1, higher=better; RDKit, offline), 'SA' (synthetic accessibility 1=easy to 10=hard; downloads a small table once), 'LogP' (TDC's PENALIZED logP = Crippen logP - synthetic-accessibility - ring penalty, an optimization objective, NOT raw octanol-water logP; for plain logP use RDKit/SwissADME; RDKit, offline), 'GSK3B' (ML probability of GSK3-beta inhibition 0-1; downloads a model once), 'JNK3' (ML probability of JNK3 inhibition 0-1; downloads a model once), 'DRD2' (ML probability of DRD2 activity 0-1; downloads a model once). Distinct from RDKit/ADMET tools because it exposes TDC's pretrained bioactivity oracles. Requires the optional 'PyTDC' package; returns a clean error if it is not installed.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "A single SMILES string or a list of SMILES strings to score. Example: 'CC(=O)Oc1ccccc1C(=O)O' (aspirin)."
+        },
+        "oracle": {
+          "type": "string",
+          "description": "Oracle name (case-insensitive). One of: QED, SA, LogP, GSK3B, JNK3, DRD2.",
+          "enum": [
+            "QED",
+            "SA",
+            "LogP",
+            "GSK3B",
+            "JNK3",
+            "DRD2"
+          ]
+        }
+      },
+      "required": [
+        "smiles",
+        "oracle"
+      ]
+    },
+    "type": "TDCOracleTool",
+    "required_packages": [
+      "PyTDC"
+    ],
+    "test_examples": [
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+        "oracle": "QED"
+      },
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+        "oracle": "SA"
+      },
+      {
+        "smiles": [
+          "CC(=O)Oc1ccccc1C(=O)O",
+          "CCO"
+        ],
+        "oracle": "LogP"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Successful oracle scoring. Mirrors the content of the 'data' field returned by the tool.",
+              "properties": {
+                "oracle": {
+                  "type": "string",
+                  "description": "Canonical oracle name that was used."
+                },
+                "oracle_description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Human-readable description of the oracle."
+                },
+                "results": {
+                  "type": "array",
+                  "description": "One entry per input SMILES, in input order.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "smiles": {
+                        "type": "string",
+                        "description": "The input SMILES string."
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The oracle score for this molecule, or null if scoring failed."
+                      },
+                      "error": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Error message if scoring this molecule failed, otherwise null."
+                      }
+                    },
+                    "required": [
+                      "smiles",
+                      "score",
+                      "error"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "oracle",
+                "results"
+              ]
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response (e.g. PyTDC not installed, empty input, or unknown oracle).",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message."
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -117,6 +117,188 @@
     }
   },
   {
+    "name": "UCSC_list_tracks",
+    "description": "Discover available UCSC Genome Browser annotation tracks for a genome assembly, and inspect a track's column schema. With only 'genome' set, returns the list of leaf tracks (each with track name, type, shortLabel, longLabel, parent) so you can find valid track names to pass to UCSC_get_track (there are tens of thousands, e.g. dbSnp155, dbSnp155ClinVar, dbSnp155Common, knownGene, ncbiRefSeq, encodeCcreCombined). Use 'name_filter' to narrow the list by substring (matched against track name, shortLabel, longLabel). When 'track' is also provided, returns that track's column schema instead (column name, sqlType, jsonType, description) from the list/schema endpoint. Example: genome 'hg38' returns 23000+ tracks; genome 'hg38' + track 'knownGene' returns its 27 columns (chrom, chromStart, ...).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genome": {
+          "type": "string",
+          "description": "UCSC genome assembly identifier. Examples: 'hg38', 'hg19', 'mm39', 'mm10', 'dm6', 'danRer11'."
+        },
+        "track": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional. When set, return this track's column schema instead of the track list. Example: 'knownGene', 'dbSnp155', 'ncbiRefSeq'."
+        },
+        "name_filter": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional substring filter (case-insensitive) applied to track name/shortLabel/longLabel when listing tracks. Example: 'dbSnp', 'gencode', 'clinvar'."
+        },
+        "max_tracks": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of tracks to return when listing (default 500). The total matched count is always reported in track_count."
+        }
+      },
+      "required": [
+        "genome"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "list_tracks"
+    },
+    "type": "UCSCGenomeTool",
+    "test_examples": [
+      {
+        "genome": "hg38",
+        "name_filter": "dbSnp155",
+        "max_tracks": 10
+      },
+      {
+        "genome": "hg38",
+        "track": "knownGene"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "genome": {
+                  "type": "string"
+                },
+                "name_filter": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "track_count": {
+                  "type": "integer"
+                },
+                "returned_count": {
+                  "type": "integer"
+                },
+                "tracks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "track": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "short_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "long_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "parent": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "group": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "track": {
+                  "type": "string"
+                },
+                "track_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "column_count": {
+                  "type": "integer"
+                },
+                "columns": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "sqlType": {
+                        "type": "string"
+                      },
+                      "jsonType": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
     "name": "UCSC_get_sequence",
     "description": "Get DNA sequence from the UCSC Genome Browser for a specified genomic region. Returns the nucleotide sequence for a given chromosome, start, and end position in a genome assembly. Useful for primer design, sequence analysis, and regulatory element inspection. Example: hg38, chr17, start=7668421, end=7668521 returns 100bp of TP53 sequence.",
     "parameter": {

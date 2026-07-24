@@ -1,0 +1,6 @@
+torch>=1.6
+enformer-pytorch>=0.8
+# enformer-pytorch loads via HuggingFace transformers; transformers >= 5.0 removed
+# the attribute enformer-pytorch relies on (AttributeError all_tied_weights_keys),
+# so pin to the 4.x line. Validated on CPU with transformers 4.49.
+transformers>=4.46,<5

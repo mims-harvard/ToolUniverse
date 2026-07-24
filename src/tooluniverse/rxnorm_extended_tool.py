@@ -61,6 +61,10 @@ class RxNormExtendedTool(BaseTool):
             return self._get_drug_info(arguments)
         elif op == "get_related_drugs":
             return self._get_related_drugs(arguments)
+        elif op == "get_ndc_status_history":
+            return self._get_ndc_status_history(arguments)
+        elif op == "get_ndc_properties":
+            return self._get_ndc_properties(arguments)
         return {"status": "error", "error": f"Unknown operation: {op}"}
 
     # ------------------------------------------------------------------
@@ -235,5 +239,153 @@ class RxNormExtendedTool(BaseTool):
                 "source": "NLM RxNorm API",
                 "tty_filter": tty_param,
                 "tty_key": {v: k for k, v in TTY_LABELS.items()},
+            },
+        }
+
+    def _get_ndc_status_history(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Return active/obsolete status plus full RxCUI remapping timeline for an NDC."""
+        ndc = arguments.get("ndc")
+        if not ndc or not str(ndc).strip():
+            return {"status": "error", "error": "ndc is required"}
+
+        url = f"{RXNORM_BASE}/ndcstatus.json"
+        try:
+            resp = requests.get(
+                url, params={"ndc": str(ndc).strip()}, timeout=self.timeout
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"RxNorm API request failed: {e}"}
+        except Exception as e:
+            return {"status": "error", "error": f"Failed to parse response: {e}"}
+
+        status_block = data.get("ndcStatus") or {}
+        if not status_block or not status_block.get("ndc11"):
+            return {
+                "status": "success",
+                "data": {
+                    "ndc": str(ndc).strip(),
+                    "found": False,
+                    "ndc_status": None,
+                    "ndc_history": [],
+                },
+                "metadata": {
+                    "source": "NLM RxNorm API",
+                    "note": "No NDC status found. Verify the NDC (try 11-digit form).",
+                },
+            }
+
+        history_raw = status_block.get("ndcHistory") or []
+        history = [
+            {
+                "active_rxcui": h.get("activeRxcui"),
+                "original_rxcui": h.get("originalRxcui"),
+                "start_date": h.get("startDate"),
+                "end_date": h.get("endDate"),
+            }
+            for h in history_raw
+            if isinstance(h, dict)
+        ]
+
+        source_list = (status_block.get("sourceList") or {}).get("sourceName") or []
+
+        return {
+            "status": "success",
+            "data": {
+                "ndc": str(ndc).strip(),
+                "found": True,
+                "ndc11": status_block.get("ndc11"),
+                "status": status_block.get("status"),
+                "active": status_block.get("active"),
+                "rxcui": status_block.get("rxcui"),
+                "concept_name": status_block.get("conceptName"),
+                "concept_status": status_block.get("conceptStatus"),
+                "sources": source_list,
+                "ndc_history": history,
+            },
+            "metadata": {
+                "source": "NLM RxNorm API",
+                "total_history_periods": len(history),
+            },
+        }
+
+    def _get_ndc_properties(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Return product/package metadata (imprint, color, labeler, SPL setid) for an NDC."""
+        ndc = arguments.get("ndc")
+        if not ndc or not str(ndc).strip():
+            return {"status": "error", "error": "ndc is required"}
+
+        url = f"{RXNORM_BASE}/ndcproperties.json"
+        try:
+            resp = requests.get(
+                url, params={"id": str(ndc).strip()}, timeout=self.timeout
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"RxNorm API request failed: {e}"}
+        except Exception as e:
+            return {"status": "error", "error": f"Failed to parse response: {e}"}
+
+        prop_items = (data.get("ndcPropertyList") or {}).get("ndcProperty") or []
+        if not isinstance(prop_items, list):
+            prop_items = [prop_items]
+        if not prop_items:
+            return {
+                "status": "success",
+                "data": {"ndc": str(ndc).strip(), "found": False, "products": []},
+                "metadata": {
+                    "source": "NLM RxNorm API",
+                    "note": "No NDC properties found. Verify the NDC.",
+                },
+            }
+
+        products = []
+        for item in prop_items:
+            if not isinstance(item, dict):
+                continue
+            concepts = (item.get("propertyConceptList") or {}).get(
+                "propertyConcept"
+            ) or []
+            if not isinstance(concepts, list):
+                concepts = [concepts]
+            props = {
+                c.get("propName"): c.get("propValue")
+                for c in concepts
+                if isinstance(c, dict) and c.get("propName")
+            }
+            packaging = (item.get("packagingList") or {}).get("packaging") or []
+            if not isinstance(packaging, list):
+                packaging = [packaging]
+            products.append(
+                {
+                    "ndc_item": item.get("ndcItem"),
+                    "ndc10": item.get("ndc10"),
+                    "ndc9": item.get("ndc9"),
+                    "rxcui": item.get("rxcui"),
+                    "spl_set_id": item.get("splSetIdItem"),
+                    "imprint_code": props.get("IMPRINT_CODE"),
+                    "color": props.get("COLORTEXT"),
+                    "shape": props.get("SHAPE"),
+                    "labeler": props.get("LABELER"),
+                    "marketing_category": props.get("MARKETING_CATEGORY"),
+                    "anda": props.get("ANDA"),
+                    "nda": props.get("NDA"),
+                    "packaging": packaging,
+                    "properties": props,
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "ndc": str(ndc).strip(),
+                "found": True,
+                "products": products,
+            },
+            "metadata": {
+                "source": "NLM RxNorm API",
+                "total_products": len(products),
             },
         }

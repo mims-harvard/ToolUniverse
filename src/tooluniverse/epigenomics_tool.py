@@ -8,10 +8,16 @@ Integrates data from:
 - NCBI GEO (methylation array datasets, ChIP-seq datasets)
 - Ensembl Regulatory Build (regulatory features, enhancers, promoters)
 
-No authentication required for any of these APIs.
+Optional auth: set ``NCBI_API_KEY`` to lift the NCBI E-utilities rate limit
+from 3 req/sec to 10 req/sec (free, register at
+https://www.ncbi.nlm.nih.gov/account/settings/). The tool works without it
+but the GEO_* endpoints will burst-throttle (HTTP 429) under load.
 """
 
 import json
+import os
+import random
+import time
 import requests
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
@@ -21,6 +27,46 @@ ENCODE_BASE_URL = "https://www.encodeproject.org"
 UCSC_API_URL = "https://api.genome.ucsc.edu"
 NCBI_EUTILS_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 ENSEMBL_REST_URL = "https://rest.ensembl.org"
+
+# Retry on transient upstream issues. NCBI E-utils 429s on burst; ENCODE/UCSC
+# occasionally 503. Exponential backoff with jitter.
+_RETRY_STATUS_CODES = {408, 429, 500, 502, 503, 504}
+_MAX_RETRIES = 3
+
+
+def _inject_ncbi_api_key(params: Dict[str, Any]) -> Dict[str, Any]:
+    """If NCBI_API_KEY is set, append it to the params dict. 3→10 req/sec.
+
+    Returns the same params dict (mutated) for chaining.
+    """
+    key = os.environ.get("NCBI_API_KEY")
+    if key:
+        params["api_key"] = key
+    return params
+
+
+def _request_with_backoff(url: str, *, timeout: int, **kwargs) -> requests.Response:
+    """GET ``url`` with exponential-backoff retry on 429/5xx.
+
+    Re-raises the final response's HTTPError after exhausting retries.
+    Sleeps respect a ``Retry-After`` header when the server provides one.
+    """
+    last_resp = None
+    for attempt in range(_MAX_RETRIES + 1):
+        last_resp = requests.get(url, timeout=timeout, **kwargs)
+        if last_resp.status_code not in _RETRY_STATUS_CODES:
+            return last_resp
+        if attempt == _MAX_RETRIES:
+            break
+        # Honour Retry-After when present, otherwise exp-backoff + jitter
+        retry_after = last_resp.headers.get("Retry-After")
+        if retry_after and retry_after.isdigit():
+            delay = min(float(retry_after), 30.0)
+        else:
+            delay = min(0.5 * (2**attempt) + random.uniform(0, 0.25), 8.0)
+        time.sleep(delay)
+    last_resp.raise_for_status()
+    return last_resp
 
 
 @register_tool("EpigenomicsTool")
@@ -125,7 +171,7 @@ class EpigenomicsTool(BaseTool):
         """Generic ENCODE search helper."""
         url = f"{ENCODE_BASE_URL}/search/"
         params["format"] = "json"
-        response = requests.get(
+        response = _request_with_backoff(
             url,
             params=params,
             headers={"Accept": "application/json"},
@@ -496,29 +542,40 @@ class EpigenomicsTool(BaseTool):
     # =========================================================================
 
     def _geo_esearch(self, term: str, limit: int = 20) -> Dict[str, Any]:
-        """Search GEO datasets via NCBI E-utilities."""
+        """Search GEO datasets via NCBI E-utilities.
+
+        Uses NCBI_API_KEY from env when set (lifts the rate cap from 3 to
+        10 req/sec) and retries on 429/5xx with exponential backoff.
+        """
         url = f"{NCBI_EUTILS_URL}/esearch.fcgi"
-        params = {
-            "db": "gds",
-            "term": term,
-            "retmax": min(int(limit), 100),
-            "retmode": "json",
-        }
-        response = requests.get(url, params=params, timeout=self.timeout)
+        params = _inject_ncbi_api_key(
+            {
+                "db": "gds",
+                "term": term,
+                "retmax": min(int(limit), 100),
+                "retmode": "json",
+            }
+        )
+        response = _request_with_backoff(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         return response.json()
 
     def _geo_esummary(self, ids: list) -> Dict[str, Any]:
-        """Get summary for GEO dataset IDs via NCBI E-utilities."""
+        """Get summary for GEO dataset IDs via NCBI E-utilities.
+
+        Uses NCBI_API_KEY when set + retries on 429/5xx.
+        """
         if not ids:
             return {"result": {}}
         url = f"{NCBI_EUTILS_URL}/esummary.fcgi"
-        params = {
-            "db": "gds",
-            "id": ",".join(str(i) for i in ids),
-            "retmode": "json",
-        }
-        response = requests.get(url, params=params, timeout=self.timeout)
+        params = _inject_ncbi_api_key(
+            {
+                "db": "gds",
+                "id": ",".join(str(i) for i in ids),
+                "retmode": "json",
+            }
+        )
+        response = _request_with_backoff(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         return response.json()
 

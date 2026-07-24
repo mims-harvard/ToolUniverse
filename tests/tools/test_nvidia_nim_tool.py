@@ -101,6 +101,56 @@ class TestNvidiaNIMToolUnit:
         """Test URL construction."""
         url = nvidia_nim_tool._build_url()
         assert url == "https://health.api.nvidia.com/v1/biology/test/endpoint"
+
+    def test_build_url_fills_templated_path_param(self):
+        """A {placeholder} endpoint is filled from args, default, and sanitized."""
+        from tooluniverse.nvidia_nim_tool import NvidiaNIMTool
+
+        cfg = {
+            "name": "evo2",
+            "fields": {"endpoint": "arc/{model}/generate",
+                       "path_params": {"model": "evo2-40b"}},
+            "parameter": {"type": "object",
+                          "properties": {"sequence": {"type": "string"}},
+                          "required": ["sequence"]},
+        }
+        with patch.dict(os.environ, {"NVIDIA_API_KEY": "k"}):
+            tool = NvidiaNIMTool(cfg)
+        base = "https://health.api.nvidia.com/v1/biology/arc"
+        # default when not provided
+        assert tool._build_url({}) == f"{base}/evo2-40b/generate"
+        # overridden by a valid arg
+        assert tool._build_url({"model": "evo2-7b"}) == f"{base}/evo2-7b/generate"
+        # unsafe value falls back to the default (no path injection)
+        assert tool._build_url({"model": "../../x"}) == f"{base}/evo2-40b/generate"
+
+    @patch("requests.post")
+    def test_path_param_not_sent_in_request_body(self, mock_post):
+        """The model path-param selects the URL; it must not leak into the body."""
+        from tooluniverse.nvidia_nim_tool import NvidiaNIMTool
+
+        cfg = {
+            "name": "evo2",
+            "fields": {"endpoint": "arc/{model}/generate",
+                       "path_params": {"model": "evo2-40b"}, "response_type": "json"},
+            "parameter": {"type": "object",
+                          "properties": {"sequence": {"type": "string"}},
+                          "required": ["sequence"]},
+        }
+        resp = MagicMock()
+        resp.status_code = 200
+        resp.headers = {"Content-Type": "application/json"}
+        resp.json.return_value = {"sequence": "ACGT"}
+        mock_post.return_value = resp
+
+        with patch.dict(os.environ, {"NVIDIA_API_KEY": "k"}):
+            NvidiaNIMTool(cfg).run({"sequence": "ACGT", "model": "evo2-7b"})
+
+        called_url = mock_post.call_args[0][0]
+        sent_body = mock_post.call_args[1]["json"]
+        assert called_url.endswith("/arc/evo2-7b/generate")
+        assert "model" not in sent_body
+        assert sent_body["sequence"] == "ACGT"
     
     def test_missing_api_key_error(self):
         """Test error when API key is missing."""
@@ -220,11 +270,176 @@ class TestNvidiaNIMToolUnit:
         mock_response.status_code = 500
         mock_response.text = "Internal server error"
         mock_post.return_value = mock_response
-        
+
         result = nvidia_nim_tool.run({"sequence": "MVLSPADKTNVKAAWGKVG"})
-        
+
         assert "error" in result
         assert "Server error" in result["error"]
+
+    @patch("requests.post")
+    def test_server_error_empty_body_surfaces_nvcf_status(self, mock_post, nvidia_nim_tool):
+        """A 5xx with an empty body should surface the nvcf-status header signal.
+
+        The biology gateway returns 504 with an empty body and
+        nvcf-status='errored' when a hosted function cold-starts or fails; the
+        useful diagnostic lives in the headers, not the body.
+        """
+        mock_response = MagicMock()
+        mock_response.status_code = 504
+        mock_response.text = ""
+        mock_response.headers = {"nvcf-status": "errored", "nvcf-reqid": "abc-123"}
+        mock_post.return_value = mock_response
+
+        result = nvidia_nim_tool.run({"sequence": "MVLSPADKTNVKAAWGKVG"})
+
+        assert result["status"] == "error"
+        assert "errored" in result["detail"]
+        assert "abc-123" in result["detail"]
+
+    @patch("requests.post")
+    def test_esmfold_json_envelope_unwrapped_to_pdb(self, mock_post):
+        """ESMFold answers the pdb path with JSON {"pdbs": [...]}; unwrap to PDB.
+
+        The tool must return the actual PDB string in 'structure', not the raw
+        JSON envelope, so downstream consumers get parseable ATOM records.
+        """
+        from tooluniverse.nvidia_nim_tool import NvidiaNIMTool
+
+        cfg = {
+            "name": "esmfold",
+            "fields": {"endpoint": "nvidia/esmfold", "response_type": "pdb"},
+            "parameter": {"type": "object", "properties": {"sequence": {"type": "string"}},
+                          "required": ["sequence"]},
+        }
+        pdb_text = "PARENT N/A\nATOM      1  N   MET A   1       0.0   0.0   0.0\n"
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.headers = {"Content-Type": "application/json"}
+        mock_response.text = json.dumps({"pdbs": [pdb_text]})
+        mock_response.json.return_value = {"pdbs": [pdb_text]}
+        mock_post.return_value = mock_response
+
+        with patch.dict(os.environ, {"NVIDIA_API_KEY": "test-key"}):
+            result = NvidiaNIMTool(cfg).run({"sequence": "MVLSP"})
+
+        assert result["status"] == "success"
+        assert result["structure"] == pdb_text
+        assert result["structure"].startswith("PARENT")  # not "{"
+
+    @patch("requests.post")
+    def test_inner_failure_reported_as_error(self, mock_post, nvidia_nim_tool):
+        """HTTP 200 with an inner {"status": "failed"} must surface as an error.
+
+        DiffDock (and similar NIMs) answer 200 while reporting an internal
+        failure; reporting top-level success would mislead the caller.
+        """
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.headers = {"Content-Type": "application/json"}
+        mock_response.json.return_value = {
+            "status": "failed",
+            "details": "Fail to read ligand molecule description",
+            "ligand_positions": ["", ""],
+        }
+        mock_post.return_value = mock_response
+
+        result = nvidia_nim_tool.run({"sequence": "MVLSP"})
+
+        assert result["status"] == "error"
+        assert "inner failure" in result["error"].lower()
+        assert "ligand" in result["detail"].lower()
+        # the raw payload is still passed through for debugging
+        assert result["data"]["status"] == "failed"
+
+    @patch("requests.post")
+    def test_inner_success_not_flagged(self, mock_post, nvidia_nim_tool):
+        """An inner {"status": "success"} (e.g. GenMol) must stay a success."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.headers = {"Content-Type": "application/json"}
+        mock_response.json.return_value = {"status": "success", "molecules": [{"smiles": "CCO"}]}
+        mock_post.return_value = mock_response
+
+        result = nvidia_nim_tool.run({"sequence": "MVLSP"})
+
+        assert result["status"] == "success"
+        assert result["data"]["molecules"][0]["smiles"] == "CCO"
+
+    @patch("requests.post")
+    def test_404_not_found_for_account(self, mock_post, nvidia_nim_tool):
+        """A 404 'Not found for account' means the model isn't provisioned.
+
+        This is distinct from a wrong path; the error should say the model is
+        unavailable for this account rather than implying a missing endpoint.
+        """
+        mock_response = MagicMock()
+        mock_response.status_code = 404
+        mock_response.text = ('{"status":404,"title":"Not Found",'
+                              '"detail":"Function \'b1116c0d\': Not found for account \'xyz\'"}')
+        mock_post.return_value = mock_response
+
+        result = nvidia_nim_tool.run({"sequence": "MVLSP"})
+
+        assert result["status"] == "error"
+        assert "not available" in result["error"].lower()
+        assert "account" in result["error"].lower()
+
+    @patch("requests.post")
+    def test_degraded_function_reported_clearly(self, mock_post, nvidia_nim_tool):
+        """A 400 'DEGRADED function cannot be invoked' is a transient NVIDIA state.
+
+        It must read as a server-side degradation (retry later), not a bad
+        request from the caller.
+        """
+        mock_response = MagicMock()
+        mock_response.status_code = 400
+        mock_response.text = ('{"status":400,"title":"Bad Request",'
+                              '"detail":"Function id \'e3dfc6dd\': DEGRADED function cannot be invoked"}')
+        mock_response.headers = {}
+        mock_post.return_value = mock_response
+
+        result = nvidia_nim_tool.run({"sequence": "MVLSP"})
+
+        assert result["status"] == "error"
+        assert "degraded" in result["error"].lower()
+        assert "retry later" in result["detail"].lower()
+
+    @patch("requests.get")
+    @patch("requests.post")
+    def test_async_polls_on_invocation_host_not_integrate(self, mock_post, mock_get):
+        """Async polling must target the same gateway host as the invocation.
+
+        Biology NIMs live on health.api.nvidia.com; the LLM host
+        integrate.api.nvidia.com has no /v1/status route. Regression guard for
+        the poll-URL fix.
+        """
+        from tooluniverse.nvidia_nim_tool import NvidiaNIMTool
+
+        cfg = {
+            "name": "async_tool",
+            "fields": {"endpoint": "deepmind/alphafold2", "async_expected": True,
+                       "poll_seconds": 5, "response_type": "json"},
+            "parameter": {"type": "object", "properties": {"sequence": {"type": "string"}},
+                          "required": ["sequence"]},
+        }
+        post_202 = MagicMock()
+        post_202.status_code = 202
+        post_202.headers = {"nvcf-reqid": "req-xyz"}
+        mock_post.return_value = post_202
+
+        poll_200 = MagicMock()
+        poll_200.status_code = 200
+        poll_200.headers = {"Content-Type": "application/json"}
+        poll_200.json.return_value = {"structure": "PDB"}
+        mock_get.return_value = poll_200
+
+        with patch.dict(os.environ, {"NVIDIA_API_KEY": "test-key"}):
+            result = NvidiaNIMTool(cfg).run({"sequence": "MVLSP"})
+
+        assert result["status"] == "success"
+        polled_url = mock_get.call_args[0][0]
+        assert polled_url == "https://health.api.nvidia.com/v1/status/req-xyz"
+        assert "integrate.api.nvidia.com" not in polled_url
 
 
 # ============================================================================

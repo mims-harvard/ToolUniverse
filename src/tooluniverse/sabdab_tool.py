@@ -7,6 +7,8 @@ annotated with CDR sequences, chain pairings, and other structural features.
 Website: https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab
 """
 
+import csv
+import io
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -46,12 +48,14 @@ class SAbDabTool(BaseTool):
             return self._search_structures(arguments)
         elif operation == "get_structure":
             return self._get_structure(arguments)
+        elif operation == "get_structure_summary":
+            return self._get_structure_summary(arguments)
         elif operation == "get_summary":
             return self._get_summary(arguments)
         else:
             return {
                 "status": "error",
-                "error": f"Unknown operation: {operation}. Supported: search_structures, get_structure, get_summary",
+                "error": f"Unknown operation: {operation}. Supported: search_structures, get_structure, get_structure_summary, get_summary",
             }
 
     def _search_structures(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -144,8 +148,45 @@ class SAbDabTool(BaseTool):
 
             response.raise_for_status()
 
-            # Extract metadata from PDB REMARK lines
+            # Fix-R17D-2: SAbDab migrated to a new frontend ("SAbDab2", a
+            # React SPA) and its old download URL now redirects to an
+            # internal-only backend hostname (confirmed live: the new
+            # domain's /api/pdb/{id}/ route 307-redirects to
+            # "http://sabdab-backend:8000/...", not publicly resolvable) --
+            # so this request lands on the SPA shell instead of real PDB
+            # coordinate data, and used to be reported as a successful
+            # download of that HTML. Detect and report it honestly instead.
             pdb_content = response.text
+            # SAbDab migrated to a React SPA that serves the same generic
+            # HTML app shell for every route including this download
+            # endpoint (confirmed live: /pdb/<id>/ 200s with
+            # "<!doctype html>..." instead of PDB coordinate records) --
+            # detect that before claiming success, rather than reporting
+            # the HTML page's byte count/preview as if it were structure
+            # data. A positive check against known PDB record prefixes
+            # (rather than an HTML-only negative check) also catches any
+            # other non-PDB content the endpoint might return.
+            first_line = pdb_content.lstrip().splitlines()[0] if pdb_content else ""
+            looks_like_pdb = first_line[:6].strip() in (
+                "HEADER",
+                "ATOM",
+                "HETATM",
+                "TITLE",
+                "REMARK",
+                "COMPND",
+            )
+            if not looks_like_pdb:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"SAbDab did not return PDB structure data for {pdb_id} "
+                        "(got non-PDB content, likely an HTML page from "
+                        "SAbDab's current site). The structure/site layout "
+                        "may have changed; try downloading directly from "
+                        f"{pdb_url}."
+                    ),
+                }
+
             metadata = {"pdb_id": pdb_id}
 
             # Parse REMARK 5 lines which contain SAbDab annotations
@@ -179,6 +220,173 @@ class SAbDabTool(BaseTool):
                 "metadata": {
                     "source": "SAbDab",
                     "note": "PDB file with Chothia numbering available at download_url",
+                },
+            }
+
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
+        except Exception as e:
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
+
+    @staticmethod
+    def _looks_like_html(text: str) -> bool:
+        """True when the response body is an HTML page (the SAbDab2 SPA shell)
+        rather than the expected PDB/TSV data."""
+        return text.lstrip()[:20].lower().startswith(("<!doctype html", "<html"))
+
+    @staticmethod
+    def _coerce(value: str):
+        """Convert SAbDab TSV string cells to typed values.
+
+        SAbDab writes the literal strings 'None'/'NA'/'' for missing fields and
+        'True'/'False' for boolean flags. Numeric fields (resolution, r_free)
+        come back as decimal strings.
+        """
+        if value is None:
+            return None
+        stripped = value.strip()
+        if stripped in ("", "None", "NA", "na", "N/A"):
+            return None
+        if stripped == "True":
+            return True
+        if stripped == "False":
+            return False
+        # Try numeric conversion (resolution, r_free, r_factor, delta_g, ...)
+        try:
+            if "." in stripped or "e" in stripped.lower():
+                return float(stripped)
+            return int(stripped)
+        except ValueError:
+            return stripped
+
+    def _get_structure_summary(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get per-structure curated antibody annotations for a PDB ID.
+
+        Returns the SAbDab summary TSV row(s) for the structure: antigen
+        name/type/species, heavy/light chain species and subclass, resolution,
+        experimental method, R-free / R-factor, scFv and engineered flags, and
+        (when curated) binding affinity Kd, delta_G, affinity method,
+        temperature and PMID.
+
+        Args:
+            arguments: Dict containing:
+                - pdb_id: 4-character PDB ID (alias: pdb_code, pdb)
+        """
+        pdb_id = (
+            arguments.get("pdb_id")
+            or arguments.get("pdb_code")
+            or arguments.get("pdb")
+            or ""
+        )
+        if not pdb_id:
+            return {
+                "status": "error",
+                "error": "Missing required parameter: pdb_id",
+            }
+
+        pdb_id_lower = pdb_id.strip().lower()
+
+        try:
+            response = requests.get(
+                f"{SABDAB_BASE_URL}/summary/{pdb_id_lower}/",
+                timeout=self.timeout,
+                headers={
+                    "User-Agent": "ToolUniverse/SAbDab",
+                    "Accept": "text/tab-separated-values",
+                },
+            )
+
+            if response.status_code == 404:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Structure not found in SAbDab: {pdb_id}. "
+                        "SAbDab only annotates PDB entries containing antibody structures."
+                    ),
+                }
+
+            response.raise_for_status()
+
+            text = response.text
+            content_type = response.headers.get("Content-Type", "")
+
+            # Expect a TSV with a header row + one row per antibody chain pairing.
+            if "tab-separated" not in content_type and "\t" not in text:
+                # Fix-R17D-3: see the matching detection in _get_structure
+                # -- SAbDab's new site returns its SPA shell HTML instead
+                # of TSV data at this URL now, which the old message here
+                # ("may not be an antibody complex") misleadingly blamed on
+                # the structure itself rather than the actual cause
+                # (upstream site migration), confirmed live even for
+                # verified real antibody-antigen complexes.
+                if self._looks_like_html(text):
+                    return {
+                        "status": "error",
+                        "error": (
+                            "SAbDab appears to have migrated to a new site "
+                            "(SAbDab2) with no public summary-data API "
+                            "currently reachable at this URL -- got an "
+                            "HTML page instead of TSV data. This is an "
+                            "upstream issue, not a query problem."
+                        ),
+                    }
+                return {
+                    "status": "error",
+                    "error": (
+                        f"SAbDab did not return tabular data for {pdb_id} "
+                        "(got non-tabular content, likely an HTML page from "
+                        "SAbDab's current site, rather than 'structure may "
+                        "not be an antibody complex' -- confirmed live this "
+                        "now happens even for known antibody structures)."
+                    ),
+                }
+
+            reader = csv.DictReader(io.StringIO(text.strip()), delimiter="\t")
+            rows = []
+            for raw in reader:
+                rows.append({k: self._coerce(v) for k, v in raw.items()})
+
+            if not rows:
+                return {
+                    "status": "error",
+                    "error": f"No SAbDab annotation rows found for {pdb_id}.",
+                }
+
+            first = rows[0]
+            return {
+                "status": "success",
+                "data": {
+                    "pdb_id": pdb_id_lower,
+                    "antigen_name": first.get("antigen_name"),
+                    "antigen_type": first.get("antigen_type"),
+                    "antigen_species": first.get("antigen_species"),
+                    "heavy_species": first.get("heavy_species"),
+                    "light_species": first.get("light_species"),
+                    "resolution": first.get("resolution"),
+                    "method": first.get("method"),
+                    "r_free": first.get("r_free"),
+                    "r_factor": first.get("r_factor"),
+                    "heavy_subclass": first.get("heavy_subclass"),
+                    "light_subclass": first.get("light_subclass"),
+                    "light_ctype": first.get("light_ctype"),
+                    "scfv": first.get("scfv"),
+                    "engineered": first.get("engineered"),
+                    "affinity": first.get("affinity"),
+                    "delta_g": first.get("delta_g"),
+                    "affinity_method": first.get("affinity_method"),
+                    "temperature": first.get("temperature"),
+                    "pmid": first.get("pmid"),
+                    "chains": rows,
+                    "count": len(rows),
+                },
+                "metadata": {
+                    "source": "SAbDab",
+                    "summary_url": f"{SABDAB_BASE_URL}/summary/{pdb_id_lower}/",
+                    "note": (
+                        "'chains' lists one row per antibody chain pairing in the "
+                        "structure; top-level fields are taken from the first pairing."
+                    ),
                 },
             }
 
