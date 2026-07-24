@@ -50,7 +50,7 @@ jobs:
       - name: Check code formatting/linting requirements
         uses: astral-sh/ruff-action@v3
         with:
-          version: "latest"
+          version: "0.15.22"
 
 
       - name: Generate SDK
