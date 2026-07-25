@@ -296,6 +296,34 @@ class PubChemRESTTool(BaseTool):
             },
         }
 
+    @staticmethod
+    def _cid_not_found(payload):
+        """Turn PubChem's CID-0 not-found sentinel into a real error.
+
+        Fix-R4A-9: a structure PubChem does not hold is answered at HTTP 200
+        with {"IdentifierList": {"CID": [0]}}. CID 0 is a sentinel, not a
+        compound, so the wrapper reported status "success" and callers chained
+        it forward -- PubChem_get_compound_properties_by_CID({"cid": 0}) then
+        died with an opaque "Invalid ID, must be positive integer" two steps
+        later. Novel or proprietary analogues are exactly the inputs that hit
+        this. The name-based sibling already reports a clean HTTP 404 /
+        "No CID found", so match that behaviour.
+        """
+        if not isinstance(payload, dict):
+            return None
+        cids = (payload.get("IdentifierList") or {}).get("CID")
+        if isinstance(cids, list) and cids and all(c == 0 for c in cids):
+            return {
+                "status": "error",
+                "error": "No CID found",
+                "detail": (
+                    "PubChem has no compound record matching this structure "
+                    "(it returned the CID 0 not-found sentinel). The structure "
+                    "may be novel, or the input notation may need correcting."
+                ),
+            }
+        return None
+
     def run(self, arguments: dict):
         # Substance (SID, depositor-level) record lookup is handled separately:
         # it parses the raw PC_Substances payload and merges linked CIDs.
@@ -370,7 +398,11 @@ class PubChemRESTTool(BaseTool):
 
         if out_fmt == "JSON":
             try:
-                return {"status": "success", "data": resp.json()}
+                payload = resp.json()
+                sentinel = self._cid_not_found(payload)
+                if sentinel:
+                    return sentinel
+                return {"status": "success", "data": payload}
             except ValueError:
                 ct = resp.headers.get("content-type", "")
                 return {
