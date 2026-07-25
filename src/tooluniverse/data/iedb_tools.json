@@ -206,7 +206,10 @@
       }
     ],
     "fields": {
-      "endpoint": "/antigen_search"
+      "endpoint": "/antigen_search",
+      "default_params": {
+        "order": "parent_source_antigen_id.asc"
+      }
     }
   },
   {
@@ -307,7 +310,10 @@
       }
     ],
     "fields": {
-      "endpoint": "/mhc_search"
+      "endpoint": "/mhc_search",
+      "default_params": {
+        "order": "elution_id.asc"
+      }
     }
   },
   {
@@ -401,7 +407,10 @@
       }
     ],
     "fields": {
-      "endpoint": "/bcell_search"
+      "endpoint": "/bcell_search",
+      "default_params": {
+        "order": "bcell_id.asc"
+      }
     }
   },
   {
@@ -495,7 +504,10 @@
       }
     ],
     "fields": {
-      "endpoint": "/reference_search"
+      "endpoint": "/reference_search",
+      "default_params": {
+        "order": "reference_id.asc"
+      }
     }
   },
   {
@@ -588,6 +600,9 @@
           "column": "structure_id",
           "op": "eq"
         }
+      },
+      "default_params": {
+        "order": "structure_id.asc"
       }
     }
   },
@@ -681,6 +696,9 @@
           "column": "structure_id",
           "op": "eq"
         }
+      },
+      "default_params": {
+        "order": "elution_id.asc"
       }
     }
   },
@@ -774,6 +792,9 @@
           "column": "structure_id",
           "op": "eq"
         }
+      },
+      "default_params": {
+        "order": "reference_id.asc"
       }
     }
   }

@@ -49,10 +49,26 @@ class DGIdbTool(BaseTool):
             return {"status": "error", "error": payload["errors"]}
         inner = payload.get("data", {}) or {}
         nodes = (inner.get(collection) or {}).get("nodes", []) or []
+
+        # Fix-R4A-8: `total` counted top-level nodes, which for the
+        # interactions tools are GENES, not interactions. Querying PDCD1
+        # reported total=1 beside a payload holding 68 drug-gene interactions,
+        # and three genes reported total=3 against 140 -- a number that reads
+        # as a truncation warning and is the one figure most likely to be
+        # quoted in a summary. Name what is actually counted and add the
+        # interaction total alongside it.
+        interaction_total = sum(
+            len(node.get("interactions") or [])
+            for node in nodes
+            if isinstance(node, dict)
+        )
+        metadata = {"total": len(nodes), f"{collection}_returned": len(nodes)}
+        if interaction_total:
+            metadata["interactions_total"] = interaction_total
         return {
             "status": "success",
             "data": inner,
-            "metadata": {"total": len(nodes)},
+            "metadata": metadata,
         }
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

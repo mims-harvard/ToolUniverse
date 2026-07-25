@@ -2,7 +2,7 @@
   {
     "name": "HLALigandAtlas_get_benign_peptides",
     "type": "HLALigandAtlasTool",
-    "description": "Retrieve benign-tissue HLA-presented peptides (immunopeptidome) from the HLA Ligand Atlas (hla-ligand-atlas.org, release 2020.12) - the curated reference of self-peptides eluted from non-malignant human tissues, used to filter self-peptides during cancer neoantigen discovery. Filter the aggregated table by peptide sequence, HLA class (HLA-I or HLA-II), presenting donor allele, and/or tissue of origin. Each row reports the peptide, HLA class, the donor-allele presentation flags (strong 'n/' or weak 'w/'), and the tissues in which it was detected. Filtering by an exact peptide sequence or a specific tissue/allele is recommended because the aggregated table is large.",
+    "description": "Retrieve benign-tissue HLA-presented peptides (immunopeptidome) from the HLA Ligand Atlas (hla-ligand-atlas.org, release 2020.12) - the curated reference of self-peptides eluted from non-malignant human tissues, used to filter self-peptides during cancer neoantigen discovery. Filter the aggregated table by peptide sequence, HLA class (HLA-I or HLA-II), presenting donor allele, and/or tissue of origin. Each row reports the peptide, HLA class, the donor-allele presentation flags, and the tissues in which it was detected. Donor alleles carry one of THREE prefixes: 's/' = strong binder, 'w/' = weak binder, 'n/' = NON-binder (the allele was typed in the donor but is not predicted to present this peptide). Only 's/' entries indicate the peptide is actually presented by that allele -- treat 'n/' as evidence AGAINST presentation, not for it. Filtering by an exact peptide sequence or a specific tissue/allele is recommended because the aggregated table is large.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19,7 +19,7 @@
         },
         "allele": {
           "type": "string",
-          "description": "Substring of a presenting allele to match within the donor_alleles list, e.g. 'DRB1*01:01' or 'DQA1*01:03-DQB1*06:02'. Case-sensitive."
+          "description": "Substring of a presenting allele to match within the donor_alleles list, e.g. 'DRB1*01:01' or 'DQA1*01:03-DQB1*06:02'. Case-sensitive. NOTE: this is a plain substring match, so a bare allele such as 'A*02:01' also matches the 's/', 'w/' AND 'n/' prefixed entries -- including peptides that allele is predicted NOT to present. To restrict to peptides genuinely presented by the allele, include the strong-binder prefix: 's/A*02:01'."
         },
         "tissue": {
           "type": "string",
