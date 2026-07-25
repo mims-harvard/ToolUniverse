@@ -1246,6 +1246,22 @@ def cmd_run(args: argparse.Namespace) -> None:
                 ),
             }
         )
+    # Fix-R3-02: `tu info <typo>` already offers "Did you mean: ...", but the
+    # far more common `tu run <typo>` did not -- _render_run_error knows how to
+    # display suggestions, yet nothing on the run path ever populated them, so
+    # a one-character tool-name typo produced only generic spelling tips.
+    # Populate them here exactly as cmd_info does. Skip API-key-gated tools:
+    # their name is already correct, so near-miss alternatives are noise.
+    if isinstance(result, dict) and result.get("status") == "error":
+        details = result.get("error_details") or {}
+        is_api_key_error = "requires api key" in str(result.get("error", "")).lower()
+        if details.get("type") == "ToolUnavailableError" and not is_api_key_error:
+            # Same cutoff as cmd_info (Feature-23B-04) to avoid coincidental matches.
+            suggestions = difflib.get_close_matches(
+                args.tool_name, list(tu.all_tool_dict.keys()), n=3, cutoff=0.62
+            )
+            if suggestions:
+                result["suggestions"] = suggestions
     # Feature-23B-02: use _render_run so human mode gets a concise error summary;
     # --json / --raw still get the full JSON blob.
     _print_result(result, args, render_fn=_render_run)

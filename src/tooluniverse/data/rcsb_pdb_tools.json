@@ -1068,8 +1068,10 @@
         ]
       },
       "return_fields": [
-        "polymer_entities.rcsb_entity_host_organism.taxonomy_lineage.name",
-        "polymer_entities.rcsb_entity_source_organism.ncbi_parent_scientific_name"
+        "polymer_entities.rcsb_entity_source_organism.ncbi_scientific_name",
+        "polymer_entities.rcsb_entity_source_organism.ncbi_taxonomy_id",
+        "polymer_entities.rcsb_entity_source_organism.ncbi_parent_scientific_name",
+        "polymer_entities.rcsb_entity_host_organism.ncbi_scientific_name"
       ]
     },
     "test_examples": [
@@ -1101,8 +1103,11 @@
                           "items": {
                             "type": "object",
                             "properties": {
-                              "taxonomy_lineage": {
-                                "type": "null"
+                              "ncbi_scientific_name": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
                               }
                             }
                           }
@@ -1112,6 +1117,15 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "ncbi_scientific_name": {
+                                "type": "string"
+                              },
+                              "ncbi_taxonomy_id": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
                               "ncbi_parent_scientific_name": {
                                 "type": "string"
                               }

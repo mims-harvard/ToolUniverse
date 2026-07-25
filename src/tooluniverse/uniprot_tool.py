@@ -223,6 +223,26 @@ class UniProtRESTTool(BaseTool):
                 ),
             }
 
+    @staticmethod
+    def _total_results(resp, data: Dict[str, Any], results: list) -> int:
+        """Resolve the true number of matches for a UniProt search response.
+
+        Fix-R3-08: UniProt reports the match total in the ``x-total-results``
+        response HEADER, not in the JSON body -- there is no ``resultsFound``
+        key. Reading only the body meant the fallback always won, so a field
+        named ``total_results`` silently reported the page size: a search for
+        "beta-lactamase" in UniRef returned ``total_results: 2`` for ``limit:
+        2`` when the real total is 395446. Prefer the header, and keep the
+        body/page-size fallbacks for any endpoint that does supply them.
+        """
+        header = getattr(resp, "headers", {}).get("x-total-results")
+        if header is not None:
+            try:
+                return int(header)
+            except (TypeError, ValueError):
+                pass
+        return data.get("resultsFound", len(results))
+
     def _handle_search(self, arguments: Dict[str, Any]) -> Any:
         """Handle search queries with flexible parameters"""
         query = arguments.get("query", "")
@@ -307,7 +327,7 @@ class UniProtRESTTool(BaseTool):
                 return {
                     "status": "success",
                     "data": {
-                        "total_results": data.get("resultsFound", 0),
+                        "total_results": self._total_results(resp, data, results),
                         "returned": len(results),
                         "results": results,
                     },
@@ -350,7 +370,7 @@ class UniProtRESTTool(BaseTool):
             return {
                 "status": "success",
                 "data": {
-                    "total_results": data.get("resultsFound", len(results)),
+                    "total_results": self._total_results(resp, data, results),
                     "returned": len(results),
                     "results": formatted_results,
                 },
@@ -556,7 +576,7 @@ class UniProtRESTTool(BaseTool):
             return {
                 "status": "success",
                 "data": {
-                    "total_results": data.get("resultsFound", len(results)),
+                    "total_results": self._total_results(resp, data, results),
                     "returned": len(results),
                     "results": results,
                 },
@@ -592,7 +612,7 @@ class UniProtRESTTool(BaseTool):
             return {
                 "status": "success",
                 "data": {
-                    "total_results": data.get("resultsFound", len(results)),
+                    "total_results": self._total_results(resp, data, results),
                     "returned": len(results),
                     "results": results,
                 },

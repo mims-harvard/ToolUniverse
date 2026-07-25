@@ -2411,7 +2411,18 @@ class ToolUniverse:
             dict or None: Tool configuration if found, None otherwise.
         """
         if tool_name not in self.all_tool_dict:
-            warning(f"Tool name {tool_name} not found in the loaded tools.")
+            # Fix-R3-05: a tool held back for a missing API key is not "not
+            # found" -- the name is correct and the fix is to set a key, not to
+            # re-check the spelling. `tu info <gated tool>` printed this
+            # misleading warning immediately above the accurate API-key error.
+            missing_keys = getattr(self, "_excluded_api_key_tools", {}).get(tool_name)
+            if missing_keys:
+                warning(
+                    f"Tool {tool_name} is not loaded: requires API key(s) not set: "
+                    f"{', '.join(missing_keys)}."
+                )
+            else:
+                warning(f"Tool name {tool_name} not found in the loaded tools.")
             return None
 
         tool_config = self.all_tool_dict[tool_name]
@@ -3773,6 +3784,28 @@ class ToolUniverse:
         # Get the expected type
         expected_type = schema.get("type")
 
+        # Fix-R3-06: JSON Schema permits "type" to be a LIST of types, and
+        # ["integer", "null"] is this project's own convention for an optional
+        # parameter. Every comparison below is against a bare string, so a union
+        # type matched nothing and the value stayed a str -- which then failed
+        # schema validation. That made the documented `tu run <tool> limit=10`
+        # shorthand fail on most tools ("'10' is not of type 'integer', 'null'")
+        # while the JSON form worked, and equally affected LLM callers that pass
+        # numbers as strings. Try each non-null member of the union instead.
+        if isinstance(expected_type, list):
+            candidates = [t for t in expected_type if t != "null"]
+            # If a string is acceptable, keep it as-is rather than
+            # reinterpreting it as some other type.
+            if "string" in candidates:
+                return value
+            for candidate in candidates:
+                coerced = self._coerce_value_to_type(
+                    value, dict(schema, type=candidate)
+                )
+                if coerced is not value:
+                    return coerced
+            return value
+
         # Don't coerce if schema expects string type
         if expected_type == "string":
             return value
@@ -3856,16 +3889,31 @@ class ToolUniverse:
             # Check again after loading
             if function_name not in self.all_tool_dict:
                 missing_keys = self._excluded_api_key_tools.get(function_name)
+                # Fix-R3-03: both branches previously omitted next_steps and so
+                # inherited ToolUnavailableError's network-flavoured defaults
+                # ("Check network connection", "Verify service status") -- wrong
+                # and misleading advice for a misspelled tool name or an unset
+                # API key. The sibling not-found path in run_one_function already
+                # passes tool-discovery steps; match it here so SDK and MCP
+                # callers get the same actionable guidance the CLI shows.
                 if missing_keys:
                     return ToolUnavailableError(
                         f"Tool '{function_name}' requires API key(s) not set: "
                         f"{', '.join(missing_keys)}. "
                         "Set them as environment variables and retry.",
                         retriable=False,
+                        next_steps=[
+                            f"Set the environment variable(s): {', '.join(missing_keys)}",
+                            "Run `tu status` to check which API keys are configured",
+                        ],
                     )
                 return ToolUnavailableError(
                     f"Tool '{function_name}' not found even after loading tools",
                     retriable=False,
+                    next_steps=[
+                        "Check tool name spelling",
+                        "Verify tool is available in loaded categories",
+                    ],
                 )
 
         tool_instance = self._get_tool_instance(function_name, cache=True)
