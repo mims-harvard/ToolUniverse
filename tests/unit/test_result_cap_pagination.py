@@ -304,3 +304,35 @@ def test_cpic_missing_gene_is_an_error_not_an_exception():
     result = CPICGetAllelesTool({"name": "CPIC_get_alleles"}).run({})
     assert result["status"] == "error"
     assert "genesymbol" in result["error"]
+
+
+# --------------------------------------------------------------------------
+# Expression Atlas
+# --------------------------------------------------------------------------
+
+
+def test_expression_atlas_pages_beyond_the_old_fifty_cap():
+    """241 experiments matched 'cancer' but only the first 50 were reachable."""
+    from tooluniverse.expression_atlas_tool import ExpressionAtlasTool
+
+    records = [{"experiment_accession": f"E-{i:04d}"} for i in range(241)]
+
+    first, offset, note = ExpressionAtlasTool._page(records, {})
+    assert len(first) == 50 and offset == 0
+    assert "241" in note and "offset=50" in note
+
+    tail, offset, note = ExpressionAtlasTool._page(records, {"limit": 10, "offset": 200})
+    assert [r["experiment_accession"] for r in tail][0] == "E-0200"
+    assert offset == 200
+
+    everything, _, note = ExpressionAtlasTool._page(records, {"limit": 300})
+    assert len(everything) == 241
+    assert note is None, "no next-page note once the list is exhausted"
+
+
+def test_expression_atlas_limit_is_capped_and_offset_floored():
+    from tooluniverse.expression_atlas_tool import ExpressionAtlasTool
+
+    records = [{"i": i} for i in range(600)]
+    assert len(ExpressionAtlasTool._page(records, {"limit": 9999})[0]) == 500
+    assert ExpressionAtlasTool._page(records, {"offset": -5})[1] == 0

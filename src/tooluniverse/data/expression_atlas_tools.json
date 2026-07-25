@@ -13,6 +13,22 @@
           "type": "string",
           "description": "Species name (default: 'homo sapiens'). Also supports 'mus musculus', 'rattus norvegicus', etc.",
           "default": "homo sapiens"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of experiments to return (default 50, max 500). Compare with the total reported in the response to see how many exist.",
+          "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based index of the first experiment to return, for paging through results beyond the first page (e.g. offset=50 returns 51-100). Default: 0.",
+          "default": 0
         }
       },
       "required": [
@@ -130,6 +146,22 @@
           "type": "string",
           "description": "Species name (default: 'homo sapiens')",
           "default": "homo sapiens"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of experiments to return (default 50, max 500). Compare with the total reported in the response to see how many exist.",
+          "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based index of the first experiment to return, for paging through results beyond the first page (e.g. offset=50 returns 51-100). Default: 0.",
+          "default": 0
         }
       }
     },
@@ -251,6 +283,22 @@
         "species": {
           "type": "string",
           "description": "Species name (optional, e.g., 'homo sapiens')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of experiments to return (default 50, max 500). Compare with the total reported in the response to see how many exist.",
+          "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based index of the first experiment to return, for paging through results beyond the first page (e.g. offset=50 returns 51-100). Default: 0.",
+          "default": 0
         }
       }
     },

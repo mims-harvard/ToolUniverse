@@ -92,6 +92,32 @@ class ExpressionAtlasTool(BaseTool):
             f"gene-specific result set."
         )
 
+    @staticmethod
+    def _page(records, arguments):
+        """Slice a result list to the caller's window and describe the slice.
+
+        Fix-R4A-10: these lists were cut to a hard-coded [:50] with no limit or
+        offset parameter declared, so the tail was unreachable -- confirmed
+        live that condition="cancer" reports total_count 241 and returns 50.
+        The lists are ranked (by assay count, or gene-mention then assay
+        count), so the truncated tail is the weakest end, but 191 of 241
+        experiments simply could not be retrieved.
+        """
+        raw_limit = arguments.get("limit")
+        limit = 50 if raw_limit in (None, "") else int(raw_limit)
+        limit = max(1, min(limit, 500))
+        offset = max(0, int(arguments.get("offset") or 0))
+
+        page = records[offset : offset + limit]
+        note = None
+        if page and offset + len(page) < len(records):
+            note = (
+                f"Showing {offset + 1}-{offset + len(page)} of {len(records)}. "
+                f"Re-run with offset={offset + len(page)} for the next page, or "
+                "raise 'limit' (max 500)."
+            )
+        return page, offset, note
+
     def _get_baseline_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         List baseline expression experiments for a species.
@@ -156,14 +182,18 @@ class ExpressionAtlasTool(BaseTool):
                 for exp in baseline_exps
             ]
             results.sort(key=lambda x: -(x.get("num_assays") or 0))
+            _page, _offset, _note = self._page(results, arguments)
 
             return {
                 "status": "success",
                 "data": {
                     "gene": gene,
                     "species": species,
-                    "baseline_experiments": results[:50],
+                    "baseline_experiments": _page,
                     "total_baseline": len(baseline_exps),
+                    "returned_baseline": len(_page),
+                    "offset": _offset,
+                    **({"page_note": _note} if _note else {}),
                 },
                 "note": (
                     f"This lists baseline experiments for '{species}'; it does "
@@ -270,12 +300,16 @@ class ExpressionAtlasTool(BaseTool):
                     )
                 )
 
+            _page, _offset, _note = self._page(experiments, arguments)
             result_data = {
                 "gene": gene,
                 "condition": condition,
                 "species": species,
-                "experiments": experiments[:50],
+                "experiments": _page,
                 "experiment_count": len(experiments),
+                "returned_experiments": len(_page),
+                "offset": _offset,
+                **({"page_note": _note} if _note else {}),
             }
             if gene:
                 result_data["warning"] = self._gene_filter_warning(gene)
@@ -375,13 +409,17 @@ class ExpressionAtlasTool(BaseTool):
                     )
                 )
 
+            _page, _offset, _note = self._page(experiments, arguments)
             result_data = {
                 "gene": gene,
                 "condition": condition,
                 "species": species,
-                "experiments": experiments[:50],
+                "experiments": _page,
                 "total_count": len(experiments),
+                "returned_experiments": len(_page),
+                "offset": _offset,
                 "gene_specific_count": len(gene_exp_ids),
+                **({"page_note": _note} if _note else {}),
             }
             if gene:
                 result_data["warning"] = self._gene_filter_warning(gene)
