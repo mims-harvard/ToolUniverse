@@ -1,13 +1,29 @@
 [
   {
     "name": "PDBeSIFTS_get_best_structures",
-    "description": "Get the best available PDB structures for a UniProt protein, ranked by coverage and resolution from PDBe SIFTS. Returns PDB IDs with chain mapping, resolution, experimental method (X-ray, cryo-EM, NMR), and UniProt sequence coverage. Essential for structural biologists to find the most suitable structure for a protein of interest. Example: P04637 (TP53) returns 641 structure entries, P00533 (EGFR) returns 633 entries, with X-ray and cryo-EM structures ranked by quality.",
+    "description": "Get the best available PDB structures for a UniProt protein, ranked by coverage and resolution from PDBe SIFTS. Returns PDB IDs with chain mapping, resolution, experimental method (X-ray, cryo-EM, NMR), and UniProt sequence coverage. Essential for structural biologists to find the most suitable structure for a protein of interest. Example: P04637 (TP53) returns 641 structure entries, P00533 (EGFR) returns 633 entries, with X-ray and cryo-EM structures ranked by quality. Returns 50 entries per call by default; use 'limit' (max 500) and 'offset' to page through the full ranked list, whose size is reported in the response.",
     "parameter": {
       "type": "object",
       "properties": {
         "uniprot_accession": {
           "type": "string",
           "description": "UniProt accession for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1), 'P01308' (Insulin)."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of entries to return (default 50, max 500). Proteins such as P04637 (TP53) have hundreds of structure-chain entries; raise this or use 'offset' to reach past the first page.",
+          "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based index of the first entry to return, for paging through the ranked list (e.g. offset=50 returns entries 51-100). Default: 0.",
+          "default": 0
         }
       },
       "required": [
@@ -101,11 +117,23 @@
                       }
                     }
                   },
-                  "description": "Ranked PDB structures (max 50)"
+                  "description": "Ranked PDB structures (this page)"
                 },
                 "total_structures": {
                   "type": "integer",
                   "description": "Total available structure-chain entries"
+                },
+                "returned_structures": {
+                  "type": "integer",
+                  "description": "Number of entries in this page of results"
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based index of the first entry returned"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Present when more entries remain; explains how to page to them"
                 }
               }
             },
@@ -240,6 +268,14 @@
                           }
                         },
                         "description": "Chain-to-UniProt residue mappings"
+                      },
+                      "total_chain_mappings": {
+                        "type": "integer",
+                        "description": "Total chain mappings for this accession (chain_mappings shows at most the first 20)"
+                      },
+                      "chain_mappings_truncated": {
+                        "type": "boolean",
+                        "description": "True when total_chain_mappings exceeds the 20 returned in chain_mappings"
                       }
                     }
                   },
@@ -283,13 +319,29 @@
   },
   {
     "name": "PDBeSIFTS_get_all_structures",
-    "description": "Get all PDB structures for a UniProt protein, grouped by PDB entry with chain details, from PDBe SIFTS. Unlike best_structures which returns a flat ranked list, this groups results by PDB ID showing all chains per structure, sorted by resolution. Useful for comprehensive structural coverage analysis. Example: P04637 (TP53) has structures across hundreds of unique PDB entries covering different domains and complexes.",
+    "description": "Get all PDB structures for a UniProt protein, grouped by PDB entry with chain details, from PDBe SIFTS. Unlike best_structures which returns a flat ranked list, this groups results by PDB ID showing all chains per structure, sorted by resolution. Useful for comprehensive structural coverage analysis. Example: P04637 (TP53) has structures across hundreds of unique PDB entries covering different domains and complexes. Returns 50 entries per call by default; use 'limit' (max 500) and 'offset' to page through the full ranked list, whose size is reported in the response.",
     "parameter": {
       "type": "object",
       "properties": {
         "uniprot_accession": {
           "type": "string",
           "description": "UniProt accession for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of entries to return (default 50, max 500). Proteins such as P04637 (TP53) have hundreds of structure-chain entries; raise this or use 'offset' to reach past the first page.",
+          "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based index of the first entry to return, for paging through the ranked list (e.g. offset=50 returns entries 51-100). Default: 0.",
+          "default": 0
         }
       },
       "required": [
@@ -381,7 +433,7 @@
                       }
                     }
                   },
-                  "description": "PDB entries sorted by resolution (max 50)"
+                  "description": "PDB entries sorted by resolution (this page)"
                 },
                 "total_pdb_entries": {
                   "type": "integer",
@@ -390,6 +442,18 @@
                 "total_chain_mappings": {
                   "type": "integer",
                   "description": "Total chain-level mappings"
+                },
+                "returned_pdb_entries": {
+                  "type": "integer",
+                  "description": "Number of entries in this page of results"
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based index of the first entry returned"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Present when more entries remain; explains how to page to them"
                 }
               }
             },

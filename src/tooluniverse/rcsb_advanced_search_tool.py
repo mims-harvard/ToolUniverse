@@ -18,6 +18,14 @@ from .tool_registry import register_tool
 
 RCSB_SEARCH_URL = "https://search.rcsb.org/rcsbsearch/v2/query"
 
+# Fix-R4B-2: `rows` was clamped to 50 and the paginate window start was
+# hard-coded to 0, so results 51+ were structurally unreachable -- a search
+# matching 81,865 entries could only ever expose its first 50, and a caller
+# asking for rows=200 silently got 50 back with nothing in the response
+# saying the request had been reduced. `start` makes the rest of the result
+# set reachable; _paginate() reports the clamp instead of hiding it.
+MAX_ROWS_PER_PAGE = 50
+
 
 @register_tool("RCSBAdvancedSearchTool")
 class RCSBAdvancedSearchTool(BaseTool):
@@ -57,6 +65,54 @@ class RCSBAdvancedSearchTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
+    @staticmethod
+    def _paginate(arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve the paginate window, reporting any clamp applied to `rows`.
+
+        Returns the RCSB `paginate` block plus the bookkeeping needed to tell
+        the caller how much of the result set they actually received.
+        """
+        requested_rows = (
+            arguments.get("rows")
+            or arguments.get("limit")
+            or arguments.get("max_results")
+            or 10
+        )
+        requested_rows = max(1, int(requested_rows))
+        rows = min(requested_rows, MAX_ROWS_PER_PAGE)
+        start = max(0, int(arguments.get("start") or arguments.get("offset") or 0))
+
+        clamped = None
+        if requested_rows > rows:
+            clamped = (
+                f"Requested rows={requested_rows} exceeds the per-page maximum of "
+                f"{MAX_ROWS_PER_PAGE}; returned {rows}. Use 'start' to page through "
+                "the remaining results."
+            )
+        return {"start": start, "rows": rows, "clamp_note": clamped}
+
+    @staticmethod
+    def _pagination_metadata(window: Dict[str, Any], total: int, returned: int) -> Dict:
+        """Build the metadata block describing this page of the result set."""
+        meta: Dict[str, Any] = {
+            "total_count": total,
+            "returned": returned,
+            "start": window["start"],
+            "rows": window["rows"],
+            "max_rows_per_page": MAX_ROWS_PER_PAGE,
+        }
+
+        notes = [n for n in (window["clamp_note"],) if n]
+        next_start = window["start"] + returned
+        if returned and next_start < total:
+            notes.append(
+                f"Showing results {window['start'] + 1}-{next_start} of {total}. "
+                f"Re-run with start={next_start} for the next page."
+            )
+        if notes:
+            meta["note"] = " ".join(notes)
+        return meta
+
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
         if self.endpoint == "advanced_search":
@@ -74,13 +130,7 @@ class RCSBAdvancedSearchTool(BaseTool):
         experimental_method = arguments.get("experimental_method")
         polymer_description = arguments.get("polymer_description")
         min_deposition_date = arguments.get("min_deposition_date")
-        rows = min(
-            arguments.get("rows")
-            or arguments.get("limit")
-            or arguments.get("max_results")
-            or 10,
-            50,
-        )
+        window = self._paginate(arguments)
         sort_by = arguments.get("sort_by") or "resolution"
 
         nodes = []
@@ -192,7 +242,7 @@ class RCSBAdvancedSearchTool(BaseTool):
             "query": query,
             "return_type": "entry",
             "request_options": {
-                "paginate": {"start": 0, "rows": rows},
+                "paginate": {"start": window["start"], "rows": window["rows"]},
                 "sort": [{"sort_by": sort_field, "direction": sort_direction}],
             },
         }
@@ -210,8 +260,7 @@ class RCSBAdvancedSearchTool(BaseTool):
                 "data": [],
                 "metadata": {
                     "source": "RCSB PDB Advanced Search",
-                    "total_count": 0,
-                    "returned": 0,
+                    **self._pagination_metadata(window, 0, 0),
                 },
             }
 
@@ -232,8 +281,9 @@ class RCSBAdvancedSearchTool(BaseTool):
             "data": results,
             "metadata": {
                 "source": "RCSB PDB Advanced Search",
-                "total_count": data.get("total_count", 0),
-                "returned": len(results),
+                **self._pagination_metadata(
+                    window, data.get("total_count", 0), len(results)
+                ),
             },
         }
 
@@ -245,13 +295,7 @@ class RCSBAdvancedSearchTool(BaseTool):
 
         pattern_type = arguments.get("pattern_type") or "prosite"
         sequence_type = arguments.get("sequence_type") or "protein"
-        rows = min(
-            arguments.get("rows")
-            or arguments.get("limit")
-            or arguments.get("max_results")
-            or 10,
-            50,
-        )
+        window = self._paginate(arguments)
 
         request_body = {
             "query": {
@@ -264,7 +308,9 @@ class RCSBAdvancedSearchTool(BaseTool):
                 },
             },
             "return_type": "polymer_entity",
-            "request_options": {"paginate": {"start": 0, "rows": rows}},
+            "request_options": {
+                "paginate": {"start": window["start"], "rows": window["rows"]}
+            },
         }
 
         response = requests.post(
@@ -280,8 +326,7 @@ class RCSBAdvancedSearchTool(BaseTool):
                 "data": [],
                 "metadata": {
                     "source": "RCSB PDB Motif Search",
-                    "total_count": 0,
-                    "returned": 0,
+                    **self._pagination_metadata(window, 0, 0),
                     "pattern": pattern,
                     "pattern_type": pattern_type,
                 },
@@ -310,8 +355,9 @@ class RCSBAdvancedSearchTool(BaseTool):
             "data": results,
             "metadata": {
                 "source": "RCSB PDB Motif Search",
-                "total_count": data.get("total_count", 0),
-                "returned": len(results),
+                **self._pagination_metadata(
+                    window, data.get("total_count", 0), len(results)
+                ),
                 "pattern": pattern,
                 "pattern_type": pattern_type,
             },

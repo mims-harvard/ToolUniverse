@@ -963,7 +963,7 @@
   },
   {
     "name": "CPIC_get_alleles",
-    "description": "Get pharmacogenomics alleles and their functional status for a gene from CPIC. Returns allele names, activity values, and functional status. Note: use 'clinicalfunctionalstatus' field for the active clinical classification (e.g., 'No function', 'Normal function'); the 'functionalstatus' field may be null for some genes. Critical for translating genotype to phenotype (e.g., CYP2D6 *4 = no function, CYP2D6 *1 = normal function).",
+    "description": "Get pharmacogenomics alleles and their functional status for a gene from CPIC. Returns allele names, activity values, and functional status, plus 'total_count' -- the number of alleles CPIC curates for the gene, which is often far larger than one page (CYP2D6 has 208). Returns 50 per call by default; use 'limit' (max 1000) and 'offset' to retrieve the rest. Note: use 'clinicalfunctionalstatus' field for the active clinical classification (e.g., 'No function', 'Normal function'); the 'functionalstatus' field may be null for some genes. Critical for translating genotype to phenotype (e.g., CYP2D6 *4 = no function, CYP2D6 *1 = normal function).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -976,19 +976,23 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of alleles to return (default 50)",
+          "description": "Maximum number of alleles to return per call (default 50, max 1000). Compare with 'total_count' in the response to see how many exist in total.",
           "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based index of the first allele to return, for paging through genes with more alleles than one page (e.g. offset=50 returns alleles 51-100). Default: 0.",
+          "default": 0
         }
       },
       "required": [
         "genesymbol"
       ]
     },
-    "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/allele?genesymbol=eq.{genesymbol}&select=name,functionalstatus,activityvalue,clinicalfunctionalstatus&limit={limit}",
-      "uppercase_params": ["genesymbol"]
-    },
-    "type": "BaseRESTTool",
+    "type": "CPICGetAllelesTool",
     "test_examples": [
       {
         "genesymbol": "CYP2D6",
@@ -997,32 +1001,76 @@
       {
         "genesymbol": "DPYD",
         "limit": 20
+      },
+      {
+        "genesymbol": "CYP2D6",
+        "limit": 20,
+        "offset": 50
       }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "functionalstatus": {
-                "type": [
-                  "null",
-                  "string"
-                ]
-              },
-              "activityvalue": {
-                "type": "string"
-              },
-              "clinicalfunctionalstatus": {
-                "type": "string"
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "description": "Alleles in this page of results",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Star allele name (e.g. '*4')"
+                  },
+                  "functionalstatus": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "activityvalue": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "clinicalfunctionalstatus": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                }
               }
+            },
+            "url": {
+              "type": "string",
+              "description": "Resolved CPIC API request URL"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of alleles in this page"
+            },
+            "total_count": {
+              "type": "integer",
+              "description": "Total alleles CPIC curates for this gene"
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Zero-based index of the first allele returned"
+            },
+            "note": {
+              "type": "string",
+              "description": "Present when more alleles remain; explains how to page to them"
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",

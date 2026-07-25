@@ -17,6 +17,14 @@ from .tool_registry import register_tool
 
 PDBE_API_BASE_URL = "https://www.ebi.ac.uk/pdbe/api"
 
+# Fix-R4B-3: the structure lists were sliced to a hard-coded first 50 with no
+# parameter able to reach past it -- P04637 (TP53) has 676 structure-chain
+# entries and only the first 50 were obtainable, at any resolution or method.
+# `limit`/`offset` make the whole ranked list reachable; DEFAULT_PAGE_SIZE
+# preserves the previous default response size for existing callers.
+DEFAULT_PAGE_SIZE = 50
+MAX_PAGE_SIZE = 500
+
 
 @register_tool("PDBeSIFTSTool")
 class PDBeSIFTSTool(BaseTool):
@@ -74,6 +82,29 @@ class PDBeSIFTSTool(BaseTool):
                 "error": f"Unexpected error querying PDBe SIFTS API: {str(e)}",
             }
 
+    @staticmethod
+    def _page_window(arguments: Dict[str, Any]) -> Dict[str, int]:
+        """Resolve the limit/offset window for a truncated result list."""
+        raw_limit = arguments.get("limit")
+        limit = DEFAULT_PAGE_SIZE if raw_limit in (None, "") else int(raw_limit)
+        limit = max(1, min(limit, MAX_PAGE_SIZE))
+        offset = max(0, int(arguments.get("offset") or 0))
+        return {"limit": limit, "offset": offset}
+
+    @staticmethod
+    def _page_note(window: Dict[str, int], total: int, returned: int) -> str:
+        """Describe the slice returned, and how to reach the rest of it."""
+        if not returned:
+            return ""
+        first = window["offset"] + 1
+        last = window["offset"] + returned
+        if last >= total:
+            return ""
+        return (
+            f"Showing {first}-{last} of {total}. Re-run with offset={last} for the "
+            f"next page, or raise 'limit' (max {MAX_PAGE_SIZE})."
+        )
+
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
         if self.endpoint == "best_structures":
@@ -102,9 +133,10 @@ class PDBeSIFTSTool(BaseTool):
         data = response.json()
 
         entries = data.get(accession, [])
+        window = self._page_window(arguments)
 
         structures = []
-        for e in entries[:50]:
+        for e in entries[window["offset"] : window["offset"] + window["limit"]]:
             structures.append(
                 {
                     "pdb_id": e.get("pdb_id"),
@@ -118,18 +150,24 @@ class PDBeSIFTSTool(BaseTool):
                 }
             )
 
-        return {
+        result = {
             "status": "success",
             "data": {
                 "uniprot_accession": accession,
                 "structures": structures,
                 "total_structures": len(entries),
+                "returned_structures": len(structures),
+                "offset": window["offset"],
             },
             "metadata": {
                 "source": "PDBe SIFTS - Best Structures",
                 "accession": accession,
             },
         }
+        note = self._page_note(window, len(entries), len(structures))
+        if note:
+            result["data"]["note"] = note
+        return result
 
     def _get_pdb_to_uniprot(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Map PDB entry chains to UniProt accessions."""
@@ -151,8 +189,9 @@ class PDBeSIFTSTool(BaseTool):
 
         proteins = []
         for acc, info in uniprot_data.items():
+            all_mappings = info.get("mappings", [])
             chain_mappings = []
-            for m in info.get("mappings", [])[:20]:
+            for m in all_mappings[:20]:
                 chain_mappings.append(
                     {
                         "chain_id": m.get("chain_id"),
@@ -163,11 +202,17 @@ class PDBeSIFTSTool(BaseTool):
                     }
                 )
 
+            # Fix-R4B-3: this 20-mapping truncation was entirely silent --
+            # `total_proteins` counts proteins, not mappings, so a viral or
+            # ribosomal entry with dozens of chains per accession looked
+            # complete at 20. Report the real count alongside the slice.
             proteins.append(
                 {
                     "uniprot_accession": acc,
                     "name": info.get("identifier"),
                     "chain_mappings": chain_mappings,
+                    "total_chain_mappings": len(all_mappings),
+                    "chain_mappings_truncated": len(all_mappings) > len(chain_mappings),
                 }
             )
 
@@ -300,12 +345,17 @@ class PDBeSIFTSTool(BaseTool):
             key=lambda x: x.get("resolution") or 999,
         )
 
-        return {
+        window = self._page_window(arguments)
+        page = sorted_entries[window["offset"] : window["offset"] + window["limit"]]
+
+        result = {
             "status": "success",
             "data": {
                 "uniprot_accession": accession,
-                "pdb_entries": sorted_entries[:50],
+                "pdb_entries": page,
                 "total_pdb_entries": len(pdb_entries),
+                "returned_pdb_entries": len(page),
+                "offset": window["offset"],
                 "total_chain_mappings": len(entries),
             },
             "metadata": {
@@ -313,3 +363,7 @@ class PDBeSIFTSTool(BaseTool):
                 "accession": accession,
             },
         }
+        note = self._page_note(window, len(pdb_entries), len(page))
+        if note:
+            result["data"]["note"] = note
+        return result
