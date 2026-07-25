@@ -104,17 +104,13 @@
   },
   {
     "name": "MGnify_search_genomes",
-    "description": "Search the MGnify genome catalog for metagenome-assembled genomes (MAGs) and isolate genomes. Filter by taxonomy lineage or genome type. Returns quality metrics, taxonomy, and protein counts. Useful for finding reference genomes from specific microbial lineages.",
+    "description": "Search the MGnify genome catalog for metagenome-assembled genomes (MAGs) and isolate genomes. Filter by taxonomy lineage. Returns quality metrics, taxonomy, and protein counts. Useful for finding reference genomes from specific microbial lineages. Taxonomy names follow GTDB, not NCBI: use 'Bacteroidota' (not 'Bacteroidetes'), 'Bacillota' (not 'Firmicutes'), 'Pseudomonadota' (not 'Proteobacteria') -- an NCBI-style name usually returns 0 hits rather than an error.",
     "parameter": {
       "type": "object",
       "properties": {
         "taxonomy": {
           "type": "string",
-          "description": "Taxonomy lineage filter. Examples: 'Firmicutes', 'Bacteroidetes', 'Proteobacteria'."
-        },
-        "genome_type": {
-          "type": "string",
-          "description": "Filter by genome source type. Options: 'Isolate', 'MAG'."
+          "description": "GTDB taxonomy lineage filter, matched anywhere in the lineage. Examples: 'Bacteroidota' (phylum), 'Bacteroides' (genus), 'Bacillota', 'Pseudomonadota'. NCBI-style phylum names such as 'Bacteroidetes' or 'Firmicutes' return few or no hits -- use the GTDB spelling."
         },
         "page": {
           "type": "integer",

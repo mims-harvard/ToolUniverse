@@ -125,6 +125,22 @@ class NeuroMorphoTool(BaseTool):
             "metadata": {"total_results": 1},
         }
 
+    @staticmethod
+    def _lucene_term(value: Any) -> str:
+        """Quote a multi-word query value so it stays a single search term.
+
+        Fix-R4A-4: NeuroMorpho's Solr-style endpoint splits an unquoted
+        multi-word value on whitespace and matches only the trailing token, so
+        query_value="entorhinal cortex" was executed as "cortex". Confirmed
+        live that it returned the identical 872 hits as query_value="cortex"
+        -- topped by zebra-finch song-nucleus neurons -- while the quoted form
+        returns the correct 3431 entorhinal-cortex reconstructions.
+        """
+        text = str(value).strip()
+        if not text or (text.startswith('"') and text.endswith('"')):
+            return text
+        return f'"{text}"' if any(c.isspace() for c in text) else text
+
     def _search_neurons(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search neurons by field criteria."""
         query_field = arguments.get("query_field", "species")
@@ -142,14 +158,14 @@ class NeuroMorphoTool(BaseTool):
 
         url = f"{NEUROMORPHO_BASE_URL}/neuron/select"
         params = {
-            "q": f"{query_field}:{query_value}",
+            "q": f"{query_field}:{self._lucene_term(query_value)}",
             "page": page,
             "size": size,
         }
 
         # Add filter query if specified
         if filter_field and filter_value:
-            params["fq"] = f"{filter_field}:{filter_value}"
+            params["fq"] = f"{filter_field}:{self._lucene_term(filter_value)}"
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -213,7 +229,7 @@ class NeuroMorphoTool(BaseTool):
 
         url = f"{NEUROMORPHO_BASE_URL}/literature/select"
         params = {
-            "q": f"{query_field}:{query_value}",
+            "q": f"{query_field}:{self._lucene_term(query_value)}",
             "page": page,
             "size": size,
         }

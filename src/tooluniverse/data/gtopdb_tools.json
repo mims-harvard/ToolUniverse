@@ -10,7 +10,14 @@
             "string",
             "null"
           ],
-          "description": "Target name or gene symbol to search. Examples: 'dopamine', 'serotonin receptor', 'EGFR', 'beta-adrenoceptor', 'TRPV1'"
+          "description": "Target NAME substring to search. Examples: 'dopamine', 'serotonin receptor', 'beta-adrenoceptor', 'TRPV1'. This is a name/abbreviation match, not a gene lookup -- GtoPdb names targets pharmacologically ('5-HT6 receptor', 'GluN2B'), so HGNC symbols such as 'HTR6' or 'GRIN2B' return nothing here. Use 'gene_symbol' for HGNC symbols."
+        },
+        "gene_symbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "HGNC gene symbol for an exact target lookup. Examples: 'CHRNA7' (nicotinic acetylcholine receptor alpha7 subunit), 'GRIN2B' (GluN2B), 'HTR6' (5-HT6 receptor). Preferred over 'name' when you have a gene symbol."
         },
         "type": {
           "type": [
