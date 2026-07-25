@@ -79,14 +79,24 @@ class MaveDBTool(BaseTool):
             }
 
         data = resp.json()
-        score_sets = data.get("scoreSets", [])[:limit]
+        all_score_sets = data.get("scoreSets", [])
+        score_sets = all_score_sets[:limit]
         results = []
         for ss in score_sets:
+            target_genes = [
+                g.get("name")
+                for g in (ss.get("targetGenes") or [])
+                if isinstance(g, dict) and g.get("name")
+            ]
             results.append(
                 {
                     "urn": ss.get("urn"),
                     "title": ss.get("title"),
                     "short_description": ss.get("shortDescription"),
+                    # Expose the target gene(s) so a full-text hit on a different
+                    # gene (e.g. query "BRCA1" matching "BRCA1-Associated Protein
+                    # 1"/BAP1) is visible rather than silently taken for the query.
+                    "target_genes": target_genes,
                     "num_variants": ss.get("numVariants"),
                     "published_date": ss.get("publishedDate"),
                 }
@@ -95,7 +105,10 @@ class MaveDBTool(BaseTool):
             "status": "success",
             "data": results,
             "metadata": {
-                "total_results": len(score_sets),
+                # True number of matches (MaveDB returns them all in one page),
+                # computed before truncation so callers know more may exist.
+                "total_results": len(all_score_sets),
+                "returned_results": len(results),
                 "query": query,
             },
         }
@@ -284,6 +297,21 @@ class MaveDBTool(BaseTool):
         }
 
     @staticmethod
+    def _is_genomic_reference(summary: Optional[Dict[str, Any]]) -> bool:
+        """True when a summarized VRS allele is anchored on a genomic sequence.
+
+        MaveDB maps protein-level DMS constructs onto protein (NP_/XP_) or
+        transcript (NM_/XM_/NR_) RefSeqs, which carry no genomic coordinates;
+        only chromosome/gene-region RefSeqs (NC_/NT_/NW_/NG_) are genomic.
+        Counting any non-null postMapped as "genomic" over-reports variants that
+        cannot actually be cross-referenced to ClinVar/dbSNP by position.
+        """
+        if not summary:
+            return False
+        label = (summary.get("sequence_reference_label") or "").upper()
+        return label.startswith(("NC_", "NT_", "NW_", "NG_"))
+
+    @staticmethod
     def _parse_limit(raw_limit: Any) -> Optional[int]:
         """Coerce a user-supplied ``limit`` to a positive int, else None (no cap)."""
         if raw_limit is None:
@@ -349,7 +377,7 @@ class MaveDBTool(BaseTool):
             post = self._summarize_vrs_allele(entry.get("postMapped"))
             pre = self._summarize_vrs_allele(entry.get("preMapped"))
             clingen = entry.get("clingenAlleleId")
-            if post:
+            if self._is_genomic_reference(post):
                 n_with_genomic += 1
             if clingen:
                 n_with_clingen += 1

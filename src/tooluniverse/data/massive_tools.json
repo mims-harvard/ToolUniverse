@@ -94,13 +94,13 @@
     },
     {
         "name": "MassIVE_get_protein_identifications",
-        "description": "Identification-level access to MassIVE datasets via the ProXI standard API. MassIVE's other tools return only dataset metadata; this tool exposes the actual protein identifications. Three modes: (1) per-dataset protein summaries - pass 'accession' (e.g. 'PXD000561') to get identified proteins with countPSM/countPeptides/countPeptidoforms/countDatasets; (2) cross-dataset protein lookup - pass 'protein_accession' (e.g. 'A2M_MOUSE') to find how many MassIVE datasets identified a protein; (3) peptide-spectrum matches - set result_type='psms' with a dataset 'accession' to get PSMs (peptide sequence + charge). Returns a structured success/error envelope.",
+        "description": "Identification-level access to MassIVE datasets via the ProXI standard API. Keyed on 'protein_accession' (e.g. 'A2M_MOUSE'): with result_type='proteins' (default) it returns that protein's cross-dataset identification counts (countPSM/countPeptides/countPeptidoforms/countDatasets); with result_type='psms' it returns that protein's peptide-spectrum matches (peptide sequence + charge). Note: the MassIVE ProXI proteins/psms endpoints do not filter by dataset 'accession' (they return the same global summary regardless), so per-dataset identification listing is not supported here - use MassIVE_get_dataset for dataset-level metadata. Returns a structured success/error envelope.",
         "parameter": {
             "type": "object",
             "properties": {
                 "accession": {
                     "type": ["string", "null"],
-                    "description": "Dataset accession (ProteomeXchange PXD or MassIVE MSV, e.g. 'PXD000561'). Required for per-dataset protein summaries and for PSM lookups."
+                    "description": "Optional dataset accession (ProteomeXchange PXD or MassIVE MSV). NOTE: the MassIVE ProXI endpoints ignore this as a filter, so it does not restrict results to a dataset. Use 'protein_accession' to query; use MassIVE_get_dataset for dataset metadata."
                 },
                 "protein_accession": {
                     "type": ["string", "null"],
@@ -110,7 +110,7 @@
                     "type": "string",
                     "enum": ["proteins", "psms"],
                     "default": "proteins",
-                    "description": "'proteins' (default) for protein identification summaries, or 'psms' for peptide-spectrum matches (use with a dataset 'accession')."
+                    "description": "'proteins' (default) for cross-dataset protein identification summaries, or 'psms' for that protein's peptide-spectrum matches. Both require 'protein_accession'."
                 }
             },
             "required": []
@@ -121,13 +121,10 @@
         "type": "MassIVETool",
         "test_examples": [
             {
-                "accession": "PXD000561"
-            },
-            {
                 "protein_accession": "A2M_MOUSE"
             },
             {
-                "accession": "PXD000561",
+                "protein_accession": "A2M_MOUSE",
                 "result_type": "psms"
             }
         ],
