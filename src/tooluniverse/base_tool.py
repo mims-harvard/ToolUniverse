@@ -178,6 +178,61 @@ class BaseTool:
         required_params = schema.get("required", [])
         return required_params
 
+    @staticmethod
+    def _normalize_key(key: str) -> str:
+        """Lowercase a parameter name and drop separators for fuzzy comparison."""
+        return "".join(ch for ch in key.lower() if ch.isalnum())
+
+    @staticmethod
+    def _unknown_keys(arguments: Dict[str, Any], properties: Dict[str, Any]) -> list:
+        """Return supplied argument names that are not declared in the schema.
+
+        Returns an empty list when the schema declares no properties, since
+        there is then nothing to compare against.
+        """
+        if not properties:
+            return []
+        return [k for k in arguments if k not in properties]
+
+    @classmethod
+    def _find_misspelled_key(
+        cls,
+        missing_prop: str,
+        arguments: Dict[str, Any],
+        properties: Optional[Dict[str, Any]] = None,
+    ) -> Optional[str]:
+        """Find which supplied key was probably meant to be ``missing_prop``.
+
+        Only considers keys that are not themselves valid schema properties, so
+        a legitimately-supplied sibling parameter is never reported as a typo.
+        Matching widens in three stages: exact case-insensitive, then
+        separator-insensitive (``geneName`` -> ``gene_name``), then fuzzy.
+        """
+        candidates = cls._unknown_keys(arguments, properties or {}) or list(arguments)
+        if not candidates:
+            return None
+
+        target = missing_prop.lower()
+        for key in candidates:
+            if key.lower() == target:
+                return key
+
+        target_norm = cls._normalize_key(missing_prop)
+        for key in candidates:
+            if cls._normalize_key(key) == target_norm:
+                return key
+
+        # Fuzzy fallback for ordinary typos ('acession' -> 'accession').
+        # The cutoff is deliberately high so that an unrelated parameter is
+        # not mislabelled as a misspelling of the missing one.
+        import difflib
+
+        norm_to_key = {cls._normalize_key(k): k for k in candidates}
+        match = difflib.get_close_matches(
+            target_norm, list(norm_to_key), n=1, cutoff=0.8
+        )
+        return norm_to_key[match[0]] if match else None
+
     def validate_parameters(self, arguments: Dict[str, Any]) -> Optional[ToolError]:
         """
         Validate parameters against tool schema.
@@ -231,6 +286,13 @@ class BaseTool:
             # Feature-25A-03: when a required property is missing, check if the user
             # provided a case-variant of it (e.g. kinase_id instead of kinase_ID).
             # If so, surface a "Did you mean?" hint to help them fix the typo.
+            # Feature-R3-01: case-variants were the ONLY form matched, so the far
+            # more common real-world errors -- an ordinary typo ('acession'), or
+            # separator/camelCase drift ('geneName' for 'gene_name') -- produced a
+            # bare "'accession' is a required property" with no indication that the
+            # key the user actually passed was unrecognized. Widen the match to
+            # separator-insensitive and fuzzy comparison, and when nothing matches
+            # at all, name the unrecognized keys instead of staying silent.
             if e.validator == "required" and isinstance(filtered_arguments, dict):
                 # e.message looks like: "'kinase_ID' is a required property"
                 # Extract the missing property name from the message.
@@ -239,13 +301,25 @@ class BaseTool:
                 _m = _re.match(r"'([^']+)' is a required property", e.message)
                 if _m:
                     missing_prop = _m.group(1)
-                    provided_lower = {k.lower(): k for k in filtered_arguments}
-                    if missing_prop.lower() in provided_lower:
-                        wrong_key = provided_lower[missing_prop.lower()]
+                    wrong_key = self._find_misspelled_key(
+                        missing_prop,
+                        filtered_arguments,
+                        properties=schema.get("properties", {}),
+                    )
+                    if wrong_key is not None:
                         error_msg += (
                             f" (you passed '{wrong_key}' — "
                             f"did you mean '{missing_prop}'?)"
                         )
+                    else:
+                        unknown = self._unknown_keys(
+                            filtered_arguments, schema.get("properties", {})
+                        )
+                        if unknown:
+                            error_msg += (
+                                f" (unrecognized parameter(s): "
+                                f"{', '.join(repr(k) for k in unknown)})"
+                            )
 
             return ToolValidationError(
                 error_msg,

@@ -300,12 +300,6 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             names = arguments["variant_name"]
             names = names if isinstance(names, list) else [names]
             names = [str(n).strip() for n in names if str(n).strip()]
-            # NCBI's [Variant name] index mangles the '.' in an HGVS reference
-            # prefix ('p.Glu342Lys' -> 'p0x2eGlu342Lys') and matches nothing, so a
-            # clinician typing standard HGVS got a silent false-empty. Strip the
-            # leading reference-type prefix so 'p.Glu342Lys' -> 'Glu342Lys' (which
-            # matches). Verified live: SERPINA1 p.Glu342Lys 0 -> 2 hits (Z-allele).
-            names = [re.sub(r"(?i)^[pcgmnor]\.", "", n) for n in names]
             # An rsID passed as variant_name (e.g. rs776746) belongs in a bare
             # free-text search, not the [Variant name] field, which returns 0 for
             # it -- route it like the rsid param instead of a false-empty.
@@ -313,9 +307,35 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             names = [n for n in names if n not in rsid_names]
             for _rs in rsid_names:
                 query_parts.append(_rs)
-            if names:
-                terms = " OR ".join(f"{n}[Variant name]" for n in names)
-                query_parts.append(f"({terms})" if len(names) > 1 else terms)
+            # NCBI's [Variant name] index mangles the '.' in an unquoted HGVS
+            # reference prefix ('p.Glu342Lys' -> 'p0x2eGlu342Lys') and matches
+            # nothing, so a clinician typing standard HGVS got a silent
+            # false-empty. Stripping the prefix fixed the protein case, but
+            # Fix-R3-07: it silently BROKE the coding case, because c. notation
+            # also carries '+'/'>' that Entrez only treats literally inside
+            # quotes. Confirmed live -- there is no single spelling that works
+            # for both:
+            #     DPYD "c.1905+1G>A"[Variant name] -> 1 ; "1905+1G>A" -> 0
+            #     SERPINA1 "p.Glu342Lys"    -> 0 ; "Glu342Lys"  -> 2
+            # so `tu run ClinVar_search_variants '{"gene":"DPYD",
+            # "variant_name":"c.1905+1G>A"}'` reported total_count 0 for
+            # VCV000000432, one of the best-known pharmacogenomic variants.
+            # Emit BOTH spellings, quoted, OR'd together: an OR can only add
+            # matches the old query missed, never drop ones it already found.
+            # Verified live: DPYD c.1905+1G>A 0->1, CYP2C19 c.681G>A 0->36,
+            # SERPINA1 p.Glu342Lys still 2, HBB p.Glu7Val still 9.
+            spellings = []
+            for name in names:
+                stripped = re.sub(r"(?i)^[pcgmnor]\.", "", name)
+                for form in (name, stripped):
+                    # Strip embedded quotes so they cannot break out of the
+                    # quoted Entrez term.
+                    form = form.replace('"', "").strip()
+                    if form and form not in spellings:
+                        spellings.append(form)
+            if spellings:
+                terms = " OR ".join(f'"{s}"[Variant name]' for s in spellings)
+                query_parts.append(f"({terms})" if len(spellings) > 1 else terms)
 
         if "clinical_significance" in arguments:
             # Feature-82A-002: NCBI silently translates [clnsig] to [All Fields],

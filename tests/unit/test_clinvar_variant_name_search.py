@@ -9,6 +9,11 @@ pathogenic variants in human genetics; see test_compound_variant_tool.py for
 the full cross-tool bug this caused). ClinVar eSearch DOES support a real
 [Variant name] field tag (confirmed live via raw NCBI E-utils), so this adds
 it as a proper "variant_name" parameter.
+
+Fix-R3-07 update: each candidate is now emitted as a QUOTED Entrez term, and
+an HGVS-prefixed name additionally contributes its prefix-stripped spelling,
+because coding notation ("c.1905+1G>A") only matches with the prefix kept
+while protein notation ("p.Glu342Lys") only matches with it removed.
 """
 
 from unittest.mock import patch
@@ -36,7 +41,7 @@ def test_variant_name_single_string_builds_field_tag():
     assert result["status"] == "success"
     term = mock_request.call_args[0][1]["term"]
     assert "HBB[gene]" in term
-    assert "Glu6Val[Variant name]" in term
+    assert '"Glu6Val"[Variant name]' in term
     assert "AND" in term
 
 
@@ -50,11 +55,11 @@ def test_variant_name_list_combines_with_or():
         tool.run({"gene": "HBB", "variant_name": ["Glu7Val", "Glu6Val"]})
 
     term = mock_request.call_args[0][1]["term"]
-    assert "Glu7Val[Variant name]" in term
-    assert "Glu6Val[Variant name]" in term
+    assert '"Glu7Val"[Variant name]' in term
+    assert '"Glu6Val"[Variant name]' in term
     assert " OR " in term
     # both candidates must be inside one parenthesized OR group, ANDed with gene
-    assert "(Glu7Val[Variant name] OR Glu6Val[Variant name])" in term
+    assert '("Glu7Val"[Variant name] OR "Glu6Val"[Variant name])' in term
 
 
 def test_variant_name_alone_is_a_valid_search_no_gene_required():
@@ -67,7 +72,7 @@ def test_variant_name_alone_is_a_valid_search_no_gene_required():
         result = tool.run({"variant_name": "V600E"})
 
     assert result["status"] == "success"
-    assert "V600E[Variant name]" in mock_request.call_args[0][1]["term"]
+    assert '"V600E"[Variant name]' in mock_request.call_args[0][1]["term"]
 
 
 def test_variant_name_is_a_recognized_parameter_not_flagged_as_unrecognized():
@@ -90,7 +95,7 @@ def test_empty_or_blank_variant_name_entries_are_dropped():
         tool.run({"gene": "HBB", "variant_name": ["", "  ", "Glu6Val"]})
 
     term = mock_request.call_args[0][1]["term"]
-    assert "Glu6Val[Variant name]" in term
+    assert '"Glu6Val"[Variant name]' in term
     assert "OR" not in term  # only one real candidate survived, no OR needed
 
 
@@ -111,7 +116,7 @@ def test_variant_is_aliased_to_variant_name_when_gene_also_present():
     assert result["status"] == "success"
     term = mock_request.call_args[0][1]["term"]
     assert "KRAS[gene]" in term
-    assert "G12C[Variant name]" in term  # the variant filter is actually applied
+    assert '"G12C"[Variant name]' in term  # the variant filter is actually applied
 
 
 def test_variant_alias_not_flagged_as_unrecognized_when_alone():
@@ -124,7 +129,7 @@ def test_variant_alias_not_flagged_as_unrecognized_when_alone():
         result = tool.run({"variant": "G12C"})
 
     assert result["status"] == "success"
-    assert "G12C[Variant name]" in mock_request.call_args[0][1]["term"]
+    assert '"G12C"[Variant name]' in mock_request.call_args[0][1]["term"]
 
 
 def test_explicit_variant_name_takes_precedence_over_variant_alias():
@@ -137,5 +142,5 @@ def test_explicit_variant_name_takes_precedence_over_variant_alias():
         tool.run({"gene": "KRAS", "variant_name": "G12D", "variant": "G12C"})
 
     term = mock_request.call_args[0][1]["term"]
-    assert "G12D[Variant name]" in term
+    assert '"G12D"[Variant name]' in term
     assert "G12C" not in term
