@@ -195,12 +195,11 @@ class IMGTTool(BaseTool):
 
         fmt = arguments.get("format", "fasta")
 
-        try:
-            # Use EBI DBFetch to retrieve IMGT sequences
-            response = requests.get(
+        def _dbfetch(db):
+            return requests.get(
                 EBI_DBFETCH_URL,
                 params={
-                    "db": "imgt",
+                    "db": db,
                     "id": accession,
                     "format": fmt,
                     "style": "raw",
@@ -209,21 +208,25 @@ class IMGTTool(BaseTool):
                 headers={"User-Agent": "ToolUniverse/IMGT"},
             )
 
-            if response.status_code == 404 or "not found" in response.text.lower():
-                # Try EMBL database as fallback
-                response = requests.get(
-                    EBI_DBFETCH_URL,
-                    params={
-                        "db": "embl",
-                        "id": accession,
-                        "format": fmt,
-                        "style": "raw",
-                    },
-                    timeout=self.timeout,
-                    headers={"User-Agent": "ToolUniverse/IMGT"},
-                )
+        def _dbfetch_failed(resp):
+            # DBFetch reports failures (unknown database, no entries found) as an
+            # HTTP 200 whose body begins with "ERROR <n> ...", so a status-code
+            # check alone would let that error text through as a "sequence".
+            if resp.status_code == 404:
+                return True
+            body = resp.text.lstrip()
+            return body.startswith("ERROR ") or "not found" in body.lower()
 
-            if response.status_code == 404:
+        try:
+            # IMGT/LIGM-DB is the native IMGT nucleotide database for IG/TR gene
+            # sequences; fall back to EMBL/ENA for accessions not mirrored there.
+            # (The old "imgt" slug is not a valid DBFetch database, so every
+            # request returned "ERROR 1 Unknown database [imgt]." as the result.)
+            response = _dbfetch("imgtligm")
+            if _dbfetch_failed(response):
+                response = _dbfetch("embl")
+
+            if _dbfetch_failed(response):
                 return {"status": "error", "error": f"Sequence not found: {accession}"}
 
             response.raise_for_status()

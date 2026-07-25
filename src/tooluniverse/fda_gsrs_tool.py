@@ -137,7 +137,10 @@ class FDAGSRSTool(BaseTool):
                 "error": "Provide 'query' (name, UNII, InChIKey, or formula).",
             }
 
-        params: Dict[str, Any] = {"q": query.strip(), "top": limit}
+        # ``view=full`` inlines each result's codes/names arrays; without it the
+        # search records carry only link stubs, so xrefs and synonyms come back
+        # empty for every hit.
+        params: Dict[str, Any] = {"q": query.strip(), "top": limit, "view": "full"}
         if substance_class:
             params["fdim"] = f"substanceClass:{substance_class}"
 
@@ -174,7 +177,13 @@ class FDAGSRSTool(BaseTool):
                 "error": "Provide 'unii' (e.g., 'R16CO5Y76E' for aspirin).",
             }
 
-        result = self._api_get(f"{GSRS_BASE}/substances/{unii.strip().upper()}")
+        # ``?view=full`` is required for GSRS to inline the codes/names/references
+        # arrays; the default view returns only link stubs (``_codes``/``_names``),
+        # so without it the cross-references and synonyms come back empty.
+        result = self._api_get(
+            f"{GSRS_BASE}/substances/{unii.strip().upper()}",
+            params={"view": "full"},
+        )
         if not result["ok"]:
             result.pop("ok", None)
             return {"status": "error", **result}
@@ -224,7 +233,10 @@ class FDAGSRSTool(BaseTool):
                     "smiles": structure.get("smiles", ""),
                     "formula": structure.get("formula", ""),
                     "molfile": structure.get("molfile", ""),
-                    "inchiKey": structure.get("inchiKey", ""),
+                    # GSRS exposes the InChIKey under ``_inchiKey`` in the full
+                    # view; keep the plain key as a fallback.
+                    "inchiKey": structure.get("_inchiKey")
+                    or structure.get("inchiKey", ""),
                     "charge": structure.get("charge", ""),
                     "mwt": structure.get("mwt", ""),
                 },
