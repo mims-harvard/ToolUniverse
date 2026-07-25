@@ -358,3 +358,87 @@ class CPICSearchPairsTool(BaseRESTTool):
 
     def _build_url(self, args: Dict[str, Any]) -> str:
         return super()._build_url(self._resolve_aliases(args))
+
+
+@register_tool("CPICGetAllelesTool")
+class CPICGetAllelesTool(BaseTool):
+    """List CPIC star alleles for a gene, with a true total and paging.
+
+    Fix-R4B-4: this tool ran as a plain BaseRESTTool over a URL template
+    carrying `limit={limit}` with a default of 50, and the only count in the
+    response was `count`, which reported the size of the returned page. So
+    `CPIC_get_alleles {"genesymbol": "CYP2D6"}` came back with 50 alleles and
+    `count: 50` -- indistinguishable from CYP2D6 genuinely having 50 alleles,
+    when CPIC actually curates 208 (confirmed live via the PostgREST
+    `Content-Range` header, `0-207/208`). A pharmacogenomics user calling
+    star alleles from that page silently loses 158 of them, and there was no
+    `offset` to walk the rest. Ask PostgREST for the exact count, report it,
+    and page explicitly.
+    """
+
+    _DEFAULT_LIMIT = 50
+    _MAX_LIMIT = 1000
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Fetch one page of alleles plus the gene's true allele count."""
+        gene = arguments.get("genesymbol")
+        if not gene:
+            return {"status": "error", "error": "genesymbol is required (e.g. CYP2D6)"}
+        gene = str(gene).upper()
+
+        raw_limit = arguments.get("limit")
+        limit = self._DEFAULT_LIMIT if raw_limit in (None, "") else int(raw_limit)
+        limit = max(1, min(limit, self._MAX_LIMIT))
+        offset = max(0, int(arguments.get("offset") or 0))
+
+        params = {
+            "genesymbol": f"eq.{gene}",
+            "select": "name,functionalstatus,activityvalue,clinicalfunctionalstatus",
+            "limit": limit,
+            "offset": offset,
+        }
+        try:
+            # Prefer: count=exact makes PostgREST report the unpaged total in
+            # the Content-Range response header ("0-49/208").
+            response = requests.get(
+                f"{_CPIC_API}/allele",
+                params=params,
+                headers={"Prefer": "count=exact"},
+                timeout=30,
+            )
+            response.raise_for_status()
+            data = response.json()
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"CPIC API error: {e}"}
+
+        total = self._total_from_content_range(response.headers.get("Content-Range"))
+        if total is None:
+            total = offset + len(data)
+
+        result: Dict[str, Any] = {
+            "status": "success",
+            "data": data,
+            "url": response.url,
+            "count": len(data),
+            "total_count": total,
+            "offset": offset,
+        }
+        if data and offset + len(data) < total:
+            result["note"] = (
+                f"Showing alleles {offset + 1}-{offset + len(data)} of {total} curated "
+                f"by CPIC for {gene}. Re-run with offset={offset + len(data)} for the "
+                f"next page, or raise 'limit' (max {self._MAX_LIMIT})."
+            )
+        elif not data and total:
+            result["note"] = (
+                f"No alleles at offset={offset}; {gene} has {total} alleles in CPIC."
+            )
+        return result
+
+    @staticmethod
+    def _total_from_content_range(header: Optional[str]) -> Optional[int]:
+        """Parse the unpaged total out of a PostgREST Content-Range header."""
+        if not header or "/" not in header:
+            return None
+        total = header.rsplit("/", 1)[1].strip()
+        return int(total) if total.isdigit() else None

@@ -501,9 +501,21 @@ class GWASVariantsForTrait(GWASRESTTool):
         page_size = (
             self._coerce_int(arguments.get("size") or arguments.get("limit")) or 200
         )
+        # Fix-R4B-1: /v2/associations returns associations UNSORTED, and this
+        # tool never asked for a sort -- so the first page was an arbitrary
+        # slice of the trait's associations rather than its strongest loci.
+        # Confirmed live: efo_id=MONDO_0004979 (asthma, 3219 associations)
+        # returned p-values 2e-06 .. 2e-24 here, while the sibling
+        # GWASAssociationsForTrait -- same endpoint, but sending
+        # sort=p_value&direction=asc -- returned 7e-288, 8e-223, 2e-156 ...
+        # A user reading the top of this tool's page therefore missed every
+        # genome-wide-significant hit. Default to significance order and let
+        # callers override, matching the sibling tools.
         params: Dict[str, Any] = {
             "size": page_size,
             "page": self._coerce_int(arguments.get("page")) or 0,
+            "sort": self._coerce_str(arguments.get("sort")) or "p_value",
+            "direction": self._coerce_str(arguments.get("direction")) or "asc",
         }
         if efo_id:
             params["efo_id"] = efo_id
