@@ -249,7 +249,22 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
             "single_cell": "rnascm",  # RNA single cell type specific nTPM
         }
 
-        # Map expected API response field names for each source type
+        # Fix-R4A-2: the aggregate "*specific nTPM" columns above are populated
+        # only for genes HPA classifies as enriched in that source type, and
+        # "rnabrm" is not a valid HPA column at all -- HPA silently drops
+        # unknown columns, so every brain query returned "N/A" with
+        # status "success". Confirmed live: ?columns=g,rnabrm returns
+        # {"Gene":"GFAP"} with no data column, while
+        # ?columns=g,brain_RNA_thalamus returns 14782.4 nTPM. HPA exposes a
+        # per-source column for each source name; query that first and only
+        # fall back to the aggregate column if it yields nothing.
+        self.source_column_prefixes = {
+            "tissue": "t_RNA_",
+            "blood": "blood_RNA_",
+            "brain": "brain_RNA_",
+            "single_cell": "sc_RNA_",
+        }
+
         self.api_response_fields = {
             "tissue": "RNA tissue specific nTPM",
             "blood": "RNA blood lineage specific nTPM",
@@ -341,6 +356,64 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
             },
         }
 
+    @staticmethod
+    def _categorize_expression(expression_value):
+        """Bucket an nTPM/nCPM value into a coarse expression level."""
+        if expression_value in (None, "N/A"):
+            return "unknown"
+        try:
+            val = float(expression_value)
+        except (ValueError, TypeError):
+            return "unknown"
+        if val > 50:
+            return "very high"
+        if val > 10:
+            return "high"
+        if val > 1:
+            return "medium"
+        if val > 0.1:
+            return "low"
+        return "very low"
+
+    def _query_source_column(self, gene_name, source_type, candidate_names):
+        """Fetch a single source's value from its dedicated HPA column.
+
+        Returns (value, column_label) or (None, None) when HPA has no such
+        column or no value for this gene.
+        """
+        prefix = self.source_column_prefixes.get(source_type)
+        if not prefix:
+            return None, None
+
+        for candidate in candidate_names:
+            if not candidate:
+                continue
+            column = prefix + str(candidate).strip().replace(" ", "_")
+            try:
+                response = self._make_api_request(gene_name, f"g,{column}")
+            except Exception:
+                continue
+            if not response or isinstance(response, dict):
+                continue
+
+            # HPA's search matches synonyms too (search=GFAP also returns
+            # HGFAC), so pick the row whose Gene actually equals the query.
+            row = next(
+                (
+                    r
+                    for r in response
+                    if str(r.get("Gene", "")).upper() == gene_name.upper()
+                ),
+                response[0],
+            )
+            for key, value in row.items():
+                # HPA labels the column e.g. "Brain RNA - thalamus [nTPM]".
+                if " RNA - " not in key:
+                    continue
+                if value not in (None, "", "N/A"):
+                    return value, key
+        return None, None
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         gene_name = arguments.get("gene_name")
         source_type = arguments.get("source_type", "").lower()
@@ -423,6 +496,27 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
             return {"status": "error", "data": {"error": error_msg}}
 
         try:
+            # Prefer HPA's dedicated per-source column -- it carries a value
+            # for every gene, not just the ones enriched in this source type.
+            candidates = list(self.source_name_mappings[source_type][source_name])
+            candidates.append(source_name.replace("_", " "))
+            direct_value, direct_label = self._query_source_column(
+                gene_name, source_type, candidates
+            )
+            if direct_value is not None:
+                return {
+                    "status": "success",
+                    "data": {
+                        "gene_name": gene_name,
+                        "source_type": source_type,
+                        "source_name": source_name,
+                        "expression_value": direct_value,
+                        "expression_level": self._categorize_expression(direct_value),
+                        "column_queried": direct_label,
+                        "status": "ok",
+                    },
+                }
+
             # Get the correct API column
             api_column = self.source_column_mappings[source_type]
             columns = f"g,gs,{api_column}"
@@ -485,23 +579,7 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                         if expression_value != "N/A":
                             break
 
-            # Categorize expression level
-            expression_level = "unknown"
-            if expression_value != "N/A":
-                try:
-                    val = float(expression_value)
-                    if val > 50:
-                        expression_level = "very high"
-                    elif val > 10:
-                        expression_level = "high"
-                    elif val > 1:
-                        expression_level = "medium"
-                    elif val > 0.1:
-                        expression_level = "low"
-                    else:
-                        expression_level = "very low"
-                except (ValueError, TypeError):
-                    expression_level = "unknown"
+            expression_level = self._categorize_expression(expression_value)
 
             result = {
                 "gene_name": gene_data.get("Gene", gene_name),
