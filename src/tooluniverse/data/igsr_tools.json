@@ -43,7 +43,12 @@
           "type": "object",
           "properties": {
             "total": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Total number of matching records in IGSR, independent of the `limit` page size."
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number of records included in this response (at most `limit`)."
             },
             "populations": {
               "type": "array",
@@ -161,7 +166,12 @@
           "type": "object",
           "properties": {
             "total": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Total number of matching records in IGSR, independent of the `limit` page size."
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number of records included in this response (at most `limit`)."
             },
             "samples": {
               "type": "array",
@@ -261,7 +271,12 @@
           "type": "object",
           "properties": {
             "total": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Total number of matching records in IGSR, independent of the `limit` page size."
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number of records included in this response (at most `limit`)."
             },
             "collections": {
               "type": "array",

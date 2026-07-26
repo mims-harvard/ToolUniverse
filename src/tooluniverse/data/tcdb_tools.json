@@ -89,7 +89,11 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of families to return (default 20, max 100)."
+          "description": "Maximum number of families to return per page (default 20, max 100). This caps the page only; `total_matches` reports the full result-set size."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of matching families to skip before returning a page (default 0). Combine with `limit` to page through result sets larger than 100."
         }
       },
       "required": []
@@ -103,6 +107,9 @@
               "type": "object",
               "properties": {
                 "total_matches": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "offset": {"type": "integer"},
+                "has_more": {"type": "boolean"},
                 "families": {
                   "type": "array",
                   "items": {
@@ -157,7 +164,11 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return (default 20, max 100)."
+          "description": "Maximum number of transporters to return per page (default 20, max 100). This caps the page only; `total_matches` reports the full result-set size."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of matching transporters to skip before returning a page (default 0). Combine with `limit` to page through result sets larger than 100."
         }
       },
       "required": ["substrate_name"]
@@ -171,6 +182,9 @@
               "type": "object",
               "properties": {
                 "total_matches": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "offset": {"type": "integer"},
+                "has_more": {"type": "boolean"},
                 "transporters": {
                   "type": "array",
                   "items": {

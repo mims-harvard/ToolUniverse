@@ -234,6 +234,7 @@ class TCDBTool(BaseTool):
         family_id = (arguments.get("family_id") or "").strip()
         family_name = (arguments.get("family_name") or "").strip()
         limit = min(int(arguments.get("limit", 20)), 100)
+        offset = max(int(arguments.get("offset", 0)), 0)
 
         if not family_id and not family_name:
             return {
@@ -262,13 +263,19 @@ class TCDBTool(BaseTool):
             )
 
         matches.sort(key=lambda x: x["family_id"])
-        matches = matches[:limit]
+        # `total_matches` counts every family matching the query. It must be taken
+        # before paging, otherwise it just echoes `limit` back to the caller.
+        total_matches = len(matches)
+        page = matches[offset : offset + limit]
 
         return {
             "status": "success",
             "data": {
-                "total_matches": len(matches),
-                "families": matches,
+                "total_matches": total_matches,
+                "returned": len(page),
+                "offset": offset,
+                "has_more": offset + len(page) < total_matches,
+                "families": page,
                 "query": {
                     "family_id": family_id or None,
                     "family_name": family_name or None,
@@ -282,6 +289,7 @@ class TCDBTool(BaseTool):
             arguments.get("substrate_name") or arguments.get("substrate") or ""
         ).strip()
         limit = min(int(arguments.get("limit", 20)), 100)
+        offset = max(int(arguments.get("offset", 0)), 0)
 
         if not substrate_name:
             return {
@@ -308,12 +316,18 @@ class TCDBTool(BaseTool):
                     }
                 )
 
-        matches = matches[:limit]
+        # Count every transporter carrying the substrate before paging, so
+        # `total_matches` reports the size of the result set rather than `limit`.
+        total_matches = len(matches)
+        page = matches[offset : offset + limit]
         return {
             "status": "success",
             "data": {
-                "total_matches": len(matches),
-                "transporters": matches,
+                "total_matches": total_matches,
+                "returned": len(page),
+                "offset": offset,
+                "has_more": offset + len(page) < total_matches,
+                "transporters": page,
                 "query": substrate_name,
             },
         }
