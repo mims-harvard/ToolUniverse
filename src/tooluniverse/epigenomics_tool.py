@@ -34,6 +34,22 @@ _RETRY_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 _MAX_RETRIES = 3
 
 
+def _encode_empty_result_note(biosample: Any = None) -> str:
+    """Explain a genuinely empty ENCODE result, hinting at ontology spelling."""
+    note = (
+        "No matching ENCODE experiments. The filters are applied as given -- "
+        "this is a real zero-result answer, not a dropped filter."
+    )
+    if biosample:
+        note += (
+            f" ENCODE requires exact ontology names, so check biosample='{biosample}' "
+            "(e.g. 'K562', 'HepG2', 'liver', 'brain', 'breast epithelium', 'MCF-7'; "
+            "'breast' must be spelled 'breast epithelium' or 'mammary gland'). "
+            "Use GEO_search_chipseq_datasets for disease-based searches."
+        )
+    return note
+
+
 def _inject_ncbi_api_key(params: Dict[str, Any]) -> Dict[str, Any]:
     """If NCBI_API_KEY is set, append it to the params dict. 3→10 req/sec.
 
@@ -168,7 +184,16 @@ class EpigenomicsTool(BaseTool):
     # =========================================================================
 
     def _encode_search(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """Generic ENCODE search helper."""
+        """Generic ENCODE search helper.
+
+        ENCODE answers a facet combination that matches nothing with HTTP 404
+        carrying a perfectly valid body ({"total": 0, "@graph": [],
+        "notification": "No results found"}). Treating that as a transport
+        error made callers either retry with a filter removed -- returning
+        another species' experiments under the requested organism -- or report
+        a genuine zero-result query as "API HTTP error: 404". Parse the body,
+        as encode_tool.py::_http_get already does.
+        """
         url = f"{ENCODE_BASE_URL}/search/"
         params["format"] = "json"
         response = _request_with_backoff(
@@ -177,6 +202,14 @@ class EpigenomicsTool(BaseTool):
             headers={"Accept": "application/json"},
             timeout=self.timeout,
         )
+        if response.status_code == 404:
+            try:
+                body = response.json()
+            except ValueError:
+                response.raise_for_status()
+            else:
+                if isinstance(body, dict) and "@graph" in body:
+                    return body
         response.raise_for_status()
         return response.json()
 
@@ -223,36 +256,23 @@ class EpigenomicsTool(BaseTool):
         limit = arguments.get("limit", 25)
         params["limit"] = min(int(limit), 100)
 
-        # Feature-70A-003: ambiguous/non-leaf biosample terms (e.g. "heart") combined with
-        # the organism filter can produce HTTP 404 from ENCODE. Fall back without
-        # the organism filter in that case.
-        # Feature-79E: if biosample_term_name is not a valid ENCODE ontology term
-        # (e.g. disease names like "AML"), both attempts 404; return empty with hint.
-        try:
-            raw = self._encode_search(params)
-        except Exception:
-            fallback_params = {
-                k: v
-                for k, v in params.items()
-                if k != "replicates.library.biosample.organism.scientific_name"
+        # A zero-result combination now comes back as total 0 rather than an
+        # exception. Retrying without the organism filter used to answer
+        # "human midbrain H3K4me3" with four Mus musculus embryo experiments
+        # while still reporting organism="Homo sapiens", so no filter is
+        # dropped here -- an empty answer is reported as empty.
+        raw = self._encode_search(params)
+        if not raw.get("@graph"):
+            return {
+                "status": "success",
+                "data": [],
+                "metadata": {
+                    "source": "ENCODE",
+                    "total": 0,
+                    "organism": organism,
+                    "note": _encode_empty_result_note(biosample),
+                },
             }
-            try:
-                raw = self._encode_search(fallback_params)
-            except Exception:
-                return {
-                    "status": "success",
-                    "data": [],
-                    "metadata": {
-                        "source": "ENCODE",
-                        "total": 0,
-                        "note": f"No results for biosample='{biosample}'. "
-                        "ENCODE requires exact ontology names for cell lines or tissues "
-                        "(e.g., 'K562', 'HepG2', 'liver', 'brain', 'breast epithelium', 'MCF-7'). "
-                        "Common anatomy terms like 'breast' must be spelled as ENCODE uses them "
-                        "(try 'breast epithelium', 'mammary gland', or a cell line like 'MCF-7'). "
-                        "Use GEO_search_chipseq_datasets for disease-based searches.",
-                    },
-                }
 
         experiments = []
         for exp in raw.get("@graph", []):
@@ -370,30 +390,19 @@ class EpigenomicsTool(BaseTool):
         limit = arguments.get("limit", 25)
         params["limit"] = min(int(limit), 100)
 
-        # Feature-70A-003: biosample+organism combos can 404; fall back without organism.
-        try:
-            raw = self._encode_search(params)
-        except Exception:
-            fallback_params = {
-                k: v
-                for k, v in params.items()
-                if k != "replicates.library.biosample.organism.scientific_name"
+        # No filter is dropped on an empty result -- see _encode_search.
+        raw = self._encode_search(params)
+        if not raw.get("@graph"):
+            return {
+                "status": "success",
+                "data": [],
+                "metadata": {
+                    "source": "ENCODE",
+                    "total": 0,
+                    "organism": organism,
+                    "note": _encode_empty_result_note(biosample),
+                },
             }
-            try:
-                raw = self._encode_search(fallback_params)
-            except Exception:
-                return {
-                    "status": "success",
-                    "data": [],
-                    "metadata": {
-                        "source": "ENCODE",
-                        "total": 0,
-                        "note": f"No results for biosample='{biosample}'. "
-                        "ENCODE requires exact ontology names for cell lines or tissues "
-                        "(e.g., 'K562', 'HepG2', 'liver', 'brain', 'breast epithelium', 'MCF-7'). "
-                        "Use GEO_search_atacseq_datasets for disease-based searches.",
-                    },
-                }
 
         experiments = []
         for exp in raw.get("@graph", []):
@@ -875,29 +884,8 @@ class EpigenomicsTool(BaseTool):
             params["replicates.library.biosample.organism.scientific_name"] = organism
         params["limit"] = min(int(limit), 100)
 
-        try:
-            raw = self._encode_search(params)
-        except Exception:
-            # Fall back without organism filter (mirrors histone search fix)
-            fallback = {
-                k: v
-                for k, v in params.items()
-                if k != "replicates.library.biosample.organism.scientific_name"
-            }
-            try:
-                raw = self._encode_search(fallback)
-            except Exception:
-                return {
-                    "status": "success",
-                    "data": {"total": 0, "experiments": []},
-                    "metadata": {
-                        "source": "ENCODE",
-                        "note": (
-                            f"No results for biosample='{biosample}'. "
-                            "ENCODE requires exact ontology names (e.g., 'K562', 'HepG2', 'liver')."
-                        ),
-                    },
-                }
+        # No filter is dropped on an empty result -- see _encode_search.
+        raw = self._encode_search(params)
 
         # If no results and assay was 'total RNA-seq', retry with 'polyA plus RNA-seq'
         # Some cell lines (e.g. HeLa-S3) have no total RNA-seq but have polyA plus RNA-seq.

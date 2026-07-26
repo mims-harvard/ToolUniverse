@@ -4,6 +4,27 @@ from urllib.parse import quote
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
+# Defaults applied to GOlr URL templates when the caller omits the parameter.
+_GOLR_TEMPLATE_DEFAULTS = {"rows": 100}
+
+
+def _drop_unfilled_query_segments(url: str) -> str:
+    """Remove query segments still holding an unsubstituted {placeholder}.
+
+    An optional filter the caller omitted must not be sent as the literal
+    string "{taxon}" -- Solr would then match nothing and the tool would report
+    an empty result set as though the term genuinely had no genes.
+    """
+    if "{" not in url or "?" not in url:
+        return url
+    base, _, query = url.partition("?")
+    kept = [
+        segment
+        for segment in query.split("&")
+        if not ("{" in segment and "}" in segment)
+    ]
+    return f"{base}?{'&'.join(kept)}" if kept else base
+
 
 @register_tool("GeneOntologyTool")
 class GeneOntologyTool(BaseTool):
@@ -49,21 +70,34 @@ class GeneOntologyTool(BaseTool):
             docs = response.get("docs", [])
             return docs
 
-        elif extract_path == "associations[*].subject":
-            # Extract gene/protein information from Biolink associations
-            result = []
-            # Handle both dict with associations and direct list from Biolink API
-            if isinstance(data, list):
-                # Direct list of associations from Biolink API
-                associations = data
-            else:
-                # Dictionary response with associations key
-                associations = data.get("associations", [])
-
-            for assoc in associations:
-                subject = assoc.get("subject", {})
-                result.append(subject)
-            return result
+        elif extract_path == "response.docs.genes":
+            # Collapse GOlr annotation rows into distinct genes. GOlr returns one
+            # row per annotation, so a gene backed by several evidence codes
+            # appears many times; counting rows would overstate the gene count.
+            response = data.get("response", {})
+            docs = response.get("docs", [])
+            genes = {}
+            for doc in docs:
+                bioentity = doc.get("bioentity")
+                if not bioentity:
+                    continue
+                gene = genes.setdefault(
+                    bioentity,
+                    {
+                        "bioentity": bioentity,
+                        "gene_symbol": doc.get("bioentity_label"),
+                        "gene_name": doc.get("bioentity_name"),
+                        "taxon": doc.get("taxon"),
+                        "taxon_label": doc.get("taxon_label"),
+                        "evidence_types": [],
+                        "annotation_count": 0,
+                    },
+                )
+                gene["annotation_count"] += 1
+                evidence = doc.get("evidence_type")
+                if evidence and evidence not in gene["evidence_types"]:
+                    gene["evidence_types"].append(evidence)
+            return list(genes.values())
 
         # For simple paths, try direct access
         try:
@@ -124,8 +158,13 @@ class GeneOntologyTool(BaseTool):
         if "?" in self.endpoint:
             # This is a complete URL with query parameters (GOlr format)
             url = self.endpoint
-            for key, value in arguments.items():
+            template_args = dict(arguments)
+            for key, default in _GOLR_TEMPLATE_DEFAULTS.items():
+                if f"{{{key}}}" in url and key not in template_args:
+                    template_args[key] = default
+            for key, value in template_args.items():
                 url = url.replace(f"{{{key}}}", quote(str(value)))
+            url = _drop_unfilled_query_segments(url)
             params = {}
         else:
             # This is a template URL (Biolink format)
