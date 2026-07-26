@@ -3,6 +3,10 @@ from typing import Any, Dict
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
+from tooluniverse.gtex_v2_tool import (
+    DATASET_GENCODE_VERSION,
+    DEFAULT_GENCODE_VERSION,
+)
 from tooluniverse.tool_registry import register_tool
 
 
@@ -31,16 +35,22 @@ def _extract_data_list(api_response: Any) -> list:
     return api_response if isinstance(api_response, list) else []
 
 
-def _resolve_gene_id(gene_input: str, base_url: str, timeout: int) -> str:
+def _resolve_gene_id(
+    gene_input: str, base_url: str, timeout: int, dataset_id: str = "gtex_v8"
+) -> str:
     """Resolve a gene symbol or unversioned Ensembl ID to a versioned GENCODE ID.
 
-    Queries GTEx /reference/gene to resolve to the correct GENCODE v26 version.
-    If a user-provided versioned ID (e.g., ENSG00000142192.21) doesn't match
-    GENCODE v26, strip the version and re-resolve.
+    Queries GTEx /reference/gene for the GENCODE version `dataset_id` is
+    annotated against. Resolving against the wrong version yields an empty but
+    HTTP 200 response, which reads as "no data for this gene" rather than as an
+    ID mismatch, so the dataset drives the version rather than a fixed v26.
     """
+    gencode_version = DATASET_GENCODE_VERSION.get(dataset_id, DEFAULT_GENCODE_VERSION)
     # Try resolving the input (versioned or not) via the reference API
     query_id = gene_input.split(".")[0] if gene_input.startswith("ENS") else gene_input
-    url = f"{base_url}/reference/gene?geneId={query_id}&gencodeVersion=v26"
+    url = (
+        f"{base_url}/reference/gene?geneId={query_id}&gencodeVersion={gencode_version}"
+    )
     try:
         data = _http_get(url, headers={"Accept": "application/json"}, timeout=timeout)
         genes = data.get("data", [])
@@ -205,11 +215,12 @@ class GTExEQTLTool:
                     "(e.g. 'ENSG00000197708'), or 'gene' to query eQTLs."
                 ),
             }
-        gencode_id = _resolve_gene_id(gene_input, base, timeout)
+        dataset_id = arguments.get("dataset_id", "gtex_v8")
+        gencode_id = _resolve_gene_id(gene_input, base, timeout, dataset_id)
 
         query: Dict[str, Any] = {
             "gencodeId": gencode_id,
-            "datasetId": arguments.get("dataset_id", "gtex_v8"),
+            "datasetId": dataset_id,
         }
         # Pass tissue filter if provided (tissueSiteDetailId is case-sensitive, e.g. 'Brain_Cortex')
         tissue = arguments.get("tissue_id") or arguments.get("tissue")

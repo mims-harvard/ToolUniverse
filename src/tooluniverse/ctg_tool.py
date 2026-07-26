@@ -510,13 +510,16 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
                 query_params[k] = arguments[k]
 
         # Add default parameters that are not shown in the schema.
-        # Skip filter.advanced when a status filter is set, because filter.advanced
-        # requires HasResults=true which excludes most RECRUITING/active trials.
-        has_status_filter = "filter.overallStatus" in query_params
+        # filter.advanced used to be skipped whenever a status filter was set,
+        # to work around its old AREA[HasResults]true clause. That clause was
+        # removed above, so the skip only disabled the documented "Limited to
+        # trials beyond phase 1" gate -- and it did so silently: adding the
+        # narrowing overall_status=COMPLETED filter to a metformin/lactic
+        # acidosis search *raised* total_count from 2 to 3 and returned a
+        # disjoint set, while a RECRUITING pembrolizumab search returned 745
+        # studies instead of 557, phase-1 trials included.
         for k, v in self.default_params_not_shown.items():
             if k not in query_params:
-                if k == "filter.advanced" and has_status_filter:
-                    continue
                 query_params[k] = v
 
         # Process list parameters that need to be joined

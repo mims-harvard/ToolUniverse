@@ -100,9 +100,22 @@ class WikiPathwaysExtTool(BaseTool):
                 "error": "pathway_id parameter is required (e.g., 'WP254')",
             }
 
-        code = arguments.get("code", "H")
-        id_type_name = CODE_TO_NAME.get(code, code)
-        source_substr = _CODE_TO_SOURCE_SUBSTR.get(code, code)
+        # `code` used to default to "H" (HGNC), but WikiPathways' RDF store
+        # annotates gene products with the database they were drawn from, and
+        # HGNC is rare there -- WP254's 87 gene products are sourced from
+        # Entrez Gene (84) and Ensembl (3), none from HGNC. The default filter
+        # therefore matched nothing and the tool reported "0 genes" for its own
+        # documented 88-gene example. `code` is now an optional filter.
+        code = arguments.get("code")
+        id_type_name = CODE_TO_NAME.get(code, code) if code else "All sources"
+
+        source_filter = ""
+        if code:
+            source_substr = _CODE_TO_SOURCE_SUBSTR.get(code, code)
+            # Case-insensitive: the store writes "UniProtKB", not "Uniprot".
+            source_filter = (
+                f'\n  FILTER(CONTAINS(LCASE(STR(?src)), "{source_substr.lower()}"))'
+            )
 
         identifier_uri = f"https://identifiers.org/wikipathways/{pathway_id}"
         sparql = f"""
@@ -110,33 +123,43 @@ PREFIX wp: <http://vocabularies.wikipathways.org/wp#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT DISTINCT ?gene_id ?gene_label WHERE {{
+SELECT DISTINCT ?gene ?gene_label WHERE {{
   ?gene dcterms:isPartOf ?pathway ;
         a wp:GeneProduct ;
-        dc:identifier ?gene_id ;
         rdfs:label ?gene_label ;
         dc:source ?src .
-  ?pathway dc:identifier <{identifier_uri}> .
-  FILTER(CONTAINS(STR(?src), "{source_substr}"))
-}} LIMIT 500
+  ?pathway dc:identifier <{identifier_uri}> .{source_filter}
+}} LIMIT 2000
 """
         data = _sparql(sparql, timeout=self.timeout)
-        # SPARQL returns the gene URI in ?gene_id; flatten to the bare label
-        # so callers see the same {gene_count, genes:[symbol]} shape as before.
-        symbols = sorted(
-            {
-                _val(b, "gene_label")
-                for b in data.get("results", {}).get("bindings", [])
-                if _val(b, "gene_label")
-            }
-        )
+        # One gene product carries several rdfs:label aliases, so counting
+        # labels overstated the gene set -- WP254 read as 134 genes against 87
+        # actual gene products. Count the nodes instead. The aliases are not
+        # reliable enough to pick a single symbol from (WikiPathways attaches
+        # "PIK3CA" to the AKT1 node among others), so every label is reported
+        # rather than one being guessed at.
+        labels_by_gene: Dict[str, set] = {}
+        for binding in data.get("results", {}).get("bindings", []):
+            gene_uri = _val(binding, "gene")
+            label = _val(binding, "gene_label")
+            if not gene_uri or not label:
+                continue
+            labels_by_gene.setdefault(gene_uri, set()).add(label)
+
+        symbols = sorted({lbl for labels in labels_by_gene.values() for lbl in labels})
+        gene_products = [
+            {"identifier": uri, "labels": sorted(labels)}
+            for uri, labels in sorted(labels_by_gene.items())
+        ]
         return {
             "status": "success",
             "data": {
                 "pathway_id": pathway_id,
-                "gene_count": len(symbols),
+                "gene_count": len(labels_by_gene),
+                "label_count": len(symbols),
                 "identifier_type": id_type_name,
                 "genes": symbols,
+                "gene_products": gene_products,
             },
             "metadata": {
                 "source": "WikiPathways SPARQL",

@@ -1,18 +1,20 @@
 [
     {
         "name": "WikiPathways_get_pathway_genes",
-        "description": "Get all genes (as gene symbols) involved in a WikiPathways pathway. Returns the list of HGNC gene symbols for human pathways, or equivalent organism-specific gene identifiers. Useful for extracting gene sets from curated pathways for enrichment analysis or network building. Example: WP254 (Apoptosis) returns 88 genes including AKT1, APAF1, BAD, BAK1, BAX, BCL2, BCL2L1, BID, CASP3, CASP8, CASP9, CFLAR, CYCS, DIABLO, FADD, FAS, NFKB1, TP53, TRAF1, XIAP, and more.",
+        "description": "Get the genes involved in a WikiPathways pathway. `gene_count` counts distinct gene products; `genes` lists every symbol label WikiPathways records for them, which is larger because one gene product carries several aliases (AKT, AKT1, Akt1 are one node) and occasionally an unrelated symbol -- use `gene_products` for node-level identifiers and their exact labels. By default every gene product is returned regardless of which database annotated it; set `code` only when you need genes cross-referenced to one identifier system, and note most pathways are annotated from Entrez Gene or Ensembl rather than HGNC. Useful for extracting gene sets from curated pathways for enrichment analysis or network building. Example: WP254 (Apoptosis) has 87 gene products (139 labels) including AKT1, APAF1, BAD, BAK1, BAX, BCL2, BCL2L1, BID, CASP3, CASP8, CASP9, CFLAR, CYCS, DIABLO, FADD, FAS, NFKB1, TP53, TRAF1, XIAP.",
         "parameter": {
             "type": "object",
             "properties": {
                 "pathway_id": {
                     "type": "string",
-                    "description": "WikiPathways pathway identifier. Examples: 'WP254' (Apoptosis, 88 genes), 'WP179' (Cell cycle, 100+ genes), 'WP4216' (Chromosomal and microsatellite instability), 'WP1584' (Type II diabetes mellitus)."
+                    "description": "WikiPathways pathway identifier. Examples: 'WP254' (Apoptosis, 87 gene products), 'WP179' (Cell cycle), 'WP4216' (Chromosomal and microsatellite instability), 'WP1584' (Type II diabetes mellitus)."
                 },
                 "code": {
-                    "type": "string",
-                    "description": "Identifier system code for returned genes. Options: 'H' (HGNC symbols, default), 'En' (Ensembl), 'S' (UniProt), 'L' (Entrez Gene), 'Ce' (ChEBI for metabolites).",
-                    "default": "H"
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Optional filter restricting results to gene products annotated from one identifier system: 'H' (HGNC), 'En' (Ensembl), 'S' (UniProt), 'L' (Entrez Gene), 'Ce' (ChEBI, metabolites). Omit to return every gene product in the pathway. Most pathways are annotated from Entrez Gene or Ensembl and carry no HGNC-sourced entries, so filtering can legitimately return 0."
                 }
             },
             "required": [
@@ -46,17 +48,39 @@
                                 },
                                 "gene_count": {
                                     "type": "integer",
-                                    "description": "Total number of genes in the pathway"
+                                    "description": "Number of distinct gene products in the pathway"
+                                },
+                                "label_count": {
+                                    "type": "integer",
+                                    "description": "Number of distinct symbol labels across those gene products; exceeds gene_count because one gene product carries several aliases"
                                 },
                                 "identifier_type": {
                                     "type": "string",
-                                    "description": "Type of gene identifiers returned (HGNC, Ensembl, etc.)"
+                                    "description": "Identifier system results were filtered to, or 'All sources' when unfiltered"
                                 },
                                 "genes": {
                                     "type": "array",
-                                    "description": "List of gene identifiers",
+                                    "description": "Every symbol label recorded for the pathway's gene products",
                                     "items": {
                                         "type": "string"
+                                    }
+                                },
+                                "gene_products": {
+                                    "type": "array",
+                                    "description": "Node-level truth: one entry per gene product with its identifier and exact labels",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "identifier": {
+                                                "type": "string"
+                                            },
+                                            "labels": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

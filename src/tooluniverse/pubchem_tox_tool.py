@@ -135,21 +135,28 @@ class PubChemToxTool(BaseTool):
     def _extract_info_from_sections(
         self, sections: List[Dict], heading: str
     ) -> List[Dict]:
-        """Find sections matching heading recursively and extract their Information entries."""
+        """Find sections matching heading recursively and extract their Information entries.
+
+        PubChem packs every statement of one notification group into a single
+        Information entry holding N StringWithMarkup elements, so reading only
+        element 0 dropped the rest. Because GHS codes are ordered numerically
+        and physical hazards (H2xx) sort ahead of health hazards (H3xx), that
+        systematically discarded carcinogenicity and mutagenicity: benzene came
+        back as H225/H401 -- flammable and toxic to aquatic life -- with H350
+        "May cause cancer" among the fourteen statements silently lost.
+        """
         matched = self._find_sections_recursive(sections, heading)
         results = []
         for section in matched:
             for info in section.get("Information", []):
                 name = info.get("Name", "")
                 val = info.get("Value", {})
-                sws = val.get("StringWithMarkup", [])
-                if sws:
-                    text = sws[0].get("String", "")
-                    markups = sws[0].get("Markup", [])
+                for sw in val.get("StringWithMarkup", []):
+                    markups = sw.get("Markup", [])
                     extras = [m.get("Extra", "") for m in markups if m.get("Extra")]
                     entry = {
                         "name": name,
-                        "value": self._strip_html(text),
+                        "value": self._strip_html(sw.get("String", "")),
                     }
                     if extras:
                         entry["pictogram_labels"] = extras

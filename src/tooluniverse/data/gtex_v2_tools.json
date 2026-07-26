@@ -2,7 +2,7 @@
   {
     "name": "GTEx_get_median_gene_expression",
     "type": "GTExV2Tool",
-    "description": "Get median gene expression levels across GTEx tissues. Returns median expression in TPM (Transcripts Per Million) for one or more genes across 54 tissue sites. Filter by specific tissues or get expression across all tissues. Defaults to GTEx V8 (2020) -- confirmed live no V11 dataset is queryable via this API (dataset_id only accepts gtex_v7/gtex_v8/gtex_v10; v10 returns empty for most endpoints, so v8 is the most complete option). Use for: tissue-specific expression profiling, identifying highly expressed genes, comparing expression patterns across tissues. Example: Get brain vs liver expression for TP53 gene.",
+    "description": "Get median gene expression levels across GTEx tissues. Returns median expression in TPM (Transcripts Per Million) for one or more genes across 54 tissue sites. Filter by specific tissues or get expression across all tissues. Defaults to GTEx V8 (2020) -- confirmed live no V11 dataset is queryable via this API (dataset_id accepts gtex_v7/gtex_v8/gtex_v10). Set dataset_id='gtex_v10' for the newer release; gene IDs are resolved to each dataset's own GENCODE version automatically, so V10 returns full results. Use for: tissue-specific expression profiling, identifying highly expressed genes, comparing expression patterns across tissues. Example: Get brain vs liver expression for TP53 gene.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -38,7 +38,7 @@
             "gtex_snrnaseq_pilot"
           ],
           "default": "gtex_v8",
-          "description": "GTEx dataset version (default: gtex_v8; v10 returns empty for most endpoints)"
+          "description": "GTEx dataset version (default: gtex_v8, the most widely cited release). gtex_v10 is the newer release (943 eQTL donors vs 838) and is fully queryable -- gene IDs are resolved to each dataset's own GENCODE version automatically."
         },
         "page": {
           "type": "integer",

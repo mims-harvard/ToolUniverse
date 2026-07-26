@@ -18,6 +18,23 @@ from .tool_registry import register_tool
 EBI_PROTEINS_BASE_URL = "https://www.ebi.ac.uk/proteins/api"
 
 
+def _entries_for_accession(data: Any, accession: str) -> list:
+    """Keep only the payload entries describing `accession` itself.
+
+    /proteins/interaction/{acc} answers with the queried protein followed by
+    its neighbours, so an entry's own `accession` is the only thing that ties
+    an interaction list to the protein it belongs to.
+    """
+    if not isinstance(data, list):
+        return []
+    wanted = accession.upper()
+    return [
+        entry
+        for entry in data
+        if isinstance(entry, dict) and str(entry.get("accession", "")).upper() == wanted
+    ]
+
+
 @register_tool("EBIProteinsInteractionsTool")
 class EBIProteinsInteractionsTool(BaseTool):
     """
@@ -86,27 +103,30 @@ class EBIProteinsInteractionsTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        # Data is a list of entries, each with interactions
+        # The endpoint returns the queried protein *plus* ~100 neighbour
+        # proteins, each carrying its own full interaction list. Pooling them
+        # attributed other proteins' partners to the query: 44 of the 50 rows
+        # returned for TP53 were pairs like AXIN1-GSK3B and BRCA2-RAD51, and
+        # the total read 3258 instead of TP53's own few hundred.
         all_interactions = []
-        if isinstance(data, list):
-            for entry in data:
-                for interaction in entry.get("interactions", []):
-                    partner_acc = interaction.get(
-                        "accession2", interaction.get("accession1")
-                    )
-                    # Skip self-interactions
-                    if partner_acc == accession:
-                        partner_acc = interaction.get("accession1")
-                    all_interactions.append(
-                        {
-                            "partner_accession": partner_acc,
-                            "gene_name": interaction.get("gene"),
-                            "experiments": interaction.get("experiments", 0),
-                            "organism_differ": interaction.get("organismDiffer", False),
-                            "intact_id_a": interaction.get("interactor1"),
-                            "intact_id_b": interaction.get("interactor2"),
-                        }
-                    )
+        for entry in _entries_for_accession(data, accession):
+            for interaction in entry.get("interactions", []):
+                partner_acc = interaction.get(
+                    "accession2", interaction.get("accession1")
+                )
+                # Skip self-interactions
+                if partner_acc == accession:
+                    partner_acc = interaction.get("accession1")
+                all_interactions.append(
+                    {
+                        "partner_accession": partner_acc,
+                        "gene_name": interaction.get("gene"),
+                        "experiments": interaction.get("experiments", 0),
+                        "organism_differ": interaction.get("organismDiffer", False),
+                        "intact_id_a": interaction.get("interactor1"),
+                        "intact_id_b": interaction.get("interactor2"),
+                    }
+                )
 
         # Deduplicate by partner accession, keep highest experiment count
         seen = {}
@@ -159,8 +179,10 @@ class EBIProteinsInteractionsTool(BaseTool):
                 "error": f"No interaction data found for {accession}",
             }
 
-        # Extract protein metadata from first entry
-        first_entry = data[0]
+        # Metadata must come from the queried protein's own entry, not merely
+        # the first one in the payload.
+        own_entries = _entries_for_accession(data, accession)
+        first_entry = own_entries[0] if own_entries else data[0]
         # Feature-66B-008a: "accession" returns the accession again; use "name" for protein name
         protein_name = first_entry.get("name", accession)
         protein_existence = first_entry.get("proteinExistence")
@@ -176,7 +198,9 @@ class EBIProteinsInteractionsTool(BaseTool):
         diseases = set()
         locations = set()
 
-        for entry in data:
+        # Same scoping as the interactions tool: neighbour entries describe
+        # their own partners, not this protein's.
+        for entry in own_entries:
             for interaction in entry.get("interactions", []):
                 partner_acc = interaction.get(
                     "accession2", interaction.get("accession1")

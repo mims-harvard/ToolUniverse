@@ -21,6 +21,10 @@ from .tool_registry import register_tool
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
 ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
 
+# Default number of LD partners returned, strongest r2 first. Overridable via
+# the `limit` parameter; the full total is always reported as total_ld_count.
+DEFAULT_LD_VARIANT_LIMIT = 200
+
 
 @register_tool("EnsemblLDTool")
 class EnsemblLDTool(BaseTool):
@@ -86,6 +90,9 @@ class EnsemblLDTool(BaseTool):
         population = arguments.get("population", "")
         r2_threshold = arguments.get("r2_threshold", None)
         d_prime_threshold = arguments.get("d_prime_threshold", None)
+        limit = arguments.get("limit")
+        if limit is None:
+            limit = DEFAULT_LD_VARIANT_LIMIT
 
         if not variant_id:
             return {
@@ -137,13 +144,18 @@ class EnsemblLDTool(BaseTool):
         # Sort by r2 descending
         ld_variants.sort(key=lambda x: x["r2"], reverse=True)
 
-        # Limit to top 200
-        ld_variants = ld_variants[:200]
+        # Keep the strongest `limit` partners, but report the true total: a count
+        # taken after truncation reads as "this variant has 200 LD partners" and
+        # hides that the weakest returned r2 is far above the requested threshold.
+        total_ld_count = len(ld_variants)
+        ld_variants = ld_variants[:limit]
 
         result = {
             "query_variant": variant_id,
             "population": population,
+            "total_ld_count": total_ld_count,
             "ld_count": len(ld_variants),
+            "truncated": total_ld_count > len(ld_variants),
             "ld_variants": ld_variants,
         }
 
