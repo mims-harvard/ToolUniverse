@@ -257,7 +257,12 @@ def search_openfda(
                 print("Invalid search_keyword_option. Please use 'AND' or 'OR'.")
         del params["search_fields"]
     if search_query:
-        params["search"] = "+".join(search_query)
+        # Join the per-field clauses with an explicit AND. A bare "+" decodes to a
+        # space, and openFDA's Lucene parser defaults to OR between clauses, so
+        # every multi-field search returned the UNION of its filters: adding a
+        # second filter increased the result count and admitted records matching
+        # neither the first field nor, necessarily, having that field at all.
+        params["search"] = "+AND+".join(search_query)
         params["search"] = "(" + params["search"] + ")"
 
     def _normalize_indication_terms(text: str) -> list[str]:
@@ -537,6 +542,15 @@ def search_openfda(
         is_name_based = bool(
             {"openfda.brand_name", "openfda.generic_name"} & orig_fields_flat
         )
+        # The broadening stages below exist to tolerate typos and synonyms in a
+        # single lookup term: they OR the terms across several fields and use only
+        # the FIRST filter's text. Applied to a query that supplied more than one
+        # filter, they silently drop the other filters and re-introduce the union
+        # semantics this function is meant to avoid -- so a deliberately narrow
+        # two-filter query would come back with thousands of non-matching records
+        # instead of the correct empty result. With multiple filters, NOT_FOUND is
+        # the right answer.
+        is_multi_filter = len(orig_search_fields) > 1
 
         # Return-field fallback mapping (generic):
         # If NOT_FOUND is likely caused by `_exists_:{primary}` for a requested
@@ -568,6 +582,7 @@ def search_openfda(
         # Stage A: phrase -> terms within the same search field(s)
         if (
             not used_generic_fallback
+            and not is_multi_filter
             and fallback_terms
             and isinstance(response_data, dict)
             and response_data.get("error", {}).get("code") == "NOT_FOUND"
@@ -593,7 +608,8 @@ def search_openfda(
 
         # Stage B: expand to label-text fields (robust when openfda is empty or name mismatched)
         if (
-            fallback_terms
+            not is_multi_filter
+            and fallback_terms
             and isinstance(response_data, dict)
             and response_data.get("error", {}).get("code") == "NOT_FOUND"
         ):

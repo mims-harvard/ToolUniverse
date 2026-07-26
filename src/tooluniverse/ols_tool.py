@@ -34,16 +34,30 @@ def _expand_short_term_id(term_id: str) -> str:
     """
     if not term_id or term_id.startswith("http"):
         return term_id
-    if ":" in term_id:
-        prefix, local = term_id.split(":", 1)
-        return f"http://purl.obolibrary.org/obo/{prefix}_{local}"
+    # OBO PURLs are case-sensitive and always upper-case the prefix, so a
+    # well-formed but differently-cased CURIE ('mondo:0005180', the canonical
+    # Bioregistry spelling) must be normalized. Forwarding the caller's casing
+    # verbatim produced a valid-looking PURL that OLS resolves to nothing,
+    # which is indistinguishable from a genuine leaf term.
+    separator = ":" if ":" in term_id else ("_" if "_" in term_id else "")
+    if separator:
+        prefix, local = term_id.split(separator, 1)
+        return f"http://purl.obolibrary.org/obo/{prefix.upper()}_{local}"
     return term_id
 
 
 def _infer_ontology_from_term_id(term_id: str) -> str:
-    """Infer OLS ontology identifier from a CURIE prefix (e.g. 'HP:0001234' → 'hp')."""
-    if term_id and ":" in term_id and not term_id.startswith("http"):
-        return term_id.split(":", 1)[0].lower()
+    """Infer OLS ontology identifier from a CURIE prefix (e.g. 'HP:0001234' → 'hp').
+
+    Accepts both the colon CURIE and the underscore form used in OBO IRIs
+    ('MONDO_0005180'), which these tools emit themselves in their `iri` and
+    `shortForm` fields.
+    """
+    if not term_id or term_id.startswith("http"):
+        return ""
+    for separator in (":", "_"):
+        if separator in term_id:
+            return term_id.split(separator, 1)[0].lower()
     return ""
 
 
@@ -623,7 +637,12 @@ class OLSTool(BaseTool):
                             elements = candidates[0]
 
         if not elements:
-            return data if isinstance(data, dict) else {"items": data}
+            # Keep the success shape stable for empty result sets. Returning the
+            # raw upstream envelope here meant a leaf term answered with
+            # `totalElements`/`elements` while a non-leaf answered with
+            # `total_items`/`terms`, so callers reading `data["terms"]` broke on
+            # exactly the queries that legitimately have no children.
+            return {"terms": [], "total_items": 0, "showing": 0}
 
         limited = elements[:size]
         term_models = [self._build_term_model(item) for item in limited]

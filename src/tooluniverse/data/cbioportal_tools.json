@@ -194,17 +194,18 @@
   {
     "type": "CBioPortalRESTTool",
     "name": "cBioPortal_get_samples",
-    "description": "Get all samples in a cancer study",
+    "description": "Get all samples in a cancer study. Returns the full cohort by default; the response is a bare array with no truncation marker, so lower `page_size` only when you deliberately want a sample. Use this count as the denominator for mutation-frequency calculations.",
     "parameter": {
       "type": "object",
       "properties": {
         "study_id": {"type": "string", "description": "Cancer study ID"},
-        "page_size": {"type": "integer", "default": 100, "description": "Number of samples to return"}
+        "page_size": {"type": "integer", "default": 100000, "description": "Maximum number of samples to return. Defaults high enough to return every sample in a study; a smaller value silently truncates the cohort, which will corrupt any frequency denominator computed from it."},
+        "page_number": {"type": "integer", "default": 0, "description": "0-based page index, used with `page_size` to page through very large studies."}
       },
       "required": ["study_id"]
     },
     "fields": {
-      "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/samples?pageSize={page_size}",
+      "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/samples?pageSize={page_size}&pageNumber={page_number}",
       "return_format": "JSON"
     },
     "return_schema": {
@@ -227,17 +228,18 @@
   {
     "type": "CBioPortalRESTTool",
     "name": "cBioPortal_get_patients",
-    "description": "Get all patients in a cancer study",
+    "description": "Get all patients in a cancer study. Returns the full cohort by default; the response is a bare array with no truncation marker, so lower `page_size` only when you deliberately want a sample. Use this count as the denominator for mutation-frequency calculations.",
     "parameter": {
       "type": "object",
       "properties": {
         "study_id": {"type": "string", "description": "Cancer study ID"},
-        "page_size": {"type": "integer", "default": 100, "description": "Number of patients to return"}
+        "page_size": {"type": "integer", "default": 100000, "description": "Maximum number of patients to return. Defaults high enough to return every patient in a study; a smaller value silently truncates the cohort, which will corrupt any frequency denominator computed from it."},
+        "page_number": {"type": "integer", "default": 0, "description": "0-based page index, used with `page_size` to page through very large studies."}
       },
       "required": ["study_id"]
     },
     "fields": {
-      "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/patients?pageSize={page_size}",
+      "endpoint": "https://www.cbioportal.org/api/studies/{study_id}/patients?pageSize={page_size}&pageNumber={page_number}",
       "return_format": "JSON"
     },
     "return_schema": {

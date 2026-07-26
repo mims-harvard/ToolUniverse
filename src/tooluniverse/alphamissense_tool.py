@@ -26,6 +26,9 @@ from .tool_registry import register_tool
 ALPHAMISSENSE_BASE_URL = "https://alphamissense.hegelab.org"
 UNIPROT_FASTA_URL = "https://rest.uniprot.org/uniprotkb/{accession}.fasta"
 
+# The 20 standard amino acids, in one-letter code.
+_AMINO_ACIDS = frozenset("ACDEFGHIKLMNPQRSTVWY")
+
 
 @register_tool("AlphaMissenseTool")
 class AlphaMissenseTool(BaseTool):
@@ -75,6 +78,32 @@ class AlphaMissenseTool(BaseTool):
             return "benign"
         else:
             return "ambiguous"
+
+    @staticmethod
+    def _class_members(raw: Any) -> List[str]:
+        """Parse a hotspot class field of the form ``"5:M,P,Q,R,V"``.
+
+        Returns the one-letter residues in that class; an empty list when the
+        field is absent, empty or malformed.
+        """
+        if not isinstance(raw, str) or not raw.strip():
+            return []
+        residues = raw.split(":", 1)[1] if ":" in raw else raw
+        return [r.strip() for r in residues.split(",") if r.strip()]
+
+    def _classify_substitution(self, data: Dict[str, Any], alt_aa: str):
+        """Locate ``alt_aa`` in the residue's AlphaMissense class lists.
+
+        Prefers the SNV-accessible lists (``benign``/``ambiguous``/``pathogenic``)
+        and falls back to the all-substitutions lists (``*_all``). Returns
+        ``(classification, substitution_set)``; classification is ``None`` when
+        the substitution appears in neither.
+        """
+        for suffix, set_name in (("", "snv_accessible"), ("_all", "all_substitutions")):
+            for label in ("pathogenic", "ambiguous", "benign"):
+                if alt_aa in self._class_members(data.get(f"{label}{suffix}")):
+                    return label, set_name
+        return None, None
 
     def _fetch_protein_length(self, uniprot_id: str) -> Optional[int]:
         """Get protein length from UniProt FASTA."""
@@ -275,6 +304,31 @@ class AlphaMissenseTool(BaseTool):
             position = int(match.group(2))
             alt_aa = match.group(3)
 
+            if alt_aa not in _AMINO_ACIDS:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Invalid substituted amino acid {alt_aa!r} in {variant}. "
+                        f"Expected one of: {''.join(sorted(_AMINO_ACIDS))}"
+                    ),
+                }
+            if ref_aa not in _AMINO_ACIDS:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Invalid reference amino acid {ref_aa!r} in {variant}. "
+                        f"Expected one of: {''.join(sorted(_AMINO_ACIDS))}"
+                    ),
+                }
+            if ref_aa == alt_aa:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{variant} is synonymous (reference and substituted residue "
+                        "are both {0}); AlphaMissense scores missense variants only."
+                    ).format(ref_aa),
+                }
+
             # Query the API
             url = f"{ALPHAMISSENSE_BASE_URL}/hotspotapi"
             params = {"uid": uniprot_id, "resi": position}
@@ -291,48 +345,75 @@ class AlphaMissenseTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
-            # Look for the specific variant in the response
-            score = None
-            if isinstance(data, dict):
-                # API may return different formats
-                scores = data.get("scores", data.get("data", {}))
-                if isinstance(scores, dict):
-                    score = scores.get(alt_aa)
-                elif isinstance(scores, list):
-                    for item in scores:
-                        if item.get("aa") == alt_aa or item.get("variant") == alt_aa:
-                            score = item.get("score", item.get("am_pathogenicity"))
-                            break
-
-            if score is not None:
-                classification = self._classify_score(score)
+            if not isinstance(data, dict):
                 return {
-                    "status": "success",
-                    "data": {
-                        "uniprot_id": uniprot_id,
-                        "variant": f"p.{ref_aa}{position}{alt_aa}",
-                        "position": position,
-                        "reference_aa": ref_aa,
-                        "variant_aa": alt_aa,
-                        "pathogenicity_score": score,
-                        "classification": classification,
-                        "thresholds": {
-                            "pathogenic": f"> {self.PATHOGENIC_THRESHOLD}",
-                            "ambiguous": f"{self.BENIGN_THRESHOLD} - {self.PATHOGENIC_THRESHOLD}",
-                            "benign": f"< {self.BENIGN_THRESHOLD}",
+                    "status": "error",
+                    "error": (
+                        "Unexpected AlphaMissense response shape for "
+                        f"{uniprot_id} position {position}"
+                    ),
+                }
+
+            # Guard against a position/isoform mismatch: the endpoint answers for
+            # whatever residue sits at `resi`, so a wrong reference residue means
+            # the caller is querying a different sequence than they think.
+            api_ref_aa = data.get("aa")
+            if api_ref_aa and api_ref_aa != ref_aa:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Reference residue mismatch: {variant} expects {ref_aa} at "
+                        f"position {position}, but {uniprot_id} has {api_ref_aa} there. "
+                        "Check the variant notation and the isoform/accession."
+                    ),
+                }
+
+            # The hotspot endpoint does not expose per-substitution scores. It
+            # reports, per residue, which substitutions fall in each AlphaMissense
+            # class as "<count>:<comma-separated residues>", once for the
+            # SNV-accessible substitutions and once (the *_all fields) for all 19.
+            classification, substitution_set = self._classify_substitution(data, alt_aa)
+
+            return {
+                "status": "success",
+                "data": {
+                    "uniprot_id": uniprot_id,
+                    "variant": f"p.{ref_aa}{position}{alt_aa}",
+                    "position": position,
+                    "reference_aa": ref_aa,
+                    "variant_aa": alt_aa,
+                    "classification": classification,
+                    "substitution_set": substitution_set,
+                    # This endpoint publishes class membership, not per-variant
+                    # scores. Reporting the residue mean here would look like a
+                    # score for this substitution, so it is named for what it is.
+                    "pathogenicity_score": None,
+                    "score_available": False,
+                    "residue_mean_score_snv_accessible": data.get("mean"),
+                    "residue_mean_score_all_substitutions": data.get("mean_all"),
+                    "residue_class_counts": {
+                        "snv_accessible": {
+                            "benign": self._class_members(data.get("benign")),
+                            "ambiguous": self._class_members(data.get("ambiguous")),
+                            "pathogenic": self._class_members(data.get("pathogenic")),
+                        },
+                        "all_substitutions": {
+                            "benign": self._class_members(data.get("benign_all")),
+                            "ambiguous": self._class_members(data.get("ambiguous_all")),
+                            "pathogenic": self._class_members(
+                                data.get("pathogenic_all")
+                            ),
                         },
                     },
-                }
-            else:
-                return {
-                    "status": "success",
-                    "data": {
-                        "uniprot_id": uniprot_id,
-                        "variant": f"p.{ref_aa}{position}{alt_aa}",
-                        "raw_response": data,
-                        "message": "Score extraction requires parsing API response format",
-                    },
-                }
+                    "note": (
+                        "AlphaMissense hotspot API returns per-residue class "
+                        "membership, not a numeric score per substitution. "
+                        "`classification` is this substitution's class; the mean "
+                        "fields are residue-level averages, not this variant's "
+                        "score."
+                    ),
+                },
+            }
         except requests.exceptions.Timeout:
             return {
                 "status": "error",

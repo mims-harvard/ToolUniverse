@@ -14,7 +14,14 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results (default 20, max 50)."
+          "description": "Maximum number of reactions to return per page (default 20, max 1000). This caps the page only; `metadata.total_results` reports the full result-set size."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of matching reactions to skip before returning a page (default 0). Combine with `limit` and `metadata.has_more` to page through large result sets."
         }
       },
       "required": [
@@ -78,7 +85,27 @@
                   "type": "string"
                 },
                 "total_results": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Total number of matching Rhea reactions, independent of `limit`. Null if the count query failed."
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number of reactions in this response (at most `limit`)."
+                },
+                "offset": {
                   "type": "integer"
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "has_more": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 }
               }
             }
@@ -116,7 +143,14 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results (default 20, max 50)."
+          "description": "Maximum number of reactions to return per page (default 20, max 1000). This caps the page only; `metadata.total_results` reports the full result-set size."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of matching reactions to skip before returning a page (default 0). Combine with `limit` and `metadata.has_more` to page through large result sets."
         }
       },
       "required": [
@@ -177,7 +211,27 @@
                   "type": "string"
                 },
                 "total_results": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Total number of matching Rhea reactions, independent of `limit`. Null if the count query failed."
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number of reactions in this response (at most `limit`)."
+                },
+                "offset": {
                   "type": "integer"
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "has_more": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 }
               }
             }
@@ -215,7 +269,14 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results (default 20, max 50)."
+          "description": "Maximum number of reactions to return per page (default 20, max 1000). This caps the page only; `metadata.total_results` reports the full result-set size."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of matching reactions to skip before returning a page (default 0). Combine with `limit` and `metadata.has_more` to page through large result sets."
         }
       },
       "required": [
@@ -282,7 +343,27 @@
                   "type": "string"
                 },
                 "total_results": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Total number of matching Rhea reactions, independent of `limit`. Null if the count query failed."
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number of reactions in this response (at most `limit`)."
+                },
+                "offset": {
                   "type": "integer"
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "has_more": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 }
               }
             }

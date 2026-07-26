@@ -50,6 +50,15 @@ def _cas_from_synonyms(synonyms: List[str]) -> Optional[str]:
     return None
 
 
+class CTDBackendUnavailable(RuntimeError):
+    """The CTD mirror could not be reached or is no longer served.
+
+    Raised so that "the backend is gone" is never reported as "this compound has
+    no disease associations" -- the two are indistinguishable to a caller once
+    an empty list is returned as a success.
+    """
+
+
 @register_tool("MetaboliteTool")
 class MetaboliteTool(BaseTool):
     """
@@ -189,9 +198,15 @@ class MetaboliteTool(BaseTool):
                 timeout=self.timeout,
             )
             r.raise_for_status()
+        except requests.RequestException as exc:
+            raise CTDBackendUnavailable(
+                f"CTD mirror (automat.renci.org/ctd) is unavailable: {exc}"
+            ) from exc
+        try:
             payload = r.json()
             curie = payload["results"][0]["data"][0]["row"][0]
-        except (requests.RequestException, KeyError, IndexError, TypeError, ValueError):
+        except (KeyError, IndexError, TypeError, ValueError):
+            # Query succeeded but this term is not a node in the graph.
             return []
 
         # 2) Fetch the SmallMolecule → Disease edges
@@ -202,8 +217,13 @@ class MetaboliteTool(BaseTool):
                 timeout=self.timeout,
             )
             r.raise_for_status()
+        except requests.RequestException as exc:
+            raise CTDBackendUnavailable(
+                f"CTD mirror (automat.renci.org/ctd) is unavailable: {exc}"
+            ) from exc
+        try:
             edges = r.json()
-        except (requests.RequestException, ValueError):
+        except ValueError:
             return []
         if not isinstance(edges, list):
             return []
@@ -459,5 +479,7 @@ class MetaboliteTool(BaseTool):
                     "pubchem_url": f"https://pubchem.ncbi.nlm.nih.gov/compound/{cid}",
                 },
             }
+        except CTDBackendUnavailable as e:
+            return {"status": "error", "error": str(e)}
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Request failed: {str(e)}"}

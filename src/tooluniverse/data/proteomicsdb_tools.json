@@ -95,14 +95,14 @@
                   "number",
                   "null"
                 ],
-                "description": "Log10 normalized intensity (main value)"
+                "description": "Log10 NORMALIZED intensity - the main, cross-tissue-comparable value, and the one bounded by min_expression/max_expression"
               },
-              "median_expression": {
+              "unnormalized_intensity": {
                 "type": [
                   "number",
                   "null"
                 ],
-                "description": "Median log10 normalized intensity"
+                "description": "Log10 un-normalized intensity, as reported upstream. Not comparable across tissues; do not rank on this."
               },
               "min_expression": {
                 "type": [
@@ -322,7 +322,7 @@
                   "null"
                 ]
               },
-              "median_expression": {
+              "unnormalized_intensity": {
                 "type": [
                   "number",
                   "null"
