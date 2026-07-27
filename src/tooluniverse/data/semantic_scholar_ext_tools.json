@@ -20,7 +20,12 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}"
+      "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}",
+      "auth_header": {
+        "env_var": "SEMANTIC_SCHOLAR_API_KEY",
+        "header": "x-api-key",
+        "required": false
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -268,7 +273,12 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.semanticscholar.org/graph/v1/author/search"
+      "endpoint": "https://api.semanticscholar.org/graph/v1/author/search",
+      "auth_header": {
+        "env_var": "SEMANTIC_SCHOLAR_API_KEY",
+        "header": "x-api-key",
+        "required": false
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -366,7 +376,12 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.semanticscholar.org/graph/v1/author/{author_id}"
+      "endpoint": "https://api.semanticscholar.org/graph/v1/author/{author_id}",
+      "auth_header": {
+        "env_var": "SEMANTIC_SCHOLAR_API_KEY",
+        "header": "x-api-key",
+        "required": false
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -515,7 +530,12 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.semanticscholar.org/recommendations/v1/papers/forpaper/{paper_id}"
+      "endpoint": "https://api.semanticscholar.org/recommendations/v1/papers/forpaper/{paper_id}",
+      "auth_header": {
+        "env_var": "SEMANTIC_SCHOLAR_API_KEY",
+        "header": "x-api-key",
+        "required": false
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -591,7 +611,12 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}/citations"
+      "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}/citations",
+      "auth_header": {
+        "env_var": "SEMANTIC_SCHOLAR_API_KEY",
+        "header": "x-api-key",
+        "required": false
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -705,7 +730,12 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}/references"
+      "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}/references",
+      "auth_header": {
+        "env_var": "SEMANTIC_SCHOLAR_API_KEY",
+        "header": "x-api-key",
+        "required": false
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -823,7 +853,12 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.semanticscholar.org/graph/v1/author/{author_id}/papers"
+      "endpoint": "https://api.semanticscholar.org/graph/v1/author/{author_id}/papers",
+      "auth_header": {
+        "env_var": "SEMANTIC_SCHOLAR_API_KEY",
+        "header": "x-api-key",
+        "required": false
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [

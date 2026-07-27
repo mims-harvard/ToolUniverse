@@ -67,6 +67,7 @@ from .logging_config import (
 from .cache.result_cache_manager import ResultCacheManager
 from .output_hook import HookManager
 from .default_config import default_tool_files, get_default_hook_config
+from .credentials import credential_context, get_credential, has_credential_context
 
 # Determine the directory where the current file is located
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -813,8 +814,8 @@ class ToolUniverse:
         return list(self.tool_files.keys())
 
     def _get_api_key(self, key_name: str):
-        """Get API key from environment variables."""
-        return os.getenv(key_name)
+        """Get an API key from the active request or the environment fallback."""
+        return get_credential(key_name)
 
     def _check_api_key_requirements(self, tool_config):
         """
@@ -3164,7 +3165,12 @@ class ToolUniverse:
         return None
 
     def run_one_function(
-        self, function_call_json, stream_callback=None, use_cache=False, validate=True
+        self,
+        function_call_json,
+        stream_callback=None,
+        use_cache=False,
+        validate=True,
+        credentials=None,
     ):
         """
         Execute a single function call.
@@ -3178,10 +3184,21 @@ class ToolUniverse:
             stream_callback (callable, optional): Callback for streaming responses.
             use_cache (bool, optional): Whether to use result caching. Defaults to False.
             validate (bool, optional): Whether to validate parameters against schema. Defaults to True.
+            credentials (mapping, optional): Request-scoped credentials. Values remain hidden from
+                tool schemas/arguments and are restored after this call.
 
         Returns:
             str or dict: Result from the tool execution, or error message if validation fails.
         """
+        if credentials is not None:
+            with credential_context(credentials):
+                return self.run_one_function(
+                    function_call_json,
+                    stream_callback=stream_callback,
+                    use_cache=use_cache,
+                    validate=validate,
+                )
+
         function_name = function_call_json.get("name", "")
         arguments = function_call_json.get("arguments", {})
 
@@ -3208,8 +3225,13 @@ class ToolUniverse:
         composed_cache_key = None
         cache_guard = nullcontext()
 
+        # Credential-scoped results must never be reused by another tenant. Disable result caching
+        # rather than putting secret material into a cache key.
         cache_enabled = (
-            use_cache and self.cache_manager is not None and self.cache_manager.enabled
+            use_cache
+            and not has_credential_context()
+            and self.cache_manager is not None
+            and self.cache_manager.enabled
         )
 
         if cache_enabled:
@@ -3382,7 +3404,12 @@ class ToolUniverse:
             return result
 
     async def run_one_function_async(
-        self, function_call_json, stream_callback=None, use_cache=False, validate=True
+        self,
+        function_call_json,
+        stream_callback=None,
+        use_cache=False,
+        validate=True,
+        credentials=None,
     ):
         """
         Async version of run_one_function.
@@ -3390,6 +3417,15 @@ class ToolUniverse:
         Execute a single function call asynchronously (non-blocking).
         Handles both sync and async tools intelligently.
         """
+        if credentials is not None:
+            with credential_context(credentials):
+                return await self.run_one_function_async(
+                    function_call_json,
+                    stream_callback=stream_callback,
+                    use_cache=use_cache,
+                    validate=validate,
+                )
+
         function_name = function_call_json.get("name", "")
         arguments = function_call_json.get("arguments", {})
 
@@ -3415,7 +3451,10 @@ class ToolUniverse:
         cache_key = None
 
         cache_enabled = (
-            use_cache and self.cache_manager is not None and self.cache_manager.enabled
+            use_cache
+            and not has_credential_context()
+            and self.cache_manager is not None
+            and self.cache_manager.enabled
         )
 
         if cache_enabled:
