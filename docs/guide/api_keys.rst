@@ -11,6 +11,34 @@ Overview
 
 ToolUniverse provides access to 1000+ scientific tools across various domains. Many tools work without API keys, but some require authentication for full functionality or enhanced rate limits.
 
+Request-scoped credentials for hosted applications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Environment variables remain the default for local and single-user installations. Multi-tenant
+services should pass credentials for one execution instead of mutating ``os.environ``::
+
+   result = tu.run_one_function(
+       {
+           "name": "SemanticScholar_search_papers",
+           "arguments": {"query": "CRISPR", "limit": 5},
+       },
+       credentials={"SEMANTIC_SCHOLAR_API_KEY": user_api_key},
+   )
+
+For a group of calls, use the context manager::
+
+   from tooluniverse import credential_context
+
+   with credential_context({"SEMANTIC_SCHOLAR_API_KEY": user_api_key}):
+       first = tu.run_one_function(first_call)
+       second = tu.run_one_function(second_call)
+
+Credential values are not added to tool schemas or arguments, are never copied into environment
+variables, and are restored when the context exits. An active context is fail-closed: credentials
+missing from that request do not fall back to process-wide secrets. Result caching is disabled
+inside credential contexts to prevent cross-tenant cache reuse. SMCP propagates the context into
+its execution thread pool automatically.
+
 API Key Categories
 ------------------
 

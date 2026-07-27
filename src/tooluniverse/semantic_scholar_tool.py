@@ -22,7 +22,8 @@ class SemanticScholarTool(BaseTool):
     """
     Tool to search for papers on Semantic Scholar including abstracts.
 
-    API key is read from environment variable SEMANTIC_SCHOLAR_API_KEY.
+    API key is resolved from the active request credential context, with
+    SEMANTIC_SCHOLAR_API_KEY as the local environment fallback.
     Request an API key at: https://www.semanticscholar.org/product/api
 
     Rate limits:
@@ -40,8 +41,6 @@ class SemanticScholarTool(BaseTool):
     ):
         super().__init__(tool_config)
         self.base_url = base_url
-        # Get API key from environment as fallback
-        self.default_api_key = os.environ.get("SEMANTIC_SCHOLAR_API_KEY", "")
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
 
@@ -73,8 +72,12 @@ class SemanticScholarTool(BaseTool):
         }
 
     def _enforce_rate_limit(self, has_api_key: bool) -> None:
-        # Keep anonymous usage below 1 req/sec to reduce 429s.
-        min_interval = 0.02 if has_api_key else 1.05
+        # Authenticated requests may use different tenant keys, so a process-global keyed throttle
+        # would serialize unrelated users. Let Semantic Scholar enforce each key's own quota and
+        # retain a conservative shared-IP throttle only for anonymous traffic.
+        if has_api_key:
+            return
+        min_interval = 1.05
         with self._rate_limit_lock:
             now = time.time()
             elapsed = now - SemanticScholarTool._last_request_time
@@ -89,8 +92,9 @@ class SemanticScholarTool(BaseTool):
 
         url = f"https://api.semanticscholar.org/graph/v1/paper/{paper_id}"
         params = {"fields": "abstract,externalIds,openAccessPdf"}
-        headers = {"x-api-key": self.default_api_key} if self.default_api_key else {}
-        self._enforce_rate_limit(bool(self.default_api_key))
+        api_key = self.credential("SEMANTIC_SCHOLAR_API_KEY") or ""
+        headers = {"x-api-key": api_key} if api_key else {}
+        self._enforce_rate_limit(bool(api_key))
         resp = request_with_retry(
             self.session,
             "GET",
@@ -144,8 +148,9 @@ class SemanticScholarTool(BaseTool):
             params["year"] = str(year)
         if sort:
             params["sort"] = sort
-        headers = {"x-api-key": self.default_api_key} if self.default_api_key else {}
-        self._enforce_rate_limit(bool(self.default_api_key))
+        api_key = self.credential("SEMANTIC_SCHOLAR_API_KEY") or ""
+        headers = {"x-api-key": api_key} if api_key else {}
+        self._enforce_rate_limit(bool(api_key))
         # Use /paper/search/bulk when sorting, as /paper/search silently
         # ignores the sort parameter and always returns relevance-ranked results.
         url = self.base_url
@@ -354,12 +359,15 @@ class SemanticScholarPDFSnippetsTool(BaseTool):
             paper_id = paper_id.strip()
             api_url = f"https://api.semanticscholar.org/graph/v1/paper/{paper_id}"
             params = {"fields": "openAccessPdf"}
+            api_key = self.credential("SEMANTIC_SCHOLAR_API_KEY") or ""
+            headers = {"x-api-key": api_key} if api_key else {}
             try:
                 resp = request_with_retry(
                     self.session,
                     "GET",
                     api_url,
                     params=params,
+                    headers=headers,
                     timeout=20,
                     max_attempts=2,
                 )

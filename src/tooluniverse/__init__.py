@@ -23,6 +23,7 @@ __path__ = extend_path(__path__, __name__)
 
 from .execute_function import ToolUniverse
 from .base_tool import BaseTool
+from .credentials import credential_context, current_credentials, get_credential
 from .default_config import default_tool_files
 from .profile import (
     ProfileLoader,
@@ -181,6 +182,9 @@ __all__ = [
     "__version__",
     "ToolUniverse",
     "BaseTool",
+    "credential_context",
+    "current_credentials",
+    "get_credential",
     "register_tool",
     "get_tool_registry",
     "SMCP",

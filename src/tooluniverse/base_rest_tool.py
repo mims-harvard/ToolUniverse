@@ -8,7 +8,6 @@ This module provides a reusable base class for REST API tools that handles:
 - Standard error handling and response formatting
 """
 
-import os
 import csv
 import io
 import requests
@@ -147,15 +146,15 @@ class BaseRESTTool(BaseTool):
             if "default" in prop and prop["default"] is not None:
                 params[param_mapping.get(key, key)] = prop["default"]
 
-        # Inject an API token from an environment variable into a query param
+        # Inject an API token from a request credential (or environment fallback) into a query param
         # when configured. Config: {"env_var": "WAQI_API_KEY", "param": "token"}.
         # If the env var is unset the config default (e.g. a public "demo"
         # token) is left in place, so this is a non-breaking opt-in.
         auth_param_cfg = self.tool_config.get("fields", {}).get("auth_param")
         if auth_param_cfg:
-            env_value = os.environ.get(auth_param_cfg.get("env_var", ""), "")
-            if env_value:
-                params[auth_param_cfg.get("param", "token")] = env_value
+            credential = self.credential(auth_param_cfg.get("env_var", ""))
+            if credential:
+                params[auth_param_cfg.get("param", "token")] = credential
 
         return params
 
@@ -306,14 +305,14 @@ class BaseRESTTool(BaseTool):
                 self.tool_config.get("fields", {}).get("headers") or {}
             )
 
-            # Inject API key from environment variable if auth_header is configured.
-            # Config format: {"env_var": "MY_API_KEY", "header": "x-api-key"}
+            # Inject an API key from a request credential (or environment fallback).
+            # Config: {"env_var": "MY_API_KEY", "header": "x-api-key", "required": true}.
             auth_header_cfg = self.tool_config.get("fields", {}).get("auth_header")
             if auth_header_cfg:
                 env_var = auth_header_cfg.get("env_var", "")
                 header_name = auth_header_cfg.get("header", "")
-                api_key = os.environ.get(env_var, "")
-                if not api_key:
+                api_key = self.credential(env_var)
+                if not api_key and auth_header_cfg.get("required", True):
                     register_url = auth_header_cfg.get("register_url", "")
                     register_hint = (
                         f" Register at {register_url} to obtain a key."
@@ -324,10 +323,12 @@ class BaseRESTTool(BaseTool):
                         "status": "error",
                         "error": (
                             f"{self.api_name} requires an API key. "
-                            f"Set the {env_var} environment variable.{register_hint}"
+                            f"Provide {env_var} as a request credential or set the "
+                            f"environment variable.{register_hint}"
                         ),
                     }
-                custom_headers[header_name] = api_key
+                if api_key:
+                    custom_headers[header_name] = api_key
 
             response = request_with_retry(
                 self.session,

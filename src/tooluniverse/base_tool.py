@@ -15,6 +15,8 @@ from typing import no_type_check, Optional, Dict, Any
 import hashlib
 import inspect
 
+from .credentials import get_credential
+
 
 class BaseTool:
     STATIC_CACHE_VERSION = "1"
@@ -22,6 +24,17 @@ class BaseTool:
     def __init__(self, tool_config):
         self.tool_config = self._apply_defaults(tool_config)
         self._cached_version_hash: Optional[str] = None
+
+    def credential(self, name: str, fallback: Optional[str] = None) -> Optional[str]:
+        """Resolve a request-scoped credential with an environment fallback.
+
+        Concrete tools should use this helper instead of reading a credential once during
+        construction. Outside a request context, ``fallback`` takes precedence when supplied;
+        otherwise the environment variable named by ``name`` is read. The fallback is ignored
+        whenever a request credential context is active, including an explicitly empty context.
+        """
+
+        return get_credential(name, fallback)
 
     @classmethod
     def get_default_config_file(cls):
