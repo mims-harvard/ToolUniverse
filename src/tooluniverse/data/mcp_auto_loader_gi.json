@@ -1,0 +1,40 @@
+[
+  {
+    "name": "mcp_auto_loader_gi",
+    "description": "Automatically discover and load Genomic Intelligence DNA sequence-analysis tools from the hosted Genomic Intelligence MCP server. Provides transformer DNA language-model predictions over six tasks (promoter, splice sites, enhancer activity, chromatin state, expression, gene annotation) plus a composite find-genes-then-predict-expression workflow, and helpers that fetch sequence from Ensembl into a reusable handle. The server is public and needs no API key; calls run against a shared, rate-limited demo quota. For research and development use, not clinical or diagnostic decisions.",
+    "type": "MCPAutoLoaderTool",
+    "tool_prefix": "gi_",
+    "server_url": "https://mcp.genomicintelligence.ai/mcp",
+    "transport": "http",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "discover",
+            "generate_configs",
+            "call_tool"
+          ],
+          "description": "The operation to perform: discover tools, generate configs, or call a tool directly"
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Name of the MCP tool to call (required for call_tool operation)"
+        },
+        "tool_arguments": {
+          "type": "object",
+          "description": "Arguments to pass to the MCP tool (for call_tool operation)"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "MCP server auto-discovered tools and their execution results. Structure varies by discovered tool (fetch_*, predict_*, find_genes*, get_job, list_jobs, list_models, store_inline_sequence).",
+      "additionalProperties": true
+    }
+  }
+]
