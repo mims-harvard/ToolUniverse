@@ -11,13 +11,13 @@ Get your key at: https://build.nvidia.com
 Rate limit: 40 requests per minute (enforced internally).
 """
 
-import os
 import re
 import time
 import requests
 from typing import Dict, Any, Optional, List
 from urllib.parse import urlparse
 from .base_tool import BaseTool
+from .credentials import has_credential_context
 from .tool_registry import register_tool
 
 
@@ -98,9 +98,19 @@ class NvidiaNIMTool(BaseTool):
         self.poll_seconds = fields.get("poll_seconds", self.DEFAULT_POLL_SECONDS)
         self.response_type = fields.get("response_type", "json")
         self.timeout = fields.get("timeout", self.DEFAULT_TIMEOUT)
+        self._api_key_override = None
 
-        # Get API key from environment
-        self.api_key = os.environ.get("NVIDIA_API_KEY")
+    @property
+    def api_key(self) -> str:
+        """Resolve the NVIDIA key for the active request."""
+        scoped_key = self.credential("NVIDIA_API_KEY") or ""
+        if has_credential_context():
+            return scoped_key
+        return self._api_key_override or scoped_key
+
+    @api_key.setter
+    def api_key(self, value):
+        self._api_key_override = value
 
     def _get_headers(self) -> Dict[str, str]:
         """Build request headers with authentication."""

@@ -15,6 +15,7 @@ import urllib.parse
 from typing import Any, Dict, Optional, Callable
 from .base_tool import BaseTool
 from .http_utils import request_with_retry
+from .provider_rate_limit import enforce_provider_rate_limit
 
 
 class BaseRESTTool(BaseTool):
@@ -308,6 +309,7 @@ class BaseRESTTool(BaseTool):
             # Inject an API key from a request credential (or environment fallback).
             # Config: {"env_var": "MY_API_KEY", "header": "x-api-key", "required": true}.
             auth_header_cfg = self.tool_config.get("fields", {}).get("auth_header")
+            api_key = ""
             if auth_header_cfg:
                 env_var = auth_header_cfg.get("env_var", "")
                 header_name = auth_header_cfg.get("header", "")
@@ -329,6 +331,24 @@ class BaseRESTTool(BaseTool):
                     }
                 if api_key:
                     custom_headers[header_name] = api_key
+
+            rate_limit_cfg = self.tool_config.get("fields", {}).get("rate_limit")
+            if rate_limit_cfg:
+                credential_name = rate_limit_cfg.get("credential", "")
+                rate_limit_credential = (
+                    api_key
+                    if auth_header_cfg
+                    and credential_name == auth_header_cfg.get("env_var")
+                    else self.credential(credential_name) or ""
+                ) or ""
+                requests_per_second = rate_limit_cfg.get(
+                    "authenticated_rps" if rate_limit_credential else "anonymous_rps"
+                )
+                enforce_provider_rate_limit(
+                    rate_limit_cfg.get("provider", self.api_name),
+                    rate_limit_credential,
+                    requests_per_second,
+                )
 
             response = request_with_retry(
                 self.session,

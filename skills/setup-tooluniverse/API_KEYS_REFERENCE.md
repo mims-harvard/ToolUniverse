@@ -128,7 +128,7 @@ Detailed guide for every API key used by ToolUniverse. Use this when walking use
 - **Service**: Semantic Scholar (Allen Institute for AI)
 - **Required**: No (optional, but recommended for heavy literature use)
 - **Tools that use it**: `SemanticScholar_search_papers`
-- **What it does**: Increases rate limit from 1 request/second to 100 requests/second. Essential if doing bulk literature searches or citation analysis.
+- **What it does**: Provides an isolated authenticated quota (new keys currently start at 1 request/second) instead of relying on the dynamically throttled anonymous pool. It also enables authentication-required endpoints.
 - **How to get it**:
   1. Go to https://www.semanticscholar.org/product/api
   2. Click "Request API Key"

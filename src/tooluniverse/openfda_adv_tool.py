@@ -1,4 +1,3 @@
-import os
 import copy
 import requests
 import urllib.parse
@@ -76,7 +75,7 @@ class FDADrugAdverseEventTool(BaseTool):
     ):
         super().__init__(tool_config)
         self.endpoint_url = endpoint_url
-        self.api_key = api_key or os.getenv("FDA_API_KEY")
+        self._explicit_api_key = api_key
         self.search_fields = tool_config.get("fields", {}).get("search_fields", {})
         self.return_fields = tool_config.get("fields", {}).get("return_fields", [])
         self.count_field = tool_config.get("count_field") or (
@@ -97,6 +96,10 @@ class FDADrugAdverseEventTool(BaseTool):
             for param_name, param_def in tool_config["parameter"]["properties"].items():
                 if "enum" in param_def:
                     self.parameter_enums[param_name] = param_def["enum"]
+
+    @property
+    def api_key(self):
+        return self.credential("FDA_API_KEY") or self._explicit_api_key
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
@@ -393,7 +396,7 @@ class FDADrugAdverseEventDetailTool(BaseTool):
         super().__init__(tool_config)
         self.tool_config = tool_config
         self.endpoint_url = endpoint_url
-        self.api_key = api_key or os.getenv("FDA_API_KEY")
+        self._explicit_api_key = api_key
         self.search_fields = tool_config.get("fields", {}).get("search_fields", {})
         self.return_fields = tool_config.get("fields", {}).get("return_fields", [])
 
@@ -403,6 +406,10 @@ class FDADrugAdverseEventDetailTool(BaseTool):
             for param_name, param_def in tool_config["parameter"]["properties"].items():
                 if "enum" in param_def:
                     self.parameter_enums[param_name] = param_def["enum"]
+
+    @property
+    def api_key(self):
+        return self.credential("FDA_API_KEY") or self._explicit_api_key
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
@@ -741,7 +748,7 @@ class FDADrugInteractionDetailTool(BaseTool):
         super().__init__(tool_config)
         self.tool_config = tool_config
         self.endpoint_url = endpoint_url
-        self.api_key = api_key or os.getenv("FDA_API_KEY")
+        self._explicit_api_key = api_key
         self.search_fields = tool_config.get("fields", {}).get("search_fields", {})
         self.return_fields = tool_config.get("fields", {}).get("return_fields", [])
 
@@ -751,6 +758,10 @@ class FDADrugInteractionDetailTool(BaseTool):
             for param_name, param_def in tool_config["parameter"]["properties"].items():
                 if "enum" in param_def:
                     self.parameter_enums[param_name] = param_def["enum"]
+
+    @property
+    def api_key(self):
+        return self.credential("FDA_API_KEY") or self._explicit_api_key
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)

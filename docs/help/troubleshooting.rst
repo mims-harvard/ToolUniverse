@@ -384,8 +384,8 @@ Many services limit how many requests you can make per second/minute. API keys t
      - 3 req/sec
      - 10 req/sec (3x faster, set NCBI_API_KEY)
    * - Semantic Scholar
-     - 1 req/sec
-     - 100 req/sec (100x faster, set SEMANTIC_SCHOLAR_API_KEY)
+     - Shared adaptive pool
+     - 1 req/sec introductory per-key quota (set SEMANTIC_SCHOLAR_API_KEY)
    * - OpenFDA
      - 40 req/min
      - 240 req/min (6x faster, set FDA_API_KEY)

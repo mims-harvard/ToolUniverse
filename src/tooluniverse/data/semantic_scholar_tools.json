@@ -2,7 +2,7 @@
   {
     "type": "SemanticScholarTool",
     "name": "SemanticScholar_search_papers",
-    "description": "Search for papers on Semantic Scholar including abstracts and AI-generated TLDR summaries. This tool queries the Semantic Scholar API using natural language keywords and returns papers with details such as title, abstract, TLDR summary, fields of study, publication year, journal (venue), and URL. Rate limits: 1 req/sec without API key, 100 req/sec with SEMANTIC_SCHOLAR_API_KEY environment variable set.",
+    "description": "Search for papers on Semantic Scholar including abstracts and AI-generated TLDR summaries. This tool queries the Semantic Scholar API using natural language keywords and returns papers with details such as title, abstract, TLDR summary, fields of study, publication year, journal (venue), and URL. Anonymous traffic uses a shared upstream pool and may be throttled dynamically; new API keys currently start at 1 request/second and provide an isolated authenticated quota.",
     "optional_api_keys": [
       "SEMANTIC_SCHOLAR_API_KEY"
     ],

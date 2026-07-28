@@ -34,7 +34,6 @@ API: https://docs.nvidia.com/nim/bionemo/evo2/latest/endpoints.html
 import base64
 import io
 import json
-import os
 import zipfile
 from typing import Any, Dict, Optional, Tuple
 
@@ -72,7 +71,7 @@ class Evo2VariantEffectTool(BaseTool):
     # ------------------------------------------------------------------ run
     def run(self, arguments: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         args = arguments or {}
-        api_key = os.environ.get("NVIDIA_API_KEY")
+        api_key = self.credential("NVIDIA_API_KEY")
         if not api_key:
             return self._err(
                 "NVIDIA_API_KEY not set (free key at https://build.nvidia.com)."

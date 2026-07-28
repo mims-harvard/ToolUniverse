@@ -18,7 +18,6 @@ will currently fail until synbiohub.org's policy changes or auth support
 is added.
 """
 
-import os
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -59,7 +58,10 @@ class SynBioHubTool(BaseTool):
         # this module previously read it -- the documented capability
         # didn't exist. SynBioHub's REST API accepts a prior /login
         # session token via the "X-authorization" header.
-        self.api_token = os.environ.get("SYNBIOHUB_API_TOKEN")
+
+    @property
+    def api_token(self) -> str:
+        return self.credential("SYNBIOHUB_API_TOKEN") or ""
 
     def _token_header(self) -> Dict[str, str]:
         """X-authorization header carrying the SynBioHub session token, if set."""

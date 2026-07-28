@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional
 
 from .base_tool import BaseTool
+from .credentials import get_credential, is_credential_name
 from .tool_registry import register_tool
 from .logging_config import get_logger
 from .llm_clients import AzureOpenAIClient, GeminiClient, OpenRouterClient, VLLMClient
@@ -44,7 +45,10 @@ class AgenticTool(BaseTool):
         for _api_type, required_vars in API_KEY_ENV_VARS.items():
             all_keys_present = True
             for var in required_vars:
-                if not os.getenv(var):
+                value = (
+                    get_credential(var) if is_credential_name(var) else os.getenv(var)
+                )
+                if not value:
                     all_keys_present = False
                     break
             if all_keys_present:

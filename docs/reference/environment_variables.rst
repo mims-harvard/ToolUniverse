@@ -306,7 +306,7 @@ See: :doc:`../guide/api_keys`
    # NCBI (3x faster PubMed access)
    NCBI_API_KEY=your_key_here
    
-   # Semantic Scholar (no rate limits)
+   # Semantic Scholar (isolated authenticated quota)
    SEMANTIC_SCHOLAR_API_KEY=your_key_here
    
    # NVIDIA NIM (protein structure prediction)

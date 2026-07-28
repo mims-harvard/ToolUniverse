@@ -1,7 +1,6 @@
 import requests
 import json
 import re
-import os
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from .base_tool import BaseTool
@@ -9,8 +8,6 @@ from .tool_registry import register_tool
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv(usecwd=True))
-
-USPTO_API_KEY = os.environ.get("USPTO_API_KEY")
 
 
 @register_tool("USPTOOpenDataPortalTool")
@@ -23,7 +20,7 @@ class USPTOOpenDataPortalTool(BaseTool):
     def __init__(
         self,
         tool_config,
-        api_key=USPTO_API_KEY,
+        api_key=None,
         base_url="https://api.uspto.gov/api/v1",
     ):
         """
@@ -36,11 +33,7 @@ class USPTOOpenDataPortalTool(BaseTool):
         """
         super().__init__(tool_config)
         self.base_url = base_url
-        if api_key == "YOUR_API_KEY" or not api_key:
-            raise ValueError(
-                "You must set a USPTO API key via the USPTO_API_KEY environment variable."
-            )
-        self.headers = {"X-API-KEY": api_key, "Accept": "application/json"}
+        self._explicit_api_key = api_key
         self.session = requests.Session()
         retry_strategy = Retry(
             total=5,
@@ -50,6 +43,15 @@ class USPTOOpenDataPortalTool(BaseTool):
         )
         adapter = HTTPAdapter(max_retries=retry_strategy)
         self.session.mount("https://", adapter)
+
+    def _api_key(self):
+        return self.credential("USPTO_API_KEY") or self._explicit_api_key
+
+    def _headers(self):
+        api_key = self._api_key()
+        if api_key == "YOUR_API_KEY" or not api_key:
+            return None
+        return {"X-API-KEY": api_key, "Accept": "application/json"}
 
     @staticmethod
     def _http_error_hint(status_code):
@@ -174,6 +176,13 @@ class USPTOOpenDataPortalTool(BaseTool):
         Returns
             The result of the API call, either as a dictionary (for JSON) or a string (for CSV).
         """
+        headers = self._headers()
+        if headers is None:
+            return {
+                "status": "error",
+                "error": "USPTO_API_KEY is required as a request credential or environment variable.",
+            }
+
         endpoint = self.tool_config.get("api_endpoint")
         if not endpoint:
             return {
@@ -250,7 +259,7 @@ class USPTOOpenDataPortalTool(BaseTool):
 
             response = self.session.get(
                 f"{self.base_url}/{endpoint}",
-                headers=self.headers,
+                headers=headers,
                 params=query_params,
                 timeout=timeout,
             )

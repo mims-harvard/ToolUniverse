@@ -8,6 +8,7 @@ query return 403 regardless of query format.
 """
 
 import json
+import os
 import pytest
 import requests
 from unittest.mock import patch, MagicMock
@@ -121,11 +122,15 @@ class TestRunHttpErrorHandling:
         assert "hint" not in result["data"]
 
 
-class TestInitRequiresKey:
-    """The tool refuses to initialise without a key rather than failing at call time."""
+class TestRuntimeRequiresKey:
+    """The tool can initialize before a request supplies its key."""
 
-    def test_missing_key_raises(self, tool_config):
+    def test_missing_key_returns_error(self, tool_config):
         from tooluniverse.uspto_tool import USPTOOpenDataPortalTool
 
-        with pytest.raises(ValueError, match="USPTO_API_KEY"):
-            USPTOOpenDataPortalTool(tool_config, api_key=None)
+        tool = USPTOOpenDataPortalTool(tool_config, api_key=None)
+        with patch.dict(os.environ, {}, clear=True):
+            result = tool.run({"query": "widget"})
+
+        assert result["status"] == "error"
+        assert "USPTO_API_KEY" in result["error"]

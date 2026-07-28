@@ -39,6 +39,25 @@ missing from that request do not fall back to process-wide secrets. Result cachi
 inside credential contexts to prevent cross-tenant cache reuse. SMCP propagates the context into
 its execution thread pool automatically.
 
+Coverage model
+~~~~~~~~~~~~~~
+
+BYOK applies to tools that consume credentials; public and local-compute tools do not need a key.
+Coverage is implemented at three layers:
+
+* JSON-defined REST tools declare ``auth_header`` or ``auth_param`` and resolve the credential at
+  request time through ``BaseRESTTool``.
+* Python tools call ``self.credential("PROVIDER_KEY")`` (or ``get_credential`` in a shared helper)
+  for every request. They must not read provider credentials directly from ``os.environ``.
+* Tools initially hidden by ``required_api_keys`` are activated on demand when
+  ``run_one_function(credentials=...)`` supplies the missing key. Credential-scoped calls use a
+  fresh tool instance, which prevents SDK clients, session headers, and auth cookies from being
+  shared between tenants.
+
+Provider quotas are also partitioned by a keyed digest of the credential. Raw keys are not kept
+in limiter state. Service-to-service tokens (for example MCP ingress authentication) and offline
+database-build credentials are infrastructure configuration, not end-user BYOK credentials.
+
 API Key Categories
 ------------------
 
@@ -89,12 +108,12 @@ These API keys are optional but provide better performance, higher rate limits, 
 **Semantic Scholar**
 
 :API Key: ``SEMANTIC_SCHOLAR_API_KEY`` (environment variable)
-:Required For: Academic literature search with enhanced rate limits
+:Required For: An isolated authenticated quota and authentication-required endpoints
 :How to Get: Visit https://www.semanticscholar.org/product/api and request an API key
-:Rate Limits: 100 requests/second with key vs 1 request/second without key
-:Benefits: 100x faster rate limit for literature searches
+:Rate Limits: New keys currently start at 1 request/second. Anonymous requests share a global pool and can be throttled dynamically.
+:Benefits: Predictable per-key quota, isolation from anonymous traffic, and access to authentication-required endpoints
 :Tool Categories: ``semantic_scholar``
-:Configuration: Set ``SEMANTIC_SCHOLAR_API_KEY=your_key`` - automatically used. Tools work without this key at reduced rate limits.
+:Configuration: Set ``SEMANTIC_SCHOLAR_API_KEY=your_key`` or pass it as a request credential. Tools also work anonymously when the upstream pool permits.
 
 **FDA OpenFDA**
 
@@ -535,9 +554,9 @@ Rate Limits Summary
      - 10 req/sec
      - Optional (env var only)
    * - Semantic Scholar
-     - 1 req/sec
-     - 100 req/sec
-     - Optional (env var only)
+     - Shared adaptive pool
+     - 1 req/sec introductory quota
+     - Optional (environment or request credential)
    * - OpenFDA
      - 40 req/min
      - 240 req/min

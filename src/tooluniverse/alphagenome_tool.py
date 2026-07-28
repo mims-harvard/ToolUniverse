@@ -25,7 +25,6 @@ prediction with AlphaGenome." Nature 649, 1206-1218 (2026).
 doi:10.1038/s41586-025-10014-0.
 """
 
-import os
 from typing import Any, Dict, List, Optional
 
 from .base_tool import BaseTool
@@ -81,7 +80,7 @@ class AlphaGenomeTool(BaseTool):
             return self._err(
                 "The 'alphagenome' package is required: pip install alphagenome."
             )
-        api_key = os.environ.get("ALPHA_GENOME_API_KEY", "")
+        api_key = self.credential("ALPHA_GENOME_API_KEY") or ""
         if not api_key:
             return self._err(
                 "Set ALPHA_GENOME_API_KEY (free non-commercial key at "

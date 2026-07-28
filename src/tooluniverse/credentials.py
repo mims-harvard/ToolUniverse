@@ -18,6 +18,16 @@ from typing import Iterator, Mapping, Optional
 
 CredentialMapping = Mapping[str, str]
 
+_CREDENTIAL_NAME_SUFFIXES = (
+    "KEY",
+    "TOKEN",
+    "SECRET",
+    "PASSWORD",
+    "USERNAME",
+    "EMAIL",
+    "JWT",
+)
+
 # ``None`` means there is no request scope and tools may use their normal environment fallback.
 # An active empty mapping is intentionally different: it masks all process-level credentials.
 _request_credentials: contextvars.ContextVar[Optional[CredentialMapping]] = (
@@ -67,6 +77,11 @@ def has_credential_context() -> bool:
     """Return whether request-scoped credentials (including an empty scope) are active."""
 
     return _request_credentials.get() is not None
+
+
+def is_credential_name(name: str) -> bool:
+    """Distinguish provider credentials from process-level infrastructure config."""
+    return isinstance(name, str) and name.endswith(_CREDENTIAL_NAME_SUFFIXES)
 
 
 def get_credential(name: str, fallback: Optional[str] = None) -> Optional[str]:

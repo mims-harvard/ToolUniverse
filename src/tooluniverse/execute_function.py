@@ -36,7 +36,7 @@ import warnings
 import threading
 from pathlib import Path
 from contextlib import nullcontext
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import as_completed
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from .utils import read_json_list, evaluate_function_call, extract_function_call_json
@@ -66,7 +66,13 @@ from .logging_config import (
 from .cache.result_cache_manager import ResultCacheManager
 from .output_hook import HookManager
 from .default_config import default_tool_files, get_default_hook_config
-from .credentials import credential_context, get_credential, has_credential_context
+from .credentials import (
+    ContextThreadPoolExecutor,
+    credential_context,
+    get_credential,
+    has_credential_context,
+    is_credential_name,
+)
 
 # Determine the directory where the current file is located
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -388,6 +394,8 @@ class ToolUniverse:
         self.tool_category_dicts: Dict[str, List[Dict[str, Any]]] = {}
         # Maps tool name → missing required API key names (for better "not found" errors)
         self._excluded_api_key_tools: Dict[str, List[str]] = {}
+        self._excluded_any_api_key_tools: Dict[str, List[str]] = {}
+        self._credential_tool_load_lock = threading.RLock()
         self.tool_finder = None
         if tool_files is None:
             tool_files = default_tool_files
@@ -758,7 +766,11 @@ class ToolUniverse:
 
     def _get_api_key(self, key_name: str):
         """Get an API key from the active request or the environment fallback."""
-        return get_credential(key_name)
+        if is_credential_name(key_name):
+            return get_credential(key_name)
+        # required_api_keys historically also contains server URLs, package flags, and other
+        # deployment configuration. Those are not tenant secrets and remain process-scoped.
+        return os.environ.get(key_name)
 
     def _check_api_key_requirements(self, tool_config):
         """
@@ -796,6 +808,53 @@ class ToolUniverse:
         all_valid = len(missing_keys) == 0
 
         return all_valid, missing_keys
+
+    def _activate_credential_tool(self, function_name: str) -> None:
+        """Load a previously gated tool when this request supplies its credentials.
+
+        Tools are still skipped during the initial load for backward compatibility and to
+        avoid constructing clients that require credentials in ``__init__``. A request-scoped
+        credential can activate just the requested tool without changing process environment.
+        Once loaded, execution-time checks keep later requests fail-closed.
+        """
+        missing_keys = self._excluded_api_key_tools.get(function_name)
+        alternative_keys = self._excluded_any_api_key_tools.get(function_name)
+        required_ready = bool(missing_keys) and all(
+            self._get_api_key(key) for key in missing_keys
+        )
+        alternative_ready = bool(alternative_keys) and any(
+            self._get_api_key(key) for key in alternative_keys
+        )
+        if not required_ready and not alternative_ready:
+            return
+
+        with self._credential_tool_load_lock:
+            if function_name in self.all_tool_dict:
+                self._excluded_api_key_tools.pop(function_name, None)
+                self._excluded_any_api_key_tools.pop(function_name, None)
+                return
+            self.load_tools(include_tools=[function_name], quiet=True)
+            if function_name in self.all_tool_dict:
+                self._excluded_api_key_tools.pop(function_name, None)
+                self._excluded_any_api_key_tools.pop(function_name, None)
+
+    def _missing_required_credentials(self, function_name: str) -> List[str]:
+        """Return missing credentials for a loaded or initially gated tool."""
+        tool_config = self.all_tool_dict.get(function_name)
+        if tool_config is not None:
+            return [
+                key
+                for key in tool_config.get("required_api_keys", [])
+                if not self._get_api_key(key)
+            ]
+        return list(self._excluded_api_key_tools.get(function_name, []))
+
+    def _missing_alternative_credentials(self, function_name: str) -> List[str]:
+        """Return an any-of credential group when none of its choices is available."""
+        alternatives = self._excluded_any_api_key_tools.get(function_name, [])
+        if alternatives and not any(self._get_api_key(key) for key in alternatives):
+            return list(alternatives)
+        return []
 
     def generate_env_template(
         self, all_missing_keys, output_file: str = ".env.template"
@@ -969,6 +1028,7 @@ class ToolUniverse:
             self.all_tool_dict = {}
             self.tool_category_dicts = {}
             self._excluded_api_key_tools = {}
+            self._excluded_any_api_key_tools = {}
 
         # Handle tools_file parameter (alternative to include_tools)
         if tools_file:
@@ -1311,6 +1371,11 @@ class ToolUniverse:
                     all_missing_keys.add(
                         "LLM API keys (AZURE_OPENAI_API_KEY, OPENROUTER_API_KEY, or GEMINI_API_KEY)"
                     )
+                    self._excluded_any_api_key_tools[tool_name] = [
+                        "AZURE_OPENAI_API_KEY",
+                        "OPENROUTER_API_KEY",
+                        "GEMINI_API_KEY",
+                    ]
                     continue
 
             # Last-seen wins: user tools loaded after built-ins naturally override them
@@ -2611,7 +2676,10 @@ class ToolUniverse:
         results: List[Any],
     ) -> List[_BatchJob]:
         if not (
-            use_cache and self.cache_manager is not None and self.cache_manager.enabled
+            use_cache
+            and not has_credential_context()
+            and self.cache_manager is not None
+            and self.cache_manager.enabled
         ):
             return jobs
 
@@ -2704,7 +2772,7 @@ class ToolUniverse:
                 results[idx] = result
 
         if max_workers and max_workers > 1:
-            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            with ContextThreadPoolExecutor(max_workers=max_workers) as executor:
                 futures = [executor.submit(run_job, job) for job in jobs_to_run]
                 for future in as_completed(futures):
                     future.result()
@@ -3042,6 +3110,9 @@ class ToolUniverse:
         function_name = function_call_json.get("name", "")
         arguments = function_call_json.get("arguments", {})
 
+        # A tool gated during process startup can be activated by this request's credentials.
+        self._activate_credential_tool(function_name)
+
         # Resolve original names to shortened names (all_tool_dict uses shortened as keys)
         function_name = self._resolve_tool_name(function_name)
 
@@ -3055,6 +3126,32 @@ class ToolUniverse:
             return self._create_dual_format_error(
                 ToolValidationError(
                     f"Arguments must be a dictionary, got {type(arguments).__name__}"
+                )
+            )
+
+        missing_credentials = self._missing_required_credentials(function_name)
+        if missing_credentials:
+            return self._create_dual_format_error(
+                ToolUnavailableError(
+                    f"Tool '{function_name}' requires API key(s): "
+                    f"{', '.join(missing_credentials)}. Provide them as request "
+                    "credentials or environment variables.",
+                    retriable=False,
+                    next_steps=[
+                        "Pass the missing keys in run_one_function(credentials={...})",
+                        "Or set them as local environment variables",
+                    ],
+                )
+            )
+
+        alternative_credentials = self._missing_alternative_credentials(function_name)
+        if alternative_credentials:
+            return self._create_dual_format_error(
+                ToolUnavailableError(
+                    f"Tool '{function_name}' requires at least one API key: "
+                    f"{', '.join(alternative_credentials)}. Provide one as a request "
+                    "credential or environment variable.",
+                    retriable=False,
                 )
             )
 
@@ -3146,7 +3243,9 @@ class ToolUniverse:
             tool_arguments = arguments
             try:
                 if tool_instance is None:
-                    tool_instance = self._get_tool_instance(function_name, cache=True)
+                    tool_instance = self._get_tool_instance(
+                        function_name, cache=not has_credential_context()
+                    )
 
                 if tool_instance:
                     result, tool_arguments = self._execute_tool_with_stream(
@@ -3167,7 +3266,9 @@ class ToolUniverse:
                         )
 
                     # Try to get the tool instance again after loading
-                    tool_instance = self._get_tool_instance(function_name, cache=True)
+                    tool_instance = self._get_tool_instance(
+                        function_name, cache=not has_credential_context()
+                    )
                     if tool_instance:
                         result, tool_arguments = self._execute_tool_with_stream(
                             tool_instance,
@@ -3268,6 +3369,8 @@ class ToolUniverse:
         function_name = function_call_json.get("name", "")
         arguments = function_call_json.get("arguments", {})
 
+        self._activate_credential_tool(function_name)
+
         # Resolve original names to shortened names
         function_name = self._resolve_tool_name(function_name)
 
@@ -3281,6 +3384,31 @@ class ToolUniverse:
             return self._create_dual_format_error(
                 ToolValidationError(
                     f"Arguments must be a dictionary, got {type(arguments).__name__}"
+                )
+            )
+
+        missing_credentials = self._missing_required_credentials(function_name)
+        if missing_credentials:
+            return self._create_dual_format_error(
+                ToolUnavailableError(
+                    f"Tool '{function_name}' requires API key(s): "
+                    f"{', '.join(missing_credentials)}. Provide them as request "
+                    "credentials or environment variables.",
+                    retriable=False,
+                    next_steps=[
+                        "Pass the missing keys in run_one_function_async(credentials={...})",
+                        "Or set them as local environment variables",
+                    ],
+                )
+            )
+        alternative_credentials = self._missing_alternative_credentials(function_name)
+        if alternative_credentials:
+            return self._create_dual_format_error(
+                ToolUnavailableError(
+                    f"Tool '{function_name}' requires at least one API key: "
+                    f"{', '.join(alternative_credentials)}. Provide one as a request "
+                    "credential or environment variable.",
+                    retriable=False,
                 )
             )
 
@@ -3344,7 +3472,9 @@ class ToolUniverse:
         tool_arguments = arguments
         try:
             if tool_instance is None:
-                tool_instance = self._get_tool_instance(function_name, cache=True)
+                tool_instance = self._get_tool_instance(
+                    function_name, cache=not has_credential_context()
+                )
 
             if tool_instance:
                 result, tool_arguments = await self._execute_tool_with_stream_async(
@@ -3366,7 +3496,9 @@ class ToolUniverse:
                     )
 
                 # Try to get the tool instance again after loading
-                tool_instance = self._get_tool_instance(function_name, cache=True)
+                tool_instance = self._get_tool_instance(
+                    function_name, cache=not has_credential_context()
+                )
                 if tool_instance:
                     result, tool_arguments = await self._execute_tool_with_stream_async(
                         tool_instance,
@@ -3700,8 +3832,9 @@ class ToolUniverse:
         # Resolve original names to shortened names (all_tool_dict uses shortened as keys)
         function_name = self._resolve_tool_name(function_name)
 
-        # Check cache first
-        if function_name in self.callable_functions:
+        # Request-scoped execution must not reuse an instance that may contain another tenant's
+        # SDK client, auth cookie, session headers, or constructor-resolved credentials.
+        if cache and function_name in self.callable_functions:
             return self.callable_functions[function_name]
 
         # Check if known unavailable
@@ -4054,6 +4187,8 @@ class ToolUniverse:
         self.all_tools = []
         self.all_tool_dict = {}
         self.tool_category_dicts = {}
+        self._excluded_api_key_tools = {}
+        self._excluded_any_api_key_tools = {}
 
         # Clear instantiated tool instances
         self.callable_functions = {}

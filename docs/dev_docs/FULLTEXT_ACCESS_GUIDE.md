@@ -407,7 +407,7 @@ def rate_limited_extract(papers, delay=3):
 | Service | Rate Limit (no key) | Rate Limit (with key) | Key Required? |
 |---------|--------------------|-----------------------|---------------|
 | Europe PMC | Unspecified | Unspecified | No |
-| Semantic Scholar | 1 req/sec | 100 req/sec | Optional (`SEMANTIC_SCHOLAR_API_KEY`) |
+| Semantic Scholar | Shared adaptive pool | 1 req/sec introductory per-key quota | Optional (`SEMANTIC_SCHOLAR_API_KEY`) |
 | ArXiv | 3s between requests | N/A | No |
 | PubMed | 3 req/sec | 10 req/sec | Optional (`NCBI_API_KEY`) |
 

@@ -1,7 +1,7 @@
-import os
 import requests
 from typing import Any, Dict, Optional
 from .base_tool import BaseTool
+from .credentials import get_credential
 from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
@@ -14,7 +14,7 @@ def _with_api_key(params):
     key is a query parameter named `api_key` (free at openalex.org/settings/api)
     and is read from the OPENALEX_API_KEY environment variable.
     """
-    key = os.environ.get("OPENALEX_API_KEY")
+    key = get_credential("OPENALEX_API_KEY")
     if key:
         params = dict(params or {})
         params["api_key"] = key

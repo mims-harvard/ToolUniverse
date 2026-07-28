@@ -11,9 +11,9 @@ Set via environment variable ESM_API_KEY.
 Install: pip install esm
 """
 
-import os
 from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
+from .credentials import get_credential
 from .tool_registry import register_tool
 
 
@@ -23,7 +23,7 @@ def _get_client(model: str):
         from esm.sdk.forge import ESM3ForgeInferenceClient
     except ImportError:
         raise ImportError("esm package is required. Install with: pip install esm")
-    token = os.environ.get("ESM_API_KEY", "")
+    token = get_credential("ESM_API_KEY") or ""
     if not token:
         raise EnvironmentError(
             "ESM_API_KEY environment variable is not set. "
@@ -48,7 +48,7 @@ def _get_esmc_client(model: str):
             "live on an unmerged feature branch. Install from there:\n"
             "  pip install 'esm @ git+https://github.com/evolutionaryscale/esm@ee891c52'"
         )
-    token = os.environ.get("ESM_API_KEY", "")
+    token = get_credential("ESM_API_KEY") or ""
     if not token:
         raise EnvironmentError(
             "ESM_API_KEY environment variable is not set. "

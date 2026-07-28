@@ -14,7 +14,6 @@ Note: the DisGeNET v1 API exposes gene/variant-disease associations through the
 only access CURATED sources (CLINGEN, CLINVAR, ORPHANET, GENCC, UNIPROT, ...).
 """
 
-import os
 import re
 import requests
 from typing import Dict, Any, List
@@ -46,7 +45,11 @@ class DisGeNETTool(BaseTool):
         super().__init__(tool_config)
         self.timeout: int = tool_config.get("timeout", 30)
         self.parameter = tool_config.get("parameter", {})
-        self.api_key = os.environ.get("DISGENET_API_KEY", "")
+
+    @property
+    def api_key(self) -> str:
+        """Resolve the DisGeNET key for the active request."""
+        return self.credential("DISGENET_API_KEY") or ""
 
     def _get_headers(self) -> Dict[str, str]:
         """Get request headers with authentication.
@@ -164,7 +167,7 @@ class DisGeNETTool(BaseTool):
         if not self.api_key:
             return {
                 "status": "error",
-                "error": "DisGeNET API key required. Set DISGENET_API_KEY environment variable. Register at https://www.disgenet.com/",
+                "error": "DisGeNET API key required. Provide DISGENET_API_KEY as a request credential or environment variable. Register at https://www.disgenet.com/",
             }
 
         operation = arguments.get("operation", "")

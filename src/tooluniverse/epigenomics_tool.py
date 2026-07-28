@@ -15,12 +15,12 @@ but the GEO_* endpoints will burst-throttle (HTTP 429) under load.
 """
 
 import json
-import os
 import random
 import time
 import requests
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
+from .credentials import get_credential
 from .tool_registry import register_tool
 
 ENCODE_BASE_URL = "https://www.encodeproject.org"
@@ -39,7 +39,7 @@ def _inject_ncbi_api_key(params: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns the same params dict (mutated) for chaining.
     """
-    key = os.environ.get("NCBI_API_KEY")
+    key = get_credential("NCBI_API_KEY")
     if key:
         params["api_key"] = key
     return params

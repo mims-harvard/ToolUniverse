@@ -4,6 +4,8 @@ import os
 import time
 import json as _json
 
+from .credentials import get_credential
+
 
 class BaseLLMClient:
     def test_api(self) -> None:
@@ -85,7 +87,7 @@ class AzureOpenAIClient(BaseLLMClient):
             f"Resolved Azure API version for {model_id}: {resolved_version}"
         )
 
-        api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        api_key = get_credential("AZURE_OPENAI_API_KEY")
         if not api_key:
             raise ValueError("AZURE_OPENAI_API_KEY not set")
         endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://azure-ai.hms.edu")
@@ -405,7 +407,7 @@ class GeminiClient(BaseLLMClient):
             from google.genai import types as genai_types  # type: ignore
         except Exception as e:  # pragma: no cover
             raise RuntimeError("google-genai not available") from e
-        api_key = os.getenv("GEMINI_API_KEY")
+        api_key = get_credential("GEMINI_API_KEY")
         if not api_key:
             raise ValueError("GEMINI_API_KEY not found")
         self._client = genai.Client(api_key=api_key)
@@ -577,7 +579,7 @@ class OpenRouterClient(BaseLLMClient):
         self.model_name = model_id
         self.logger = logger
 
-        api_key = os.getenv("OPENROUTER_API_KEY")
+        api_key = get_credential("OPENROUTER_API_KEY")
         if not api_key:
             raise ValueError("OPENROUTER_API_KEY not set")
 

@@ -25,6 +25,12 @@
         "env_var": "SEMANTIC_SCHOLAR_API_KEY",
         "header": "x-api-key",
         "required": false
+      },
+      "rate_limit": {
+        "provider": "semantic_scholar",
+        "credential": "SEMANTIC_SCHOLAR_API_KEY",
+        "authenticated_rps": 1.0,
+        "anonymous_rps": null
       }
     },
     "type": "BaseRESTTool",
@@ -278,6 +284,12 @@
         "env_var": "SEMANTIC_SCHOLAR_API_KEY",
         "header": "x-api-key",
         "required": false
+      },
+      "rate_limit": {
+        "provider": "semantic_scholar",
+        "credential": "SEMANTIC_SCHOLAR_API_KEY",
+        "authenticated_rps": 1.0,
+        "anonymous_rps": null
       }
     },
     "type": "BaseRESTTool",
@@ -381,6 +393,12 @@
         "env_var": "SEMANTIC_SCHOLAR_API_KEY",
         "header": "x-api-key",
         "required": false
+      },
+      "rate_limit": {
+        "provider": "semantic_scholar",
+        "credential": "SEMANTIC_SCHOLAR_API_KEY",
+        "authenticated_rps": 1.0,
+        "anonymous_rps": null
       }
     },
     "type": "BaseRESTTool",
@@ -535,6 +553,12 @@
         "env_var": "SEMANTIC_SCHOLAR_API_KEY",
         "header": "x-api-key",
         "required": false
+      },
+      "rate_limit": {
+        "provider": "semantic_scholar",
+        "credential": "SEMANTIC_SCHOLAR_API_KEY",
+        "authenticated_rps": 1.0,
+        "anonymous_rps": null
       }
     },
     "type": "BaseRESTTool",
@@ -616,6 +640,12 @@
         "env_var": "SEMANTIC_SCHOLAR_API_KEY",
         "header": "x-api-key",
         "required": false
+      },
+      "rate_limit": {
+        "provider": "semantic_scholar",
+        "credential": "SEMANTIC_SCHOLAR_API_KEY",
+        "authenticated_rps": 1.0,
+        "anonymous_rps": null
       }
     },
     "type": "BaseRESTTool",
@@ -735,6 +765,12 @@
         "env_var": "SEMANTIC_SCHOLAR_API_KEY",
         "header": "x-api-key",
         "required": false
+      },
+      "rate_limit": {
+        "provider": "semantic_scholar",
+        "credential": "SEMANTIC_SCHOLAR_API_KEY",
+        "authenticated_rps": 1.0,
+        "anonymous_rps": null
       }
     },
     "type": "BaseRESTTool",
@@ -858,6 +894,12 @@
         "env_var": "SEMANTIC_SCHOLAR_API_KEY",
         "header": "x-api-key",
         "required": false
+      },
+      "rate_limit": {
+        "provider": "semantic_scholar",
+        "credential": "SEMANTIC_SCHOLAR_API_KEY",
+        "authenticated_rps": 1.0,
+        "anonymous_rps": null
       }
     },
     "type": "BaseRESTTool",

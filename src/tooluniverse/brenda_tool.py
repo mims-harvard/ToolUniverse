@@ -14,7 +14,6 @@ WSDL: https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl
 """
 
 import hashlib
-import os
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -71,8 +70,8 @@ class BRENDATool(BaseTool):
         super().__init__(tool_config)
 
     def _credentials(self) -> Optional[tuple]:
-        email = os.environ.get("BRENDA_EMAIL", "")
-        password = os.environ.get("BRENDA_PASSWORD", "")
+        email = self.credential("BRENDA_EMAIL") or ""
+        password = self.credential("BRENDA_PASSWORD") or ""
         if not email or not password:
             return None
         return email, _hash_password(password)
