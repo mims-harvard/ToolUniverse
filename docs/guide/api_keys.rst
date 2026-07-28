@@ -39,6 +39,19 @@ missing from that request do not fall back to process-wide secrets. Result cachi
 inside credential contexts to prevent cross-tenant cache reuse. SMCP propagates the context into
 its execution thread pool automatically.
 
+Credential-scoped tool instances are safely reused using an LRU cache keyed by the tool
+configuration and a process-local HMAC of the complete credential mapping. Raw key values are
+never stored in cache metadata, and different credential mappings cannot share SDK clients,
+cookies, or constructor-bound authentication. Entries expire after 15 minutes of inactivity and
+the cache retains at most 256 instances by default. Set either
+``TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_SIZE=0`` or
+``TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_TTL=0`` to restore strict per-call construction.
+
+JSON-defined REST tools additionally keep identity state in separate ``requests.Session`` objects
+while sharing only the underlying TCP/TLS connection pools. Authorization headers and cookies are
+not stored in the shared transport. Custom REST tools using client certificates should provide
+their own session instead of using the shared transport pool.
+
 Coverage model
 ~~~~~~~~~~~~~~
 
@@ -51,8 +64,8 @@ Coverage is implemented at three layers:
   for every request. They must not read provider credentials directly from ``os.environ``.
 * Tools initially hidden by ``required_api_keys`` are activated on demand when
   ``run_one_function(credentials=...)`` supplies the missing key. Credential-scoped calls use a
-  fresh tool instance, which prevents SDK clients, session headers, and auth cookies from being
-  shared between tenants.
+  bounded, expiring instance partition for that exact credential mapping, preventing SDK clients,
+  session headers, and auth cookies from being shared across credential partitions.
 
 Provider quotas are also partitioned by a keyed digest of the credential. Raw keys are not kept
 in limiter state. Service-to-service tokens (for example MCP ingress authentication) and offline

@@ -16,6 +16,7 @@ from typing import Any, Dict, Optional, Callable
 from .base_tool import BaseTool
 from .http_utils import request_with_retry
 from .provider_rate_limit import enforce_provider_rate_limit
+from .shared_http_session import create_shared_pool_session
 
 
 class BaseRESTTool(BaseTool):
@@ -36,7 +37,9 @@ class BaseRESTTool(BaseTool):
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
-        self.session = requests.Session()
+        # Keep cookies/headers/auth isolated per tool instance while sharing only the underlying
+        # identity-free TCP/TLS transport pools across instances and tenants.
+        self.session = create_shared_pool_session()
         self.timeout = 30
         self.api_name = tool_config.get(
             "name", self.__class__.__name__.replace("RESTTool", "")

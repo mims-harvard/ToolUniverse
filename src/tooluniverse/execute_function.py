@@ -69,10 +69,12 @@ from .default_config import default_tool_files, get_default_hook_config
 from .credentials import (
     ContextThreadPoolExecutor,
     credential_context,
+    current_credentials,
     get_credential,
     has_credential_context,
     is_credential_name,
 )
+from .credential_instance_cache import CredentialInstanceCache
 
 # Determine the directory where the current file is located
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -341,6 +343,8 @@ class ToolUniverse:
         profile: Optional[str] = None,
         workspace: Optional[str] = None,
         use_global: bool = False,
+        credential_instance_cache_size: Optional[int] = None,
+        credential_instance_cache_ttl: Optional[float] = None,
     ):
         """
         Initialize the ToolUniverse with tool file configurations.
@@ -369,6 +373,12 @@ class ToolUniverse:
             use_global (bool, optional): When True, use the global ``~/.tooluniverse`` directory
                                          as the default workspace instead of ``./.tooluniverse``.
                                          Has no effect if ``workspace`` or ``TOOLUNIVERSE_HOME`` is set.
+            credential_instance_cache_size (int, optional): Maximum request-credential-isolated
+                tool instances retained per ToolUniverse object. Defaults to 256 or
+                ``TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_SIZE``. Set to 0 to disable reuse.
+            credential_instance_cache_ttl (float, optional): Idle expiration in seconds for
+                request-credential-isolated tool instances. Defaults to 900 or
+                ``TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_TTL``. Set to 0 to disable reuse.
         """
         # Set log level if specified
         if log_level is not None:
@@ -408,6 +418,20 @@ class ToolUniverse:
         self.logger.debug("Tool files:")
         self.logger.debug(json.dumps(tool_files, indent=2))
         self.callable_functions = {}
+        credential_cache_size = (
+            int(os.getenv("TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_SIZE", "256"))
+            if credential_instance_cache_size is None
+            else credential_instance_cache_size
+        )
+        credential_cache_ttl = (
+            float(os.getenv("TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_TTL", "900"))
+            if credential_instance_cache_ttl is None
+            else credential_instance_cache_ttl
+        )
+        self._credential_instance_cache = CredentialInstanceCache(
+            max_size=credential_cache_size,
+            idle_ttl_seconds=credential_cache_ttl,
+        )
 
         # Refresh the global tool_type_mappings to include any tools registered during imports
         global tool_type_mappings
@@ -3828,12 +3852,28 @@ class ToolUniverse:
             return None  # Return None instead of raising
 
     def _get_tool_instance(self, function_name: str, cache: bool = True):
-        """Get or create tool instance with optional caching."""
+        """Get or create a tool instance with process or credential-partitioned caching."""
         # Resolve original names to shortened names (all_tool_dict uses shortened as keys)
         function_name = self._resolve_tool_name(function_name)
 
-        # Request-scoped execution must not reuse an instance that may contain another tenant's
-        # SDK client, auth cookie, session headers, or constructor-resolved credentials.
+        scoped_credentials = current_credentials()
+        if scoped_credentials is not None and function_name in self.all_tool_dict:
+            tool_config = self.all_tool_dict[function_name]
+            config_payload = json.dumps(
+                tool_config,
+                sort_keys=True,
+                separators=(",", ":"),
+                default=repr,
+            ).encode("utf-8")
+            config_version = hashlib.sha256(config_payload).hexdigest()
+            return self._credential_instance_cache.get_or_create(
+                tool_name=function_name,
+                config_version=config_version,
+                credentials=scoped_credentials,
+                factory=lambda: self.init_tool(tool_config, add_to_cache=False),
+            )
+
+        # Local/single-user execution keeps the original fast process-level instance cache.
         if cache and function_name in self.callable_functions:
             return self.callable_functions[function_name]
 
@@ -4179,7 +4219,7 @@ class ToolUniverse:
             tu.load_tools(include_tools=["UniProt_get_entry_by_accession"])
 
         Note:
-            - This does not affect tool instances in callable_functions cache
+            - This clears process-level and credential-partitioned tool instances
             - Subsequent tool access will trigger on-demand loading
             - Use clear_cache=True if you also want to clear result cache
         """
@@ -4189,6 +4229,7 @@ class ToolUniverse:
         self.tool_category_dicts = {}
         self._excluded_api_key_tools = {}
         self._excluded_any_api_key_tools = {}
+        self._credential_instance_cache.clear()
 
         # Clear instantiated tool instances
         self.callable_functions = {}
@@ -4205,6 +4246,11 @@ class ToolUniverse:
             return {"enabled": False}
         return self.cache_manager.stats()
 
+    def get_credential_instance_cache_stats(self) -> Dict[str, Any]:
+        """Return non-secret BYOK tool-instance cache telemetry."""
+
+        return self._credential_instance_cache.stats()
+
     def dump_cache(self, namespace: Optional[str] = None):
         """Iterate over cached entries (persistent layer only)."""
         if not self.cache_manager:
@@ -4213,6 +4259,7 @@ class ToolUniverse:
 
     def close(self):
         """Release resources."""
+        self._credential_instance_cache.clear()
         if self.cache_manager:
             self.cache_manager.close()
 
