@@ -96,7 +96,7 @@ class RXNChemistryTool(BaseTool):
     # Key / header helpers
     # ------------------------------------------------------------------ #
     def _api_key(self) -> str:
-        return os.environ.get(ENV_KEY, "")
+        return self.credential(ENV_KEY) or ""
 
     def _headers(self, api_key: str) -> Dict[str, str]:
         return {"Authorization": api_key, "Content-Type": "application/json"}

@@ -14,7 +14,6 @@ Authentication: Token-based via ADDGENE_API_KEY environment variable.
 Register at https://developers.addgene.org/ to obtain a free token.
 """
 
-import os
 import requests
 from typing import Dict, Any, Optional, List
 from .base_tool import BaseTool
@@ -44,7 +43,11 @@ class AddgeneTool(BaseTool):
         self.timeout = tool_config.get("timeout", 30)
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
-        self.api_key = os.environ.get("ADDGENE_API_KEY", "")
+
+    @property
+    def api_key(self) -> str:
+        """Resolve the Addgene key for the active request."""
+        return self.credential("ADDGENE_API_KEY") or ""
 
     def _get_headers(self):
         """Get request headers with auth token."""

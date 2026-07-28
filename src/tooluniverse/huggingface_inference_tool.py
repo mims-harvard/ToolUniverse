@@ -41,6 +41,7 @@ retryable status rather than an exception.
 """
 
 import os
+
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -151,7 +152,7 @@ class HuggingFaceInferenceTool(BaseTool):
         """
         url = f"{_BASE_URL}/{model_id.strip('/')}{path_suffix}"
         headers = {"Content-Type": "application/json"}
-        token = os.environ.get("HF_TOKEN", "")
+        token = self.credential("HF_TOKEN") or ""
         if token:
             headers["Authorization"] = f"Bearer {token}"
         if wait_for_model:
@@ -258,7 +259,7 @@ class HuggingFaceInferenceTool(BaseTool):
 
         url = f"{_BASE_URL}/{model_id.strip('/')}"
         headers = {"Content-Type": loaded["_content_type"]}
-        token = os.environ.get("HF_TOKEN", "")
+        token = self.credential("HF_TOKEN") or ""
         if token:
             headers["Authorization"] = f"Bearer {token}"
         if bool(args.get("wait_for_model", False)):

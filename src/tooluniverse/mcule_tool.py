@@ -24,7 +24,6 @@ API base: https://mcule.com/api/v1/
 Reference: https://doc.mcule.com/doku.php?id=api
 """
 
-import os
 import requests
 from typing import Dict, Any, Optional, List
 from .base_tool import BaseTool
@@ -55,10 +54,6 @@ class MculeTool(BaseTool):
         self.required = self.parameter.get("required", [])
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
-        # Check for optional API key
-        api_key = os.environ.get("MCULE_API_KEY")
-        if api_key:
-            self.session.headers.update({"Authorization": "Token {}".format(api_key)})
         self.timeout = 30
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -99,14 +94,16 @@ class MculeTool(BaseTool):
     ) -> Dict[str, Any]:
         """Make request to Mcule API."""
         url = "{}/{}".format(MCULE_BASE_URL, path.lstrip("/"))
+        api_key = self.credential("MCULE_API_KEY")
+        headers = {"Authorization": f"Token {api_key}"} if api_key else {}
         try:
             if method == "GET":
                 response = self.session.get(
-                    url, params=params or {}, timeout=self.timeout
+                    url, params=params or {}, headers=headers, timeout=self.timeout
                 )
             else:
                 response = self.session.post(
-                    url, json=params or {}, timeout=self.timeout
+                    url, json=params or {}, headers=headers, timeout=self.timeout
                 )
 
             if response.status_code == 200:

@@ -1,12 +1,11 @@
 import os
 import re
 import tempfile
-import threading
-import time
 
 import requests
 from .base_tool import BaseTool
 from .http_utils import request_with_retry
+from .provider_rate_limit import enforce_provider_rate_limit
 from .tool_registry import register_tool
 
 try:
@@ -47,13 +46,9 @@ class SemanticScholarTool(BaseTool):
     SEMANTIC_SCHOLAR_API_KEY as the local environment fallback.
     Request an API key at: https://www.semanticscholar.org/product/api
 
-    Rate limits:
-    - Without API key: 1 request/second
-    - With API key: 100 requests/second
+    Semantic Scholar currently gives new API keys an introductory quota of 1 request/second.
+    Anonymous requests use a shared upstream pool and may be throttled dynamically.
     """
-
-    _last_request_time = 0.0
-    _rate_limit_lock = threading.Lock()
 
     def __init__(
         self,
@@ -135,19 +130,15 @@ class SemanticScholarTool(BaseTool):
             response["truncated"] = False
         return response
 
-    def _enforce_rate_limit(self, has_api_key: bool) -> None:
-        # Authenticated requests may use different tenant keys, so a process-global keyed throttle
-        # would serialize unrelated users. Let Semantic Scholar enforce each key's own quota and
-        # retain a conservative shared-IP throttle only for anonymous traffic.
-        if has_api_key:
-            return
-        min_interval = 1.05
-        with self._rate_limit_lock:
-            now = time.time()
-            elapsed = now - SemanticScholarTool._last_request_time
-            if elapsed < min_interval:
-                time.sleep(min_interval - elapsed)
-            SemanticScholarTool._last_request_time = time.time()
+    def _enforce_rate_limit(self, api_key: str) -> None:
+        # New authenticated keys start at 1 RPS across Semantic Scholar endpoints. Anonymous
+        # traffic belongs to a shared, adaptive upstream pool, so Retry-After/backoff is more
+        # accurate than imposing the old, incorrect process-wide 1 RPS assumption locally.
+        enforce_provider_rate_limit(
+            "semantic_scholar",
+            api_key,
+            1.0 if api_key else None,
+        )
 
     def _fetch_missing_abstract(self, paper_id: str) -> dict | None:
         paper_id = (paper_id or "").strip()
@@ -158,7 +149,7 @@ class SemanticScholarTool(BaseTool):
         params = {"fields": "abstract,externalIds,openAccessPdf"}
         api_key = self.credential("SEMANTIC_SCHOLAR_API_KEY") or ""
         headers = {"x-api-key": api_key} if api_key else {}
-        self._enforce_rate_limit(bool(api_key))
+        self._enforce_rate_limit(api_key)
         resp = request_with_retry(
             self.session,
             "GET",
@@ -230,7 +221,7 @@ class SemanticScholarTool(BaseTool):
             params["sort"] = sort
         api_key = self.credential("SEMANTIC_SCHOLAR_API_KEY") or ""
         headers = {"x-api-key": api_key} if api_key else {}
-        self._enforce_rate_limit(bool(api_key))
+        self._enforce_rate_limit(api_key)
         # Use /paper/search/bulk when sorting, as /paper/search silently
         # ignores the sort parameter and always returns relevance-ranked results.
         url = self.base_url
@@ -453,6 +444,11 @@ class SemanticScholarPDFSnippetsTool(BaseTool):
             api_key = self.credential("SEMANTIC_SCHOLAR_API_KEY") or ""
             headers = {"x-api-key": api_key} if api_key else {}
             try:
+                enforce_provider_rate_limit(
+                    "semantic_scholar",
+                    api_key,
+                    1.0 if api_key else None,
+                )
                 resp = request_with_retry(
                     self.session,
                     "GET",
