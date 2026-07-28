@@ -3,6 +3,8 @@
 import asyncio
 import ast
 import json
+import threading
+import time
 from concurrent.futures import as_completed
 from pathlib import Path
 
@@ -17,6 +19,7 @@ from tooluniverse.credentials import (
     get_credential,
     has_credential_context,
 )
+from tooluniverse.credential_instance_cache import CredentialInstanceCache
 from tooluniverse.provider_rate_limit import ProviderRateLimiter
 from tooluniverse.disgenet_tool import DisGeNETTool
 from tooluniverse.omim_tool import OMIMTool
@@ -497,15 +500,19 @@ def test_clear_tools_clears_credential_activation_metadata():
     tu = _make_tooluniverse()
     tu._excluded_api_key_tools["required"] = ["REQUIRED_KEY"]
     tu._excluded_any_api_key_tools["alternative"] = ["ONE_KEY", "TWO_KEY"]
+    with credential_context({"TEST_API_KEY": "tenant"}):
+        assert tu._get_tool_instance("CredentialEchoTest") is not None
+    assert tu.get_credential_instance_cache_stats()["current_size"] == 1
 
     tu.clear_tools()
 
     assert tu._excluded_api_key_tools == {}
     assert tu._excluded_any_api_key_tools == {}
+    assert tu.get_credential_instance_cache_stats()["current_size"] == 0
 
 
 @pytest.mark.unit
-def test_request_credentials_do_not_reuse_constructor_bound_tool_instances():
+def test_request_credentials_partition_constructor_bound_tool_instances():
     _ConstructorCredentialTool.instances = 0
     config = {
         "name": "ConstructorCredentialTest",
@@ -520,6 +527,10 @@ def test_request_credentials_do_not_reuse_constructor_bound_tool_instances():
         {"name": "ConstructorCredentialTest", "arguments": {}},
         validate=False,
     )
+    process_result_again = tu.run_one_function(
+        {"name": "ConstructorCredentialTest", "arguments": {}},
+        validate=False,
+    )
     tenant_a = tu.run_one_function(
         {"name": "ConstructorCredentialTest", "arguments": {}},
         validate=False,
@@ -530,10 +541,17 @@ def test_request_credentials_do_not_reuse_constructor_bound_tool_instances():
         validate=False,
         credentials={"TEST_API_KEY": "tenant-b"},
     )
+    tenant_a_again = tu.run_one_function(
+        {"name": "ConstructorCredentialTest", "arguments": {}},
+        validate=False,
+        credentials={"TEST_API_KEY": "tenant-a"},
+    )
 
     assert process_result["credential"] == "process-fallback"
+    assert process_result_again == process_result
     assert tenant_a["credential"] == "tenant-a"
     assert tenant_b["credential"] == "tenant-b"
+    assert tenant_a_again == tenant_a
     assert (
         len(
             {
@@ -544,6 +562,192 @@ def test_request_credentials_do_not_reuse_constructor_bound_tool_instances():
         )
         == 3
     )
+    assert tu.get_credential_instance_cache_stats()["hits"] == 1
+
+
+@pytest.mark.unit
+def test_credential_instance_cache_is_bounded_expires_and_retains_no_raw_keys():
+    now = [0.0]
+    created = []
+    cache = CredentialInstanceCache(
+        max_size=2,
+        idle_ttl_seconds=5,
+        clock=lambda: now[0],
+        digest_secret=b"x" * 32,
+    )
+
+    def get(credential, config_version="v1"):
+        return cache.get_or_create(
+            tool_name="tool",
+            config_version=config_version,
+            credentials={"TEST_API_KEY": credential},
+            factory=lambda: created.append(object()) or created[-1],
+        )
+
+    first_a = get("tenant-a-secret")
+    assert get("tenant-a-secret") is first_a
+    get("tenant-b-secret")
+    first_c = get("tenant-c-secret")
+
+    assert cache.stats() == {
+        "enabled": True,
+        "max_size": 2,
+        "idle_ttl_seconds": 5.0,
+        "current_size": 2,
+        "hits": 1,
+        "misses": 3,
+        "evictions": 1,
+        "expirations": 0,
+    }
+    assert "tenant" not in repr(list(cache._entries))
+
+    now[0] = 6.0
+    assert get("tenant-c-secret") is not first_c
+    assert cache.stats()["expirations"] == 2
+
+
+@pytest.mark.unit
+def test_credential_instance_cache_config_version_invalidates_instance():
+    cache = CredentialInstanceCache(
+        max_size=4,
+        idle_ttl_seconds=60,
+        digest_secret=b"x" * 32,
+    )
+    created = []
+
+    def get(config_version):
+        return cache.get_or_create(
+            tool_name="tool",
+            config_version=config_version,
+            credentials={"TEST_API_KEY": "tenant"},
+            factory=lambda: created.append(object()) or created[-1],
+        )
+
+    first = get("v1")
+    assert get("v1") is first
+    assert get("v2") is not first
+    assert len(created) == 2
+
+
+@pytest.mark.unit
+def test_credential_instance_cache_collapses_concurrent_initialization():
+    cache = CredentialInstanceCache(
+        max_size=4,
+        idle_ttl_seconds=60,
+        digest_secret=b"x" * 32,
+    )
+    created = 0
+    created_lock = threading.Lock()
+
+    def factory():
+        nonlocal created
+        time.sleep(0.005)
+        with created_lock:
+            created += 1
+        return object()
+
+    def get():
+        return cache.get_or_create(
+            tool_name="tool",
+            config_version="v1",
+            credentials={"TEST_API_KEY": "tenant"},
+            factory=factory,
+        )
+
+    with ContextThreadPoolExecutor(max_workers=12) as executor:
+        instances = list(executor.map(lambda _: get(), range(50)))
+
+    assert created == 1
+    assert len({id(instance) for instance in instances}) == 1
+    assert cache.stats()["hits"] == 49
+
+
+@pytest.mark.unit
+def test_credential_instance_cache_initializes_different_tenants_concurrently():
+    cache = CredentialInstanceCache(
+        max_size=32,
+        idle_ttl_seconds=60,
+        digest_secret=b"x" * 32,
+    )
+    active = 0
+    maximum_active = 0
+    active_lock = threading.Lock()
+
+    def get(tenant):
+        def factory():
+            nonlocal active, maximum_active
+            with active_lock:
+                active += 1
+                maximum_active = max(maximum_active, active)
+            time.sleep(0.01)
+            with active_lock:
+                active -= 1
+            return object()
+
+        return cache.get_or_create(
+            tool_name="tool",
+            config_version="v1",
+            credentials={"TEST_API_KEY": tenant},
+            factory=factory,
+        )
+
+    with ContextThreadPoolExecutor(max_workers=10) as executor:
+        list(executor.map(get, [f"tenant-{index}" for index in range(10)]))
+
+    assert maximum_active > 1
+
+
+@pytest.mark.unit
+def test_credential_instance_cache_can_be_disabled():
+    cache = CredentialInstanceCache(max_size=0, idle_ttl_seconds=60)
+    created = []
+
+    def get():
+        return cache.get_or_create(
+            tool_name="tool",
+            config_version="v1",
+            credentials={"TEST_API_KEY": "tenant"},
+            factory=lambda: created.append(object()) or created[-1],
+        )
+
+    assert get() is not get()
+    assert cache.stats()["current_size"] == 0
+    assert cache.stats()["misses"] == 2
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("ttl", [-1, float("nan"), float("inf")])
+def test_credential_instance_cache_rejects_invalid_ttl(ttl):
+    with pytest.raises(ValueError, match="non-negative finite"):
+        CredentialInstanceCache(idle_ttl_seconds=ttl)
+
+
+@pytest.mark.unit
+def test_base_rest_sessions_share_transport_but_not_identity_state():
+    first = BaseRESTTool(
+        {
+            "name": "first",
+            "fields": {"endpoint": "https://example.test/first"},
+            "parameter": {"type": "object", "properties": {}},
+        }
+    )
+    second = BaseRESTTool(
+        {
+            "name": "second",
+            "fields": {"endpoint": "https://example.test/second"},
+            "parameter": {"type": "object", "properties": {}},
+        }
+    )
+
+    assert first.session is not second.session
+    assert first.session.get_adapter("https://") is second.session.get_adapter(
+        "https://"
+    )
+
+    first.session.headers["Authorization"] = "Bearer tenant-a"
+    first.session.cookies.set("session", "tenant-a")
+    assert "Authorization" not in second.session.headers
+    assert second.session.cookies.get("session") is None
 
 
 @pytest.mark.unit

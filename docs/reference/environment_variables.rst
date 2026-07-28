@@ -54,6 +54,18 @@ Control ToolUniverse's two-tier caching system (in-memory LRU + SQLite persisten
    * - ``TOOLUNIVERSE_CACHE_ASYNC_PERSIST``
      - ``true``
      - Write to SQLite on background thread for non-blocking I/O. Set to ``false`` for immediate disk persistence.
+   * - ``TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_SIZE``
+     - ``256``
+     - Maximum BYOK credential-partitioned tool instances retained per ``ToolUniverse`` object. ``0`` disables reuse.
+   * - ``TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_TTL``
+     - ``900``
+     - Idle lifetime in seconds for BYOK tool instances. ``0`` disables reuse and constructs an instance for every call.
+   * - ``TOOLUNIVERSE_HTTP_POOL_CONNECTIONS``
+     - ``64``
+     - Number of host connection pools retained by the identity-free shared REST transport.
+   * - ``TOOLUNIVERSE_HTTP_POOL_MAXSIZE``
+     - ``64``
+     - Reusable TCP/TLS connections retained per host by the shared REST transport.
 
 **Examples**::
 
@@ -69,6 +81,10 @@ Control ToolUniverse's two-tier caching system (in-memory LRU + SQLite persisten
    
    # Synchronous writes for critical data
    export TOOLUNIVERSE_CACHE_ASYNC_PERSIST=false
+
+   # Keep up to 128 isolated BYOK clients for 10 minutes of inactivity
+   export TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_SIZE=128
+   export TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_TTL=600
 
 **See also**: :doc:`../guide/cache_system` for complete caching guide.
 
