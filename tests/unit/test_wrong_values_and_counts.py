@@ -40,7 +40,20 @@ def _config(filename, tool_name):
 # RDKit descriptors and pharmacophore features
 # --------------------------------------------------------------------------
 
-rdkit = pytest.importorskip("rdkit", reason="rdkit not installed")
+# rdkit lives in the `visualization` extra, and CI installs only `.[dev]` -- so
+# gate ONLY the rdkit-dependent tests. A module-level importorskip here would
+# skip the whole file, taking the PubChem, DGIdb, IEDB, IntAct and HLA guards
+# below down with it and leaving those fixes unguarded in CI.
+try:
+    import rdkit  # noqa: F401
+
+    HAS_RDKIT = True
+except ImportError:  # pragma: no cover - depends on install extras
+    HAS_RDKIT = False
+
+requires_rdkit = pytest.mark.skipif(
+    not HAS_RDKIT, reason="rdkit not installed (ships in the 'visualization' extra)"
+)
 
 IMATINIB = "Cc1ccc(NC(=O)c2ccc(CN3CCN(C)CC3)cc2)cc1Nc1nccc(-c2cccnc2)n1"
 
@@ -51,6 +64,7 @@ def _cheminfo(endpoint):
     return RDKitCheminfoTool({"name": "rdkit", "fields": {"endpoint": endpoint}})
 
 
+@requires_rdkit
 def test_mw_is_average_molecular_weight_not_monoisotopic():
     from rdkit import Chem
     from rdkit.Chem import Descriptors
@@ -62,6 +76,7 @@ def test_mw_is_average_molecular_weight_not_monoisotopic():
     assert descriptors["MW"] != round(Descriptors.ExactMolWt(mol), 2)
 
 
+@requires_rdkit
 def test_exact_mass_is_reported_separately():
     from rdkit import Chem
 
@@ -70,6 +85,7 @@ def test_exact_mass_is_reported_separately():
     assert descriptors["exact_mass"] == pytest.approx(493.259, abs=0.01)
 
 
+@requires_rdkit
 def test_halogen_mw_matches_average_mass():
     """The monoisotopic/average gap is widest for heavy halogens."""
     from rdkit import Chem
@@ -94,6 +110,7 @@ def test_halogen_mw_matches_average_mass():
         ("imatinib", IMATINIB, 2),
     ],
 )
+@requires_rdkit
 def test_posionizable_matches_rdkit_reference_definitions(name, smiles, expected):
     """Counts must agree with RDKit's own BaseFeatures.fdef."""
     from rdkit import Chem
@@ -109,6 +126,7 @@ def test_posionizable_matches_rdkit_reference_definitions(name, smiles, expected
     assert len(matched) == expected, name
 
 
+@requires_rdkit
 def test_filtered_out_features_report_null_not_zero():
     result = _cheminfo("pharmacophore_features").run(
         {"smiles": IMATINIB, "include_features": ["HBD"]}
@@ -121,6 +139,7 @@ def test_filtered_out_features_report_null_not_zero():
     assert "include_features" in interpretation["note"]
 
 
+@requires_rdkit
 def test_unfiltered_request_still_reports_every_count():
     result = _cheminfo("pharmacophore_features").run({"smiles": IMATINIB})
     interpretation = result["data"]["interpretation"]
@@ -147,7 +166,9 @@ def test_real_cid_is_not_treated_as_not_found():
 
 
 def test_mixed_cid_list_is_not_treated_as_not_found():
-    assert PubChemRESTTool._cid_not_found({"IdentifierList": {"CID": [0, 2244]}}) is None
+    assert (
+        PubChemRESTTool._cid_not_found({"IdentifierList": {"CID": [0, 2244]}}) is None
+    )
 
 
 def test_non_cid_payloads_pass_through():
