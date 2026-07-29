@@ -1,6 +1,6 @@
 # ToolUniverse Skills
 
-68 pre-built research skills for AI agents. Skills are automatically available — just ask naturally.
+69 pre-built research skills for AI agents. Skills are automatically available — just ask naturally.
 
 ```
 "Find the E. coli K-12 genome"           → tooluniverse-sequence-retrieval
@@ -41,6 +41,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-epigenomics` | Epigenomics and gene regulation (ENCODE, JASPAR, methylation) |
 | `tooluniverse-expression-data-retrieval` | Gene expression datasets from ArrayExpress and BioStudies |
 | `tooluniverse-gene-enrichment` | Gene enrichment and pathway analysis (gseapy, PANTHER, STRING, etc.) |
+| `tooluniverse-gene-liability` | Human safety liability scoring for gene inhibition or loss of function |
 | `tooluniverse-gwas-drug-discovery` | GWAS signals to drug targets and repurposing opportunities |
 | `tooluniverse-gwas-finemapping` | Causal variant prioritization via statistical fine-mapping |
 | `tooluniverse-gwas-snp-interpretation` | Genetic variant interpretation from GWAS studies |

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gene Liability Evaluation"
+  short_description: "Score safety risks of inhibiting a human gene"
+  default_prompt: "Use $tooluniverse-gene-liability to evaluate the safety liability of inhibiting TP53."
