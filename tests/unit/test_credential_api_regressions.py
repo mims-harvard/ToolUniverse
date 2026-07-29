@@ -24,6 +24,16 @@ def _tool_config(filename: str, name: str) -> dict:
 
 
 @pytest.mark.unit
+def test_every_openalex_tool_requires_the_now_mandatory_api_key():
+    configs = json.loads((DATA_DIR / "openalex_tools.json").read_text(encoding="utf-8"))
+
+    assert configs
+    for config in configs:
+        assert config.get("required_api_keys") == ["OPENALEX_API_KEY"]
+        assert "optional_api_keys" not in config
+
+
+@pytest.mark.unit
 def test_census_builds_dataset_path_and_injects_key(monkeypatch):
     """The saved CENSUS_API_KEY must actually reach the upstream query."""
     tool = BaseRESTTool(_tool_config("uscensus_tools.json", "USCensus_get_population"))

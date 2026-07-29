@@ -404,7 +404,7 @@
   },
   {
     "name": "OPENALEX_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Literature & Patents",
     "register_url": "https://openalex.org/settings/api",

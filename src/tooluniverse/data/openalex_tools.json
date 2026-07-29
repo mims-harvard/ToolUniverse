@@ -1,7 +1,7 @@
 [
   {
     "type": "OpenAlexTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "api_key_info": {
@@ -197,7 +197,7 @@
   },
   {
     "type": "OpenAlexRESTTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "name": "openalex_search_works",
@@ -297,7 +297,7 @@
   },
   {
     "type": "OpenAlexRESTTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "name": "openalex_get_work",
@@ -337,7 +337,7 @@
   },
   {
     "type": "OpenAlexRESTTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "name": "openalex_get_work_by_doi",
@@ -371,7 +371,7 @@
   },
   {
     "type": "OpenAlexRESTTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "name": "openalex_search_authors",
@@ -419,7 +419,7 @@
   },
   {
     "type": "OpenAlexRESTTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "name": "openalex_get_author",
@@ -453,7 +453,7 @@
   },
   {
     "type": "OpenAlexRESTTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "name": "openalex_search_institutions",
@@ -501,7 +501,7 @@
   },
   {
     "type": "OpenAlexRESTTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "name": "openalex_get_institution",
@@ -535,7 +535,7 @@
   },
   {
     "type": "OpenAlexRESTTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "name": "openalex_search_sources",
@@ -586,7 +586,7 @@
   },
   {
     "type": "OpenAlexRESTTool",
-    "optional_api_keys": [
+    "required_api_keys": [
       "OPENALEX_API_KEY"
     ],
     "name": "openalex_get_source",

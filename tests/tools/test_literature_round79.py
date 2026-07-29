@@ -209,7 +209,11 @@ class TestPubMedGetArticleXMLParsing(unittest.TestCase):
 
         config = {
             "name": "PubMed_get_article",
-            "fields": {"endpoint": "https://example.com", "method": "GET", "params": {}},
+            "fields": {
+                "endpoint": "https://example.com",
+                "method": "GET",
+                "params": {},
+            },
             "parameter": {"type": "object", "properties": {}, "required": []},
         }
         tool = PubMedRESTTool(config)
@@ -237,14 +241,19 @@ class TestPubMedGetRelatedEnrichment(unittest.TestCase):
             self.skipTest("ToolUniverse not available")
 
         try:
-            result = tu.execute_tool(
-                "PubMed_get_related", {"pmid": "35953136", "limit": 3}
+            result = tu.run_one_function(
+                {
+                    "name": "PubMed_get_related",
+                    "arguments": {"pmid": "35953136", "limit": 3},
+                }
             )
         except Exception as e:
             self.skipTest(f"API call failed: {e}")
 
         if isinstance(result, str):
             result = json.loads(result)
+        if isinstance(result, dict) and result.get("status") == "error":
+            self.skipTest(f"API call failed: {result.get('error', 'unknown error')}")
 
         # Should have data
         data = result.get("data", result.get("result", []))
@@ -277,15 +286,19 @@ class TestSemanticScholarSchemaDefaults(unittest.TestCase):
             self.skipTest("ToolUniverse not available")
 
         try:
-            result = tu.execute_tool(
-                "SemanticScholar_get_paper",
-                {"paper_id": "DOI:10.1038/s41586-020-2649-2"},
+            result = tu.run_one_function(
+                {
+                    "name": "SemanticScholar_get_paper",
+                    "arguments": {"paper_id": "DOI:10.1038/s41586-020-2649-2"},
+                }
             )
         except Exception as e:
             self.skipTest(f"API call failed: {e}")
 
         if isinstance(result, str):
             result = json.loads(result)
+        if isinstance(result, dict) and result.get("status") == "error":
+            self.skipTest(f"API call failed: {result.get('error', 'unknown error')}")
 
         data = result.get("data", result)
         if isinstance(data, str):
@@ -293,9 +306,13 @@ class TestSemanticScholarSchemaDefaults(unittest.TestCase):
 
         self.assertIsInstance(data, dict)
         # With schema defaults, these fields should be present
-        self.assertIn("abstract", data, "Should have abstract via schema default fields")
+        self.assertIn(
+            "abstract", data, "Should have abstract via schema default fields"
+        )
         self.assertIn("year", data, "Should have year via schema default fields")
-        self.assertIn("citationCount", data, "Should have citationCount via schema default fields")
+        self.assertIn(
+            "citationCount", data, "Should have citationCount via schema default fields"
+        )
         self.assertIn("authors", data, "Should have authors via schema default fields")
 
 
@@ -402,7 +419,9 @@ class TestMultiAgentParseResult(unittest.TestCase):
 
         nested = {
             "success": True,
-            "result": json.dumps({"user_intent": "Find CRISPR papers", "search_plans": []}),
+            "result": json.dumps(
+                {"user_intent": "Find CRISPR papers", "search_plans": []}
+            ),
             "metadata": {"model": "gpt-5"},
         }
         parsed = _parse_result(nested)
