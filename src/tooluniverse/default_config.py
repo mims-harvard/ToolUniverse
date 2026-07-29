@@ -1108,7 +1108,7 @@ default_tool_files = {
     "usgs_water": os.path.join(current_dir, "data", "usgs_water_tools.json"),
     # Spaceflight News API - 30K+ space news articles from major sites
     # Launch Library 2 - upcoming rocket launches worldwide (all providers)
-    # US Census Bureau - population and demographic data (no key required)
+    # US Census Bureau - population and demographic data (free key required)
     "uscensus": os.path.join(current_dir, "data", "uscensus_tools.json"),
     # Open-Meteo Marine - ocean wave/swell forecasts for any coastal location
     "open_meteo_marine": os.path.join(

@@ -1,7 +1,7 @@
 [
   {
     "name": "USCensus_get_population",
-    "description": "Get population and demographic data from the US Census Bureau API. Access decennial census and American Community Survey (ACS) data at national, state, county, and city levels. No authentication key required for basic usage. Variables include total population, housing units, age groups, and race/ethnicity breakdowns. Useful for demographic research, urban planning, and social science analysis. Note: requires CENSUS_API_KEY env (free, register at https://api.census.gov/data/key_signup.html).",
+    "description": "Get population and demographic data from the US Census Bureau API. Access decennial census and American Community Survey (ACS) data at national, state, county, and city levels. A free CENSUS_API_KEY is required. Variables include total population, housing units, age groups, and race/ethnicity breakdowns. Useful for demographic research, urban planning, and social science analysis. Register at https://api.census.gov/data/key_signup.html.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,14 +11,16 @@
         },
         "for": {
           "type": "string",
-          "description": "Geographic unit. Examples: 'state:*' (all states), 'county:*' (all counties), 'state:06' (California), 'county:001&in=state:06' (Alameda County CA)"
+          "description": "Geographic unit. Examples: 'state:*' (all states), 'county:*' (all counties), 'state:06' (California), or 'county:001' together with in='state:06' (Alameda County CA)"
         },
         "dataset": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Dataset to query. Values: '2020/dec/pl' (2020 decennial), '2022/acs/acs5' (ACS 5-year 2022), '2021/acs/acs1' (ACS 1-year 2021). Default: 2022/acs/acs5"
+          "description": "Dataset to query. Values: '2020/dec/pl' (2020 decennial), '2022/acs/acs5' (ACS 5-year 2022), '2021/acs/acs1' (ACS 1-year 2021). Default: 2022/acs/acs5",
+          "pattern": "^[0-9]{4}(?:/[A-Za-z0-9][A-Za-z0-9._-]*)+$",
+          "default": "2022/acs/acs5"
         },
         "in": {
           "type": [
@@ -32,7 +34,8 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return"
+          "minimum": 0,
+          "description": "Maximum number of data rows to return (the header row is preserved and is not counted)"
         }
       },
       "required": [
@@ -41,8 +44,17 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.census.gov/data/2022/acs/acs5",
-      "params": {}
+      "endpoint": "https://api.census.gov/data/{dataset}",
+      "params": {},
+      "path_param_safe": {
+        "dataset": "/"
+      },
+      "client_side_limit": true,
+      "client_side_limit_preserve_header": true,
+      "auth_param": {
+        "env_var": "CENSUS_API_KEY",
+        "param": "key"
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -63,26 +75,58 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "Census data as a 2D array. First row is header with variable names, subsequent rows are data. Example: [['NAME','B01003_001E','state'],['Alabama','5028092','01'],...]",
-          "items": {
-            "type": "array",
-            "items": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "description": "Census data as a 2D array. First row is the header; subsequent rows are data.",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "total_before_limit": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "status",
+            "data",
+            "url"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            },
+            "url": {
               "type": [
                 "string",
                 "null"
               ]
             }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
           },
           "required": [
+            "status",
             "error"
           ]
         }

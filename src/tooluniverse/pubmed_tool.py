@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Any, Dict
 from .base_rest_tool import BaseRESTTool
-from .http_utils import request_with_retry
+from .http_utils import redact_url_secrets, request_with_retry
 from .provider_rate_limit import enforce_provider_rate_limit
 from .tool_registry import register_tool
 
@@ -315,7 +315,11 @@ class PubMedRESTTool(BaseRESTTool):
         try:
             root = ET.fromstring(response.text)
         except ET.ParseError:
-            return {"status": "success", "data": response.text, "url": response.url}
+            return {
+                "status": "success",
+                "data": response.text,
+                "url": redact_url_secrets(response.url),
+            }
 
         def _text(el, path, default=""):
             found = el.find(path) if el is not None else None
@@ -401,7 +405,11 @@ class PubMedRESTTool(BaseRESTTool):
             if a
         ]
         data = articles[0] if len(articles) == 1 else articles
-        result = {"status": "success", "data": data, "url": response.url}
+        result = {
+            "status": "success",
+            "data": data,
+            "url": redact_url_secrets(response.url),
+        }
         if len(articles) != 1:
             result["count"] = len(articles)
         return result
@@ -488,9 +496,9 @@ class PubMedRESTTool(BaseRESTTool):
                 return {
                     "status": "error",
                     "error": "PubMed API error",
-                    "url": response.url,
+                    "url": redact_url_secrets(response.url),
                     "status_code": response.status_code,
-                    "detail": (response.text or "")[:500],
+                    "detail": redact_url_secrets((response.text or "")[:500]),
                 }
 
             # Try JSON first (elink, esearch)
@@ -503,7 +511,7 @@ class PubMedRESTTool(BaseRESTTool):
                     return {
                         "status": "error",
                         "data": f"NCBI API error: {error_msg[:200]}",
-                        "url": response.url,
+                        "url": redact_url_secrets(response.url),
                     }
 
                 # For esearch responses, extract ID list and fetch summaries
@@ -629,7 +637,7 @@ class PubMedRESTTool(BaseRESTTool):
                             "status": "success",
                             "data": [],
                             "count": 0,
-                            "url": response.url,
+                            "url": redact_url_secrets(response.url),
                         }
 
                     if linksets and len(linksets) > 0:
@@ -677,14 +685,14 @@ class PubMedRESTTool(BaseRESTTool):
                                     "status": "success",
                                     "data": links,
                                     "count": len(links),
-                                    "url": response.url,
+                                    "url": redact_url_secrets(response.url),
                                 }
                         # Extract LinkOut URLs (idurllist)
                         elif "idurllist" in linkset:
                             return {
                                 "status": "success",
                                 "data": linkset.get("idurllist", {}),
-                                "url": response.url,
+                                "url": redact_url_secrets(response.url),
                             }
                         else:
                             # Linkset exists but no linksetdbs or idurllist = no results
@@ -692,7 +700,7 @@ class PubMedRESTTool(BaseRESTTool):
                                 "status": "success",
                                 "data": [],
                                 "count": 0,
-                                "url": response.url,
+                                "url": redact_url_secrets(response.url),
                             }
 
                 # For elink responses with LinkOut URLs (llinks returns direct idurllist)
@@ -700,13 +708,13 @@ class PubMedRESTTool(BaseRESTTool):
                     return {
                         "status": "success",
                         "data": data.get("idurllist", []),
-                        "url": response.url,
+                        "url": redact_url_secrets(response.url),
                     }
 
                 return {
                     "status": "success",
                     "data": data,
-                    "url": response.url,
+                    "url": redact_url_secrets(response.url),
                 }
             except Exception:
                 # For XML responses (efetch), parse into structured data
@@ -715,6 +723,6 @@ class PubMedRESTTool(BaseRESTTool):
         except Exception as e:
             return {
                 "status": "error",
-                "error": f"PubMed API error: {str(e)}",
+                "error": redact_url_secrets(f"PubMed API error: {str(e)}"),
                 "url": url,
             }

@@ -14,7 +14,7 @@ import requests
 import urllib.parse
 from typing import Any, Dict, Optional, Callable
 from .base_tool import BaseTool
-from .http_utils import request_with_retry
+from .http_utils import redact_url_secrets, request_with_retry
 from .provider_rate_limit import enforce_provider_rate_limit
 from .shared_http_session import create_shared_pool_session
 
@@ -68,6 +68,7 @@ class BaseRESTTool(BaseTool):
             Complete URL with path parameters substituted
         """
         url = self.tool_config["fields"]["endpoint"]
+        path_param_safe = self.tool_config.get("fields", {}).get("path_param_safe", {})
 
         # Apply path_aliases: map alias → canonical name before substitution.
         # Fix-R31B-3: an alias key left in `args` after this point leaked into
@@ -87,7 +88,9 @@ class BaseRESTTool(BaseTool):
             placeholder = f"{{{key}}}"
             if placeholder in url:
                 # URL encode to handle special characters (e.g., DOIs with slashes)
-                encoded_value = urllib.parse.quote(str(value), safe="")
+                encoded_value = urllib.parse.quote(
+                    str(value), safe=path_param_safe.get(key, "")
+                )
                 url = url.replace(placeholder, encoded_value)
 
         # Apply schema defaults for any remaining {param} placeholders
@@ -96,7 +99,9 @@ class BaseRESTTool(BaseTool):
         ):
             placeholder = f"{{{key}}}"
             if placeholder in url and "default" in prop and prop["default"] is not None:
-                encoded_value = urllib.parse.quote(str(prop["default"]), safe="")
+                encoded_value = urllib.parse.quote(
+                    str(prop["default"]), safe=path_param_safe.get(key, "")
+                )
                 url = url.replace(placeholder, encoded_value)
 
         return url
@@ -370,7 +375,7 @@ class BaseRESTTool(BaseTool):
                     "error": f"{self.api_name} API error",
                     "url": url,
                     "status_code": response.status_code,
-                    "detail": (response.text or "")[:500],
+                    "detail": redact_url_secrets((response.text or "")[:500]),
                 }
 
             # Try special endpoint handling first
@@ -386,14 +391,27 @@ class BaseRESTTool(BaseTool):
                 props = self.tool_config.get("parameter", {}).get("properties", {})
                 limit = arguments.get("limit", props.get("limit", {}).get("default"))
                 data = result.get("data")
-                if (
-                    limit is not None
-                    and isinstance(data, list)
-                    and len(data) > int(limit)
-                ):
-                    result["total_before_limit"] = len(data)
-                    result["data"] = data[: int(limit)]
-                    result["count"] = int(limit)
+                if isinstance(data, list):
+                    preserve_header = self.tool_config.get("fields", {}).get(
+                        "client_side_limit_preserve_header"
+                    )
+                    if preserve_header:
+                        # Tabular APIs such as Census return a 2D array whose
+                        # first row is the schema/header.  Counts and caller
+                        # limits refer to records, not that mandatory header.
+                        total_records = max(0, len(data) - 1)
+                        result["count"] = total_records
+                        if limit is not None:
+                            max_items = max(0, int(limit))
+                            if total_records > max_items:
+                                result["total_before_limit"] = total_records
+                                result["data"] = data[: max_items + 1]
+                            result["count"] = min(total_records, max_items)
+                    elif limit is not None and len(data) > max(0, int(limit)):
+                        max_items = max(0, int(limit))
+                        result["total_before_limit"] = len(data)
+                        result["data"] = data[:max_items]
+                        result["count"] = max_items
 
             # Fix-R32C-4/5: an exact-match backend (e.g. CPIC's PostgREST
             # name=eq.{name}) silently returns status:success with an empty
@@ -416,6 +434,6 @@ class BaseRESTTool(BaseTool):
         except Exception as e:
             return {
                 "status": "error",
-                "error": f"{self.api_name} API error: {str(e)}",
+                "error": redact_url_secrets(f"{self.api_name} API error: {str(e)}"),
                 "url": url,
             }

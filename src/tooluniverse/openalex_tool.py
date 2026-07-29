@@ -2,7 +2,7 @@ import requests
 from typing import Any, Dict, Optional
 from .base_tool import BaseTool
 from .credentials import get_credential
-from .http_utils import request_with_retry
+from .http_utils import redact_url_secrets, request_with_retry
 from .tool_registry import register_tool
 
 
@@ -146,7 +146,9 @@ class OpenAlexTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {
                 "status": "error",
-                "error": f"Error retrieving data from OpenAlex: {e}",
+                "error": redact_url_secrets(
+                    f"Error retrieving data from OpenAlex: {e}"
+                ),
             }
 
     def _extract_paper_info(self, work):
@@ -278,7 +280,7 @@ class OpenAlexTool(BaseTool):
             return self._extract_paper_info(work)
 
         except requests.exceptions.RequestException as e:
-            print(f"Error retrieving paper by DOI {doi}: {e}")
+            print(redact_url_secrets(f"Error retrieving paper by DOI {doi}: {e}"))
             return None
 
     def get_papers_by_author(self, author_name, max_results=10):
@@ -317,7 +319,9 @@ class OpenAlexTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {
                 "status": "error",
-                "error": f"Error retrieving papers by author {author_name}: {e}",
+                "error": redact_url_secrets(
+                    f"Error retrieving papers by author {author_name}: {e}"
+                ),
             }
 
 
@@ -469,7 +473,7 @@ class OpenAlexRESTTool(BaseTool):
                 timeout=self.timeout,
                 max_attempts=3,
             )
-            final_url = getattr(resp, "url", None) or url
+            final_url = redact_url_secrets(getattr(resp, "url", None) or url)
 
             if resp.status_code != 200:
                 return {
@@ -477,13 +481,13 @@ class OpenAlexRESTTool(BaseTool):
                     "error": "OpenAlex API error",
                     "url": final_url,
                     "status_code": resp.status_code,
-                    "detail": (resp.text or "")[:500],
+                    "detail": redact_url_secrets((resp.text or "")[:500]),
                 }
 
             return {"status": "success", "data": resp.json(), "url": final_url}
         except Exception as e:
             return {
                 "status": "error",
-                "error": f"OpenAlex API error: {str(e)}",
+                "error": redact_url_secrets(f"OpenAlex API error: {str(e)}"),
                 "url": url,
             }

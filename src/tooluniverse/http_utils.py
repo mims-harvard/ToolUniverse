@@ -10,11 +10,38 @@ from __future__ import annotations
 from typing import Any, Mapping, Optional, Sequence, Union
 import time
 import random
+import re
 
 import requests
 
 
 RetryStatuses = Sequence[int]
+
+
+# Query-string credentials are frequently included in ``requests.Response.url``
+# and in RequestException messages.  Returning those values from a tool turns an
+# otherwise harmless diagnostics field into a secret disclosure.  Match exact
+# credential parameter names only: ordinary parameters such as ``keyword`` must
+# remain untouched.
+_SENSITIVE_QUERY_VALUE_RE = re.compile(
+    r"(?i)([?&](?:"
+    r"api[_-]?key|apikey|key|accesskey|x[_-]?api[_-]?key|"
+    r"token|api[_-]?token|access[_-]?token|refresh[_-]?token|"
+    r"client[_-]?secret|password"
+    r")=)[^&#\s\"']*"
+)
+
+
+def redact_url_secrets(value: Any) -> Any:
+    """Redact credential-bearing query values in a URL or error message.
+
+    The helper accepts arbitrary text because ``requests`` exceptions often
+    embed a full URL inside a longer sentence.  Non-string values are returned
+    unchanged so callers can safely use it around optional response fields.
+    """
+    if not isinstance(value, str):
+        return value
+    return _SENSITIVE_QUERY_VALUE_RE.sub(r"\1[REDACTED]", value)
 
 
 def _jittered_sleep(backoff_seconds: float, attempt: int) -> None:
