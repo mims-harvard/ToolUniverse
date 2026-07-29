@@ -32,7 +32,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -118,7 +119,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -175,7 +177,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.8
     },
     "test_examples": [
       {
@@ -218,7 +221,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.1
     },
     "test_examples": [
       {
@@ -253,7 +257,8 @@
       ]
     },
     "configs": {
-      "return_json": true
+      "return_json": true,
+      "temperature": 0.0
     },
     "test_examples": [
       {
@@ -299,7 +304,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -340,7 +346,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -375,7 +382,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -408,7 +416,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -446,7 +455,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -480,7 +490,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -513,7 +524,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -546,7 +558,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -585,7 +598,8 @@
       ]
     },
     "configs": {
-      "return_json": true
+      "return_json": true,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -619,7 +633,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.2
     },
     "test_examples": [
       {
@@ -675,7 +690,8 @@
       ]
     },
     "configs": {
-      "return_json": true
+      "return_json": true,
+      "temperature": 0.1
     },
     "test_examples": [
       {
@@ -740,7 +756,8 @@
       ]
     },
     "configs": {
-      "return_json": true
+      "return_json": true,
+      "temperature": 0.1
     },
     "test_examples": [
       {
@@ -889,7 +906,8 @@
       ]
     },
     "configs": {
-      "return_json": true
+      "return_json": true,
+      "temperature": 0.1
     },
     "test_examples": [
       {
@@ -953,7 +971,8 @@
       ]
     },
     "configs": {
-      "return_json": true
+      "return_json": true,
+      "temperature": 0.1
     },
     "test_examples": [
       {
@@ -990,7 +1009,8 @@
       ]
     },
     "configs": {
-      "return_json": false
+      "return_json": false,
+      "temperature": 0.7
     },
     "test_examples": [
       {
@@ -1030,6 +1050,7 @@
     },
     "configs": {
       "return_json": true,
+      "temperature": 0.1,
       "return_metadata": false
     },
     "test_examples": [
@@ -1122,7 +1143,8 @@
       ]
     },
     "configs": {
-      "return_json": true
+      "return_json": true,
+      "temperature": 0.0
     },
     "test_examples": [
       {
@@ -1170,7 +1192,8 @@
       ]
     },
     "configs": {
-      "return_json": true
+      "return_json": true,
+      "temperature": 0.1
     },
     "test_examples": [
       {
