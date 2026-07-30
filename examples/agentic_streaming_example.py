@@ -68,7 +68,7 @@ from tooluniverse.tool_registry import register_tool
 
 
 API_TYPE = "GEMINI"  # Change to "OPENROUTER" or "CHATGPT" to test other providers
-MODEL_ID = "gemini-2.0-flash"  # Adjust to any model supported by the chosen API type
+MODEL_ID = "gemini-3.6-flash"  # Adjust to any model supported by the chosen API type
 
 
 def ensure_provider_config() -> None:

@@ -25,7 +25,7 @@ def test_default_global_fallback():
             {
                 "name": "gemini_with_global_fallback",
                 "api_type": "GEMINI",
-                "model_id": "gemini-2.0-flash",
+                "model_id": "gemini-3.6-flash",
                 # No fallback_api_type configured - should use global fallback
                 "prompt": "You are a helpful assistant. Answer: {question}",
                 "input_arguments": ["question"],
@@ -61,7 +61,7 @@ def test_custom_global_fallback():
 
     # Set custom global fallback chain
     custom_chain = [
-        {"api_type": "GEMINI", "model_id": "gemini-2.0-flash"},
+        {"api_type": "GEMINI", "model_id": "gemini-3.6-flash"},
         {"api_type": "CHATGPT", "model_id": "gpt-4o-mini-0718"},
     ]
     os.environ["AGENTIC_TOOL_FALLBACK_CHAIN"] = json.dumps(custom_chain)
@@ -164,7 +164,7 @@ def test_explicit_fallback_priority():
             {
                 "name": "explicit_vs_global_fallback",
                 "api_type": "GEMINI",
-                "model_id": "gemini-2.0-flash",
+                "model_id": "gemini-3.6-flash",
                 "fallback_api_type": "CHATGPT",  # Explicit fallback
                 "fallback_model_id": "gpt-4o-mini-0718",  # Different from global default
                 "prompt": "You are a helpful assistant. Answer: {question}",
@@ -217,14 +217,14 @@ def test_multiple_tools_global_fallback():
             {
                 "name": "gemini_tool_1",
                 "api_type": "GEMINI",
-                "model_id": "gemini-2.0-flash",
+                "model_id": "gemini-3.6-flash",
                 "prompt": "Gemini tool 1: {question}",
                 "input_arguments": ["question"],
             },
             {
                 "name": "gemini_tool_2",
                 "api_type": "GEMINI",
-                "model_id": "gemini-2.0-flash",
+                "model_id": "gemini-3.6-flash",
                 "prompt": "Gemini tool 2: {question}",
                 "input_arguments": ["question"],
             },
