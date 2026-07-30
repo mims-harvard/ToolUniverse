@@ -1,11 +1,41 @@
 [
   {
     "name": "mcp_auto_loader_gi",
-    "description": "Automatically discover and load Genomic Intelligence DNA sequence-analysis tools from the hosted Genomic Intelligence MCP server. Provides transformer DNA language-model predictions over six tasks (promoter, splice sites, enhancer activity, chromatin state, expression, gene annotation) plus a composite find-genes-then-predict-expression workflow, and helpers that fetch sequence from Ensembl into a reusable handle. The server is public and needs no API key; calls run against a shared, rate-limited demo quota. For research and development use, not clinical or diagnostic decisions.",
+    "description": "Automatically discover and load reviewed Genomic Intelligence DNA sequence-analysis tools when GENOMIC_INTELLIGENCE_MCP_URL is configured. Provides transformer DNA language-model predictions over six tasks (promoter, splice sites, enhancer activity, chromatin state, expression, gene annotation) plus a composite find-genes-then-predict-expression workflow, and helpers that fetch sequence from Ensembl into a reusable handle. The hosted public server needs no API key; calls run against a shared, rate-limited demo quota. For research and development use, not clinical or diagnostic decisions.",
     "type": "MCPAutoLoaderTool",
     "tool_prefix": "gi_",
-    "server_url": "https://mcp.genomicintelligence.ai/mcp",
+    "server_url": "${GENOMIC_INTELLIGENCE_MCP_URL}",
     "transport": "http",
+    "timeout": 30,
+    "selected_tools": [
+      "list_models",
+      "fetch_ensembl_sequence",
+      "fetch_region",
+      "fetch_gene_for_expression",
+      "load_demo_sequence",
+      "store_inline_sequence",
+      "predict_promoter",
+      "predict_splice",
+      "predict_enhancer",
+      "predict_chromatin",
+      "predict_expression",
+      "find_genes",
+      "find_genes_and_predict_expression",
+      "get_job",
+      "list_jobs"
+    ],
+    "required_api_keys": [
+      "GENOMIC_INTELLIGENCE_MCP_URL"
+    ],
+    "api_key_info": {
+      "GENOMIC_INTELLIGENCE_MCP_URL": {
+        "domain": "Models & Infrastructure",
+        "type": "endpoint",
+        "register_url": "https://docs.genomicintelligence.ai",
+        "purpose": "Endpoint URL for the opt-in Genomic Intelligence MCP service.",
+        "without": "Leave blank to keep this third-party MCP service disabled. To use its public demo, set https://mcp.genomicintelligence.ai/mcp."
+      }
+    },
     "parameter": {
       "type": "object",
       "properties": {
