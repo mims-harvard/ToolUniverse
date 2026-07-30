@@ -112,4 +112,7 @@ skill-name/
 1. Create `skill-name/SKILL.md` with proper frontmatter
 2. Keep SKILL.md concise (<500 lines)
 3. Add examples for common use cases
-4. See `create-tooluniverse-skill` for the full workflow
+4. Keep canonical skills host-agnostic. Do not add client-specific metadata such
+   as `agents/openai.yaml`; generate host-specific files in the corresponding
+   plugin packaging layer instead.
+5. See `create-tooluniverse-skill` for the full workflow

@@ -33,6 +33,12 @@ pytestmark = pytest.mark.unit
 _SKILL_TEXT = (Path(__file__).parent / "SKILL.md").read_text()
 
 
+def test_skill_has_no_host_specific_metadata():
+    skill_dir = Path(__file__).parent
+
+    assert not (skill_dir / "agents" / "openai.yaml").exists()
+
+
 @pytest.mark.parametrize(
     ("tool", "parameter"),
     [
