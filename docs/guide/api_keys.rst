@@ -136,11 +136,16 @@ These API keys enable AI-powered tools that use large language models for reason
 **Google Gemini**
 
 :API Key: ``GEMINI_API_KEY``
-:Model ID: ``GEMINI_MODEL_ID`` (optional, default: ``gemini-2.0-flash``)
+:Model ID: ``GEMINI_MODEL_ID`` (optional, default: ``gemini-3.6-flash``)
 :Required For: Agentic tools using Google's Gemini models
 :How to Get: Visit https://ai.google.dev/ and get an API key (free tier available)
 :Rate Limits: 60 requests/minute (free tier), higher with paid tiers
 :Tool Categories: ``agents``, ``output_summarization``
+
+Gemini 3.6 Flash and newer model generations no longer accept the
+``temperature``, ``top_p``, or ``top_k`` sampling parameters.
+ToolUniverse omits them automatically for these models and moving
+``-latest`` aliases.
 
 **VLLM (Self-Hosted LLMs)**
 
@@ -312,7 +317,7 @@ Choose the method that best fits your use case:
          AZURE_OPENAI_ENDPOINT=https://your-endpoint.openai.azure.com
          AZURE_OPENAI_API_VERSION=2024-02-15-preview
          GEMINI_API_KEY=your_gemini_key_here
-         GEMINI_MODEL_ID=gemini-2.0-flash
+         GEMINI_MODEL_ID=gemini-3.6-flash
          VLLM_SERVER_URL=http://localhost:8000
 
          # MCP Server Configurations

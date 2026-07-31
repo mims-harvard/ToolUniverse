@@ -105,7 +105,7 @@
   },
   {
     "name": "get_HPO_ID_by_phenotype",
-    "description": "Retrieve the HPO ID of a phenotype or symptom.",
+    "description": "Retrieve the HPO ID of a phenotype or symptom. Results are restricted to the HP: namespace (Monarch's underlying search spans multiple ontologies -- e.g. MP: mouse phenotype, UPHENO: cross-species upper ontology -- for the same query term).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -134,6 +134,7 @@
       "limit": 20,
       "offset": 0
     },
+    "result_id_prefix": "HP:",
     "label": [
       "Monarch",
       "Phenotype",

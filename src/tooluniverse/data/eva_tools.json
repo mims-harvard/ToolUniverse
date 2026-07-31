@@ -352,62 +352,43 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "EVA accessioning record(s) for the clustered-variant RS accession",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "integer"
+              },
+              "version": {
+                "type": "integer"
+              },
+              "data": {
                 "type": "object",
                 "properties": {
-                  "accession": {
+                  "assemblyAccession": {
+                    "type": "string"
+                  },
+                  "taxonomyAccession": {
                     "type": "integer"
                   },
-                  "version": {
+                  "contig": {
+                    "type": "string"
+                  },
+                  "start": {
                     "type": "integer"
                   },
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "assemblyAccession": {
-                        "type": "string"
-                      },
-                      "taxonomyAccession": {
-                        "type": "integer"
-                      },
-                      "contig": {
-                        "type": "string"
-                      },
-                      "start": {
-                        "type": "integer"
-                      },
-                      "type": {
-                        "type": "string",
-                        "description": "Variant type (e.g., SNV)"
-                      }
-                    }
+                  "type": {
+                    "type": "string",
+                    "description": "Variant type (e.g., SNV)"
                   }
                 }
               }
-            },
-            "count": {
-              "type": "integer"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }

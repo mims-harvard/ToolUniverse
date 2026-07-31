@@ -88,3 +88,26 @@ def test_pagination_completes_without_truncation(monkeypatch):
     assert result["status"] == "success"
     assert "truncated" not in result["data"]
     assert result["data"]["total_targets_with_scores"] == 5
+
+
+# Fix-R37A-1: disease_target_score_tools.json required "pageSize" in every
+# one of these 9 tools' schemas even though pageSize's own description says
+# "default: 100" and DiseaseTargetScoreTool.run() already reads it via
+# arguments.get("pageSize", 100) -- confirmed live that omitting it (the
+# natural reading of "default: 100") previously hit a hard schema
+# validation error before this fallback ever ran.
+@pytest.mark.unit
+def test_omitted_page_size_falls_back_to_100(monkeypatch):
+    monkeypatch.setattr(gqt.time, "monotonic", lambda: 0.0)
+
+    captured = {}
+
+    def fake_execute(endpoint, query, variables):
+        captured["size"] = variables["size"]
+        return _page(variables["index"], variables["size"], total=variables["size"])
+
+    with patch.object(gqt, "execute_query", side_effect=fake_execute):
+        result = make_tool().run({"efoId": "EFO_0000339", "datasourceId": "chembl"})
+
+    assert result["status"] == "success"
+    assert captured["size"] == 100

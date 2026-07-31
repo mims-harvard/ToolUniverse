@@ -51,6 +51,25 @@ class ChEMBLRESTTool(BaseTool):
             # Replace placeholders in URL
             for k, v in args.items():
                 url = url.replace(f"{{{k}}}", str(v))
+            # Fix-R40A-1: ChEMBL_search_similarity's endpoint template
+            # (/similarity/{smiles}/{threshold}.json) has a path placeholder
+            # that this loop never fills unless the caller explicitly
+            # supplies it -- confirmed live a caller omitting "threshold"
+            # (relying on its own schema "default": 80) got a literal
+            # "{threshold}" left in the URL and a 404, unlike BaseRESTTool's
+            # _build_url which already falls back to schema defaults for
+            # unfilled placeholders. Mirror that behavior here.
+            for key, prop in (
+                self.tool_config.get("parameter", {}).get("properties", {}).items()
+            ):
+                placeholder = f"{{{key}}}"
+                if (
+                    placeholder in url
+                    and isinstance(prop, dict)
+                    and "default" in prop
+                    and prop["default"] is not None
+                ):
+                    url = url.replace(placeholder, str(prop["default"]))
             # Feature-31A-03 fix: /drug.json does not support pref_name__icontains filtering
             # (ChEMBL server silently ignores it). When a name query is given, route to
             # /molecule.json which supports full text filtering.
@@ -171,12 +190,12 @@ class ChEMBLRESTTool(BaseTool):
         # Map target_chembl_id and assay_chembl_id to __exact API params
         # when used as query filters (not as URL path components)
         target_id = args.get("target_chembl_id")
-        # Feature-120B-001: only exclude ChEMBL_get_target (single lookup), not
-        # ChEMBL_get_target_activities or ChEMBL_get_target_assays which need the filter
-        if target_id is not None and tool_name_local not in (
-            "ChEMBL_get_target",
-            "ChEMBL_search_targets",
-        ):
+        # Feature-120B-001: only exclude ChEMBL_get_target (single lookup via URL path
+        # template {target_chembl_id}, substituted in _build_url). Every other tool,
+        # including ChEMBL_search_targets, queries /target.json with no path template,
+        # so target_chembl_id must be mapped to the __exact query filter or it is
+        # silently dropped entirely (Fix-T2A-004).
+        if target_id is not None and tool_name_local != "ChEMBL_get_target":
             params["target_chembl_id__exact"] = target_id
 
         assay_id = args.get("assay_chembl_id")
@@ -228,6 +247,24 @@ class ChEMBLRESTTool(BaseTool):
         if parent_id and parent_id != mol_id:
             return parent_id
         return mol_id
+
+    def _fetch_parent_chembl_id(self, chembl_id: str) -> Optional[str]:
+        """Resolve a ChEMBL molecule id to its parent (active-moiety) id.
+
+        /mechanism.json indexes records under the PARENT molecule, but
+        ChEMBL_search_drugs hands back the salt/child id (e.g. dolutegravir
+        CHEMBL1213165, parent CHEMBL1229211), so a mechanism query on the child
+        matched nothing. Fetch the molecule record and return its parent id, or
+        None if it has no distinct parent / the lookup fails."""
+        base = f"{self.base_url}/molecule/{chembl_id}.json"
+        headers = {"Accept": "application/json", "User-Agent": "ToolUniverse/1.0"}
+        try:
+            resp = requests.get(base, headers=headers, timeout=20)
+            resp.raise_for_status()
+            parent = self._extract_parent_chembl_id(resp.json())
+            return parent if parent and parent != chembl_id else None
+        except Exception:
+            return None
 
     def _lookup_chembl_id_by_name(self, drug_name: str) -> Optional[str]:
         """Look up a ChEMBL molecule ID by preferred name (case-insensitive).
@@ -464,6 +501,47 @@ class ChEMBLRESTTool(BaseTool):
                     if key in data and isinstance(data[key], list):
                         response_data["count"] = len(data[key])
                         break
+
+            # ChEMBL_get_drug_mechanisms: /mechanism.json indexes records under
+            # the PARENT molecule. A caller who passes a salt/child id -- exactly
+            # what ChEMBL_search_drugs returns (e.g. dolutegravir CHEMBL1213165,
+            # parent CHEMBL1229211) -- got a silent empty. On an empty result,
+            # resolve the parent and retry once so the search->mechanism chain
+            # works instead of falsely reporting "no mechanism on file".
+            if (
+                tool_name == "ChEMBL_get_drug_mechanisms"
+                and isinstance(data, dict)
+                and not data.get("mechanisms")
+                and mol_id
+            ):
+                parent_id = self._fetch_parent_chembl_id(mol_id)
+                if parent_id:
+                    retry_args = dict(arguments)
+                    retry_args["drug_chembl_id"] = parent_id
+                    retry_params = self._build_params(retry_args)
+                    retry_resp = request_with_retry(
+                        self.session,
+                        "GET",
+                        url,
+                        params=retry_params,
+                        timeout=self.timeout,
+                        max_attempts=3,
+                        backoff_seconds=0.5,
+                    )
+                    retry_resp.raise_for_status()
+                    retry_data = retry_resp.json()
+                    if isinstance(retry_data, dict) and retry_data.get("mechanisms"):
+                        response_data["data"] = retry_data
+                        response_data["url"] = retry_resp.url
+                        response_data["count"] = len(retry_data["mechanisms"])
+                        response_data.setdefault("metadata", {})[
+                            "resolved_parent_chembl_id"
+                        ] = parent_id
+                        response_data["metadata"]["note"] = (
+                            f"No mechanisms indexed under '{mol_id}' (a salt/child "
+                            f"molecule); returned mechanisms for its parent "
+                            f"'{parent_id}'."
+                        )
 
             return response_data
 

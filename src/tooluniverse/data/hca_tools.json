@@ -28,9 +28,7 @@
                     "default": 10
                 }
             },
-            "required": [
-                "action"
-            ]
+            "required": []
         },
         "return_schema": {
             "type": "object",
@@ -101,7 +99,6 @@
                 }
             },
             "required": [
-                "action",
                 "project_id"
             ]
         },

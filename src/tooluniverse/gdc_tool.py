@@ -753,15 +753,53 @@ class GDCMutationFreqByProjectTool:
             raw.get("aggregations", {}).get("projects", {}).get("buckets", []) or []
         )
 
+        # Fix-R4A-002: the analysis endpoint's nested `case_summary.doc_count`
+        # is NOT the project's total case count (confirmed against the raw
+        # API and cross-checked with GDC_search_cases/GDC_list_projects,
+        # e.g. it reports 2282 for TCGA-COAD when the real total is 461) —
+        # its sibling `case_summary.case_with_ssm.doc_count` is simply a
+        # duplicate of the mutated count. Fetch true per-project totals from
+        # the /projects endpoint's `summary.case_count` field instead, the
+        # same field GDC_list_projects uses.
+        project_ids = [b.get("key") for b in buckets if b.get("key")]
+        true_totals: Dict[str, int] = {}
+        if project_ids:
+            proj_filters = json.dumps(
+                {
+                    "op": "in",
+                    "content": {"field": "project_id", "value": project_ids},
+                }
+            )
+            proj_query = {
+                "filters": proj_filters,
+                "fields": "project_id,summary.case_count",
+                "size": len(project_ids),
+            }
+            proj_url = f"{base}/projects?{urlencode(proj_query)}"
+            try:
+                proj_raw = _http_get(
+                    proj_url, headers={"Accept": "application/json"}, timeout=timeout
+                )
+                for hit in proj_raw.get("data", {}).get("hits", []) or []:
+                    pid = hit.get("project_id")
+                    count = (hit.get("summary") or {}).get("case_count")
+                    if pid and count is not None:
+                        true_totals[pid] = count
+            except Exception:
+                pass  # fall back to the (less reliable) case_summary field below
+
         projects = []
         for b in buckets:
             mutated = b.get("doc_count", 0) or 0
+            project_id = b.get("key")
             case_summary = b.get("case_summary", {}) or {}
-            total = case_summary.get("doc_count", 0) or 0
+            total = true_totals.get(project_id)
+            if total is None:
+                total = case_summary.get("doc_count", 0) or 0
             freq = round(mutated / total, 4) if total else None
             projects.append(
                 {
-                    "project_id": b.get("key"),
+                    "project_id": project_id,
                     "mutated_case_count": mutated,
                     "total_case_count": total,
                     "frequency": freq,

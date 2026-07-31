@@ -86,6 +86,18 @@ class IGSRTool(BaseTool):
         response.raise_for_status()
         return response.json()
 
+    @staticmethod
+    def _total_hits(raw: Dict[str, Any]) -> int:
+        """Number of documents matching the query, independent of page size.
+
+        Elasticsearch reports this either as a bare integer or as
+        ``{"value": N, "relation": ...}`` depending on server version.
+        """
+        total = raw.get("hits", {}).get("total", 0)
+        if isinstance(total, dict):
+            total = total.get("value", 0)
+        return total or 0
+
     def _search_populations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search 1000 Genomes populations by superpopulation or name."""
         superpopulation = arguments.get("superpopulation")
@@ -139,12 +151,17 @@ class IGSRTool(BaseTool):
                     "longitude": src.get("longitude"),
                 }
             )
+        # `total` is the size of the matching result set, not of the page. When the
+        # superpopulation filter is applied client-side the Elasticsearch hit count
+        # ignores it, so the post-filter length is the authoritative total there.
+        total = len(populations) if superpopulation else self._total_hits(raw)
         populations = populations[:limit]
 
         return {
             "status": "success",
             "data": {
-                "total": len(populations),
+                "total": total,
+                "returned": len(populations),
                 "populations": populations,
             },
             "metadata": {
@@ -202,7 +219,8 @@ class IGSRTool(BaseTool):
         return {
             "status": "success",
             "data": {
-                "total": raw.get("hits", {}).get("total", 0),
+                "total": self._total_hits(raw),
+                "returned": len(samples),
                 "samples": samples,
             },
             "metadata": {
@@ -237,7 +255,8 @@ class IGSRTool(BaseTool):
         return {
             "status": "success",
             "data": {
-                "total": raw.get("hits", {}).get("total", 0),
+                "total": self._total_hits(raw),
+                "returned": len(collections),
                 "collections": collections,
             },
             "metadata": {

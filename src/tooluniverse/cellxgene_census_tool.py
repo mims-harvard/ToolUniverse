@@ -30,7 +30,13 @@ class CELLxGENECensusTool(BaseTool):
             }
 
         try:
-            operation = arguments.get("operation", "get_metadata")
+            # Fix-R38A-1: "operation" is optional in the schema now (each
+            # config exposes exactly one valid value via enum+default), so
+            # a caller who omits it must still resolve to that tool
+            # instance's own operation -- the old bare "get_metadata"
+            # fallback doesn't match any dispatch branch below and would
+            # silently mis-route every one of these 6 tools.
+            operation = arguments.get("operation") or self.get_schema_const_operation()
             census_version = arguments.get("census_version", "stable")
 
             if operation == "get_census_versions":

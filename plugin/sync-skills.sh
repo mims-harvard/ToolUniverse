@@ -29,9 +29,13 @@ set -euo pipefail
 cd "$(dirname "$0")"
 REPO_ROOT="$(cd .. && pwd)"
 
-# Codex-host-specific skills that should NOT ship in the Claude packaging
-# (mirror of how the Codex sync drops tooluniverse-claude-code-plugin).
-CLAUDE_EXCLUDE="tooluniverse-codex-plugin"
+# Skills that should NOT ship in the Claude packaging:
+#   tooluniverse-codex-plugin — Codex-host-specific install docs (mirror of
+#                                how the Codex sync drops tooluniverse-claude-code-plugin)
+#   tooluniverse-cs-setup      — Claude Science install docs (different host
+#                                entirely: conda env + host.skills.* API, no
+#                                MCP/uvx/plugin marketplace involved)
+CLAUDE_EXCLUDE="tooluniverse-codex-plugin tooluniverse-cs-setup"
 
 # Recreate plugin/skills/ from scratch (Claude packaging — all user-facing skills)
 rm -rf skills

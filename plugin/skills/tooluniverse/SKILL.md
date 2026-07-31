@@ -106,6 +106,7 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "research", "profile", "**drug**", "medication", "therapeutic agent", "tell me about [drug]" | `Skill(skill="tooluniverse-drug-research")` |
 | "**literature review**", "papers about", "publications on", "research articles", "recent studies" | `Skill(skill="tooluniverse-literature-deep-research")` |
 | "research", "profile", "**target**", "protein target", "gene target", "target validation" | `Skill(skill="tooluniverse-target-research")` |
+| "**gene liability**", "gene safety score", "knockout safety", "knockdown safety", "on-target toxicity", "safe to inhibit [gene]" | `Skill(skill="tooluniverse-gene-liability")` |
 | "**peptide target**", "**deorphanize**", "deorphanization", "**peptide off-target**", "what does [peptide] bind", "target of a peptide", "orphan peptide", "peptide doesn't bind [target]", "binds in [species] but not", "find the receptor for [peptide]" | `Skill(skill="tooluniverse-peptide-target-deorphanization")` |
 
 ### 3. Clinical Decision Support
@@ -124,6 +125,8 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**TCGA**", "cancer genomics cohort", "GDC analysis", "TCGA mutations", "pan-cancer" | `Skill(skill="tooluniverse-cancer-genomics-tcga")` |
 | "**immunotherapy response**", "checkpoint inhibitor response", "TMB", "MSI", "PD-L1", "ICI response" | `Skill(skill="tooluniverse-immunotherapy-response-prediction")` |
 | "**rare disease diagnosis**", "differential diagnosis", "phenotype matching", "HPO", "patient with [symptoms]" | `Skill(skill="tooluniverse-rare-disease-diagnosis")` |
+| "**clinical risk score**", "CHA2DS2-VASc", "HAS-BLED", "CURB-65", "qSOFA", "Child-Pugh", "MELD-Na", "Wells score", "ASCVD risk", "eGFR CKD-EPI", "bedside risk calculator" | `Skill(skill="tooluniverse-clinical-risk-scoring")` |
+| "**device adverse events**", "device recall", "MAUDE", "food/supplement adverse event", "CAERS", "veterinary adverse event", "drug shortage" | `Skill(skill="tooluniverse-product-safety-surveillance")` |
 | "**variant interpretation**", "VUS", "pathogenicity", "clinical significance", "is [variant] pathogenic" | `Skill(skill="tooluniverse-variant-interpretation")` |
 | "**clinical guidelines**", "practice guidelines", "treatment guidelines", "dosing recommendations", "standard of care" | `Skill(skill="tooluniverse-clinical-guidelines")` |
 | "**patient stratification**", "precision medicine", "biomarker stratification", "treatment selection" | `Skill(skill="tooluniverse-precision-medicine-stratification")` |
@@ -143,6 +146,7 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**small molecule discovery**", "chemical biology", "compound sourcing", "hit finding", "chemical probe" | `Skill(skill="tooluniverse-small-molecule-discovery")` |
 | "**chemical sourcing**", "buy compound", "vendor search", "Enamine", "MolPort", "compound availability" | `Skill(skill="tooluniverse-chemical-sourcing")` |
 | "**GPCR**", "G-protein coupled receptor", "GPCRdb", "receptor ligand", "biased agonist" | `Skill(skill="tooluniverse-gpcr-structural-pharmacology")` |
+| "**dereplicate**", "natural product identification", "NPAtlas", "ChemOnt classification", "ClassyFire", "producing organism" | `Skill(skill="tooluniverse-natural-product-dereplication")` |
 
 ### 5. Genomics & Variant Analysis
 
@@ -159,6 +163,13 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**regulatory variant**", "non-coding variant", "eQTL variant", "regulatory region variant" | `Skill(skill="tooluniverse-regulatory-variant-analysis")` |
 | "**rare disease genomics**", "Orphanet gene", "rare disease gene", "causative gene", "exome diagnosis" | `Skill(skill="tooluniverse-rare-disease-genomics")` |
 | "**1000 Genomes**", "IGSR", "population frequency", "superpopulation", "AFR/EUR/EAS/SAS/AMR" | `Skill(skill="tooluniverse-population-genetics-1000genomes")` |
+| "**PheWAS**", "phenome-wide association", "cross-ancestry replication", "cross-biobank", "FinnGen", "BioBank Japan", "pleiotropy of a variant" | `Skill(skill="tooluniverse-phewas")` |
+| "**Mendelian randomization**", "MR causal inference", "instrumental variable", "does X cause Y", "genetic causal evidence" | `Skill(skill="tooluniverse-mendelian-randomization")` |
+| "**loss-of-function mechanism**", "LoF mechanism", "why is this variant LoF", "structural stability vs functional disruption" | `Skill(skill="tooluniverse-protein-lof-mechanism")` |
+| "**SAE feature**", "sparse autoencoder variant", "ESMC SAE", "mechanistic variant interpretation" | `Skill(skill="tooluniverse-protein-sae-variant-interpretation")` |
+| "**per-residue annotation**", "binding interface residues", "ligand pocket residues", "buried vs surface residues", "PDB structural annotation" | `Skill(skill="tooluniverse-protein-structural-annotation-pdb")` |
+| "**why are these residues critical**", "residue functional mechanism", "DMS hotspot interpretation", "catalytic vs structural residue" | `Skill(skill="tooluniverse-residue-functional-mechanism-interpretation")` |
+| "**validate variant predictor**", "DMS validation", "deep mutational scanning benchmark", "predictor vs experimental effect" | `Skill(skill="tooluniverse-variant-predictor-dms-validation")` |
 
 ### 6. Systems & Network Analysis
 
@@ -208,6 +219,7 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**protein modification**", "PTM analysis", "phosphorylation site", "ubiquitination", "glycosylation" | `Skill(skill="tooluniverse-protein-modification-analysis")` |
 | "**structural proteomics**", "cross-linking mass spec", "XL-MS", "HDX-MS", "structural biology" | `Skill(skill="tooluniverse-structural-proteomics")` |
 | "**protein structure prediction**", "AlphaFold prediction", "structure modeling", "homology modeling" | `Skill(skill="tooluniverse-protein-structure-prediction")` |
+| "**FASTQ QC**", "FastQC", "MultiQC", "adapter trimming", "fastp", "Cutadapt", "read quality", "sequence duplication" | `Skill(skill="tooluniverse-fastq-qc")` |
 
 ### 8. Clinical Trials & Study Design
 
@@ -231,6 +243,7 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**ecology**", "biodiversity", "invasive species", "pollinator", "food web", "conservation", "community ecology", "trophic" | `Skill(skill="tooluniverse-ecology-biodiversity")` |
 | "**microbiome**", "gut microbiota", "dysbiosis", "microbiome composition", "16S rRNA" | `Skill(skill="tooluniverse-microbiome-research")` |
 | "**adverse outcome pathway**", "AOP", "key event", "molecular initiating event", "KER" | `Skill(skill="tooluniverse-adverse-outcome-pathway")` |
+| "**genome assembly**", "assembly N50", "RefSeq assembly QC", "plasmid count", "NCBI Datasets genome" | `Skill(skill="tooluniverse-microbial-genome-characterization")` |
 
 ### 10. Specialized Biology
 
@@ -272,6 +285,7 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**custom tool**", "add my own tool", "local tool", "create tool", "extend ToolUniverse" | `Skill(skill="tooluniverse-custom-tool")` |
 | "**SDK**", "Python SDK", "build AI scientist", "programmatic access", "**import tooluniverse**", "**coding API**", "**tu build**", "**typed wrappers**" | `Skill(skill="tooluniverse-sdk")` |
 | "**install skills**", "missing skills", "skill not found", "add skills" | `Skill(skill="tooluniverse-install-skills")` |
+| "**self-review**", "check my work", "definition of done", "evaluation rubric", "success criteria", "grading criteria", "LLM-as-judge" | `Skill(skill="tooluniverse-self-review")` |
 
 ---
 

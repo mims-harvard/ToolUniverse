@@ -20,6 +20,24 @@ HPO_BASE_URL = "https://ontology.jax.org/api/hp"
 HPO_ANNOTATION_URL = "https://ontology.jax.org/api/network/annotation"
 
 
+def _normalize_hpo_id(term_id: str) -> str:
+    """Normalize an HPO term id to the canonical colon CURIE 'HP:0001250'.
+
+    Accepts the underscore form 'HP_0001250' (which OpenTargets and other tools
+    emit, e.g. phenotypeHPO.id) and a bare numeric id '0001250'. Without this,
+    'HP_0001250' failed the old `startswith("HP:")` check and was turned into
+    'HP:HP_0001250', causing an HPO API 404 -- a cross-tool chaining break in the
+    OpenTargets-phenotype -> HPO_get_term path a clinician follows."""
+    tid = str(term_id).strip()
+    # Underscore CURIE from OpenTargets et al. -> colon CURIE.
+    if tid.upper().startswith("HP_"):
+        tid = "HP:" + tid[3:]
+    elif not tid.upper().startswith("HP:"):
+        tid = f"HP:{tid}"
+    # Canonicalize the prefix case ('hp:' -> 'HP:').
+    return "HP:" + tid.split(":", 1)[1] if ":" in tid else tid
+
+
 @register_tool("HPOTool")
 class HPOTool(BaseTool):
     """
@@ -203,8 +221,7 @@ class HPOTool(BaseTool):
                 "status": "error",
                 "error": "term_id parameter is required (e.g., 'HP:0001250')",
             }
-        if not str(term_id).startswith("HP:"):
-            term_id = f"HP:{term_id}"
+        term_id = _normalize_hpo_id(term_id)
 
         try:
             limit = int(arguments.get("limit", 50))
@@ -247,9 +264,8 @@ class HPOTool(BaseTool):
                 "error": "term_id parameter is required (e.g., 'HP:0001250')",
             }
 
-        # Normalize the ID format
-        if not term_id.startswith("HP:"):
-            term_id = f"HP:{term_id}"
+        # Normalize the ID format (accepts HP:xxx, HP_xxx, and bare digits)
+        term_id = _normalize_hpo_id(term_id)
 
         url = f"{HPO_BASE_URL}/terms/{term_id}"
         response = requests.get(url, timeout=self.timeout)
@@ -290,18 +306,29 @@ class HPOTool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        max_results = arguments.get("max_results", 10)
-        if max_results > 50:
-            max_results = 50
+        # Coerce max_results robustly: the schema allows integer|null, so a
+        # caller may omit it, pass null, or pass an out-of-range value. Using
+        # the raw value directly would crash on None (None > 50) and let
+        # negatives/zero through.
+        try:
+            max_results = int(arguments.get("max_results") or 10)
+        except (TypeError, ValueError):
+            max_results = 10
+        max_results = max(1, min(max_results, 50))
 
         url = f"{HPO_BASE_URL}/search"
-        params = {"q": query, "max": max_results}
+        # The JAX ontology search endpoint sizes the page with `limit`. The
+        # previous `max` key was silently ignored, capping every result set at
+        # the API default of 10 regardless of the requested count.
+        params = {"q": query, "limit": max_results}
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
-        terms = data.get("terms", [])
+        # Defensive truncation in case an upstream change ever returns more
+        # rows than requested.
+        terms = data.get("terms", [])[:max_results]
         results = []
         for term in terms:
             results.append(
@@ -321,6 +348,10 @@ class HPOTool(BaseTool):
                 "source": "HPO (JAX Ontology)",
                 "query": query,
                 "total_results": len(results),
+                # Total matches available across all pages (the API reports this
+                # as `totalCount`), so callers can see more terms exist beyond
+                # the returned page instead of assuming this page is exhaustive.
+                "total_available": data.get("totalCount", len(results)),
             },
         }
 
@@ -333,8 +364,7 @@ class HPOTool(BaseTool):
                 "error": "term_id parameter is required (e.g., 'HP:0001250')",
             }
 
-        if not term_id.startswith("HP:"):
-            term_id = f"HP:{term_id}"
+        term_id = _normalize_hpo_id(term_id)
 
         direction = arguments.get("direction", "children")
 

@@ -195,9 +195,12 @@ class EnsemblComparaTool(BaseTool):
 
         species = arguments.get("species", "human")
 
-        # Gene tree uses /genetree/member/id or /genetree/member/symbol
+        # Gene tree uses /genetree/member/id or /genetree/member/symbol --
+        # confirmed live that the id form 404s without a {species} path
+        # segment (e.g. /genetree/member/id/ENSG00000141510 alone 404s;
+        # /genetree/member/id/human/ENSG00000141510 works).
         if gene.startswith("ENS"):
-            url = f"{ENSEMBL_BASE_URL}/genetree/member/id/{gene}"
+            url = f"{ENSEMBL_BASE_URL}/genetree/member/id/{species}/{gene}"
         else:
             url = f"{ENSEMBL_BASE_URL}/genetree/member/symbol/{species}/{gene}"
 
@@ -210,19 +213,30 @@ class EnsemblComparaTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        # Extract tree info
-        tree_id = (
-            data.get("tree", {}).get("id")
-            if isinstance(data.get("tree"), dict)
-            else data.get("id")
-        )
+        # Extract tree info. The tree's own id is a top-level field, not
+        # nested under "tree" (confirmed live: {"type", "rooted", "tree",
+        # "id"} -- "tree" itself carries no "id" key).
+        tree_id = data.get("id")
         rooted = data.get("rooted", True)
-
-        # Get Newick tree from the response if available
-        newick = None
         tree_data = data.get("tree", data)
-        if isinstance(tree_data, dict):
-            newick = tree_data.get("newick")
+
+        # Ensembl's JSON genetree response never embeds a "newick" field
+        # regardless of nh_format -- Newick text is only served as a
+        # separate plain-text response via the "text/x-nh" content type.
+        # Fetch it as a best-effort second call; a failure here shouldn't
+        # fail the whole tool.
+        newick = None
+        try:
+            nh_resp = requests.get(
+                url,
+                params=params,
+                headers={**ENSEMBL_HEADERS, "Content-Type": "text/x-nh"},
+                timeout=self.timeout,
+            )
+            if nh_resp.status_code == 200 and nh_resp.text.strip():
+                newick = nh_resp.text.strip()
+        except requests.exceptions.RequestException:
+            pass
 
         # Count members in the tree
         members = []
@@ -248,17 +262,21 @@ class EnsemblComparaTool(BaseTool):
         if len(members) >= max_members:
             return
         if isinstance(node, dict):
-            # Leaf node has 'id' and 'species'
-            if "id" in node and "species" in node:
+            # Leaf nodes carry a gene "id" and have no "children"; internal
+            # (ancestral) nodes have "taxonomy" too but no "id". Confirmed
+            # live: leaves have no "species" key at all -- species info
+            # lives under "taxonomy", which the previous check never read.
+            if "id" in node and not node.get("children"):
                 gene_id = node.get("id", {})
                 if isinstance(gene_id, dict):
                     gene_id = gene_id.get("accession", "")
+                taxonomy = node.get("taxonomy", {})
                 members.append(
                     {
                         "gene_id": str(gene_id),
-                        "species": node.get("species", {}).get("scientific_name", "")
-                        if isinstance(node.get("species"), dict)
-                        else str(node.get("species", "")),
+                        "species": taxonomy.get("scientific_name", "")
+                        if isinstance(taxonomy, dict)
+                        else str(taxonomy),
                     }
                 )
             # Traverse children

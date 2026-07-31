@@ -1,9 +1,4 @@
-"""
-Web search tools for ToolUniverse using DDGS (Dux Distributed Global Search).
-
-This module provides web search capabilities using the ddgs library,
-which supports multiple search engines including DuckDuckGo, Google, Bing, etc.
-"""
+"""Web search tools for ToolUniverse using Parallel Search MCP and DDGS."""
 
 import json
 import re
@@ -17,7 +12,16 @@ from urllib.parse import parse_qs, unquote, urlparse
 import requests
 
 from .base_tool import BaseTool
+from .mcp_client_tool import BaseMCPClient
 from .tool_registry import register_tool
+
+PARALLEL_SEARCH_MCP_URL = "https://search.parallel.ai/mcp"
+PARALLEL_PROVIDER_NOTICE = (
+    "Query sent to Parallel's hosted third-party Search MCP service at "
+    f"{PARALLEL_SEARCH_MCP_URL}. ToolUniverse region and safesearch controls "
+    "are not applied by this backend; do not submit sensitive or "
+    "patient-identifying information."
+)
 
 
 @register_tool("WebSearchTool")
@@ -117,6 +121,72 @@ print(json.dumps(results))
 
         return results
 
+    def _search_with_parallel(
+        self, query: str, max_results: int
+    ) -> List[Dict[str, Any]]:
+        """Search with Parallel Search MCP and normalize its structured results."""
+        client = BaseMCPClient(PARALLEL_SEARCH_MCP_URL, transport="http", timeout=30)
+        response = client._run_with_cleanup(
+            lambda: client._make_mcp_request(
+                "tools/call",
+                {
+                    "name": "web_search",
+                    "arguments": {
+                        "objective": query,
+                        "search_queries": [query],
+                    },
+                },
+            )
+        )
+
+        if response.get("isError"):
+            raise RuntimeError("Parallel Search MCP returned an error")
+
+        structured_content = response.get("structuredContent") or response.get(
+            "structured_content"
+        )
+        if not isinstance(structured_content, dict):
+            raise RuntimeError(
+                "Parallel Search MCP response did not include structured content"
+            )
+
+        search_results = structured_content.get("results")
+        if not isinstance(search_results, list):
+            raise RuntimeError(
+                "Parallel Search MCP structured content did not include results"
+            )
+
+        results = []
+        for result in search_results:
+            if not isinstance(result, dict):
+                continue
+
+            url = result.get("url")
+            if not isinstance(url, str) or not url:
+                continue
+
+            title = result.get("title")
+            excerpts = result.get("excerpts")
+            if isinstance(excerpts, list):
+                snippet = "\n\n".join(
+                    excerpt for excerpt in excerpts if isinstance(excerpt, str)
+                )
+            else:
+                snippet = ""
+
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": url,
+                    "snippet": snippet,
+                    "rank": len(results) + 1,
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
     def _search_with_fallback(
         self,
         query: str,
@@ -144,7 +214,29 @@ print(json.dumps(results))
         backends_to_try = [backend]
         stop_ddgs_backends = False
 
-        if backend == "auto":
+        if backend == "parallel":
+            attempted_backends.append("parallel")
+            try:
+                results = self._search_with_parallel(
+                    query=query, max_results=max_results
+                )
+                if results:
+                    return (
+                        results,
+                        "parallel",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["parallel"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding Parallel to the default provider chain.
+            backends_to_try = ["auto"]
+        elif backend == "auto":
             # Try the explicit DuckDuckGo backend first. It tends to fail with
             # regular Python exceptions in restricted environments, while some
             # other backends can trigger native panics.
@@ -367,6 +459,31 @@ print(json.dumps(results))
                     },
                 }
 
+            if backend == "parallel":
+                unsupported_controls = []
+                if region != "us-en":
+                    unsupported_controls.append("region")
+                if safesearch != "moderate":
+                    unsupported_controls.append("safesearch")
+                if unsupported_controls:
+                    controls = ", ".join(unsupported_controls)
+                    error_msg = (
+                        "The Parallel backend does not support non-default "
+                        f"ToolUniverse controls: {controls}. Omit these controls "
+                        "or use a DDGS backend."
+                    )
+                    return {
+                        "status": "error",
+                        "error": error_msg,
+                        "data": {
+                            "status": "error",
+                            "error": error_msg,
+                            "query": query,
+                            "total_results": 0,
+                            "results": [],
+                        },
+                    }
+
             # Validate max_results
             max_results = max(1, min(max_results, 50))  # Limit between 1-50
 
@@ -394,7 +511,7 @@ print(json.dumps(results))
             )
 
             if search_warning:
-                return {
+                response = {
                     "status": "success",
                     "warning": search_warning,
                     "data": {
@@ -410,6 +527,9 @@ print(json.dumps(results))
                         "warning": search_warning,
                     },
                 }
+                if "parallel" in attempted_backends:
+                    response["data"]["provider_notice"] = PARALLEL_PROVIDER_NOTICE
+                return response
 
             # Add rate limiting to be respectful
             time.sleep(0.5)
@@ -425,6 +545,8 @@ print(json.dumps(results))
             }
             if provider_errors:
                 result_data["provider_errors"] = provider_errors
+            if "parallel" in attempted_backends:
+                result_data["provider_notice"] = PARALLEL_PROVIDER_NOTICE
 
             return {"status": "success", "data": result_data}
 
@@ -495,16 +617,22 @@ class WebAPIDocumentationSearchTool(WebSearchTool):
             else:
                 enhanced_query = f'"{query}" documentation API reference'
 
-            # Use parent class search with enhanced query
-            arguments["query"] = enhanced_query
-            arguments["search_type"] = "api_documentation"
-            arguments["backend"] = backend
+            # The query is already focus-enhanced above. Pass it through the
+            # parent as a general search so it is not enhanced a second time,
+            # and do not mutate the caller's arguments dictionary.
+            parent_arguments = {
+                **arguments,
+                "query": enhanced_query,
+                "search_type": "general",
+                "backend": backend,
+            }
 
-            result = super().run(arguments)
+            result = super().run(parent_arguments)
 
             # Extract data from parent result and add focus-specific metadata
             if result["status"] == "success" and "data" in result:
                 result_data = result["data"]
+                result_data["search_type"] = "api_documentation"
                 result_data["focus"] = focus
                 result_data["enhanced_query"] = enhanced_query
 

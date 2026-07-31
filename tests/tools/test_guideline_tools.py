@@ -286,10 +286,28 @@ class TestGuidelineToolsIntegration:
             config = {"name": name, "type": type_name}
             tool = tool_class(config)
             result = tool.run({"query": "diabetes", "limit": 1})
-            
-            # All should return list (or error dict)
+
+            # All should return list, a {"status": "success", "data": [...]}
+            # envelope (Fix-R9E-1), or an error dict.
             assert isinstance(result, (list, dict))
-            
+
+            if tool_class is PubMedGuidelinesTool:
+                # Fix-R9E-1 specifically wraps PubMedGuidelinesTool's
+                # bare-list success case in this envelope -- assert it's
+                # actually present (not just conditionally unwrapped like
+                # below) so a revert of that fix fails this test instead of
+                # silently passing.
+                assert isinstance(result, dict), (
+                    "PubMedGuidelinesTool regressed to a bare-list success "
+                    "return; Fix-R9E-1 requires the {status, data} envelope"
+                )
+                assert result.get("status") in ("success", "error")
+                if result.get("status") == "success":
+                    assert "data" in result
+                    result = result["data"]
+            elif isinstance(result, dict) and result.get("status") == "success":
+                result = result["data"]
+
             if isinstance(result, list):
                 # Check it's a list of guidelines
                 assert len(result) <= 1

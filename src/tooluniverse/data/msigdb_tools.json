@@ -199,6 +199,9 @@
         "gene"
       ]
     },
+    "fields": {
+      "operation": "check_gene_in_set"
+    },
     "return_schema": {
       "oneOf": [
         {
@@ -278,6 +281,9 @@
       "required": [
         "gene_set_name"
       ]
+    },
+    "fields": {
+      "operation": "get_gene_set"
     },
     "return_schema": {
       "oneOf": [

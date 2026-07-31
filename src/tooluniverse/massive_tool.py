@@ -182,6 +182,20 @@ class MassIVETool(BaseTool):
             )
             resp.raise_for_status()
             return {"ok": True, "data": resp.json()}
+        except requests.exceptions.HTTPError as e:
+            # ProXI 4xx/5xx responses carry a real, more useful reason in
+            # their JSON body (confirmed live:
+            # {"code":404,"title":"Not Found","message":"No data found for
+            # the specified parameters."}) that plain str(e) discards,
+            # leaving only the generic "404 Client Error: ..." text.
+            message = None
+            if e.response is not None:
+                try:
+                    message = e.response.json().get("message")
+                except ValueError:
+                    pass
+            base = f"MassIVE API error: {e}"
+            return {"ok": False, "error": f"{base} ({message})" if message else base}
         except requests.exceptions.RequestException as e:
             return {"ok": False, "error": f"MassIVE API error: {e}"}
         except ValueError:
@@ -198,30 +212,37 @@ class MassIVETool(BaseTool):
     def _get_protein_identifications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Identification-level access to MassIVE via ProXI.
 
-        Three sub-modes (auto-selected by which argument is present):
-          - per-dataset proteins:  accession=PXD000561 -> protein summaries
-          - cross-dataset protein:  protein_accession=A2M_MOUSE -> dataset counts
-          - peptide-spectrum matches: result_type='psms' with a dataset accession
+        Keyed on ``protein_accession`` (e.g. 'A2M_MOUSE'):
+          - proteins (default): cross-dataset PSM / peptide / dataset counts
+          - psms (result_type='psms'): peptide-spectrum matches for the protein
+
+        The MassIVE ProXI proteins/psms endpoints do NOT honor a dataset
+        ``accession`` filter -- they return the same global summary regardless of
+        it -- so per-dataset identification listing is not offered here; use
+        MassIVE_get_dataset for dataset-level metadata.
         """
         accession = arguments.get("accession")
         protein_accession = arguments.get("protein_accession")
         result_type = arguments.get("result_type", "proteins")
 
-        if not accession and not protein_accession:
+        if not protein_accession:
             return {
                 "status": "error",
                 "error": (
-                    "Provide 'accession' (dataset, e.g. 'PXD000561') for per-dataset "
-                    "identifications, or 'protein_accession' (e.g. 'A2M_MOUSE') for a "
-                    "cross-dataset protein lookup."
+                    "'protein_accession' is required (e.g. 'A2M_MOUSE'). The MassIVE "
+                    "ProXI proteins/psms endpoints ignore a dataset 'accession' filter "
+                    "and return a global summary, so identifications cannot be listed "
+                    "per dataset; use MassIVE_get_dataset for dataset metadata."
                 ),
             }
 
-        params: Dict[str, Any] = {"resultType": "compact"}
-        if accession:
-            params["accession"] = accession
-        if protein_accession:
-            params["proteinAccession"] = protein_accession
+        # `accession` (dataset) is intentionally NOT sent to the endpoint: it is
+        # ignored upstream, and including it would imply a per-dataset filter that
+        # does not actually work.
+        params: Dict[str, Any] = {
+            "resultType": "compact",
+            "proteinAccession": protein_accession,
+        }
 
         endpoint = "psms" if result_type == "psms" else "proteins"
         result = self._proxi_get(endpoint, params)

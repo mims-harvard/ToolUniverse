@@ -287,7 +287,7 @@
   {
     "type": "ComposeTool",
     "name": "MultiAgentLiteratureSearch",
-    "description": "Multi-agent literature search system that uses AI agents to analyze intent, extract keywords, execute parallel searches, summarize results, and check quality iteratively",
+    "description": "Multi-agent literature search system that uses AI agents to analyze intent, extract keywords, execute parallel searches, and summarize results. Always runs a single pass -- 'max_iterations' and 'quality_threshold' are not currently applied (no iterative refinement loop is wired into the search flow yet).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -297,19 +297,17 @@
         },
         "max_iterations": {
           "type": "integer",
-          "description": "Maximum number of iterations (default: 3)",
+          "description": "Not currently applied -- the search always runs a single pass. Retained for forward compatibility with a future iterative-refinement implementation.",
           "default": 3
         },
         "quality_threshold": {
           "type": "number",
-          "description": "Quality threshold for completion (default: 0.7)",
+          "description": "Not currently applied -- QualityCheckerAgent is registered as a dependency but never invoked by the current search flow. Retained for forward compatibility with a future iterative-refinement implementation.",
           "default": 0.7
         }
       },
       "required": [
-        "query",
-        "max_iterations",
-        "quality_threshold"
+        "query"
       ]
     },
     "auto_load_dependencies": true,

@@ -10,12 +10,27 @@
         "fields": {"timeout": 30},
         "type": "EPATRIFacilitiesTool",
         "test_examples": [{"state": "CA", "city": "Sacramento", "limit": 5}, {"state": "TX", "limit": 3}, {"state": "NY", "limit": 3}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "TRI facilities", "properties": {
-                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "EPA_search_frs_facilities",
@@ -28,12 +43,27 @@
         "fields": {"timeout": 30},
         "type": "EPAFRSFacilitiesTool",
         "test_examples": [{"state": "MA", "limit": 5}, {"state": "CA", "city": "Oakland", "limit": 3}, {"state": "WA", "limit": 3}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "FRS facility sites", "properties": {
-                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "EPA_get_tri_facility_chemical_releases",
@@ -45,20 +75,64 @@
         "fields": {"timeout": 30, "table": "tri_reporting_form", "lookup_column": "tri_facility_id", "lookup_param": "tri_facility_id", "row_kind": "reporting_form"},
         "type": "EPATRIFacilitiesTool",
         "test_examples": [{"tri_facility_id": "15902CCKRN75BRI", "limit": 3}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "TRI reporting forms for one facility", "properties": {
-                "status": {"type": "string"},
-                "data": {"type": "array", "items": {"type": "object", "properties": {
-                    "tri_facility_id": {"type": ["string", "null"]},
-                    "tri_chem_id": {"type": ["string", "null"]},
-                    "chemical_name": {"type": ["string", "null"]},
-                    "reporting_year": {"type": ["string", "null"]},
-                    "form_type": {"type": ["string", "null"]},
-                    "max_amount_code": {"type": ["string", "null"]}
-                }}},
-                "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tri_facility_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tri_chem_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chemical_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reporting_year": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "form_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "max_amount_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

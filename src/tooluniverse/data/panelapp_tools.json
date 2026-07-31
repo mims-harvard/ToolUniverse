@@ -20,7 +20,7 @@
         "format": "json"
       }
     },
-    "type": "BaseRESTTool",
+    "type": "PanelAppSearchTool",
     "test_examples": [
       {
         "search": "breast cancer"

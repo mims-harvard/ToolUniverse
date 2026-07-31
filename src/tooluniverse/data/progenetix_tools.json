@@ -332,47 +332,119 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "filters": {"type": "string"},
-                "label": {"type": ["string", "null"]},
-                "group_id": {"type": ["string", "null"]},
-                "dataset_id": {"type": ["string", "null"]},
-                "sample_count": {"type": "integer"},
-                "interval_count": {"type": "integer"},
-                "returned_interval_count": {"type": "integer"},
-                "intervals": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "no": {"type": ["integer", "null"]},
-                      "reference_name": {"type": ["string", "null"]},
-                      "cytobands": {"type": ["string", "null"]},
-                      "start": {"type": ["integer", "null"]},
-                      "end": {"type": ["integer", "null"]},
-                      "size": {"type": ["integer", "null"]},
-                      "gain_frequency": {"type": ["number", "null"]},
-                      "loss_frequency": {"type": ["number", "null"]},
-                      "gain_hlfrequency": {"type": ["number", "null"]},
-                      "loss_hlfrequency": {"type": ["number", "null"]}
-                    }
+            "filters": {
+              "type": "string"
+            },
+            "label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "group_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dataset_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sample_count": {
+              "type": "integer"
+            },
+            "interval_count": {
+              "type": "integer"
+            },
+            "returned_interval_count": {
+              "type": "integer"
+            },
+            "intervals": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "no": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "reference_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cytobands": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "size": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "gain_frequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "loss_frequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "gain_hlfrequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "loss_hlfrequency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "filters"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

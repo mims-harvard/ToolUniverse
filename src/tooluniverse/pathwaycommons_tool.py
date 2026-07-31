@@ -182,26 +182,48 @@ class PathwayCommonsTool(BaseTool):
                 "error": "Failed to retrieve pathway data for URI: {}".format(uri),
             }
 
+        # _traverse returns None on a failed request but [] on a genuinely
+        # empty-but-successful one -- track which secondary fields failed to
+        # fetch so the response doesn't silently conflate "fetch failed"
+        # with "this pathway genuinely has no such data."
+        fetch_failures = []
+
+        def _scalar(values, label):
+            if values is None:
+                fetch_failures.append(label)
+                return None
+            return values[0] if values else None
+
+        def _list(values, label):
+            if values is None:
+                fetch_failures.append(label)
+                return []
+            return values
+
         result = {
             "pathway": {
                 "uri": uri,
                 "name": name[0] if name else None,
-                "description": comment[0] if comment else None,
-                "organism": organism[0] if organism else None,
-                "data_source": data_source[0] if data_source else None,
+                "description": _scalar(comment, "comment"),
+                "organism": _scalar(organism, "organism"),
+                "data_source": _scalar(data_source, "data_source"),
             },
-            "sub_pathways": sub_pathways or [],
-            "participants": participants or [],
+            "sub_pathways": _list(sub_pathways, "sub_pathways"),
+            "participants": _list(participants, "participants"),
         }
+
+        metadata = {
+            "uri": uri,
+            "sub_pathway_count": len(result["sub_pathways"]),
+            "participant_count": len(result["participants"]),
+        }
+        if fetch_failures:
+            metadata["fetch_failures"] = fetch_failures
 
         return {
             "status": "success",
             "data": result,
-            "metadata": {
-                "uri": uri,
-                "sub_pathway_count": len(sub_pathways or []),
-                "participant_count": len(participants or []),
-            },
+            "metadata": metadata,
         }
 
     def _get_neighborhood(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

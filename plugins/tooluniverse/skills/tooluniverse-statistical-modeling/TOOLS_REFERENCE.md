@@ -77,7 +77,7 @@ These ToolUniverse tools can be used to retrieve data before modeling:
 |------|-----------|---------|
 | `FAERS_calculate_disproportionality` | `drug_name`, `adverse_event` | `{metrics: {PRR, ROR, IC}, signal_detection}` |
 | `FAERS_stratify_by_demographics` | `drug_name`, `adverse_event`, `stratify_by` | Stratified counts |
-| `FAERS_count_patient_reaction` | `medicinalproduct` | `[{term, count}]` |
+| `FAERS_count_reactions_by_drug_event` | `medicinalproduct` | `[{term, count}]` (grouped by MedDRA Preferred Term) |
 
 ### Gene-Disease Evidence
 

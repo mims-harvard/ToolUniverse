@@ -5,11 +5,22 @@ This tool provides access to the ClinVar database for clinical variant informati
 disease associations, and clinical significance data.
 """
 
+import re
 import requests
 import time
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+
+# Human-readable clinical-significance classes whose NCBI clinsig [prop] token is
+# NOT the naive underscore form. Confirmed live: "Uncertain significance" ->
+# clinsig_vus[prop] (BRCA2: 4345), while clinsig_uncertain_significance[prop]
+# returns 0 -- so filtering for VUS, the single LARGEST ClinVar category,
+# silently returned an empty success. Keyed by the normalized (lowercased,
+# spaces) class name.
+_CLINSIG_PROP_ALIASES = {
+    "uncertain significance": "vus",
+}
 
 
 class ClinVarRESTTool(BaseTool):
@@ -175,8 +186,30 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             arguments = dict(arguments, gene=arguments["gene_symbol"])
         if not arguments.get("clinical_significance") and arguments.get("significance"):
             arguments = dict(arguments, clinical_significance=arguments["significance"])
+        # An rsID (e.g. rs4244285) passed as `query` was aliased to `condition`
+        # and searched as a DISEASE term ('rs4244285[dis]'), silently returning
+        # 0 -- but ClinVar's free-text index DOES match a bare rsID (confirmed
+        # live: term=rs4244285 -> 37 records). Route an rsID to a bare-term
+        # search so the standard PGx chain rsID -> ClinVar works instead of a
+        # false 'not found'.
+        _rsid_src = arguments.get("rsid") or arguments.get("query")
+        if (
+            not arguments.get("rsid")
+            and isinstance(_rsid_src, str)
+            and re.fullmatch(r"rs\d+", _rsid_src.strip(), re.IGNORECASE)
+        ):
+            arguments = dict(arguments, rsid=_rsid_src.strip())
+            arguments.pop("query", None)
         if not arguments.get("condition") and arguments.get("query"):
             arguments = dict(arguments, condition=arguments["query"])
+        # `variant` is the intuitive name for the variant filter (the schema
+        # calls it `variant_name`). Passing `variant` used to be silently
+        # dropped whenever a valid param like `gene` was also present, so
+        # {"gene":"KRAS","variant":"G12C"} returned ALL 599 KRAS variants
+        # instead of the 2 G12C ones -- a dangerous silent full-gene dump.
+        # Alias it, mirroring the gene_symbol/significance/query aliases above.
+        if not arguments.get("variant_name") and arguments.get("variant"):
+            arguments = dict(arguments, variant_name=arguments["variant"])
 
         params = {
             "db": "clinvar",
@@ -186,9 +219,45 @@ class ClinVarSearchVariants(ClinVarRESTTool):
 
         # Build search query
         query_parts = []
+        compound_clnsig = False
 
+        gene_hyphen_variant = None
         if "gene" in arguments:
-            query_parts.append(f"{arguments['gene']}[gene]")
+            # Fix-R10D-1: ClinVar's [gene] index only matches a bare HGNC
+            # symbol, but a natural clinical phrasing like "NF2 gene" (used
+            # verbatim in real research questions -- e.g. "look up the NF2
+            # gene") silently returns 0 results, since the literal trailing
+            # word "gene" becomes part of the queried string (confirmed
+            # live and via raw NCBI E-utils curl: "Nf2 gene[gene]" -> 0
+            # hits, "NF2[gene]" -> 2612 hits). Strip a trailing/leading
+            # "gene"/"protein" qualifier word before querying.
+            gene = re.sub(
+                r"^\s*(?:gene|protein)\s+|\s+(?:gene|protein)\s*$",
+                "",
+                arguments["gene"],
+                flags=re.IGNORECASE,
+            ).strip()
+
+            # Fix-R8B-1 (revised, Fix-R49A-1): some genes are informally
+            # hyphenated even though their current HGNC symbol has none (e.g.
+            # "BRCA-2" for "BRCA2", "HER-2" for "HER2" -- confirmed live via
+            # raw NCBI E-utils: "BRCA-2[gene]" -> 0 hits, "BRCA2[gene]" ->
+            # 21879 hits). R8B-1 originally handled this by unconditionally
+            # stripping every hyphen, but that silently broke every gene
+            # whose CURRENT official HGNC symbol genuinely contains one --
+            # confirmed live for the entire HLA family (HLA-B[gene] -> 130
+            # hits, HLAB[gene] -> 0), the NKX homeobox family (NKX2-5[gene]
+            # -> real hits, NKX25[gene] -> 0), and MT- mitochondrial genes
+            # (MT-ND1[gene] -> 194 hits, MTND1[gene] -> 0) -- all clinically
+            # significant gene families (HLA pharmacogenomics/transplant,
+            # NKX cardiac/pancreatic development, MT- mitochondrial disease).
+            # Query with the hyphen preserved first; only fall back to the
+            # stripped form if that returns zero results, so both the old
+            # informally-hyphenated-name case and genuinely-hyphenated
+            # official symbols work.
+            if "-" in gene:
+                gene_hyphen_variant = gene.replace("-", "")
+            query_parts.append(f"{gene}[gene]")
 
         if "condition" in arguments:
             # Feature-70B-005: [disease/phenotype] is not a valid ClinVar eSearch field.
@@ -199,19 +268,158 @@ class ClinVarSearchVariants(ClinVarRESTTool):
                 condition = f'"{condition}"'
             query_parts.append(f"{condition}[dis]")
 
+        if arguments.get("rsid"):
+            # Search a dbSNP rsID as a bare free-text term -- ClinVar matches it
+            # across the record (not via [dis]/[gene]/[Variant name]).
+            query_parts.append(str(arguments["rsid"]).strip())
+
         if "variant_id" in arguments:
             # Feature-70B-004: [variant_id] is not recognized by ClinVar eSearch.
             # Use [uid] to look up by numeric variation ID.
             query_parts.append(f"{arguments['variant_id']}[uid]")
 
+        if arguments.get("variant_name"):
+            # Fix-R78B-1: the Fix-R5D-1/R8C-1 comment above assumed there was
+            # "no such parameter" -- but ClinVar eSearch DOES support a real
+            # [Variant name] field tag (confirmed live: "HBB[gene] AND
+            # Glu7Val[Variant name]" -> 9 hits including VCV 15333, the
+            # canonical sickle-cell NM_000518.5(HBB):c.20A>T (p.Glu7Val)
+            # Pathogenic record). Without this, an exact-match lookup for a
+            # specific protein change/HGVS notation could only be done by
+            # fetching gene-level rows (capped at 100) and filtering
+            # client-side -- which silently misses old/low-ID records in any
+            # variant-dense gene, since ClinVar's default gene-level order
+            # isn't clinical-significance- or fame-ranked (confirmed live:
+            # HBB's own sickle-cell record, one of the best-known variants in
+            # human genetics, isn't within the first 100 or even the first
+            # 425-Pathogenic-filtered gene-level rows). Accepts either a
+            # single name or a list (a multi-allelic site yields one protein
+            # change per allele; only the queried allele's name will hit, so
+            # every candidate must be tried) -- combined with OR so one
+            # request covers all candidates.
+            names = arguments["variant_name"]
+            names = names if isinstance(names, list) else [names]
+            names = [str(n).strip() for n in names if str(n).strip()]
+            # An rsID passed as variant_name (e.g. rs776746) belongs in a bare
+            # free-text search, not the [Variant name] field, which returns 0 for
+            # it -- route it like the rsid param instead of a false-empty.
+            rsid_names = [n for n in names if re.fullmatch(r"rs\d+", n, re.IGNORECASE)]
+            names = [n for n in names if n not in rsid_names]
+            for _rs in rsid_names:
+                query_parts.append(_rs)
+            # NCBI's [Variant name] index mangles the '.' in an unquoted HGVS
+            # reference prefix ('p.Glu342Lys' -> 'p0x2eGlu342Lys') and matches
+            # nothing, so a clinician typing standard HGVS got a silent
+            # false-empty. Stripping the prefix fixed the protein case, but
+            # Fix-R3-07: it silently BROKE the coding case, because c. notation
+            # also carries '+'/'>' that Entrez only treats literally inside
+            # quotes. Confirmed live -- there is no single spelling that works
+            # for both:
+            #     DPYD "c.1905+1G>A"[Variant name] -> 1 ; "1905+1G>A" -> 0
+            #     SERPINA1 "p.Glu342Lys"    -> 0 ; "Glu342Lys"  -> 2
+            # so `tu run ClinVar_search_variants '{"gene":"DPYD",
+            # "variant_name":"c.1905+1G>A"}'` reported total_count 0 for
+            # VCV000000432, one of the best-known pharmacogenomic variants.
+            # Emit BOTH spellings, quoted, OR'd together: an OR can only add
+            # matches the old query missed, never drop ones it already found.
+            # Verified live: DPYD c.1905+1G>A 0->1, CYP2C19 c.681G>A 0->36,
+            # SERPINA1 p.Glu342Lys still 2, HBB p.Glu7Val still 9.
+            spellings = []
+            for name in names:
+                stripped = re.sub(r"(?i)^[pcgmnor]\.", "", name)
+                for form in (name, stripped):
+                    # Strip embedded quotes so they cannot break out of the
+                    # quoted Entrez term.
+                    form = form.replace('"', "").strip()
+                    if form and form not in spellings:
+                        spellings.append(form)
+            if spellings:
+                terms = " OR ".join(f'"{s}"[Variant name]' for s in spellings)
+                query_parts.append(f"({terms})" if len(spellings) > 1 else terms)
+
         if "clinical_significance" in arguments:
             # Feature-82A-002: NCBI silently translates [clnsig] to [All Fields],
             # returning unrelated variants. The correct syntax is the [Filter] field:
             # "clinsig pathogenic"[Filter] which properly restricts to the clinsig index.
-            clnsig = arguments["clinical_significance"].lower().replace("_", " ")
-            query_parts.append(f'"clinsig {clnsig}"[Filter]')
+            #
+            # Fix-R6C-1: that [Filter] form only indexes single-word clinsig
+            # values -- confirmed live that "clinsig risk factor"[Filter] and
+            # "clinsig likely pathogenic"[Filter] both silently return 0
+            # results even though matching variants exist (e.g. HFE C282Y,
+            # whose own classification literally contains "risk factor").
+            # ClinVar separately indexes compound values via clinsig_<value
+            # with underscores>[prop] (confirmed live for risk_factor and
+            # likely_pathogenic). OR both forms so single-word values keep
+            # using the already-verified [Filter] path while compound values
+            # fall through to the [prop] path -- this can only add matches
+            # the old query missed, never drop ones it already found.
+            # A COMPOUND aggregate class like "Pathogenic/Likely pathogenic" has
+            # no single NCBI clinsig token -- the slash breaks BOTH the [Filter]
+            # phrase and the [prop] token, so the old query silently returned 0
+            # even though the tool's OWN get_clinical_significance emits that exact
+            # value. Treat "/" as OR and expand to the individual clinsig classes
+            # (the clinically-actionable union), each via the proven
+            # [Filter]-OR-[prop] path.
+            _raw_clnsig = str(arguments["clinical_significance"])
+            _components = [c.strip() for c in _raw_clnsig.split("/") if c.strip()]
+            compound_clnsig = len(_components) > 1
+            _clauses = []
+            for _comp in _components:
+                _c = _comp.lower().replace("_", " ")
+                _c_prop = _c.replace(" ", "_")
+                _forms = f'"clinsig {_c}"[Filter] OR clinsig_{_c_prop}[prop]'
+                # Some classes index under a different NCBI token (e.g. VUS);
+                # OR it in so a valid class is never a silent false-empty.
+                _alias = _CLINSIG_PROP_ALIASES.get(_c)
+                if _alias:
+                    _forms += f" OR clinsig_{_alias}[prop]"
+                _clauses.append(f"({_forms})")
+            if _clauses:
+                query_parts.append(
+                    "(" + " OR ".join(_clauses) + ")"
+                    if len(_clauses) > 1
+                    else _clauses[0]
+                )
+
+        # Fix-R5D-1/R8C-1: a caller-supplied param that doesn't match any
+        # recognized name/alias (e.g. "gene_name" instead of "gene") was
+        # silently dropped. (Fix-R78B-1: "variant_name" -- originally called
+        # out here as "no such parameter" -- is now a real, supported param;
+        # see above.) When it's the ONLY param supplied, this
+        # produced a generic "at least one search parameter is required"
+        # error with no hint the parameter itself was misnamed. When OTHER
+        # valid params are also supplied, the query still runs but silently
+        # ignores the unrecognized one -- confirmed live that
+        # {"gene": "GJB2", "made_up_param": "35delG"} returns all 739 GJB2
+        # variants with no indication the made_up_param filter had zero
+        # effect. Name unrecognized parameter(s) in both cases.
+        recognized = {
+            "gene",
+            "gene_symbol",
+            "condition",
+            "query",
+            "variant_id",
+            "variant_name",
+            "variant",
+            "rsid",
+            "clinical_significance",
+            "significance",
+            "max_results",
+            "limit",
+        }
+        unrecognized = sorted(set(arguments) - recognized)
 
         if not query_parts:
+            if unrecognized:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Unrecognized parameter(s): {', '.join(unrecognized)}. "
+                        "Valid search parameters: gene (or gene_symbol), "
+                        "condition (or query), variant_id, variant_name, "
+                        "clinical_significance (or significance)."
+                    ),
+                }
             return {
                 "status": "error",
                 "error": "At least one search parameter is required",
@@ -227,6 +435,48 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         data = result.get("data", {})
         if "esearchresult" not in data:
             return result
+
+        # Fix-R49A-1: the hyphen-preserved gene query above found nothing --
+        # retry once with the hyphen stripped, for the informally-hyphenated
+        # BRCA-2/HER-2-style names ClinVar's index doesn't recognize.
+        if gene_hyphen_variant and int(data["esearchresult"].get("count", 0)) == 0:
+            # "gene" is always the first query part appended when present.
+            fallback_query_parts = [f"{gene_hyphen_variant}[gene]"] + query_parts[1:]
+            fallback_params = dict(params, term=" AND ".join(fallback_query_parts))
+            fallback_result = self._make_request(self.endpoint, fallback_params)
+            if (
+                fallback_result.get("status") == "success"
+                and "esearchresult" in fallback_result.get("data", {})
+                and int(fallback_result["data"]["esearchresult"].get("count", 0)) > 0
+            ):
+                result = fallback_result
+                data = result["data"]
+
+        # Fix-R62A-1: some gene symbols are HGNC-deprecated/renamed entirely,
+        # not just informally hyphenated -- e.g. "GBA" (glucocerebrosidase,
+        # Gaucher disease) was renamed to "GBA1" in 2023 to disambiguate from
+        # the GBA2/GBA3 gene family, and ClinVar's own [gene] index has fully
+        # absorbed the rename with no backward-compat alias (confirmed live
+        # and via raw NCBI E-utils: "GBA[gene]" -> 0 hits, not even recognized
+        # as a search phrase; "GBA1[gene]" -> 786 hits). Unlike the hyphen
+        # case above, no string transform recovers the current symbol --
+        # resolve it via NCBI's own gene database (which tracks "GBA" as an
+        # alias of gene ID 2629, current official symbol "GBA1") instead of
+        # hardcoding a growing alias list.
+        if "gene" in arguments and int(data["esearchresult"].get("count", 0)) == 0:
+            resolved_gene = self._resolve_deprecated_gene_symbol(gene)
+            if resolved_gene and resolved_gene.upper() != gene.upper():
+                resolved_query_parts = [f"{resolved_gene}[gene]"] + query_parts[1:]
+                resolved_params = dict(params, term=" AND ".join(resolved_query_parts))
+                resolved_result = self._make_request(self.endpoint, resolved_params)
+                if (
+                    resolved_result.get("status") == "success"
+                    and "esearchresult" in resolved_result.get("data", {})
+                    and int(resolved_result["data"]["esearchresult"].get("count", 0))
+                    > 0
+                ):
+                    result = resolved_result
+                    data = result["data"]
 
         esearch = data["esearchresult"]
         ids = esearch.get("idlist", [])
@@ -257,16 +507,55 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             }.items()
             if v is not None
         }
-        return {
-            "status": "success",
-            "data": {
-                "total_count": count,
-                "variant_ids": ids,
-                "variants": variants,
-                "query_translation": esearch.get("querytranslation", ""),
-                "search_params": search_params,
-            },
+        response_data = {
+            "total_count": count,
+            "variant_ids": ids,
+            "variants": variants,
+            "query_translation": esearch.get("querytranslation", ""),
+            "search_params": search_params,
         }
+        if unrecognized:
+            response_data["ignored_parameters"] = unrecognized
+        if compound_clnsig:
+            response_data["clinical_significance_note"] = (
+                "The '/' in the requested clinical_significance was treated as OR: "
+                "results are the union of the individual classes (e.g. Pathogenic "
+                "AND Likely pathogenic), which is broader than only the aggregate "
+                "'Pathogenic/Likely pathogenic' review class."
+            )
+        return {"status": "success", "data": response_data}
+
+    def _resolve_deprecated_gene_symbol(self, gene: str) -> Optional[str]:
+        """Look up `gene` in NCBI's own gene database (which tracks
+        deprecated/previous symbols as aliases, e.g. "GBA" -> current
+        official symbol "GBA1") and return its current official symbol.
+        Best-effort: returns None on any failure or if no gene is found,
+        never raises -- this is a fallback, not a hard requirement."""
+        try:
+            search_result = self._make_request(
+                "/esearch.fcgi",
+                {
+                    "db": "gene",
+                    "term": f"{gene}[sym] AND human[orgn]",
+                    "retmode": "json",
+                },
+            )
+            if search_result.get("status") != "success":
+                return None
+            ids = (
+                search_result.get("data", {}).get("esearchresult", {}).get("idlist", [])
+            )
+            if not ids:
+                return None
+            summary_result = self._make_request(
+                "/esummary.fcgi", {"db": "gene", "id": ids[0], "retmode": "json"}
+            )
+            if summary_result.get("status") != "success":
+                return None
+            gene_data = summary_result.get("data", {}).get("result", {}).get(ids[0], {})
+            return gene_data.get("name") or None
+        except Exception:
+            return None
 
 
 @register_tool("ClinVarGetVariantDetails")
@@ -290,7 +579,16 @@ class ClinVarGetVariantDetails(ClinVarRESTTool):
         variant_data = fetch["variant_data"]
         result = fetch["result"]
         result["variant_id"] = variant_id
-        result["formatted_data"] = {
+        # Fix-R8E-1/R6C-2: assign the formatted payload *over* `result["data"]`
+        # (the full, unprocessed esummary envelope from _make_request) instead
+        # of publishing it alongside under a second key. Keeping both roughly
+        # tripled payload size for no informational gain and made this tool's
+        # output nearly indistinguishable from ClinVarGetClinicalSignificance's,
+        # which had the identical duplication. Overwriting preserves that
+        # de-duplication -- raw access remains at data["raw_data"] -- while
+        # delivering the payload under the `data` key the return_schema
+        # declares and every other tool in the registry uses.
+        result["data"] = {
             "variant_id": variant_id,
             "accession": variant_data.get("accession", ""),
             "obj_type": variant_data.get("obj_type", ""),
@@ -335,7 +633,11 @@ class ClinVarGetClinicalSignificance(ClinVarRESTTool):
         clinical_impact = variant_data.get("clinical_impact_classification", {})
         oncogenicity = variant_data.get("oncogenicity_classification", {})
 
-        result["formatted_data"] = {
+        # Fix-R8E-1/R6C-2: see the matching fix in ClinVarGetVariantDetails --
+        # assigning over `result["data"]` (the raw esummary envelope) both
+        # de-duplicates the payload and honours the `data` key declared in the
+        # return_schema. Raw access remains at data["raw_data"].
+        result["data"] = {
             "variant_id": variant_id,
             "germline_classification": {
                 "description": germline_class.get("description", ""),

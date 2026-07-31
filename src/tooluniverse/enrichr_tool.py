@@ -4,6 +4,9 @@ import urllib.parse
 import networkx as nx
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .logging_config import get_logger
+
+logger = get_logger("EnrichrTool")
 
 
 @register_tool("EnrichrTool")
@@ -11,6 +14,16 @@ class EnrichrTool(BaseTool):
     """
     Tool to perform gene enrichment analysis using Enrichr.
     """
+
+    # Default enrichment libraries used when the caller does not specify any
+    # (or passes an empty list).
+    DEFAULT_LIBS = [
+        "WikiPathways_2024_Human",
+        "Reactome_Pathways_2024",
+        "MSigDB_Hallmark_2020",
+        "GO_Molecular_Function_2023",
+        "GO_Biological_Process_2023",
+    ]
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
@@ -21,22 +34,24 @@ class EnrichrTool(BaseTool):
     def run(self, arguments):
         """Main entry point for the tool."""
         genes = arguments.get("gene_list")
-        libs = arguments.get(
-            "libs",
-            [
-                "WikiPathways_2024_Human",
-                "Reactome_Pathways_2024",
-                "MSigDB_Hallmark_2020",
-                "GO_Molecular_Function_2023",
-                "GO_Biological_Process_2023",
-            ],
-        )
+        # ``libs`` defaults to a broad set of pathway/ontology libraries. An
+        # explicitly-supplied empty list (e.g. ``"libs": []``) is treated as
+        # "use the default" rather than "query nothing" -- otherwise a valid
+        # call would silently return an empty enrichment wrapped in success.
+        libs = arguments.get("libs") or self.DEFAULT_LIBS
         connected_path, connections = self.enrichr_api(genes, libs)
-        # Convert to JSON string for schema compatibility
-        import json
-
-        result = {"connected_paths": connected_path, "connections": connections}
-        return {"status": "success", "data": json.dumps(result, indent=2)}
+        return {
+            "status": "success",
+            "data": {
+                "connected_paths": connected_path,
+                "connections": connections,
+            },
+            "metadata": {
+                "source": "Enrichr (maayanlab.cloud)",
+                "libraries": list(libs),
+                "gene_count": len(genes) if genes else 0,
+            },
+        }
 
     def get_official_gene_name(self, gene_name):
         """
@@ -52,7 +67,7 @@ class EnrichrTool(BaseTool):
         encoded_gene_name = urllib.parse.quote(gene_name)
         url = f"https://mygene.info/v3/query?q={encoded_gene_name}&fields=symbol,alias&species=human"
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=30)
         if response.status_code != 200:
             return f"Error querying MyGene.info API: {response.status_code}"
 
@@ -65,16 +80,18 @@ class EnrichrTool(BaseTool):
         for hit in hits:
             symbol = hit.get("symbol", "")
             if symbol.upper() == gene_name.upper():
-                print(
-                    f"[enrichr_api] Using the official gene name: '{symbol}' instead of {gene_name}",
-                    flush=True,
+                logger.debug(
+                    "[enrichr_api] Using the official gene name: '%s' instead of %s",
+                    symbol,
+                    gene_name,
                 )
                 return symbol
             aliases = hit.get("alias", [])
             if any(gene_name.upper() == alias.upper() for alias in aliases):
-                print(
-                    f"[enrichr_api] Using the official gene name: '{symbol}' instead of {gene_name}",
-                    flush=True,
+                logger.debug(
+                    "[enrichr_api] Using the official gene name: '%s' instead of %s",
+                    symbol,
+                    gene_name,
                 )
                 return symbol
 
@@ -82,9 +99,10 @@ class EnrichrTool(BaseTool):
         top_hit = hits[0]
         symbol = top_hit.get("symbol", None)
         if symbol:
-            print(
-                f"[enrichr_api] Using the official gene name: '{symbol}' instead of {gene_name}",
-                flush=True,
+            logger.debug(
+                "[enrichr_api] Using the official gene name: '%s' instead of %s",
+                symbol,
+                gene_name,
             )
             return symbol
         else:
@@ -104,7 +122,7 @@ class EnrichrTool(BaseTool):
             "list": (None, gene_list),
             "description": (None, f"Gene list for {gene_list}"),
         }
-        response = requests.post(self.enrichr_url, files=payload)
+        response = requests.post(self.enrichr_url, files=payload, timeout=30)
 
         if not response.ok:
             return "Error submitting gene list to Enrichr"
@@ -123,7 +141,7 @@ class EnrichrTool(BaseTool):
             dict: The enrichment results.
         """
         query_string = f"?userListId={user_list_id}&backgroundType={library}"
-        response = requests.get(self.enrichment_url + query_string)
+        response = requests.get(self.enrichment_url + query_string, timeout=60)
 
         if not response.ok:
             return f"Error fetching enrichment results for {library}"
@@ -221,7 +239,7 @@ class EnrichrTool(BaseTool):
         """
         # Convert each gene to its official name and log the result
         genes = [self.get_official_gene_name(gene) for gene in genes]
-        print("Official gene names:", genes)
+        logger.debug("Official gene names: %s", genes)
 
         # Ensure at least two genes are provided for path ranking
         if len(genes) < 2:
@@ -259,13 +277,14 @@ class EnrichrTool(BaseTool):
 
         # Check for empty outputs and print helper messages
         if not connected_path:
-            print(
-                f"[Enrichr] No ranked paths were found between the gene pair {genes}."
+            logger.debug(
+                "[Enrichr] No ranked paths were found between the gene pair %s.", genes
             )
 
         if not connections:
-            print(
-                f"[Enrichr] No connection between genes and terms in the enriched graph of {genes}."
+            logger.debug(
+                "[Enrichr] No connection between genes and terms in the enriched graph of %s.",
+                genes,
             )
 
         return connected_path, connections

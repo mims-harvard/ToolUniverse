@@ -35,55 +35,40 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "allele": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "allele": {
-                  "type": "string"
-                },
-                "mhc_class": {
-                  "type": "string"
-                },
-                "peptides": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "peptide": {
-                        "type": "string"
-                      },
-                      "core": {
-                        "type": "string"
-                      }
-                    }
+            "mhc_class": {
+              "type": "string"
+            },
+            "peptides": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "peptide": {
+                    "type": "string"
+                  },
+                  "core": {
+                    "type": "string"
                   }
-                },
-                "sequence": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "sequence": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "required": [
-            "status",
-            "data"
+            "allele"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }

@@ -15,7 +15,7 @@ from .llm_clients import AzureOpenAIClient, GeminiClient, OpenRouterClient, VLLM
 DEFAULT_FALLBACK_CHAIN = [
     {"api_type": "CHATGPT", "model_id": "gpt-4o-1120"},
     {"api_type": "OPENROUTER", "model_id": "openai/gpt-4o"},
-    {"api_type": "GEMINI", "model_id": "gemini-2.0-flash"},
+    {"api_type": "GEMINI", "model_id": "gemini-3.6-flash"},
 ]
 
 # API key environment variable mapping
@@ -43,6 +43,17 @@ class AgenticTool(BaseTool):
             raise ValueError(
                 f"Expected numeric TOOLUNIVERSE_LLM_TEMPERATURE, got: {value!r}"
             ) from exc
+
+    @staticmethod
+    def _parse_bool_env(value: Optional[str]) -> Optional[bool]:
+        if value is None:
+            return None
+        normalized = value.strip().lower()
+        if normalized in {"1", "true", "yes", "on"}:
+            return True
+        if normalized in {"0", "false", "no", "off"}:
+            return False
+        raise ValueError(f"Expected boolean environment value, got: {value!r}")
 
     @staticmethod
     def has_any_api_keys() -> bool:
@@ -103,6 +114,10 @@ class AgenticTool(BaseTool):
                 env_value = self._parse_float_env(
                     os.getenv("TOOLUNIVERSE_LLM_TEMPERATURE")
                 )
+            elif key == "return_json":
+                env_value = self._parse_bool_env(
+                    os.getenv("TOOLUNIVERSE_LLM_RETURN_JSON")
+                )
 
             mode = os.getenv("TOOLUNIVERSE_LLM_CONFIG_MODE", "default")
 
@@ -149,7 +164,7 @@ class AgenticTool(BaseTool):
         # Gemini model configuration (optional; env override)
         self._gemini_model_id: str = get_config(
             "gemini_model_id",
-            __import__("os").getenv("GEMINI_MODEL_ID", "gemini-2.0-flash"),
+            __import__("os").getenv("GEMINI_MODEL_ID", "gemini-3.6-flash"),
         )
 
         # Validation
@@ -333,6 +348,34 @@ class AgenticTool(BaseTool):
                 f"Unsupported API type: {self._api_type}. Supported types: {supported_api_types}"
             )
 
+    def _execution_model_info(self) -> Dict[str, Any]:
+        """Return metadata for the model and parameters used for this execution."""
+        api_type = self._current_api_type or self._api_type
+        model_id = self._current_model_id or self._model_id
+        model_info = {
+            "api_type": api_type,
+            "model_id": model_id,
+            "temperature": self._temperature,
+        }
+
+        accepts_sampling_parameters = getattr(
+            self._llm_client, "_accepts_sampling_parameters", None
+        )
+        if (
+            api_type == "GEMINI"
+            and callable(accepts_sampling_parameters)
+            and not accepts_sampling_parameters()
+        ):
+            model_info.update(
+                {
+                    "temperature": None,
+                    "configured_temperature": self._temperature,
+                    "sampling_parameters_omitted": True,
+                }
+            )
+
+        return model_info
+
     # ------------------------------------------------------------------ public API --------------
     def run(
         self,
@@ -455,11 +498,7 @@ class AgenticTool(BaseTool):
                         "input_arguments": {
                             arg: arguments.get(arg) for arg in self._input_arguments
                         },
-                        "model_info": {
-                            "api_type": self._api_type,
-                            "model_id": self._model_id,
-                            "temperature": self._temperature,
-                        },
+                        "model_info": self._execution_model_info(),
                         "execution_time_seconds": execution_time,
                         "timestamp": start_time.isoformat(),
                     },
@@ -485,11 +524,7 @@ class AgenticTool(BaseTool):
                         "input_arguments": {
                             arg: arguments.get(arg) for arg in self._input_arguments
                         },
-                        "model_info": {
-                            "api_type": self._api_type,
-                            "model_id": self._model_id,
-                            "temperature": self._temperature,
-                        },
+                        "model_info": self._execution_model_info(),
                         "execution_time_seconds": execution_time,
                         "timestamp": start_time.isoformat(),
                     },
@@ -509,11 +544,7 @@ class AgenticTool(BaseTool):
                         "input_arguments": {
                             arg: arguments.get(arg) for arg in self._input_arguments
                         },
-                        "model_info": {
-                            "api_type": self._api_type,
-                            "model_id": self._model_id,
-                            "temperature": self._temperature,
-                        },
+                        "model_info": self._execution_model_info(),
                         "execution_time_seconds": execution_time,
                     },
                 )

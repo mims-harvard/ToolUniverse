@@ -98,6 +98,15 @@ class PubChemToxTool(BaseTool):
 
         url = f"{PUG_BASE_URL}/name/{compound_name}/cids/JSON"
         response = requests.get(url, timeout=self.timeout)
+        # PubChem's name->CID lookup itself 404s when the name doesn't
+        # resolve at all (confirmed live) -- raise that as a distinct
+        # ValueError here, before it can reach run()'s generic
+        # HTTPError(404) handler, which otherwise conflates "compound name
+        # never resolved" with "compound resolved fine but this specific
+        # toxicity heading is absent for it" into the identical misleading
+        # "This heading may not exist for this compound" message.
+        if response.status_code == 404:
+            raise ValueError(f"No compound found for name: {compound_name}")
         response.raise_for_status()
         data = response.json()
         cids = data.get("IdentifierList", {}).get("CID", [])
@@ -126,21 +135,28 @@ class PubChemToxTool(BaseTool):
     def _extract_info_from_sections(
         self, sections: List[Dict], heading: str
     ) -> List[Dict]:
-        """Find sections matching heading recursively and extract their Information entries."""
+        """Find sections matching heading recursively and extract their Information entries.
+
+        PubChem packs every statement of one notification group into a single
+        Information entry holding N StringWithMarkup elements, so reading only
+        element 0 dropped the rest. Because GHS codes are ordered numerically
+        and physical hazards (H2xx) sort ahead of health hazards (H3xx), that
+        systematically discarded carcinogenicity and mutagenicity: benzene came
+        back as H225/H401 -- flammable and toxic to aquatic life -- with H350
+        "May cause cancer" among the fourteen statements silently lost.
+        """
         matched = self._find_sections_recursive(sections, heading)
         results = []
         for section in matched:
             for info in section.get("Information", []):
                 name = info.get("Name", "")
                 val = info.get("Value", {})
-                sws = val.get("StringWithMarkup", [])
-                if sws:
-                    text = sws[0].get("String", "")
-                    markups = sws[0].get("Markup", [])
+                for sw in val.get("StringWithMarkup", []):
+                    markups = sw.get("Markup", [])
                     extras = [m.get("Extra", "") for m in markups if m.get("Extra")]
                     entry = {
                         "name": name,
-                        "value": self._strip_html(text),
+                        "value": self._strip_html(sw.get("String", "")),
                     }
                     if extras:
                         entry["pictogram_labels"] = extras

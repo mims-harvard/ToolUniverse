@@ -146,11 +146,30 @@ class MGnifyExpandedTool(BaseTool):
         params["page"] = page
         params["page_size"] = page_size
 
-        if "taxonomy" in arguments:
-            params["lineage"] = arguments["taxonomy"]
+        # Fix-R4A-1: the /genomes endpoint filters on `taxon_lineage`, not
+        # `lineage`. MGnify drops unknown query params rather than erroring, so
+        # sending `lineage` returned the ENTIRE unfiltered catalogue as a
+        # success -- confirmed live that taxonomy="Bacteroides",
+        # taxonomy="COMPLETELY_BOGUS_XYZ" and no taxonomy at all all returned
+        # the same 56,782 genomes, while ?taxon_lineage=Bacteroides upstream
+        # returns the correct 136.
+        if arguments.get("taxonomy"):
+            params["taxon_lineage"] = arguments["taxonomy"]
 
-        if "genome_type" in arguments:
-            params["genome_type"] = arguments["genome_type"]
+        # ...and `genome_type` has no working equivalent on this endpoint at
+        # all: ?genome_type=, ?type= and ?genome-type= each return the full
+        # 56,782. Rather than accept the filter and ignore it, fail closed and
+        # point at the per-genome `type` field callers can filter on instead.
+        if arguments.get("genome_type"):
+            return {
+                "status": "error",
+                "error": (
+                    "The MGnify /genomes endpoint does not support filtering by "
+                    "genome_type; passing it would silently return the entire "
+                    "unfiltered catalogue. Omit genome_type and filter the "
+                    "returned records on their 'type' field instead."
+                ),
+            }
 
         url = f"{MGNIFY_BASE_URL}/genomes"
         response = requests.get(url, params=params, timeout=self.timeout)
@@ -336,6 +355,17 @@ class MGnifyExpandedTool(BaseTool):
     def _format_sample(item: Dict[str, Any]) -> Dict[str, Any]:
         """Flatten a MGnify sample JSON:API record into a metadata row."""
         attrs = item.get("attributes", {}) if isinstance(item, dict) else {}
+        # attributes["environment-biome"] is null for most samples (confirmed
+        # live); the real per-sample biome path lives in the sample's own
+        # "biome" relationship instead (e.g. "root:Host-associated:Human:
+        # Digestive system:Large intestine"), which the list endpoint already
+        # includes per item -- fall back to it rather than dropping the tag
+        # entirely.
+        biome_rel = (
+            (item.get("relationships") or {}).get("biome", {}).get("data") or {}
+            if isinstance(item, dict)
+            else {}
+        )
         return {
             "sample_accession": item.get("id"),
             "biosample": attrs.get("biosample"),
@@ -348,7 +378,7 @@ class MGnifyExpandedTool(BaseTool):
             "collection_date": attrs.get("collection-date"),
             "host_tax_id": attrs.get("host-tax-id"),
             "species": attrs.get("species"),
-            "environment_biome": attrs.get("environment-biome"),
+            "environment_biome": attrs.get("environment-biome") or biome_rel.get("id"),
             "environment_feature": attrs.get("environment-feature"),
             "environment_material": attrs.get("environment-material"),
             "last_update": attrs.get("last-update"),

@@ -31,36 +31,47 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "classId": {"type": "string"},
-                  "className": {"type": "string"},
-                  "classType": {"type": "string"},
-                  "rxcui": {"type": "string"},
-                  "drugName": {"type": "string"},
-                  "tty": {"type": "string"},
-                  "rela": {"type": "string"},
-                  "relaSource": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "classId": {
+                "type": "string"
+              },
+              "className": {
+                "type": "string"
+              },
+              "classType": {
+                "type": "string"
+              },
+              "rxcui": {
+                "type": "string"
+              },
+              "drugName": {
+                "type": "string"
+              },
+              "tty": {
+                "type": "string"
+              },
+              "rela": {
+                "type": "string"
+              },
+              "relaSource": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -102,31 +113,32 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rxcui": {"type": "string"},
-                  "name": {"type": "string"},
-                  "tty": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rxcui": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "tty": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -163,31 +175,32 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "classId": {"type": "string"},
-                  "className": {"type": "string"},
-                  "classType": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "classId": {
+                "type": "string"
+              },
+              "className": {
+                "type": "string"
+              },
+              "classType": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -223,56 +236,72 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "nodes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "classId": {"type": "string"},
-                      "className": {"type": "string"},
-                      "classType": {"type": "string"}
-                    }
-                  }
-                },
-                "edges": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "child": {"type": "string"},
-                      "rela": {"type": "string"},
-                      "parent": {"type": "string"}
-                    }
-                  }
-                },
-                "ancestor_path": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "classId": {"type": "string"},
-                      "className": {"type": "string"},
-                      "classType": {"type": "string"}
-                    }
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "classId": {
+                    "type": "string"
+                  },
+                  "className": {
+                    "type": "string"
+                  },
+                  "classType": {
+                    "type": "string"
                   }
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "edges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "child": {
+                    "type": "string"
+                  },
+                  "rela": {
+                    "type": "string"
+                  },
+                  "parent": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "ancestor_path": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "classId": {
+                    "type": "string"
+                  },
+                  "className": {
+                    "type": "string"
+                  },
+                  "classType": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "nodes"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -318,36 +347,47 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "classId": {"type": "string"},
-                  "className": {"type": "string"},
-                  "classType": {"type": "string"},
-                  "rela": {"type": "string"},
-                  "rxcui": {"type": "string"},
-                  "drugName": {"type": "string"},
-                  "name": {"type": "string"},
-                  "tty": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "classId": {
+                "type": "string"
+              },
+              "className": {
+                "type": "string"
+              },
+              "classType": {
+                "type": "string"
+              },
+              "rela": {
+                "type": "string"
+              },
+              "rxcui": {
+                "type": "string"
+              },
+              "drugName": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "tty": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

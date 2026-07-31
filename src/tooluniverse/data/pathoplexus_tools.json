@@ -54,41 +54,25 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Aggregated sequence counts",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -162,41 +146,25 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Characteristic mutations",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -249,28 +217,25 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Per-sequence metadata rows",
-                    "properties": {
-                        "status": {"type": "string"},
-                        "data": {
-                            "type": "array",
-                            "items": {"type": "object"}
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["status", "data"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {"type": "string"}
-                    },
-                    "required": ["error"]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -322,31 +287,33 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "FASTA sequence payload",
-                    "properties": {
-                        "status": {"type": "string"},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "fasta": {"type": "string"},
-                                "num_records": {"type": "integer"}
-                            }
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["status", "data"]
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "fasta": {
+                  "type": "string"
                 },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {"type": "string"}
-                    },
-                    "required": ["error"]
+                "num_records": {
+                  "type": "integer"
                 }
-            ]
+              },
+              "required": [
+                "fasta"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

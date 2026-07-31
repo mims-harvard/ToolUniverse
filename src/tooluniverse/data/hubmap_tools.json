@@ -415,96 +415,81 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "uuid": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "uuid": {
-                  "type": "string"
-                },
-                "ancestor_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "lineage": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "entity_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "hubmap_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "uuid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "sample_category": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "organ": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "dataset_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "group_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "ancestor_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "lineage": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hubmap_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "uuid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sample_category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "organ": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "dataset_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "group_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "uuid"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

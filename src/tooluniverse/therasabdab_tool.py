@@ -17,6 +17,7 @@ Website: https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/therasabdab/
 
 import requests
 from typing import Dict, Any, List, Optional
+import html as html_lib
 import re
 from urllib.parse import urlparse, parse_qs
 from .base_tool import BaseTool
@@ -230,8 +231,8 @@ class TheraSAbDabTool(BaseTool):
                 def clean_html(text):
                     # Remove HTML tags
                     clean = re.sub(r"<[^>]+>", "", text)
-                    # Decode entities
-                    clean = clean.replace("&nbsp;", " ").strip()
+                    # Decode entities (named and numeric, e.g. &amp; &#39; &nbsp;)
+                    clean = html_lib.unescape(clean).replace("\xa0", " ").strip()
                     return clean
 
                 therapeutic = {
@@ -374,15 +375,34 @@ class TheraSAbDabTool(BaseTool):
             # Load all therapeutics and filter by target
             all_therapeutics = self._load_all_therapeutics()
 
-            # Filter by target (case-insensitive, hyphen-normalized)
-            # TheraSAbDab stores targets as "PDCD1/CD279/PD1" (no hyphens)
+            # Filter by target (case-insensitive, hyphen-normalized, exact
+            # alias match).
+            # Fix-R17D-1: TheraSAbDab stores targets as e.g.
+            # "PDCD1/CD279/PD1" (multiple aliases, "/"-joined) or, for
+            # bispecifics, "LAG3/CD223;PDCD1/CD279/PD1" (";"-joined target
+            # groups) -- confirmed live that plain substring containment
+            # matched "pd1" inside "entpd1" (ENTPD1/CD39, an unrelated
+            # target), silently polluting a PD-1 search with CD39
+            # antibodies. Split the stored target string into individual
+            # alias tokens and require an exact (not substring) match
+            # against one of them.
             target_lower = target.lower()
             target_nohyphen = target_lower.replace("-", "")
+
+            def _target_aliases(raw_target: Optional[str]) -> set:
+                aliases = set()
+                for part in re.split(r"[;/]", raw_target or ""):
+                    part = part.strip().lower()
+                    if part:
+                        aliases.add(part)
+                        aliases.add(part.replace("-", ""))
+                return aliases
+
+            query_aliases = {target_lower, target_nohyphen}
             filtered = [
                 t
                 for t in all_therapeutics
-                if target_lower in (t.get("target") or "").lower()
-                or target_nohyphen in (t.get("target") or "").lower().replace("-", "")
+                if query_aliases & _target_aliases(t.get("target"))
             ]
 
             return {

@@ -1,4 +1,5 @@
 import asyncio
+import json
 import sys
 import types
 
@@ -183,7 +184,7 @@ async def test_smcp_tool_emits_stream_logs():
     tool_config = tu.all_tool_dict[config["name"]]
     smcp._create_mcp_tool_from_tooluniverse(tool_config)
 
-    mcp_tool = await smcp._tool_manager.get_tool(config["name"])
+    mcp_tool = await smcp.get_tool(config["name"])
     dynamic_fn = mcp_tool.fn
 
     ctx = _DummyCtx()
@@ -196,5 +197,5 @@ async def test_smcp_tool_emits_stream_logs():
     # Allow thread-safe callbacks to finish
     await asyncio.sleep(0)
 
-    assert result == "log-1log-2"
+    assert json.loads(result) == {"result": "log-1log-2"}
     assert ctx.messages == ["log-1", "log-2"]

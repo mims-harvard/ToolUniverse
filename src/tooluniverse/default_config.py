@@ -1006,7 +1006,9 @@ default_tool_files = {
     # eQTL Catalogue - Expression quantitative trait loci associations
     "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
     # OSDR - NASA Open Science Data Repository (space biology studies)
-    "osdr": os.path.join(current_dir, "data", "osdr_tools.json"),
+    # Removed: API unreachable/down (see commit c70493c6); data file deleted,
+    # this entry was left behind and has been silently loading 0 tools since.
+    # "osdr": os.path.join(current_dir, "data", "osdr_tools.json"),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts
@@ -1122,7 +1124,9 @@ default_tool_files = {
     "opentopodata": os.path.join(current_dir, "data", "opentopodata_tools.json"),
     # Disease.sh - COVID-19 global and country-level statistics
     # NASA NeoWs - Near Earth Object data (asteroids, close approaches)
-    "nasa_neows": os.path.join(current_dir, "data", "nasa_neows_tools.json"),
+    # Removed: API unreachable/down (see commit c70493c6); data file deleted,
+    # this entry was left behind and has been silently loading 0 tools since.
+    # "nasa_neows": os.path.join(current_dir, "data", "nasa_neows_tools.json"),
     # REST Countries Extended - country details by name, region, language
     # STRING Network - protein-protein interaction networks
     "string_network": os.path.join(current_dir, "data", "string_network_tools.json"),

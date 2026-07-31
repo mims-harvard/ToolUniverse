@@ -24,6 +24,11 @@ from .tool_registry import register_tool
 DEPMAP_BASE_URL = "https://api.cellmodelpassports.sanger.ac.uk"
 
 
+def _gene_symbol(item: Dict[str, Any]) -> str:
+    """Uppercased gene symbol used as the sort key of the /genes catalog."""
+    return item.get("attributes", {}).get("symbol", "").upper()
+
+
 @register_tool("DepMapTool")
 class DepMapTool(BaseTool):
     """
@@ -64,6 +69,21 @@ class DepMapTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown operation: {operation}"}
 
+    @staticmethod
+    def _parse_model_list(data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Map a JSON:API /models response's ``data`` array to
+        [{model_id, model_name}] rows (model_name is ``names[0]``, a list)."""
+        models = []
+        for item in data.get("data", []):
+            names = item.get("attributes", {}).get("names")
+            models.append(
+                {
+                    "model_id": item.get("id"),
+                    "model_name": names[0] if names else None,
+                }
+            )
+        return models
+
     def _get_cell_lines(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         Get list of cancer cell lines with metadata.
@@ -75,47 +95,59 @@ class DepMapTool(BaseTool):
         page_size = arguments.get("page_size", 20)
 
         try:
+            # Fix-R19C-3: `filter[model]` on this endpoint doesn't
+            # actually filter (confirmed live across multiple syntax
+            # variants -- filtered and unfiltered requests return
+            # identical results and the identical total count), and
+            # `model_name`/`tissue`/`cancer_type`/`sample_site`/`gender`/
+            # `ethnicity` aren't real attributes on the model resource at
+            # all (only `names`, a list; the rest live on related sample/
+            # tissue/cancer_type/patient resources, reachable per-model
+            # via `include=`, which isn't practical for a whole page of
+            # results without an N+1 request per row). Rather than
+            # silently accepting a tissue/cancer_type filter and
+            # returning unfiltered results, warn that filtering isn't
+            # currently supported by the upstream API; model_name is
+            # fixed since it's cheap (no extra request needed).
             url = f"{DEPMAP_BASE_URL}/models"
             params = {"page[size]": min(page_size, 100)}
-
-            # Add filters if provided
-            filters = []
-            if tissue:
-                filters.append(f"tissue:{tissue}")
-            if cancer_type:
-                filters.append(f"cancer_type:{cancer_type}")
-
-            if filters:
-                params["filter[model]"] = ",".join(filters)
-
             response = requests.get(url, params=params, timeout=self.timeout)
             response.raise_for_status()
             data = response.json()
 
-            # Parse cell line data
-            cell_lines = []
-            for item in data.get("data", []):
-                attrs = item.get("attributes", {})
-                cell_lines.append(
-                    {
-                        "model_id": item.get("id"),
-                        "model_name": attrs.get("model_name"),
-                        "tissue": attrs.get("tissue"),
-                        "cancer_type": attrs.get("cancer_type"),
-                        "sample_site": attrs.get("sample_site"),
-                        "gender": attrs.get("gender"),
-                        "ethnicity": attrs.get("ethnicity"),
-                    }
-                )
+            # Parse cell line data. tissue/cancer_type/sample_site/gender/
+            # ethnicity are not attributes on /models list items at all
+            # (they live on each item's related sample/patient resources,
+            # only resolvable one model at a time via DepMap_get_cell_line)
+            # -- left unset here rather than reading nonexistent keys.
+            cell_lines = self._parse_model_list(data)
 
-            return {
+            result = {
                 "status": "success",
                 "data": {
                     "cell_lines": cell_lines,
                     "count": len(cell_lines),
-                    "total": data.get("meta", {}).get("total", len(cell_lines)),
+                    "total": data.get("meta", {}).get("count", len(cell_lines)),
                 },
             }
+            # The Cell Model Passports /models endpoint does not support
+            # server-side tissue/cancer_type filtering (confirmed live:
+            # every filter[...] syntax tried -- filter[model], filter[
+            # tissue.name], filter[sample.tissue.name], bare tissue=/
+            # cancer_type= -- returned the identical unfiltered page).
+            # Say so explicitly instead of silently ignoring the filter.
+            if tissue or cancer_type:
+                result["metadata"] = {
+                    "note": (
+                        "The upstream API does not support server-side "
+                        "tissue/cancer_type filtering on this endpoint; "
+                        "results above are unfiltered. Use "
+                        "DepMap_search_cell_lines by name, or "
+                        "DepMap_get_cell_line per model_id to check its "
+                        "tissue/cancer_type."
+                    )
+                }
+            return result
         except requests.exceptions.Timeout:
             return {
                 "status": "error",
@@ -159,7 +191,17 @@ class DepMapTool(BaseTool):
                 model_id = search_result["data"]["cell_lines"][0]["model_id"]
                 url = f"{DEPMAP_BASE_URL}/models/{model_id}"
 
-            response = requests.get(url, timeout=self.timeout)
+            # tissue/cancer_type/sample_site/tissue_status/age_at_sampling/
+            # gender/ethnicity/msi_status are not attributes on the model
+            # resource itself -- they live on related sample/patient/
+            # model_msi_status resources (confirmed live via the API's own
+            # /models/{id} response, which has none of these fields).
+            # `include` pulls all of them in with this one request instead
+            # of a separate round-trip per relationship.
+            params = {
+                "include": "sample,sample.tissue,sample.cancer_type,sample.patient,model_msi_status"
+            }
+            response = requests.get(url, params=params, timeout=self.timeout)
 
             if response.status_code == 404:
                 return {
@@ -173,23 +215,50 @@ class DepMapTool(BaseTool):
 
             item = data.get("data", {})
             attrs = item.get("attributes", {})
+            # `id` comes back as a string for most included types (e.g.
+            # sample, patient) but as an int for lookup-table types like
+            # tissue/cancer_type (confirmed live) -- normalize to str so
+            # the two sides of the (type, id) key always match.
+            included_by_key = {
+                (inc.get("type"), str(inc.get("id"))): inc
+                for inc in data.get("included", [])
+                if isinstance(inc, dict)
+            }
+
+            def _resolve(node: Dict[str, Any], rel_name: str) -> Dict[str, Any]:
+                """Follow a to-one relationship from a JSON:API resource
+                object to its included resource object (or {} if absent)."""
+                rel = (node.get("relationships") or {}).get(rel_name, {}).get("data")
+                if isinstance(rel, list):
+                    rel = rel[0] if rel else None
+                if not isinstance(rel, dict):
+                    return {}
+                return included_by_key.get((rel.get("type"), str(rel.get("id"))), {})
+
+            sample = _resolve(item, "sample")
+            sample_attrs = sample.get("attributes", {})
+            tissue_attrs = _resolve(sample, "tissue").get("attributes", {})
+            cancer_type_attrs = _resolve(sample, "cancer_type").get("attributes", {})
+            patient_attrs = _resolve(sample, "patient").get("attributes", {})
+            msi_attrs = _resolve(item, "model_msi_status").get("attributes", {})
+            names = attrs.get("names")
 
             return {
                 "status": "success",
                 "data": {
                     "model_id": item.get("id"),
-                    "model_name": attrs.get("model_name"),
-                    "tissue": attrs.get("tissue"),
-                    "cancer_type": attrs.get("cancer_type"),
-                    "tissue_status": attrs.get("tissue_status"),
-                    "sample_site": attrs.get("sample_site"),
-                    "gender": attrs.get("gender"),
-                    "ethnicity": attrs.get("ethnicity"),
-                    "age_at_sampling": attrs.get("age_at_sampling"),
+                    "model_name": names[0] if names else None,
+                    "tissue": tissue_attrs.get("name"),
+                    "cancer_type": cancer_type_attrs.get("name"),
+                    "tissue_status": sample_attrs.get("tissue_status"),
+                    "sample_site": sample_attrs.get("sample_site"),
+                    "gender": patient_attrs.get("gender"),
+                    "ethnicity": patient_attrs.get("ethnicity"),
+                    "age_at_sampling": sample_attrs.get("age_at_sampling"),
                     "growth_properties": attrs.get("growth_properties"),
-                    "msi_status": attrs.get("msi_status"),
+                    "msi_status": msi_attrs.get("msi_status"),
                     "ploidy": attrs.get("ploidy"),
-                    "mutational_burden": attrs.get("mutational_burden"),
+                    "mutational_burden": attrs.get("mutations_per_mb"),
                 },
             }
         except requests.exceptions.Timeout:
@@ -202,6 +271,58 @@ class DepMapTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
+    def _find_catalog_page(
+        self,
+        url: str,
+        params: Dict[str, Any],
+        query_upper: str,
+        symbol_of,
+        request_timeout: int,
+    ) -> List[Dict[str, Any]]:
+        """Binary-search a symbol-sorted, paginated JSON:API catalog for the
+        single page that could contain ``query_upper``.
+
+        ``params`` must already request page 1 (``page[number]=1``) with the
+        desired ``sort`` and ``page[size]``; it is mutated in place as pages
+        are visited. ``symbol_of(item)`` returns an item's uppercased sort
+        symbol. Returns that page's list of resource items, or ``[]`` if the
+        query sorts outside the whole catalog.
+
+        Comparing the query against each page's first/last symbol (rather
+        than scanning linearly from page 1) keeps the cost to
+        ~log2(total_pages) round-trips over the full catalog. ``fetched_page``
+        is tracked so re-examining the current page reuses the data already in
+        hand instead of refetching (which would also risk stale data).
+        """
+        page_size = params["page[size]"]
+        response = requests.get(url, params=params, timeout=request_timeout)
+        response.raise_for_status()
+        first_data = response.json()
+        total_count = first_data.get("meta", {}).get("count", 0)
+        total_pages = max(1, -(-total_count // page_size))  # ceil division
+
+        page_items = first_data.get("data", [])
+        fetched_page = 1
+        lo, hi = 1, total_pages
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            if mid != fetched_page:
+                params["page[number]"] = mid
+                response = requests.get(url, params=params, timeout=request_timeout)
+                response.raise_for_status()
+                page_items = response.json().get("data", [])
+                fetched_page = mid
+            if not page_items:
+                hi = mid - 1
+                continue
+            if query_upper < symbol_of(page_items[0]):
+                hi = mid - 1
+            elif query_upper > symbol_of(page_items[-1]):
+                lo = mid + 1
+            else:
+                return page_items
+        return []
+
     def _search_cell_lines(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         Search cell lines by name or identifier.
@@ -212,24 +333,36 @@ class DepMapTool(BaseTool):
             return {"status": "error", "error": "query parameter is required"}
 
         try:
-            url = f"{DEPMAP_BASE_URL}/models"
-            params = {"filter[model]": f"model_name:{query}", "page[size]": 20}
+            # The Cell Model Passports API silently ignores filter[model]
+            # on /models (confirmed live: any query, including nonsense
+            # strings, returned the same unfiltered first page). The real
+            # name-search endpoint is /search/models?q=... . Confirmed live
+            # this endpoint's own result order is NOT exact-match-first
+            # (e.g. q=HCC38 returns "HCC38-BL" before the exact "HCC38"
+            # match) -- DepMap_get_cell_line's by-name lookup relies on
+            # cell_lines[0], so re-sort client-side with exact matches
+            # first rather than trusting upstream order.
+            url = f"{DEPMAP_BASE_URL}/search/models"
+            params = {"q": query, "page[size]": 20}
 
             response = requests.get(url, params=params, timeout=self.timeout)
             response.raise_for_status()
             data = response.json()
 
+            query_upper = query.upper()
             cell_lines = []
             for item in data.get("data", []):
-                attrs = item.get("attributes", {})
-                cell_lines.append(
-                    {
-                        "model_id": item.get("id"),
-                        "model_name": attrs.get("model_name"),
-                        "tissue": attrs.get("tissue"),
-                        "cancer_type": attrs.get("cancer_type"),
-                    }
-                )
+                names = item.get("attributes", {}).get("names") or []
+                name = names[0] if names else None
+                if name:
+                    cell_lines.append(
+                        {
+                            "model_id": item.get("id"),
+                            "model_name": name,
+                            "exact_match": name.upper() == query_upper,
+                        }
+                    )
+            cell_lines.sort(key=lambda c: (not c["exact_match"], c["model_name"]))
 
             return {
                 "status": "success",
@@ -339,52 +472,46 @@ class DepMapTool(BaseTool):
             return {"status": "error", "error": "query parameter is required"}
 
         try:
-            # The Sanger API's filter[gene] param doesn't work for
-            # exact symbol matching. Use sorted pagination + client filter.
+            # Fix-R19C-1: the Sanger API's filter[gene] param doesn't work
+            # for exact symbol matching (confirmed live: it silently
+            # returns an unrelated, seemingly-arbitrary page of genes
+            # regardless of the filter value). The catalog has ~45,751
+            # genes; the previous "scan up to 5 pages of 100" approach only
+            # ever covered the first ~1% alphabetically, so any gene not
+            # starting with A/B (e.g. KRAS, TP53, EGFR) was always
+            # reported "not found" -- confirmed live for all three.
+            # Results are sorted by symbol, so binary-search the pages by
+            # comparing the query against each page's first/last symbol
+            # instead of scanning linearly from page 1.
             url = f"{DEPMAP_BASE_URL}/genes"
-            params = {
-                "sort": "symbol",
-                "page[size]": 100,
-            }
-
-            # Scan through pages to find matching genes
-            # With sorted results, we search up to 5 pages (500 genes)
-            genes = []
+            params = {"sort": "symbol", "page[size]": 1000, "page[number]": 1}
             query_upper = query.upper()
-            for page_num in range(1, 6):
-                params["page[number]"] = page_num
-                response = requests.get(url, params=params, timeout=self.timeout)
-                response.raise_for_status()
-                data = response.json()
+            # Binary search makes several sequential round-trips (~6 for the
+            # full 45k-gene catalog); this API is occasionally slow on an
+            # individual request (confirmed live, one page took 22s), so
+            # give each request more headroom than the tool's default.
+            page_items = self._find_catalog_page(
+                url, params, query_upper, _gene_symbol, max(self.timeout, 45)
+            )
 
-                for item in data.get("data", []):
-                    attrs = item.get("attributes", {})
-                    symbol = attrs.get("symbol", "")
-                    # Check for exact or prefix match
-                    if symbol.upper() == query_upper or symbol.upper().startswith(
-                        query_upper
-                    ):
-                        genes.append(
-                            {
-                                "gene_id": item.get("id"),
-                                "symbol": symbol,
-                                "name": attrs.get("name"),
-                                "hgnc_id": attrs.get("hgnc_id"),
-                                "ensembl_id": attrs.get("ensembl_gene_id"),
-                                "exact_match": (symbol.upper() == query_upper),
-                            }
-                        )
-
-                # If we found exact match(es), no need for more pages
-                if any(g["exact_match"] for g in genes):
-                    break
-
-                # Check if we've gone past alphabetically
-                page_data = data.get("data", [])
-                if page_data:
-                    last_sym = page_data[-1].get("attributes", {}).get("symbol", "")
-                    if last_sym.upper() > query_upper + "Z":
-                        break
+            genes = []
+            for item in page_items:
+                attrs = item.get("attributes", {})
+                symbol = attrs.get("symbol", "")
+                # Check for exact or prefix match
+                if symbol.upper() == query_upper or symbol.upper().startswith(
+                    query_upper
+                ):
+                    genes.append(
+                        {
+                            "gene_id": item.get("id"),
+                            "symbol": symbol,
+                            "name": attrs.get("name"),
+                            "hgnc_id": attrs.get("hgnc_id"),
+                            "ensembl_id": attrs.get("ensembl_gene_id"),
+                            "exact_match": (symbol.upper() == query_upper),
+                        }
+                    )
 
             # Sort: exact matches first
             genes.sort(

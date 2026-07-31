@@ -17,6 +17,9 @@ _APHIA_OPERATIONS = {
 
 @register_tool("WoRMSRESTTool")
 class WoRMSRESTTool(BaseTool):
+    # Maximum number of records WoRMS returns from a single AphiaRecordsByName call.
+    _PAGE_SIZE = 50
+
     def __init__(self, tool_config: Dict):
         super().__init__(tool_config)
         self.base_url = "https://www.marinespecies.org/rest"
@@ -72,32 +75,73 @@ class WoRMSRESTTool(BaseTool):
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
 
-        encoded_query = urllib.parse.quote(query)
-        url = f"{self.base_url}/AphiaRecordsByName/{encoded_query}"
         try:
-            response = self.session.get(url, timeout=self.timeout)
-            response.raise_for_status()
-            if not response.text.strip():
-                return {
-                    "status": "success",
-                    "data": [],
-                    "url": url,
-                    "message": "No results found for this query",
-                }
-            data = response.json()
-        except Exception as e:
-            return {"status": "error", "error": f"WoRMS API error: {str(e)}"}
+            limit = int(arguments.get("limit", 20))
+            offset = int(arguments.get("offset", 1))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": (
+                    "limit and offset must be integers, got "
+                    f"limit={arguments.get('limit')!r}, "
+                    f"offset={arguments.get('offset')!r}"
+                ),
+            }
+        if limit < 1:
+            return {"status": "error", "error": f"limit must be >= 1, got {limit}"}
+        offset = max(offset, 1)
 
-        if isinstance(data, list) and len(data) > 0:
-            limited_data = data[:5]
+        encoded_query = urllib.parse.quote(query)
+        base_url = f"{self.base_url}/AphiaRecordsByName/{encoded_query}"
+        first_url = f"{base_url}?offset={offset}"
+
+        # WoRMS caps every AphiaRecordsByName response at _PAGE_SIZE records and
+        # pages with a 1-based `offset`. Walk pages until the caller's `limit` is
+        # satisfied, fetching one record beyond it so `has_more` can be reported
+        # without enumerating the entire result set.
+        records: list = []
+        page_offset = offset
+        while len(records) <= limit:
+            url = f"{base_url}?offset={page_offset}"
+            try:
+                response = self.session.get(url, timeout=self.timeout)
+                # 204 / empty body = no (further) records for this query.
+                if response.status_code == 204 or not response.text.strip():
+                    break
+                response.raise_for_status()
+                page = response.json()
+            except Exception as e:
+                return {"status": "error", "error": f"WoRMS API error: {str(e)}"}
+            if not isinstance(page, list) or not page:
+                break
+            records.extend(page)
+            if len(page) < self._PAGE_SIZE:
+                break
+            page_offset += self._PAGE_SIZE
+
+        if not records:
             return {
                 "status": "success",
-                "data": limited_data,
-                "url": url,
-                "count": len(limited_data),
-                "total_found": len(data),
+                "data": [],
+                "url": first_url,
+                "count": 0,
+                "offset": offset,
+                "limit": limit,
+                "has_more": False,
+                "message": "No results found for this query",
             }
-        return {"status": "success", "data": data, "url": url}
+
+        has_more = len(records) > limit
+        page = records[:limit]
+        return {
+            "status": "success",
+            "data": page,
+            "url": first_url,
+            "count": len(page),
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+        }
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         operation = self._operation()

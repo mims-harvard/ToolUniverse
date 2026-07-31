@@ -20,6 +20,19 @@ def _get_json(url: str, timeout: int = 30) -> Any:
         return json.loads(resp.read().decode("utf-8", errors="ignore"))
 
 
+def _aopwiki_not_found(result: Any) -> bool:
+    """AOP-Wiki returns HTTP 200 with a body like
+    {"message": "This AOP does not exist.", "status": "unprocessable_entity"}
+    for an invalid id (confirmed live for both /aops and /events) -- there is
+    no HTTP error to catch. Detect that string status, not a numeric one.
+    """
+    return isinstance(result, dict) and result.get("status") in (
+        404,
+        500,
+        "unprocessable_entity",
+    )
+
+
 @register_tool(
     "AOPWikiListTool",
     config={
@@ -131,7 +144,7 @@ class AOPWikiDetailTool:
         except Exception as e:
             return {"status": "error", "error": f"AOPWiki API error: {e}"}
 
-        if not isinstance(result, dict) or result.get("status") in (404, 500):
+        if not isinstance(result, dict) or _aopwiki_not_found(result):
             return {
                 "status": "error",
                 "error": f"Key Event {event_id} not found or server error",
@@ -178,7 +191,7 @@ class AOPWikiDetailTool:
         except Exception as e:
             return {"status": "error", "error": f"AOPWiki API error: {e}"}
 
-        if isinstance(result, dict) and result.get("status") in (404, 500):
+        if _aopwiki_not_found(result):
             return {
                 "status": "error",
                 "error": f"AOP {aop_id} not found or server error",

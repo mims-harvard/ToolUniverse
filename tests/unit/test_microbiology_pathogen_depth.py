@@ -260,6 +260,42 @@ class TestMGnifySamples(unittest.TestCase):
         self.assertEqual(result["metadata"]["total_results"], 435812)
         self.assertIn("/samples", get.call_args[0][0])
 
+    def test_environment_biome_falls_back_to_relationship(self):
+        """Fix-R27D-2: attributes["environment-biome"] is null for most
+        samples (confirmed live); the real per-sample biome path lives in
+        the sample's own "biome" relationship instead, which the list
+        endpoint already includes per item."""
+        tool = _mgnify_samples_tool()
+        payload = {
+            "data": [
+                {
+                    "id": "SRS10016928",
+                    "attributes": {
+                        "biosample": "SAMN21216480",
+                        "environment-biome": None,
+                    },
+                    "relationships": {
+                        "biome": {
+                            "data": {
+                                "type": "biomes",
+                                "id": "root:Host-associated:Human:Digestive system:Large intestine",
+                            }
+                        }
+                    },
+                }
+            ],
+            "meta": {"pagination": {"count": 1, "page": 1, "pages": 1}},
+        }
+        resp = MagicMock()
+        resp.json.return_value = payload
+        resp.raise_for_status.return_value = None
+        with patch("tooluniverse.mgnify_expanded_tool.requests.get", return_value=resp):
+            result = tool.run({"page_size": 1})
+        self.assertEqual(
+            result["data"][0]["environment_biome"],
+            "root:Host-associated:Human:Digestive system:Large intestine",
+        )
+
     def test_single_sample_detail_path(self):
         """A sample_accession routes to the single-sample detail endpoint."""
         tool = _mgnify_samples_tool()

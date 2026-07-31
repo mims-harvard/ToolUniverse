@@ -136,54 +136,131 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "required": ["status"],
-                    "properties": {
-                        "status": {"const": "success"},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "taxonomy": {"type": "string"},
-                                "location": {"type": "string"},
-                                "proteins": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "accession": {"type": ["string", "null"]},
-                                            "entry_type": {"type": ["string", "null"]},
-                                            "taxid": {"type": ["integer", "null"]},
-                                            "ensembl_gene_id": {"type": ["string", "null"]},
-                                            "ensembl_transcript_id": {"type": ["string", "null"]},
-                                            "ensembl_translation_id": {"type": ["string", "null"]},
-                                            "protein_start": {"type": ["integer", "null"]},
-                                            "protein_end": {"type": ["integer", "null"]},
-                                            "amino_acids": {"type": ["string", "null"]},
-                                            "chromosome": {"type": ["string", "null"]},
-                                            "gene_start": {"type": ["integer", "null"]},
-                                            "gene_end": {"type": ["integer", "null"]},
-                                            "reverse_strand": {"type": ["boolean", "null"]},
-                                            "assembly_name": {"type": ["string", "null"]}
-                                        }
-                                    }
-                                },
-                                "total_proteins": {"type": ["integer", "number"]}
-                            }
-                        },
-                        "metadata": {"type": "object"}
-                    }
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "taxonomy": {
+                  "type": "string"
                 },
-                {
+                "location": {
+                  "type": "string"
+                },
+                "proteins": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
-                    "required": ["status", "error"],
                     "properties": {
-                        "status": {"const": "error"},
-                        "error": {"type": "string"}
+                      "accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "entry_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "taxid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "ensembl_gene_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ensembl_transcript_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ensembl_translation_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "protein_start": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "protein_end": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "amino_acids": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "chromosome": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gene_start": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "gene_end": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reverse_strand": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "assembly_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
+                  }
+                },
+                "total_proteins": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 }
-            ]
+              },
+              "required": [
+                "taxonomy"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

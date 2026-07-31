@@ -1,5 +1,6 @@
 import requests
 from typing import Any, Dict
+from urllib.parse import quote
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -151,6 +152,21 @@ class CBioPortalRESTTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         try:
+            # Fix-R4A-001: _build_url only substitutes {placeholder} for keys
+            # actually present in `arguments`, so an omitted optional param
+            # (e.g. `limit`) left its literal "{limit}" placeholder unfilled
+            # in the endpoint template, sending a broken query string to the
+            # live API instead of falling back to the schema's declared
+            # default value.
+            schema_props = self.tool_config.get("parameter", {}).get("properties", {})
+            defaults = {
+                name: prop["default"]
+                for name, prop in schema_props.items()
+                if "default" in prop and name not in arguments
+            }
+            if defaults:
+                arguments = {**arguments, **defaults}
+
             if "query" in arguments and "keyword" not in arguments:
                 arguments = {**arguments, "keyword": arguments["query"]}
             if (
@@ -210,6 +226,19 @@ class CBioPortalRESTTool(BaseTool):
                     "molecular_profile_id": profile_id,
                     "entrez_gene_ids": entrez_ids,
                 }
+
+            # cBioPortal_get_clinical_data declares an optional
+            # `clinical_attribute_id` filter that maps to the API's
+            # `attributeId` query param. _build_url only substitutes
+            # {placeholders}, so without this the filter was silently dropped
+            # and every call returned all clinical attributes regardless of the
+            # requested one (confirmed live: brca_tcga returns 17 attributes
+            # unfiltered vs 1 with attributeId=CANCER_TYPE).
+            if "cBioPortal_get_clinical_data" in self.tool_config.get("name", ""):
+                attribute_id = arguments.get("clinical_attribute_id")
+                if attribute_id:
+                    sep = "&" if "?" in url else "?"
+                    url = f"{url}{sep}attributeId={quote(str(attribute_id))}"
 
             # Handle regular GET or POST requests
             if method == "POST":

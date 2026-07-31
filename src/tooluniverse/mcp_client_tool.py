@@ -15,7 +15,10 @@ from mcp.client.session import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .logging_config import get_logger
 import os
+
+logger = get_logger(__name__)
 
 
 class BaseMCPClient:
@@ -49,10 +52,14 @@ class BaseMCPClient:
     def _get_mcp_endpoint(self, path: str) -> str:
         """Get the full MCP endpoint URL"""
         if self.transport == "http":
-            base_url = self.server_url.rstrip("/")
-            if not base_url.endswith("/mcp"):
-                base_url += "/mcp"
-            return urljoin(base_url + "/", path)
+            base_url = self.server_url
+            if not base_url.rstrip("/").endswith("/mcp"):
+                # Preserve the legacy generated endpoint for bare server URLs,
+                # but keep an explicitly configured /mcp slash shape exact.
+                base_url = base_url.rstrip("/") + "/mcp/"
+            if not path:
+                return base_url
+            return urljoin(base_url.rstrip("/") + "/", path)
         return self.server_url
 
     async def _make_mcp_request(
@@ -154,7 +161,7 @@ class MCPClientTool(BaseTool, BaseMCPClient):
 
         # Debug logging for transport configuration
         tool_name = tool_config.get("name", "Unknown")
-        print(
+        logger.debug(
             f"MCP Tool Init: {tool_name} -> transport={self.transport}, server={self.server_url}"
         )
 
@@ -391,7 +398,7 @@ class MCPServerDiscovery:
             return tool_configs
 
         except Exception as e:
-            print(f"Error discovering tools from MCP server {server_url}: {e}")
+            logger.error(f"Error discovering tools from MCP server {server_url}: {e}")
             return []
         finally:
             await client._close_session()
@@ -494,15 +501,15 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
         )  # None means load all
 
         # Debug logging
-        print(
+        logger.debug(
             f"MCPAutoLoaderTool '{tool_config.get('name', 'Unknown')}' initialized with:"
         )
-        print(f"  - server_url: {self.server_url}")
-        print(f"  - transport: {self.transport}")
-        print(f"  - auto_register: {self.auto_register}")
-        print(f"  - tool_prefix: {self.tool_prefix}")
-        print(f"  - selected_tools: {self.selected_tools}")
-        print(f"  - timeout: {self.timeout}")
+        logger.debug(f"  - server_url: {self.server_url}")
+        logger.debug(f"  - transport: {self.transport}")
+        logger.debug(f"  - auto_register: {self.auto_register}")
+        logger.debug(f"  - tool_prefix: {self.tool_prefix}")
+        logger.debug(f"  - selected_tools: {self.selected_tools}")
+        logger.debug(f"  - timeout: {self.timeout}")
 
         self._discovered_tools = {}
         self._registered_tools = {}
@@ -598,11 +605,11 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             # Discover tools
             discovered = await self.discover_tools()
 
-            print(
+            logger.info(
                 f"🔍 MCPAutoLoaderTool discovered {len(discovered)} tools from MCP server:"
             )
             for tool_name, tool_info in discovered.items():
-                print(
+                logger.info(
                     f"  📋 {tool_name}: {tool_info.get('description', 'No description')}"
                 )
 
@@ -610,11 +617,11 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             if self.auto_register:
                 registered_count = self.register_tools_in_engine(engine)
 
-                print(
+                logger.info(
                     f"✅ MCPAutoLoaderTool registered {registered_count} tools with prefix '{self.tool_prefix}':"
                 )
                 for registered_name in self._registered_tools.keys():
-                    print(f"  🔧 {registered_name}")
+                    logger.info(f"  🔧 {registered_name}")
 
                 return {
                     "discovered_count": len(discovered),
@@ -623,7 +630,7 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                     "registered_tools": list(self._registered_tools.keys()),
                 }
             else:
-                print(
+                logger.info(
                     "ℹ️  MCPAutoLoaderTool auto_register is disabled. Tools not registered automatically."
                 )
                 return {
@@ -632,7 +639,7 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                     "configs": self.generate_proxy_tool_configs(),
                 }
         except Exception as e:
-            print(f"❌ MCPAutoLoaderTool auto-load failed: {str(e)}")
+            logger.error(f"❌ MCPAutoLoaderTool auto-load failed: {str(e)}")
             raise Exception(f"Auto-load failed: {str(e)}")
 
     def run(self, arguments):

@@ -68,10 +68,8 @@
       "Search"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS associations search results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS association objects",
           "items": {
@@ -179,34 +177,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -940,7 +922,7 @@
   {
     "type": "GWASVariantsForTrait",
     "name": "gwas_get_variants_for_trait",
-    "description": "Search the GWAS Catalog for all genetic variants (SNPs) linked to a specific disease or trait. Accepts free-text disease/trait names (e.g., 'diabetes', 'breast cancer'), EFO ontology IDs, or EFO trait labels. Returns variant details including rsIDs, p-values, mapped genes, and genomic locations. This is the best tool for finding all GWAS variants for a disease when you do NOT already have a specific variant ID.",
+    "description": "Search the GWAS Catalog for all genetic variants (SNPs) linked to a specific disease or trait. Accepts free-text disease/trait names (e.g., 'diabetes', 'breast cancer'), EFO ontology IDs, or EFO trait labels. Returns variant details including rsIDs, p-values, mapped genes, and genomic locations. Results are sorted by p-value ascending (most significant first) by default, so the first page holds the strongest loci; override with the 'sort' and 'direction' parameters. This is the best tool for finding all GWAS variants for a disease when you do NOT already have a specific variant ID.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -975,6 +957,14 @@
         "page": {
           "type": "integer",
           "description": "Page number for pagination"
+        },
+        "sort": {
+          "type": "string",
+          "description": "Sort field (e.g., 'p_value', 'or_value'). Defaults to 'p_value' so the most significant associations appear first."
+        },
+        "direction": {
+          "type": "string",
+          "description": "Sort direction ('asc' or 'desc'). Defaults to 'asc'."
         }
       },
       "oneOf": [
@@ -2091,8 +2081,8 @@
         },
         "size": {
           "type": "integer",
-          "description": "Max associations to return.",
-          "default": 5
+          "description": "Max associations to return (default 100; results are sorted by p-value, most significant first).",
+          "default": 100
         }
       },
       "required": [

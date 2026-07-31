@@ -17,6 +17,17 @@
         "limit": {
           "type": "integer",
           "description": "The number of tools to retrieve (default: 10)"
+        },
+        "embedding_model": {
+          "type": "string",
+          "description": "Optional: embedding encoder to use for this search. 'default' = the fine-tuned ToolRAG-T1 (1.5B); 'gte-qwen2-7b' and 'e5-mistral-7b' are larger open encoders with higher accuracy (downloaded on first use, GPU recommended); 'openai-3-large'/'openai-3-small' use hosted OpenAI embeddings (require OpenAI/Azure credentials). Defaults to 'default'.",
+          "enum": [
+            "default",
+            "gte-qwen2-7b",
+            "e5-mistral-7b",
+            "openai-3-large",
+            "openai-3-small"
+          ]
         }
       },
       "required": [
@@ -85,6 +96,17 @@
             "type": "string"
           },
           "description": "Optional list of tool categories to filter by"
+        },
+        "embedding_model": {
+          "type": "string",
+          "description": "Optional: embedding encoder to use for this search. 'default' = the fine-tuned ToolRAG-T1 (1.5B); 'gte-qwen2-7b' and 'e5-mistral-7b' are larger open encoders with higher accuracy (downloaded on first use, GPU recommended); 'openai-3-large'/'openai-3-small' use hosted OpenAI embeddings (require OpenAI/Azure credentials). Defaults to 'default'.",
+          "enum": [
+            "default",
+            "gte-qwen2-7b",
+            "e5-mistral-7b",
+            "openai-3-large",
+            "openai-3-small"
+          ]
         }
       },
       "required": [

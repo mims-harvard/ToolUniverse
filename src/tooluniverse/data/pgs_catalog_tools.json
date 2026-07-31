@@ -9,7 +9,7 @@
       "properties": {
         "query": {
           "type": "string",
-          "description": "Trait or phenotype term, e.g. 'coronary artery disease', 'type 2 diabetes', 'breast cancer'."
+          "description": "Trait or phenotype term, e.g. 'coronary artery disease', 'type 2 diabetes', 'breast cancer'. PGS Catalog's own search can return zero results for some multi-word phrases that don't exactly match an indexed label even when a near-identical trait exists (e.g. 'familial hypercholesterolemia' finds nothing while 'hypercholesterolemia' alone does) -- if a natural-language query returns no results, retry with a shorter or more generic core term."
         }
       },
       "required": ["query"]
@@ -17,32 +17,35 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "trait_id": {"type": "string"},
-                  "label": {"type": "string"},
-                  "description": {"type": "string"},
-                  "n_scores": {"type": "integer"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trait_id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "n_scores": {
+                "type": "integer"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -66,34 +69,41 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "pgs_id": {"type": "string"},
-                  "trait_reported": {"type": "string"},
-                  "variants_number": {"type": "integer"},
-                  "method_name": {"type": "string"},
-                  "publication": {"type": "object"},
-                  "scoring_file": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pgs_id": {
+                "type": "string"
+              },
+              "trait_reported": {
+                "type": "string"
+              },
+              "variants_number": {
+                "type": "integer"
+              },
+              "method_name": {
+                "type": "string"
+              },
+              "publication": {
+                "type": "object"
+              },
+              "scoring_file": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -119,33 +129,51 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "pgs_id": {"type": "string"},
-                "name": {"type": "string"},
-                "trait_reported": {"type": "string"},
-                "trait_efo": {"type": "array"},
-                "variants_number": {"type": "integer"},
-                "method_name": {"type": "string"},
-                "genome_build": {"type": "string"},
-                "publication": {"type": "object"},
-                "ancestry_distribution": {"type": "object"},
-                "scoring_file": {"type": "string"}
-              }
+            "pgs_id": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "name": {
+              "type": "string"
+            },
+            "trait_reported": {
+              "type": "string"
+            },
+            "trait_efo": {
+              "type": "array"
+            },
+            "variants_number": {
+              "type": "integer"
+            },
+            "method_name": {
+              "type": "string"
+            },
+            "genome_build": {
+              "type": "string"
+            },
+            "publication": {
+              "type": "object"
+            },
+            "ancestry_distribution": {
+              "type": "object"
+            },
+            "scoring_file": {
+              "type": "string"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "pgs_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -169,62 +197,132 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ppm_id": {"type": "string"},
-                  "pgs_id": {"type": "string"},
-                  "phenotyping_reported": {"type": ["string", "null"]},
-                  "covariates": {"type": ["string", "null"]},
-                  "effect_sizes": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name_short": {"type": ["string", "null"]},
-                        "name_long": {"type": ["string", "null"]},
-                        "estimate": {"type": ["number", "null"]},
-                        "ci_lower": {"type": ["number", "null"]},
-                        "ci_upper": {"type": ["number", "null"]}
-                      }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ppm_id": {
+                "type": "string"
+              },
+              "pgs_id": {
+                "type": "string"
+              },
+              "phenotyping_reported": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "covariates": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "effect_sizes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name_short": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "name_long": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "estimate": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "ci_lower": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "ci_upper": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
                     }
-                  },
-                  "classification_accuracy": {"type": "array"},
-                  "other_metrics": {"type": "array"},
-                  "evaluation_sampleset_id": {"type": ["string", "null"]},
-                  "evaluation_samples": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "sample_number": {"type": ["integer", "null"]},
-                        "sample_cases": {"type": ["integer", "null"]},
-                        "sample_controls": {"type": ["integer", "null"]},
-                        "ancestry_broad": {"type": ["string", "null"]},
-                        "ancestry_country": {"type": ["string", "null"]}
-                      }
-                    }
-                  },
-                  "publication": {"type": "object"}
+                  }
                 }
+              },
+              "classification_accuracy": {
+                "type": "array"
+              },
+              "other_metrics": {
+                "type": "array"
+              },
+              "evaluation_sampleset_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "evaluation_samples": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "sample_number": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "sample_cases": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "sample_controls": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "ancestry_broad": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ancestry_country": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "publication": {
+                "type": "object"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

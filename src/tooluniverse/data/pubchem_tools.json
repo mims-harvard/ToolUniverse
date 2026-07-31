@@ -420,8 +420,7 @@
         }
       },
       "required": [
-        "smiles",
-        "threshold"
+        "smiles"
       ]
     },
     "fields": {
@@ -472,15 +471,14 @@
         }
       },
       "required": [
-        "cid",
-        "image_size"
+        "cid"
       ]
     },
     "fields": {
       "endpoint": "/compound/cid/{cid}/PNG?image_size={image_size}",
       "use_pugview": false,
       "input_description": "Input is:\n- cid: compound ID;\n- image_size: desired image pixel size, format is \"widthxheight\" (e.g., \"150x150\").",
-      "output_description": "Returns binary PNG image data, conforming to PNG file header format. LLM can save this binary as image file, or provide to downstream visualization.",
+      "output_description": "Returns {status, data: {image_base64, encoding: 'base64', format: 'png'}}. Decode image_base64 to get the raw PNG bytes (conforming to PNG file header format).",
       "return_format": "PNG"
     },
     "type": "PubChemRESTTool",
@@ -1069,100 +1067,69 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful substance lookup.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
+            "sid": {
+              "type": [
+                "integer",
+                "string"
               ]
             },
-            "found": {
-              "type": "boolean"
+            "source_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "sid": {
-                  "type": [
-                    "integer",
-                    "string"
-                  ]
-                },
-                "source_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "source_id": {
-                  "type": [
-                    "string",
-                    "integer",
-                    "null"
-                  ]
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "comment": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "registry_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "xrefs": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                },
-                "linked_cids": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer"
-                  }
-                }
+            "source_id": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object"
+            "comment": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "registry_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "xrefs": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "linked_cids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           },
           "required": [
-            "status",
-            "found",
-            "data"
+            "sid"
           ]
         },
         {
           "type": "object",
-          "description": "Error during substance lookup.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
-              "type": "string"
-            },
-            "detail": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1202,55 +1169,31 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful reverse-sourcing lookup.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
+            "IdentifierList": {
               "type": "object",
               "properties": {
-                "IdentifierList": {
-                  "type": "object",
-                  "properties": {
-                    "SID": {
-                      "type": "array",
-                      "items": {
-                        "type": "integer"
-                      }
-                    }
+                "SID": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
                   }
                 }
               }
             }
           },
           "required": [
-            "status",
-            "data"
+            "IdentifierList"
           ]
         },
         {
           "type": "object",
-          "description": "Error (e.g., unknown source name -> HTTP 404).",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
-              "type": "string"
-            },
-            "detail": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -1279,55 +1222,31 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful source directory listing.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
+            "InformationList": {
               "type": "object",
               "properties": {
-                "InformationList": {
-                  "type": "object",
-                  "properties": {
-                    "SourceName": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
+                "SourceName": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
                 }
               }
             }
           },
           "required": [
-            "status",
-            "data"
+            "InformationList"
           ]
         },
         {
           "type": "object",
-          "description": "Error retrieving the source directory.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
-              "type": "string"
-            },
-            "detail": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

@@ -1,7 +1,7 @@
 [
   {
     "name": "ExpressionAtlas_get_baseline",
-    "description": "Get baseline gene expression experiments from EBI Expression Atlas. Shows which tissues/cell types express a gene under normal conditions. Complements GTEx and HPA. No API key needed. Query by gene symbol or Ensembl ID.",
+    "description": "List baseline gene expression experiments in EBI Expression Atlas for a given species. The `gene` argument is used to label the request and suggest a follow-up call, but does NOT filter the returned experiment list (the underlying API has no reliable way to filter experiments by gene) -- use GxA_get_experiment_expression with an experiment_accession from the results and gene_id=<gene> to check whether a specific experiment actually has data for that gene. Complements GTEx and HPA. No API key needed.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,6 +13,22 @@
           "type": "string",
           "description": "Species name (default: 'homo sapiens'). Also supports 'mus musculus', 'rattus norvegicus', etc.",
           "default": "homo sapiens"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of experiments to return (default 50, max 500). Compare with the total reported in the response to see how many exist.",
+          "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based index of the first experiment to return, for paging through results beyond the first page (e.g. offset=50 returns 51-100). Default: 0.",
+          "default": 0
         }
       },
       "required": [
@@ -36,87 +52,63 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "gene": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "baseline_experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "experiment_accession": {
-                        "type": "string"
-                      },
-                      "experiment_type": {
-                        "type": "string"
-                      },
-                      "experiment_description": {
-                        "type": "string"
-                      },
-                      "species": {
-                        "type": "string"
-                      },
-                      "num_assays": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "gene_mentioned": {
-                        "type": "boolean"
-                      },
-                      "last_update": {
-                        "type": "string"
-                      }
-                    }
+            "species": {
+              "type": "string"
+            },
+            "baseline_experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "experiment_accession": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "experiment_description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "num_assays": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "last_update": {
+                    "type": "string"
                   }
-                },
-                "total_baseline": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "gene_specific_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total_baseline": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -138,7 +130,7 @@
   },
   {
     "name": "ExpressionAtlas_search_differential",
-    "description": "Search for differential expression experiments from EBI Expression Atlas. Find experiments where a gene is differentially expressed in disease vs. normal, treated vs. untreated, etc. Supports disease-context expression analysis.",
+    "description": "Search for differential expression EXPERIMENTS from EBI Expression Atlas by condition text and/or a gene mentioned in the experiment description. Supports disease-context expression analysis. Caveat: `condition` does real text filtering, but `gene` is a text-search coincidence (experiment descriptions rarely name individual genes) and does not return actual per-gene differential-expression values -- treat gene-tagged results as a starting point for manual review, not a validated gene-specific result set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -154,6 +146,22 @@
           "type": "string",
           "description": "Species name (default: 'homo sapiens')",
           "default": "homo sapiens"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of experiments to return (default 50, max 500). Compare with the total reported in the response to see how many exist.",
+          "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based index of the first experiment to return, for paging through results beyond the first page (e.g. offset=50 returns 51-100). Default: 0.",
+          "default": 0
         }
       }
     },
@@ -175,87 +183,72 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "gene": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene": {
-                  "type": "string"
-                },
-                "condition": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "experiment_accession": {
-                        "type": "string"
-                      },
-                      "experiment_type": {
-                        "type": "string"
-                      },
-                      "experiment_description": {
-                        "type": "string"
-                      },
-                      "species": {
-                        "type": "string"
-                      },
-                      "num_assays": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "gene_mentioned": {
-                        "type": "boolean"
-                      },
-                      "factors": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
+            "condition": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "experiment_accession": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "experiment_description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "num_assays": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "gene_mentioned": {
+                    "type": "boolean"
+                  },
+                  "factors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
-                },
-                "experiment_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "experiment_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -275,7 +268,7 @@
   },
   {
     "name": "ExpressionAtlas_search_experiments",
-    "description": "Search all EBI Expression Atlas experiments (baseline + differential) by gene and/or condition. Returns experiment accessions, types, descriptions, and assay counts. Use to find relevant expression datasets.",
+    "description": "Search all EBI Expression Atlas experiments (baseline + differential) by condition text and/or a gene mentioned in the experiment description. Returns experiment accessions, types, descriptions, and assay counts. Caveat: `condition` does real text filtering, but `gene` is a text-search coincidence (experiment descriptions rarely name individual genes), so a gene-only query effectively returns the unfiltered catalog -- use to find relevant expression datasets, not as a validated per-gene result set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -290,6 +283,22 @@
         "species": {
           "type": "string",
           "description": "Species name (optional, e.g., 'homo sapiens')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of experiments to return (default 50, max 500). Compare with the total reported in the response to see how many exist.",
+          "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based index of the first experiment to return, for paging through results beyond the first page (e.g. offset=50 returns 51-100). Default: 0.",
+          "default": 0
         }
       }
     },
@@ -311,90 +320,75 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "gene": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene": {
-                  "type": "string"
-                },
-                "condition": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "experiment_accession": {
-                        "type": "string"
-                      },
-                      "experiment_type": {
-                        "type": "string"
-                      },
-                      "experiment_description": {
-                        "type": "string"
-                      },
-                      "species": {
-                        "type": "string"
-                      },
-                      "num_assays": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "gene_mentioned": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
-                      }
-                    }
+            "condition": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "experiment_accession": {
+                    "type": "string"
+                  },
+                  "experiment_type": {
+                    "type": "string"
+                  },
+                  "experiment_description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "num_assays": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "gene_mentioned": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
                   }
-                },
-                "total_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "gene_specific_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "gene_specific_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -413,7 +407,7 @@
   },
   {
     "name": "ExpressionAtlas_get_experiment",
-    "description": "Get detailed metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836). Returns experiment design, species, technology, contrasts, PubMed references, and number of assays.",
+    "description": "Get metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836): accession, type, species, and description/URLs. Caveat: the underlying GXA API does not expose per-experiment design/technology/contrasts/PubMed/assay-count data through this endpoint (confirmed live: those fields are always empty) -- for that level of detail, visit the experiment's page on https://www.ebi.ac.uk/gxa directly.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -439,67 +433,52 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "accession": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "factors": {
-                  "type": "array"
-                },
-                "technology": {
-                  "type": "array"
-                },
-                "contrasts": {
-                  "type": "array"
-                },
-                "assay_count": {
-                  "type": "null"
-                },
-                "last_update": {
-                  "type": "null"
-                },
-                "pubmed_ids": {
-                  "type": "array"
-                }
-              }
+            "type": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "description": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "factors": {
+              "type": "array"
+            },
+            "technology": {
+              "type": "array"
+            },
+            "contrasts": {
+              "type": "array"
+            },
+            "assay_count": {
+              "type": "null"
+            },
+            "last_update": {
+              "type": "null"
+            },
+            "pubmed_ids": {
+              "type": "array"
             }
-          }
+          },
+          "required": [
+            "accession"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

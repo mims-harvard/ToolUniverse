@@ -113,7 +113,12 @@ class BindingDBTool(BaseTool):
             ids = [single] if single else []
         if not ids:
             return {"status": "error", "error": "Provide uniprot accession(s)."}
-        cutoff = int(arguments.get("cutoff", 10000))
+        # Schema declares this param as `affinity_cutoff`; the legacy `cutoff`
+        # name is kept as a fallback (the internal search_by_target caller and
+        # any older callers pass `cutoff`). Reading only `cutoff` silently
+        # ignored a user-supplied `affinity_cutoff` and always used the 10000 nM
+        # default -- confirmed live: passing affinity_cutoff=1 echoed cutoff=10000.
+        cutoff = int(arguments.get("affinity_cutoff", arguments.get("cutoff", 10000)))
         result = _http_get(
             "getLigandsByUniprots",
             {
@@ -141,7 +146,8 @@ class BindingDBTool(BaseTool):
             ids = [s.strip() for s in ids.split(",") if s.strip()]
         if not ids:
             return {"status": "error", "error": "Provide pdb id(s)."}
-        cutoff = int(arguments.get("cutoff", 10000))
+        # Schema declares this param as `affinity_cutoff` (see uniprot handler).
+        cutoff = int(arguments.get("affinity_cutoff", arguments.get("cutoff", 10000)))
         result = _http_get(
             "getLigandsByPDBs",
             {"pdbs": ";".join(ids), "cutoff": cutoff, "response": "application/json"},
@@ -160,7 +166,12 @@ class BindingDBTool(BaseTool):
         smiles = arguments.get("smiles") or arguments.get("compound_smiles") or ""
         if not smiles:
             return {"status": "error", "error": "Provide a SMILES string."}
-        similarity = float(arguments.get("similarity", 0.85))
+        # Schema declares this param as `similarity_cutoff`; `similarity` is a
+        # legacy fallback. Reading only `similarity` silently ignored a
+        # user-supplied `similarity_cutoff` and always used the 0.85 default.
+        similarity = float(
+            arguments.get("similarity_cutoff", arguments.get("similarity", 0.85))
+        )
         result = _http_get(
             "getTargetByCompound",
             {

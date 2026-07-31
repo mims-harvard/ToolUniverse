@@ -1,7 +1,7 @@
 """
 get_patent_overview_by_text_query
 
-Search for patent application overviews using a query string of the format 'applicationMetaData.i...
+Search for patent application overviews using a query string of the format 'field:value', where va...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def get_patent_overview_by_text_query(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for patent application overviews using a query string of the format 'applicationMetaData.i...
+    Search for patent application overviews using a query string of the format 'field:value', where va...
 
     Parameters
     ----------

@@ -185,7 +185,7 @@
   },
   {
     "name": "MedlinePlus_get_genetics_condition_by_name",
-    "description": "Get detailed information from MedlinePlus Genetics corresponding to genetic condition name. Returns XML data parsed into a dictionary with condition description, related genes, synonyms, and other details.",
+    "description": "Get detailed information from MedlinePlus Genetics corresponding to genetic condition name. Returns condition description, related genes, inheritance pattern, synonyms, and other details.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -236,6 +236,13 @@
             "type": "string"
           },
           "description": "List of related genes"
+        },
+        "inheritance": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Inheritance pattern(s) (e.g. 'Autosomal dominant')"
         },
         "synonyms": {
           "type": "array",

@@ -20,6 +20,20 @@ MARRVEL_BASE = "http://api.marrvel.org/data"
 HUMAN_TAXON = "9606"
 
 
+def _resolve_symbol(arguments: Dict[str, Any]) -> str:
+    # Fix-R32B-4: unlike most other gene-input tools in this codebase
+    # (DGIdb, OpenTargets, ensembl_lookup_gene, ...), these tools only
+    # accepted the bare "symbol" param with no gene/gene_symbol alias --
+    # confirmed live that the natural-language guess {"gene_symbol":
+    # "PTPN22"} failed schema validation entirely.
+    return (
+        arguments.get("symbol")
+        or arguments.get("gene_symbol")
+        or arguments.get("gene")
+        or ""
+    ).strip()
+
+
 @register_tool("MARRVELGeneTool")
 class MARRVELGeneTool(BaseTool):
     """Aggregated identity/annotation for a human gene by symbol."""
@@ -29,7 +43,7 @@ class MARRVELGeneTool(BaseTool):
         self.timeout = tool_config.get("fields", {}).get("timeout", 30)
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        symbol = (arguments.get("symbol") or "").strip()
+        symbol = _resolve_symbol(arguments)
         if not symbol:
             return {"status": "error", "error": "'symbol' (e.g. 'CFTR') is required"}
 
@@ -74,7 +88,14 @@ class MARRVELGeneTool(BaseTool):
                 "name": rec.get("name"),
                 "entrez_id": rec.get("entrezId"),
                 "hgnc_id": xref.get("hgncId"),
-                "omim_id": xref.get("omimId"),
+                # Fix-R78A-1: MARRVEL's own /gene/taxonId/.../symbol/... endpoint
+                # returns a bogus small placeholder integer in xref.omimId (e.g.
+                # "1" for BRCA1/EGFR/APOE/MYH7/TP53, "6" for CFTR/PTEN) instead
+                # of the real 6-digit OMIM MIM number -- confirmed live across
+                # multiple genes, so this isn't a per-gene data gap. The correct
+                # gene_mim_number is only available from MARRVEL's dedicated OMIM
+                # endpoint, exposed here as MARRVEL_get_omim_phenotypes -- point
+                # callers there instead of surfacing this misleading value.
                 "ensembl_id": xref.get("ensemblId"),
                 "uniprot_id": rec.get("uniprotKBId"),
                 "chromosome": rec.get("chr"),
@@ -101,7 +122,7 @@ class MARRVELOmimTool(BaseTool):
         self.timeout = tool_config.get("fields", {}).get("timeout", 30)
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        symbol = (arguments.get("symbol") or "").strip()
+        symbol = _resolve_symbol(arguments)
         if not symbol:
             return {"status": "error", "error": "'symbol' (e.g. 'CFTR') is required"}
 

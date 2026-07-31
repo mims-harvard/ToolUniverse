@@ -29,35 +29,53 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Child taxa of the given GBIF taxon",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "key": {"type": ["integer", "null"]},
-                  "scientificName": {"type": ["string", "null"]},
-                  "canonicalName": {"type": ["string", "null"]},
-                  "rank": {"type": ["string", "null"]},
-                  "taxonomicStatus": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "scientificName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "canonicalName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxonomicStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "description": "Error response",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -87,33 +105,41 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Ranked ancestor lineage (root-first)",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "key": {"type": ["integer", "null"]},
-                  "scientificName": {"type": ["string", "null"]},
-                  "rank": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "scientificName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "description": "Error response",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -148,34 +174,47 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Synonym name-usages for the given taxon",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "key": {"type": ["integer", "null"]},
-                  "scientificName": {"type": ["string", "null"]},
-                  "canonicalName": {"type": ["string", "null"]},
-                  "taxonomicStatus": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "scientificName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "canonicalName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxonomicStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "description": "Error response",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -209,34 +248,47 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Vernacular (common) names for the given taxon",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "vernacularName": {"type": ["string", "null"]},
-                  "language": {"type": ["string", "null"]},
-                  "country": {"type": ["string", "null"]},
-                  "source": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "vernacularName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "language": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "country": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "description": "Error response",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -271,41 +323,89 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Parsed scientific-name components",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "scientificName": {"type": ["string", "null"]},
-                  "type": {"type": ["string", "null"]},
-                  "canonicalName": {"type": ["string", "null"]},
-                  "genusOrAbove": {"type": ["string", "null"]},
-                  "specificEpithet": {"type": ["string", "null"]},
-                  "infraSpecificEpithet": {"type": ["string", "null"]},
-                  "authorship": {"type": ["string", "null"]},
-                  "bracketAuthorship": {"type": ["string", "null"]},
-                  "year": {"type": ["string", "null"]},
-                  "rankMarker": {"type": ["string", "null"]},
-                  "parsed": {"type": ["boolean", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scientificName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "canonicalName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genusOrAbove": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "specificEpithet": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "infraSpecificEpithet": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "authorship": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bracketAuthorship": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "year": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rankMarker": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "parsed": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "description": "Error response",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

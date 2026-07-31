@@ -138,6 +138,17 @@ class GtoPdbRESTTool(BaseTool):
                 "min_affinity": "affinity",
                 "approved_only": "approved",
                 "query": "name",  # alias: query → name (GtoPdb API uses ?name=)
+                # Fix-R4A-3: gene_symbol was not in this map, so it was passed
+                # through verbatim as ?gene_symbol=, which GtoPdb ignores --
+                # GtoPdb_search_targets returned the identical unfiltered
+                # first-50 target list ("12R-LOX", "12S-LOX", ...) for
+                # gene_symbol=CHRNA7, gene_symbol=GRIN2B and no arguments at
+                # all. GtoPdb does index targets by gene symbol under
+                # ?geneSymbol= (CHRNA7 -> target 468, GRIN2B -> 457,
+                # HTR6 -> 11), which the sibling GtoPdb_get_interactions
+                # already uses.
+                "gene_symbol": "geneSymbol",
+                "gene": "geneSymbol",
             }
 
             api_params = {}
@@ -386,9 +397,17 @@ class GtoPdbRESTTool(BaseTool):
         # Feature-46A-04: gene_symbol convenience parameter for GtoPdb_get_interactions.
         # Auto-resolve gene symbol → targetId so users don't need a separate
         # GtoPdb_search_targets call before querying interactions.
+        # Fix-R4A-3: this resolution is only meaningful for the interactions
+        # endpoints, which are addressed as /targets/{targetId}/interactions.
+        # On the plain /targets endpoint the resolved targetId becomes a query
+        # parameter that GtoPdb ignores, and `gene_symbol` was popped on the
+        # way -- so GtoPdb_search_targets silently dropped the filter and
+        # returned the unfiltered first 50 targets. There, `gene_symbol` maps
+        # directly to GtoPdb's own ?geneSymbol= instead (see _build_url).
         gene_symbol = arguments.get("gene_symbol")
         if (
             gene_symbol
+            and endpoint.endswith("/interactions")
             and not arguments.get("targetId")
             and not arguments.get("target_id")
         ):

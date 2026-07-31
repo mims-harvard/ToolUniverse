@@ -315,7 +315,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `ChEMBL_search_drugs` | Search drugs | `query`, `max_phase` |
-| `ChEMBL_get_drug_mechanisms_of_action_by_chemblId` | Drug MOA | `chemblId` |
+| `ChEMBL_get_drug_mechanisms` | Drug MOA | `drug_chembl_id` |
 | `ChEMBL_get_target_activities` | Bioactivity data | `target_chembl_id` |
 
 ### DailyMed

@@ -81,7 +81,16 @@ class PubMedRESTTool(BaseRESTTool):
 
         # Handle query as 'term' parameter (for esearch)
         if "query" in args:
-            params["term"] = args["query"]
+            # Fix-R9C-1: NCBI's automatic term-mapping treats a hyphenated
+            # compound (e.g. "CYP3A5-guided") as a literal [All Fields]
+            # phrase rather than decomposing it into individual words --
+            # confirmed via raw E-utils curl that this silently zeroes out
+            # an otherwise-matching multi-keyword AND query (0 results for
+            # "CYP3A5-guided tacrolimus dosing kidney transplant" vs. 38
+            # for the identical query with the hyphen replaced by a space,
+            # and "COVID-19" is unaffected -- both forms return the same
+            # count there, so this isn't a special-case regression risk).
+            params["term"] = args["query"].replace("-", " ")
 
         # Add API key from environment variable
         if self.default_api_key:
@@ -97,10 +106,26 @@ class PubMedRESTTool(BaseRESTTool):
         if limit_val is not None:
             params["retmax"] = max(0, int(limit_val))
 
-        # Forward date-range parameters for esearch
+        # Forward date-range parameters for esearch.
+        # Fix-R16E-1: NCBI's esearch silently ignores mindate/maxdate
+        # entirely unless BOTH are present -- confirmed live that
+        # mindate alone (an open-ended "from this date on" range, the
+        # natural way a caller would use it) returns the exact same
+        # unfiltered count as no date params at all, while mindate+maxdate
+        # together correctly filters. Backfill whichever bound is missing
+        # with a placeholder outside PubMed's real date range so an
+        # open-ended query still filters as the caller intends. Also
+        # confirmed omitting datetype (even with both dates set) silently
+        # changes NCBI's filter basis from publication date to Entrez
+        # date, so default it to "pdat" per this tool's own documented
+        # default whenever any date bound is supplied.
         for date_key in ("mindate", "maxdate", "datetype"):
             if date_key in args and args[date_key]:
                 params[date_key] = args[date_key]
+        if "mindate" in params or "maxdate" in params:
+            params.setdefault("mindate", "1000")
+            params.setdefault("maxdate", "3000")
+            params.setdefault("datetype", "pdat")
 
         # Forward sort parameter for esearch
         # Valid values: pub_date, Author, JournalName, relevance
@@ -576,7 +601,9 @@ class PubMedRESTTool(BaseRESTTool):
                                     a["partial"] = True
                                     a["warning"] = warning
 
-                        include_abstract = bool(arguments.get("include_abstract", True))
+                        include_abstract = bool(
+                            arguments.get("include_abstract", False)
+                        )
                         if include_abstract and articles:
                             pmids = [
                                 str(a.get("pmid")).strip()

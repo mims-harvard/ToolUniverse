@@ -42,44 +42,66 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "array",
-              "description": "Paper records with structured evidence fields.",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "doi": {"type": "string"},
-                  "title": {"type": "string"},
-                  "publication_date": {"type": "string"},
-                  "publication_name": {"type": "string"},
-                  "one_sentence_summary": {"type": "string"},
-                  "results_and_conclusions": {"type": "string"},
-                  "methods_and_experimental_techniques": {"type": "string"},
-                  "sample_size_and_population": {"type": "string"},
-                  "paper_limitations_and_biases": {"type": "string"},
-                  "conflict_of_interest": {"type": "string"},
-                  "data_availability_statements": {"type": "string"},
-                  "how_to_falsify": {"type": "string"},
-                  "study_blindspots": {"type": "string"},
-                  "quality_scores": {"type": "object"}
-                }
+          "type": "array",
+          "description": "Paper records with structured evidence fields.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "doi": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "publication_date": {
+                "type": "string"
+              },
+              "publication_name": {
+                "type": "string"
+              },
+              "one_sentence_summary": {
+                "type": "string"
+              },
+              "results_and_conclusions": {
+                "type": "string"
+              },
+              "methods_and_experimental_techniques": {
+                "type": "string"
+              },
+              "sample_size_and_population": {
+                "type": "string"
+              },
+              "paper_limitations_and_biases": {
+                "type": "string"
+              },
+              "conflict_of_interest": {
+                "type": "string"
+              },
+              "data_availability_statements": {
+                "type": "string"
+              },
+              "how_to_falsify": {
+                "type": "string"
+              },
+              "study_blindspots": {
+                "type": "string"
+              },
+              "quality_scores": {
+                "type": "object"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "detail": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

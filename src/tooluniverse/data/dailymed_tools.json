@@ -36,6 +36,10 @@
           "description": "Number of items per page, maximum 100, default 100.",
           "default": 100
         },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Alias for pagesize."
+        },
         "page": {
           "type": "integer",
           "description": "Page number, starts from 1, default 1.",
@@ -72,7 +76,7 @@
               "type": "string"
             },
             "next_page_url": {
-              "type": "string"
+              "type": ["string", "null"]
             },
             "total_elements": {
               "type": "integer"
@@ -87,7 +91,7 @@
               "type": ["string", "integer", "null"]
             },
             "previous_page_url": {
-              "type": "string"
+              "type": ["string", "null"]
             },
             "next_page": {
               "type": ["string", "integer", "null"]

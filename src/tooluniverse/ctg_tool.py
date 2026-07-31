@@ -1,7 +1,27 @@
+import re
 from copy import deepcopy
 from urllib.parse import urljoin
 from .restful_tool import RESTfulTool, execute_RESTful_query
 from .tool_registry import register_tool
+
+_ESSIE_OPERATOR_RE = re.compile(r'"|[()\[\]]|\b(?:AND|OR|NOT|AREA)\b', re.IGNORECASE)
+
+
+def _phrase_quote_if_plain(value: str) -> str:
+    """Fix-R9D-1: CTG API v2's Essie search engine treats an unquoted
+    multi-word query.cond/query.intr value as an implicit-OR keyword match
+    rather than a phrase, so "cervical cancer" ranks unrelated head/neck
+    and esophageal trials above actual cervical cancer trials (confirmed
+    live: 11215 unquoted matches vs. 2519 when phrase-quoted, with the
+    quoted results correctly topped by cervical-cancer-specific trials).
+    Quoting the value as an Essie phrase fixes this -- but only for a
+    plain multi-word value with no existing quotes/parens/boolean
+    operators, since query_cond's own docs advertise Boolean-operator
+    support (e.g. "breast cancer AND HER2") that a blind wrap would
+    break."""
+    if " " in value and not _ESSIE_OPERATOR_RE.search(value):
+        return f'"{value}"'
+    return value
 
 
 @register_tool("ClinicalTrialsTool")
@@ -190,7 +210,12 @@ class ClinicalTrialsTool(RESTfulTool):
                     study_type_clause = f"({study_type_clause})"
                 advanced_clauses.append(study_type_clause)
             elif key in _SEARCH_PARAM_MAP:
-                params[_SEARCH_PARAM_MAP[key]] = value
+                mapped_key = _SEARCH_PARAM_MAP[key]
+                if mapped_key in ("query.cond", "query.intr") and isinstance(
+                    value, str
+                ):
+                    value = _phrase_quote_if_plain(value)
+                params[mapped_key] = value
 
         if advanced_clauses:
             params["filter.advanced"] = " AND ".join(advanced_clauses)
@@ -405,7 +430,15 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
                 # "HasResults",
             ],  # NOTE: Can change this one
             "countTotal": True,  # NOTE: Can change this one
-            "filter.advanced": "AREA[HasResults]true AND (AREA[Phase]PHASE2 OR AREA[Phase]PHASE3 OR AREA[Phase]PHASE4)",
+            # Fix-T1A-002/T3A-004: this used to also require AREA[HasResults]true,
+            # which silently restricted every search to trials with *posted
+            # results* — undocumented, and it made the tool return "no studies
+            # found" for real, findable trials that simply haven't reported
+            # results yet (e.g. rivaroxaban + renal impairment, which has 11
+            # matching trials on ClinicalTrials.gov, none surfaced by this
+            # filter). The phase>=2 restriction stays; it matches the tool's
+            # documented "Limited to trials beyond phase 1" behavior.
+            "filter.advanced": "(AREA[Phase]PHASE2 OR AREA[Phase]PHASE3 OR AREA[Phase]PHASE4)",
             # TODO: Consider adding a YEAR filter for the query to remove trials that are too early? E.g., "AREA[LastUpdatePostDate]RANGE[2000-01-01,MAX]"
         }
         # "title": {
@@ -477,13 +510,16 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
                 query_params[k] = arguments[k]
 
         # Add default parameters that are not shown in the schema.
-        # Skip filter.advanced when a status filter is set, because filter.advanced
-        # requires HasResults=true which excludes most RECRUITING/active trials.
-        has_status_filter = "filter.overallStatus" in query_params
+        # filter.advanced used to be skipped whenever a status filter was set,
+        # to work around its old AREA[HasResults]true clause. That clause was
+        # removed above, so the skip only disabled the documented "Limited to
+        # trials beyond phase 1" gate -- and it did so silently: adding the
+        # narrowing overall_status=COMPLETED filter to a metformin/lactic
+        # acidosis search *raised* total_count from 2 to 3 and returned a
+        # disjoint set, while a RECRUITING pembrolizumab search returned 745
+        # studies instead of 557, phase-1 trials included.
         for k, v in self.default_params_not_shown.items():
             if k not in query_params:
-                if k == "filter.advanced" and has_status_filter:
-                    continue
                 query_params[k] = v
 
         # Process list parameters that need to be joined

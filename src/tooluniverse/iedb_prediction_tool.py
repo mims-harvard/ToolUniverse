@@ -58,8 +58,41 @@ class IEDBPredictionTool(BaseTool):
             return {"status": "error", "error": f"IEDB prediction error: {str(e)}"}
 
     def _parse_tsv(self, text: str) -> List[Dict[str, str]]:
-        reader = csv.DictReader(io.StringIO(text.strip()), delimiter="\t")
+        text = text.strip()
+        # Fix-R18D-1: IEDB's prediction endpoints return HTTP 200 with a
+        # plain-text validation error (e.g. "The length of input sequence
+        # is less than the input/default length 15.") instead of TSV data
+        # for invalid input like a too-short sequence -- confirmed live.
+        # csv.DictReader silently treated the error's first line as a
+        # single-column header and the second as one data row, and the
+        # caller's `.get("percentile_rank", 100)` fallback then made this
+        # look like a real (if suspicious) successful prediction. Detect
+        # the non-tabular response before parsing and raise instead, so
+        # `run()`'s exception handler reports it as the error it is.
+        if not text or "\t" not in text.splitlines()[0]:
+            raise ValueError(
+                f"IEDB tool returned a non-tabular response, likely an "
+                f"input validation error rather than prediction data: "
+                f"{text[:300]!r}"
+            )
+        reader = csv.DictReader(io.StringIO(text), delimiter="\t")
         return [dict(row) for row in reader]
+
+    @staticmethod
+    def _iedb_error_response(text: str) -> Dict[str, Any] | None:
+        """Detect IEDB's plain-text error responses (e.g. an invalid allele
+        name), which return HTTP 200 with prose instead of a TSV table --
+        parsing that as TSV silently produces bogus rows keyed on the error
+        message itself. Returns an error dict if `text` isn't real TSV data,
+        else None.
+        """
+        first_line = text.strip().split("\n", 1)[0]
+        if "\t" in first_line:
+            return None
+        return {
+            "status": "error",
+            "error": f"IEDB API error: {first_line}",
+        }
 
     def _predict_bcell(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Predict linear B-cell epitopes along a protein sequence.
@@ -78,6 +111,9 @@ class IEDBPredictionTool(BaseTool):
             timeout=self.timeout,
         )
         resp.raise_for_status()
+        err = self._iedb_error_response(resp.text)
+        if err:
+            return err
         rows = self._parse_tsv(resp.text)
 
         residues = []
@@ -174,6 +210,9 @@ class IEDBPredictionTool(BaseTool):
         )
         resp.raise_for_status()
 
+        err = self._iedb_error_response(resp.text)
+        if err:
+            return err
         results = self._parse_tsv(resp.text)
 
         # Cast numeric columns; sort by total_score descending (higher = more
@@ -243,6 +282,9 @@ class IEDBPredictionTool(BaseTool):
         )
         resp.raise_for_status()
 
+        err = self._iedb_error_response(resp.text)
+        if err:
+            return err
         results = self._parse_tsv(resp.text)
 
         # Sort by score (descending for EL, ascending for BA)
@@ -284,6 +326,19 @@ class IEDBPredictionTool(BaseTool):
             "sequence_text": sequence,
             "allele": allele,
         }
+        # Fix-R34A-1: IEDB's mhcii endpoint defaults its sliding-window
+        # length to 15 server-side and hard-errors on any shorter sequence
+        # ("length of input sequence is less than the input/default length
+        # 15") -- confirmed live, including against this tool's own <15-
+        # residue test example. Unlike the MHC-I methods in this file,
+        # this endpoint never exposed a length override. Auto-shrink the
+        # window to the sequence's own length when it's under 15, mirroring
+        # the MHC-I `length` param.
+        length = arguments.get("length")
+        if length is None and len(sequence) < 15:
+            length = len(sequence)
+        if length is not None:
+            data["length"] = str(length)
 
         resp = requests.post(
             f"{IEDB_TOOLS_BASE}/mhcii/",
@@ -292,10 +347,24 @@ class IEDBPredictionTool(BaseTool):
         )
         resp.raise_for_status()
 
+        err = self._iedb_error_response(resp.text)
+        if err:
+            return err
         results = self._parse_tsv(resp.text)
+        # The mhcii/ endpoint's TSV column is "rank", not "percentile_rank"
+        # (confirmed live) -- reading the wrong key silently defaulted every
+        # result to 100.0, masking real binder rankings.
         for r in results:
+            # Fix-R18D-2: the mhcii endpoint's real TSV column is named
+            # "rank", not "percentile_rank" (unlike the mhci endpoint,
+            # confirmed live to genuinely have a "percentile_rank" column)
+            # -- so this always hit the `100` default, making the field
+            # silently and completely wrong for every successful call
+            # regardless of the actual binding rank.
             try:
-                r["percentile_rank"] = float(r.get("percentile_rank", 100))
+                r["percentile_rank"] = float(
+                    r.get("rank", r.get("percentile_rank", 100))
+                )
             except (ValueError, TypeError):
                 pass
 
@@ -309,5 +378,9 @@ class IEDBPredictionTool(BaseTool):
                 "allele": allele,
                 "n_peptides": len(results),
                 "source": "IEDB Analysis Resource",
+                "interpretation": (
+                    "percentile_rank < 2% = strong binder, "
+                    "2-10% = weak binder, >10% = non-binder (NetMHCIIpan convention)"
+                ),
             },
         }

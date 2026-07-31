@@ -47,42 +47,25 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Matching CTIS trials",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "description": "Includes total_records"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -272,42 +255,25 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Filtered CTIS trials",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "description": "Includes total_records and the applied search_criteria"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     },
     {
@@ -341,38 +307,22 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Full CTIS trial record",
-                    "properties": {
-                        "status": {
-                            "type": "string"
-                        },
-                        "data": {
-                            "type": "object"
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "status",
-                        "data"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

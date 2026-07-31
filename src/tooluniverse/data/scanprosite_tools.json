@@ -144,77 +144,73 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["success"]
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "sequence_ac": {
-                    "type": ["string", "null"],
-                    "description": "UniProt accession of the matching protein (e.g., Q6GZW6)"
-                  },
-                  "sequence_id": {
-                    "type": ["string", "null"],
-                    "description": "UniProt entry name (e.g., 009L_FRG3G)"
-                  },
-                  "sequence_db": {
-                    "type": ["string", "null"],
-                    "description": "Sequence database (sp for Swiss-Prot, tr for TrEMBL)"
-                  },
-                  "start": {
-                    "type": ["integer", "null"],
-                    "description": "Start position of the motif match in the protein"
-                  },
-                  "stop": {
-                    "type": ["integer", "null"],
-                    "description": "End position of the motif match"
-                  },
-                  "signature_ac": {
-                    "type": ["string", "null"],
-                    "description": "PROSITE signature accession that matched (e.g., PS00029)"
-                  },
-                  "signature_id": {
-                    "type": ["string", "null"],
-                    "description": "PROSITE signature name (e.g., LEUCINE_ZIPPER)"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sequence_ac": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession of the matching protein (e.g., Q6GZW6)"
               },
-              "description": "Array of matching UniProt proteins with motif positions"
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "signature_ac": {"type": "string"},
-                "database": {"type": "string"},
-                "total_matches": {"type": "integer"},
-                "total_sequences": {"type": ["integer", "null"]},
-                "capped": {"type": "boolean"},
-                "returned": {"type": "integer"},
-                "skip_frequent_patterns": {"type": "boolean"}
+              "sequence_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt entry name (e.g., 009L_FRG3G)"
+              },
+              "sequence_db": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Sequence database (sp for Swiss-Prot, tr for TrEMBL)"
+              },
+              "start": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Start position of the motif match in the protein"
+              },
+              "stop": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "End position of the motif match"
+              },
+              "signature_ac": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PROSITE signature accession that matched (e.g., PS00029)"
+              },
+              "signature_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PROSITE signature name (e.g., LEUCINE_ZIPPER)"
               }
             }
           },
-          "required": ["status", "data"]
+          "description": "Array of matching UniProt proteins with motif positions"
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": ["error"]
-            },
             "error": {
               "type": "string"
             }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

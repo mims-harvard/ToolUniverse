@@ -29,33 +29,71 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "identifier": {"type": "string"},
-                "representation": {"type": "string"},
-                "result": {"type": ["string", "array", "null"]},
-                "smiles": {"type": ["string", "null"]},
-                "iupac_name": {"type": ["string", "null"]},
-                "formula": {"type": ["string", "null"]},
-                "mw": {"type": ["string", "null"]},
-                "cas": {"type": ["string", "array", "null"]},
-                "stdinchikey": {"type": ["string", "null"]}
-              }
+            "identifier": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "representation": {
+              "type": "string"
+            },
+            "result": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ]
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "iupac_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mw": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "cas": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ]
+            },
+            "stdinchikey": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "identifier"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "retryable": {"type": "boolean"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

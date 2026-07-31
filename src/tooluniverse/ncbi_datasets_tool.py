@@ -259,6 +259,7 @@ class NCBIDatasetsTool(BaseTool):
             }
 
         tax_data = nodes[0].get("taxonomy", {})
+        lineage_ids = tax_data.get("lineage", [])
         return {
             "status": "success",
             "data": {
@@ -267,7 +268,8 @@ class NCBIDatasetsTool(BaseTool):
                 "genbank_common_name": tax_data.get("genbank_common_name"),
                 "rank": tax_data.get("rank"),
                 "blast_name": tax_data.get("blast_name"),
-                "lineage": tax_data.get("lineage", []),
+                "lineage": lineage_ids,
+                "lineage_names": self._resolve_lineage_names(lineage_ids),
                 "children": tax_data.get("children", []),
                 "counts": tax_data.get("counts", []),
             },
@@ -277,6 +279,45 @@ class NCBIDatasetsTool(BaseTool):
                 "source": "NCBI Datasets API v2",
             },
         }
+
+    def _resolve_lineage_names(self, tax_ids):
+        """Fix-R12B-1: `lineage` is a bare list of ancestor tax_ids with no
+        names or ranks attached, despite the tool's own description promising
+        "full lineage" -- confirmed this is exactly what NCBI's own API
+        returns, not something dropped by this tool. NCBI's endpoint accepts
+        a comma-joined batch of tax_ids in one request (confirmed live), so
+        resolve the whole lineage's names/ranks in a single extra call rather
+        than one call per ancestor. Best-effort: any failure here just leaves
+        `lineage_names` empty, since the bare-id `lineage` field above already
+        succeeded and shouldn't be failed by this enrichment step.
+        """
+        if not tax_ids:
+            return []
+        try:
+            response = requests.get(
+                f"{NCBI_DATASETS_BASE}/taxonomy/taxon/{','.join(str(t) for t in tax_ids)}",
+                headers={"Accept": "application/json"},
+                timeout=self.timeout,
+            )
+            response.raise_for_status()
+            nodes = response.json().get("taxonomy_nodes", [])
+        except requests.exceptions.RequestException:
+            return []
+
+        by_id = {}
+        for node in nodes:
+            node_tax = node.get("taxonomy", {})
+            node_tax_id = node_tax.get("tax_id")
+            if node_tax_id is not None:
+                by_id[node_tax_id] = {
+                    "tax_id": node_tax_id,
+                    "organism_name": node_tax.get("organism_name"),
+                    "rank": node_tax.get("rank"),
+                }
+        return [
+            by_id.get(tid, {"tax_id": tid, "organism_name": None, "rank": None})
+            for tid in tax_ids
+        ]
 
     def _get_taxonomy_suggest(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Suggest taxonomy names matching a query string."""

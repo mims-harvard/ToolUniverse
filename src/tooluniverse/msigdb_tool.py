@@ -24,9 +24,10 @@ class MSigDBTool(BaseTool):
 
     def __init__(self, tool_config: Dict[str, Any], **kwargs):
         super().__init__(tool_config)
+        self.operation = tool_config.get("fields", {}).get("operation", "get_gene_set")
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        operation = arguments.get("operation", "get_gene_set")
+        operation = arguments.get("operation", self.operation)
 
         if operation == "get_gene_set":
             return self._get_gene_set(arguments)

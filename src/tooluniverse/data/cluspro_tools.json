@@ -46,26 +46,28 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful job submission.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {"job_id": {"type": ["string", "integer"]}}
-            },
-            "metadata": {"type": "object"}
+            "job_id": {
+              "type": [
+                "string",
+                "integer"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "job_id"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

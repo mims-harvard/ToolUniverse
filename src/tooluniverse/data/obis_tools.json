@@ -30,81 +30,66 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "scientificName": {
-                        "type": "string"
-                      },
-                      "aphiaID": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "rank": {
-                        "type": "null"
-                      },
-                      "kingdom": {
-                        "type": "string"
-                      },
-                      "phylum": {
-                        "type": "string"
-                      },
-                      "class": {
-                        "type": "null"
-                      },
-                      "order": {
-                        "type": "string"
-                      },
-                      "family": {
-                        "type": "string"
-                      },
-                      "genus": {
-                        "type": "string"
-                      }
-                    }
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scientificName": {
+                    "type": "string"
+                  },
+                  "aphiaID": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "rank": {
+                    "type": "null"
+                  },
+                  "kingdom": {
+                    "type": "string"
+                  },
+                  "phylum": {
+                    "type": "string"
+                  },
+                  "class": {
+                    "type": "null"
+                  },
+                  "order": {
+                    "type": "string"
+                  },
+                  "family": {
+                    "type": "string"
+                  },
+                  "genus": {
+                    "type": "string"
                   }
-                },
-                "total": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "results"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -160,306 +145,291 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "total": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "basisOfRecord": {
-                        "type": "string"
-                      },
-                      "class": {
-                        "type": "string"
-                      },
-                      "classid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "collectionCode": {
-                        "type": "string"
-                      },
-                      "coordinateUncertaintyInMeters": {
-                        "type": "number"
-                      },
-                      "dataGeneralizations": {
-                        "type": "string"
-                      },
-                      "datasetID": {
-                        "type": "string"
-                      },
-                      "datasetName": {
-                        "type": "string"
-                      },
-                      "date_end": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "date_mid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "date_start": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "date_year": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "decimalLatitude": {
-                        "type": "number"
-                      },
-                      "decimalLongitude": {
-                        "type": "number"
-                      },
-                      "eventDate": {
-                        "type": "string"
-                      },
-                      "eventID": {
-                        "type": "string"
-                      },
-                      "eventType": {
-                        "type": "string"
-                      },
-                      "family": {
-                        "type": "string"
-                      },
-                      "familyid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "genus": {
-                        "type": "string"
-                      },
-                      "genusid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "geodeticDatum": {
-                        "type": "string"
-                      },
-                      "infraphylum": {
-                        "type": "string"
-                      },
-                      "infraphylumid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "institutionCode": {
-                        "type": "string"
-                      },
-                      "kingdom": {
-                        "type": "string"
-                      },
-                      "kingdomid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "license": {
-                        "type": "string"
-                      },
-                      "locationRemarks": {
-                        "type": "string"
-                      },
-                      "marine": {
-                        "type": "boolean"
-                      },
-                      "maximumElevationInMeters": {
-                        "type": "string"
-                      },
-                      "megaclass": {
-                        "type": "string"
-                      },
-                      "megaclassid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "minimumElevationInMeters": {
-                        "type": "string"
-                      },
-                      "occurrenceID": {
-                        "type": "string"
-                      },
-                      "occurrenceStatus": {
-                        "type": "string"
-                      },
-                      "order": {
-                        "type": "string"
-                      },
-                      "orderid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "organismID": {
-                        "type": "string"
-                      },
-                      "organismName": {
-                        "type": "string"
-                      },
-                      "parentEventID": {
-                        "type": "string"
-                      },
-                      "phylum": {
-                        "type": "string"
-                      },
-                      "phylumid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "rightsHolder": {
-                        "type": "string"
-                      },
-                      "samplingProtocol": {
-                        "type": "string"
-                      },
-                      "scientificName": {
-                        "type": "string"
-                      },
-                      "scientificNameID": {
-                        "type": "string"
-                      },
-                      "sex": {
-                        "type": "string"
-                      },
-                      "species": {
-                        "type": "string"
-                      },
-                      "speciesid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "subphylum": {
-                        "type": "string"
-                      },
-                      "subphylumid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "superclass": {
-                        "type": "string"
-                      },
-                      "superclassid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "string"
-                      },
-                      "dataset_id": {
-                        "type": "string"
-                      },
-                      "node_id": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "dropped": {
-                        "type": "boolean"
-                      },
-                      "absence": {
-                        "type": "boolean"
-                      },
-                      "originalScientificName": {
-                        "type": "string"
-                      },
-                      "aphiaID": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "flags": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "bathymetry": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "shoredistance": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      }
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "basisOfRecord": {
+                    "type": "string"
+                  },
+                  "class": {
+                    "type": "string"
+                  },
+                  "classid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "collectionCode": {
+                    "type": "string"
+                  },
+                  "coordinateUncertaintyInMeters": {
+                    "type": "number"
+                  },
+                  "dataGeneralizations": {
+                    "type": "string"
+                  },
+                  "datasetID": {
+                    "type": "string"
+                  },
+                  "datasetName": {
+                    "type": "string"
+                  },
+                  "date_end": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "date_mid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "date_start": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "date_year": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "decimalLatitude": {
+                    "type": "number"
+                  },
+                  "decimalLongitude": {
+                    "type": "number"
+                  },
+                  "eventDate": {
+                    "type": "string"
+                  },
+                  "eventID": {
+                    "type": "string"
+                  },
+                  "eventType": {
+                    "type": "string"
+                  },
+                  "family": {
+                    "type": "string"
+                  },
+                  "familyid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "genus": {
+                    "type": "string"
+                  },
+                  "genusid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "geodeticDatum": {
+                    "type": "string"
+                  },
+                  "infraphylum": {
+                    "type": "string"
+                  },
+                  "infraphylumid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "institutionCode": {
+                    "type": "string"
+                  },
+                  "kingdom": {
+                    "type": "string"
+                  },
+                  "kingdomid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "license": {
+                    "type": "string"
+                  },
+                  "locationRemarks": {
+                    "type": "string"
+                  },
+                  "marine": {
+                    "type": "boolean"
+                  },
+                  "maximumElevationInMeters": {
+                    "type": "string"
+                  },
+                  "megaclass": {
+                    "type": "string"
+                  },
+                  "megaclassid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "minimumElevationInMeters": {
+                    "type": "string"
+                  },
+                  "occurrenceID": {
+                    "type": "string"
+                  },
+                  "occurrenceStatus": {
+                    "type": "string"
+                  },
+                  "order": {
+                    "type": "string"
+                  },
+                  "orderid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "organismID": {
+                    "type": "string"
+                  },
+                  "organismName": {
+                    "type": "string"
+                  },
+                  "parentEventID": {
+                    "type": "string"
+                  },
+                  "phylum": {
+                    "type": "string"
+                  },
+                  "phylumid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "rightsHolder": {
+                    "type": "string"
+                  },
+                  "samplingProtocol": {
+                    "type": "string"
+                  },
+                  "scientificName": {
+                    "type": "string"
+                  },
+                  "scientificNameID": {
+                    "type": "string"
+                  },
+                  "sex": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "speciesid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "subphylum": {
+                    "type": "string"
+                  },
+                  "subphylumid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "superclass": {
+                    "type": "string"
+                  },
+                  "superclassid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "dataset_id": {
+                    "type": "string"
+                  },
+                  "node_id": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "dropped": {
+                    "type": "boolean"
+                  },
+                  "absence": {
+                    "type": "boolean"
+                  },
+                  "originalScientificName": {
+                    "type": "string"
+                  },
+                  "aphiaID": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "flags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "bathymetry": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "shoredistance": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "total"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

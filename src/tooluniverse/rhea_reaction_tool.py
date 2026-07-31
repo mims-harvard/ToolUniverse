@@ -35,8 +35,15 @@ from .tool_registry import register_tool
 RHEA_BASE_URL = "https://www.rhea-db.org/rhea"
 
 # Pull "<a data-molid="chebi:25858">1,7-dimethylxanthine</a>" out of htmlequation.
+# Generic/polymer participants (e.g. protein-linked residues consumed or
+# produced by the reaction, like "L-tyrosyl-[protein]") aren't real ChEBI
+# compounds -- Rhea gives them a "rhea-comp:" id instead of a "chebi:" one.
+# Both namespaces must be matched or those participants are silently dropped
+# even though they appear in the plain-text `equation` string (confirmed
+# live for RHEA:10596, whose htmlequation carries "rhea-comp:10136" and
+# "rhea-comp:20101" for its two protein-residue participants).
 _PARTICIPANT_RE = re.compile(
-    r'data-molid="chebi:(?P<chebi>\d+)"[^>]*>(?P<name>.*?)</a>',
+    r'data-molid="(?P<ns>chebi|rhea-comp):(?P<molid>\d+)"[^>]*>(?P<name>.*?)</a>',
     re.IGNORECASE | re.DOTALL,
 )
 # Strip residual inline HTML tags (<i>, <small>, <sup>, <sub>) from names.
@@ -119,12 +126,15 @@ class RheaReactionTool(BaseTool):
 
         for side_html, bucket in ((left, reactants), (right, products)):
             for m in _PARTICIPANT_RE.finditer(side_html):
-                bucket.append(
-                    {
-                        "chebi_id": f"CHEBI:{m.group('chebi')}",
-                        "name": self._clean_name(m.group("name")),
-                    }
-                )
+                is_generic = m.group("ns").lower() == "rhea-comp"
+                participant = {
+                    "chebi_id": None if is_generic else f"CHEBI:{m.group('molid')}",
+                    "name": self._clean_name(m.group("name")),
+                    "is_generic": is_generic,
+                }
+                if is_generic:
+                    participant["rhea_comp_id"] = f"RHEA-COMP:{m.group('molid')}"
+                bucket.append(participant)
         return {"reactants": reactants, "products": products}
 
     @staticmethod

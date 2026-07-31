@@ -15,7 +15,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://icite.od.nih.gov/api/pubs"
+      "endpoint": "https://icite.od.nih.gov/api/pubs",
+      "extract_path": "data"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -30,286 +31,271 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
             "data": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "_id": {
-                        "type": "string"
-                      },
-                      "authors": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "lastName": {
-                              "type": "string"
-                            },
-                            "fullName": {
-                              "type": "string"
-                            },
-                            "firstName": {
-                              "type": "string"
-                            }
-                          }
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "authors": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "fullName": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
                         }
-                      },
-                      "doi": {
-                        "type": "string"
-                      },
-                      "pmid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "animal": {
-                        "type": "number"
-                      },
-                      "human": {
-                        "type": "number"
-                      },
-                      "apt": {
-                        "type": "number"
-                      },
-                      "citedByClinicalArticle": {
-                        "type": "boolean"
-                      },
-                      "citedByPmidsByYear": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "36244096": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "39507426": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "34717201": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "39359723": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "35359543": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "24939975": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "31555204": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "35359563": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "31518578": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "32679995": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "38359253": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "41414399": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "35209409": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "36236933": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "35473031": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "38394080": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "33804690": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "36010775": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "37420482": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "37361425": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            }
-                          }
-                        }
-                      },
-                      "year": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "journal": {
-                        "type": "string"
-                      },
-                      "is_research_article": {
-                        "type": "boolean"
-                      },
-                      "citation_count": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "field_citation_rate": {
-                        "type": "number"
-                      },
-                      "expected_citations_per_year": {
-                        "type": "number"
-                      },
-                      "citations_per_year": {
-                        "type": "number"
-                      },
-                      "relative_citation_ratio": {
-                        "type": "number"
-                      },
-                      "nih_percentile": {
-                        "type": "number"
-                      },
-                      "molecular_cellular": {
-                        "type": "number"
-                      },
-                      "x_coord": {
-                        "type": "number"
-                      },
-                      "y_coord": {
-                        "type": "number"
-                      },
-                      "is_clinical": {
-                        "type": "boolean"
-                      },
-                      "cited_by_clin": {
-                        "type": "null"
-                      },
-                      "cited_by": {
-                        "type": "array",
-                        "items": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        }
-                      },
-                      "references": {
-                        "type": "array",
-                        "items": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        }
-                      },
-                      "provisional": {
-                        "type": "boolean"
                       }
                     }
+                  },
+                  "doi": {
+                    "type": "string"
+                  },
+                  "pmid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "animal": {
+                    "type": "number"
+                  },
+                  "human": {
+                    "type": "number"
+                  },
+                  "apt": {
+                    "type": "number"
+                  },
+                  "citedByClinicalArticle": {
+                    "type": "boolean"
+                  },
+                  "citedByPmidsByYear": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "36244096": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "39507426": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "34717201": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "39359723": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "35359543": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "24939975": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "31555204": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "35359563": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "31518578": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "32679995": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "38359253": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "41414399": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "35209409": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "36236933": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "35473031": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "38394080": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "33804690": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "36010775": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "37420482": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "37361425": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "year": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "journal": {
+                    "type": "string"
+                  },
+                  "is_research_article": {
+                    "type": "boolean"
+                  },
+                  "citation_count": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "field_citation_rate": {
+                    "type": "number"
+                  },
+                  "expected_citations_per_year": {
+                    "type": "number"
+                  },
+                  "citations_per_year": {
+                    "type": "number"
+                  },
+                  "relative_citation_ratio": {
+                    "type": "number"
+                  },
+                  "nih_percentile": {
+                    "type": "number"
+                  },
+                  "molecular_cellular": {
+                    "type": "number"
+                  },
+                  "x_coord": {
+                    "type": "number"
+                  },
+                  "y_coord": {
+                    "type": "number"
+                  },
+                  "is_clinical": {
+                    "type": "boolean"
+                  },
+                  "cited_by_clin": {
+                    "type": "null"
+                  },
+                  "cited_by": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    }
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    }
+                  },
+                  "provisional": {
+                    "type": "boolean"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

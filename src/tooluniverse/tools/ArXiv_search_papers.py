@@ -26,7 +26,7 @@ def ArXiv_search_papers(
     Parameters
     ----------
     query : str
-        Search query for arXiv papers. Use keywords separated by spaces to refine you...
+        Search query for arXiv papers. Unquoted, unprefixed space-separated keywords ...
     limit : int
         Number of papers to return. This sets the maximum number of papers retrieved ...
     sort_by : str
@@ -34,9 +34,9 @@ def ArXiv_search_papers(
     sort_order : str
         Sort direction. Options: 'ascending', 'descending'
     date_from : str
-        Filter results from this date (format: YYYY-MM-DD). Uses submittedDate range.
+        Filter results from this date (format: YYYY-MM-DD). Uses submittedDate, the d...
     date_to : str
-        Filter results up to this date (format: YYYY-MM-DD). Uses submittedDate range.
+        Filter results up to this date (format: YYYY-MM-DD). Uses submittedDate, the ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

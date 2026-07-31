@@ -19,6 +19,30 @@ from .base_tool import BaseTool
 
 KEGG_BASE_URL = "https://rest.kegg.jp"
 
+# Cross-reference line prefixes recognized inside a KEGG variant's VARIATION
+# block, mapped to the result field they populate. COSF (COSMIC Fusion) and
+# OmimVar were added in Fix-R18E-5 (confirmed live in the raw record for
+# BCR-ABL, hsa_var:25v1); previously only ClinVar/dbSNP/COSM were captured.
+_VARIANT_XREF_FIELDS = {
+    "ClinVar:": "clinvar",
+    "dbSNP:": "dbsnp",
+    "COSM:": "cosmic",
+    "COSF:": "cosmic_fusion",
+    "OmimVar:": "omim_variant",
+}
+
+
+def _new_kegg_variation(mutation: str) -> Dict[str, Any]:
+    """A fresh KEGG variant record with all cross-reference lists empty."""
+    return {
+        "mutation": mutation,
+        "clinvar": [],
+        "dbsnp": [],
+        "cosmic": [],
+        "cosmic_fusion": [],
+        "omim_variant": [],
+    }
+
 
 def _parse_tsv_column(text: str, column: int = 0) -> list:
     """Extract a single column from KEGG tab-separated text output."""
@@ -72,7 +96,29 @@ class KEGGExtTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
-                return {"status": "error", "error": f"KEGG entry not found"}
+                if self.endpoint == "get_brite_hierarchy":
+                    # Fix-R18E-4: some BRITE files are KEGG's "(table)"-type
+                    # hierarchies (e.g. br08341, Pharmacogenomic
+                    # biomarkers), published only as flat text/HTML
+                    # upstream with no JSON tree representation -- their
+                    # /get/br:{id}/json endpoint 404s even though the
+                    # hierarchy itself exists and KEGG_list_brite_hierarchies
+                    # happily lists it (confirmed live via curl). A bare
+                    # "not found" wrongly implies the hierarchy_id itself
+                    # is wrong.
+                    hid = arguments.get("hierarchy_id", "")
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"KEGG BRITE hierarchy '{hid}' has no JSON tree "
+                            "representation (HTTP 404). This is common for "
+                            "KEGG's table-type BRITE files, which are only "
+                            "published as flat text/HTML upstream -- it "
+                            "does not necessarily mean hierarchy_id is "
+                            "wrong."
+                        ),
+                    }
+                return {"status": "error", "error": "KEGG entry not found"}
             return {"status": "error", "error": f"KEGG API HTTP error: {code}"}
         except Exception as e:
             return {
@@ -625,7 +671,12 @@ class KEGGExtTool(BaseTool):
                 gene_line = line[12:].strip()
                 if gene_line:
                     result["genes"].append(gene_line)
-            elif line.startswith("PATHWAY"):
+            elif line.startswith(("PATHWAY", "DIS_PATHWAY")):
+                # Fix-R18E-2: a KEGG disease flat file uses the field name
+                # DIS_PATHWAY (not PATHWAY) for its associated pathways --
+                # confirmed live via raw curl for H00004 (chronic myeloid
+                # leukemia), whose real DIS_PATHWAY entry was silently
+                # unrecognized and dropped entirely.
                 current_field = "PATHWAY"
                 parts = line[12:].strip().split("  ", 1)
                 if len(parts) >= 2:
@@ -812,12 +863,23 @@ class KEGGExtTool(BaseTool):
                 target_line = line[12:].strip()
                 if target_line:
                     result["targets"].append(target_line)
-            elif line.startswith("PATHWAY"):
+            elif line.startswith(("PATHWAY", "  PATHWAY")):
+                # Fix-R18E-1: in a KEGG drug flat file, PATHWAY is nested
+                # 2 spaces under TARGET (not a top-level 0-indent field
+                # like every other field this parser recognizes) --
+                # confirmed live via raw curl for D01441 (imatinib), whose
+                # 3 real pathways were silently dropped entirely, along
+                # with their continuation lines (current_field was reset
+                # to None on the unrecognized "  PATHWAY   ..." line, so
+                # even the follow-on indented rows never attributed).
+                # Content still starts at column 12 in both cases.
                 current_field = "PATHWAY"
                 parts = line[12:].strip().split("  ", 1)
                 if len(parts) >= 2:
                     result["pathways"][parts[0].strip()] = parts[1].strip()
-            elif line.startswith("DISEASE"):
+            elif line.startswith(("DISEASE", "  DISEASE")):
+                # Fix-R18E-1: DISEASE is likewise nested 2 spaces under
+                # EFFICACY in a KEGG drug flat file.
                 current_field = "DISEASE"
                 disease_line = line[12:].strip()
                 if disease_line:
@@ -941,7 +1003,19 @@ class KEGGExtTool(BaseTool):
                 "error": "network_id is required (e.g., 'N00001')",
             }
 
-        url = f"{KEGG_BASE_URL}/get/{network_id}"
+        # Fix-R18E-6: KEGG's REST API accepts a bare "N00001"-style
+        # perturbed-network ID directly, but 404s on a bare "nt06276"-style
+        # disease/map network ID -- it requires a "network:" prefix for
+        # that ID family (confirmed live: GET /get/nt06276 -> 404, GET
+        # /get/network:nt06276 -> 200). This nt###### format is exactly
+        # what this same tool family's other outputs surface (e.g.
+        # KEGG_get_disease's NETWORK field, KEGG_get_variant's networks
+        # list), making it a natural, undocumented chaining trap.
+        lookup_id = network_id
+        if lookup_id.lower().startswith("nt") and ":" not in lookup_id:
+            lookup_id = f"network:{lookup_id}"
+
+        url = f"{KEGG_BASE_URL}/get/{lookup_id}"
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
 
@@ -982,7 +1056,14 @@ class KEGGExtTool(BaseTool):
                 drug_line = line[12:].strip()
                 if drug_line:
                     result["drugs"].append(drug_line)
-            elif line.startswith("ELEMENT"):
+            elif line.startswith(("ELEMENT", "MEMBER")):
+                # Fix-R18E-7: KEGG's Map-type network entries (nt######
+                # IDs) list their child networks under MEMBER, not ELEMENT
+                # (that field name is only used by N#####-style perturbed
+                # networks) -- confirmed live for nt06276, whose 9 real
+                # MEMBER entries were silently dropped entirely. Both
+                # represent the same concept (child network elements) so
+                # they're merged into the one "elements" output field.
                 current_field = "ELEMENT"
                 result["elements"].append(line[12:].strip())
             elif line.startswith("///"):
@@ -1097,12 +1178,7 @@ class KEGGExtTool(BaseTool):
             elif line.startswith("VARIATION"):
                 current_field = "VARIATION"
                 content = line[12:].strip()
-                current_variation = {
-                    "mutation": content,
-                    "clinvar": [],
-                    "dbsnp": [],
-                    "cosmic": [],
-                }
+                current_variation = _new_kegg_variation(content)
                 result["variations"].append(current_variation)
             elif line.startswith("NETWORK"):
                 current_field = "NETWORK"
@@ -1119,25 +1195,20 @@ class KEGGExtTool(BaseTool):
                 content = line[12:].strip()
                 if current_field == "VARIATION" and current_variation:
                     if content.startswith("mutation "):
-                        current_variation = {
-                            "mutation": content.replace("mutation ", ""),
-                            "clinvar": [],
-                            "dbsnp": [],
-                            "cosmic": [],
-                        }
+                        current_variation = _new_kegg_variation(
+                            content.replace("mutation ", "")
+                        )
                         result["variations"].append(current_variation)
-                    elif content.startswith("ClinVar:"):
-                        current_variation["clinvar"] = content.replace(
-                            "ClinVar: ", ""
-                        ).split()
-                    elif content.startswith("dbSNP:"):
-                        current_variation["dbsnp"] = content.replace(
-                            "dbSNP: ", ""
-                        ).split()
-                    elif content.startswith("COSM:"):
-                        current_variation["cosmic"] = content.replace(
-                            "COSM: ", ""
-                        ).split()
+                    else:
+                        # Capture any recognized cross-reference line (ClinVar,
+                        # dbSNP, COSM, and -- per Fix-R18E-5 -- COSF/OmimVar)
+                        # into its result field; unrecognized lines are ignored.
+                        for prefix, key in _VARIANT_XREF_FIELDS.items():
+                            if content.startswith(prefix):
+                                current_variation[key] = content.replace(
+                                    f"{prefix} ", ""
+                                ).split()
+                                break
                 elif current_field == "NETWORK":
                     result["networks"].append(content)
                 elif current_field == "DISEASE":

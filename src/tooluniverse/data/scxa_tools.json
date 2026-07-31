@@ -246,77 +246,59 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "gene_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "cell_group_value": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "cell_group_value_where_marker": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "value": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "p_value": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "expression_unit": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cell_group_value": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cell_group_value_where_marker": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "p_value": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "expression_unit": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

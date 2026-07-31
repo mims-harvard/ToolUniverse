@@ -94,6 +94,10 @@
           "type": "string",
           "description": "Prediction method: 'netmhciipan_el' (recommended), 'netmhciipan_ba', 'nn_align'",
           "default": "netmhciipan_el"
+        },
+        "length": {
+          "type": ["integer", "null"],
+          "description": "Sliding-window peptide length IEDB scores within 'sequence'. IEDB defaults this to 15 server-side and errors if 'sequence' is shorter than it; omit to auto-match the sequence's own length when it's under 15."
         }
       },
       "required": [

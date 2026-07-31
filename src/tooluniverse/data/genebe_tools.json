@@ -35,35 +35,57 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {"type": "string"},
-                "gene_symbol": {"type": "string"},
-                "transcript": {"type": "string"},
-                "hgvs_c": {"type": "string"},
-                "hgvs_p": {"type": "string"},
-                "acmg_classification": {"type": "string"},
-                "acmg_score": {"type": "number"},
-                "acmg_criteria": {"type": "string"},
-                "clinvar_classification": {"type": "string"},
-                "alphamissense_score": {"type": "number"},
-                "dbsnp": {"type": "string"},
-                "gnomad_exomes_af": {"type": "number"}
-              }
+            "variant": {
+              "type": "string"
             },
-            "metadata": {"type": "object"}
+            "gene_symbol": {
+              "type": "string"
+            },
+            "transcript": {
+              "type": "string"
+            },
+            "hgvs_c": {
+              "type": "string"
+            },
+            "hgvs_p": {
+              "type": "string"
+            },
+            "acmg_classification": {
+              "type": "string"
+            },
+            "acmg_score": {
+              "type": "number"
+            },
+            "acmg_criteria": {
+              "type": "string"
+            },
+            "clinvar_classification": {
+              "type": "string"
+            },
+            "alphamissense_score": {
+              "type": "number"
+            },
+            "dbsnp": {
+              "type": "string"
+            },
+            "gnomad_exomes_af": {
+              "type": "number"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "variant"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -105,53 +127,118 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "variants": {
-                  "type": "array",
-                  "description": "Per-variant ACMG classification, one entry per submitted variant.",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "chr": {"type": "string"},
-                      "pos": {"type": "integer"},
-                      "ref": {"type": "string"},
-                      "alt": {"type": "string"},
-                      "gene_symbol": {"type": ["string", "null"]},
-                      "transcript": {"type": ["string", "null"]},
-                      "hgvs_c": {"type": ["string", "null"]},
-                      "hgvs_p": {"type": ["string", "null"]},
-                      "acmg_classification": {"type": ["string", "null"]},
-                      "acmg_score": {"type": ["number", "null"]},
-                      "acmg_criteria": {"type": ["string", "null"]},
-                      "acmg_by_gene": {
-                        "type": ["array", "null"],
-                        "description": "Per-gene ACMG verdict, score, criteria, and HGVS c./p.",
-                        "items": {"type": "object"}
-                      },
-                      "clinvar_classification": {"type": ["string", "null"]},
-                      "alphamissense_score": {"type": ["number", "null"]},
-                      "gnomad_exomes_af": {"type": ["number", "null"]},
-                      "dbsnp": {"type": ["string", "null"]}
+            "variants": {
+              "type": "array",
+              "description": "Per-variant ACMG classification, one entry per submitted variant.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chr": {
+                    "type": "string"
+                  },
+                  "pos": {
+                    "type": "integer"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "alt": {
+                    "type": "string"
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "transcript": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hgvs_c": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hgvs_p": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "acmg_classification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "acmg_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "acmg_criteria": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "acmg_by_gene": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Per-gene ACMG verdict, score, criteria, and HGVS c./p.",
+                    "items": {
+                      "type": "object"
                     }
+                  },
+                  "clinvar_classification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "alphamissense_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "gnomad_exomes_af": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "dbsnp": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": ["variants"]
-            },
-            "metadata": {"type": "object"}
+              }
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "variants"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

@@ -25,65 +25,81 @@ class NHANESTool(BaseTool):
         super().__init__(tool_config)
         self.endpoint = tool_config["fields"]["endpoint"]
 
+    # Published NHANES continuous cycles, newest first. Each is a real CDC
+    # release; note there is no standalone 2019-2020 cycle -- field work was
+    # cut short by COVID-19 and those data ship as the "2017-2020 pre-pandemic"
+    # files instead.
+    _CYCLES = [
+        "2021-2023",
+        "2017-2018",
+        "2015-2016",
+        "2013-2014",
+        "2011-2012",
+        "2009-2010",
+        "2007-2008",
+        "2005-2006",
+        "2003-2004",
+        "2001-2002",
+        "1999-2000",
+    ]
+
+    _COMPONENTS = [
+        "Demographics",
+        "Dietary",
+        "Examination",
+        "Laboratory",
+        "Questionnaire",
+    ]
+
+    @staticmethod
+    def _datapage_url(component: str, cycle: str) -> str:
+        """Build the CDC data-listing URL for a component within a cycle."""
+        return (
+            "https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx"
+            f"?Component={component}&CycleBeginYear={cycle.split('-')[0]}"
+        )
+
     def _get_dataset_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get NHANES dataset information."""
         year = arguments.get("year")
         component = arguments.get("component")
 
-        base_url = "https://wwwn.cdc.gov/Nchs/Nhanes"
+        # An unrecognised cycle used to fall through to the two most recent
+        # ones, so asking for 2021-2023 returned rows labelled 2017-2018 under
+        # status "success". Reject it instead of answering about another year.
+        if year and year not in self._CYCLES:
+            return {
+                "status": "error",
+                "error": (
+                    f"Unknown NHANES cycle '{year}'. Valid cycles: "
+                    f"{', '.join(self._CYCLES)}. NHANES has no standalone "
+                    "2019-2020 cycle; those data are published as the "
+                    "'2017-2020 pre-pandemic' files."
+                ),
+            }
 
-        # Common NHANES cycles
-        cycles = [
-            "2017-2018",
-            "2015-2016",
-            "2013-2014",
-            "2011-2012",
-            "2009-2010",
-            "2007-2008",
+        cycles_to_show = [year] if year else self._CYCLES[:2]
+        components = [component] if component else self._COMPONENTS
+
+        datasets = [
+            {
+                "name": f"NHANES {comp} - {cycle}",
+                "year": cycle,
+                "component": comp,
+                "download_url": self._datapage_url(comp, cycle),
+                "description": f"NHANES {comp} data for {cycle}",
+            }
+            for cycle in cycles_to_show
+            for comp in components
         ]
-
-        datasets = []
-
-        if year:
-            cycles_to_show = [year] if year in cycles else cycles[:2]
-        else:
-            cycles_to_show = cycles[:2]  # Show most recent
-
-        for cycle in cycles_to_show:
-            if component:
-                datasets.append(
-                    {
-                        "name": f"NHANES {component} - {cycle}",
-                        "year": cycle,
-                        "component": component,
-                        "download_url": f"{base_url}/{cycle}/{component.lower()}_{cycle}.aspx",
-                        "description": f"NHANES {component} data for {cycle}",
-                    }
-                )
-            else:
-                # Show all components
-                for comp in [
-                    "Demographics",
-                    "Dietary",
-                    "Examination",
-                    "Laboratory",
-                    "Questionnaire",
-                ]:
-                    datasets.append(
-                        {
-                            "name": f"NHANES {comp} - {cycle}",
-                            "year": cycle,
-                            "component": comp,
-                            "download_url": f"{base_url}/{cycle}/{comp.lower()}_{cycle}.aspx",
-                            "description": f"NHANES {comp} data for {cycle}",
-                        }
-                    )
 
         return {
             "status": "success",
             "data": {
-                "datasets": datasets[:20],  # Limit results
-                "note": "NHANES data is available as downloadable files (SAS, XPT formats) from the CDC website. Visit the download URLs to access datasets. Files may require SAS or conversion tools to read.",
+                "datasets": datasets,
+                "count": len(datasets),
+                "cycles_covered": cycles_to_show,
+                "note": "download_url opens the CDC listing of data files for that component and cycle. Files are XPT (SAS transport); use NHANES_download_and_parse to fetch and parse one directly.",
             },
             "metadata": {
                 "source": "CDC NHANES",
@@ -212,6 +228,13 @@ class NHANESTool(BaseTool):
                 return ""
 
         if dataset_name:
+            # Fix-R16B-2: nhanes_search_datasets' own results carry the
+            # cycle suffix already (e.g. file_name "BMX_J") -- confirmed
+            # live that passing that value straight through here appended
+            # the suffix a second time ("BMX_J" + "_J" -> 404 downloading
+            # BMX_J_J.XPT). Don't double it if it's already present.
+            if dataset_name.endswith(suffix):
+                return dataset_name
             return f"{dataset_name}{suffix}"
 
         prefix = self._COMPONENT_PREFIX.get(component)
@@ -306,6 +329,27 @@ class NHANESTool(BaseTool):
                 "error": (
                     "Laboratory component requires 'dataset_name' "
                     "(e.g., 'CBC', 'BIOPRO', 'GHB', 'GLU', 'TRIGLY', 'HDL', 'TCHOL'). "
+                    "Use nhanes_search_datasets to discover available dataset names."
+                ),
+            }
+        # Fix-R16B-1: Examination and Questionnaire, like Laboratory, each
+        # span many distinct files (Examination: BMX body measures, BPX
+        # blood pressure, AUX audiometry, OHXDEN oral health, ...). The old
+        # _COMPONENT_PREFIX fallback silently picked one arbitrary file
+        # (BPX for Examination) regardless of which `variables` were
+        # actually requested -- confirmed live that requesting BMXBMI/BMXWT
+        # without dataset_name silently downloaded the blood-pressure file
+        # instead and returned status:"success" with the requested
+        # variables missing. Require dataset_name here too, matching the
+        # precedent already set for Laboratory.
+        if component in ("Examination", "Questionnaire") and not dataset_name:
+            return {
+                "status": "error",
+                "error": (
+                    f"'{component}' component has multiple distinct files and "
+                    "requires 'dataset_name' to disambiguate which one to "
+                    "download (e.g., 'BMX' for body measures, 'BPX' for blood "
+                    "pressure under Examination). "
                     "Use nhanes_search_datasets to discover available dataset names."
                 ),
             }

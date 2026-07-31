@@ -50,70 +50,84 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["status"],
           "properties": {
-            "status": {
-              "const": "success"
+            "total": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "samples": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "hubmap_id": {
-                        "type": ["string", "null"]
-                      },
-                      "uuid": {
-                        "type": ["string", "null"]
-                      },
-                      "sample_category": {
-                        "type": ["string", "null"]
-                      },
-                      "organ_code": {
-                        "type": ["string", "null"]
-                      },
-                      "organ_name": {
-                        "type": ["string", "null"]
-                      },
-                      "group_name": {
-                        "type": ["string", "null"]
-                      },
-                      "spatially_registered": {
-                        "type": ["boolean", "null"]
-                      },
-                      "donor_hubmap_id": {
-                        "type": ["string", "null"]
-                      }
-                    }
+            "returned": {
+              "type": "integer"
+            },
+            "samples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hubmap_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "uuid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sample_category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "organ_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "organ_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "group_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "spatially_registered": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "donor_hubmap_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "total"
+          ]
         },
         {
           "type": "object",
-          "required": ["status", "error"],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -147,94 +161,136 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["status"],
           "properties": {
-            "status": {
-              "const": "success"
+            "hubmap_id": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
+            "uuid": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "entity_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sample_category": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organ_code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organ_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "group_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "data_access_level": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "protocol_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "donor_hubmap_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "created_timestamp": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ]
+            },
+            "rui_location": {
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
-                "hubmap_id": {
-                  "type": ["string", "null"]
+                "registered": {
+                  "type": "boolean"
                 },
-                "uuid": {
-                  "type": ["string", "null"]
+                "placement_target": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "entity_type": {
-                  "type": ["string", "null"]
+                "x_dimension": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
-                "sample_category": {
-                  "type": ["string", "null"]
+                "y_dimension": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
-                "organ_code": {
-                  "type": ["string", "null"]
+                "z_dimension": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
-                "organ_name": {
-                  "type": ["string", "null"]
+                "dimension_units": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "group_name": {
-                  "type": ["string", "null"]
-                },
-                "data_access_level": {
-                  "type": ["string", "null"]
-                },
-                "protocol_url": {
-                  "type": ["string", "null"]
-                },
-                "donor_hubmap_id": {
-                  "type": ["string", "null"]
-                },
-                "created_timestamp": {
-                  "type": ["integer", "number", "null"]
-                },
-                "rui_location": {
-                  "type": ["object", "null"],
-                  "properties": {
-                    "registered": {
-                      "type": "boolean"
-                    },
-                    "placement_target": {
-                      "type": ["string", "null"]
-                    },
-                    "x_dimension": {
-                      "type": ["number", "null"]
-                    },
-                    "y_dimension": {
-                      "type": ["number", "null"]
-                    },
-                    "z_dimension": {
-                      "type": ["number", "null"]
-                    },
-                    "dimension_units": {
-                      "type": ["string", "null"]
-                    },
-                    "ccf_annotations": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
+                "ccf_annotations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "hubmap_id"
+          ]
         },
         {
           "type": "object",
-          "required": ["status", "error"],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -283,58 +339,57 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["status"],
           "properties": {
-            "status": {
-              "const": "success"
+            "total": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "donors": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "hubmap_id": {
-                        "type": ["string", "null"]
-                      },
-                      "uuid": {
-                        "type": ["string", "null"]
-                      },
-                      "group_name": {
-                        "type": ["string", "null"]
-                      },
-                      "demographics": {
-                        "type": "object"
-                      }
-                    }
+            "returned": {
+              "type": "integer"
+            },
+            "donors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hubmap_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "uuid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "group_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "demographics": {
+                    "type": "object"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "total"
+          ]
         },
         {
           "type": "object",
-          "required": ["status", "error"],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

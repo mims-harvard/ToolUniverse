@@ -39,6 +39,14 @@ class JASPARRESTTool(BaseTool):
                         url = url.replace(ph, str(v))
                         params.pop(k, None)
 
+                # Some JASPAR query parameters are named differently upstream than
+                # in our parameter schema (e.g. the taxonomy filter is `tax_id`).
+                # JASPAR ignores unrecognised query parameters instead of
+                # rejecting them, so an unmapped name silently drops the filter
+                # and returns the unfiltered result set as a success.
+                param_map = fields_cfg.get("param_map") or {}
+                params = {param_map.get(k, k): v for k, v in params.items()}
+
                 response = self.session.get(url, params=params, timeout=self.timeout)
             else:
                 url = self._build_url(arguments)

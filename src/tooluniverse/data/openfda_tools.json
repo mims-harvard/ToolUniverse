@@ -526,7 +526,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Field to count by for frequency analysis (e.g., 'classification', 'recalling_firm.exact', 'voluntary_mandated.exact')"
+                    "description": "Field to count by for frequency analysis. Must use the '.exact' keyword sub-field for text columns or openFDA rejects the request (e.g. 'classification.exact', 'recalling_firm.exact', 'voluntary_mandated.exact')."
                 }
             },
             "required": []
@@ -661,7 +661,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Field to count by (e.g., 'classification', 'status', 'recalling_firm.exact')"
+                    "description": "Field to count by. Must use the '.exact' keyword sub-field for text columns or openFDA rejects the request (e.g. 'classification.exact', 'status.exact', 'recalling_firm.exact')."
                 }
             },
             "required": []
@@ -879,7 +879,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Field to count by (e.g., 'classification', 'state', 'recalling_firm.exact')"
+                    "description": "Field to count by. Must use the '.exact' keyword sub-field for text columns or openFDA rejects the request (e.g. 'classification.exact', 'state.exact', 'recalling_firm.exact')."
                 }
             },
             "required": []

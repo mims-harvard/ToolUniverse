@@ -32,41 +32,61 @@
             }
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "uniprot_id": {"type": "string"},
-                                "protein_length": {"type": "integer"},
-                                "scores": {
-                                    "type": "array",
-                                    "description": "Per-residue records, one per position with successful fetch. Each record carries position, uid, aa, resi, benign/ambiguous/pathogenic bin strings (e.g. '6:A,C,D,R,S,V'), benign_all/ambiguous_all/pathogenic_all (covering all 19 substitutions, not just SNV-reachable), and mean/mean_all numeric scores.",
-                                    "items": {"type": "object"}
-                                },
-                                "n_positions_returned": {"type": "integer"},
-                                "n_positions_attempted": {"type": "integer"},
-                                "max_residues_cap": {"type": ["integer", "null"]},
-                                "thresholds": {"type": "object"},
-                                "pdb_download": {"type": "string"}
-                            },
-                            "required": ["uniprot_id", "protein_length", "scores", "n_positions_returned"]
-                        }
-                    },
-                    "required": ["status", "data"]
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "uniprot_id": {
+                  "type": "string"
                 },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
+                "protein_length": {
+                  "type": "integer"
+                },
+                "scores": {
+                  "type": "array",
+                  "description": "Per-residue records, one per position with successful fetch. Each record carries position, uid, aa, resi, benign/ambiguous/pathogenic bin strings (e.g. '6:A,C,D,R,S,V'), benign_all/ambiguous_all/pathogenic_all (covering all 19 substitutions, not just SNV-reachable), and mean/mean_all numeric scores.",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "n_positions_returned": {
+                  "type": "integer"
+                },
+                "n_positions_attempted": {
+                  "type": "integer"
+                },
+                "max_residues_cap": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "thresholds": {
+                  "type": "object"
+                },
+                "pdb_download": {
+                  "type": "string"
                 }
-            ]
+              },
+              "required": [
+                "uniprot_id",
+                "protein_length",
+                "scores",
+                "n_positions_returned"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         },
         "label": ["AlphaMissense", "Protein", "Pathogenicity"],
         "metadata": {
@@ -76,7 +96,7 @@
     },
     {
         "name": "AlphaMissense_get_variant_score",
-        "description": "Get AlphaMissense pathogenicity score for a specific missense variant. Input: UniProt ID and variant (e.g., 'p.R123H'). Returns score and classification (pathogenic/ambiguous/benign). State-of-the-art for VUS interpretation.",
+        "description": "Classify a specific missense variant with AlphaMissense. Input: UniProt ID and variant (e.g., 'p.R123H'). Returns the variant's AlphaMissense class (pathogenic/ambiguous/benign) and whether it came from the SNV-accessible or the all-substitutions set. NOTE: the upstream hotspot API publishes per-residue class membership, not a numeric score per substitution, so `pathogenicity_score` is null and `score_available` is false; the `residue_mean_score_*` fields are residue-level averages, NOT this variant's score. For a numeric per-variant score use GenomeNexus_annotate_variant.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -114,8 +134,17 @@
                     "properties": {
                         "uniprot_id": {"type": "string"},
                         "variant": {"type": "string"},
-                        "pathogenicity_score": {"type": "number"},
-                        "classification": {"type": "string", "enum": ["pathogenic", "ambiguous", "benign"]}
+                        "position": {"type": "integer"},
+                        "reference_aa": {"type": "string"},
+                        "variant_aa": {"type": "string"},
+                        "pathogenicity_score": {"type": ["number", "null"], "description": "Always null: the upstream hotspot API exposes no per-substitution score."},
+                        "score_available": {"type": "boolean"},
+                        "classification": {"type": ["string", "null"], "enum": ["pathogenic", "ambiguous", "benign", null]},
+                        "substitution_set": {"type": ["string", "null"], "enum": ["snv_accessible", "all_substitutions", null]},
+                        "residue_mean_score_snv_accessible": {"type": ["number", "null"]},
+                        "residue_mean_score_all_substitutions": {"type": ["number", "null"]},
+                        "residue_class_counts": {"type": "object"},
+                        "note": {"type": "string"}
                     }
                 },
                 "error": {"type": "string"}
@@ -129,7 +158,7 @@
     },
     {
         "name": "AlphaMissense_get_residue_scores",
-        "description": "Get AlphaMissense scores for all 20 possible amino acid substitutions at a specific protein position. Useful for saturation mutagenesis analysis and identifying pathogenic hotspots.",
+        "description": "Get the AlphaMissense class breakdown for substitutions at a specific protein position: which residues fall in each class (benign/ambiguous/pathogenic), reported separately for the SNV-accessible substitutions and for all 19, plus the residue mean scores. NOTE: the upstream hotspot API does not expose a numeric score per individual substitution, so this returns class membership rather than 20 scores.",
         "parameter": {
             "type": "object",
             "properties": {

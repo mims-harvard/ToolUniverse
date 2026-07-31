@@ -49,14 +49,18 @@
         },
         "rows": {
           "type": "integer",
-          "description": "Number of results to return (default: 10, max: 50)."
+          "description": "Number of results to return per page (default: 10, max: 50). Requests above 50 are reduced to 50 and the response metadata says so -- use 'start' to retrieve the rest."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Zero-based index of the first result to return, for paging through a result set larger than one page (e.g. start=50 returns results 51-100). Default: 0. The response metadata reports 'total_count' and the 'start' value to use for the next page."
         },
         "sort_by": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Sort results by: 'resolution' (best resolution first, default), 'date' (newest first), 'weight' (smallest first)."
+          "description": "Sort results by: 'resolution' (best resolution first, default), 'date' (newest first), 'weight' (smallest first), 'score' (best full-text relevance match first)."
         }
       },
       "required": []
@@ -118,6 +122,22 @@
                 },
                 "returned": {
                   "type": "integer"
+                },
+                "start": {
+                  "type": "integer",
+                  "description": "Zero-based index of the first returned result"
+                },
+                "rows": {
+                  "type": "integer",
+                  "description": "Effective page size after clamping to max_rows_per_page"
+                },
+                "max_rows_per_page": {
+                  "type": "integer",
+                  "description": "Maximum results returnable in one call"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Present when the result set was clamped or more pages remain; explains how to reach the rest"
                 }
               }
             }
@@ -161,7 +181,11 @@
         },
         "rows": {
           "type": "integer",
-          "description": "Number of results to return (default: 10, max: 50)."
+          "description": "Number of results to return per page (default: 10, max: 50). Requests above 50 are reduced to 50 and the response metadata says so -- use 'start' to retrieve the rest."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Zero-based index of the first result to return, for paging through a result set larger than one page (e.g. start=50 returns results 51-100). Default: 0. The response metadata reports 'total_count' and the 'start' value to use for the next page."
         }
       },
       "required": [
@@ -236,6 +260,22 @@
                 },
                 "returned": {
                   "type": "integer"
+                },
+                "start": {
+                  "type": "integer",
+                  "description": "Zero-based index of the first returned result"
+                },
+                "rows": {
+                  "type": "integer",
+                  "description": "Effective page size after clamping to max_rows_per_page"
+                },
+                "max_rows_per_page": {
+                  "type": "integer",
+                  "description": "Maximum results returnable in one call"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Present when the result set was clamped or more pages remain; explains how to reach the rest"
                 },
                 "pattern": {
                   "type": "string"

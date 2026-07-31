@@ -8,12 +8,24 @@
         "fields": {"timeout": 30},
         "type": "USDAPlantsProfileTool",
         "test_examples": [{"symbol": "ABBA"}, {"symbol": "ACRU"}, {"symbol": "QUAL"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Plant profile", "properties": {
-                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "USDA_plants_get_characteristics",
@@ -24,12 +36,27 @@
         "fields": {"timeout": 30},
         "type": "USDAPlantsCharacteristicsTool",
         "test_examples": [{"symbol": "ABBA"}, {"symbol": "ACRU"}, {"symbol": "QUAL"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Plant characteristics", "properties": {
-                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "USDA_plants_search_by_name",
@@ -41,20 +68,59 @@
         "fields": {"timeout": 30, "action": "search"},
         "type": "USDAPlantsProfileTool",
         "test_examples": [{"searchText": "white oak"}, {"searchText": "red maple"}, {"searchText": "Quercus"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Matching plants with PLANTS symbols", "properties": {
-                "status": {"type": "string"},
-                "data": {"type": "array", "items": {"type": "object", "properties": {
-                    "symbol": {"type": ["string", "null"]},
-                    "scientific_name": {"type": ["string", "null"]},
-                    "common_name": {"type": ["string", "null"]},
-                    "rank": {"type": ["string", "null"]},
-                    "id": {"type": ["integer", "null"]}
-                }}},
-                "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "USDA_plants_get_wetland_status",
@@ -66,22 +132,67 @@
         "fields": {"timeout": 30, "action": "wetland"},
         "type": "USDAPlantsProfileTool",
         "test_examples": [{"symbol": "TYLA"}, {"id": 27001}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Wetland indicator statuses by region", "properties": {
-                "status": {"type": "string"},
-                "data": {"type": "array", "items": {"type": "object", "properties": {
-                    "id": {"type": ["integer", "null"]},
-                    "scientific_name": {"type": ["string", "null"]},
-                    "wetland_designations": {"type": "array", "items": {"type": "object", "properties": {
-                        "region": {"type": ["string", "null"]},
-                        "sub_region": {"type": ["string", "null"]},
-                        "wetland_code": {"type": ["string", "null"]}
-                    }}}
-                }}},
-                "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "wetland_designations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "region": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "sub_region": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "wetland_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "USDA_plants_get_invasive_status",
@@ -93,25 +204,81 @@
         "fields": {"timeout": 30, "action": "invasive"},
         "type": "USDAPlantsProfileTool",
         "test_examples": [{"symbol": "PUMO"}, {"id": 82047}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Invasive and noxious legal status by jurisdiction", "properties": {
-                "status": {"type": "string"},
-                "data": {"type": "object", "properties": {
-                    "invasive": {"type": "array", "items": {"type": "object", "properties": {
-                        "locality_name": {"type": ["string", "null"]},
-                        "common_names": {"type": "array", "items": {"type": "string"}},
-                        "statuses": {"type": "array", "items": {"type": "string"}}
-                    }}},
-                    "noxious": {"type": "array", "items": {"type": "object", "properties": {
-                        "locality_name": {"type": ["string", "null"]},
-                        "common_names": {"type": "array", "items": {"type": "string"}},
-                        "statuses": {"type": "array", "items": {"type": "string"}}
-                    }}}
-                }},
-                "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "invasive": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "locality_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "common_names": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "statuses": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "noxious": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "locality_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "common_names": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "statuses": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "invasive"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "USDA_plants_get_wildlife_value",
@@ -123,29 +290,110 @@
         "fields": {"timeout": 30, "action": "wildlife"},
         "type": "USDAPlantsProfileTool",
         "test_examples": [{"symbol": "SANIC4"}, {"id": 42834}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Wildlife food and cover value ratings", "properties": {
-                "status": {"type": "string"},
-                "data": {"type": "object", "properties": {
-                    "food": {"type": "array", "items": {"type": "object", "properties": {
-                        "source": {"type": ["string", "null"]},
-                        "large_mammals": {"type": ["string", "null"]},
-                        "small_mammals": {"type": ["string", "null"]},
-                        "water_birds": {"type": ["string", "null"]},
-                        "terrestrial_birds": {"type": ["string", "null"]}
-                    }}},
-                    "cover": {"type": "array", "items": {"type": "object", "properties": {
-                        "source": {"type": ["string", "null"]},
-                        "large_mammals": {"type": ["string", "null"]},
-                        "small_mammals": {"type": ["string", "null"]},
-                        "water_birds": {"type": ["string", "null"]},
-                        "terrestrial_birds": {"type": ["string", "null"]}
-                    }}},
-                    "sources": {"type": "array", "items": {"type": "object"}}
-                }},
-                "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "food": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "large_mammals": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "small_mammals": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "water_birds": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "terrestrial_birds": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "cover": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "large_mammals": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "small_mammals": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "water_birds": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "terrestrial_birds": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              },
+              "required": [
+                "food"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

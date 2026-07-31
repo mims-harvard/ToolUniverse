@@ -329,7 +329,7 @@
   },
   {
     "name": "GO_get_genes_for_term",
-    "description": "Finds all genes/proteins associated with a specific Gene Ontology term using the Biolink API.",
+    "description": "Finds genes/proteins annotated to a Gene Ontology term, including annotations to its descendant terms (is_a/part_of closure), via the GO Solr index. Rows are collapsed to distinct genes, each carrying its evidence codes and annotation count. Supply `taxon` to restrict to one species -- omit it and genes from all species are returned together. Example: id='GO:0006915' with taxon='NCBITaxon:9606' returns human apoptosis genes.",
     "type": "GeneOntologyTool",
     "parameter": {
       "type": "object",
@@ -340,38 +340,91 @@
         },
         "taxon": {
           "type": "string",
-          "description": "Optional species filter using a NCBI taxon ID. For example, Human is 'NCBITaxon:9606', and Mouse is 'NCBITaxon:10090'."
+          "description": "Optional species filter using an NCBI taxon ID, e.g. 'NCBITaxon:9606' (human) or 'NCBITaxon:10090' (mouse). Omit to return genes from every species."
         },
         "rows": {
           "type": "integer",
-          "description": "The number of genes to return. Default is 100."
+          "minimum": 1,
+          "default": 100,
+          "description": "Maximum number of annotation rows to scan. Distinct genes returned may be fewer, since one gene can carry several annotations. Default is 100."
         }
       },
       "required": [
-        "id",
-        "taxon",
-        "rows"
+        "id"
       ]
     },
     "fields": {
-      "endpoint": "http://api.geneontology.org/api/bioentity/function/{id}",
-      "extract_path": "associations[*].subject",
+      "endpoint": "https://golr-aux.geneontology.io/solr/select?wt=json&q=*:*&fq=document_category:\"annotation\"&fq=isa_partof_closure:\"{id}\"&fq=taxon:\"{taxon}\"&rows={rows}&fl=bioentity,bioentity_label,bioentity_name,taxon,taxon_label,evidence_type",
+      "extract_path": "response.docs.genes",
       "input_description": "Input GO term ID, e.g., 'GO:0006915'.",
-      "output_description": "Returns a list of genes/proteins associated with the GO term."
+      "output_description": "Returns distinct genes/proteins annotated to the GO term or its descendants."
     },
     "test_examples": [
       {
         "id": "GO:0006915",
         "taxon": "NCBITaxon:9606",
         "rows": 10
+      },
+      {
+        "id": "GO:0006915",
+        "rows": 10
       }
     ],
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {}
-      }
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bioentity": {
+                "type": "string",
+                "description": "Gene/protein identifier, e.g. 'UniProtKB:P04637'"
+              },
+              "gene_symbol": {
+                "type": "string"
+              },
+              "gene_name": {
+                "type": "string"
+              },
+              "taxon": {
+                "type": "string"
+              },
+              "taxon_label": {
+                "type": "string"
+              },
+              "evidence_types": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Distinct GO evidence codes supporting the annotation"
+              },
+              "annotation_count": {
+                "type": "integer",
+                "description": "Annotation rows collapsed into this gene"
+              }
+            },
+            "required": [
+              "bioentity"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     }
   },
   {

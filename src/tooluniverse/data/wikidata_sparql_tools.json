@@ -17,8 +17,7 @@
         }
       },
       "required": [
-        "sparql",
-        "max_results"
+        "sparql"
       ]
     },
     "return_schema": {

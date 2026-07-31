@@ -26,81 +26,66 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "uniprots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprots": {
-                  "type": "array",
-                  "items": {
+            "cutoff": {
+              "type": "integer"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
                     "type": "string"
-                  }
-                },
-                "cutoff": {
-                  "type": "integer"
-                },
-                "affinities": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "query": {
-                        "type": "string"
-                      },
-                      "monomerid": {
-                        "type": [
-                          "string",
-                          "integer"
-                        ]
-                      },
-                      "smile": {
-                        "type": "string"
-                      },
-                      "affinity_type": {
-                        "type": "string"
-                      },
-                      "affinity": {
-                        "type": [
-                          "string",
-                          "number"
-                        ]
-                      },
-                      "pmid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "uniprots"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -141,81 +126,66 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "uniprots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprots": {
-                  "type": "array",
-                  "items": {
+            "cutoff": {
+              "type": "integer"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
                     "type": "string"
-                  }
-                },
-                "cutoff": {
-                  "type": "integer"
-                },
-                "affinities": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "query": {
-                        "type": "string"
-                      },
-                      "monomerid": {
-                        "type": [
-                          "string",
-                          "integer"
-                        ]
-                      },
-                      "smile": {
-                        "type": "string"
-                      },
-                      "affinity_type": {
-                        "type": "string"
-                      },
-                      "affinity": {
-                        "type": [
-                          "string",
-                          "number"
-                        ]
-                      },
-                      "pmid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "uniprots"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -256,81 +226,66 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "uniprots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprots": {
-                  "type": "array",
-                  "items": {
+            "cutoff": {
+              "type": "integer"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
                     "type": "string"
-                  }
-                },
-                "cutoff": {
-                  "type": "integer"
-                },
-                "affinities": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "query": {
-                        "type": "string"
-                      },
-                      "monomerid": {
-                        "type": [
-                          "string",
-                          "integer"
-                        ]
-                      },
-                      "smile": {
-                        "type": "string"
-                      },
-                      "affinity_type": {
-                        "type": "string"
-                      },
-                      "affinity": {
-                        "type": [
-                          "string",
-                          "number"
-                        ]
-                      },
-                      "pmid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "uniprots"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -373,81 +328,66 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "pdbs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "pdbs": {
-                  "type": "array",
-                  "items": {
+            "cutoff": {
+              "type": "integer"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
                     "type": "string"
-                  }
-                },
-                "cutoff": {
-                  "type": "integer"
-                },
-                "affinities": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "query": {
-                        "type": "string"
-                      },
-                      "monomerid": {
-                        "type": [
-                          "string",
-                          "integer"
-                        ]
-                      },
-                      "smile": {
-                        "type": "string"
-                      },
-                      "affinity_type": {
-                        "type": "string"
-                      },
-                      "affinity": {
-                        "type": [
-                          "string",
-                          "number"
-                        ]
-                      },
-                      "pmid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "pdbs"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -481,78 +421,63 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "smiles": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "smiles": {
-                  "type": "string"
-                },
-                "similarity": {
-                  "type": "number"
-                },
-                "affinities": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "query": {
-                        "type": "string"
-                      },
-                      "monomerid": {
-                        "type": [
-                          "string",
-                          "integer"
-                        ]
-                      },
-                      "smile": {
-                        "type": "string"
-                      },
-                      "affinity_type": {
-                        "type": "string"
-                      },
-                      "affinity": {
-                        "type": [
-                          "string",
-                          "number"
-                        ]
-                      },
-                      "pmid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "similarity": {
+              "type": "number"
+            },
+            "affinities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "monomerid": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "smile": {
+                    "type": "string"
+                  },
+                  "affinity_type": {
+                    "type": "string"
+                  },
+                  "affinity": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "smiles"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

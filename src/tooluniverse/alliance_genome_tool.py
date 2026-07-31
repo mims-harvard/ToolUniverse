@@ -11,12 +11,32 @@ API: https://www.alliancegenome.org/api
 No authentication required.
 """
 
-import requests
+import re
+from html import unescape
 from typing import Dict, Any
+
+import requests
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 ALLIANCE_BASE = "https://www.alliancegenome.org/api"
+
+_HTML_TAG_RE = re.compile(r"<[^>]+>")
+
+
+def _strip_html(text):
+    """Strip inline HTML markup from an Alliance text field.
+
+    Alliance phenotype/description fields embed markup (e.g. italicised gene
+    symbols: 'anatomical structure <i>acta1a</i> expression decreased amount')
+    that leaks literal <i>...</i> tags into the JSON a caller renders. Remove the
+    tags and unescape entities so downstream consumers get clean plain text."""
+    if not isinstance(text, str):
+        return text
+    # Unescape entities FIRST so an entity-encoded tag ('&lt;i&gt;') becomes a
+    # real tag and is then removed too, not just literal '<i>' markup.
+    return _HTML_TAG_RE.sub("", unescape(text)).strip()
 
 
 @register_tool("AllianceGenomeTool")
@@ -370,7 +390,7 @@ class AllianceGenomeTool(BaseTool):
                 {
                     "gene_symbol": gene_symbol,
                     "gene_id": subject.get("primaryExternalId"),
-                    "phenotype_statement": r.get("phenotypeStatement"),
+                    "phenotype_statement": _strip_html(r.get("phenotypeStatement")),
                 }
             )
 

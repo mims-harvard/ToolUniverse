@@ -71,7 +71,7 @@
   {
     "name": "ORCID_search_researchers",
     "type": "ORCIDTool",
-    "description": "Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Supports full-text search across names, affiliations, publications, and keywords. Use for: finding researchers working on specific topics, identifying collaborators, disambiguating authors.",
+    "description": "Search ORCID registry for researchers by keyword query. Returns each match's ORCID iD along with given/family/credit names, other names, and institution affiliations, so same-named candidates can be disambiguated without a separate profile lookup. Supports full-text search across names, affiliations, publications, and keywords. Use for: finding researchers working on specific topics, identifying collaborators, disambiguating authors.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -164,37 +164,75 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": ["status", "data"],
-          "properties": {
-            "status": {"const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "put_code": {"type": ["integer", "string", "null"]},
-                  "title": {"type": ["string", "null"]},
-                  "type": {"type": ["string", "null"]},
-                  "organization": {"type": ["string", "null"]},
-                  "organization_country": {"type": ["string", "null"]},
-                  "start_date": {"type": ["object", "null"]},
-                  "end_date": {"type": ["object", "null"]},
-                  "url": {"type": ["string", "null"]},
-                  "external_ids": {"type": "array"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "put_code": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "organization": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "organization_country": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "start_date": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "end_date": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "external_ids": {
+                "type": "array"
               }
-            },
-            "num_fundings": {"type": "integer"}
+            }
           }
         },
         {
           "type": "object",
-          "required": ["status", "error"],
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -227,36 +265,72 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": ["status", "data"],
-          "properties": {
-            "status": {"const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "put_code": {"type": ["integer", "string", "null"]},
-                  "reviewer_role": {"type": ["string", "null"]},
-                  "review_type": {"type": ["string", "null"]},
-                  "review_group_id": {"type": ["string", "null"]},
-                  "convening_organization": {"type": ["string", "null"]},
-                  "convening_organization_country": {"type": ["string", "null"]},
-                  "completion_date": {"type": ["object", "null"]},
-                  "review_url": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "put_code": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "reviewer_role": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "review_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "review_group_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "convening_organization": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "convening_organization_country": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "completion_date": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "review_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "num_peer_reviews": {"type": "integer"}
+            }
           }
         },
         {
           "type": "object",
-          "required": ["status", "error"],
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

@@ -2,7 +2,7 @@
   {
     "type": "IntActRESTTool",
     "name": "intact_get_interactor",
-    "description": "Get detailed information about a specific interactor from IntAct database by IntAct identifier (e.g., 'EBI-1004115'). Note: This requires an IntAct-specific identifier, not UniProt IDs. For UniProt IDs, use intact_get_interactions instead. Returns interactor details including names, aliases, organism, and cross-references.",
+    "description": "Get detailed information about a specific interactor from IntAct database by IntAct identifier (e.g., 'EBI-1004115'). Note: This requires an IntAct-specific identifier, not UniProt IDs. For UniProt IDs, use intact_get_interactions instead. Returns interactor details including names, aliases, organism, and cross-references. Returns 25 interactions per call by default; compare 'count' with 'hitCount' in the response metadata and raise 'size' to retrieve the rest.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,11 +13,17 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
           "default": "json",
-          "description": "Response format"
+          "description": "Response format. Only 'json' is produced by this endpoint."
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of interactions to return (default 25). IntAct entries commonly have far more -- the response reports the true total as 'hitCount', so raise 'size' to that value to retrieve them all."
         }
       },
       "required": [
@@ -47,7 +53,7 @@
   {
     "type": "IntActRESTTool",
     "name": "intact_get_interactions",
-    "description": "Get all interactions involving a specific interactor (protein or gene) by identifier. Uses EBI Search API (IntAct domain) for reliable access. Returns list of interactions with interaction IDs (e.g., 'EBI-366083-EBI-366083') in the 'interaction_ids' field. These IDs can be used with intact_get_interaction_details or intact_get_interaction_network to get detailed information. Accepts UniProt IDs, gene names, or IntAct identifiers.",
+    "description": "Get all interactions involving a specific interactor (protein or gene) by identifier. Uses EBI Search API (IntAct domain) for reliable access. Returns list of interactions with interaction IDs (e.g., 'EBI-366083-EBI-366083') in the 'interaction_ids' field. These IDs can be used with intact_get_interaction_details or intact_get_interaction_network to get detailed information. Accepts UniProt IDs, gene names, or IntAct identifiers. Returns 25 interactions per call by default; compare 'count' with 'hitCount' in the response metadata and raise 'size' to retrieve the rest.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -58,10 +64,17 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of interactions to return (default 25). IntAct entries commonly have far more -- the response reports the true total as 'hitCount', so raise 'size' to that value to retrieve them all."
         }
       },
       "required": [

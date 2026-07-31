@@ -27,49 +27,34 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
             "status": {
-              "const": "success"
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "string"
-                },
-                "candidates": {
-                  "type": "array"
-                },
-                "recommendation": {
-                  "type": "null"
-                },
-                "message": {
-                  "type": "string"
-                }
-              }
+            "candidates": {
+              "type": "array"
             },
-            "metadata": {
-              "type": "object"
+            "recommendation": {
+              "type": "null"
+            },
+            "message": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

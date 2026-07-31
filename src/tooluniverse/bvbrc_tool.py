@@ -663,6 +663,18 @@ class BVBRCTool(BaseTool):
             "ec_number",
             "ec_description",
             "taxon_id",
+            # BV-BRC's pathway index has one row per gene/annotation-source
+            # per pathway/EC pair (e.g. the same EC number annotated once
+            # by RefSeq and once by PATRIC, or matched by multiple distinct
+            # genes). Without these fields selected, those genuinely
+            # distinct records collapse into what looks like exact
+            # duplicate rows (confirmed live for M. tuberculosis
+            # "Fatty acid metabolism": 10/10 rows identical without these
+            # fields, vs. fadD15/fadD19/fadD35 etc. once selected).
+            "gene",
+            "feature_id",
+            "product",
+            "annotation",
         ]
 
         query = self._build_query_string(

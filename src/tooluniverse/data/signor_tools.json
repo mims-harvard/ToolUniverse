@@ -297,111 +297,69 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "source_entity": {
-                    "type": "string"
-                  },
-                  "source_type": {
-                    "type": "string"
-                  },
-                  "source_id": {
-                    "type": "string"
-                  },
-                  "target_entity": {
-                    "type": "string"
-                  },
-                  "target_type": {
-                    "type": "string"
-                  },
-                  "target_id": {
-                    "type": "string"
-                  },
-                  "effect": {
-                    "type": "string"
-                  },
-                  "mechanism": {
-                    "type": "string"
-                  },
-                  "residue": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "pmid": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "direct": {
-                    "type": "boolean"
-                  },
-                  "score": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "signor_id": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "proteins": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "level": {
-                  "type": "integer"
-                },
-                "total_interactions": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_entity": {
+                "type": "string"
+              },
+              "source_type": {
+                "type": "string"
+              },
+              "source_id": {
+                "type": "string"
+              },
+              "target_entity": {
+                "type": "string"
+              },
+              "target_type": {
+                "type": "string"
+              },
+              "target_id": {
+                "type": "string"
+              },
+              "effect": {
+                "type": "string"
+              },
+              "mechanism": {
+                "type": "string"
+              },
+              "residue": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pmid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "direct": {
+                "type": "boolean"
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "signor_id": {
+                "type": "string"
               }
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

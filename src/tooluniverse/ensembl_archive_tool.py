@@ -47,9 +47,25 @@ class EnsemblArchiveTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 400:
+                # Fix-R19A-2: Ensembl's archive endpoint returns HTTP 400
+                # (not 404) for both a malformed ID AND a syntactically
+                # valid but nonexistent one -- confirmed live for
+                # ENSG00000999999 (correct ENSG + 11 digits, same shape as
+                # a real ID): HTTP 400 with body {"error": "No object
+                # found for ENSG00000999999"}. Blanket-mapping every 400
+                # to "Invalid format" discarded that real message and sent
+                # a user checking ID syntax instead of realizing the
+                # record simply doesn't exist. Surface the upstream
+                # message when present.
+                upstream_error = None
+                try:
+                    upstream_error = e.response.json().get("error")
+                except Exception:
+                    pass
                 return {
                     "status": "error",
-                    "error": f"Invalid Ensembl ID format: {arguments.get('ensembl_id', '')}",
+                    "error": upstream_error
+                    or f"Invalid Ensembl ID format: {arguments.get('ensembl_id', '')}",
                 }
             if code == 404:
                 return {

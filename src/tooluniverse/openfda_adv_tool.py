@@ -193,8 +193,14 @@ class FDADrugAdverseEventTool(BaseTool):
                         field_parts.append(f'{fda_field_name}:"{mapped_value}"')
                     else:
                         field_parts.append(f"{fda_field_name}:{mapped_value}")
-                # Join multiple fields with OR
-                search_parts.append("+OR+".join(field_parts))
+                # Join multiple fields with OR. The group MUST be parenthesized:
+                # openFDA/Lucene binds AND tighter than OR, so an un-grouped
+                # "a:x OR b:x AND c:y OR d:y" parses as "a:x OR (b:x AND c:y) OR
+                # d:y" -- wrong. That silently broke every filtered multi-field
+                # query, e.g. FAERS colistin + reaction "acute kidney injury"
+                # returned 0 (HTTP 404) even though the unfiltered count shows
+                # ACUTE KIDNEY INJURY = 151. Wrapping keeps "(a OR b) AND (c OR d)".
+                search_parts.append("(" + "+OR+".join(field_parts) + ")")
             else:
                 # Single field - normal behavior
                 fda_field_name = fda_fields[0]
@@ -460,8 +466,14 @@ class FDADrugAdverseEventDetailTool(BaseTool):
                         field_parts.append(f'{fda_field_name}:"{mapped_value}"')
                     else:
                         field_parts.append(f"{fda_field_name}:{mapped_value}")
-                # Join multiple fields with OR
-                search_parts.append("+OR+".join(field_parts))
+                # Join multiple fields with OR. The group MUST be parenthesized:
+                # openFDA/Lucene binds AND tighter than OR, so an un-grouped
+                # "a:x OR b:x AND c:y OR d:y" parses as "a:x OR (b:x AND c:y) OR
+                # d:y" -- wrong. That silently broke every filtered multi-field
+                # query, e.g. FAERS colistin + reaction "acute kidney injury"
+                # returned 0 (HTTP 404) even though the unfiltered count shows
+                # ACUTE KIDNEY INJURY = 151. Wrapping keeps "(a OR b) AND (c OR d)".
+                search_parts.append("(" + "+OR+".join(field_parts) + ")")
             else:
                 # Single field - normal behavior
                 fda_field_name = fda_fields[0]

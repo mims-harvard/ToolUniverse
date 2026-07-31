@@ -17,45 +17,121 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful conopeptide lookup.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "id": {"type": ["string", "null"]},
-                "name": {"type": ["string", "null"]},
-                "alternative_names": {"type": "array"},
-                "class": {"type": ["string", "null"]},
-                "gene_superfamily": {"type": ["string", "null"]},
-                "cysteine_framework": {"type": ["string", "null"]},
-                "pharmacological_family": {"type": ["string", "null"]},
-                "organism_latin": {"type": ["string", "null"]},
-                "organism_diet": {"type": ["string", "null"]},
-                "organism_region": {"type": ["string", "null"]},
-                "sequence": {"type": ["string", "null"]},
-                "sequence_modifications": {"type": "array"},
-                "sequence_evidence": {"type": ["string", "null"]},
-                "average_mass": {"type": ["string", "null"]},
-                "monoisotopic_mass": {"type": ["string", "null"]},
-                "isoelectric_point": {"type": ["string", "null"]},
-                "extinction_coefficient": {"type": ["string", "null"]},
-                "references": {"type": "array"}
-              }
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "metadata": {"type": "object"}
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "alternative_names": {
+              "type": "array"
+            },
+            "class": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gene_superfamily": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "cysteine_framework": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pharmacological_family": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organism_latin": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organism_diet": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organism_region": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sequence": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sequence_modifications": {
+              "type": "array"
+            },
+            "sequence_evidence": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "average_mass": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "monoisotopic_mass": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "isoelectric_point": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "extinction_coefficient": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "references": {
+              "type": "array"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -85,30 +161,31 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful search.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "count": {"type": "integer"},
-                "returned": {"type": "integer"},
-                "results": {"type": "array"}
-              }
+            "count": {
+              "type": "integer"
             },
-            "metadata": {"type": "object"}
+            "returned": {
+              "type": "integer"
+            },
+            "results": {
+              "type": "array"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "count"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

@@ -597,7 +597,7 @@
         },
         "species": {
           "type": "string",
-          "description": "Filter by NCBI taxonomy ID (e.g., '9606' for human)."
+          "description": "Filter by NCBI taxonomy ID (e.g., '9606' for human). Sent to JASPAR as its `tax_id` query parameter."
         },
         "page": {
           "type": "integer",
@@ -609,12 +609,16 @@
           "default": 20,
           "description": "Results per page."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://jaspar.elixir.no/api/v1/matrix/",
       "return_format": "JSON",
-      "use_params": true
+      "use_params": true,
+      "param_map": {
+        "species": "tax_id"
+      }
     },
     "return_schema": {
       "type": "object",

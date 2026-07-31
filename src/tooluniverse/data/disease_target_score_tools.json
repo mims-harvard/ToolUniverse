@@ -21,8 +21,7 @@
       },
       "required": [
         "efoId",
-        "datasourceId",
-        "pageSize"
+        "datasourceId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",
@@ -106,8 +105,7 @@
         }
       },
       "required": [
-        "efoId",
-        "pageSize"
+        "efoId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",
@@ -190,8 +188,7 @@
         }
       },
       "required": [
-        "efoId",
-        "pageSize"
+        "efoId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",
@@ -266,8 +263,7 @@
         }
       },
       "required": [
-        "efoId",
-        "pageSize"
+        "efoId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",
@@ -342,8 +338,7 @@
         }
       },
       "required": [
-        "efoId",
-        "pageSize"
+        "efoId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",
@@ -418,8 +413,7 @@
         }
       },
       "required": [
-        "efoId",
-        "pageSize"
+        "efoId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",
@@ -494,8 +488,7 @@
         }
       },
       "required": [
-        "efoId",
-        "pageSize"
+        "efoId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",
@@ -570,8 +563,7 @@
         }
       },
       "required": [
-        "efoId",
-        "pageSize"
+        "efoId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",
@@ -646,8 +638,7 @@
         }
       },
       "required": [
-        "efoId",
-        "pageSize"
+        "efoId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",
@@ -722,8 +713,7 @@
         }
       },
       "required": [
-        "efoId",
-        "pageSize"
+        "efoId"
       ]
     },
     "query_schema": "query getTargets($efoId: String!, $index: Int!, $size: Int!) { disease(efoId: $efoId) { id name associatedTargets(page: { index: $index, size: $size }) { count rows { target { approvedSymbol id } datasourceScores { id score } } } } }",

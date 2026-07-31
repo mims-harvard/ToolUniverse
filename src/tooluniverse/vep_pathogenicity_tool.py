@@ -189,6 +189,14 @@ class VEPPathogenicityTool(BaseTool):
                     "gene_symbol": tc.get("gene_symbol"),
                     "gene_id": tc.get("gene_id"),
                     "biotype": tc.get("biotype"),
+                    # Ensembl includes this on every transcript consequence
+                    # (confirmed live) precisely to disambiguate which
+                    # nucleotide substitution a prediction applies to at a
+                    # multiallelic site (e.g. rsIDs frequently map to
+                    # allele_string "G/A/T") -- without it, a caller has no
+                    # way to tell which alt allele a given AlphaMissense/
+                    # SIFT/PolyPhen score belongs to.
+                    "variant_allele": tc.get("variant_allele"),
                     "consequence_terms": tc.get("consequence_terms"),
                     "amino_acids": tc.get("amino_acids"),
                     "codons": tc.get("codons"),

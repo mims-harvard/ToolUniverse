@@ -24,55 +24,146 @@
             "required": ["seq"]
         },
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Successful peptide property calculation.",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["success"]},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "seqString": {"type": ["string", "null"], "description": "Input peptide sequence."},
-                                "seqList": {"type": ["array", "null"], "description": "Per-residue list of the sequence.", "items": {"type": "string"}},
-                                "seqLength": {"type": ["integer", "null"], "description": "Number of residues."},
-                                "nString": {"type": ["string", "null"], "description": "N-terminal group string used."},
-                                "cString": {"type": ["string", "null"], "description": "C-terminal group string used."},
-                                "nName": {"type": ["string", "null"], "description": "Human-readable N-terminal modification name (e.g. 'Unmodified', 'Acetyl')."},
-                                "cName": {"type": ["string", "null"], "description": "Human-readable C-terminal modification name (e.g. 'Acid', 'Amide')."},
-                                "nModified": {"type": ["boolean", "null"], "description": "Whether the N-terminus is modified."},
-                                "cModified": {"type": ["boolean", "null"], "description": "Whether the C-terminus is modified."},
-                                "formula": {"type": ["string", "null"], "description": "Molecular formula (e.g. 'C44H67N13O13S')."},
-                                "molecularWeight": {"type": ["string", "null"], "description": "Monoisotopic molecular weight in Da (string)."},
-                                "molecularWeightAverage": {"type": ["string", "null"], "description": "Average molecular weight in Da (string)."},
-                                "isoelectricPoint": {"type": ["string", "null"], "description": "Isoelectric point (pI); null if the iso endpoint could not be computed."},
-                                "extinctionCoefficient": {
-                                    "type": ["object", "null"],
-                                    "description": "Molar extinction coefficient at 280 nm (M^-1 cm^-1).",
-                                    "properties": {
-                                        "oxidized": {"type": ["number", "null"], "description": "With cystine (oxidized cysteines)."},
-                                        "reduced": {"type": ["number", "null"], "description": "With free (reduced) cysteines."}
-                                    },
-                                    "additionalProperties": true
-                                }
-                            },
-                            "additionalProperties": true
-                        },
-                        "metadata": {"type": "object", "additionalProperties": true}
-                    },
-                    "required": ["status", "data"]
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "seqString": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Input peptide sequence."
                 },
-                {
-                    "type": "object",
-                    "description": "Error response.",
-                    "properties": {
-                        "status": {"type": "string", "enum": ["error"]},
-                        "error": {"type": "string", "description": "Human-readable error message."},
-                        "errorCode": {"type": ["string", "null"], "description": "Pep-Calc API error code, when present."}
+                "seqList": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Per-residue list of the sequence.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "seqLength": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of residues."
+                },
+                "nString": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "N-terminal group string used."
+                },
+                "cString": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "C-terminal group string used."
+                },
+                "nName": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Human-readable N-terminal modification name (e.g. 'Unmodified', 'Acetyl')."
+                },
+                "cName": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Human-readable C-terminal modification name (e.g. 'Acid', 'Amide')."
+                },
+                "nModified": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether the N-terminus is modified."
+                },
+                "cModified": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether the C-terminus is modified."
+                },
+                "formula": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Molecular formula (e.g. 'C44H67N13O13S')."
+                },
+                "molecularWeight": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Monoisotopic molecular weight in Da (string)."
+                },
+                "molecularWeightAverage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Average molecular weight in Da (string)."
+                },
+                "isoelectricPoint": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Isoelectric point (pI); null if the iso endpoint could not be computed."
+                },
+                "extinctionCoefficient": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Molar extinction coefficient at 280 nm (M^-1 cm^-1).",
+                  "properties": {
+                    "oxidized": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "With cystine (oxidized cysteines)."
                     },
-                    "required": ["status", "error"]
+                    "reduced": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "With free (reduced) cysteines."
+                    }
+                  },
+                  "additionalProperties": true
                 }
-            ]
+              },
+              "additionalProperties": true,
+              "required": [
+                "seqString"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         },
         "test_examples": [
             {

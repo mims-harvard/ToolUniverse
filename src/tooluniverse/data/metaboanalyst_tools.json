@@ -53,7 +53,7 @@
   {
     "name": "MetaboAnalyst_name_to_id",
     "type": "MetaboAnalystTool",
-    "description": "Map metabolite common names to database identifiers (KEGG, HMDB, PubChem, ChEBI). Resolves metabolite names against the KEGG compound database and retrieves cross-references to HMDB, PubChem, and ChEBI. Returns matched name, molecular formula, and exact mass for each metabolite. Use for: converting metabolite lists to standardized IDs before pathway or enrichment analysis.",
+    "description": "Map metabolite common names to database identifiers (KEGG, PubChem, ChEBI). Resolves metabolite names against the KEGG compound database and retrieves cross-references to PubChem and ChEBI. Returns matched name, molecular formula, and exact mass for each metabolite. Note: hmdb_id is almost always null -- KEGG discontinued HMDB cross-references in its DBLINKS data years ago, so this field is populated only for the rare legacy entry that still carries one; use a dedicated HMDB lookup tool to resolve HMDB IDs. Use for: converting metabolite lists to standardized IDs before pathway or enrichment analysis.",
     "parameter": {
       "type": "object",
       "properties": {

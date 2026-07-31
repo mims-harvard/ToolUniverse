@@ -10,8 +10,9 @@ chemical↔disease cleanly, but does NOT contain CTD's gene-disease inferred
 edges. Gene→disease queries return an honest error pointing at OpenTargets.
 """
 
+import re
 import requests
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -19,6 +20,42 @@ from .tool_registry import register_tool
 RENCI_BASE = "https://automat.renci.org/ctd"
 RENCI_HEADERS = {"Accept": "application/json", "User-Agent": "ToolUniverse CTDTool"}
 DATA_AS_OF = "2024-06"  # RENCI snapshot version
+
+_MESH_ID_RE = re.compile(r"^[CD]\d{6,9}$")  # D=descriptor, C=supplementary concept
+_CAS_RN_RE = re.compile(r"^\d{1,7}-\d{2}-\d$")
+_ALL_DIGITS_RE = re.compile(r"^\d+$")
+
+# Per input_type, the (pattern, CURIE prefix) pairs to try in order when the
+# bare term looks like a well-known, unambiguous ID format.
+_CURIE_RULES = {
+    "chem": ((_MESH_ID_RE, "MESH"), (_CAS_RN_RE, "CAS")),
+    "gene": ((_ALL_DIGITS_RE, "NCBIGene"),),
+    "disease": ((_MESH_ID_RE, "MESH"),),
+}
+
+
+def _candidate_curies(term: str, input_type: str) -> List[str]:
+    """Fix-R18C-2/4: CTD's own tool descriptions promise bare CAS RN, bare
+    MeSH ID, and bare NCBI Gene ID as valid input_terms formats, but the
+    RENCI mirror's equivalent_identifiers only ever store the CURIE-prefixed
+    form -- confirmed live that "D000082" (bare MeSH ID) and "80-05-7" (bare
+    CAS RN) both fail to resolve while "MESH:D000082" and "CAS:80-05-7"
+    succeed, and likewise a bare NCBI Gene ID needs "NCBIGene:" prepended.
+    When input_terms matches one of these well-known, unambiguous ID
+    formats and isn't already a CURIE, try the correctly-prefixed form
+    first; the original string is always tried too so a name/CURIE that
+    already works keeps working.
+    """
+    if ":" in term:
+        return [term]
+    candidates = [
+        f"{prefix}:{term}"
+        for pattern, prefix in _CURIE_RULES.get(input_type, ())
+        if pattern.match(term)
+    ]
+    candidates.append(term)
+    return candidates
+
 
 # Maps the existing tool configs' (input_type, report_type) to RENCI
 # (source_category, target_category). The gene→disease entry is None
@@ -121,7 +158,11 @@ class CTDTool(BaseTool):
             }
         source_cat, target_cat = mapping
 
-        canonical = self._resolve_curie(input_terms)
+        canonical = None
+        for candidate in _candidate_curies(input_terms, input_type):
+            canonical = self._resolve_curie(candidate)
+            if canonical:
+                break
         if not canonical:
             return {
                 "status": "error",
@@ -154,8 +195,13 @@ class CTDTool(BaseTool):
         """Resolve an input (name or any CURIE) to the graph's canonical id.
 
         Uses RENCI's /cypher endpoint to search by `id`, `equivalent_identifiers`,
-        or case-insensitive `name`. Returns the canonical `id` or None.
+        or case-insensitive `name`. Returns the canonical `id` or None. Callers
+        should try candidates from `_candidate_curies()` in order -- this does
+        a single lookup and does not itself retry with a CURIE prefix.
         """
+        return self._cypher_lookup(term)
+
+    def _cypher_lookup(self, term: str) -> Optional[str]:
         safe = term.replace('"', "").replace("\\", "")
         query = (
             'MATCH (n) WHERE n.id = "' + safe + '" OR "' + safe + '" IN '

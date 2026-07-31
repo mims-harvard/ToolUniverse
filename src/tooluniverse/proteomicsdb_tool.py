@@ -225,9 +225,17 @@ class ProteomicsDBTool(BaseTool):
                     "tissue_category": t[3] or "",
                 }
 
-        # Build expression records
-        # mapdata format: [protein_id, tissue_id, val1, val2, val3, val4]
-        # val1 appears to be the main normalized expression value (log10 iBAQ)
+        # Build expression records.
+        #
+        # mapdata rows mirror ProteomicsDB's documented proteinexpression.xsodata
+        # columns, in this order:
+        #   [protein_id, tissue_id, UNNORMALIZED_INTENSITY, NORMALIZED_INTENSITY,
+        #    MIN_NORMALIZED_INTENSITY, MAX_NORMALIZED_INTENSITY]
+        # `expression_value` must be the NORMALIZED intensity: it is the value the
+        # tool documents, the one comparable across tissues, and the only one that
+        # lies inside the min/max interval reported alongside it. Using the
+        # un-normalized column put every value outside its own error bars and
+        # reordered the tissue ranking.
         records = []
         for row in mapdata:
             if len(row) < 3:
@@ -239,18 +247,17 @@ class ProteomicsDBTool(BaseTool):
                 "tissue_name": tissue_info.get("tissue_name", ""),
                 "tissue_group": tissue_info.get("tissue_group", ""),
                 "tissue_category": tissue_info.get("tissue_category", ""),
-                "expression_value": row[2] if len(row) > 2 else None,
+                "expression_value": row[3] if len(row) > 3 else None,
+                "unnormalized_intensity": row[2],
             }
             # Add additional quantification values if present
-            if len(row) > 3:
-                rec["median_expression"] = row[3]
             if len(row) > 4:
                 rec["min_expression"] = row[4]
             if len(row) > 5:
                 rec["max_expression"] = row[5]
             records.append(rec)
 
-        # Sort by expression value descending
+        # Sort by normalized expression value descending
         records.sort(key=lambda r: r.get("expression_value") or 0, reverse=True)
 
         # Get protein info

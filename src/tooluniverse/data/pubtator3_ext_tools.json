@@ -55,65 +55,40 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Ranked relation edges for the queried entity from the PubTator3 knowledge graph.",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "description": "Relation edges ranked by supporting publication count (highest first).",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "Relation type (e.g. associate, cause, treat, inhibit, negative_correlate)."
-                  },
-                  "source": {
-                    "type": "string",
-                    "description": "Source entity in @TYPE_Name format."
-                  },
-                  "target": {
-                    "type": "string",
-                    "description": "Target entity in @TYPE_Name format."
-                  },
-                  "publications": {
-                    "type": "integer",
-                    "description": "Aggregate number of PubMed publications supporting this edge."
-                  }
-                }
+          "type": "array",
+          "description": "Relation edges ranked by supporting publication count (highest first).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Relation type (e.g. associate, cause, treat, inhibit, negative_correlate)."
+              },
+              "source": {
+                "type": "string",
+                "description": "Source entity in @TYPE_Name format."
+              },
+              "target": {
+                "type": "string",
+                "description": "Target entity in @TYPE_Name format."
+              },
+              "publications": {
+                "type": "integer",
+                "description": "Aggregate number of PubMed publications supporting this edge."
               }
-            },
-            "count": {
-              "type": "integer"
-            },
-            "total_before_limit": {
-              "type": "integer"
-            },
-            "url": {
-              "type": "string"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -162,207 +137,192 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "PubTator3": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "_id": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "string"
-                      },
-                      "infons": {
-                        "type": "object"
-                      },
-                      "passages": {
-                        "type": "array",
-                        "items": {
+            "PubTator3": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "infons": {
+                    "type": "object"
+                  },
+                  "passages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "infons": {
                           "type": "object",
                           "properties": {
-                            "infons": {
-                              "type": "object",
-                              "properties": {
-                                "journal": {
-                                  "type": "string"
-                                },
-                                "year": {
-                                  "type": "string"
-                                },
-                                "article-id_pmc": {
-                                  "type": "string"
-                                },
-                                "type": {
-                                  "type": "string"
-                                },
-                                "authors": {
-                                  "type": "string"
-                                }
-                              }
-                            },
-                            "offset": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "text": {
+                            "journal": {
                               "type": "string"
                             },
-                            "sentences": {
-                              "type": "array"
+                            "year": {
+                              "type": "string"
                             },
-                            "annotations": {
-                              "type": "array",
-                              "items": {
+                            "article-id_pmc": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "authors": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "offset": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "text": {
+                          "type": "string"
+                        },
+                        "sentences": {
+                          "type": "array"
+                        },
+                        "annotations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "infons": {
                                 "type": "object",
                                 "properties": {
-                                  "id": {
+                                  "identifier": {
                                     "type": "string"
                                   },
-                                  "infons": {
-                                    "type": "object",
-                                    "properties": {
-                                      "identifier": {
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "valid": {
-                                        "type": "boolean"
-                                      },
-                                      "normalized": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": [
-                                            "integer",
-                                            "number",
-                                            "string"
-                                          ]
-                                        }
-                                      },
-                                      "database": {
-                                        "type": "string"
-                                      },
-                                      "normalized_id": {
-                                        "type": [
-                                          "integer",
-                                          "number",
-                                          "string"
-                                        ]
-                                      },
-                                      "biotype": {
-                                        "type": "string"
-                                      },
-                                      "name": {
-                                        "type": "string"
-                                      },
-                                      "accession": {
-                                        "type": [
-                                          "null",
-                                          "string"
-                                        ]
-                                      }
-                                    }
-                                  },
-                                  "text": {
+                                  "type": {
                                     "type": "string"
                                   },
-                                  "locations": {
+                                  "valid": {
+                                    "type": "boolean"
+                                  },
+                                  "normalized": {
                                     "type": "array",
                                     "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "offset": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        },
-                                        "length": {
-                                          "type": [
-                                            "integer",
-                                            "number"
-                                          ]
-                                        }
-                                      }
+                                      "type": [
+                                        "integer",
+                                        "number",
+                                        "string"
+                                      ]
+                                    }
+                                  },
+                                  "database": {
+                                    "type": "string"
+                                  },
+                                  "normalized_id": {
+                                    "type": [
+                                      "integer",
+                                      "number",
+                                      "string"
+                                    ]
+                                  },
+                                  "biotype": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "accession": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  }
+                                }
+                              },
+                              "text": {
+                                "type": "string"
+                              },
+                              "locations": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "offset": {
+                                      "type": [
+                                        "integer",
+                                        "number"
+                                      ]
+                                    },
+                                    "length": {
+                                      "type": [
+                                        "integer",
+                                        "number"
+                                      ]
                                     }
                                   }
                                 }
                               }
-                            },
-                            "relations": {
-                              "type": "array"
                             }
                           }
+                        },
+                        "relations": {
+                          "type": "array"
                         }
-                      },
-                      "relations": {
-                        "type": "array"
-                      },
-                      "pmid": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "pmcid": {
-                        "type": "null"
-                      },
-                      "meta": {
-                        "type": "object"
-                      },
-                      "date": {
-                        "type": "string"
-                      },
-                      "journal": {
-                        "type": "string"
-                      },
-                      "authors": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "relations_display": {
-                        "type": "array"
                       }
                     }
+                  },
+                  "relations": {
+                    "type": "array"
+                  },
+                  "pmid": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "pmcid": {
+                    "type": "null"
+                  },
+                  "meta": {
+                    "type": "object"
+                  },
+                  "date": {
+                    "type": "string"
+                  },
+                  "journal": {
+                    "type": "string"
+                  },
+                  "authors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "relations_display": {
+                    "type": "array"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "PubTator3"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

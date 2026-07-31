@@ -235,9 +235,19 @@ class ArrayExpressRESTTool(BaseTool):
         """Extract sample information from a BioStudies section"""
         samples = []
 
-        # Check if current section is a sample
+        # Fix-R14C-2: the literal "Samples" section is just a wrapper
+        # carrying aggregate summary attributes (e.g. "Sample count", plus
+        # one "Experimental Factors" attribute per factor -- which the dict
+        # build below collapses to just the last one on name collision) --
+        # not per-sample data. Confirmed live via the raw BioStudies API
+        # (E-GEOD-33447) that the actual per-sample-group records live one
+        # level deeper, under a "Source Characteristics" subsection, as
+        # "Characteristics Table" entries (one per distinct combination of
+        # characteristics, e.g. age/tissue). Match those instead of the
+        # aggregate wrapper; "sample" (singular) is kept for any submission
+        # that uses that type directly on an individual record.
         section_type = section.get("type", "")
-        if section_type.lower() in ["samples", "sample"]:
+        if section_type.lower() in ["sample", "characteristics table"]:
             # Extract sample attributes
             if "attributes" in section and isinstance(section["attributes"], list):
                 sample_data = {}

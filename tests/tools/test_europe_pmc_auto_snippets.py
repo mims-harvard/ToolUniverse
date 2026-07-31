@@ -110,6 +110,8 @@ def test_europe_pmc_auto_snippets_basic(monkeypatch):
     )
 
     # Verify results
+    assert results["status"] == "success"
+    results = results["data"]
     assert isinstance(results, list)
     assert len(results) == 2
     assert call_count["search"] == 2  # Core + lite mode
@@ -175,6 +177,8 @@ def test_europe_pmc_auto_snippets_no_oa(monkeypatch):
     )
 
     # Verify no fulltext was fetched (article not OA)
+    assert results["status"] == "success"
+    results = results["data"]
     assert isinstance(results, list)
     assert len(results) == 1
     assert call_count["fulltext"] == 0  # No fulltext fetch for non-OA
@@ -231,6 +235,8 @@ def test_europe_pmc_auto_snippets_max_articles(monkeypatch):
     )
 
     # Verify only 3 fulltext fetches (max limit)
+    assert results["status"] == "success"
+    results = results["data"]
     assert isinstance(results, list)
     assert len(results) == 5
     assert call_count["fulltext"] <= 3  # Max 3 articles processed
@@ -273,6 +279,8 @@ def test_europe_pmc_auto_snippets_no_terms(monkeypatch):
     results = tool.run({"query": "test", "limit": 5})
 
     # Should work normally, no snippets
+    assert results["status"] == "success"
+    results = results["data"]
     assert isinstance(results, list)
     assert len(results) == 1
     assert "fulltext_snippets" not in results[0]
@@ -344,6 +352,8 @@ def test_europe_pmc_auto_snippets_more_than_5_terms(monkeypatch):
         }
     )
 
+    assert results["status"] == "success"
+    results = results["data"]
     assert isinstance(results, list)
     assert len(results) == 1
 
@@ -394,6 +404,8 @@ def test_europe_pmc_auto_snippets_empty_terms(monkeypatch):
     )
 
     # Should work normally, no snippet extraction attempted
+    assert results["status"] == "success"
+    results = results["data"]
     assert isinstance(results, list)
     assert len(results) == 1
     assert "fulltext_snippets" not in results[0]

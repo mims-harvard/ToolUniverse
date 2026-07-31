@@ -48,6 +48,16 @@
                 },
                 "associations": {
                   "type": "array"
+                },
+                "per_source_results": {
+                  "type": "object"
+                },
+                "notes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Present only when a source's contribution needs explanation beyond a plain empty result (e.g. it lacks the data shape this tool extracts from, distinct from genuinely having no data for the query)."
                 }
               }
             }

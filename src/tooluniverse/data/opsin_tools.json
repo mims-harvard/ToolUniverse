@@ -22,32 +22,56 @@
             {"name": "N-(4-hydroxyphenyl)acetamide"}
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "Parsed structure (or parsed=false when the name is not a systematic name)",
-                    "properties": {
-                        "status": {"type": "string"},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "name": {"type": "string", "description": "Input name"},
-                                "parsed": {"type": "boolean", "description": "Whether OPSIN could parse the name"},
-                                "smiles": {"type": ["string", "null"], "description": "SMILES string"},
-                                "inchi": {"type": ["string", "null"], "description": "Standard InChI"},
-                                "inchikey": {"type": ["string", "null"], "description": "Standard InChIKey"}
-                            }
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["status", "data"]
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Input name"
                 },
-                {
-                    "type": "object",
-                    "properties": {"error": {"type": "string"}},
-                    "required": ["error"]
+                "parsed": {
+                  "type": "boolean",
+                  "description": "Whether OPSIN could parse the name"
+                },
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "SMILES string"
+                },
+                "inchi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Standard InChI"
+                },
+                "inchikey": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Standard InChIKey"
                 }
-            ]
+              },
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

@@ -215,25 +215,44 @@ Health check tool that diagnoses ToolUniverse installation and tool availability
 **What it checks**:
 
 - ToolUniverse installation and imports
-- Tool loading status (available vs unavailable)
-- Missing dependencies for specific tools
+- Tool loading status (how many tool configs registered, and which failed)
+- Which optional dependency groups (extras) are not installed
+
+.. important::
+
+   **Loaded is not the same as runnable.** Loading a tool registers its JSON
+   config; it does not install the tool's dependencies. Tools backed by an
+   optional extra (``[ml]``, ``[visualization]``, ``[bioinformatics]``, ...)
+   are counted as loaded on a base ``pip install tooluniverse`` and only fail
+   when you actually run them. ``tooluniverse-doctor`` reports both numbers so
+   a partial install is not mistaken for a complete one.
 
 **Example Output**::
 
-    Checking ToolUniverse health...
-   
-    Total tools: 1195
-    Available: 1150
-    Unavailable: 45
-   
-   ️  Unavailable tools:
-   
-      BioBERT_ner
-        Error: No module named 'transformers'
-        Fix: pip install transformers
-   
-    Bulk fix command:
-      pip install transformers torch biopython
+   Checking ToolUniverse health...
+
+   Total tools: 2599
+   Config loaded: 2599
+   Failed to load: 0
+
+   7 optional dependency group(s) not installed:
+
+     [ml] - up to 11 tool(s) may not run
+        Missing: admet-ai, sentence-transformers
+        Fix: pip install 'tooluniverse[ml]'
+
+     [bioinformatics] - up to 14 tool(s) may not run
+        Missing: biopython, freesasa
+        Fix: pip install 'tooluniverse[bioinformatics]'
+
+     Note: tool counts above are an upper bound - a few tools use these
+     packages only as an enhancement and still work without them.
+
+When nothing failed to load and every extra is installed, the report ends with
+``All tools loaded and every optional dependency group is installed!``.
+
+``tu status`` shows the same missing-extras summary in short form, and
+``tu status --json`` exposes it as a ``missing_extras`` field for scripting.
 
 **Use cases**:
 
@@ -504,14 +523,25 @@ Server won't start
 Tools not loading
 ~~~~~~~~~~~~~~~~~
 
-**Problem**: ``tooluniverse-doctor`` shows many unavailable tools.
+**Problem**: ``tooluniverse-doctor`` shows tools that failed to load, or
+optional dependency groups that are not installed.
 
 **Solution**: Install missing dependencies::
 
    # Install all optional dependencies
-   pip install tooluniverse[all]
-   
+   pip install 'tooluniverse[all]'
+
+   # Or just the group the doctor named
+   pip install 'tooluniverse[ml]'
+
    # Or follow the specific installation instructions from doctor output
+
+.. note::
+
+   ``[all]`` covers ``dev, docs, graph, visualization, space, embedding, ml,
+   bioinformatics``. It does **not** include ``singlecell``, ``smolagents``,
+   ``client``, or ``build`` — install those by name, e.g.
+   ``pip install 'tooluniverse[singlecell]'``.
 
 Command not found
 ~~~~~~~~~~~~~~~~~

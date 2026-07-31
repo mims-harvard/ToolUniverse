@@ -12,12 +12,18 @@ Returns TSV format which is parsed to JSON by this tool.
 No authentication required. Free public access.
 """
 
+import re
+
 import requests
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 RHEA_BASE_URL = "https://www.rhea-db.org/rhea"
+
+# Rhea's REST API honours `limit` but ignores `offset`, so paging is done
+# client-side by fetching offset+limit rows and slicing.
+MAX_ROWS_PER_REQUEST = 1000
 
 
 @register_tool("RheaTool")
@@ -71,6 +77,97 @@ class RheaTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _normalize_prefixed_id(value: str, prefix: str) -> str:
+        """Normalize an identifier to Rhea's ``PREFIX:local`` query form.
+
+        Accepts the spellings that appear in OWL/OBO files, spreadsheets and
+        papers -- ``CHEBI_15724``, ``chebi:15724``, ``EC 1.1.1.1``, a bare
+        ``15724`` -- and returns ``CHEBI:15724`` / ``EC:1.1.1.1``. Previously the
+        check was a case-sensitive ``startswith``, so ``CHEBI_15724`` became
+        ``CHEBI:CHEBI_15724`` (0 results reported as a success) and lowercase
+        prefixes produced an upstream HTTP 500.
+        """
+        text = str(value).strip()
+        local = re.sub(rf"^{re.escape(prefix)}\s*[:_ ]?\s*", "", text, flags=re.I)
+        return f"{prefix}:{local.strip()}"
+
+    def _total_for_query(self, query: str) -> Optional[int]:
+        """Number of Rhea reactions matching `query`, independent of page size.
+
+        Rhea exposes no count endpoint, so this fetches the single ``rhea-id``
+        column unlimited -- cheap, and the only way to report a real total
+        rather than echoing back the requested ``limit``.
+        """
+        try:
+            response = requests.get(
+                RHEA_BASE_URL,
+                params={"query": query, "columns": "rhea-id", "format": "tsv"},
+                timeout=self.timeout,
+            )
+            response.raise_for_status()
+        except requests.RequestException:
+            return None
+        return len(self._parse_tsv(response.text))
+
+    def _paged_search(
+        self,
+        query: str,
+        columns: str,
+        arguments: Dict[str, Any],
+        extra_metadata: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Run a Rhea search, reporting an honest total and supporting paging."""
+        try:
+            limit = int(arguments.get("limit", 20))
+            offset = int(arguments.get("offset", 0))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": (
+                    "limit and offset must be integers, got "
+                    f"limit={arguments.get('limit')!r}, "
+                    f"offset={arguments.get('offset')!r}"
+                ),
+            }
+        if limit < 1:
+            return {"status": "error", "error": f"limit must be >= 1, got {limit}"}
+        offset = max(offset, 0)
+
+        total = self._total_for_query(query)
+
+        # Rhea ignores `offset`, so fetch through the requested window and slice.
+        fetch = min(offset + limit, MAX_ROWS_PER_REQUEST)
+        response = requests.get(
+            RHEA_BASE_URL,
+            params={
+                "query": query,
+                "columns": columns,
+                "format": "tsv",
+                "limit": fetch,
+            },
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+
+        page = self._parse_tsv(response.text)[offset : offset + limit]
+
+        metadata = {
+            "source": "Rhea (SIB)",
+            # Size of the whole matching result set, not of this page.
+            "total_results": total,
+            "returned": len(page),
+            "offset": offset,
+            "limit": limit,
+            "has_more": (
+                offset + len(page) < total if isinstance(total, int) else None
+            ),
+            "max_rows_per_request": MAX_ROWS_PER_REQUEST,
+        }
+        metadata.update(extra_metadata)
+
+        return {"status": "success", "data": page, "metadata": metadata}
+
     def _parse_tsv(self, text: str) -> List[Dict[str, str]]:
         """Parse TSV response into list of dicts."""
         lines = text.strip().split("\n")
@@ -112,29 +209,12 @@ class RheaTool(BaseTool):
                 "error": "query parameter is required (e.g., 'glucose', 'ATP', 'kinase')",
             }
 
-        limit = arguments.get("limit", 20)
-
-        params = {
-            "query": query,
-            "columns": "rhea-id,equation,ec",
-            "format": "tsv",
-            "limit": min(limit, 50),
-        }
-
-        response = requests.get(RHEA_BASE_URL, params=params, timeout=self.timeout)
-        response.raise_for_status()
-
-        results = self._parse_tsv(response.text)
-
-        return {
-            "status": "success",
-            "data": results,
-            "metadata": {
-                "source": "Rhea (SIB)",
-                "query": query,
-                "total_results": len(results),
-            },
-        }
+        return self._paged_search(
+            query=query,
+            columns="rhea-id,equation,ec",
+            arguments=arguments,
+            extra_metadata={"query": query},
+        )
 
     def _search_by_ec(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for reactions by EC (Enzyme Commission) number."""
@@ -145,33 +225,14 @@ class RheaTool(BaseTool):
                 "error": "ec_number parameter is required (e.g., 'EC:1.1.1.1', '3.5.1.50')",
             }
 
-        # Normalize EC number format
-        if not ec_number.startswith("EC:"):
-            ec_number = f"EC:{ec_number}"
+        ec_number = self._normalize_prefixed_id(ec_number, "EC")
 
-        limit = arguments.get("limit", 20)
-
-        params = {
-            "query": ec_number,
-            "columns": "rhea-id,equation,ec",
-            "format": "tsv",
-            "limit": min(limit, 50),
-        }
-
-        response = requests.get(RHEA_BASE_URL, params=params, timeout=self.timeout)
-        response.raise_for_status()
-
-        results = self._parse_tsv(response.text)
-
-        return {
-            "status": "success",
-            "data": results,
-            "metadata": {
-                "source": "Rhea (SIB)",
-                "ec_number": ec_number,
-                "total_results": len(results),
-            },
-        }
+        return self._paged_search(
+            query=ec_number,
+            columns="rhea-id,equation,ec",
+            arguments=arguments,
+            extra_metadata={"ec_number": ec_number},
+        )
 
     def _search_by_chebi(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for reactions involving a specific ChEBI compound."""
@@ -182,30 +243,11 @@ class RheaTool(BaseTool):
                 "error": "chebi_id parameter is required (e.g., 'CHEBI:17234' for glucose)",
             }
 
-        # Normalize ChEBI ID format
-        if not chebi_id.startswith("CHEBI:"):
-            chebi_id = f"CHEBI:{chebi_id}"
+        chebi_id = self._normalize_prefixed_id(chebi_id, "CHEBI")
 
-        limit = arguments.get("limit", 20)
-
-        params = {
-            "query": chebi_id,
-            "columns": "rhea-id,equation,chebi-id,ec",
-            "format": "tsv",
-            "limit": min(limit, 50),
-        }
-
-        response = requests.get(RHEA_BASE_URL, params=params, timeout=self.timeout)
-        response.raise_for_status()
-
-        results = self._parse_tsv(response.text)
-
-        return {
-            "status": "success",
-            "data": results,
-            "metadata": {
-                "source": "Rhea (SIB)",
-                "chebi_id": chebi_id,
-                "total_results": len(results),
-            },
-        }
+        return self._paged_search(
+            query=chebi_id,
+            columns="rhea-id,equation,chebi-id,ec",
+            arguments=arguments,
+            extra_metadata={"chebi_id": chebi_id},
+        )

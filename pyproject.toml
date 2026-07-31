@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tooluniverse"
-version = "1.3.1"
+version = "1.4.0"
 description = "A comprehensive collection of scientific tools for Agentic AI, offering integration with the ToolUniverse SDK and MCP Server to support advanced scientific workflows."
 authors = [
     { name = "Shanghua Gao", email = "shanghuagao@gmail.com" }
@@ -22,8 +22,8 @@ dependencies = [
     "openai>=1.107.0",
     "pyyaml>=6.0.0",
     "google-genai>=1.36.0",
-    "mcp[cli]>=1.9.3",
-    "fastmcp>=2.12.3,<4.0.0",
+    "mcp[cli]>=1.29.0,<2.0.0",
+    "fastmcp>=3.4.5,<4.0.0",
     "xmltodict>=1.0.0",
     "lxml>=6.0.0",
     "huggingface_hub>=0.34.0",
@@ -40,6 +40,13 @@ dependencies = [
     "aiohttp",
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
+    # markitdown[all] (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
+    # azure-ai-documentintelligence). The [all] marker is deliberate: the
+    # convert_to_markdown tool takes an arbitrary http/https/file/data URI with no
+    # format allowlist, so every converter dropped here becomes a silent runtime
+    # failure for that input type. markitdown is also imported unconditionally at
+    # module scope by unified_guideline_tools.py, so it cannot move to an extra
+    # without guarding that import. Narrow only alongside those two changes.
     "markitdown[all]>=0.1.0",
     "psutil>=5.9.0",
     "ddgs>=9.0.0",

@@ -8,12 +8,24 @@
         "fields": {"timeout": 30},
         "type": "OpenGenesGeneTool",
         "test_examples": [{"symbol": "GHR"}, {"symbol": "FOXO3"}, {"symbol": "TP53"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Aging gene profile", "properties": {
-                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     },
     {
         "name": "OpenGenes_search_genes",
@@ -25,11 +37,26 @@
         "fields": {"timeout": 30},
         "type": "OpenGenesSearchTool",
         "test_examples": [{"limit": 5}, {"limit": 3, "page": 2}, {"limit": 10}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "Aging gene catalog page", "properties": {
-                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

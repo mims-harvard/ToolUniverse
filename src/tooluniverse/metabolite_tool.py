@@ -50,6 +50,15 @@ def _cas_from_synonyms(synonyms: List[str]) -> Optional[str]:
     return None
 
 
+class CTDBackendUnavailable(RuntimeError):
+    """The CTD mirror could not be reached or is no longer served.
+
+    Raised so that "the backend is gone" is never reported as "this compound has
+    no disease associations" -- the two are indistinguishable to a caller once
+    an empty list is returned as a success.
+    """
+
+
 @register_tool("MetaboliteTool")
 class MetaboliteTool(BaseTool):
     """
@@ -189,9 +198,15 @@ class MetaboliteTool(BaseTool):
                 timeout=self.timeout,
             )
             r.raise_for_status()
+        except requests.RequestException as exc:
+            raise CTDBackendUnavailable(
+                f"CTD mirror (automat.renci.org/ctd) is unavailable: {exc}"
+            ) from exc
+        try:
             payload = r.json()
             curie = payload["results"][0]["data"][0]["row"][0]
-        except (requests.RequestException, KeyError, IndexError, TypeError, ValueError):
+        except (KeyError, IndexError, TypeError, ValueError):
+            # Query succeeded but this term is not a node in the graph.
             return []
 
         # 2) Fetch the SmallMolecule → Disease edges
@@ -202,13 +217,26 @@ class MetaboliteTool(BaseTool):
                 timeout=self.timeout,
             )
             r.raise_for_status()
+        except requests.RequestException as exc:
+            raise CTDBackendUnavailable(
+                f"CTD mirror (automat.renci.org/ctd) is unavailable: {exc}"
+            ) from exc
+        try:
             edges = r.json()
-        except (requests.RequestException, ValueError):
+        except ValueError:
             return []
         if not isinstance(edges, list):
             return []
 
-        # 3) Flatten [source, edge_props, target] back to CTD-style rows
+        # 3) Flatten [source, edge_props, target] back to CTD-style rows.
+        # Confirmed live (automat.renci.org/ctd chemical-disease edges):
+        # edge_props only ever carries agent_type/knowledge_level/
+        # primary_knowledge_source/publications -- there is no predicate/
+        # qualified_predicate field, so DirectEvidence (CTD's own
+        # "therapeutic"/"marker/mechanism" classification) is genuinely
+        # unavailable from this mirror, not a parsing bug. publications
+        # (PMID:xxxxx strings) IS present but was previously hardcoded to
+        # [] instead of being read.
         rows = []
         for edge in edges:
             if not isinstance(edge, list) or len(edge) < 3:
@@ -218,13 +246,17 @@ class MetaboliteTool(BaseTool):
             disease_name = tgt.get("name")
             if not disease_name:
                 continue
+            pubmed_ids = [
+                p.split(":", 1)[-1]
+                for p in props.get("publications") or []
+                if isinstance(p, str)
+            ]
             rows.append(
                 {
                     "DiseaseName": disease_name,
                     "DiseaseID": tgt.get("id"),
-                    "DirectEvidence": props.get("qualified_predicate")
-                    or props.get("predicate"),
-                    "PubMedIDs": [],
+                    "DirectEvidence": None,
+                    "PubMedIDs": pubmed_ids,
                 }
             )
         return rows
@@ -424,7 +456,9 @@ class MetaboliteTool(BaseTool):
                     "disease_categories": r.get("DiseaseCategories"),
                     "direct_evidence": r.get("DirectEvidence"),
                     "pubmed_ids": (
-                        r["PubMedIDs"].split("|") if r.get("PubMedIDs") else []
+                        r["PubMedIDs"].split("|")
+                        if isinstance(r.get("PubMedIDs"), str)
+                        else (r.get("PubMedIDs") or [])
                     ),
                 }
                 for r in rows
@@ -445,5 +479,7 @@ class MetaboliteTool(BaseTool):
                     "pubchem_url": f"https://pubchem.ncbi.nlm.nih.gov/compound/{cid}",
                 },
             }
+        except CTDBackendUnavailable as e:
+            return {"status": "error", "error": str(e)}
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Request failed: {str(e)}"}

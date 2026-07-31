@@ -38,43 +38,98 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {"type": "string"},
-                "rsids": {"type": ["string", "null"]},
-                "nearest_genes": {"type": ["string", "null"]},
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "phenocode": {"type": ["string", "null"]},
-                      "phenostring": {"type": ["string", "null"]},
-                      "category": {"type": ["string", "null"]},
-                      "pval": {"type": ["number", "null"]},
-                      "beta": {"type": ["number", "null"]},
-                      "sebeta": {"type": ["number", "null"]},
-                      "af": {"type": ["number", "null"]},
-                      "num_cases": {"type": ["number", "null"]},
-                      "num_controls": {"type": ["number", "null"]}
-                    }
+            "variant": {
+              "type": "string"
+            },
+            "rsids": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "nearest_genes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenocode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenostring": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sebeta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "af": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_cases": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_controls": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "variant"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -118,43 +173,98 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {"type": "string"},
-                "rsids": {"type": ["string", "null"]},
-                "nearest_genes": {"type": ["string", "null"]},
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "phenocode": {"type": ["string", "null"]},
-                      "phenostring": {"type": ["string", "null"]},
-                      "category": {"type": ["string", "null"]},
-                      "pval": {"type": ["number", "null"]},
-                      "beta": {"type": ["number", "null"]},
-                      "sebeta": {"type": ["number", "null"]},
-                      "af": {"type": ["number", "null"]},
-                      "num_cases": {"type": ["number", "null"]},
-                      "num_controls": {"type": ["number", "null"]}
-                    }
+            "variant": {
+              "type": "string"
+            },
+            "rsids": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "nearest_genes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenocode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenostring": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sebeta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "af": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_cases": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_controls": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "variant"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -198,43 +308,98 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {"type": "string"},
-                "rsids": {"type": ["string", "null"]},
-                "nearest_genes": {"type": ["string", "null"]},
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "phenocode": {"type": ["string", "null"]},
-                      "phenostring": {"type": ["string", "null"]},
-                      "category": {"type": ["string", "null"]},
-                      "pval": {"type": ["number", "null"]},
-                      "beta": {"type": ["number", "null"]},
-                      "sebeta": {"type": ["number", "null"]},
-                      "af": {"type": ["number", "null"]},
-                      "num_cases": {"type": ["number", "null"]},
-                      "num_controls": {"type": ["number", "null"]}
-                    }
+            "variant": {
+              "type": "string"
+            },
+            "rsids": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "nearest_genes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenocode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenostring": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sebeta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "af": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_cases": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "num_controls": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "variant"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -276,41 +441,83 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_id": {"type": "string"},
-                "gene_symbol": {"type": ["string", "null"]},
-                "burden_set": {"type": "string"},
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "phenocode": {"type": ["string", "null"]},
-                      "description": {"type": ["string", "null"]},
-                      "trait_type": {"type": ["string", "null"]},
-                      "pval": {"type": ["number", "null"]},
-                      "pval_skat": {"type": ["number", "null"]},
-                      "beta": {"type": ["number", "null"]},
-                      "total_variants": {"type": ["number", "null"]}
-                    }
+            "gene_id": {
+              "type": "string"
+            },
+            "gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "burden_set": {
+              "type": "string"
+            },
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenocode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "trait_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "pval_skat": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "total_variants": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "gene_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

@@ -77,6 +77,19 @@ State which sources you chose (and why) in one line before searching.
 - Preprints: append `SRC:PPR` to the EuropePMC `query` string.
 - `CORE_search_papers` is rate-limited (HTTP 429) without `CORE_API_KEY` — treat
   as best-effort; don't rely on it as a sole source.
+- `SemanticScholar_search_papers` also 429s under load with no API key configured.
+  Retry once; if it 429s again, drop it and note the gap in Caveats rather than
+  blocking the rest of the sweep on it.
+- `ArXiv_search_papers`: unprefixed, unquoted space-separated keywords are **ANDed**
+  (every keyword must appear) — adding more synonyms NARROWS results, it does not
+  broaden them like a typical search box. A query built from many synonyms (e.g.
+  `KRAS G12C inhibitor resistance mechanism secondary mutation bypass rebound`)
+  can silently collapse to 0-2 hits. To search across synonyms, join them with
+  explicit `OR`, e.g. `"KRAS G12C" OR sotorasib OR adagrasib`.
+  Also: `date_from`/`date_to` filter on `submittedDate`, the date of the paper's
+  **first version** — a paper revised after `date_from` but originally submitted
+  earlier is still excluded, so don't be surprised when a known-recent-looking
+  paper drops out of a date-filtered query.
 
 If a search returns <5 hits, broaden the query. If >50, narrow it. If a source
 errors or needs an unconfigured API key, note it and proceed with the rest —

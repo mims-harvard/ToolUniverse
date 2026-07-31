@@ -7,6 +7,11 @@ from .tool_registry import register_tool
 
 STRING_BASE_URL = "https://string-db.org/api"
 
+# Categories whose STRING label differs from the value our schema advertises.
+# Every other enum value ('Process', 'Component', 'Function', 'KEGG',
+# 'WikiPathways', 'COMPARTMENTS', 'TISSUES', 'DISEASES') matches STRING exactly.
+_STRING_CATEGORY_LABELS = {"Reactome": "RCTM"}
+
 
 @register_tool("STRINGRESTTool")
 class STRINGRESTTool(BaseTool):
@@ -121,6 +126,14 @@ class STRINGRESTTool(BaseTool):
         # Apply client-side filter when category is specified.
         category_filter = arguments.get("category")
         if category_filter:
+            # STRING labels its own categories differently from our enum for
+            # Reactome ('RCTM'). Comparing the enum value verbatim matched no
+            # row, so a declared and schema-validated category returned zero
+            # enriched terms as a success -- indistinguishable from "this gene
+            # set has no Reactome enrichment".
+            category_filter = _STRING_CATEGORY_LABELS.get(
+                category_filter, category_filter
+            )
             if isinstance(api_response, list):
                 api_response = [
                     r for r in api_response if r.get("category") == category_filter
@@ -140,9 +153,27 @@ class STRINGRESTTool(BaseTool):
             and "data" in api_response
             and "header" in api_response
         ):
+            rows = api_response["data"]
+            metadata = {"columns": api_response["header"]}
+            # `limit` is documented as "Maximum number of interactions to return",
+            # but STRING interprets it as a network node-expansion count and then
+            # returns EVERY pairwise edge -- so limit=50 could yield 300+ rows,
+            # far more than asked. Honor the documented meaning by returning at
+            # most `limit` interactions, keeping the highest-confidence ones.
+            limit = arguments.get("limit")
+            if isinstance(rows, list) and isinstance(limit, int) and len(rows) > limit:
+
+                def _score(row):
+                    try:
+                        return float(row.get("score"))
+                    except (TypeError, ValueError):
+                        return -1.0
+
+                rows = sorted(rows, key=_score, reverse=True)[:limit]
+                metadata["truncated_to_limit"] = limit
             return {
                 "status": "success",
-                "data": api_response["data"],
-                "metadata": {"columns": api_response["header"]},
+                "data": rows,
+                "metadata": metadata,
             }
         return {"status": "success", "data": api_response}

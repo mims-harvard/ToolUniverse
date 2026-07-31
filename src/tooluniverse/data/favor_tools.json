@@ -22,36 +22,62 @@
             {"variant": "7-117559590-ATCT-A"}
         ],
         "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "FAVOR functional annotation (curated groups + full all_annotations passthrough)",
-                    "properties": {
-                        "status": {"type": "string"},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "found": {"type": "boolean"},
-                                "variant": {"type": "object", "description": "Identity: variant_vcf, rsid, chromosome, position, HGVS genomic"},
-                                "gene_consequence": {"type": "object", "description": "Gene, GENCODE category, exonic effect, protein variant, HGVS c/p"},
-                                "allele_frequency": {"type": "object", "description": "BRAVO/TOPMed, gnomAD by ancestry, 1000 Genomes frequencies"},
-                                "deleteriousness": {"type": "object", "description": "CADD, SIFT, PolyPhen, AlphaMissense, MetaSVM and other pathogenicity scores"},
-                                "conservation": {"type": "object", "description": "GERP, phyloP, phastCons conservation scores"},
-                                "clinical": {"type": "object", "description": "ClinVar significance, disease, review status"},
-                                "regulatory": {"type": "object", "description": "CAGE, GeneHancer, ENCODE, ReMap regulatory context"},
-                                "all_annotations": {"type": "object", "description": "Full ~180-field FAVOR record"}
-                            }
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["status", "data"]
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "found": {
+                  "type": "boolean"
                 },
-                {
-                    "type": "object",
-                    "properties": {"error": {"type": "string"}},
-                    "required": ["error"]
+                "variant": {
+                  "type": "object",
+                  "description": "Identity: variant_vcf, rsid, chromosome, position, HGVS genomic"
+                },
+                "gene_consequence": {
+                  "type": "object",
+                  "description": "Gene, GENCODE category, exonic effect, protein variant, HGVS c/p"
+                },
+                "allele_frequency": {
+                  "type": "object",
+                  "description": "BRAVO/TOPMed, gnomAD by ancestry, 1000 Genomes frequencies"
+                },
+                "deleteriousness": {
+                  "type": "object",
+                  "description": "CADD, SIFT, PolyPhen, AlphaMissense, MetaSVM and other pathogenicity scores"
+                },
+                "conservation": {
+                  "type": "object",
+                  "description": "GERP, phyloP, phastCons conservation scores"
+                },
+                "clinical": {
+                  "type": "object",
+                  "description": "ClinVar significance, disease, review status"
+                },
+                "regulatory": {
+                  "type": "object",
+                  "description": "CAGE, GeneHancer, ENCODE, ReMap regulatory context"
+                },
+                "all_annotations": {
+                  "type": "object",
+                  "description": "Full ~180-field FAVOR record"
                 }
-            ]
+              },
+              "required": [
+                "found"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
         }
     }
 ]

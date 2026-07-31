@@ -25,6 +25,54 @@ from .tool_registry import register_tool
 # Base URL for Complex Portal API (IntAct complex-ws)
 COMPLEX_PORTAL_BASE = "https://www.ebi.ac.uk/intact/complex-ws"
 
+# Complex Portal's `species_f` search facet is indexed by full UniProt-style
+# organism name strings (confirmed via the API's own `facets` response), NOT
+# NCBI taxonomy IDs -- a raw "9606" never matches anything in the facet
+# index and silently no-ops the filter. This maps the common taxonomy IDs
+# and casual names callers are likely to pass to the exact facet strings.
+SPECIES_TAXID_TO_NAME = {
+    "9606": "Homo sapiens",
+    "10090": "Mus musculus",
+    "10116": "Rattus norvegicus",
+    "7227": "Drosophila melanogaster",
+    "6239": "Caenorhabditis elegans",
+    "7955": "Danio rerio",
+    "3702": "Arabidopsis thaliana",
+    "9031": "Gallus gallus",
+    "9913": "Bos taurus",
+    "4932": "Saccharomyces cerevisiae (strain ATCC 204508 / S288c)",
+    "559292": "Saccharomyces cerevisiae (strain ATCC 204508 / S288c)",
+    "83333": "Escherichia coli (strain K12)",
+    "511145": "Escherichia coli (strain K12)",
+    "284812": "Schizosaccharomyces pombe (strain 972 / ATCC 24843)",
+    "2697049": "Severe acute respiratory syndrome coronavirus 2",
+    "694009": "Severe acute respiratory syndrome coronavirus",
+}
+SPECIES_NAME_ALIASES = {
+    "human": "Homo sapiens",
+    "mouse": "Mus musculus",
+    "rat": "Rattus norvegicus",
+    "fly": "Drosophila melanogaster",
+    "fruit fly": "Drosophila melanogaster",
+    "worm": "Caenorhabditis elegans",
+    "zebrafish": "Danio rerio",
+    "yeast": "Saccharomyces cerevisiae (strain ATCC 204508 / S288c)",
+    "e. coli": "Escherichia coli (strain K12)",
+    "e.coli": "Escherichia coli (strain K12)",
+    "ecoli": "Escherichia coli (strain K12)",
+}
+
+
+def _resolve_species_facet_name(species: str) -> str:
+    """Translate a caller-supplied taxonomy ID or common name to the exact
+    organism name string Complex Portal's species_f facet is indexed by.
+    Falls back to the input as-is, so a caller who already knows and passes
+    the exact facet name (e.g. a less common organism) still works."""
+    key = species.strip()
+    return (
+        SPECIES_TAXID_TO_NAME.get(key) or SPECIES_NAME_ALIASES.get(key.lower()) or key
+    )
+
 
 @register_tool("ComplexPortalTool")
 class ComplexPortalTool(BaseTool):
@@ -73,11 +121,12 @@ class ComplexPortalTool(BaseTool):
             return {"status": "error", "error": "query parameter is required"}
 
         try:
+            species_name = _resolve_species_facet_name(species) if species else None
             url = f"{COMPLEX_PORTAL_BASE}/search/{query}"
             params = {
                 "format": "json",
                 "facets": "species_f",
-                "filters": f"species_f:({species})" if species else None,
+                "filters": f'species_f:("{species_name}")' if species_name else None,
                 "first": first,
                 "number": min(number, 100),
             }
@@ -125,7 +174,7 @@ class ComplexPortalTool(BaseTool):
                 "status": "success",
                 "data": {
                     "query": query,
-                    "species_filter": species,
+                    "species_filter": species_name,
                     "complexes": complexes,
                     "count": len(complexes),
                     "total_found": total_found,

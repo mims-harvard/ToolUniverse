@@ -367,25 +367,22 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": ["object", "array"],
-              "description": "Reference compound record (object) with name, formula, inchi, inchikey, chebiId, metSpecies, hasNMR, hasMS, hasPathways flags; or the full list of MTBLC* accessions (array) when list=true."
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+          "type": [
+            "object",
+            "array"
+          ],
+          "description": "Reference compound record (object) with name, formula, inchi, inchikey, chebiId, metSpecies, hasNMR, hasMS, hasPathways flags; or the full list of MTBLC* accessions (array) when list=true."
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

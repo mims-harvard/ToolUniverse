@@ -99,24 +99,18 @@ def example_get_variant_details():
     
     print(f"Status: {result.get('status')}")
     if result.get('status') == 'success':
-        if 'formatted_data' in result:
-            formatted = result['formatted_data']
-            print(f"Variant ID: {formatted['variant_id']}")
-            print(f"Accession: {formatted['accession']}")
-            print(f"Title: {formatted['title']}")
-            print(f"Object Type: {formatted['obj_type']}")
-            print(f"Genes: {formatted['genes'][:5]}")  # Show first 5 genes
-            print(f"Clinical Significance: {formatted['clinical_significance']}")
-            print(f"Review Status: {formatted['review_status']}")
-            print(f"Chromosome: {formatted['chromosome']}")
-            print(f"Location: {formatted['location']}")
-        else:
-            # Fallback to original format
-            data = result.get('data', {})
-            print(f"Variant ID: {result.get('variant_id')}")
-            print(f"Data type: {type(data)}")
-            if isinstance(data, dict):
-                print(f"Data keys: {list(data.keys())}")
+        # The formatted payload is returned under 'data'; the unprocessed
+        # esummary record stays available at data['raw_data'].
+        formatted = result.get('data', {})
+        print(f"Variant ID: {formatted['variant_id']}")
+        print(f"Accession: {formatted['accession']}")
+        print(f"Title: {formatted['title']}")
+        print(f"Object Type: {formatted['obj_type']}")
+        print(f"Genes: {formatted['genes'][:5]}")  # Show first 5 genes
+        print(f"Clinical Significance: {formatted['clinical_significance']}")
+        print(f"Review Status: {formatted['review_status']}")
+        print(f"Chromosome: {formatted['chromosome']}")
+        print(f"Location: {formatted['location']}")
     else:
         print(f"Error: {result.get('error')}")
     
@@ -138,28 +132,22 @@ def example_get_clinical_significance():
     
     print(f"Status: {result.get('status')}")
     if result.get('status') == 'success':
-        if 'formatted_data' in result:
-            formatted = result['formatted_data']
-            print(f"Variant ID: {formatted['variant_id']}")
-            print("Germline Classification:")
-            print(f"  Description: {formatted['germline_classification']['description']}")
-            print(f"  Review Status: {formatted['germline_classification']['review_status']}")
-            print(f"  Last Evaluated: {formatted['germline_classification']['last_evaluated']}")
-            print(f"  FDA Recognized: {formatted['germline_classification']['fda_recognized']}")
-            print(f"  Traits: {formatted['germline_classification']['traits']}")
-            print("Clinical Impact:")
-            print(f"  Description: {formatted['clinical_impact']['description']}")
-            print(f"  Review Status: {formatted['clinical_impact']['review_status']}")
-            print("Oncogenicity:")
-            print(f"  Description: {formatted['oncogenicity']['description']}")
-            print(f"  Review Status: {formatted['oncogenicity']['review_status']}")
-        else:
-            # Fallback to original format
-            data = result.get('data', {})
-            print(f"Variant ID: {result.get('variant_id')}")
-            print(f"Data type: {type(data)}")
-            if isinstance(data, dict):
-                print(f"Data keys: {list(data.keys())}")
+        # The formatted payload is returned under 'data'; the unprocessed
+        # esummary record stays available at data['raw_data'].
+        formatted = result.get('data', {})
+        print(f"Variant ID: {formatted['variant_id']}")
+        print("Germline Classification:")
+        print(f"  Description: {formatted['germline_classification']['description']}")
+        print(f"  Review Status: {formatted['germline_classification']['review_status']}")
+        print(f"  Last Evaluated: {formatted['germline_classification']['last_evaluated']}")
+        print(f"  FDA Recognized: {formatted['germline_classification']['fda_recognized']}")
+        print(f"  Traits: {formatted['germline_classification']['traits']}")
+        print("Clinical Impact:")
+        print(f"  Description: {formatted['clinical_impact']['description']}")
+        print(f"  Review Status: {formatted['clinical_impact']['review_status']}")
+        print("Oncogenicity:")
+        print(f"  Description: {formatted['oncogenicity']['description']}")
+        print(f"  Review Status: {formatted['oncogenicity']['review_status']}")
     else:
         print(f"Error: {result.get('error')}")
     

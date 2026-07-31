@@ -264,92 +264,77 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "spectrum_id": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "spectrum_id": {
-                  "type": "string"
-                },
-                "compound_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "adduct": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "smiles": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "inchi": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "ion_source": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "instrument": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "ion_mode": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "precursor_mz": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "library_membership": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "pi": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
+            "compound_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "metadata": {
-              "type": "object"
+            "adduct": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ion_source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "instrument": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ion_mode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "precursor_mz": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "library_membership": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pi": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "required": [
-            "status",
-            "data"
+            "spectrum_id"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
@@ -393,56 +378,41 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "smiles": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "smiles": {
-                  "type": "string"
-                },
-                "class": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "superclass": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "pathway": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "is_glycoside": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
-                }
+            "class": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object"
+            "superclass": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "pathway": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "is_glycoside": {
+              "type": [
+                "boolean",
+                "null"
+              ]
             }
           },
           "required": [
-            "status",
-            "data"
+            "smiles"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }

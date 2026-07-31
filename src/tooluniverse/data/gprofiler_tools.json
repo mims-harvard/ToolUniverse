@@ -1,7 +1,7 @@
 [
     {
         "name": "gProfiler_enrichment",
-        "description": "Perform functional enrichment analysis on a gene list using g:Profiler (g:GOSt) from the University of Tartu. Identifies statistically overrepresented biological functions, pathways, and phenotypes in your gene list. Supports multiple data sources: Gene Ontology (GO:BP, GO:MF, GO:CC), KEGG pathways, Reactome, WikiPathways, Human Phenotype Ontology (HP), miRNA targets (MIRNA), CORUM protein complexes, and Transcription Factor targets (TF). Returns enriched terms with p-values (g:SCS multiple testing correction), term sizes, intersection genes, precision, and recall. Input is a list of gene symbols (e.g., ['TP53', 'BRCA1', 'EGFR', 'KRAS', 'PTEN']). Supports 500+ organisms (use NCBI taxonomy prefix, e.g., 'hsapiens', 'mmusculus', 'dmelanogaster').",
+        "description": "Perform functional enrichment analysis on a gene list using g:Profiler (g:GOSt) from the University of Tartu. Identifies statistically overrepresented biological functions, pathways, and phenotypes in your gene list. Supports multiple data sources: Gene Ontology (GO:BP, GO:MF, GO:CC), KEGG pathways, Reactome, WikiPathways, Human Phenotype Ontology (HP), miRNA targets (MIRNA), CORUM protein complexes, and Transcription Factor targets (TF). Returns enriched terms with p-values (g:SCS multiple testing correction), term sizes, intersection genes, precision, and recall. Input is a comma-separated string of gene symbols (e.g., 'TP53,BRCA1,EGFR,KRAS,PTEN') -- a JSON array is not accepted. Supports 500+ organisms (use NCBI taxonomy prefix, e.g., 'hsapiens', 'mmusculus', 'dmelanogaster').",
         "parameter": {
             "type": "object",
             "properties": {

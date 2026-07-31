@@ -95,14 +95,14 @@
                   "number",
                   "null"
                 ],
-                "description": "Log10 normalized intensity (main value)"
+                "description": "Log10 NORMALIZED intensity - the main, cross-tissue-comparable value, and the one bounded by min_expression/max_expression"
               },
-              "median_expression": {
+              "unnormalized_intensity": {
                 "type": [
                   "number",
                   "null"
                 ],
-                "description": "Median log10 normalized intensity"
+                "description": "Log10 un-normalized intensity, as reported upstream. Not comparable across tissues; do not rank on this."
               },
               "min_expression": {
                 "type": [
@@ -322,7 +322,7 @@
                   "null"
                 ]
               },
-              "median_expression": {
+              "unnormalized_intensity": {
                 "type": [
                   "number",
                   "null"
@@ -471,158 +471,134 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful peptide-level evidence retrieval.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
+            "uniprot_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprot_id": {
-                  "type": "string"
-                },
-                "gene_name": {
-                  "type": "string"
-                },
-                "protein_name": {
-                  "type": "string"
-                },
-                "entry_name": {
-                  "type": "string"
-                },
-                "num_peptides": {
-                  "type": "integer"
-                },
-                "peptides": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "peptide_sequence": {
-                        "type": "string"
-                      },
-                      "peptide_mass": {
-                        "type": [
-                          "number",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "is_unique": {
-                        "type": [
-                          "integer",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "is_unique_to_protein": {
-                        "type": [
-                          "integer",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "peptide_q_value": {
-                        "type": [
-                          "number",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "protein_q_value": {
-                        "type": [
-                          "number",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "peptide_score": {
-                        "type": [
-                          "number",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "search_engine": {
-                        "type": [
-                          "integer",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "start_position": {
-                        "type": [
-                          "integer",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "end_position": {
-                        "type": [
-                          "integer",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "experiment_id": {
-                        "type": [
-                          "string",
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "experiment_name": {
-                        "type": "string"
-                      },
-                      "project_name": {
-                        "type": "string"
-                      },
-                      "project_description": {
-                        "type": "string"
-                      },
-                      "pubmed_id": {
-                        "type": [
-                          "string",
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "gene_name": {
+              "type": "string"
+            },
+            "protein_name": {
+              "type": "string"
+            },
+            "entry_name": {
+              "type": "string"
+            },
+            "num_peptides": {
+              "type": "integer"
+            },
+            "peptides": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "peptide_sequence": {
+                    "type": "string"
+                  },
+                  "peptide_mass": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_unique": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_unique_to_protein": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "peptide_q_value": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_q_value": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "peptide_score": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "search_engine": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "start_position": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "end_position": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "experiment_id": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "experiment_name": {
+                    "type": "string"
+                  },
+                  "project_name": {
+                    "type": "string"
+                  },
+                  "project_description": {
+                    "type": "string"
+                  },
+                  "pubmed_id": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": [
-                "uniprot_id",
-                "num_peptides",
-                "peptides"
-              ]
+              }
             }
           },
           "required": [
-            "status",
-            "data"
+            "uniprot_id",
+            "num_peptides",
+            "peptides"
           ]
         },
         {
           "type": "object",
-          "description": "Error envelope returned on failure.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

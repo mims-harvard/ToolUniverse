@@ -45,147 +45,132 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "job_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "job_id": {
-                  "type": "string"
-                },
-                "domains": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "database": {
-                        "type": "string"
-                      },
-                      "interpro_accession": {
-                        "type": "string"
-                      },
-                      "interpro_name": {
-                        "type": "string"
-                      },
-                      "interpro_type": {
-                        "type": "string"
-                      },
-                      "locations": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "start": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "end": {
-                              "type": [
-                                "integer",
-                                "number"
-                              ]
-                            },
-                            "score": {
-                              "type": [
-                                "null",
-                                "number"
-                              ]
-                            },
-                            "evalue": {
-                              "type": [
-                                "null",
-                                "number"
-                              ]
-                            }
-                          }
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "database": {
+                    "type": "string"
+                  },
+                  "interpro_accession": {
+                    "type": "string"
+                  },
+                  "interpro_name": {
+                    "type": "string"
+                  },
+                  "interpro_type": {
+                    "type": "string"
+                  },
+                  "locations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "score": {
+                          "type": [
+                            "null",
+                            "number"
+                          ]
+                        },
+                        "evalue": {
+                          "type": [
+                            "null",
+                            "number"
+                          ]
                         }
                       }
                     }
                   }
-                },
-                "domain_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "go_annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "category": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "pathways": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "database": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "sequence_length": {
-                  "type": "null"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "domain_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "go_annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "pathways": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "sequence_length": {
+              "type": "null"
             }
-          }
+          },
+          "required": [
+            "job_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -231,49 +216,34 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "job_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "job_id": {
-                  "type": "string"
-                },
-                "job_status": {
-                  "type": "string"
-                },
-                "is_finished": {
-                  "type": "boolean"
-                },
-                "has_error": {
-                  "type": "boolean"
-                }
-              }
+            "job_status": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "is_finished": {
+              "type": "boolean"
+            },
+            "has_error": {
+              "type": "boolean"
             }
-          }
+          },
+          "required": [
+            "job_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -318,46 +288,31 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "job_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "job_id": {
-                  "type": "string"
-                },
-                "job_status": {
-                  "type": "string"
-                },
-                "message": {
-                  "type": "string"
-                }
-              }
+            "job_status": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "message": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "job_id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

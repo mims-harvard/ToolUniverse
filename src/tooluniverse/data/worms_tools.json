@@ -2,58 +2,84 @@
   {
     "type": "WoRMSRESTTool",
     "name": "WoRMS_search_species",
-    "description": "Search marine species in World Register of Marine Species",
+    "description": "Search marine species in the World Register of Marine Species (WoRMS) by name. Returns up to `limit` matching taxon records; WoRMS serves 50 records per request, so larger pages are assembled automatically. `has_more` indicates whether further records exist beyond the returned page \u2014 use `offset` to retrieve them.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {"type": "string", "description": "Species name or search term"},
-        "limit": {"type": "integer", "default": 20, "description": "Number of results"}
+        "limit": {"type": "integer", "default": 20, "description": "Maximum number of taxon records to return (default 20). Pages larger than 50 are assembled from multiple WoRMS requests."},
+        "offset": {"type": "integer", "default": 1, "description": "1-based index of the first record to return (default 1). Use with `limit` and `has_more` to page through large result sets."}
       },
       "required": ["query"]
     },
     "fields": {
-      "endpoint": "https://www.marinespecies.org/rest/AphiaIDByName/{query}",
+      "endpoint": "https://www.marinespecies.org/rest/AphiaRecordsByName/{query}",
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "AphiaID": {"type": "integer"},
-          "url": {"type": "string"},
-          "scientificname": {"type": "string"},
-          "authority": {"type": ["string", "null"]},
-          "status": {"type": "string"},
-          "unacceptreason": {"type": ["string", "null"]},
-          "taxonRankID": {"type": "integer"},
-          "rank": {"type": "string"},
-          "valid_AphiaID": {"type": "integer"},
-          "valid_name": {"type": "string"},
-          "valid_authority": {"type": ["string", "null"]},
-          "parentNameUsageID": {"type": "integer"},
-          "originalNameUsageID": {"type": ["integer", "null"]},
-          "kingdom": {"type": "string"},
-          "phylum": {"type": "string"},
-          "class": {"type": "string"},
-          "order": {"type": "string"},
-          "family": {"type": ["string", "null"]},
-          "genus": {"type": ["string", "null"]},
-          "citation": {"type": "string"},
-          "lsid": {"type": "string"},
-          "isMarine": {"type": ["integer", "null"]},
-          "isBrackish": {"type": ["integer", "null"]},
-          "isFreshwater": {"type": ["integer", "null"]},
-          "isTerrestrial": {"type": ["integer", "null"]},
-          "isExtinct": {"type": ["integer", "null"]},
-          "match_type": {"type": "string"},
-          "modified": {"type": "string"}
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "data"],
+          "properties": {
+            "status": {"type": "string"},
+            "count": {"type": "integer", "description": "Number of records in this response (at most `limit`)."},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean", "description": "True when further matching records exist beyond this page."},
+            "url": {"type": "string"},
+            "message": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "AphiaID": {"type": "integer"},
+                  "url": {"type": "string"},
+                  "scientificname": {"type": "string"},
+                  "authority": {"type": ["string", "null"]},
+                  "status": {"type": "string"},
+                  "unacceptreason": {"type": ["string", "null"]},
+                  "taxonRankID": {"type": "integer"},
+                  "rank": {"type": "string"},
+                  "valid_AphiaID": {"type": "integer"},
+                  "valid_name": {"type": "string"},
+                  "valid_authority": {"type": ["string", "null"]},
+                  "parentNameUsageID": {"type": "integer"},
+                  "originalNameUsageID": {"type": ["integer", "null"]},
+                  "kingdom": {"type": "string"},
+                  "phylum": {"type": "string"},
+                  "class": {"type": "string"},
+                  "order": {"type": "string"},
+                  "family": {"type": ["string", "null"]},
+                  "genus": {"type": ["string", "null"]},
+                  "citation": {"type": "string"},
+                  "lsid": {"type": "string"},
+                  "isMarine": {"type": ["integer", "null"]},
+                  "isBrackish": {"type": ["integer", "null"]},
+                  "isFreshwater": {"type": ["integer", "null"]},
+                  "isTerrestrial": {"type": ["integer", "null"]},
+                  "isExtinct": {"type": ["integer", "null"]},
+                  "match_type": {"type": "string"},
+                  "modified": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {"query": "Actinia equina", "limit": 5},
-      {"query": "Scleractinia", "limit": 10}
+      {"query": "Gadus", "limit": 10, "offset": 1}
     ]
   },
   {
@@ -80,28 +106,38 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Nested classification tree",
+          "description": "Recursive classification node",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "description": "Recursive classification node",
-              "properties": {
-                "AphiaID": {"type": "integer"},
-                "rank": {"type": "string"},
-                "scientificname": {"type": "string"},
-                "child": {"type": ["object", "null"]}
-              }
+            "AphiaID": {
+              "type": "integer"
             },
-            "url": {"type": "string"},
-            "AphiaID": {"type": "integer"}
+            "rank": {
+              "type": "string"
+            },
+            "scientificname": {
+              "type": "string"
+            },
+            "child": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "AphiaID"
+          ]
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -129,31 +165,38 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Vernacular (common) names with language codes",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "vernacular": {"type": "string"},
-                  "language_code": {"type": ["string", "null"]},
-                  "language": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "vernacular": {
+                "type": "string"
+              },
+              "language_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "language": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "AphiaID": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -181,38 +224,83 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Marine distribution localities",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "locality": {"type": ["string", "null"]},
-                  "locationID": {"type": ["string", "null"]},
-                  "higherGeography": {"type": ["string", "null"]},
-                  "higherGeographyID": {"type": ["string", "null"]},
-                  "recordStatus": {"type": ["string", "null"]},
-                  "establishmentMeans": {"type": ["string", "null"]},
-                  "invasiveness": {"type": ["string", "null"]},
-                  "occurrence": {"type": ["string", "null"]},
-                  "decimalLatitude": {"type": ["number", "null"]},
-                  "decimalLongitude": {"type": ["number", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "locality": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "locationID": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "higherGeography": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "higherGeographyID": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recordStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "establishmentMeans": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "invasiveness": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "occurrence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "decimalLatitude": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "decimalLongitude": {
+                "type": [
+                  "number",
+                  "null"
+                ]
               }
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "AphiaID": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -240,36 +328,53 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Taxonomic synonyms",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "AphiaID": {"type": "integer"},
-                  "scientificname": {"type": "string"},
-                  "authority": {"type": ["string", "null"]},
-                  "status": {"type": "string"},
-                  "unacceptreason": {"type": ["string", "null"]},
-                  "rank": {"type": "string"},
-                  "valid_AphiaID": {"type": "integer"},
-                  "valid_name": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "AphiaID": {
+                "type": "integer"
+              },
+              "scientificname": {
+                "type": "string"
+              },
+              "authority": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string"
+              },
+              "unacceptreason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": "string"
+              },
+              "valid_AphiaID": {
+                "type": "integer"
+              },
+              "valid_name": {
+                "type": "string"
               }
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "AphiaID": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

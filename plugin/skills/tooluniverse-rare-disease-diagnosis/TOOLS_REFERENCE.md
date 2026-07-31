@@ -748,7 +748,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `kegg_get_gene_info` | `ReactomeContent_search` | `KEGG_get_gene_pathways` |
-| `intact_search_interactions` | `STRING_interactions` | Literature search |
+| `intact_search_interactions` | `STRING_get_interaction_partners` | Literature search |
 
 ### Variant Annotation
 | Primary | Fallback 1 | Fallback 2 |

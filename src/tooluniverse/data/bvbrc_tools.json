@@ -254,7 +254,7 @@
   },
   {
     "name": "BVBRC_search_amr",
-    "description": "Search for antimicrobial resistance (AMR) phenotype data in BV-BRC. Returns resistance/susceptibility data for pathogens against specific antibiotics, including MIC values, testing methods, and evidence. Essential for AMR surveillance research. Example: search for methicillin resistance in Staphylococcus aureus.",
+    "description": "Search for antimicrobial resistance (AMR) phenotype data in BV-BRC. Returns resistance/susceptibility data for pathogens against specific antibiotics, including MIC values, testing methods, and evidence. Essential for AMR surveillance research. Filter by 'antibiotic' (e.g. 'methicillin'), 'resistant_phenotype', and/or a specific BV-BRC 'genome_id'. There is no organism/species parameter: to scope results to one organism, first obtain its genome_id(s) (e.g. via BVBRC_search_genome_features / BVBRC_search_specialty_genes with taxon_id) and pass genome_id here.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1717,6 +1717,34 @@
                       "integer",
                       "null"
                     ]
+                  },
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene symbol for this pathway/EC record, e.g. \"fadD15\". Distinguishes genuinely different genes sharing the same EC number/pathway from true duplicate rows."
+                  },
+                  "feature_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "BV-BRC feature id for this record, e.g. \"RefSeq.83332.12.NC_000962.CDS.2448160.2449962.fwd\"."
+                  },
+                  "product": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene product/protein description."
+                  },
+                  "annotation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Annotation source, e.g. \"RefSeq\" or \"PATRIC\" -- the same EC/pathway is often independently annotated by multiple sources."
                   }
                 }
               }

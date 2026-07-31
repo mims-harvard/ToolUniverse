@@ -284,38 +284,26 @@ def _massive_tool():
     )
 
 
-def test_massive_proteins_parse(monkeypatch):
-    """MassIVE per-dataset proteins parse and coerce counts to int."""
+def test_massive_dataset_only_accession_errors(monkeypatch):
+    """A dataset-only accession fails closed instead of returning global data.
+
+    The MassIVE ProXI proteins/psms endpoints ignore the dataset filter (they
+    return the same global summary regardless), so per-dataset identification
+    listing is not offered; protein_accession is required and the guard fires
+    before any HTTP call.
+    """
     tool = _massive_tool()
-    payload = [
-        {
-            "proteinAccession": "A2MP_MOUSE",
-            "countPSM": "87187",
-            "countPeptides": "58",
-            "countPeptidoforms": "82",
-            "countDatasets": "5",
-        },
-        {
-            "proteinAccession": "A2M_MOUSE",
-            "countPSM": "146131",
-            "countPeptides": "106",
-            "countPeptidoforms": "234",
-            "countDatasets": "4",
-        },
-    ]
-    monkeypatch.setattr(
-        massive_mod.requests, "get", lambda *a, **k: _resp(200, payload)
-    )
+    called = {"n": 0}
+
+    def fake_get(*a, **k):
+        called["n"] += 1
+        return _resp(200, [])
+
+    monkeypatch.setattr(massive_mod.requests, "get", fake_get)
     out = tool.run({"accession": "PXD000561"})
-    assert out["status"] == "success"
-    data = out["data"]
-    assert data["result_type"] == "proteins"
-    assert data["count"] == 2
-    first = data["proteins"][0]
-    assert first["proteinAccession"] == "A2MP_MOUSE"
-    # count strings coerced to int
-    assert first["countPSM"] == 87187
-    assert first["countDatasets"] == 5
+    assert out["status"] == "error"
+    assert "protein_accession" in out["error"]
+    assert called["n"] == 0
 
 
 def test_massive_cross_dataset_parse(monkeypatch):
@@ -361,7 +349,7 @@ def test_massive_psms_parse(monkeypatch):
         return _resp(200, payload)
 
     monkeypatch.setattr(massive_mod.requests, "get", fake_get)
-    out = tool.run({"accession": "PXD000561", "result_type": "psms"})
+    out = tool.run({"protein_accession": "A2M_MOUSE", "result_type": "psms"})
     assert out["status"] == "success"
     assert out["data"]["result_type"] == "psms"
     assert out["data"]["count"] == 2
@@ -388,7 +376,7 @@ def test_massive_http_error(monkeypatch):
         raise requests.exceptions.ConnectionError("down")
 
     monkeypatch.setattr(massive_mod.requests, "get", boom)
-    out = tool.run({"accession": "PXD000561"})
+    out = tool.run({"protein_accession": "A2M_MOUSE"})
     assert out["status"] == "error"
 
 

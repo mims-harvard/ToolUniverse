@@ -224,8 +224,6 @@ def generate_tool_file(
     for name, prop in properties.items():
         py_type = prop_to_python_type(prop)
         desc = prop.get("description", "")
-        # Escape backslashes to avoid Unicode escape errors in docstrings
-        desc = desc.replace("\\", "\\\\")
         # Sanitize parameter name to be a valid Python identifier
         py_name = sanitize_param_name(name)
 
@@ -252,9 +250,16 @@ def generate_tool_file(
 
         # Use original name as the API key, but sanitized py_name as the variable
         kwargs.append(f'"{name}": {py_name}')
-        # Wrap long descriptions
+        # Wrap long descriptions. Truncate the raw text FIRST, then escape
+        # backslashes: escaping first can leave a truncation boundary in the
+        # middle of an escaped "\\" pair, emitting a lone trailing backslash
+        # that Python reads as an invalid escape sequence in the docstring
+        # (e.g. a FASTA example "...'>seq1\n..." truncated to "...'>seq1\..."
+        # made `import tooluniverse.tools` print a SyntaxWarning).
         if len(desc) > 80:
             desc = desc[:77] + "..."
+        # Escape backslashes to avoid Unicode escape errors in docstrings
+        desc = desc.replace("\\", "\\\\")
         doc_params.append(f"    {py_name} : {py_type}\n        {desc}")
 
     # Combine required and optional parameters

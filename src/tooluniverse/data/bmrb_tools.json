@@ -290,61 +290,44 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Standard envelope; data is a list of sequence-similarity hits",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "count": {
-              "type": "integer",
-              "description": "Number of matching BMRB entries"
-            },
-            "data": {
-              "type": "array",
-              "description": "List of matching BMRB entries ranked by similarity",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "entry_id": {
-                    "type": "string",
-                    "description": "BMRB entry identifier"
-                  },
-                  "entity_id": {
-                    "type": "string",
-                    "description": "Entity (molecule) identifier within the entry"
-                  },
-                  "entry_title": {
-                    "type": "string"
-                  },
-                  "percent_id": {
-                    "type": "number",
-                    "description": "Percent sequence identity of the alignment"
-                  },
-                  "alignment_length": {
-                    "type": "integer"
-                  },
-                  "mismatches": {
-                    "type": "integer"
-                  },
-                  "gap_openings": {
-                    "type": "integer"
-                  },
-                  "e-value": {
-                    "type": "number",
-                    "description": "BLAST expectation value"
-                  },
-                  "bit_score": {
-                    "type": "number"
-                  }
-                }
+          "type": "array",
+          "description": "List of matching BMRB entries ranked by similarity",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entry_id": {
+                "type": "string",
+                "description": "BMRB entry identifier"
+              },
+              "entity_id": {
+                "type": "string",
+                "description": "Entity (molecule) identifier within the entry"
+              },
+              "entry_title": {
+                "type": "string"
+              },
+              "percent_id": {
+                "type": "number",
+                "description": "Percent sequence identity of the alignment"
+              },
+              "alignment_length": {
+                "type": "integer"
+              },
+              "mismatches": {
+                "type": "integer"
+              },
+              "gap_openings": {
+                "type": "integer"
+              },
+              "e-value": {
+                "type": "number",
+                "description": "BLAST expectation value"
+              },
+              "bit_score": {
+                "type": "number"
               }
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -411,34 +394,24 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Standard envelope; data holds column names and shift rows",
           "properties": {
-            "status": {
-              "type": "string"
+            "columns": {
+              "type": "array",
+              "description": "Column names for each row (e.g. Atom_chem_shift.Entry_ID, .Comp_ID, .Atom_ID, .Val, Sample_conditions.pH, .Temperature_K)",
+              "items": {
+                "type": "string"
+              }
             },
             "data": {
-              "type": "object",
-              "properties": {
-                "columns": {
-                  "type": "array",
-                  "description": "Column names for each row (e.g. Atom_chem_shift.Entry_ID, .Comp_ID, .Atom_ID, .Val, Sample_conditions.pH, .Temperature_K)",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "data": {
-                  "type": "array",
-                  "description": "Rows of chemical-shift records across all BMRB entries",
-                  "items": {
-                    "type": "array"
-                  }
-                }
+              "type": "array",
+              "description": "Rows of chemical-shift records across all BMRB entries",
+              "items": {
+                "type": "array"
               }
             }
           },
           "required": [
-            "status",
-            "data"
+            "columns"
           ]
         },
         {
@@ -486,33 +459,20 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Standard envelope; data keyed by entry ID with 'avs' and 'panav' validation categories",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "object",
-              "description": "Map of entry_id -> {avs, panav} validation results",
-              "additionalProperties": {
+          "description": "Map of entry_id -> {avs, panav} validation results",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "avs": {
                 "type": "object",
-                "properties": {
-                  "avs": {
-                    "type": "object",
-                    "description": "Assignment Validation Software per-residue consistency analysis"
-                  },
-                  "panav": {
-                    "type": "object",
-                    "description": "PANAV reference-offset and anomalous-shift analysis"
-                  }
-                }
+                "description": "Assignment Validation Software per-residue consistency analysis"
+              },
+              "panav": {
+                "type": "object",
+                "description": "PANAV reference-offset and anomalous-shift analysis"
               }
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

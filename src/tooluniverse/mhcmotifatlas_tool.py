@@ -45,7 +45,12 @@ class MHCMotifAtlasTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         try:
-            allele = (arguments.get("allele") or "").strip()
+            # Atlas allele codes are conventionally uppercase (e.g. "A0101",
+            # "DRB1_01_01") and matched by exact string equality below, so a
+            # case-different but otherwise well-formed input (e.g. "a0201")
+            # previously matched nothing -- confirmed live. Normalize case
+            # here, matching the existing mhc_class normalization pattern.
+            allele = (arguments.get("allele") or "").strip().upper()
             if not allele:
                 return {
                     "status": "error",

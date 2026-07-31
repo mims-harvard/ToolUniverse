@@ -378,7 +378,14 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                 {
                     "symbol": plant.get("Symbol"),
                     "scientific_name": _strip_html(plant.get("ScientificName")),
-                    "common_name": plant.get("CommonName") or item.get("Text"),
+                    # Fix-R4E-4: when CommonName is empty, USDA's own
+                    # fallback autocomplete text re-renders the scientific
+                    # name wrapped in <i> tags — strip it the same way
+                    # scientific_name already is, instead of leaking raw
+                    # HTML markup into a field callers expect to be plain
+                    # text.
+                    "common_name": plant.get("CommonName")
+                    or _strip_html(item.get("Text")),
                     "rank": plant.get("Rank"),
                     "id": plant.get("Id"),
                 }

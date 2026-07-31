@@ -31,6 +31,19 @@ def _strip_html(text):
     return text
 
 
+def _normalize_chebi_id(chebi_id):
+    """Accept the 'CHEBI:16113' CURIE that ChEBI_search / ChEBI_get_compound
+    emit (chebi_accession) and reduce it to the bare id the ontology endpoints
+    expect. Without this, chaining ChEBI_search -> ChEBI_get_ontology_parents
+    broke: the ontology tools required a bare integer and rejected the prefixed
+    accession the search hands back."""
+    if isinstance(chebi_id, str):
+        chebi_id = chebi_id.strip()
+        if chebi_id.upper().startswith("CHEBI:"):
+            chebi_id = chebi_id.split(":", 1)[1].strip()
+    return chebi_id
+
+
 @register_tool("ChEBITool")
 class ChEBITool(BaseTool):
     """
@@ -250,6 +263,7 @@ class ChEBITool(BaseTool):
                 "error": "chebi_id parameter is required (e.g., 15365 for aspirin)",
             }
 
+        chebi_id = _normalize_chebi_id(chebi_id)
         url = f"{CHEBI_BASE_URL}/ontology/children/{chebi_id}/"
         response = requests.get(
             url,
@@ -301,6 +315,7 @@ class ChEBITool(BaseTool):
                 "error": "chebi_id parameter is required (e.g., 15377 for water)",
             }
 
+        chebi_id = _normalize_chebi_id(chebi_id)
         url = f"{CHEBI_BASE_URL}/ontology/parents/{chebi_id}/"
         response = requests.get(
             url,

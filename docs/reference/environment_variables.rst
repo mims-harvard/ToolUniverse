@@ -164,6 +164,9 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
    * - ``TOOLUNIVERSE_LLM_TEMPERATURE``
      - (varies)
      - Temperature for LLM sampling (0.0-1.0). Higher = more creative.
+   * - ``TOOLUNIVERSE_LLM_RETURN_JSON``
+     - ``false``
+     - Request structured JSON output. Accepts ``true``/``false``, ``1``/``0``, ``yes``/``no``, or ``on``/``off``.
    * - ``TOOLUNIVERSE_LLM_MODEL_DEFAULT``
      - (provider default)
      - Default model ID when not task-specific.
@@ -183,6 +186,10 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
    
    # Adjust temperature
    export TOOLUNIVERSE_LLM_TEMPERATURE=0.2
+
+   # Force structured JSON output when environment values take priority
+   export TOOLUNIVERSE_LLM_CONFIG_MODE=env_override
+   export TOOLUNIVERSE_LLM_RETURN_JSON=true
 
 **Use cases**:
 
@@ -547,6 +554,9 @@ Complete Variable List
      - LLM
    * - ``TOOLUNIVERSE_LLM_TEMPERATURE``
      - (varies)
+     - LLM
+   * - ``TOOLUNIVERSE_LLM_RETURN_JSON``
+     - false
      - LLM
    * - ``TOOLUNIVERSE_LLM_MODEL_DEFAULT``
      - (provider default)

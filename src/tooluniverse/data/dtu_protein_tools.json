@@ -43,148 +43,124 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful prediction.",
           "properties": {
-            "status": {
+            "model": {
               "type": "string",
-              "enum": [
-                "success"
-              ]
+              "description": "Model that was run (deeptmhmm/signalp/deeploc)."
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "model": {
-                  "type": "string",
-                  "description": "Model that was run (deeptmhmm/signalp/deeploc)."
-                },
-                "app": {
-                  "type": "string",
-                  "description": "BioLib app URI that was executed."
-                },
-                "num_sequences": {
-                  "type": "integer"
-                },
-                "predictions": {
-                  "type": "array",
-                  "description": "One entry per input protein record. Fields present depend on the model.",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "Sequence identifier (FASTA header first token)."
-                      },
-                      "sequence_length": {
-                        "type": "integer"
-                      },
-                      "classification": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "deeptmhmm: overall class (e.g. SP, TM, GLOB, SP+TM, BETA)."
-                      },
-                      "topology": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "deeptmhmm: per-residue topology string (I=inside, O=outside, M=TM helix, B=beta strand, S=signal)."
-                      },
-                      "regions": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
-                        "description": "deeptmhmm: list of annotated regions.",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "kind": {
-                              "type": "string"
-                            },
-                            "start": {
-                              "type": "integer"
-                            },
-                            "end": {
-                              "type": "integer"
-                            }
-                          }
+            "app": {
+              "type": "string",
+              "description": "BioLib app URI that was executed."
+            },
+            "num_sequences": {
+              "type": "integer"
+            },
+            "predictions": {
+              "type": "array",
+              "description": "One entry per input protein record. Fields present depend on the model.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Sequence identifier (FASTA header first token)."
+                  },
+                  "sequence_length": {
+                    "type": "integer"
+                  },
+                  "classification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "deeptmhmm: overall class (e.g. SP, TM, GLOB, SP+TM, BETA)."
+                  },
+                  "topology": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "deeptmhmm: per-residue topology string (I=inside, O=outside, M=TM helix, B=beta strand, S=signal)."
+                  },
+                  "regions": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "deeptmhmm: list of annotated regions.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "end": {
+                          "type": "integer"
                         }
-                      },
-                      "prediction": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "signalp: predicted class (e.g. OTHER, SP, LIPO, TAT)."
-                      },
-                      "has_signal_peptide": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ],
-                        "description": "signalp: true when a signal peptide is predicted (prediction != OTHER)."
-                      },
-                      "cleavage_site": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "signalp: predicted signal-peptide cleavage position (residue index)."
-                      },
-                      "localization": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "deeploc: predicted subcellular localization."
-                      },
-                      "details": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
-                        "description": "deeploc: full parsed result row (per-compartment scores etc.)."
                       }
-                    },
-                    "required": [
-                      "id",
-                      "sequence_length"
-                    ]
+                    }
+                  },
+                  "prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "signalp: predicted class (e.g. OTHER, SP, LIPO, TAT)."
+                  },
+                  "has_signal_peptide": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "signalp: true when a signal peptide is predicted (prediction != OTHER)."
+                  },
+                  "cleavage_site": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "signalp: predicted signal-peptide cleavage position (residue index)."
+                  },
+                  "localization": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "deeploc: predicted subcellular localization."
+                  },
+                  "details": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "deeploc: full parsed result row (per-compartment scores etc.)."
                   }
-                }
-              },
-              "required": [
-                "model",
-                "app",
-                "num_sequences",
-                "predictions"
-              ]
+                },
+                "required": [
+                  "id",
+                  "sequence_length"
+                ]
+              }
             }
           },
           "required": [
-            "status",
-            "data"
+            "model",
+            "app",
+            "num_sequences",
+            "predictions"
           ]
         },
         {
           "type": "object",
-          "description": "Error (missing dependency, bad input, or cloud job failure).",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

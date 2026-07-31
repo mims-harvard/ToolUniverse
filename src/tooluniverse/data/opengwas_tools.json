@@ -72,150 +72,134 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status",
-            "data"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "instruments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "rsid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "ea": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "nea": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "eaf": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "beta": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "se": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "p": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "instruments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rsid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ea": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "nea": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "eaf": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "se": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
-                },
-                "mr_input": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "rsid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "ea": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "exposure_beta": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "exposure_se": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "outcome_beta": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "outcome_se": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "harmonization": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "n_instruments": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "n_mr_input": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "mr_input": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rsid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ea": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "exposure_beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "exposure_se": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "outcome_beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "outcome_se": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "harmonization": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "n_instruments": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "n_mr_input": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
-          }
+          },
+          "required": [
+            "instruments"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

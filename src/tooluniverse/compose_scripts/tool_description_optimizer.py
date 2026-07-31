@@ -6,7 +6,7 @@ import re
 def compose(arguments, tooluniverse, call_tool):
     tool_config = arguments["tool_config"]
     tool_name = tool_config.get("name", "unnamed_tool")
-    arguments.get("save_to_file", False)
+    save_to_file = arguments.get("save_to_file", False)
     output_file = arguments.get("output_file")
     max_iterations = arguments.get("max_iterations", 3)  # Maximum optimization rounds
     satisfaction_threshold = arguments.get(
@@ -581,9 +581,9 @@ def compose(arguments, tooluniverse, call_tool):
     print("\n✨ Final Optimized Tool Configuration:")
     print(json.dumps(final_optimized_tool_config, indent=2, ensure_ascii=False))
 
-    # 4. Save the optimized description to a file (always save, regardless of save_to_file flag)
+    # 4. Save the optimized description to a file, if requested
     file_path = None
-    if final_description:
+    if save_to_file and final_description:
         if not output_file:
             file_path = f"{tool_name}_optimized_description.txt"
         else:
@@ -657,7 +657,7 @@ def compose(arguments, tooluniverse, call_tool):
             f.write("\n```\n")
 
         print(f"✅ Optimization report saved successfully to: {file_path}")
-    else:
+    elif not final_description:
         print("⚠️ No optimized description to save")
 
     return {
@@ -677,5 +677,5 @@ def compose(arguments, tooluniverse, call_tool):
             else False
         ),
         "test_results": results,
-        "saved_to": file_path if final_description else None,
+        "saved_to": file_path,
     }

@@ -61,12 +61,27 @@ _PHARM_SMARTS: Dict[str, list] = {
         "[CX4H1]",  # methine carbons
     ],
     # Single recursive SMARTS — must not be split
+    #
+    # Fix-R4A-7: the previous pattern excluded only [OH,OX1] neighbours, so it
+    # never excluded nitrogen bonded to a carbonyl (i.e. amides), and it
+    # explicitly matched $([n;H0;+0]) -- every neutral aromatic nitrogen.
+    # That made acetamide, acetanilide and pyridine each report 1 basic centre
+    # and imatinib report 7 (its whole nitrogen count) where RDKit's own
+    # BaseFeatures.fdef gives 0, 0, 0 and 2. Amide/anilide N and pyridine
+    # (pKaH 5.2) / pyrimidine (pKaH 1.3) N are not protonated at pH 7.4, and
+    # amides are near-universal in drug-like molecules, so the false positive
+    # hit almost every query. Require sp3 amine nitrogen whose neighbours are
+    # not carbonyl/sulfonyl carbon, plus already-cationic nitrogen and
+    # amidine/guanidine carbon.
     "PosIonizable": [
-        "[$([NH2;+0;$(N-[!$([OH,OX1])])]),"
-        "$([NH;+0;$(N(-[!$([OH,OX1])])-[!$([OH,OX1])])]),"
-        "$([N;H0;+0;$(N(-[!$([OH,OX1])])"
-        "(-[!$([OH,OX1])])-[!$([OH,OX1])])]),"
-        "$([n;H0;+0]),$([NH;+]),$([NH2;+])]"
+        "[$([NX3;H2;+0;!$(N[!#6]);!$(N=*);"
+        "!$(N-[C,S]=[O,S,N]);$(N-[CX4])]),"
+        "$([NX3;H1;+0;!$(N[!#6]);!$(N=*);"
+        "!$(N-[C,S]=[O,S,N]);$(N(-[CX4])-[CX4])]),"
+        "$([NX3;H0;+0;!$(N[!#6]);!$(N=*);"
+        "!$(N-[C,S]=[O,S,N]);$(N(-[CX4])(-[CX4])-[CX4])]),"
+        "$([NX4;+]),$([NH;+]),$([NH2;+]),$([NH3;+]),"
+        "$([$([CX3](=N)(-N)-N)]),$([$([CX3](=N)-N)])]"
     ],
     # Single recursive SMARTS — must not be split
     "NegIonizable": [
@@ -122,8 +137,15 @@ class RDKitCheminfoTool(BaseTool):
         return mol, None
 
     def _get_descriptors(self, mol) -> Dict[str, Any]:
+        # Fix-R4A-6: "MW" was ExactMolWt -- the monoisotopic mass, not the
+        # average molecular weight that "MW" and "Da" denote. Imatinib came
+        # back as 493.26 where PubChem, ChEMBL, SwissADME and SMILES_verify
+        # all report 493.6, and the gap widens with halogens (bromoacetanilide
+        # 212.98 vs the true 214.06), so Ro5 cutoffs and mg->mmol maths were
+        # computed off the wrong number. Report both, correctly labelled.
         return {
-            "MW": round(Descriptors.ExactMolWt(mol), 2),
+            "MW": round(Descriptors.MolWt(mol), 2),
+            "exact_mass": round(Descriptors.ExactMolWt(mol), 4),
             "cLogP": round(Descriptors.MolLogP(mol), 3),
             "HBD": int(rdMolDescriptors.CalcNumHBD(mol)),
             "HBA": int(rdMolDescriptors.CalcNumHBA(mol)),
@@ -199,10 +221,36 @@ class RDKitCheminfoTool(BaseTool):
         except Exception:
             pass
 
-        n_hbd = feature_counts.get("HBD", 0)
-        n_hba = feature_counts.get("HBA", 0)
-        n_arom = feature_counts.get("Aromatic", 0)
-        n_hydro = feature_counts.get("Hydrophobic", 0)
+        # Fix-R4A-5: these used `.get(name, 0)`, so a feature the caller
+        # filtered out via include_features was reported as a hard 0 rather
+        # than "not computed". include_features=["HBD"] on imatinib returned
+        # HBA_count 0, aromatic_atom_count 0 and hydrophobic_atom_count 0 --
+        # a chemically false profile (the true values are 6, 24 and 28) with
+        # status "success". Report None for anything that was not requested.
+        def counted(name):
+            return feature_counts.get(name) if name in features_found else None
+
+        n_hbd = counted("HBD")
+        n_hba = counted("HBA")
+        n_arom = counted("Aromatic")
+        n_hydro = counted("Hydrophobic")
+
+        note = (
+            "3D feature centers computed from MMFF conformer."
+            if feature_centers_3d
+            else "3D conformer generation failed; 2D feature counts provided."
+        )
+        if n_hydro is not None and n_hba is not None:
+            note = (
+                "High hydrophobic + low HBA may indicate poor aqueous solubility. "
+                "HBD/HBA ratio influences membrane permeability (Ro5). " + note
+            )
+        skipped = [f for f in _PHARM_SMARTS if f not in features_found]
+        if skipped:
+            note += (
+                " Values reported as null were excluded by include_features"
+                f" and were not computed: {', '.join(sorted(skipped))}."
+            )
 
         return {
             "status": "success",
@@ -216,17 +264,11 @@ class RDKitCheminfoTool(BaseTool):
                     "HBA_count": n_hba,
                     "aromatic_atom_count": n_arom,
                     "hydrophobic_atom_count": n_hydro,
-                    "hbd_hba_ratio": round(n_hbd / n_hba, 2) if n_hba > 0 else None,
-                    "3d_available": feature_centers_3d is not None,
-                    "note": (
-                        "High hydrophobic + low HBA may indicate poor aqueous solubility. "
-                        "HBD/HBA ratio influences membrane permeability (Ro5). "
-                        + (
-                            "3D feature centers computed from MMFF conformer."
-                            if feature_centers_3d
-                            else "3D conformer generation failed; 2D feature counts provided."
-                        )
+                    "hbd_hba_ratio": (
+                        round(n_hbd / n_hba, 2) if n_hbd is not None and n_hba else None
                     ),
+                    "3d_available": feature_centers_3d is not None,
+                    "note": note,
                 },
             },
             "metadata": {

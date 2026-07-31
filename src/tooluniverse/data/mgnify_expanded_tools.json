@@ -104,17 +104,13 @@
   },
   {
     "name": "MGnify_search_genomes",
-    "description": "Search the MGnify genome catalog for metagenome-assembled genomes (MAGs) and isolate genomes. Filter by taxonomy lineage or genome type. Returns quality metrics, taxonomy, and protein counts. Useful for finding reference genomes from specific microbial lineages.",
+    "description": "Search the MGnify genome catalog for metagenome-assembled genomes (MAGs) and isolate genomes. Filter by taxonomy lineage. Returns quality metrics, taxonomy, and protein counts. Useful for finding reference genomes from specific microbial lineages. Taxonomy names follow GTDB, not NCBI: use 'Bacteroidota' (not 'Bacteroidetes'), 'Bacillota' (not 'Firmicutes'), 'Pseudomonadota' (not 'Proteobacteria') -- an NCBI-style name usually returns 0 hits rather than an error.",
     "parameter": {
       "type": "object",
       "properties": {
         "taxonomy": {
           "type": "string",
-          "description": "Taxonomy lineage filter. Examples: 'Firmicutes', 'Bacteroidetes', 'Proteobacteria'."
-        },
-        "genome_type": {
-          "type": "string",
-          "description": "Filter by genome source type. Options: 'Isolate', 'MAG'."
+          "description": "GTDB taxonomy lineage filter, matched anywhere in the lineage. Examples: 'Bacteroidota' (phylum), 'Bacteroides' (genus), 'Bacillota', 'Pseudomonadota'. NCBI-style phylum names such as 'Bacteroidetes' or 'Firmicutes' return few or no hits -- use the GTDB spelling."
         },
         "page": {
           "type": "integer",
@@ -600,37 +596,83 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "sample_accession": {"type": "string"},
-                  "biosample": {"type": ["string", "null"]},
-                  "latitude": {"type": ["number", "string", "null"]},
-                  "longitude": {"type": ["number", "string", "null"]},
-                  "geo_loc_name": {"type": ["string", "null"]},
-                  "collection_date": {"type": ["string", "null"]},
-                  "host_tax_id": {"type": ["string", "integer", "null"]},
-                  "environment_biome": {"type": ["string", "null"]},
-                  "environment_feature": {"type": ["string", "null"]},
-                  "environment_material": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sample_accession": {
+                "type": "string"
+              },
+              "biosample": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "latitude": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "longitude": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "geo_loc_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "collection_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "host_tax_id": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ]
+              },
+              "environment_biome": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "environment_feature": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "environment_material": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -674,34 +716,63 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "file_id": {"type": "string"},
-                  "label": {"type": ["string", "null"]},
-                  "description": {"type": ["string", "null"]},
-                  "file_format": {"type": ["string", "null"]},
-                  "compression": {"type": ["boolean", "string", "null"]},
-                  "group_type": {"type": ["string", "null"]},
-                  "download_url": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file_id": {
+                "type": "string"
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "file_format": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "compression": {
+                "type": [
+                  "boolean",
+                  "string",
+                  "null"
+                ]
+              },
+              "group_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "download_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

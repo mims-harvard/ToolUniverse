@@ -520,92 +520,68 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful quantitative matrix retrieval.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
+            "pdc_study_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "pdc_study_id": {
-                  "type": "string"
-                },
-                "data_type": {
-                  "type": "string"
-                },
-                "num_genes": {
-                  "type": "integer",
-                  "description": "Total gene rows in the full matrix"
-                },
-                "num_aliquots": {
-                  "type": "integer",
-                  "description": "Number of aliquot/case columns"
-                },
-                "header": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Full matrix header row: [row-label, aliquot_1, aliquot_2, ...]"
-                },
-                "aliquots": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Aliquot/case identifiers (header without the leading label cell)"
-                },
-                "matrix": {
-                  "type": "array",
-                  "items": {
-                    "type": "array"
-                  },
-                  "description": "Gene rows (truncated to max_genes); each row is [gene_symbol, value_1, value_2, ...]"
-                },
-                "num_genes_returned": {
-                  "type": "integer"
-                },
-                "truncated": {
-                  "type": "boolean",
-                  "description": "True if num_genes exceeded max_genes"
-                },
-                "max_genes": {
-                  "type": "integer"
-                }
+            "data_type": {
+              "type": "string"
+            },
+            "num_genes": {
+              "type": "integer",
+              "description": "Total gene rows in the full matrix"
+            },
+            "num_aliquots": {
+              "type": "integer",
+              "description": "Number of aliquot/case columns"
+            },
+            "header": {
+              "type": "array",
+              "items": {
+                "type": "string"
               },
-              "required": [
-                "pdc_study_id",
-                "num_genes",
-                "num_aliquots",
-                "matrix"
-              ]
+              "description": "Full matrix header row: [row-label, aliquot_1, aliquot_2, ...]"
+            },
+            "aliquots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Aliquot/case identifiers (header without the leading label cell)"
+            },
+            "matrix": {
+              "type": "array",
+              "items": {
+                "type": "array"
+              },
+              "description": "Gene rows (truncated to max_genes); each row is [gene_symbol, value_1, value_2, ...]"
+            },
+            "num_genes_returned": {
+              "type": "integer"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True if num_genes exceeded max_genes"
+            },
+            "max_genes": {
+              "type": "integer"
             }
           },
           "required": [
-            "status",
-            "data"
+            "pdc_study_id",
+            "num_genes",
+            "num_aliquots",
+            "matrix"
           ]
         },
         {
           "type": "object",
-          "description": "Error envelope returned on failure.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

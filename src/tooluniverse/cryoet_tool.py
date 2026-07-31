@@ -38,7 +38,13 @@ class CryoETTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
         try:
-            operation = arguments.get("operation", "")
+            # Fix-R39A-1: "operation" is optional in the schema (each config
+            # exposes exactly one valid value via enum+default), so a caller
+            # who omits it must still resolve to that tool instance's own
+            # operation -- the old bare "" fallback matched no dispatch
+            # branch below and would silently mis-route every one of these
+            # 7 tools.
+            operation = arguments.get("operation") or self.get_schema_const_operation()
 
             if operation == "list_datasets":
                 return self._list_datasets(arguments)

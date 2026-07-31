@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-regulatory-genomics
-description: Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), ENCODE (cCREs, ChIP-seq), RegulomeDB (regulatory variant scoring), UCSC. Use for regulatory element annotation, TF-binding-site prediction, and regulatory-region functional impact assessment.
+description: Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), ENCODE (cCREs, ChIP-seq), RegulomeDB (regulatory variant scoring), UCSC — plus sequence-based deep-learning prediction of regulatory activity and non-coding variant effects (AlphaGenome, Enformer, Borzoi, ChromBPNet, Evo 2). Use for regulatory element annotation, TF-binding-site prediction, regulatory-region functional impact assessment, and predicting how a non-coding variant or a raw DNA sequence affects expression/chromatin/accessibility. Use this whenever a user asks what regulates a gene, whether a SNP hits a regulatory element, or to predict a non-coding variant's functional effect from sequence.
 disable-model-invocation: true
 ---
 
@@ -42,6 +42,9 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 - "Is rs1234567 in a regulatory region?"
 - "What TF motifs overlap this genomic region?"
 - "Find ENCODE experiments for ATAC-seq in cancer cell lines"
+- "Predict the effect of this non-coding variant on expression / chromatin accessibility"
+- "Predict regulatory activity (expression, accessibility, TF binding) directly from a DNA sequence"
+- "Which of these enhancer variants is predicted to be most disruptive?"
 
 ---
 
@@ -64,6 +67,20 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 | `UCSC_get_encode_cCREs` | Get cCREs overlapping a genomic region | `chrom`, `start`, `end` |
 | `RegulomeDB_query_variant` | Score regulatory impact of a variant | `rsid` (e.g., "rs4994") |
 | `ENCODE_search_biosamples` | Find available cell lines/tissues in ENCODE | `term_name`, `biosample_type`, `limit` |
+
+### Sequence-based deep-learning models (predict, don't just annotate)
+
+The tools above tell you what is *known* to be at a locus (databases). These models instead *predict* regulatory activity directly from the DNA sequence, and — by scoring a reference vs. alternate window — predict what a non-coding variant *does*. RegulomeDB ranks a variant by overlap with existing annotations; these give a quantitative, tissue-aware effect size even for novel variants with no annotation. Reach for them when annotation is silent or when the question is "how much does this allele change regulation".
+
+| Tool | Op | Predicts | Context | Access |
+|------|----|----------|---------|--------|
+| `AlphaGenome_predict_interval` / `AlphaGenome_score_variant` | profile region / score variant | RNA-seq, ATAC, CAGE, splice tracks (frontier accuracy, single-base) | up to 1 Mb | hosted API — `ALPHA_GENOME_API_KEY` |
+| `run_enformer_predict` / `run_enformer_variant_effect` | profile / score | 5,313 human (+1,643 mouse) tracks: expression, chromatin, TF binding | 196 kb | remote MCP server |
+| `run_borzoi_predict` / `run_borzoi_variant_effect` | profile / score | RNA-seq coverage (expression / polyA / splicing emphasis), 7,611 tracks | 524 kb | remote MCP server |
+| `run_chrombpnet_predict` / `run_chrombpnet_variant_effect` | profile / score | chromatin accessibility (ATAC / DNase), base-resolution profile + counts | ~2 kb | remote MCP server |
+| `Evo2_score_variant` | score | genome-foundation-model delta log-likelihood; coding **and** non-coding | up to 1 Mb | hosted NIM — `NVIDIA_API_KEY` |
+
+**Picking one:** `AlphaGenome_*` is the broadest readout + longest context when its key is set; `run_enformer_*` / `run_borzoi_*` are the published, self-hostable equivalents (Enformer for general regulation, Borzoi when expression/splicing is the question); `run_chrombpnet_*` when the question is specifically chromatin accessibility; `Evo2_score_variant` as a sequence-only check that also covers coding variants. Outputs are Δ (alt − ref) effect sizes, not calibrated probabilities — rank/calibrate against known variants. If no key/server is provisioned, fall back to the annotation tools above and say so.
 
 ---
 

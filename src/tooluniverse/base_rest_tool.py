@@ -66,11 +66,18 @@ class BaseRESTTool(BaseTool):
         """
         url = self.tool_config["fields"]["endpoint"]
 
-        # Apply path_aliases: map alias → canonical name before substitution
+        # Apply path_aliases: map alias → canonical name before substitution.
+        # Fix-R31B-3: an alias key left in `args` after this point leaked into
+        # _build_params as an unrecognized query param -- confirmed live this
+        # isn't just harmless noise: PostgREST-backed APIs (e.g. CPIC) try to
+        # parse every query key as a filter expression and 400 on it
+        # ("failed to parse filter"), breaking the whole request. Always pop
+        # the alias key once consulted, whether or not the canonical name was
+        # already present.
         path_aliases = self.tool_config.get("fields", {}).get("path_aliases", {})
         for alias, canonical in path_aliases.items():
-            if alias in args and canonical not in args:
-                args[canonical] = args[alias]
+            if alias in args:
+                args.setdefault(canonical, args.pop(alias))
 
         # Replace all path parameters from user args
         for key, value in args.items():
@@ -275,6 +282,22 @@ class BaseRESTTool(BaseTool):
                     if isinstance(value, str):
                         arguments[key] = value.lower()
 
+            # Fix-R30E-3: the mirror-image case -- CPIC's gene/allele tables
+            # store symbols uppercase (e.g. "CYP2D6"), so a lowercase or
+            # mixed-case input to `symbol=eq.{symbol}`/`genesymbol=eq.{...}`
+            # silently returns an empty success (confirmed live: "cyp2d6" ->
+            # 0 rows, "CYP2D6" -> 1). `fields.uppercase_params` lists params
+            # to upcase.
+            uppercase_params = (
+                self.tool_config.get("fields", {}).get("uppercase_params") or []
+            )
+            if uppercase_params:
+                arguments = dict(arguments)
+                for key in uppercase_params:
+                    value = arguments.get(key)
+                    if isinstance(value, str):
+                        arguments[key] = value.upper()
+
             url = self._build_url(arguments)
             params = self._build_params(arguments)
 
@@ -347,6 +370,22 @@ class BaseRESTTool(BaseTool):
                     result["total_before_limit"] = len(data)
                     result["data"] = data[: int(limit)]
                     result["count"] = int(limit)
+
+            # Fix-R32C-4/5: an exact-match backend (e.g. CPIC's PostgREST
+            # name=eq.{name}) silently returns status:success with an empty
+            # list for any name that isn't spelled/named exactly as the
+            # database stores it -- confirmed live for well-known aliases
+            # ("FK506" for tacrolimus) and spelling variants ("cyclosporin"
+            # vs the indexed "cyclosporine"), indistinguishable from "no PGx
+            # data exists for this drug". `fields.empty_result_note` lets a
+            # config surface the real constraint instead of a bare empty list.
+            empty_note = self.tool_config.get("fields", {}).get("empty_result_note")
+            if (
+                empty_note
+                and isinstance(result.get("data"), list)
+                and not result["data"]
+            ):
+                result["note"] = empty_note
 
             return result
 

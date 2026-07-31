@@ -7,14 +7,16 @@
       "operation": "get_transporter"
     },
     "timeout": 60,
-    "args": [
-      {
-        "name": "uniprot_accession",
-        "type": "string",
-        "description": "UniProt accession ID of the transporter protein (e.g., P11166 for GLUT1, P08183 for P-glycoprotein/MDR1). Aliases: uniprot_id, accession.",
-        "required": true
-      }
-    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_accession": {
+          "type": "string",
+          "description": "UniProt accession ID of the transporter protein (e.g., P11166 for GLUT1, P08183 for P-glycoprotein/MDR1). Aliases: uniprot_id, accession."
+        }
+      },
+      "required": ["uniprot_accession"]
+    },
     "return_schema": {
       "oneOf": [
         {
@@ -74,26 +76,28 @@
       "operation": "search_family"
     },
     "timeout": 60,
-    "args": [
-      {
-        "name": "family_id",
-        "type": "string",
-        "description": "TC family ID or prefix to search (e.g., '2.A.1' for Major Facilitator Superfamily, '1.A.1' for VIC superfamily). Matches all families starting with this prefix.",
-        "required": false
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "family_id": {
+          "type": "string",
+          "description": "TC family ID or prefix to search (e.g., '2.A.1' for Major Facilitator Superfamily, '1.A.1' for VIC superfamily). Matches all families starting with this prefix. Either family_id or family_name is required."
+        },
+        "family_name": {
+          "type": "string",
+          "description": "Text to search in family descriptions (e.g., 'Major Facilitator', 'ABC', 'glucose'). Case-insensitive. Either family_id or family_name is required."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of families to return per page (default 20, max 100). This caps the page only; `total_matches` reports the full result-set size."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of matching families to skip before returning a page (default 0). Combine with `limit` to page through result sets larger than 100."
+        }
       },
-      {
-        "name": "family_name",
-        "type": "string",
-        "description": "Text to search in family descriptions (e.g., 'Major Facilitator', 'ABC', 'glucose'). Case-insensitive.",
-        "required": false
-      },
-      {
-        "name": "limit",
-        "type": "integer",
-        "description": "Maximum number of families to return (default 20, max 100).",
-        "required": false
-      }
-    ],
+      "required": []
+    },
     "return_schema": {
       "oneOf": [
         {
@@ -103,6 +107,9 @@
               "type": "object",
               "properties": {
                 "total_matches": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "offset": {"type": "integer"},
+                "has_more": {"type": "boolean"},
                 "families": {
                   "type": "array",
                   "items": {
@@ -148,20 +155,24 @@
       "operation": "search_by_substrate"
     },
     "timeout": 60,
-    "args": [
-      {
-        "name": "substrate_name",
-        "type": "string",
-        "description": "Name of the substrate to search for (e.g., 'glucose', 'sodium', 'chloride', 'ATP'). Case-insensitive partial match. Aliases: substrate.",
-        "required": true
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "substrate_name": {
+          "type": "string",
+          "description": "Name of the substrate to search for (e.g., 'glucose', 'sodium', 'chloride', 'ATP'). Case-insensitive partial match. Aliases: substrate."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of transporters to return per page (default 20, max 100). This caps the page only; `total_matches` reports the full result-set size."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of matching transporters to skip before returning a page (default 0). Combine with `limit` to page through result sets larger than 100."
+        }
       },
-      {
-        "name": "limit",
-        "type": "integer",
-        "description": "Maximum number of results to return (default 20, max 100).",
-        "required": false
-      }
-    ],
+      "required": ["substrate_name"]
+    },
     "return_schema": {
       "oneOf": [
         {
@@ -171,6 +182,9 @@
               "type": "object",
               "properties": {
                 "total_matches": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "offset": {"type": "integer"},
+                "has_more": {"type": "boolean"},
                 "transporters": {
                   "type": "array",
                   "items": {

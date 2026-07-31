@@ -21,78 +21,107 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful Norine peptide lookup.",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {
-              "type": "object",
-              "properties": {
-                "peptides": {
-                  "type": "array",
-                  "items": {
+            "peptides": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "cite": {
+                    "type": "array"
+                  },
+                  "general": {
                     "type": "object",
                     "properties": {
-                      "cite": {"type": "array"},
-                      "general": {
-                        "type": "object",
-                        "properties": {
-                          "id": {"type": "string"},
-                          "name": {"type": "string"},
-                          "family": {"type": "string"},
-                          "syno": {"type": "array"},
-                          "category": {"type": "string"},
-                          "formula": {"type": "string"},
-                          "mw": {"type": ["string", "number"]},
-                          "comment": {"type": "string"},
-                          "status": {"type": "string"},
-                          "activity": {"type": "array"},
-                          "source": {"type": "string"},
-                          "doi": {"type": "string"}
-                        }
+                      "id": {
+                        "type": "string"
                       },
-                      "structure": {
-                        "type": "object",
-                        "properties": {
-                          "type": {"type": "string"},
-                          "size": {"type": ["integer", "string"]},
-                          "composition": {"type": "string"},
-                          "graph": {"type": "string"},
-                          "smiles": {"type": "string"}
-                        }
+                      "name": {
+                        "type": "string"
                       },
-                      "organism": {"type": "array"},
-                      "reference": {"type": "array"}
+                      "family": {
+                        "type": "string"
+                      },
+                      "syno": {
+                        "type": "array"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "formula": {
+                        "type": "string"
+                      },
+                      "mw": {
+                        "type": [
+                          "string",
+                          "number"
+                        ]
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "activity": {
+                        "type": "array"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "doi": {
+                        "type": "string"
+                      }
                     }
                   },
-                  "description": "Normalized list of Norine NRP records (name route 'peptides' and id route 'norine.peptide' merged here)."
+                  "structure": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "size": {
+                        "type": [
+                          "integer",
+                          "string"
+                        ]
+                      },
+                      "composition": {
+                        "type": "string"
+                      },
+                      "graph": {
+                        "type": "string"
+                      },
+                      "smiles": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "organism": {
+                    "type": "array"
+                  },
+                  "reference": {
+                    "type": "array"
+                  }
                 }
               },
-              "required": ["peptides"]
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "url": {"type": "string"},
-                "lookup_mode": {"type": "string"},
-                "query": {"type": "string"},
-                "count": {"type": "integer"},
-                "first_record": {"type": "object"}
-              }
+              "description": "Normalized list of Norine NRP records (name route 'peptides' and id route 'norine.peptide' merged here)."
             }
           },
-          "required": ["status", "data", "metadata"]
+          "required": [
+            "peptides"
+          ]
         },
         {
           "type": "object",
-          "description": "Error result.",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "url": {"type": "string"},
-            "response_snippet": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

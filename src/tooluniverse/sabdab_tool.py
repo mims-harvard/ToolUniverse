@@ -148,8 +148,45 @@ class SAbDabTool(BaseTool):
 
             response.raise_for_status()
 
-            # Extract metadata from PDB REMARK lines
+            # Fix-R17D-2: SAbDab migrated to a new frontend ("SAbDab2", a
+            # React SPA) and its old download URL now redirects to an
+            # internal-only backend hostname (confirmed live: the new
+            # domain's /api/pdb/{id}/ route 307-redirects to
+            # "http://sabdab-backend:8000/...", not publicly resolvable) --
+            # so this request lands on the SPA shell instead of real PDB
+            # coordinate data, and used to be reported as a successful
+            # download of that HTML. Detect and report it honestly instead.
             pdb_content = response.text
+            # SAbDab migrated to a React SPA that serves the same generic
+            # HTML app shell for every route including this download
+            # endpoint (confirmed live: /pdb/<id>/ 200s with
+            # "<!doctype html>..." instead of PDB coordinate records) --
+            # detect that before claiming success, rather than reporting
+            # the HTML page's byte count/preview as if it were structure
+            # data. A positive check against known PDB record prefixes
+            # (rather than an HTML-only negative check) also catches any
+            # other non-PDB content the endpoint might return.
+            first_line = pdb_content.lstrip().splitlines()[0] if pdb_content else ""
+            looks_like_pdb = first_line[:6].strip() in (
+                "HEADER",
+                "ATOM",
+                "HETATM",
+                "TITLE",
+                "REMARK",
+                "COMPND",
+            )
+            if not looks_like_pdb:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"SAbDab did not return PDB structure data for {pdb_id} "
+                        "(got non-PDB content, likely an HTML page from "
+                        "SAbDab's current site). The structure/site layout "
+                        "may have changed; try downloading directly from "
+                        f"{pdb_url}."
+                    ),
+                }
+
             metadata = {"pdb_id": pdb_id}
 
             # Parse REMARK 5 lines which contain SAbDab annotations
@@ -190,6 +227,12 @@ class SAbDabTool(BaseTool):
             return {"status": "error", "error": f"Request failed: {str(e)}"}
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
+
+    @staticmethod
+    def _looks_like_html(text: str) -> bool:
+        """True when the response body is an HTML page (the SAbDab2 SPA shell)
+        rather than the expected PDB/TSV data."""
+        return text.lstrip()[:20].lower().startswith(("<!doctype html", "<html"))
 
     @staticmethod
     def _coerce(value: str):
@@ -270,11 +313,32 @@ class SAbDabTool(BaseTool):
 
             # Expect a TSV with a header row + one row per antibody chain pairing.
             if "tab-separated" not in content_type and "\t" not in text:
+                # Fix-R17D-3: see the matching detection in _get_structure
+                # -- SAbDab's new site returns its SPA shell HTML instead
+                # of TSV data at this URL now, which the old message here
+                # ("may not be an antibody complex") misleadingly blamed on
+                # the structure itself rather than the actual cause
+                # (upstream site migration), confirmed live even for
+                # verified real antibody-antigen complexes.
+                if self._looks_like_html(text):
+                    return {
+                        "status": "error",
+                        "error": (
+                            "SAbDab appears to have migrated to a new site "
+                            "(SAbDab2) with no public summary-data API "
+                            "currently reachable at this URL -- got an "
+                            "HTML page instead of TSV data. This is an "
+                            "upstream issue, not a query problem."
+                        ),
+                    }
                 return {
                     "status": "error",
                     "error": (
                         f"SAbDab did not return tabular data for {pdb_id} "
-                        "(structure may not be an antibody complex)."
+                        "(got non-tabular content, likely an HTML page from "
+                        "SAbDab's current site, rather than 'structure may "
+                        "not be an antibody complex' -- confirmed live this "
+                        "now happens even for known antibody structures)."
                     ),
                 }
 

@@ -71,16 +71,34 @@ class TestSABIORKToolDirect:
 
     @patch("tooluniverse.sabiork_tool.requests.get")
     def test_search_by_ec_number(self, mock_get, tool):
-        # Mock entry ID response then SBML response
-        mock_ids_resp = MagicMock()
-        mock_ids_resp.status_code = 200
-        mock_ids_resp.text = ENTRY_IDS_XML
-
-        mock_sbml_resp = MagicMock()
-        mock_sbml_resp.status_code = 200
-        mock_sbml_resp.text = SBML_XML
-
-        mock_get.side_effect = [mock_ids_resp, mock_sbml_resp]
+        # Fix-R73B-1: these tests still mocked the legacy two-step XML
+        # flow (entry-IDs then SBML fetch) that _search_reactions no longer
+        # uses -- it migrated to the single-call Solr endpoint (see its own
+        # docstring: the legacy REST endpoint was retired by SABIO-RK in
+        # 2025). Confirmed live that requests to the legacy endpoint now
+        # 302-redirect to a JS SPA 404 page. Mock the real Solr JSON shape.
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = {
+            "response": {
+                "numFound": 3,
+                "docs": [
+                    {
+                        "EntryID": 11020,
+                        "ECNumber": ["1.1.1.1"],
+                        "EnzymeName": ["alcohol dehydrogenase"],
+                        "Substrate": ["Ethanol"],
+                        "Product": ["Acetaldehyde"],
+                        "Parameter": [
+                            {"type": "kcat", "value": 4.916667, "unit": "s^{-1}"},
+                            {"type": "Km", "value": 0.0041, "unit": "M"},
+                            {"type": "Ki", "value": 4.3e-7, "unit": "M"},
+                        ],
+                    }
+                ],
+            }
+        }
+        mock_get.return_value = mock_resp
 
         result = tool.run(
             {"operation": "search_reactions", "ec_number": "1.1.1.1", "limit": 3}
@@ -105,7 +123,7 @@ class TestSABIORKToolDirect:
     def test_no_results(self, mock_get, tool):
         mock_resp = MagicMock()
         mock_resp.status_code = 200
-        mock_resp.text = "no data found"
+        mock_resp.json.return_value = {"response": {"numFound": 0, "docs": []}}
         mock_get.return_value = mock_resp
 
         result = tool.run(
@@ -122,7 +140,7 @@ class TestSABIORKToolDirect:
                 "substrate": "ethanol",
             }
         )
-        assert "ecnumber:1.1.1.1" in q
+        assert "ECNumber:1.1.1.1" in q
         assert 'Organism:"Homo sapiens"' in q
         assert 'Substrate:"ethanol"' in q
         assert " AND " in q

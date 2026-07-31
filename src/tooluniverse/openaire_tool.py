@@ -22,7 +22,19 @@ class OpenAIRETool(BaseTool):
         arguments = arguments or {}
         query = arguments.get("query")
         max_results = int(arguments.get("max_results", 10))
-        prod_type = arguments.get("type", "publications")
+        # This class backs both OpenAIRE_search_publications and
+        # OpenAIRE_search_projects with the same "type" param. Read the
+        # per-instance declared default instead of hardcoding
+        # "publications" for all of them, or OpenAIRE_search_projects (whose
+        # schema declares default "projects", enum locked to just that value)
+        # silently searches publications whenever the caller omits `type`.
+        declared_default = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("type", {})
+            .get("default", "publications")
+        )
+        prod_type = arguments.get("type", declared_default)
 
         if not query:
             return {

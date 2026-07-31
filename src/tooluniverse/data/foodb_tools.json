@@ -8,11 +8,23 @@
         "fields": {"timeout": 30},
         "type": "FooDBCompoundTool",
         "test_examples": [{"fdb_id": "FDB000004"}, {"fdb_id": "FDB000013"}, {"fdb_id": "FDB000211"}],
-        "return_schema": {"oneOf": [
-            {"type": "object", "description": "FooDB compound", "properties": {
-                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
-            }, "required": ["status", "data"]},
-            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
-        ]}
+        "return_schema": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
     }
 ]

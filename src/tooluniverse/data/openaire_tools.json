@@ -29,70 +29,53 @@
         }
       },
       "required": [
-        "query",
-        "max_results",
-        "type"
+        "query"
       ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
             "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "string"
-                },
-                "error": {
-                  "type": "string"
-                },
-                "reason": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "results": {
-                  "type": "array"
-                }
-              }
-            },
-            "metadata": {
-              "type": "object"
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
-          "properties": {
-            "status": {
-              "const": "error"
+              "type": "string"
             },
             "error": {
               "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            },
+            "query": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results": {
+              "type": "array"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -145,49 +128,122 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["status"],
           "properties": {
-            "status": {"const": "success"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "status": {"type": "string"},
-                "query": {"type": "string"},
-                "type": {"type": "string"},
-                "total_results": {"type": ["integer", "number"]},
-                "returned": {"type": "integer"},
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "code": {"type": ["string", "null"]},
-                      "acronym": {"type": ["string", "null"]},
-                      "title": {"type": ["string", "null"]},
-                      "funder": {"type": ["string", "null"]},
-                      "funder_shortname": {"type": ["string", "null"]},
-                      "funding_stream": {"type": ["string", "null"]},
-                      "start_date": {"type": ["string", "null"]},
-                      "end_date": {"type": ["string", "null"]},
-                      "funded_amount": {"type": ["string", "number", "null"]},
-                      "total_cost": {"type": ["string", "number", "null"]},
-                      "currency": {"type": ["string", "null"]},
-                      "website": {"type": ["string", "null"]}
-                    }
+            "status": {
+              "type": "string"
+            },
+            "query": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "acronym": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "funder": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "funder_shortname": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "funding_stream": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "start_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "end_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "funded_amount": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "total_cost": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "currency": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "website": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
-          }
+            }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
-          "required": ["status", "error"],
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

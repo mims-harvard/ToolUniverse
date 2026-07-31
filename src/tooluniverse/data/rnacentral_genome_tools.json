@@ -32,142 +32,98 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful genome-location lookup.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "source": {
-              "type": "string"
-            },
-            "operation": {
-              "type": "string"
-            },
-            "urs_id": {
-              "type": "string"
-            },
-            "taxid": {
+            "count": {
               "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "count": {
-                  "type": "integer"
-                },
-                "locations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "chromosome": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "strand": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "start": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "end": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "identity": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "ucsc_chromosome": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "assembly_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "assembly_ucsc": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "gca_accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "common_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "taxid": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "locations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chromosome": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "strand": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "identity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "ucsc_chromosome": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assembly_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assembly_ucsc": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gca_accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "taxid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": [
-                "count",
-                "locations"
-              ]
+              }
             }
           },
           "required": [
-            "status",
-            "urs_id",
-            "taxid",
-            "data"
+            "count",
+            "locations"
           ]
         },
         {
           "type": "object",
-          "description": "Error response.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
-              "type": "string"
-            },
-            "source": {
-              "type": "string"
-            },
-            "operation": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -226,70 +182,30 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful sequence lookup.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "source": {
+            "fasta_header": {
               "type": "string"
             },
-            "operation": {
+            "sequence": {
               "type": "string"
             },
-            "urs_id": {
-              "type": "string"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "fasta_header": {
-                  "type": "string"
-                },
-                "sequence": {
-                  "type": "string"
-                },
-                "length": {
-                  "type": "integer"
-                }
-              },
-              "required": [
-                "sequence",
-                "length"
-              ]
+            "length": {
+              "type": "integer"
             }
           },
           "required": [
-            "status",
-            "urs_id",
-            "data"
+            "sequence",
+            "length"
           ]
         },
         {
           "type": "object",
-          "description": "Error response.",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
-              "type": "string"
-            },
-            "source": {
-              "type": "string"
-            },
-            "operation": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

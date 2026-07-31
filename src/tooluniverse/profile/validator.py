@@ -19,6 +19,7 @@ This provides a robust, flexible, and maintainable validation system that can:
 4. Support both simple tool collections and complex workspaces
 """
 
+from copy import deepcopy
 from typing import Any, Dict, List, Tuple
 import yaml
 import jsonschema
@@ -292,7 +293,10 @@ def fill_defaults(data: Dict[str, Any], schema: Dict[str, Any]) -> Dict[str, Any
 
     for key, value in schema.get("properties", {}).items():
         if key not in result and "default" in value:
-            result[key] = value["default"]
+            # Copy the default: assigning it directly hands every caller the
+            # same mutable object from PROFILE_SCHEMA, so appending to one
+            # config's list would edit the schema and leak into later configs.
+            result[key] = deepcopy(value["default"])
         elif key in result and isinstance(value, dict) and "properties" in value:
             result[key] = fill_defaults(result[key], value)
         elif (

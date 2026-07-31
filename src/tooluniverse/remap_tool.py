@@ -8,7 +8,7 @@ from .tool_registry import register_tool
 # Real ReMap REST API (region-based TR-binding peak retrieval).
 REMAP_REST_BASE = "https://remap-rest.univ-amu.fr/api/V1"
 # Match "chr1:1000000-1100000" (chrom may be e.g. chrX / chr1 / 1).
-_REGION_RE = re.compile(r"^(chr)?[\w]+:\d+-\d+$", re.IGNORECASE)
+_REGION_RE = re.compile(r"^(?:chr)?\w+:(\d+)-(\d+)$", re.IGNORECASE)
 
 
 @register_tool("ReMapRESTTool")
@@ -44,10 +44,16 @@ class ReMapRESTTool(BaseTool):
                     "status": "error",
                     "error": "region is required (e.g. chr1:1000000-1100000)",
                 }
-            if not _REGION_RE.match(region):
+            region_match = _REGION_RE.match(region)
+            if not region_match:
                 return {
                     "status": "error",
                     "error": f"Invalid region format: '{region}'. Use chrom:start-end (e.g. chr1:1000000-1100000).",
+                }
+            if int(region_match.group(1)) >= int(region_match.group(2)):
+                return {
+                    "status": "error",
+                    "error": f"Invalid region '{region}': start must be less than end.",
                 }
 
             version = str(arguments.get("version", "2022"))
