@@ -155,6 +155,15 @@ ToolUniverse omits them automatically for these models and moving
 :Cost: Self-hosted (free, but requires GPU infrastructure)
 :Tool Categories: ``agents`` (when configured)
 
+**AWS Bedrock**
+
+:Region: ``BEDROCK_REGION`` or ``AWS_REGION`` / ``AWS_DEFAULT_REGION``
+:Credentials: Any boto3-supported AWS credentials, profile, or IAM role
+:Required For: Agentic tools using Bedrock-hosted models and inference profiles
+:How to Setup: Enable model access in Amazon Bedrock and grant the runtime identity Bedrock invoke permissions
+:Cost: Based on Amazon Bedrock model pricing
+:Tool Categories: ``agents`` (when configured)
+
 MCP Server Configurations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -319,6 +328,7 @@ Choose the method that best fits your use case:
          GEMINI_API_KEY=your_gemini_key_here
          GEMINI_MODEL_ID=gemini-3.6-flash
          VLLM_SERVER_URL=http://localhost:8000
+         AWS_REGION=us-east-1
 
          # MCP Server Configurations
          EXPERT_FEEDBACK_MCP_SERVER_URL=http://localhost:9877
@@ -398,11 +408,11 @@ Environment Variables
 
 .. code-block:: bash
 
-   # Default LLM provider (OPENAI, AZURE_OPENAI, GEMINI, VLLM)
-   TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENAI
+   # Default LLM provider (CHATGPT, OPENROUTER, GEMINI, VLLM, BEDROCK)
+   TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=BEDROCK
 
    # Model configuration per task
-   TOOLUNIVERSE_LLM_MODEL_DEFAULT=gpt-4-turbo-preview
+   TOOLUNIVERSE_LLM_MODEL_DEFAULT=anthropic.claude-3-5-sonnet-20240620-v1:0
    TOOLUNIVERSE_LLM_MODEL_SUMMARIZATION=gpt-3.5-turbo
    TOOLUNIVERSE_LLM_MODEL_REASONING=gpt-4
 
@@ -413,7 +423,7 @@ Environment Variables
    TOOLUNIVERSE_LLM_CONFIG_MODE=default
 
    # Custom fallback chain (JSON array of {api_type, model_id} objects)
-   AGENTIC_TOOL_FALLBACK_CHAIN='[{"api_type":"OPENAI","model_id":"gpt-4"},{"api_type":"GEMINI","model_id":"gemini-pro"}]'
+   AGENTIC_TOOL_FALLBACK_CHAIN='[{"api_type":"BEDROCK","model_id":"anthropic.claude-3-5-sonnet-20240620-v1:0"},{"api_type":"GEMINI","model_id":"gemini-pro"}]'
 
 Configuration Modes
 ~~~~~~~~~~~~~~~~~~~

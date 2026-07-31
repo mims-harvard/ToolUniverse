@@ -8,7 +8,13 @@ from typing import Any, Callable, Dict, List, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .logging_config import get_logger
-from .llm_clients import AzureOpenAIClient, GeminiClient, OpenRouterClient, VLLMClient
+from .llm_clients import (
+    AzureOpenAIClient,
+    BedrockClient,
+    GeminiClient,
+    OpenRouterClient,
+    VLLMClient,
+)
 
 
 # Global default fallback configuration
@@ -24,6 +30,7 @@ API_KEY_ENV_VARS = {
     "OPENROUTER": ["OPENROUTER_API_KEY"],
     "GEMINI": ["GEMINI_API_KEY"],
     "VLLM": ["VLLM_SERVER_URL"],
+    "BEDROCK": ["BEDROCK_REGION|AWS_REGION|AWS_DEFAULT_REGION"],
 }
 
 
@@ -44,7 +51,8 @@ class AgenticTool(BaseTool):
         for _api_type, required_vars in API_KEY_ENV_VARS.items():
             all_keys_present = True
             for var in required_vars:
-                if not os.getenv(var):
+                alternatives = var.split("|")
+                if not any(os.getenv(candidate) for candidate in alternatives):
                     all_keys_present = False
                     break
             if all_keys_present:
@@ -282,6 +290,8 @@ class AgenticTool(BaseTool):
                 if not server_url:
                     raise ValueError("VLLM_SERVER_URL environment variable not set")
                 self._llm_client = VLLMClient(model_id, server_url, self.logger)
+            elif api_type == "BEDROCK":
+                self._llm_client = BedrockClient(model_id, self.logger)
             else:
                 raise ValueError(f"Unsupported API type: {api_type}")
 
@@ -315,7 +325,7 @@ class AgenticTool(BaseTool):
 
     # ------------------------------------------------------------------ LLM utilities -----------
     def _validate_model_config(self):
-        supported_api_types = ["CHATGPT", "OPENROUTER", "GEMINI", "VLLM"]
+        supported_api_types = ["CHATGPT", "OPENROUTER", "GEMINI", "VLLM", "BEDROCK"]
         if self._api_type not in supported_api_types:
             raise ValueError(
                 f"Unsupported API type: {self._api_type}. Supported types: {supported_api_types}"
@@ -627,6 +637,8 @@ class AgenticTool(BaseTool):
                 if not server_url:
                     raise ValueError("VLLM_SERVER_URL environment variable not set")
                 self._llm_client = VLLMClient(self._model_id, server_url, self.logger)
+            elif self._api_type == "BEDROCK":
+                self._llm_client = BedrockClient(self._model_id, self.logger)
             else:
                 raise ValueError(f"Unsupported API type: {self._api_type}")
 
