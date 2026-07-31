@@ -1,0 +1,34 @@
+[
+  {
+    "type": "VerifiedSourceDiscoveryTool",
+    "name": "vsd_discover_sources",
+    "description": "Discover trusted candidate sources for a free-text query",
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": { "type": "string" },
+        "limit": { "type": "integer" },
+        "allowlist_overrides": { "type": "array" }
+      }
+    },
+    "label": ["VSD", "Discovery"]
+  },
+  {
+    "type": "VerifiedSourceRegisterTool",
+    "name": "vsd_register_tool",
+    "description": "Register a VSD-generated tool bound to a trusted source",
+    "parameter": {
+      "type": "object",
+      "required": ["candidate", "tool_name"],
+      "properties": {
+        "candidate": { "type": "object" },
+        "tool_name": { "type": "string" },
+        "description": { "type": "string" },
+        "parameter_overrides": { "type": "object" },
+        "evidence_sample": { "type": "object" }
+      }
+    },
+    "label": ["VSD", "Synthesis"]
+  }
+]

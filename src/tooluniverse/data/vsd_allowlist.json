@@ -1,0 +1,4 @@
+[
+{"domain": "ema.europa.eu", "label": "EMA", "trust": 0.95, "registry": "ema"},
+{"domain": "ghoapi.azureedge.net", "label": "WHO GHO", "trust": 0.92, "registry": "who"}
+]

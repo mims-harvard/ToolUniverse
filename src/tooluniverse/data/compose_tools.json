@@ -1147,5 +1147,187 @@
         }
       }
     }
+  },
+  {
+    "type": "ComposeTool",
+    "name": "HarvestAutoRegistrar",
+    "description": "Discover, validate, and register new verified-source tools by chaining GenericHarvestTool, HarvestCandidateTesterTool, and VerifiedSourceRegisterTool. Optionally runs the newly registered tool.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query passed to GenericHarvestTool when no explicit candidates are provided."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of harvest candidates to inspect.",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "harvest": {
+          "type": "object",
+          "description": "Additional arguments forwarded to GenericHarvestTool (e.g., urls, description, domain filters)."
+        },
+        "candidates": {
+          "type": "array",
+          "description": "Optional pre-harvested candidates to evaluate instead of calling GenericHarvestTool.",
+          "items": {
+            "type": "object"
+          }
+        },
+        "tester": {
+          "type": "object",
+          "description": "Overrides passed to HarvestCandidateTesterTool (e.g., default headers or params)."
+        },
+        "register": {
+          "type": "object",
+          "description": "Overrides passed to VerifiedSourceRegisterTool (e.g., default headers, params, tool_type)."
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Desired name for the registered tool. Automatically generated if omitted."
+        },
+        "force_register": {
+          "type": "boolean",
+          "description": "Register the tool even if validation fails (mirrors the force flag on VerifiedSourceRegisterTool).",
+          "default": false
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Alias for force_register.",
+          "default": false
+        },
+        "skip_tests": {
+          "type": "boolean",
+          "description": "Skip HarvestCandidateTesterTool and proceed straight to registration.",
+          "default": false
+        },
+        "auto_run": {
+          "type": "boolean",
+          "description": "Invoke the registered tool immediately after successful registration.",
+          "default": false
+        },
+        "tool_arguments": {
+          "type": "object",
+          "description": "Arguments forwarded to the registered tool when auto_run is true.",
+          "default": {}
+        }
+      }
+    },
+    "auto_load_dependencies": true,
+    "fail_on_missing_tools": false,
+    "required_tools": [
+      "GenericHarvestTool",
+      "HarvestCandidateTesterTool",
+      "VerifiedSourceRegisterTool"
+    ],
+    "composition_file": "harvest_auto_registrar.py",
+    "composition_function": "compose"
+  },
+  {
+    "type": "ComposeTool",
+    "name": "DockerLLMProvisioner",
+    "description": "Launch a Docker-hosted LLM MCP server, wait for readiness, and register client/auto-loader configurations so the model appears inside ToolUniverse.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "docker_image": {
+          "type": "string",
+          "description": "Docker image to run (default ghcr.io/tooluniverse/docker-llm-mcp:latest)."
+        },
+        "container_name": {
+          "type": "string",
+          "description": "Optional container name. Generated automatically when omitted."
+        },
+        "docker_cli": {
+          "type": "string",
+          "description": "Docker executable to invoke (default docker).",
+          "default": "docker"
+        },
+        "host": {
+          "type": "string",
+          "description": "Host interface to bind (default 127.0.0.1).",
+          "default": "127.0.0.1"
+        },
+        "host_port": {
+          "type": "integer",
+          "description": "Port exposed on the host for MCP traffic (default 9000).",
+          "default": 9000
+        },
+        "container_port": {
+          "type": "integer",
+          "description": "Internal container port that serves MCP (default 8000).",
+          "default": 8000
+        },
+        "env": {
+          "type": "object",
+          "description": "Environment variables to pass to docker run."
+        },
+        "volumes": {
+          "type": "array",
+          "description": "Volume mappings for docker run (e.g. ['/host/path:/container/path']).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extra_args": {
+          "type": "array",
+          "description": "Additional arguments appended to docker run.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Tool name registered within ToolUniverse (default DockerLLMChat).",
+          "default": "DockerLLMChat"
+        },
+        "tool_prefix": {
+          "type": "string",
+          "description": "Prefix applied when auto-registering tools from the MCP server."
+        },
+        "mcp_tool_name": {
+          "type": "string",
+          "description": "Underlying MCP tool name exposed by the server (default docker_llm_chat).",
+          "default": "docker_llm_chat"
+        },
+        "health_path": {
+          "type": "string",
+          "description": "Health-check path polled for readiness (default /health).",
+          "default": "/health"
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "description": "Seconds to wait for the container to become healthy.",
+          "default": 120
+        },
+        "poll_interval": {
+          "type": "number",
+          "description": "Seconds between health checks during provisioning.",
+          "default": 2.0
+        },
+        "reuse_container": {
+          "type": "boolean",
+          "description": "Reuse and restart an existing container if present (default true).",
+          "default": true
+        },
+        "server_url": {
+          "type": "string",
+          "description": "Override MCP base URL if different from http://host:host_port."
+        },
+        "description": {
+          "type": "string",
+          "description": "Custom description applied to the registered tool."
+        }
+      },
+      "additionalProperties": false
+    },
+    "auto_load_dependencies": false,
+    "fail_on_missing_tools": false,
+    "required_tools": [],
+    "composition_file": "docker_llm_provisioner.py",
+    "composition_function": "compose"
   }
 ]
