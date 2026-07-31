@@ -51,14 +51,6 @@ class RemoteTool(BaseTool):
         server_type = self.remote_info.get("server_type", "Unknown")
         original_type = self.remote_info.get("original_type", "Unknown")
 
-        guidance = (
-            "This tool is registered as a remote MCP endpoint and cannot run locally. "
-            "If you want to activate it, connect ToolUniverse to the hosting server (e.g. "
-            "call `ToolUniverse.load_mcp_tools([...])` with the server URL) or provision a local "
-            "container via the `DockerLLMProvisioner` compose tool / `scripts/provision_docker_llm.py`. "
-            "Custom MCP configs placed in ~/.tooluniverse/remote_tools/*.json are picked up automatically."
-        )
-
         return {
             "status": "error",
             "error": "Remote tool not available for local execution",
@@ -70,7 +62,7 @@ class RemoteTool(BaseTool):
             "tool_type": "RemoteTool",
             "original_type": original_type,
             "server_type": server_type,
-            "message": guidance,
+            "message": "This tool is hosted on an external MCP/SMCP server and cannot be executed locally. Please use the external server directly.",
             "remote_info": self.remote_info,
         }
 

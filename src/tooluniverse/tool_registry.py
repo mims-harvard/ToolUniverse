@@ -726,18 +726,3 @@ def get_tool_class_lazy(tool_name):
         return _tool_registry.get(tool_name)
 
     return None
-
-# --- VSD / compatibility shims ---
-def get_tool_class(name: str):
-    """
-    Backwards-compatible accessor used by scripts like SampleVDSRun.py.
-    Prefer get_tool_class_lazy(name) internally.
-    """
-    return get_tool_class_lazy(name)
-
-class _RegistryShim:
-    def get_tool_class(self, name: str):
-        return get_tool_class_lazy(name)
-
-# Expose a 'registry' object with get_tool_class, if callers expect it
-registry = _RegistryShim()

@@ -14,20 +14,8 @@ import importlib
 from pathlib import Path
 import pytest
 
-# Add repository src/ directory to path so we import the checked-in package
-REPO_ROOT = Path(__file__).resolve().parents[2]
-SRC_DIR = REPO_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
-
-# Ensure we import the repo copy even if another version is already loaded
-package = sys.modules.get("tooluniverse")
-if package is not None:
-    module_path = Path(getattr(package, "__file__", "")).resolve()
-    if SRC_DIR not in module_path.parents:
-        for module_name in list(sys.modules.keys()):
-            if module_name == "tooluniverse" or module_name.startswith("tooluniverse."):
-                del sys.modules[module_name]
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from tooluniverse import ToolUniverse  # noqa: E402
 from tooluniverse.generate_tools import main as generate_tools  # noqa: E402

@@ -83,8 +83,6 @@ Repository Structure Tree
    │   ├── tool_finder_keyword.py               # Keyword-based tool search
    │   ├── tool_finder_embedding.py             # Embedding-based tool search
    │   ├── tool_finder_llm.py                   # LLM-powered tool discovery
-   │   ├── remote/docker_llm/                   # Docker-based LLM provisioning helpers
-   │   ├── DockerLLMProvisioner.py              # Compose tool for Docker LLM MCP auto-registration
    │   ├── embedding_database.py                # Tool embedding database
    │   └── embedding_sync.py                    # Embedding synchronization
    │   │
@@ -322,36 +320,6 @@ Extension Points
 
 - Use `compose_tool.py` or add scripts in `compose_scripts/` for complex call chains
 - Leverage `tool_finder_*` for retrieval and routing assistance
-
-Tool Loading Cheat Sheet
-------------------------
-
-- Package data is loaded from the JSON files mapped in :mod:`default_config.py` plus everything under ``src/tooluniverse/data/``.
-- Remote/MCP entries are merged from both the packaged ``data/remote_tools`` directory **and** the user override folder ``~/.tooluniverse/remote_tools``. Dropping a JSON config there makes the tool visible without code changes.
-- The runtime builds three main registries:
-
-  1. ``tool_files`` → category JSON manifests (local tools)
-  2. ``data/remote_tools`` → bundled remote definitions
-  3. ``~/.tooluniverse/remote_tools`` → user/automation supplied remote definitions
-
-- Use ``ToolUniverse.load_tools()`` to refresh the registry after adding new files without restarting the host process.
-
-Remote MCP Provisioning
------------------------
-
-- ``DockerLLMProvisioner`` (compose tool) and ``scripts/provision_docker_llm.py`` automate standing up an MCP-enabled LLM in Docker, poll its ``/health`` endpoint, and emit the JSON configs under ``~/.tooluniverse/remote_tools`` so the new tool registers instantly.
-- Remote stubs created from bundled configs (e.g., expert feedback, DepMap) are read-only until you connect ToolUniverse to the actual MCP server. You can:
-
-  1. Call ``ToolUniverse.load_mcp_tools(["http://server:port/mcp"])`` to ingest tools live, or
-  2. Provision a local container via ``DockerLLMProvisioner`` or the CLI helper to host the endpoints yourself.
-- The `RemoteTool` error message now includes these activation instructions when an agent accidentally calls an offline remote tool.
-
-Catalog Navigation Tips
------------------------
-
-- ``ToolNavigatorTool`` combines the full catalog (including remote/VSD entries) with lightweight scoring—use it to shortlist relevant tools before running long compositions.
-- ``ToolFinderKeyword`` / ``ToolFinderEmbedding`` provide complementary search modalities; both now benefit from the expanded metadata listed in ``~/.tooluniverse/remote_tools``.
-- For big collections consider building category-specific shortlists in ``toolsets/`` and surfacing them via ``ToolNavigatorTool`` filters or custom compose tools.
 
 Directory Quick Reference
 --------------------------
