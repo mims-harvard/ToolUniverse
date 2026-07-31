@@ -5,7 +5,6 @@ from types import SimpleNamespace
 
 import pytest
 
-from tooluniverse import ToolUniverse
 from tooluniverse import vsd_tool
 
 
@@ -217,7 +216,7 @@ def test_registration_rejects_metadata_control_characters(monkeypatch):
         )
 
 
-def test_tooluniverse_end_to_end_register_query_and_remove(monkeypatch, tmp_path):
+def test_admin_catalog_end_to_end_register_query_and_remove(monkeypatch, tmp_path):
     monkeypatch.setenv("TOOLUNIVERSE_VSD_DIR", str(tmp_path))
     calls = []
 
@@ -238,49 +237,28 @@ def test_tooluniverse_end_to_end_register_query_and_remove(monkeypatch, tmp_path
 
     monkeypatch.setattr(vsd_tool, "_safe_get_json", fake_safe_get)
 
-    names = [
-        "VSDDiscoverSources",
-        "VSDRegisterSource",
-        "VSDListSources",
-        "VSDQuerySource",
-        "VSDRemoveSource",
-    ]
-    tu = ToolUniverse()
-    tu.load_tools(include_tools=names, quiet=True)
-    assert {tool["name"] for tool in tu.all_tools} == set(names)
-
-    discovery = tu.run_one_function(
-        {"name": "VSDDiscoverSources", "arguments": {"query": "WHO"}}
-    )
+    discovery = vsd_tool.VSDDiscoverSources({}).run({"query": "WHO"})
     assert discovery["data"]["sources"][0]["source_id"] == "who_gho"
 
-    registration = tu.run_one_function(
+    registration = vsd_tool.VSDRegisterSource({}).run(
         {
-            "name": "VSDRegisterSource",
-            "arguments": {
-                "source_id": "who_gho",
-                "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
-                "name": "WHO GHO",
-                "default_params": {"$top": 1},
-            },
+            "source_id": "who_gho",
+            "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
+            "name": "WHO GHO",
+            "default_params": {"$top": 1},
         }
     )
     assert registration["data"]["registered"] is True
     assert (tmp_path / "sources.json").exists()
 
-    listed = tu.run_one_function({"name": "VSDListSources", "arguments": {}})
+    listed = vsd_tool.VSDListSources({}).run({})
     assert [source["source_id"] for source in listed["data"]["sources"]] == ["who_gho"]
 
-    queried = tu.run_one_function(
-        {
-            "name": "VSDQuerySource",
-            "arguments": {"source_id": "who_gho", "params": {"$select": "Code"}},
-        }
+    queried = vsd_tool.VSDQuerySource({}).run(
+        {"source_id": "who_gho", "params": {"$select": "Code"}}
     )
     assert queried["data"]["result"]["items"][0]["id"] == 1
     assert calls[-1][1] == {"$top": 1, "$select": "Code"}
 
-    removed = tu.run_one_function(
-        {"name": "VSDRemoveSource", "arguments": {"source_id": "who_gho"}}
-    )
+    removed = vsd_tool.VSDRemoveSource({}).run({"source_id": "who_gho"})
     assert removed["data"] == {"removed": True, "source_id": "who_gho"}

@@ -3,10 +3,11 @@
 ## Purpose
 
 This change is a focused follow-up to ToolUniverse PR #413. It preserves the
-Verified Source Directory workflow while closing the security and state-integrity
-gaps found during adversarial review. It also adds a reproducible public-health
-case study whose checked artifacts were generated through the real register,
-query, and remove tools.
+Verified Source Directory workflow while closing the security, state-integrity,
+and product-boundary gaps found during adversarial review. Mutable catalog
+operations now live behind an explicit administration CLI. The default
+ToolUniverse surface contains only reviewed, read-only, source-specific tools
+with constrained inputs, normalized outputs, and concrete provenance.
 
 ## Corrected Behavior
 
@@ -19,8 +20,8 @@ query, and remove tools.
 | JSON contract | Any media type containing `json` and Python's non-standard `NaN`/`Infinity` values were accepted. | Only `application/json` or `+json` media types and standards-compliant JSON numbers are accepted. |
 | Catalog writes | A process-local thread lock protected atomic replacement, but concurrent processes could lose updates. | A cross-platform OS file lock covers each complete read-modify-write transaction, and the replacement file is flushed and synchronized before atomic replace. |
 | Duplicate IDs | Registration silently overwrote an existing source. | Duplicates fail before probing unless the caller explicitly supplies `replace=true`; the result reports whether replacement occurred. |
-| Caching | Catalog mutations and reads inherited cache support. | Register, list, query, and remove are non-cacheable. Discovery remains cacheable because it is packaged and offline. |
-| MCP metadata | Register and remove inherited read-only, non-destructive annotations. | Register and remove explicitly advertise `readOnlyHint=false` and `destructiveHint=true`. |
+| Agent boundary | Mutable catalog tools and a generic arbitrary-JSON proxy were loaded as scientific tools. | Register, list, generic query, and remove are available only through `tooluniverse-vsd-admin`; they are absent from the default registry and generated SDK. |
+| Scientific contracts | A successful reachability probe produced an untyped `result: {}` and could be mistaken for scientific verification. | Four packaged integrations map to individual read-only tools with fixed endpoints, constrained parameters, typed return schemas, source-specific validation, and an explicit statement that adapter review is not scientific endorsement. |
 | Host information | Registration returned the absolute catalog path. | Tool results and catalog validation errors do not expose host filesystem paths. |
 
 ## Regression Evidence
@@ -34,8 +35,9 @@ The transport tests verify the selected connection address, preserved TLS
 hostname and `Host` header, exact peer match, rejection of gzip/Brotli encodings
 before body reads, redirect rejection, total-deadline enforcement, strict media
 types, standards-compliant JSON, and credential-like path rejection. ToolUniverse
-contract tests load the actual tool configurations and verify effective caching
-and MCP annotations.
+contract tests load the actual tool configurations, prove the generic and mutable
+operations are absent, validate the generated SDK surface, and execute normalized
+provider output through `ToolUniverse.run_one_function()`.
 
 Run the focused proof suite from the repository root:
 
@@ -44,27 +46,27 @@ python -m pytest -o addopts= \
   tests/unit/test_vsd_tools.py \
   tests/unit/test_vsd_transport_security.py \
   tests/unit/test_vsd_catalog_concurrency.py \
+  tests/unit/test_vsd_admin_cli.py \
+  tests/unit/test_vsd_reviewed_sources.py \
   tests/unit/test_vsd_tool_contracts.py \
   tests/unit/test_vsd_public_health_case_study.py -q
 ```
 
-The final local run passed all 56 focused tests. An additional 60 adjacent tests
-covering generated wrappers, package imports, tool configuration validation, and
-base-tool capabilities also passed. On Windows, the package-import lane must set
-`PYTHONPATH=src` and `PYTHONUTF8=1` so its clean subprocess imports this checkout
-and reads the repository's existing Unicode wrapper descriptions as UTF-8.
-
-Ruff passed for every changed Python file, Python byte-compilation completed, all
-checked JSON files parsed, and `git diff --check` reported no whitespace errors.
+The final focused lane passed all 66 transport, concurrency, administration,
+source-adapter, ToolUniverse-contract, and disease-study tests. An additional 60
+generated-wrapper, package-import, validator, and base-tool tests passed; hosted
+CI status is recorded on the pull request.
 
 ## Live Case Study
 
 [`examples/vsd/public_health_case_study.py`](../../examples/vsd/public_health_case_study.py)
-uses the hardened tools to retrieve three bounded public inputs:
+creates one `ToolUniverse` instance, selectively loads four VSD tools, and makes
+every call through `run_one_function()` with caching disabled:
 
-1. WHO hypertension indicator metadata.
-2. Five aggregate CDC PLACES coronary-heart-disease estimates.
-3. One identified public openFDA aspirin label.
+1. Offline discovery of reviewed source-specific tool names.
+2. WHO hypertension indicator metadata through a fixed adapter.
+3. All 17 returned 2023 Autauga County CDC PLACES CHD tract estimates.
+4. One identified public openFDA aspirin label through a UUID adapter.
 
 Run it with:
 
@@ -76,14 +78,15 @@ The machine-readable artifact is
 [`examples/vsd/artifacts/snapshot.json`](../../examples/vsd/artifacts/snapshot.json),
 and the rendered evidence report is
 [`examples/vsd/artifacts/snapshot.md`](../../examples/vsd/artifacts/snapshot.md).
-They retain endpoint, query, status, media type, response size, timestamp, and a
-SHA-256 digest of each raw response while omitting the large raw records.
+They retain the exact ToolUniverse call ledger, normalized findings, endpoint,
+query, status, media type, response size, timestamp, and a SHA-256 digest of each
+raw response while omitting raw provider payloads and label warning text.
 
-The recorded case-study run completed six hardened HTTPS calls across WHO, CDC,
-and openFDA. A separate packaged-source smoke test returned strict JSON from all
-four seeded providers (WHO, CDC, openFDA, and Ensembl), with zero redirects and
-an exact match between each connected peer and its prevalidated pinned address;
-the run exercised both IPv4 and IPv6 destinations.
+The recorded case-study run completed three hardened HTTPS calls across WHO,
+CDC, and openFDA. It produced a bounded descriptive result for the CDC rows: an
+unweighted tract mean of 6.75%, median of 6.8%, minimum of 4.0%, and maximum of
+10.0%. These values demonstrate the workflow; they are not patient-level or
+causal findings.
 
 The sources are independent and cannot support record-level joins, causal claims,
 treatment-effect claims, or clinical advice. Live APIs can change, so later runs
@@ -98,12 +101,13 @@ may legitimately produce different timestamps, hashes, estimates, or label data.
   multi-address failover. A caller can retry after a transient address failure.
 - VSD intentionally does not accept credentials. Authenticated sources require a
   dedicated environment-backed tool with source-specific policy.
+- A reviewed adapter means the endpoint, input constraints, normalization, and
+  technical provenance contract were reviewed. It does not certify upstream
+  methodology, accuracy, stability, or fitness for a scientific claim.
 
 ## Integration Recommendation
 
-This branch is intentionally stacked on PR #413. The preferred integration is for
-the #413 author to merge this follow-up into their existing branch, preserving the
-original authorship and discussion while adding the proven fixes and case-study
-evidence. If that is inconvenient, this branch can be retargeted to `main` as the
-combined replacement after #413's commits and this validation are reviewed
-together.
+This draft contains PR #413 plus the hardened transport, administration boundary,
+source-specific tools, regression suite, and disease-study evidence. The #413
+author can take the follow-up commits into their branch or use this combined draft
+after review.

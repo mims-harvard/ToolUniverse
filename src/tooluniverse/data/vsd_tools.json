@@ -2,7 +2,7 @@
   {
     "name": "VSDDiscoverSources",
     "type": "VSDDiscoverSources",
-    "description": "Search ToolUniverse's packaged catalog of reviewed public JSON sources. This is offline discovery only; it does not contact or register a source.",
+    "description": "Search the packaged catalog of reviewed VSD integrations. Review covers the transport profile and response adapter, not scientific endorsement.",
     "category": "special_tools",
     "cacheable": true,
     "mcp_annotations": {
@@ -15,7 +15,7 @@
         "query": {
           "type": "string",
           "maxLength": 500,
-          "description": "Optional case-insensitive text filter over source name, description, ID, and endpoint."
+          "description": "Optional case-insensitive filter over source metadata."
         }
       },
       "additionalProperties": false
@@ -26,91 +26,39 @@
         "sources": {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "source_id": {"type": "string"},
+              "name": {"type": "string"},
+              "endpoint": {"type": "string"},
+              "description": {"type": "string"},
+              "default_params": {"type": "object"},
+              "tool_name": {"type": "string"},
+              "review_scope": {"type": "string"}
+            },
+            "required": [
+              "source_id",
+              "name",
+              "endpoint",
+              "description",
+              "default_params",
+              "tool_name",
+              "review_scope"
+            ],
+            "additionalProperties": false
           }
         }
       },
-      "required": [
-        "sources"
-      ]
-    }
-  },
-  {
-    "name": "VSDRegisterSource",
-    "type": "VSDRegisterSource",
-    "description": "Explicitly probe and persist an allowlisted HTTPS JSON source. Only GET requests are supported; private networks, redirects, oversized or encoded responses, and credential-like inputs are rejected.",
-    "category": "special_tools",
-    "cacheable": false,
-    "mcp_annotations": {
-      "readOnlyHint": false,
-      "destructiveHint": true
-    },
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "source_id": {
-          "type": "string",
-          "pattern": "^[a-z][a-z0-9_]{2,63}$",
-          "description": "Stable lowercase identifier for the persisted source."
-        },
-        "endpoint": {
-          "type": "string",
-          "format": "uri",
-          "maxLength": 2048,
-          "description": "Allowlisted HTTPS JSON endpoint to probe and persist."
-        },
-        "name": {
-          "type": "string",
-          "maxLength": 200,
-          "description": "Human-readable source name."
-        },
-        "description": {
-          "type": "string",
-          "maxLength": 2000,
-          "description": "Provider-neutral description of the scientific source."
-        },
-        "default_params": {
-          "type": "object",
-          "description": "Non-secret scalar GET parameters used for probing and future queries."
-        },
-        "replace": {
-          "type": "boolean",
-          "default": false,
-          "description": "Replace an existing registration with the same source_id. Defaults to false, so duplicate registration is rejected."
-        }
-      },
-      "required": [
-        "source_id",
-        "endpoint"
-      ],
+      "required": ["sources"],
       "additionalProperties": false
-    },
-    "return_schema": {
-      "type": "object",
-      "properties": {
-        "registered": {
-          "type": "boolean"
-        },
-        "replaced": {
-          "type": "boolean"
-        },
-        "source": {
-          "type": "object"
-        }
-      },
-      "required": [
-        "registered",
-        "replaced",
-        "source"
-      ]
     }
   },
   {
-    "name": "VSDListSources",
-    "type": "VSDListSources",
-    "description": "List the public JSON sources explicitly registered in the local Verified Source Directory.",
+    "name": "VSDWHOHypertensionIndicator",
+    "type": "VSDWHOHypertensionIndicator",
+    "description": "Retrieve and validate the reviewed WHO hypertension diagnosis-coverage indicator definition through a fixed HTTPS endpoint.",
     "category": "special_tools",
-    "cacheable": false,
+    "cacheable": true,
     "mcp_annotations": {
       "readOnlyHint": true,
       "destructiveHint": false
@@ -123,24 +71,53 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "sources": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+        "indicator": {
+          "type": "object",
+          "properties": {
+            "indicator_code": {"type": "string"},
+            "indicator_name": {"type": "string"},
+            "language": {"type": "string"}
+          },
+          "required": ["indicator_code", "indicator_name", "language"],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string"},
+            "endpoint": {"type": "string", "format": "uri"},
+            "query_params": {"type": "object"},
+            "retrieved_at": {"type": "string", "format": "date-time"},
+            "http_status": {"type": "integer"},
+            "content_type": {"type": "string"},
+            "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "redirects": {"type": "integer", "const": 0},
+            "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "required": [
+            "provider",
+            "endpoint",
+            "query_params",
+            "retrieved_at",
+            "http_status",
+            "content_type",
+            "response_bytes",
+            "redirects",
+            "payload_sha256"
+          ],
+          "additionalProperties": false
         }
       },
-      "required": [
-        "sources"
-      ]
+      "required": ["indicator", "provenance"],
+      "additionalProperties": false
     }
   },
   {
-    "name": "VSDQuerySource",
-    "type": "VSDQuerySource",
-    "description": "Run a bounded, DNS-pinned HTTPS GET against one explicitly registered VSD JSON source. Redirects, encoded responses, and credential-like inputs are rejected.",
+    "name": "VSDCDCPlacesCoronaryHeartDisease",
+    "type": "VSDCDCPlacesCoronaryHeartDisease",
+    "description": "Retrieve validated CDC PLACES coronary-heart-disease estimates for census tracts in one US county through a fixed endpoint.",
     "category": "special_tools",
-    "cacheable": false,
+    "cacheable": true,
     "mcp_annotations": {
       "readOnlyHint": true,
       "destructiveHint": false
@@ -148,77 +125,225 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "source_id": {
+        "state_abbr": {
           "type": "string",
-          "pattern": "^[a-z][a-z0-9_]{2,63}$",
-          "description": "Previously registered VSD source identifier."
+          "pattern": "^[A-Za-z]{2}$",
+          "description": "Two-letter US state abbreviation."
         },
-        "params": {
-          "type": "object",
-          "description": "Non-secret scalar GET parameters merged with the source defaults."
+        "county_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "County name without the word County, for example Autauga."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 500,
+          "description": "Maximum census-tract records to retrieve."
         }
       },
-      "required": [
-        "source_id"
-      ],
+      "required": ["state_abbr", "county_name"],
       "additionalProperties": false
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "source": {
-          "type": "object"
+        "measure": {"type": "string"},
+        "state_abbr": {"type": "string"},
+        "county_name": {"type": "string"},
+        "possibly_truncated": {"type": "boolean"},
+        "tracts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {"type": "string"},
+              "stateabbr": {"type": "string"},
+              "countyname": {"type": "string"},
+              "locationname": {"type": "string"},
+              "measure": {"type": "string"},
+              "data_value": {"type": "string"},
+              "low_confidence_limit": {"type": "string"},
+              "high_confidence_limit": {"type": "string"}
+            },
+            "required": [
+              "year",
+              "stateabbr",
+              "countyname",
+              "locationname",
+              "measure",
+              "data_value",
+              "low_confidence_limit",
+              "high_confidence_limit"
+            ],
+            "additionalProperties": false
+          }
         },
-        "request": {
-          "type": "object"
-        },
-        "result": {}
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string"},
+            "endpoint": {"type": "string", "format": "uri"},
+            "query_params": {"type": "object"},
+            "retrieved_at": {"type": "string", "format": "date-time"},
+            "http_status": {"type": "integer"},
+            "content_type": {"type": "string"},
+            "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "redirects": {"type": "integer", "const": 0},
+            "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "required": [
+            "provider",
+            "endpoint",
+            "query_params",
+            "retrieved_at",
+            "http_status",
+            "content_type",
+            "response_bytes",
+            "redirects",
+            "payload_sha256"
+          ],
+          "additionalProperties": false
+        }
       },
       "required": [
-        "source",
-        "request",
-        "result"
-      ]
+        "measure",
+        "state_abbr",
+        "county_name",
+        "possibly_truncated",
+        "tracts",
+        "provenance"
+      ],
+      "additionalProperties": false
     }
   },
   {
-    "name": "VSDRemoveSource",
-    "type": "VSDRemoveSource",
-    "description": "Remove one explicitly registered source from the local Verified Source Directory.",
+    "name": "VSDOpenFDALabelBySetId",
+    "type": "VSDOpenFDALabelBySetId",
+    "description": "Retrieve and normalize one public openFDA drug label by UUID set ID through a fixed endpoint.",
     "category": "special_tools",
-    "cacheable": false,
+    "cacheable": true,
     "mcp_annotations": {
-      "readOnlyHint": false,
-      "destructiveHint": true
+      "readOnlyHint": true,
+      "destructiveHint": false
     },
     "parameter": {
       "type": "object",
       "properties": {
-        "source_id": {
+        "set_id": {
           "type": "string",
-          "pattern": "^[a-z][a-z0-9_]{2,63}$",
-          "description": "Registered VSD source identifier to remove."
+          "format": "uuid",
+          "description": "Public openFDA label set UUID."
         }
       },
-      "required": [
-        "source_id"
-      ],
+      "required": ["set_id"],
       "additionalProperties": false
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "removed": {
-          "type": "boolean"
+        "label": {
+          "type": "object",
+          "properties": {
+            "set_id": {"type": "string"},
+            "effective_time": {"type": "string"},
+            "brand_name": {"type": "string"},
+            "generic_name": {"type": "string"},
+            "route": {"type": "string"},
+            "warnings": {"type": "array", "items": {"type": "string"}}
+          },
+          "required": [
+            "set_id",
+            "effective_time",
+            "brand_name",
+            "generic_name",
+            "route",
+            "warnings"
+          ],
+          "additionalProperties": false
         },
-        "source_id": {
-          "type": "string"
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string"},
+            "endpoint": {"type": "string", "format": "uri"},
+            "query_params": {"type": "object"},
+            "retrieved_at": {"type": "string", "format": "date-time"},
+            "http_status": {"type": "integer"},
+            "content_type": {"type": "string"},
+            "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "redirects": {"type": "integer", "const": 0},
+            "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "required": [
+            "provider",
+            "endpoint",
+            "query_params",
+            "retrieved_at",
+            "http_status",
+            "content_type",
+            "response_bytes",
+            "redirects",
+            "payload_sha256"
+          ],
+          "additionalProperties": false
         }
       },
-      "required": [
-        "removed",
-        "source_id"
-      ]
+      "required": ["label", "provenance"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "VSDEnsemblServiceStatus",
+    "type": "VSDEnsemblServiceStatus",
+    "description": "Check the reviewed Ensembl REST service endpoint and return a typed availability result.",
+    "category": "special_tools",
+    "cacheable": true,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "service": {"type": "string"},
+        "available": {"type": "boolean"},
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string"},
+            "endpoint": {"type": "string", "format": "uri"},
+            "query_params": {"type": "object"},
+            "retrieved_at": {"type": "string", "format": "date-time"},
+            "http_status": {"type": "integer"},
+            "content_type": {"type": "string"},
+            "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "redirects": {"type": "integer", "const": 0},
+            "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "required": [
+            "provider",
+            "endpoint",
+            "query_params",
+            "retrieved_at",
+            "http_status",
+            "content_type",
+            "response_bytes",
+            "redirects",
+            "payload_sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": ["service", "available", "provenance"],
+      "additionalProperties": false
     }
   }
 ]

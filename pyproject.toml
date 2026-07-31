@@ -168,6 +168,7 @@ tu-datastore = "tooluniverse.database_setup.cli:main"
 # tooluniverse-wide-research = "tooluniverse.web_tools.literature_search_ui.simple_app:main"
 # Health Check Tool
 tooluniverse-doctor = "tooluniverse.doctor:main"
+tooluniverse-vsd-admin = "tooluniverse.vsd_admin_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

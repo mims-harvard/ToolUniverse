@@ -1,27 +1,33 @@
 """
-VSDRemoveSource
+VSDCDCPlacesCoronaryHeartDisease
 
-Remove one explicitly registered source from the local Verified Source Directory.
+Retrieve validated CDC PLACES coronary-heart-disease estimates for census tracts in one US county...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def VSDRemoveSource(
-    source_id: str,
+def VSDCDCPlacesCoronaryHeartDisease(
+    state_abbr: str,
+    county_name: str,
+    limit: Optional[int] = 500,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Remove one explicitly registered source from the local Verified Source Directory.
+    Retrieve validated CDC PLACES coronary-heart-disease estimates for census tracts in one US county...
 
     Parameters
     ----------
-    source_id : str
-        Registered VSD source identifier to remove.
+    state_abbr : str
+        Two-letter US state abbreviation.
+    county_name : str
+        County name without the word County, for example Autauga.
+    limit : int
+        Maximum census-tract records to retrieve.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,10 +42,18 @@ def VSDRemoveSource(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"source_id": source_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "state_abbr": state_abbr,
+            "county_name": county_name,
+            "limit": limit,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
-            "name": "VSDRemoveSource",
+            "name": "VSDCDCPlacesCoronaryHeartDisease",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -48,4 +62,4 @@ def VSDRemoveSource(
     )
 
 
-__all__ = ["VSDRemoveSource"]
+__all__ = ["VSDCDCPlacesCoronaryHeartDisease"]

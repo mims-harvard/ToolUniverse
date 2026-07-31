@@ -1,21 +1,21 @@
 """
-VSDListSources
+VSDEnsemblServiceStatus
 
-List the public JSON sources explicitly registered in the local Verified Source Directory.
+Check the reviewed Ensembl REST service endpoint and return a typed availability result.
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def VSDListSources(
+def VSDEnsemblServiceStatus(
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    List the public JSON sources explicitly registered in the local Verified Source Directory.
+    Check the reviewed Ensembl REST service endpoint and return a typed availability result.
 
     Parameters
     ----------
@@ -37,7 +37,7 @@ def VSDListSources(
     _args = {k: v for k, v in {}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
-            "name": "VSDListSources",
+            "name": "VSDEnsemblServiceStatus",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -46,4 +46,4 @@ def VSDListSources(
     )
 
 
-__all__ = ["VSDListSources"]
+__all__ = ["VSDEnsemblServiceStatus"]

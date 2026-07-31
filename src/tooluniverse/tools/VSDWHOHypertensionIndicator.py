@@ -1,30 +1,25 @@
 """
-VSDQuerySource
+VSDWHOHypertensionIndicator
 
-Run a bounded, DNS-pinned HTTPS GET against one explicitly registered VSD JSON source. Redirects,...
+Retrieve and validate the reviewed WHO hypertension diagnosis-coverage indicator definition throu...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def VSDQuerySource(
-    source_id: str,
-    params: Optional[dict[str, Any]] = None,
+def VSDWHOHypertensionIndicator(
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Run a bounded, DNS-pinned HTTPS GET against one explicitly registered VSD JSON source. Redirects,...
+    Retrieve and validate the reviewed WHO hypertension diagnosis-coverage indicator definition throu...
 
     Parameters
     ----------
-    source_id : str
-        Previously registered VSD source identifier.
-    params : dict[str, Any]
-        Non-secret scalar GET parameters merged with the source defaults.
+    No parameters
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -39,14 +34,10 @@ def VSDQuerySource(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"source_id": source_id, "params": params}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
-            "name": "VSDQuerySource",
+            "name": "VSDWHOHypertensionIndicator",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -55,4 +46,4 @@ def VSDQuerySource(
     )
 
 
-__all__ = ["VSDQuerySource"]
+__all__ = ["VSDWHOHypertensionIndicator"]

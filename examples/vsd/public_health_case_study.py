@@ -1,17 +1,16 @@
-"""Build a bounded, provenance-rich public-health snapshot with VSD.
+"""Run a ToolUniverse-native coronary-heart-disease VSD case study.
 
-The live workflow intentionally retains only aggregate or public product metadata.
-Raw upstream responses are hashed for provenance and are not written to disk.
+The workflow retains normalized aggregate observations and provenance. It does
+not persist raw upstream responses or use heterogeneous sources as joinable
+patient-level evidence.
 """
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import os
+import statistics
 import sys
-import tempfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -21,271 +20,324 @@ REPOSITORY_SRC = Path(__file__).resolve().parents[2] / "src"
 if str(REPOSITORY_SRC) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_SRC))
 
-import tooluniverse.vsd_tool as vsd_tool  # noqa: E402
+from tooluniverse import ToolUniverse  # noqa: E402
 
 
-SCHEMA_VERSION = 1
-CASE_STUDY_ID = "cardiovascular_public_health_snapshot"
+SCHEMA_VERSION = 2
+CASE_STUDY_ID = "coronary_heart_disease_autauga_vsd_study"
 DEFAULT_JSON_PATH = Path(__file__).with_name("artifacts") / "snapshot.json"
 DEFAULT_MARKDOWN_PATH = Path(__file__).with_name("artifacts") / "snapshot.md"
+ASPIRIN_LABEL_SET_ID = "0058175f-3474-40c3-a046-6cfaec86d84b"
 
-SOURCES: tuple[dict[str, Any], ...] = (
-    {
-        "source_id": "who_gho",
-        "provider": "WHO Global Health Observatory",
-        "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
-        "description": "WHO hypertension indicator metadata.",
-        "params": {
-            "$filter": "IndicatorCode eq 'NCD_HYP_DIAGNOSIS_C'",
-            "$select": "IndicatorCode,IndicatorName,Language",
-            "$top": 1,
-        },
-    },
-    {
-        "source_id": "cdc_places",
-        "provider": "CDC PLACES",
-        "endpoint": "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json",
-        "description": "Aggregate Alabama census-tract coronary-heart-disease estimates.",
-        "params": {
-            "$select": (
-                "year,stateabbr,countyname,locationname,measure,data_value,"
-                "low_confidence_limit,high_confidence_limit"
-            ),
-            "$where": (
-                "stateabbr='AL' AND measure='Coronary heart disease among adults'"
-            ),
-            "$order": "locationname ASC",
-            "$limit": 5,
-        },
-    },
-    {
-        "source_id": "openfda_labels",
-        "provider": "openFDA Drug Labels",
-        "endpoint": "https://api.fda.gov/drug/label.json",
-        "description": "One identified public aspirin product label.",
-        "params": {
-            "search": 'set_id:"0058175f-3474-40c3-a046-6cfaec86d84b"',
-            "limit": 1,
-        },
-    },
+TOOL_NAMES = (
+    "VSDDiscoverSources",
+    "VSDWHOHypertensionIndicator",
+    "VSDCDCPlacesCoronaryHeartDisease",
+    "VSDOpenFDALabelBySetId",
+)
+TOOL_CALLS: tuple[tuple[str, dict[str, Any]], ...] = (
+    ("VSDDiscoverSources", {"query": ""}),
+    ("VSDWHOHypertensionIndicator", {}),
+    (
+        "VSDCDCPlacesCoronaryHeartDisease",
+        {"state_abbr": "AL", "county_name": "Autauga", "limit": 500},
+    ),
+    ("VSDOpenFDALabelBySetId", {"set_id": ASPIRIN_LABEL_SET_ID}),
 )
 
 
 @dataclass(frozen=True)
-class SourceResult:
-    definition: dict[str, Any]
-    payload: Any
-    request: dict[str, Any]
+class StudyRun:
+    outputs: dict[str, dict[str, Any]]
+    calls: list[dict[str, Any]]
 
 
 def canonical_json(value: Any) -> str:
-    """Return the stable JSON representation used for artifacts and hashes."""
+    """Return the stable JSON representation used for checked artifacts."""
     return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=True) + "\n"
 
 
-def payload_sha256(payload: Any) -> str:
-    compact = json.dumps(
-        payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True
-    ).encode("utf-8")
-    return hashlib.sha256(compact).hexdigest()
-
-
-def _first_text(value: Any) -> str | None:
-    if isinstance(value, list) and value and isinstance(value[0], str):
-        return value[0]
-    return value if isinstance(value, str) else None
-
-
-def transform_who(payload: Any) -> dict[str, Any]:
-    rows = payload.get("value") if isinstance(payload, dict) else None
-    if not isinstance(rows, list) or len(rows) != 1 or not isinstance(rows[0], dict):
-        raise ValueError("WHO response must contain exactly one indicator row")
-    row = rows[0]
-    return {
-        "indicator_code": row.get("IndicatorCode"),
-        "indicator_name": row.get("IndicatorName"),
-        "language": row.get("Language"),
-    }
-
-
-def transform_cdc(payload: Any) -> list[dict[str, Any]]:
-    if not isinstance(payload, list):
-        raise ValueError("CDC response must be a list")
-    fields = (
-        "year",
-        "stateabbr",
-        "countyname",
-        "locationname",
-        "measure",
-        "data_value",
-        "low_confidence_limit",
-        "high_confidence_limit",
-    )
-    rows = [
-        {field: row.get(field) for field in fields}
-        for row in payload
-        if isinstance(row, dict)
-    ]
-    if len(rows) != len(payload) or len(rows) > 5:
-        raise ValueError("CDC response must contain at most five object rows")
-    return sorted(rows, key=lambda row: str(row["locationname"]))
-
-
-def transform_openfda(payload: Any) -> dict[str, Any]:
-    rows = payload.get("results") if isinstance(payload, dict) else None
-    if not isinstance(rows, list) or len(rows) != 1 or not isinstance(rows[0], dict):
-        raise ValueError("openFDA response must contain exactly one label")
-    label = rows[0]
-    metadata = label.get("openfda") if isinstance(label.get("openfda"), dict) else {}
-    warning = " ".join(label.get("warnings") or []).casefold()
-    warning_terms = sorted(
+def _warning_terms(warnings: Any) -> list[str]:
+    if not isinstance(warnings, list) or not all(
+        isinstance(value, str) for value in warnings
+    ):
+        raise ValueError("Normalized openFDA warnings must be a string list")
+    text = " ".join(warnings).casefold()
+    return sorted(
         term
         for term in ("blood thinning", "heart disease", "high blood pressure")
-        if term in warning
+        if term in text
     )
+
+
+def summarize_chd(tracts: Any) -> dict[str, Any]:
+    """Compute descriptive statistics without individual-level inference."""
+    if not isinstance(tracts, list) or not tracts:
+        raise ValueError("CDC output must contain at least one census tract")
+    ordered = sorted(tracts, key=lambda row: str(row["locationname"]))
+    values = [float(row["data_value"]) for row in ordered]
+    minimum = min(
+        ordered, key=lambda row: (float(row["data_value"]), row["locationname"])
+    )
+    maximum = max(
+        ordered, key=lambda row: (float(row["data_value"]), row["locationname"])
+    )
+    years = sorted({row["year"] for row in ordered})
     return {
-        "set_id": label.get("set_id"),
-        "effective_time": label.get("effective_time"),
-        "brand_name": _first_text(metadata.get("brand_name")),
-        "generic_name": _first_text(metadata.get("generic_name")),
-        "route": _first_text(metadata.get("route")),
-        "warning_terms_found": warning_terms,
+        "tract_count": len(ordered),
+        "years": years,
+        "mean_estimate_pct": round(statistics.fmean(values), 2),
+        "median_estimate_pct": round(statistics.median(values), 2),
+        "minimum": {
+            "census_tract": minimum["locationname"],
+            "estimate_pct": float(minimum["data_value"]),
+            "confidence_interval_pct": [
+                float(minimum["low_confidence_limit"]),
+                float(minimum["high_confidence_limit"]),
+            ],
+        },
+        "maximum": {
+            "census_tract": maximum["locationname"],
+            "estimate_pct": float(maximum["data_value"]),
+            "confidence_interval_pct": [
+                float(maximum["low_confidence_limit"]),
+                float(maximum["high_confidence_limit"]),
+            ],
+        },
+        "observed_range_percentage_points": round(max(values) - min(values), 2),
     }
 
 
-def build_artifact(results: list[SourceResult], *, generated_at: str) -> dict[str, Any]:
-    """Transform live or fixture responses into the checked artifact schema."""
-    by_id = {item.definition["source_id"]: item for item in results}
-    missing = {source["source_id"] for source in SOURCES} - set(by_id)
-    if missing:
-        raise ValueError(f"Missing source results: {sorted(missing)}")
+def summarize_tool_result(tool_name: str, data: dict[str, Any]) -> dict[str, Any]:
+    """Record bounded proof values without copying full provider results."""
+    if tool_name == "VSDDiscoverSources":
+        return {"reviewed_source_count": len(data["sources"])}
+    if tool_name == "VSDWHOHypertensionIndicator":
+        return {"indicator_code": data["indicator"]["indicator_code"]}
+    if tool_name == "VSDCDCPlacesCoronaryHeartDisease":
+        return {
+            "tract_count": len(data["tracts"]),
+            "possibly_truncated": data["possibly_truncated"],
+        }
+    if tool_name == "VSDOpenFDALabelBySetId":
+        return {"set_id": data["label"]["set_id"]}
+    raise ValueError(f"Unexpected disease-study tool: {tool_name}")
 
-    provenance = []
-    for source_id in sorted(by_id):
-        item = by_id[source_id]
-        request = item.request
-        provenance.append(
-            {
-                "source_id": source_id,
-                "provider": item.definition["provider"],
-                "endpoint": item.definition["endpoint"],
-                "query_params": item.definition["params"],
-                "http_status": request.get("status_code"),
-                "content_type": request.get("content_type"),
-                "response_bytes": request.get("response_bytes"),
-                "redirects": request.get("redirects"),
-                "payload_sha256": payload_sha256(item.payload),
-            }
-        )
+
+def build_artifact(study_run: StudyRun, *, generated_at: str) -> dict[str, Any]:
+    """Build the bounded study artifact from normalized ToolUniverse outputs."""
+    missing = set(TOOL_NAMES) - set(study_run.outputs)
+    if missing:
+        raise ValueError(f"Missing ToolUniverse outputs: {sorted(missing)}")
+
+    discovery = study_run.outputs["VSDDiscoverSources"]["sources"]
+    reviewed_tools = {source["tool_name"]: source for source in discovery}
+    used_source_tools = set(TOOL_NAMES) - {"VSDDiscoverSources"}
+    if not used_source_tools <= set(reviewed_tools):
+        raise ValueError("Discovery output did not identify every used source tool")
+
+    who = study_run.outputs["VSDWHOHypertensionIndicator"]
+    cdc = study_run.outputs["VSDCDCPlacesCoronaryHeartDisease"]
+    fda = study_run.outputs["VSDOpenFDALabelBySetId"]
+    if cdc["possibly_truncated"]:
+        raise ValueError("CDC county result reached its limit and may be incomplete")
+    label = fda["label"]
+    tracts = sorted(cdc["tracts"], key=lambda row: row["locationname"])
 
     return {
         "schema_version": SCHEMA_VERSION,
         "case_study": {
             "id": CASE_STUDY_ID,
-            "title": "Cardiovascular public-health evidence snapshot",
+            "title": "Coronary heart disease estimates in Autauga County, Alabama",
             "generated_at": generated_at,
-            "purpose": (
-                "Demonstrate bounded, attributable retrieval across independent "
-                "public scientific sources."
+            "research_question": (
+                "What variation does CDC PLACES report in modeled adult coronary "
+                "heart disease prevalence across Autauga County census tracts, and "
+                "how can related WHO indicator and public aspirin-label context be "
+                "retrieved without treating the sources as joinable clinical evidence?"
+            ),
+            "study_design": (
+                "Bounded descriptive retrieval demonstration using aggregate CDC "
+                "small-area estimates and two independent context sources."
             ),
             "interpretation_limits": [
-                "The three datasets are independent and must not be joined at record level.",
-                "The snapshot does not establish causation, treatment efficacy, or clinical advice.",
-                "CDC rows are aggregate model-based estimates, not individual observations.",
-                "openFDA labeling is unvalidated upstream data and must not guide medical care.",
+                "CDC PLACES values are modeled aggregate estimates, not individual observations.",
+                "The descriptive mean is unweighted across retrieved census tracts.",
+                "Differences between tracts do not establish causes or statistical significance.",
+                "WHO metadata, CDC estimates, and the openFDA label are independent and are not joined.",
+                "The aspirin label is safety context, not evidence of treatment efficacy or advice.",
+                "A reviewed VSD adapter establishes a constrained technical contract, not scientific endorsement.",
             ],
         },
-        "observations": {
-            "who_indicator": transform_who(by_id["who_gho"].payload),
-            "cdc_places_estimates": transform_cdc(by_id["cdc_places"].payload),
-            "openfda_label": transform_openfda(by_id["openfda_labels"].payload),
+        "tooluniverse_execution": {
+            "api": "ToolUniverse.run_one_function",
+            "loaded_tools": list(TOOL_NAMES),
+            "cache_requested": False,
+            "call_count": len(study_run.calls),
+            "calls": study_run.calls,
         },
-        "provenance": provenance,
+        "vsd_contribution": [
+            "Discovery maps packaged reviewed integrations to concrete ToolUniverse tool names.",
+            "Each source tool fixes the provider endpoint and validates source-specific inputs and outputs.",
+            "The shared transport pins a vetted public address, validates TLS hostname and peer, rejects redirects and encoded bodies, and caps responses at 1 MB.",
+            "Each result carries endpoint, exact query, retrieval time, media type, size, redirect count, and payload hash.",
+            "Mutable registration and generic JSON querying are available only through the explicit administration CLI, not the agent tool surface.",
+        ],
+        "reviewed_integrations": [
+            reviewed_tools[name] for name in sorted(used_source_tools)
+        ],
+        "findings": {
+            "cdc_places_summary": summarize_chd(tracts),
+            "who_context": who["indicator"],
+            "openfda_context": {
+                "set_id": label["set_id"],
+                "effective_time": label["effective_time"],
+                "brand_name": label["brand_name"],
+                "generic_name": label["generic_name"],
+                "route": label["route"],
+                "warning_terms_found": _warning_terms(label["warnings"]),
+            },
+        },
+        "cdc_places_estimates": tracts,
+        "provenance": [
+            cdc["provenance"],
+            fda["provenance"],
+            who["provenance"],
+        ],
     }
+
+
+def _inline_json(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, ensure_ascii=True).replace("|", "\\|")
 
 
 def render_markdown(artifact: dict[str, Any]) -> str:
     case = artifact["case_study"]
-    observations = artifact["observations"]
-    who = observations["who_indicator"]
-    label = observations["openfda_label"]
+    summary = artifact["findings"]["cdc_places_summary"]
+    who = artifact["findings"]["who_context"]
+    label = artifact["findings"]["openfda_context"]
     lines = [
         f"# {case['title']}",
         "",
         f"Generated: `{case['generated_at']}`",
         "",
-        "## Result",
+        "## Research Question",
         "",
-        f"WHO indicator `{who['indicator_code']}` is **{who['indicator_name']}**.",
+        case["research_question"],
         "",
-        "CDC PLACES aggregate estimates:",
+        "## Exactly How ToolUniverse Was Used",
         "",
-        "| Year | State | County | Census tract | Estimate (%) | 95% interval |",
-        "| --- | --- | --- | --- | ---: | --- |",
+        "The script created one `ToolUniverse` instance, selectively loaded four VSD tools, and executed every step through `run_one_function()` with caching disabled:",
+        "",
+        "```python",
+        "tu = ToolUniverse()",
+        "tu.load_tools(include_tools=list(TOOL_NAMES), quiet=True)",
+        "result = tu.run_one_function(",
+        '    {"name": tool_name, "arguments": arguments},',
+        "    use_cache=False,",
+        ")",
+        "```",
+        "",
+        "| # | Tool | Exact arguments | Result proof |",
+        "| ---: | --- | --- | --- |",
     ]
-    for row in observations["cdc_places_estimates"]:
-        interval = f"{row['low_confidence_limit']} to {row['high_confidence_limit']}"
+    for call in artifact["tooluniverse_execution"]["calls"]:
         lines.append(
-            f"| {row['year']} | {row['stateabbr']} | {row['countyname']} | "
-            f"{row['locationname']} | {row['data_value']} | {interval} |"
+            f"| {call['sequence']} | `{call['tool_name']}` | "
+            f"`{_inline_json(call['arguments'])}` | "
+            f"`{_inline_json(call['result_summary'])}` |"
         )
+
     lines.extend(
         [
             "",
-            (
-                f"The public openFDA label `{label['set_id']}` identifies "
-                f"{label['brand_name']} ({label['generic_name']}, {label['route']})."
-            ),
-            "Warning phrases found: "
-            + ", ".join(f"`{term}`" for term in label["warning_terms_found"])
-            + ".",
+            "## Descriptive Result",
             "",
-            "## Interpretation Limits",
+            (
+                f"CDC PLACES returned **{summary['tract_count']}** Autauga County "
+                f"census-tract estimates for {', '.join(summary['years'])}. The "
+                f"unweighted tract mean was **{summary['mean_estimate_pct']}%**, "
+                f"the median was **{summary['median_estimate_pct']}%**, and the "
+                f"observed range was **{summary['observed_range_percentage_points']} "
+                "percentage points**."
+            ),
+            "",
+            "| Bound | Census tract | Estimate | 95% confidence interval |",
+            "| --- | --- | ---: | --- |",
+        ]
+    )
+    for label_name, key in (("Minimum", "minimum"), ("Maximum", "maximum")):
+        item = summary[key]
+        interval = " to ".join(str(value) for value in item["confidence_interval_pct"])
+        lines.append(
+            f"| {label_name} | {item['census_tract']} | "
+            f"{item['estimate_pct']}% | {interval}% |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "Independent context retrieved by the other typed tools:",
+            "",
+            f"- WHO indicator `{who['indicator_code']}`: {who['indicator_name']}.",
+            (
+                f"- openFDA label `{label['set_id']}`: {label['brand_name']} "
+                f"({label['generic_name']}, {label['route']}); matched warning terms: "
+                + ", ".join(f"`{term}`" for term in label["warning_terms_found"])
+                + "."
+            ),
+            "",
+            "## Why VSD Was Useful",
             "",
         ]
     )
-    lines.extend(f"- {limit}" for limit in case["interpretation_limits"])
+    lines.extend(f"- {value}" for value in artifact["vsd_contribution"])
+    lines.extend(["", "## What This Does Not Prove", ""])
+    lines.extend(f"- {value}" for value in case["interpretation_limits"])
     lines.extend(["", "## Provenance", ""])
     for source in artifact["provenance"]:
         lines.append(
             f"- **{source['provider']}**: `{source['endpoint']}`; HTTP "
-            f"{source['http_status']}; SHA-256 `{source['payload_sha256']}`."
+            f"{source['http_status']}; {source['response_bytes']} bytes; "
+            f"SHA-256 `{source['payload_sha256']}`."
         )
     return "\n".join(lines) + "\n"
 
 
-def run_live() -> list[SourceResult]:
-    """Exercise register/query/remove using an isolated temporary catalog."""
-    results: list[SourceResult] = []
-    previous_dir = os.environ.get("TOOLUNIVERSE_VSD_DIR")
-    with tempfile.TemporaryDirectory(
-        prefix="tooluniverse-vsd-case-study-"
-    ) as directory:
-        os.environ["TOOLUNIVERSE_VSD_DIR"] = directory
-        try:
-            for definition in SOURCES:
-                registration = {
-                    "source_id": definition["source_id"],
-                    "endpoint": definition["endpoint"],
-                    "name": definition["provider"],
-                    "description": definition["description"],
-                    "default_params": definition["params"],
+def run_live() -> StudyRun:
+    """Execute every disease-study step through ToolUniverse."""
+    tooluniverse = ToolUniverse()
+    tooluniverse.load_tools(include_tools=list(TOOL_NAMES), quiet=True)
+    loaded = {tool["name"] for tool in tooluniverse.all_tools}
+    if loaded != set(TOOL_NAMES):
+        raise RuntimeError(f"Unexpected loaded VSD tools: {sorted(loaded)}")
+
+    outputs: dict[str, dict[str, Any]] = {}
+    calls: list[dict[str, Any]] = []
+    try:
+        for sequence, (tool_name, arguments) in enumerate(TOOL_CALLS, start=1):
+            result = tooluniverse.run_one_function(
+                {"name": tool_name, "arguments": arguments}, use_cache=False
+            )
+            if not isinstance(result, dict) or result.get("status") != "success":
+                raise RuntimeError(f"{tool_name} failed: {result}")
+            data = result.get("data")
+            if not isinstance(data, dict):
+                raise RuntimeError(f"{tool_name} returned a non-object data payload")
+            outputs[tool_name] = data
+            calls.append(
+                {
+                    "sequence": sequence,
+                    "tool_name": tool_name,
+                    "arguments": arguments,
+                    "status": "success",
+                    "output_keys": sorted(data),
+                    "result_summary": summarize_tool_result(tool_name, data),
                 }
-                vsd_tool.VSDRegisterSource({}).run(registration)
-                response = vsd_tool.VSDQuerySource({}).run(
-                    {"source_id": definition["source_id"]}
-                )["data"]
-                results.append(
-                    SourceResult(definition, response["result"], response["request"])
-                )
-            for definition in SOURCES:
-                vsd_tool.VSDRemoveSource({}).run({"source_id": definition["source_id"]})
-        finally:
-            if previous_dir is None:
-                os.environ.pop("TOOLUNIVERSE_VSD_DIR", None)
-            else:
-                os.environ["TOOLUNIVERSE_VSD_DIR"] = previous_dir
-    return results
+            )
+    finally:
+        tooluniverse.close()
+    return StudyRun(outputs=outputs, calls=calls)
 
 
 def utc_now() -> str:
@@ -303,8 +355,7 @@ def main() -> int:
     parser.add_argument("--markdown", type=Path, default=DEFAULT_MARKDOWN_PATH)
     args = parser.parse_args()
 
-    generated_at = utc_now()
-    artifact = build_artifact(run_live(), generated_at=generated_at)
+    artifact = build_artifact(run_live(), generated_at=utc_now())
     args.json.parent.mkdir(parents=True, exist_ok=True)
     args.markdown.parent.mkdir(parents=True, exist_ok=True)
     args.json.write_text(canonical_json(artifact), encoding="utf-8")

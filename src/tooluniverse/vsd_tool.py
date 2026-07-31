@@ -1,11 +1,11 @@
 """Safe, explicit Verified Source Directory (VSD) tools.
 
-This module implements the smallest complete VSD workflow:
+This module implements two VSD boundaries:
 
-1. discover a packaged set of trusted public JSON sources,
-2. probe and persist a source explicitly,
-3. query only a previously registered source, and
-4. list or remove persisted sources.
+1. agent-facing, read-only adapters for packaged public JSON sources with fixed
+   endpoints and source-specific contracts, and
+2. explicit administration primitives for probing, persisting, querying, and
+   removing additional sources through the VSD administration CLI.
 
 It deliberately does not auto-harvest arbitrary URLs, auto-run generated tools,
 or expose container provisioning. Network access is HTTPS GET-only, host
@@ -15,6 +15,7 @@ private, loopback, link-local, reserved, and other non-global addresses.
 
 from __future__ import annotations
 
+import hashlib
 import ipaddress
 import json
 import math
@@ -77,6 +78,8 @@ _PACKAGED_SOURCES = (
         "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
         "description": "WHO global-health indicators exposed as JSON/OData.",
         "default_params": {"$top": 5},
+        "tool_name": "VSDWHOHypertensionIndicator",
+        "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
     },
     {
         "source_id": "openfda_labels",
@@ -84,6 +87,8 @@ _PACKAGED_SOURCES = (
         "endpoint": "https://api.fda.gov/drug/label.json",
         "description": "FDA drug labeling records, warnings, and indications.",
         "default_params": {"limit": 5},
+        "tool_name": "VSDOpenFDALabelBySetId",
+        "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
     },
     {
         "source_id": "cdc_places",
@@ -91,6 +96,8 @@ _PACKAGED_SOURCES = (
         "endpoint": "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json",
         "description": "CDC local chronic-disease and preventive-service estimates.",
         "default_params": {"$limit": 5},
+        "tool_name": "VSDCDCPlacesCoronaryHeartDisease",
+        "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
     },
     {
         "source_id": "ensembl_ping",
@@ -98,6 +105,8 @@ _PACKAGED_SOURCES = (
         "endpoint": "https://rest.ensembl.org/info/ping",
         "description": "Ensembl REST JSON heartbeat and service entry point.",
         "default_params": {},
+        "tool_name": "VSDEnsemblServiceStatus",
+        "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
     },
 )
 
@@ -631,7 +640,6 @@ class VSDDiscoverSources(BaseTool):
         return {"status": "success", "data": {"sources": sources}}
 
 
-@register_tool("VSDRegisterSource")
 class VSDRegisterSource(BaseTool):
     """Probe and persist an explicitly trusted, public, JSON GET source."""
 
@@ -692,7 +700,6 @@ class VSDRegisterSource(BaseTool):
         }
 
 
-@register_tool("VSDListSources")
 class VSDListSources(BaseTool):
     """List explicitly registered VSD sources."""
 
@@ -704,7 +711,6 @@ class VSDListSources(BaseTool):
         return {"status": "success", "data": {"sources": sources}}
 
 
-@register_tool("VSDQuerySource")
 class VSDQuerySource(BaseTool):
     """Run a safe JSON GET against one explicitly registered source."""
 
@@ -733,7 +739,6 @@ class VSDQuerySource(BaseTool):
         }
 
 
-@register_tool("VSDRemoveSource")
 class VSDRemoveSource(BaseTool):
     """Remove one explicitly registered VSD source."""
 
@@ -748,4 +753,256 @@ class VSDRemoveSource(BaseTool):
         return {
             "status": "success",
             "data": {"removed": removed is not None, "source_id": source_id},
+        }
+
+
+def _source_provenance(
+    provider: str,
+    request: dict[str, Any],
+    query_params: dict[str, Any],
+    payload: Any,
+) -> dict[str, Any]:
+    """Return the stable provenance contract shared by reviewed source tools."""
+    canonical_payload = json.dumps(
+        payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+    ).encode("utf-8")
+    return {
+        "provider": provider,
+        "endpoint": request["url"],
+        "query_params": query_params,
+        "retrieved_at": datetime.now(timezone.utc).isoformat(),
+        "http_status": request["status_code"],
+        "content_type": request["content_type"],
+        "response_bytes": request["response_bytes"],
+        "redirects": request["redirects"],
+        "payload_sha256": hashlib.sha256(canonical_payload).hexdigest(),
+    }
+
+
+def _one_string(values: Any) -> str | None:
+    if isinstance(values, list) and len(values) == 1 and isinstance(values[0], str):
+        return values[0]
+    return values if isinstance(values, str) else None
+
+
+@register_tool("VSDWHOHypertensionIndicator")
+class VSDWHOHypertensionIndicator(BaseTool):
+    """Return one fixed WHO hypertension indicator definition."""
+
+    ENDPOINT = "https://ghoapi.azureedge.net/api/Indicator"
+    PARAMS = {
+        "$filter": "IndicatorCode eq 'NCD_HYP_DIAGNOSIS_C'",
+        "$select": "IndicatorCode,IndicatorName,Language",
+        "$top": 1,
+    }
+
+    def run(self, arguments=None, **_: Any):
+        if arguments:
+            raise ValueError("VSDWHOHypertensionIndicator accepts no arguments")
+        payload, request = _safe_get_json(self.ENDPOINT, self.PARAMS)
+        rows = payload.get("value") if isinstance(payload, dict) else None
+        if (
+            not isinstance(rows, list)
+            or len(rows) != 1
+            or not isinstance(rows[0], dict)
+        ):
+            raise VSDPolicyError(
+                "WHO response did not match the reviewed indicator schema"
+            )
+        row = rows[0]
+        indicator = {
+            "indicator_code": row.get("IndicatorCode"),
+            "indicator_name": row.get("IndicatorName"),
+            "language": row.get("Language"),
+        }
+        if not all(isinstance(value, str) and value for value in indicator.values()):
+            raise VSDPolicyError("WHO indicator fields were missing or invalid")
+        return {
+            "status": "success",
+            "data": {
+                "indicator": indicator,
+                "provenance": _source_provenance(
+                    "WHO Global Health Observatory", request, self.PARAMS, payload
+                ),
+            },
+        }
+
+
+@register_tool("VSDCDCPlacesCoronaryHeartDisease")
+class VSDCDCPlacesCoronaryHeartDisease(BaseTool):
+    """Return typed CDC PLACES CHD estimates for one county."""
+
+    ENDPOINT = "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json"
+    MEASURE = "Coronary heart disease among adults"
+    SELECT = (
+        "year,stateabbr,countyname,locationname,measure,data_value,"
+        "low_confidence_limit,high_confidence_limit"
+    )
+
+    def run(self, arguments=None, **_: Any):
+        arguments = arguments or {}
+        state_abbr = str(arguments.get("state_abbr") or "").upper()
+        if not re.fullmatch(r"[A-Z]{2}", state_abbr):
+            raise ValueError("state_abbr must contain exactly two letters")
+        county_name = _bounded_text(
+            arguments.get("county_name"), field="county_name", maximum=100
+        ).strip()
+        if not re.fullmatch(r"[A-Za-z][A-Za-z .'-]{0,99}", county_name):
+            raise ValueError("county_name contains unsupported characters")
+        limit = arguments.get("limit", 500)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 500
+        ):
+            raise ValueError("limit must be an integer between 1 and 500")
+
+        escaped_county = county_name.replace("'", "''")
+        params = {
+            "$select": self.SELECT,
+            "$where": (
+                f"stateabbr='{state_abbr}' AND countyname='{escaped_county}' "
+                f"AND measure='{self.MEASURE}'"
+            ),
+            "$order": "locationname ASC",
+            "$limit": limit,
+        }
+        payload, request = _safe_get_json(self.ENDPOINT, params)
+        if not isinstance(payload, list) or len(payload) > limit:
+            raise VSDPolicyError(
+                "CDC response did not match the reviewed collection schema"
+            )
+
+        fields = (
+            "year",
+            "stateabbr",
+            "countyname",
+            "locationname",
+            "measure",
+            "data_value",
+            "low_confidence_limit",
+            "high_confidence_limit",
+        )
+        tracts = []
+        for row in payload:
+            if not isinstance(row, dict):
+                raise VSDPolicyError("CDC response contained a non-object record")
+            normalized = {field: row.get(field) for field in fields}
+            if not all(
+                isinstance(value, str) and value for value in normalized.values()
+            ):
+                raise VSDPolicyError("CDC record fields were missing or invalid")
+            if (
+                normalized["stateabbr"] != state_abbr
+                or normalized["countyname"] != county_name
+                or normalized["measure"] != self.MEASURE
+            ):
+                raise VSDPolicyError(
+                    "CDC response escaped the requested disease geography"
+                )
+            try:
+                numeric = [
+                    float(normalized[field])
+                    for field in (
+                        "data_value",
+                        "low_confidence_limit",
+                        "high_confidence_limit",
+                    )
+                ]
+            except ValueError as exc:
+                raise VSDPolicyError("CDC estimate fields were not numeric") from exc
+            if not all(math.isfinite(value) for value in numeric):
+                raise VSDPolicyError("CDC estimate fields were not finite")
+            tracts.append(normalized)
+
+        return {
+            "status": "success",
+            "data": {
+                "measure": self.MEASURE,
+                "state_abbr": state_abbr,
+                "county_name": county_name,
+                "tracts": tracts,
+                "possibly_truncated": len(tracts) == limit,
+                "provenance": _source_provenance(
+                    "CDC PLACES", request, params, payload
+                ),
+            },
+        }
+
+
+@register_tool("VSDOpenFDALabelBySetId")
+class VSDOpenFDALabelBySetId(BaseTool):
+    """Return a normalized public openFDA label selected by set ID."""
+
+    ENDPOINT = "https://api.fda.gov/drug/label.json"
+
+    def run(self, arguments=None, **_: Any):
+        arguments = arguments or {}
+        set_id = str(arguments.get("set_id") or "").lower()
+        if not re.fullmatch(
+            r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+            set_id,
+        ):
+            raise ValueError("set_id must be a UUID")
+        params = {"search": f'set_id:"{set_id}"', "limit": 1}
+        payload, request = _safe_get_json(self.ENDPOINT, params)
+        rows = payload.get("results") if isinstance(payload, dict) else None
+        if (
+            not isinstance(rows, list)
+            or len(rows) != 1
+            or not isinstance(rows[0], dict)
+        ):
+            raise VSDPolicyError("openFDA response did not contain exactly one label")
+        row = rows[0]
+        openfda = row.get("openfda") if isinstance(row.get("openfda"), dict) else {}
+        warnings = row.get("warnings") or []
+        if not isinstance(warnings, list) or not all(
+            isinstance(value, str) for value in warnings
+        ):
+            raise VSDPolicyError("openFDA warnings did not match the reviewed schema")
+        label = {
+            "set_id": row.get("set_id"),
+            "effective_time": row.get("effective_time"),
+            "brand_name": _one_string(openfda.get("brand_name")),
+            "generic_name": _one_string(openfda.get("generic_name")),
+            "route": _one_string(openfda.get("route")),
+            "warnings": warnings,
+        }
+        if label["set_id"] != set_id or not all(
+            isinstance(label[field], str) and label[field]
+            for field in ("effective_time", "brand_name", "generic_name", "route")
+        ):
+            raise VSDPolicyError("openFDA label fields were missing or invalid")
+        return {
+            "status": "success",
+            "data": {
+                "label": label,
+                "provenance": _source_provenance(
+                    "openFDA Drug Labels", request, params, payload
+                ),
+            },
+        }
+
+
+@register_tool("VSDEnsemblServiceStatus")
+class VSDEnsemblServiceStatus(BaseTool):
+    """Return the typed status of the reviewed Ensembl REST endpoint."""
+
+    ENDPOINT = "https://rest.ensembl.org/info/ping"
+
+    def run(self, arguments=None, **_: Any):
+        if arguments:
+            raise ValueError("VSDEnsemblServiceStatus accepts no arguments")
+        payload, request = _safe_get_json(self.ENDPOINT)
+        if not isinstance(payload, dict) or payload.get("ping") not in (0, 1):
+            raise VSDPolicyError(
+                "Ensembl response did not match the reviewed ping schema"
+            )
+        return {
+            "status": "success",
+            "data": {
+                "service": "Ensembl REST",
+                "available": payload["ping"] == 1,
+                "provenance": _source_provenance("Ensembl REST", request, {}, payload),
+            },
         }

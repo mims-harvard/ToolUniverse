@@ -1,70 +1,218 @@
 {
   "case_study": {
-    "generated_at": "2026-07-31T20:26:07Z",
-    "id": "cardiovascular_public_health_snapshot",
+    "generated_at": "2026-07-31T23:19:43Z",
+    "id": "coronary_heart_disease_autauga_vsd_study",
     "interpretation_limits": [
-      "The three datasets are independent and must not be joined at record level.",
-      "The snapshot does not establish causation, treatment efficacy, or clinical advice.",
-      "CDC rows are aggregate model-based estimates, not individual observations.",
-      "openFDA labeling is unvalidated upstream data and must not guide medical care."
+      "CDC PLACES values are modeled aggregate estimates, not individual observations.",
+      "The descriptive mean is unweighted across retrieved census tracts.",
+      "Differences between tracts do not establish causes or statistical significance.",
+      "WHO metadata, CDC estimates, and the openFDA label are independent and are not joined.",
+      "The aspirin label is safety context, not evidence of treatment efficacy or advice.",
+      "A reviewed VSD adapter establishes a constrained technical contract, not scientific endorsement."
     ],
-    "purpose": "Demonstrate bounded, attributable retrieval across independent public scientific sources.",
-    "title": "Cardiovascular public-health evidence snapshot"
+    "research_question": "What variation does CDC PLACES report in modeled adult coronary heart disease prevalence across Autauga County census tracts, and how can related WHO indicator and public aspirin-label context be retrieved without treating the sources as joinable clinical evidence?",
+    "study_design": "Bounded descriptive retrieval demonstration using aggregate CDC small-area estimates and two independent context sources.",
+    "title": "Coronary heart disease estimates in Autauga County, Alabama"
   },
-  "observations": {
-    "cdc_places_estimates": [
-      {
-        "countyname": "Autauga",
-        "data_value": "7.2",
-        "high_confidence_limit": "8.1",
-        "locationname": "01001020100",
-        "low_confidence_limit": "6.2",
-        "measure": "Coronary heart disease among adults",
-        "stateabbr": "AL",
-        "year": "2023"
+  "cdc_places_estimates": [
+    {
+      "countyname": "Autauga",
+      "data_value": "7.2",
+      "high_confidence_limit": "8.1",
+      "locationname": "01001020100",
+      "low_confidence_limit": "6.2",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.5",
+      "high_confidence_limit": "7.3",
+      "locationname": "01001020200",
+      "low_confidence_limit": "5.8",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.3",
+      "high_confidence_limit": "8.2",
+      "locationname": "01001020300",
+      "low_confidence_limit": "6.3",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.5",
+      "high_confidence_limit": "8.5",
+      "locationname": "01001020400",
+      "low_confidence_limit": "6.5",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "5.4",
+      "high_confidence_limit": "6.2",
+      "locationname": "01001020501",
+      "low_confidence_limit": "4.7",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "4.4",
+      "high_confidence_limit": "4.9",
+      "locationname": "01001020502",
+      "low_confidence_limit": "3.8",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.1",
+      "high_confidence_limit": "6.9",
+      "locationname": "01001020503",
+      "low_confidence_limit": "5.3",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.8",
+      "high_confidence_limit": "7.7",
+      "locationname": "01001020600",
+      "low_confidence_limit": "6.0",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.1",
+      "high_confidence_limit": "7.9",
+      "locationname": "01001020700",
+      "low_confidence_limit": "6.3",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.8",
+      "high_confidence_limit": "7.6",
+      "locationname": "01001020801",
+      "low_confidence_limit": "6.0",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "8.3",
+      "high_confidence_limit": "9.4",
+      "locationname": "01001020803",
+      "low_confidence_limit": "7.4",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "4.0",
+      "high_confidence_limit": "4.5",
+      "locationname": "01001020804",
+      "low_confidence_limit": "3.6",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.1",
+      "high_confidence_limit": "6.8",
+      "locationname": "01001020805",
+      "low_confidence_limit": "5.4",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.2",
+      "high_confidence_limit": "6.9",
+      "locationname": "01001020901",
+      "low_confidence_limit": "5.5",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.6",
+      "high_confidence_limit": "7.3",
+      "locationname": "01001020902",
+      "low_confidence_limit": "5.9",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "8.4",
+      "high_confidence_limit": "9.3",
+      "locationname": "01001021000",
+      "low_confidence_limit": "7.5",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "10.0",
+      "high_confidence_limit": "11.0",
+      "locationname": "01001021100",
+      "low_confidence_limit": "9.0",
+      "measure": "Coronary heart disease among adults",
+      "stateabbr": "AL",
+      "year": "2023"
+    }
+  ],
+  "findings": {
+    "cdc_places_summary": {
+      "maximum": {
+        "census_tract": "01001021100",
+        "confidence_interval_pct": [
+          9.0,
+          11.0
+        ],
+        "estimate_pct": 10.0
       },
-      {
-        "countyname": "Autauga",
-        "data_value": "6.5",
-        "high_confidence_limit": "7.3",
-        "locationname": "01001020200",
-        "low_confidence_limit": "5.8",
-        "measure": "Coronary heart disease among adults",
-        "stateabbr": "AL",
-        "year": "2023"
+      "mean_estimate_pct": 6.75,
+      "median_estimate_pct": 6.8,
+      "minimum": {
+        "census_tract": "01001020804",
+        "confidence_interval_pct": [
+          3.6,
+          4.5
+        ],
+        "estimate_pct": 4.0
       },
-      {
-        "countyname": "Autauga",
-        "data_value": "7.3",
-        "high_confidence_limit": "8.2",
-        "locationname": "01001020300",
-        "low_confidence_limit": "6.3",
-        "measure": "Coronary heart disease among adults",
-        "stateabbr": "AL",
-        "year": "2023"
-      },
-      {
-        "countyname": "Autauga",
-        "data_value": "7.5",
-        "high_confidence_limit": "8.5",
-        "locationname": "01001020400",
-        "low_confidence_limit": "6.5",
-        "measure": "Coronary heart disease among adults",
-        "stateabbr": "AL",
-        "year": "2023"
-      },
-      {
-        "countyname": "Autauga",
-        "data_value": "5.4",
-        "high_confidence_limit": "6.2",
-        "locationname": "01001020501",
-        "low_confidence_limit": "4.7",
-        "measure": "Coronary heart disease among adults",
-        "stateabbr": "AL",
-        "year": "2023"
-      }
-    ],
-    "openfda_label": {
+      "observed_range_percentage_points": 6.0,
+      "tract_count": 17,
+      "years": [
+        "2023"
+      ]
+    },
+    "openfda_context": {
       "brand_name": "Low Dose Aspirin",
       "effective_time": "20240416",
       "generic_name": "ASPIRIN",
@@ -76,7 +224,7 @@
         "high blood pressure"
       ]
     },
-    "who_indicator": {
+    "who_context": {
       "indicator_code": "NCD_HYP_DIAGNOSIS_C",
       "indicator_name": "Hypertension: diagnosis coverage among adults aged 30-79 with hypertension, crude (%)",
       "language": "EN"
@@ -87,17 +235,17 @@
       "content_type": "application/json;charset=utf-8",
       "endpoint": "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json",
       "http_status": 200,
-      "payload_sha256": "d0e44040ccde7be7447cc5aaf1a008e0f7ecd17904067cc93a88ea6b56cf91a9",
+      "payload_sha256": "2dd9daed8a50f847e4f3fa9cb7e5e2e3b98288328300e52fdade1b7deeeef41f",
       "provider": "CDC PLACES",
       "query_params": {
-        "$limit": 5,
+        "$limit": 500,
         "$order": "locationname ASC",
         "$select": "year,stateabbr,countyname,locationname,measure,data_value,low_confidence_limit,high_confidence_limit",
-        "$where": "stateabbr='AL' AND measure='Coronary heart disease among adults'"
+        "$where": "stateabbr='AL' AND countyname='Autauga' AND measure='Coronary heart disease among adults'"
       },
       "redirects": 0,
-      "response_bytes": 1061,
-      "source_id": "cdc_places"
+      "response_bytes": 3607,
+      "retrieved_at": "2026-07-31T23:19:42.863469+00:00"
     },
     {
       "content_type": "application/json; charset=utf-8",
@@ -111,7 +259,7 @@
       },
       "redirects": 0,
       "response_bytes": 8944,
-      "source_id": "openfda_labels"
+      "retrieved_at": "2026-07-31T23:19:43.104501+00:00"
     },
     {
       "content_type": "application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8",
@@ -126,8 +274,127 @@
       },
       "redirects": 0,
       "response_bytes": 281,
-      "source_id": "who_gho"
+      "retrieved_at": "2026-07-31T23:19:42.402697+00:00"
     }
   ],
-  "schema_version": 1
+  "reviewed_integrations": [
+    {
+      "default_params": {
+        "$limit": 5
+      },
+      "description": "CDC local chronic-disease and preventive-service estimates.",
+      "endpoint": "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json",
+      "name": "CDC PLACES",
+      "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
+      "source_id": "cdc_places",
+      "tool_name": "VSDCDCPlacesCoronaryHeartDisease"
+    },
+    {
+      "default_params": {
+        "limit": 5
+      },
+      "description": "FDA drug labeling records, warnings, and indications.",
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "name": "openFDA Drug Labels",
+      "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
+      "source_id": "openfda_labels",
+      "tool_name": "VSDOpenFDALabelBySetId"
+    },
+    {
+      "default_params": {
+        "$top": 5
+      },
+      "description": "WHO global-health indicators exposed as JSON/OData.",
+      "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
+      "name": "WHO Global Health Observatory",
+      "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
+      "source_id": "who_gho",
+      "tool_name": "VSDWHOHypertensionIndicator"
+    }
+  ],
+  "schema_version": 2,
+  "tooluniverse_execution": {
+    "api": "ToolUniverse.run_one_function",
+    "cache_requested": false,
+    "call_count": 4,
+    "calls": [
+      {
+        "arguments": {
+          "query": ""
+        },
+        "output_keys": [
+          "sources"
+        ],
+        "result_summary": {
+          "reviewed_source_count": 4
+        },
+        "sequence": 1,
+        "status": "success",
+        "tool_name": "VSDDiscoverSources"
+      },
+      {
+        "arguments": {},
+        "output_keys": [
+          "indicator",
+          "provenance"
+        ],
+        "result_summary": {
+          "indicator_code": "NCD_HYP_DIAGNOSIS_C"
+        },
+        "sequence": 2,
+        "status": "success",
+        "tool_name": "VSDWHOHypertensionIndicator"
+      },
+      {
+        "arguments": {
+          "county_name": "Autauga",
+          "limit": 500,
+          "state_abbr": "AL"
+        },
+        "output_keys": [
+          "county_name",
+          "measure",
+          "possibly_truncated",
+          "provenance",
+          "state_abbr",
+          "tracts"
+        ],
+        "result_summary": {
+          "possibly_truncated": false,
+          "tract_count": 17
+        },
+        "sequence": 3,
+        "status": "success",
+        "tool_name": "VSDCDCPlacesCoronaryHeartDisease"
+      },
+      {
+        "arguments": {
+          "set_id": "0058175f-3474-40c3-a046-6cfaec86d84b"
+        },
+        "output_keys": [
+          "label",
+          "provenance"
+        ],
+        "result_summary": {
+          "set_id": "0058175f-3474-40c3-a046-6cfaec86d84b"
+        },
+        "sequence": 4,
+        "status": "success",
+        "tool_name": "VSDOpenFDALabelBySetId"
+      }
+    ],
+    "loaded_tools": [
+      "VSDDiscoverSources",
+      "VSDWHOHypertensionIndicator",
+      "VSDCDCPlacesCoronaryHeartDisease",
+      "VSDOpenFDALabelBySetId"
+    ]
+  },
+  "vsd_contribution": [
+    "Discovery maps packaged reviewed integrations to concrete ToolUniverse tool names.",
+    "Each source tool fixes the provider endpoint and validates source-specific inputs and outputs.",
+    "The shared transport pins a vetted public address, validates TLS hostname and peer, rejects redirects and encoded bodies, and caps responses at 1 MB.",
+    "Each result carries endpoint, exact query, retrieval time, media type, size, redirect count, and payload hash.",
+    "Mutable registration and generic JSON querying are available only through the explicit administration CLI, not the agent tool surface."
+  ]
 }

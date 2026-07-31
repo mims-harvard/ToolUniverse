@@ -1,27 +1,27 @@
 """
-VSDDiscoverSources
+VSDOpenFDALabelBySetId
 
-Search the packaged catalog of reviewed VSD integrations. Review covers the transport profile and...
+Retrieve and normalize one public openFDA drug label by UUID set ID through a fixed endpoint.
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def VSDDiscoverSources(
-    query: Optional[str] = None,
+def VSDOpenFDALabelBySetId(
+    set_id: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search the packaged catalog of reviewed VSD integrations. Review covers the transport profile and...
+    Retrieve and normalize one public openFDA drug label by UUID set ID through a fixed endpoint.
 
     Parameters
     ----------
-    query : str
-        Optional case-insensitive filter over source metadata.
+    set_id : str
+        Public openFDA label set UUID.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,10 +36,10 @@ def VSDDiscoverSources(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query}.items() if v is not None}
+    _args = {k: v for k, v in {"set_id": set_id}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
-            "name": "VSDDiscoverSources",
+            "name": "VSDOpenFDALabelBySetId",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -48,4 +48,4 @@ def VSDDiscoverSources(
     )
 
 
-__all__ = ["VSDDiscoverSources"]
+__all__ = ["VSDOpenFDALabelBySetId"]

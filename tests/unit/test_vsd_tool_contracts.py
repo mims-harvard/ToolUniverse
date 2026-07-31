@@ -13,8 +13,14 @@ from tooluniverse import vsd_tool
 pytestmark = pytest.mark.unit
 
 
-_VSD_TOOL_NAMES = (
+SOURCE_TOOL_NAMES = (
     "VSDDiscoverSources",
+    "VSDWHOHypertensionIndicator",
+    "VSDCDCPlacesCoronaryHeartDisease",
+    "VSDOpenFDALabelBySetId",
+    "VSDEnsemblServiceStatus",
+)
+ADMIN_TOOL_NAMES = (
     "VSDRegisterSource",
     "VSDListSources",
     "VSDQuerySource",
@@ -24,190 +30,118 @@ _VSD_TOOL_NAMES = (
 
 def _loaded_vsd() -> ToolUniverse:
     tooluniverse = ToolUniverse()
-    tooluniverse.load_tools(include_tools=list(_VSD_TOOL_NAMES), quiet=True)
+    tooluniverse.load_tools(
+        include_tools=[*SOURCE_TOOL_NAMES, *ADMIN_TOOL_NAMES], quiet=True
+    )
     return tooluniverse
 
 
-def test_loaded_vsd_tools_expose_safe_mcp_and_cache_contracts():
-    """Loaded VSD tools expose cache and mutation hints matching behavior."""
+def test_default_surface_contains_only_read_only_source_specific_tools():
+    """Mutable administration and generic proxy tools are not agent-facing."""
     tooluniverse = _loaded_vsd()
     try:
-        expected = {
-            "VSDDiscoverSources": (True, True, False),
-            "VSDRegisterSource": (False, False, True),
-            "VSDListSources": (False, True, False),
-            "VSDQuerySource": (False, True, False),
-            "VSDRemoveSource": (False, False, True),
-        }
+        loaded = {tool["name"] for tool in tooluniverse.all_tools}
+        assert loaded == set(SOURCE_TOOL_NAMES)
+        assert loaded.isdisjoint(ADMIN_TOOL_NAMES)
 
-        for name, (cacheable, read_only, destructive) in expected.items():
+        for name in SOURCE_TOOL_NAMES:
             config = tooluniverse.all_tool_dict[name]
-            assert config["cacheable"] is cacheable
+            assert config["cacheable"] is True
             assert config["mcp_annotations"] == {
-                "readOnlyHint": read_only,
-                "destructiveHint": destructive,
+                "readOnlyHint": True,
+                "destructiveHint": False,
             }
-
-            instance = tooluniverse._get_tool_instance(name, cache=True)
-            assert instance is not None
-            assert instance.supports_caching() is cacheable
+            assert config["return_schema"] != {}
     finally:
         tooluniverse.close()
 
 
-def test_register_schema_requires_explicit_opt_in_for_replacement():
-    """The public registration schema defaults replacement to false."""
+def test_source_contracts_are_fixed_and_typed():
+    """Reviewed providers expose constrained inputs and normalized outputs."""
     tooluniverse = _loaded_vsd()
     try:
-        register_config = tooluniverse.all_tool_dict["VSDRegisterSource"]
-        replace_schema = register_config["parameter"]["properties"]["replace"]
+        cdc = tooluniverse.all_tool_dict["VSDCDCPlacesCoronaryHeartDisease"]
+        assert cdc["parameter"]["required"] == ["state_abbr", "county_name"]
+        assert cdc["parameter"]["properties"]["limit"]["maximum"] == 500
+        assert (
+            cdc["return_schema"]["properties"]["tracts"]["items"][
+                "additionalProperties"
+            ]
+            is False
+        )
 
-        assert replace_schema == {
-            "type": "boolean",
-            "default": False,
-            "description": (
-                "Replace an existing registration with the same source_id. "
-                "Defaults to false, so duplicate registration is rejected."
-            ),
-        }
-        assert "replace" not in register_config["parameter"]["required"]
+        fda = tooluniverse.all_tool_dict["VSDOpenFDALabelBySetId"]
+        assert fda["parameter"]["required"] == ["set_id"]
+        assert fda["parameter"]["properties"]["set_id"]["format"] == "uuid"
+
+        discovery = tooluniverse.run_one_function(
+            {"name": "VSDDiscoverSources", "arguments": {"query": "CDC"}}
+        )
+        source = discovery["data"]["sources"][0]
+        assert source["tool_name"] == "VSDCDCPlacesCoronaryHeartDisease"
+        assert source["review_scope"].endswith("not scientific endorsement.")
     finally:
         tooluniverse.close()
 
 
-def test_generated_wrapper_exposes_replace_contract_and_metadata():
-    """Generated wrappers and metadata expose the new replacement control."""
+def test_tooluniverse_executes_typed_who_adapter(monkeypatch):
+    """The documented ToolUniverse call path returns normalized WHO data."""
+    monkeypatch.setattr(
+        vsd_tool,
+        "_safe_get_json",
+        lambda endpoint, params: (
+            {
+                "value": [
+                    {
+                        "IndicatorCode": "NCD_HYP_DIAGNOSIS_C",
+                        "IndicatorName": "Hypertension diagnosis coverage (%)",
+                        "Language": "EN",
+                    }
+                ]
+            },
+            {
+                "url": endpoint,
+                "status_code": 200,
+                "content_type": "application/json",
+                "response_bytes": 100,
+                "peer_ip": "93.184.216.34",
+                "redirects": 0,
+            },
+        ),
+    )
+    tooluniverse = ToolUniverse()
+    tooluniverse.load_tools(include_tools=["VSDWHOHypertensionIndicator"], quiet=True)
+    try:
+        result = tooluniverse.run_one_function(
+            {"name": "VSDWHOHypertensionIndicator", "arguments": {}}
+        )
+        assert result["data"]["indicator"]["indicator_code"] == ("NCD_HYP_DIAGNOSIS_C")
+        assert result["data"]["provenance"]["provider"] == (
+            "WHO Global Health Observatory"
+        )
+    finally:
+        tooluniverse.close()
+
+
+def test_generated_wrappers_and_metadata_match_source_surface():
+    """Generated SDK wrappers expose source contracts and omit admin commands."""
     tools_path = Path(__file__).parents[2] / "src" / "tooluniverse" / "tools"
     wrapper = ast.parse(
-        (tools_path / "VSDRegisterSource.py").read_text(encoding="utf-8")
+        (tools_path / "VSDCDCPlacesCoronaryHeartDisease.py").read_text(encoding="utf-8")
     )
     function = next(
         node
         for node in wrapper.body
-        if isinstance(node, ast.FunctionDef) and node.name == "VSDRegisterSource"
+        if isinstance(node, ast.FunctionDef)
+        and node.name == "VSDCDCPlacesCoronaryHeartDisease"
     )
     positional = [argument.arg for argument in function.args.args]
-    defaults = dict(
-        zip(positional[-len(function.args.defaults) :], function.args.defaults)
-    )
-
-    assert "replace" in positional
-    assert isinstance(defaults["replace"], ast.Constant)
-    assert defaults["replace"].value is False
-    assert any(
-        isinstance(node, ast.Dict)
-        and any(
-            isinstance(key, ast.Constant)
-            and key.value == "replace"
-            and isinstance(value, ast.Name)
-            and value.id == "replace"
-            for key, value in zip(node.keys, node.values)
-        )
-        for node in ast.walk(function)
-    )
+    assert positional[:3] == ["state_abbr", "county_name", "limit"]
 
     metadata = json.loads(
         (tools_path / ".tool_metadata.json").read_text(encoding="utf-8")
     )
-    for name in _VSD_TOOL_NAMES:
+    for name in SOURCE_TOOL_NAMES:
         assert re.fullmatch(r"[0-9a-f]{32}", metadata[name])
-
-
-def test_catalog_operations_execute_even_when_cache_is_requested(monkeypatch, tmp_path):
-    """Catalog reads and mutations never return stale cached results."""
-    monkeypatch.setenv("TOOLUNIVERSE_VSD_DIR", str(tmp_path))
-    calls = []
-
-    def fake_safe_get(url, params=None, **kwargs):
-        del kwargs
-        calls.append((url, params or {}))
-        return (
-            {"endpoint": url, "call": len(calls)},
-            {
-                "url": url,
-                "status_code": 200,
-                "content_type": "application/json",
-                "response_bytes": 20,
-                "peer_ip": "93.184.216.34",
-                "redirects": 0,
-            },
-        )
-
-    monkeypatch.setattr(vsd_tool, "_safe_get_json", fake_safe_get)
-    monkeypatch.setattr(
-        vsd_tool,
-        "_resolve_public_addresses",
-        lambda host, port: ("93.184.216.34",),
-    )
-    tooluniverse = _loaded_vsd()
-    register_call = {
-        "name": "VSDRegisterSource",
-        "arguments": {
-            "source_id": "cache_case",
-            "endpoint": "https://api.fda.gov/drug/label.json",
-        },
-    }
-    remove_call = {
-        "name": "VSDRemoveSource",
-        "arguments": {"source_id": "cache_case"},
-    }
-    list_call = {"name": "VSDListSources", "arguments": {}}
-    query_call = {
-        "name": "VSDQuerySource",
-        "arguments": {"source_id": "cache_case"},
-    }
-
-    try:
-        tooluniverse.run_one_function(register_call, use_cache=True)
-        assert (
-            len(
-                tooluniverse.run_one_function(list_call, use_cache=True)["data"][
-                    "sources"
-                ]
-            )
-            == 1
-        )
-        assert tooluniverse.run_one_function(remove_call, use_cache=True)["data"][
-            "removed"
-        ]
-
-        tooluniverse.run_one_function(register_call, use_cache=True)
-        assert (
-            len(
-                tooluniverse.run_one_function(list_call, use_cache=True)["data"][
-                    "sources"
-                ]
-            )
-            == 1
-        )
-        first_query = tooluniverse.run_one_function(query_call, use_cache=True)
-        assert (
-            first_query["data"]["result"]["endpoint"]
-            == register_call["arguments"]["endpoint"]
-        )
-
-        tooluniverse.run_one_function(
-            {
-                "name": "VSDRegisterSource",
-                "arguments": {
-                    **register_call["arguments"],
-                    "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
-                    "replace": True,
-                },
-            },
-            use_cache=True,
-        )
-        second_query = tooluniverse.run_one_function(query_call, use_cache=True)
-        assert second_query["data"]["result"]["endpoint"] == (
-            "https://ghoapi.azureedge.net/api/Indicator"
-        )
-
-        assert tooluniverse.run_one_function(remove_call, use_cache=True)["data"][
-            "removed"
-        ]
-        assert (
-            tooluniverse.run_one_function(list_call, use_cache=True)["data"]["sources"]
-            == []
-        )
-    finally:
-        tooluniverse.close()
+    for name in ADMIN_TOOL_NAMES:
+        assert name not in metadata
