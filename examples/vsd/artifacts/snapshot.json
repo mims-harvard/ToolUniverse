@@ -1,0 +1,133 @@
+{
+  "case_study": {
+    "generated_at": "2026-07-31T20:26:07Z",
+    "id": "cardiovascular_public_health_snapshot",
+    "interpretation_limits": [
+      "The three datasets are independent and must not be joined at record level.",
+      "The snapshot does not establish causation, treatment efficacy, or clinical advice.",
+      "CDC rows are aggregate model-based estimates, not individual observations.",
+      "openFDA labeling is unvalidated upstream data and must not guide medical care."
+    ],
+    "purpose": "Demonstrate bounded, attributable retrieval across independent public scientific sources.",
+    "title": "Cardiovascular public-health evidence snapshot"
+  },
+  "observations": {
+    "cdc_places_estimates": [
+      {
+        "countyname": "Autauga",
+        "data_value": "7.2",
+        "high_confidence_limit": "8.1",
+        "locationname": "01001020100",
+        "low_confidence_limit": "6.2",
+        "measure": "Coronary heart disease among adults",
+        "stateabbr": "AL",
+        "year": "2023"
+      },
+      {
+        "countyname": "Autauga",
+        "data_value": "6.5",
+        "high_confidence_limit": "7.3",
+        "locationname": "01001020200",
+        "low_confidence_limit": "5.8",
+        "measure": "Coronary heart disease among adults",
+        "stateabbr": "AL",
+        "year": "2023"
+      },
+      {
+        "countyname": "Autauga",
+        "data_value": "7.3",
+        "high_confidence_limit": "8.2",
+        "locationname": "01001020300",
+        "low_confidence_limit": "6.3",
+        "measure": "Coronary heart disease among adults",
+        "stateabbr": "AL",
+        "year": "2023"
+      },
+      {
+        "countyname": "Autauga",
+        "data_value": "7.5",
+        "high_confidence_limit": "8.5",
+        "locationname": "01001020400",
+        "low_confidence_limit": "6.5",
+        "measure": "Coronary heart disease among adults",
+        "stateabbr": "AL",
+        "year": "2023"
+      },
+      {
+        "countyname": "Autauga",
+        "data_value": "5.4",
+        "high_confidence_limit": "6.2",
+        "locationname": "01001020501",
+        "low_confidence_limit": "4.7",
+        "measure": "Coronary heart disease among adults",
+        "stateabbr": "AL",
+        "year": "2023"
+      }
+    ],
+    "openfda_label": {
+      "brand_name": "Low Dose Aspirin",
+      "effective_time": "20240416",
+      "generic_name": "ASPIRIN",
+      "route": "ORAL",
+      "set_id": "0058175f-3474-40c3-a046-6cfaec86d84b",
+      "warning_terms_found": [
+        "blood thinning",
+        "heart disease",
+        "high blood pressure"
+      ]
+    },
+    "who_indicator": {
+      "indicator_code": "NCD_HYP_DIAGNOSIS_C",
+      "indicator_name": "Hypertension: diagnosis coverage among adults aged 30-79 with hypertension, crude (%)",
+      "language": "EN"
+    }
+  },
+  "provenance": [
+    {
+      "content_type": "application/json;charset=utf-8",
+      "endpoint": "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json",
+      "http_status": 200,
+      "payload_sha256": "d0e44040ccde7be7447cc5aaf1a008e0f7ecd17904067cc93a88ea6b56cf91a9",
+      "provider": "CDC PLACES",
+      "query_params": {
+        "$limit": 5,
+        "$order": "locationname ASC",
+        "$select": "year,stateabbr,countyname,locationname,measure,data_value,low_confidence_limit,high_confidence_limit",
+        "$where": "stateabbr='AL' AND measure='Coronary heart disease among adults'"
+      },
+      "redirects": 0,
+      "response_bytes": 1061,
+      "source_id": "cdc_places"
+    },
+    {
+      "content_type": "application/json; charset=utf-8",
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "http_status": 200,
+      "payload_sha256": "aa3a391272c7b9be4ef6bd8714395cfbf14cef480fd65a0858f9046cd728ef00",
+      "provider": "openFDA Drug Labels",
+      "query_params": {
+        "limit": 1,
+        "search": "set_id:\"0058175f-3474-40c3-a046-6cfaec86d84b\""
+      },
+      "redirects": 0,
+      "response_bytes": 8944,
+      "source_id": "openfda_labels"
+    },
+    {
+      "content_type": "application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8",
+      "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
+      "http_status": 200,
+      "payload_sha256": "49136dfd464ecaad2c2a530d0524316f19a62201e2c35c772da9a959b5e61d3c",
+      "provider": "WHO Global Health Observatory",
+      "query_params": {
+        "$filter": "IndicatorCode eq 'NCD_HYP_DIAGNOSIS_C'",
+        "$select": "IndicatorCode,IndicatorName,Language",
+        "$top": 1
+      },
+      "redirects": 0,
+      "response_bytes": 281,
+      "source_id": "who_gho"
+    }
+  ],
+  "schema_version": 1
+}

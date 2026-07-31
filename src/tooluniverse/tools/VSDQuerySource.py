@@ -1,7 +1,7 @@
 """
 VSDQuerySource
 
-Run a bounded, redirect-validated HTTPS GET against one explicitly registered VSD JSON source. Cr...
+Run a bounded, DNS-pinned HTTPS GET against one explicitly registered VSD JSON source. Redirects,...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def VSDQuerySource(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Run a bounded, redirect-validated HTTPS GET against one explicitly registered VSD JSON source. Cr...
+    Run a bounded, DNS-pinned HTTPS GET against one explicitly registered VSD JSON source. Redirects,...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 VSDRegisterSource
 
-Explicitly probe and persist an allowlisted HTTPS JSON source. Only side-effect-free GET requests...
+Explicitly probe and persist an allowlisted HTTPS JSON source. Only GET requests are supported; p...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def VSDRegisterSource(
     name: Optional[str] = None,
     description: Optional[str] = None,
     default_params: Optional[dict[str, Any]] = None,
+    replace: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Explicitly probe and persist an allowlisted HTTPS JSON source. Only side-effect-free GET requests...
+    Explicitly probe and persist an allowlisted HTTPS JSON source. Only GET requests are supported; p...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def VSDRegisterSource(
         Provider-neutral description of the scientific source.
     default_params : dict[str, Any]
         Non-secret scalar GET parameters used for probing and future queries.
+    replace : bool
+        Replace an existing registration with the same source_id. Defaults to false, ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def VSDRegisterSource(
             "name": name,
             "description": description,
             "default_params": default_params,
+            "replace": replace,
         }.items()
         if v is not None
     }

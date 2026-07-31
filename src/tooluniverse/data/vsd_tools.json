@@ -4,6 +4,11 @@
     "type": "VSDDiscoverSources",
     "description": "Search ToolUniverse's packaged catalog of reviewed public JSON sources. This is offline discovery only; it does not contact or register a source.",
     "category": "special_tools",
+    "cacheable": true,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -33,8 +38,13 @@
   {
     "name": "VSDRegisterSource",
     "type": "VSDRegisterSource",
-    "description": "Explicitly probe and persist an allowlisted HTTPS JSON source. Only side-effect-free GET requests are supported; private networks, unsafe redirects, oversized responses, and credential-like query parameters are rejected.",
+    "description": "Explicitly probe and persist an allowlisted HTTPS JSON source. Only GET requests are supported; private networks, redirects, oversized or encoded responses, and credential-like inputs are rejected.",
     "category": "special_tools",
+    "cacheable": false,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -62,6 +72,11 @@
         "default_params": {
           "type": "object",
           "description": "Non-secret scalar GET parameters used for probing and future queries."
+        },
+        "replace": {
+          "type": "boolean",
+          "default": false,
+          "description": "Replace an existing registration with the same source_id. Defaults to false, so duplicate registration is rejected."
         }
       },
       "required": [
@@ -76,17 +91,17 @@
         "registered": {
           "type": "boolean"
         },
+        "replaced": {
+          "type": "boolean"
+        },
         "source": {
           "type": "object"
-        },
-        "catalog_path": {
-          "type": "string"
         }
       },
       "required": [
         "registered",
-        "source",
-        "catalog_path"
+        "replaced",
+        "source"
       ]
     }
   },
@@ -95,6 +110,11 @@
     "type": "VSDListSources",
     "description": "List the public JSON sources explicitly registered in the local Verified Source Directory.",
     "category": "special_tools",
+    "cacheable": false,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {},
@@ -118,8 +138,13 @@
   {
     "name": "VSDQuerySource",
     "type": "VSDQuerySource",
-    "description": "Run a bounded, redirect-validated HTTPS GET against one explicitly registered VSD JSON source. Credentials must not be passed as arguments.",
+    "description": "Run a bounded, DNS-pinned HTTPS GET against one explicitly registered VSD JSON source. Redirects, encoded responses, and credential-like inputs are rejected.",
     "category": "special_tools",
+    "cacheable": false,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -161,6 +186,11 @@
     "type": "VSDRemoveSource",
     "description": "Remove one explicitly registered source from the local Verified Source Directory.",
     "category": "special_tools",
+    "cacheable": false,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
