@@ -34,6 +34,17 @@ class AgenticTool(BaseTool):
     STREAM_FLAG_KEY = "_tooluniverse_stream"
 
     @staticmethod
+    def _parse_bool_env(value: Optional[str]) -> Optional[bool]:
+        if value is None:
+            return None
+        normalized = value.strip().lower()
+        if normalized in {"1", "true", "yes", "on"}:
+            return True
+        if normalized in {"0", "false", "no", "off"}:
+            return False
+        raise ValueError(f"Expected boolean environment value, got: {value!r}")
+
+    @staticmethod
     def has_any_api_keys() -> bool:
         """
         Check if any API keys are available across all supported API types.
@@ -91,6 +102,10 @@ class AgenticTool(BaseTool):
             elif key == "temperature":
                 temp_str = os.getenv("TOOLUNIVERSE_LLM_TEMPERATURE")
                 env_value = float(temp_str) if temp_str else None
+            elif key == "return_json":
+                env_value = self._parse_bool_env(
+                    os.getenv("TOOLUNIVERSE_LLM_RETURN_JSON")
+                )
 
             mode = os.getenv("TOOLUNIVERSE_LLM_CONFIG_MODE", "default")
 
