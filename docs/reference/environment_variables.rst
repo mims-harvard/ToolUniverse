@@ -173,9 +173,9 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
 
 **Examples**::
 
-   # Use OpenAI for all LLM tasks
+   # Use OpenRouter for all LLM tasks
    export TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENROUTER
-   export TOOLUNIVERSE_LLM_MODEL_DEFAULT=gpt-4o-mini
+   export TOOLUNIVERSE_LLM_MODEL_DEFAULT=openai/gpt-4o-mini
    
    # Task-specific models
    export TOOLUNIVERSE_LLM_MODEL_SUMMARIZATION=gpt-4o-mini
@@ -210,6 +210,9 @@ Bedrock-specific variables:
    * - ``AWS_DEFAULT_REGION``
      - (none)
      - Fallback AWS region used by boto3.
+   * - ``AWS_PROFILE``
+     - (none)
+     - Optional named AWS profile. Its configured region is used when no region environment variable is set.
    * - ``BEDROCK_MAX_TOKENS_BY_MODEL``
      - (none)
      - JSON mapping of Bedrock model IDs or prefixes to default max output tokens.
@@ -359,8 +362,8 @@ You can set environment variables in a ``.env`` file at project root:
    SEMANTIC_SCHOLAR_API_KEY=your_key_here
    
    # LLM Configuration
-   TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=BEDROCK
-   AWS_REGION=us-east-1
+   TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENROUTER
+   OPENROUTER_API_KEY=your_openrouter_key_here
 
 **To use**:
 

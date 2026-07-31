@@ -237,6 +237,7 @@ Community & Support
    guide/streaming_tools
    guide/openrouter_support
    guide/vllm_support
+   guide/bedrock_support
    guide/euhealth_tools_tutorial
 
 .. toctree::

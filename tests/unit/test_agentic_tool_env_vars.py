@@ -34,6 +34,7 @@ class TestAgenticToolEnvironmentVariables:
             "BEDROCK_REGION",
             "AWS_REGION",
             "AWS_DEFAULT_REGION",
+            "AWS_PROFILE",
         ]
         for var in env_vars_to_clear:
             if var in os.environ:
@@ -398,6 +399,12 @@ class TestAgenticToolEnvironmentVariables:
 
             assert tool._api_type == "BEDROCK"
             assert AgenticTool.has_any_api_keys() is True
+
+    def test_bedrock_profile_marks_provider_available(self):
+        """Test that an explicit AWS profile enables Bedrock discovery."""
+        os.environ["AWS_PROFILE"] = "research"
+
+        assert AgenticTool.has_any_api_keys() is True
 
     def test_task_specific_model_env_var(self):
         """Test that task-specific model environment variables work."""

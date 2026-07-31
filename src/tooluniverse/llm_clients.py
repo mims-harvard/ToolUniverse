@@ -839,22 +839,27 @@ class BedrockClient(BaseLLMClient):
         try:
             import boto3  # type: ignore
         except Exception as e:  # pragma: no cover
-            raise RuntimeError("boto3 is not available for Bedrock client") from e
+            raise RuntimeError(
+                "boto3 is required for Bedrock; install tooluniverse[bedrock]"
+            ) from e
 
         self.model_name = model_id
         self.logger = logger
 
+        session = boto3.Session()
         region = (
             os.getenv("BEDROCK_REGION")
             or os.getenv("AWS_REGION")
             or os.getenv("AWS_DEFAULT_REGION")
+            or session.region_name
         )
         if not region:
             raise ValueError(
-                "Set BEDROCK_REGION, AWS_REGION, or AWS_DEFAULT_REGION for Bedrock"
+                "Configure an AWS profile region or set BEDROCK_REGION, AWS_REGION, "
+                "or AWS_DEFAULT_REGION for Bedrock"
             )
 
-        self.client = boto3.client("bedrock-runtime", region_name=region)
+        self.client = session.client("bedrock-runtime", region_name=region)
 
         env_limits_raw = os.getenv("BEDROCK_DEFAULT_MODEL_LIMITS")
         self._default_limits: Dict[str, Dict[str, int]] = (
@@ -949,9 +954,7 @@ class BedrockClient(BaseLLMClient):
             response.get("output", {}).get("message", {}).get("content", [])
         )
         return "".join(
-            block.get("text", "")
-            for block in content_blocks
-            if isinstance(block, dict)
+            block.get("text", "") for block in content_blocks if isinstance(block, dict)
         )
 
     def test_api(self) -> None:
