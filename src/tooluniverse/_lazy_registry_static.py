@@ -676,6 +676,7 @@ STATIC_LAZY_REGISTRY = {
     "UnpaywallTool": "unpaywall_tool",
     "UsageTipsTool": "usage_tips_tool",
     "VDJDBTool": "vdjdb_tool",
+    "VSDDiscoverAPICandidates": "vsd_discovery",
     "VSDDiscoverSources": "vsd_tool",
     "VSDListSources": "vsd_tool",
     "VSDQuerySource": "vsd_tool",

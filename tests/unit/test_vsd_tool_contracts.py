@@ -13,6 +13,7 @@ pytestmark = pytest.mark.unit
 
 
 SOURCE_TOOL_NAMES = (
+    "VSDDiscoverAPICandidates",
     "VSDDiscoverSources",
     "VSDWHOHypertensionIndicator",
     "VSDCDCPlacesHeartHealthProfile",

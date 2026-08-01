@@ -1,5 +1,49 @@
 [
   {
+    "name": "VSDDiscoverAPICandidates",
+    "type": "VSDDiscoverAPICandidates",
+    "description": "Search the fixed Socrata public-data catalog for API-ready datasets related to a research demand. Returned metadata is untrusted and non-executable until separately reviewed, verified, and approved.",
+    "category": "special_tools",
+    "cacheable": true,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 200,
+          "description": "Research capability or dataset need, such as active cancer clinical trials by site and phase."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 10,
+          "description": "Maximum number of non-executable candidates to return."
+        }
+      },
+      "required": ["query"],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string"},
+        "candidates": {"type": "array"},
+        "candidate_count": {"type": "integer"},
+        "catalog_result_count": {"type": ["integer", "null"]},
+        "boundary": {"type": "string"},
+        "provenance": {"type": "object"}
+      },
+      "required": ["query", "candidates", "candidate_count", "catalog_result_count", "boundary", "provenance"],
+      "additionalProperties": false
+    }
+  },
+  {
     "name": "VSDDiscoverSources",
     "type": "VSDDiscoverSources",
     "description": "Search the packaged catalog of reviewed VSD integrations. Review covers the transport profile and response adapter, not scientific endorsement.",

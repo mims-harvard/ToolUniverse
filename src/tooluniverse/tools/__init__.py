@@ -2584,6 +2584,7 @@ from .VEuPathDB_list_organism_searches import VEuPathDB_list_organism_searches
 from .VEuPathDB_list_record_types import VEuPathDB_list_record_types
 from .VEuPathDB_search_genes_by_organism import VEuPathDB_search_genes_by_organism
 from .VSDCDCPlacesHeartHealthProfile import VSDCDCPlacesHeartHealthProfile
+from .VSDDiscoverAPICandidates import VSDDiscoverAPICandidates
 from .VSDDiscoverSources import VSDDiscoverSources
 from .VSDEnsemblServiceStatus import VSDEnsemblServiceStatus
 from .VSDOpenFDALabelBySetId import VSDOpenFDALabelBySetId
@@ -5413,6 +5414,7 @@ __all__ = [
     "VEuPathDB_list_record_types",
     "VEuPathDB_search_genes_by_organism",
     "VSDCDCPlacesHeartHealthProfile",
+    "VSDDiscoverAPICandidates",
     "VSDDiscoverSources",
     "VSDEnsemblServiceStatus",
     "VSDOpenFDALabelBySetId",
