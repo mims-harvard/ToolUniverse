@@ -1,0 +1,121 @@
+{
+  "all_cases_passed": true,
+  "case_count": 3,
+  "cases": [
+    {
+      "arguments": {
+        "nctId": "NCT03019419"
+      },
+      "case_index": 0,
+      "expect": {
+        "equals": {},
+        "equals_paths": {
+          "/protocolSection/identificationModule/nctId": "NCT03019419"
+        },
+        "max_items": null,
+        "min_items": null,
+        "required_fields": [
+          "protocolSection"
+        ],
+        "required_paths": [
+          "/protocolSection/identificationModule/nctId",
+          "/protocolSection/identificationModule/briefTitle",
+          "/protocolSection/statusModule/overallStatus",
+          "/protocolSection/conditionsModule/conditions"
+        ],
+        "result_type": "object"
+      },
+      "http_status": 200,
+      "observed_fields": [
+        "derivedSection",
+        "hasResults",
+        "protocolSection"
+      ],
+      "operation_sha256": "27f9c4e92c3ff99ea44fe05456c6f34a90fb6cf0ac29a21163a41398e7992be0",
+      "payload_sha256": "4fce0ba178580566ab3d97bb5aa0d7f77cca287b4d193539dfa9cbaacfeb60da",
+      "redirects": 0,
+      "result_type": "object",
+      "retrieved_at": "2026-08-01T18:52:47.404925+00:00",
+      "row_count": null
+    },
+    {
+      "arguments": {
+        "nctId": "NCT04428775"
+      },
+      "case_index": 1,
+      "expect": {
+        "equals": {},
+        "equals_paths": {
+          "/protocolSection/identificationModule/nctId": "NCT04428775"
+        },
+        "max_items": null,
+        "min_items": null,
+        "required_fields": [
+          "protocolSection"
+        ],
+        "required_paths": [
+          "/protocolSection/identificationModule/nctId",
+          "/protocolSection/identificationModule/briefTitle",
+          "/protocolSection/statusModule/overallStatus",
+          "/protocolSection/conditionsModule/conditions"
+        ],
+        "result_type": "object"
+      },
+      "http_status": 200,
+      "observed_fields": [
+        "derivedSection",
+        "hasResults",
+        "protocolSection"
+      ],
+      "operation_sha256": "27f9c4e92c3ff99ea44fe05456c6f34a90fb6cf0ac29a21163a41398e7992be0",
+      "payload_sha256": "17df843a24f19baad6655410238244ba464c171d2cdc048f08c0c158432f68ca",
+      "redirects": 0,
+      "result_type": "object",
+      "retrieved_at": "2026-08-01T18:52:47.595065+00:00",
+      "row_count": null
+    },
+    {
+      "arguments": {
+        "nctId": "NCT04745299"
+      },
+      "case_index": 2,
+      "expect": {
+        "equals": {},
+        "equals_paths": {
+          "/protocolSection/identificationModule/nctId": "NCT04745299"
+        },
+        "max_items": null,
+        "min_items": null,
+        "required_fields": [
+          "protocolSection"
+        ],
+        "required_paths": [
+          "/protocolSection/identificationModule/nctId",
+          "/protocolSection/identificationModule/briefTitle",
+          "/protocolSection/statusModule/overallStatus",
+          "/protocolSection/conditionsModule/conditions"
+        ],
+        "result_type": "object"
+      },
+      "http_status": 200,
+      "observed_fields": [
+        "derivedSection",
+        "hasResults",
+        "protocolSection"
+      ],
+      "operation_sha256": "27f9c4e92c3ff99ea44fe05456c6f34a90fb6cf0ac29a21163a41398e7992be0",
+      "payload_sha256": "95a907ff858124aa0d29c0367a1de9f8e32ee7686a96bf9285a47f94370ab34d",
+      "redirects": 0,
+      "result_type": "object",
+      "retrieved_at": "2026-08-01T18:52:47.835388+00:00",
+      "row_count": null
+    }
+  ],
+  "draft_id": "vsdclinicaltrialsstudybynct_27f9c4e92c3f",
+  "draft_sha256": "2d97d81a7723e51789beedc77210be958ea438368c472b3533ca738729f4d3cd",
+  "operation_sha256": "27f9c4e92c3ff99ea44fe05456c6f34a90fb6cf0ac29a21163a41398e7992be0",
+  "tool_name": "VSDClinicalTrialsStudyByNCT",
+  "verification_sha256": "55d799070ea17713f2b0355eff968acf031d69bd04973d5d0bc62c0f8b7a67f0",
+  "verified_at": "2026-08-01T18:52:47.836991+00:00",
+  "version": 1
+}

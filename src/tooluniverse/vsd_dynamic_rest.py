@@ -111,8 +111,14 @@ def _validated_operation_config(config: Any) -> dict[str, Any]:
         raise VSDDynamicRESTError("parameter.properties must be an object")
     path_arguments = operation.get("path_arguments", {})
     query_arguments = operation.get("query_arguments", {})
+    has_query_serialization = "query_serialization" in operation
+    query_serialization = operation.get("query_serialization", {})
     fixed_query = operation.get("fixed_query", {})
-    if not isinstance(path_arguments, dict) or not isinstance(query_arguments, dict):
+    if (
+        not isinstance(path_arguments, dict)
+        or not isinstance(query_arguments, dict)
+        or not isinstance(query_serialization, dict)
+    ):
         raise VSDDynamicRESTError("Argument mappings must be objects")
     for argument, target in (*path_arguments.items(), *query_arguments.items()):
         if (
@@ -143,6 +149,39 @@ def _validated_operation_config(config: Any) -> dict[str, Any]:
         raise VSDDynamicRESTError(
             f"Every input must map to the request; unmapped inputs: {sorted(unmapped)!r}"
         )
+    unknown_serialization = set(query_serialization) - set(query_arguments)
+    if unknown_serialization:
+        raise VSDDynamicRESTError(
+            "Query serialization references unmapped arguments: "
+            f"{sorted(unknown_serialization)!r}"
+        )
+    normalized_serialization: dict[str, dict[str, Any]] = {}
+    for argument in query_arguments:
+        rule = query_serialization.get(argument, {"style": "form", "explode": True})
+        if not isinstance(rule, dict) or set(rule) - {"style", "explode"}:
+            raise VSDDynamicRESTError(
+                f"Query serialization for {argument!r} is invalid"
+            )
+        style = rule.get("style", "form")
+        explode = rule.get("explode", style == "form")
+        if style not in {"form", "pipeDelimited", "spaceDelimited"}:
+            raise VSDDynamicRESTError(
+                f"Query serialization style for {argument!r} is unsupported"
+            )
+        if type(explode) is not bool:
+            raise VSDDynamicRESTError(
+                f"Query serialization explode for {argument!r} must be boolean"
+            )
+        if style != "form" and explode:
+            raise VSDDynamicRESTError(
+                f"Query serialization style {style!r} cannot explode values"
+            )
+        normalized_serialization[argument] = {
+            "style": style,
+            "explode": explode,
+        }
+    if has_query_serialization:
+        operation["query_serialization"] = normalized_serialization
     if not isinstance(fixed_query, dict):
         raise VSDDynamicRESTError("fixed_query must be an object")
     try:
@@ -198,7 +237,19 @@ def _provider_request(
     query = dict(operation.get("fixed_query", {}))
     for argument, parameter_name in operation.get("query_arguments", {}).items():
         if argument in arguments and arguments[argument] is not None:
-            query[parameter_name] = arguments[argument]
+            value = arguments[argument]
+            serialization = operation.get("query_serialization", {}).get(
+                argument, {"style": "form", "explode": True}
+            )
+            if isinstance(value, list):
+                style = serialization["style"]
+                if style == "pipeDelimited":
+                    value = "|".join(str(item) for item in value)
+                elif style == "spaceDelimited":
+                    value = " ".join(str(item) for item in value)
+                elif not serialization["explode"]:
+                    value = ",".join(str(item) for item in value)
+            query[parameter_name] = value
     try:
         return endpoint, _validated_params(query)
     except VSDPolicyError as exc:

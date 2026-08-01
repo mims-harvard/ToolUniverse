@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -14,6 +15,8 @@ from pathlib import Path
 from typing import Any, Iterator
 from urllib.parse import urlsplit
 
+from jsonschema.exceptions import ValidationError
+
 from .execute_function import ToolUniverse
 from .vsd_dynamic_rest import (
     VSDDynamicRESTError,
@@ -21,6 +24,7 @@ from .vsd_dynamic_rest import (
     register_reviewed_rest_tool,
 )
 from .vsd_tool import _acquire_process_lock, _release_process_lock
+from .vsd_openapi import VSDOpenAPIError, validate_openapi_candidate
 
 _PROMOTION_VERSION = 1
 _GENERATOR_VERSION = 1
@@ -329,6 +333,13 @@ def create_draft(
         return_fields=return_fields,
         max_records=max_records,
     )
+    return _create_draft_from_config(config, workspace=workspace)
+
+
+def _create_draft_from_config(
+    config: dict[str, Any], *, workspace: str | Path | None = None
+) -> dict[str, Any]:
+    """Persist one already-validated generated configuration as an inert draft."""
     digest = operation_digest(config)
     slug = re.sub(r"[^a-z0-9]+", "_", config["name"].casefold()).strip("_")
     draft_id = f"{slug}_{digest[:12]}"
@@ -356,6 +367,228 @@ def create_draft(
             return existing
         _atomic_write_json(path, record)
     return record
+
+
+def _hoist_schema_definitions(
+    schema: dict[str, Any], definitions: dict[str, Any]
+) -> dict[str, Any]:
+    normalized = copy.deepcopy(schema)
+    nested = normalized.pop("$defs", {})
+    if not isinstance(nested, dict):
+        raise VSDPromotionError("OpenAPI schema definitions must be an object")
+    for name, definition in nested.items():
+        existing = definitions.get(name)
+        if existing is not None and existing != definition:
+            raise VSDPromotionError(
+                f"OpenAPI schema definition {name!r} is inconsistent"
+            )
+        definitions[name] = definition
+    return normalized
+
+
+def build_openapi_tool_config(
+    candidate: dict[str, Any],
+    *,
+    tool_name: str,
+    description: str,
+    include_parameters: list[str] | None = None,
+    fixed_query: dict[str, Any] | None = None,
+    timeout_seconds: int | float = 20,
+) -> dict[str, Any]:
+    """Generate one narrow read-only tool from an inspected OpenAPI operation."""
+    try:
+        reviewed = validate_openapi_candidate(candidate)
+    except VSDOpenAPIError as exc:
+        raise VSDPromotionError(str(exc)) from exc
+    name = _tool_name(tool_name)
+    reviewed_description = _review_text(
+        description, field="description", minimum=20, maximum=1000
+    )
+    parameters = reviewed.get("parameters")
+    if not isinstance(parameters, list):
+        raise VSDPromotionError("OpenAPI candidate parameters are invalid")
+    indexed = {
+        parameter.get("argument_name"): parameter
+        for parameter in parameters
+        if isinstance(parameter, dict)
+        and isinstance(parameter.get("argument_name"), str)
+    }
+    if len(indexed) != len(parameters):
+        raise VSDPromotionError("OpenAPI candidate argument names must be unique")
+    required_names = {
+        parameter["argument_name"]
+        for parameter in parameters
+        if parameter.get("required") is True
+    }
+    if include_parameters is None:
+        selected_names = set(required_names)
+    elif (
+        not isinstance(include_parameters, list)
+        or len(include_parameters) != len(set(include_parameters))
+        or any(not isinstance(item, str) for item in include_parameters)
+    ):
+        raise VSDPromotionError("include_parameters must contain unique names")
+    else:
+        selected_names = set(include_parameters)
+    unknown = selected_names - set(indexed)
+    if unknown:
+        raise VSDPromotionError(f"Unknown OpenAPI parameters: {sorted(unknown)!r}")
+
+    fixed = {} if fixed_query is None else copy.deepcopy(fixed_query)
+    if not isinstance(fixed, dict):
+        raise VSDPromotionError("fixed_query must be an object")
+    provider_index = {
+        parameter["provider_name"]: parameter
+        for parameter in parameters
+        if parameter.get("location") == "query"
+    }
+    unknown_fixed = set(fixed) - set(provider_index)
+    if unknown_fixed:
+        raise VSDPromotionError(
+            f"Unknown fixed OpenAPI query parameters: {sorted(unknown_fixed)!r}"
+        )
+    for provider_name, value in fixed.items():
+        parameter = provider_index[provider_name]
+        if parameter["argument_name"] in selected_names:
+            raise VSDPromotionError(
+                f"OpenAPI query parameter {provider_name!r} cannot be fixed and exposed"
+            )
+        try:
+            from .vsd_dynamic_rest import _schema_validator
+
+            _schema_validator(
+                parameter["schema"], field=f"fixed query {provider_name}"
+            ).validate(value)
+        except (VSDDynamicRESTError, ValidationError) as exc:
+            raise VSDPromotionError(
+                f"Fixed OpenAPI query parameter {provider_name!r} is invalid"
+            ) from exc
+    unsatisfied = {
+        parameter["argument_name"]
+        for parameter in parameters
+        if parameter.get("required") is True
+        and parameter["argument_name"] not in selected_names
+        and not (
+            parameter.get("location") == "query"
+            and parameter.get("provider_name") in fixed
+        )
+    }
+    if unsatisfied:
+        raise VSDPromotionError(
+            f"Required OpenAPI parameters are not supplied: {sorted(unsatisfied)!r}"
+        )
+    if (
+        isinstance(timeout_seconds, bool)
+        or not isinstance(timeout_seconds, (int, float))
+        or not 1 <= timeout_seconds <= 60
+    ):
+        raise VSDPromotionError("timeout_seconds must be between 1 and 60")
+
+    input_definitions: dict[str, Any] = {}
+    properties: dict[str, Any] = {}
+    path_arguments: dict[str, str] = {}
+    query_arguments: dict[str, str] = {}
+    query_serialization: dict[str, dict[str, Any]] = {}
+    for parameter in parameters:
+        argument = parameter["argument_name"]
+        if argument not in selected_names:
+            continue
+        schema = _hoist_schema_definitions(parameter["schema"], input_definitions)
+        if parameter.get("description") and "description" not in schema:
+            schema["description"] = parameter["description"]
+        properties[argument] = schema
+        if parameter["location"] == "path":
+            path_arguments[argument] = parameter["provider_name"]
+        else:
+            query_arguments[argument] = parameter["provider_name"]
+            query_serialization[argument] = {
+                "style": parameter["style"],
+                "explode": parameter["explode"],
+            }
+
+    input_schema: dict[str, Any] = {
+        "type": "object",
+        "properties": properties,
+        "required": sorted(required_names & selected_names),
+        "additionalProperties": False,
+    }
+    if input_definitions:
+        input_schema["$defs"] = input_definitions
+
+    response_schema = copy.deepcopy(reviewed["response_schema"])
+    return_definitions = response_schema.pop("$defs", {})
+    return_schema: dict[str, Any] = {
+        "type": "object",
+        "properties": {
+            "result": response_schema,
+            "provenance": {"type": "object"},
+        },
+        "required": ["result", "provenance"],
+        "additionalProperties": False,
+    }
+    if return_definitions:
+        return_schema["$defs"] = return_definitions
+    endpoint = reviewed["server_url"] + "/" + reviewed["path"].lstrip("/")
+    return {
+        "name": name,
+        "type": "VSDDynamicRESTTool",
+        "description": reviewed_description,
+        "category": "special_tools",
+        "cacheable": False,
+        "mcp_annotations": {"readOnlyHint": True, "destructiveHint": False},
+        "parameter": input_schema,
+        "return_schema": return_schema,
+        "vsd_operation": {
+            "version": 1,
+            "method": "GET",
+            "endpoint": endpoint,
+            "path_arguments": path_arguments,
+            "query_arguments": query_arguments,
+            "query_serialization": query_serialization,
+            "fixed_query": fixed,
+            "timeout_seconds": timeout_seconds,
+            "auth": {"type": "none"},
+            "response_schema": reviewed["response_schema"],
+        },
+        "vsd_promotion": {
+            "generator_version": _GENERATOR_VERSION,
+            "source_type": "openapi",
+            "candidate_id": reviewed["candidate_id"],
+            "candidate_sha256": reviewed["candidate_sha256"],
+            "source_document_sha256": reviewed["source_document_sha256"],
+            "openapi_version": reviewed["openapi_version"],
+            "api_title": reviewed["api_title"],
+            "api_version": reviewed["api_version"],
+            "operation_id": reviewed["operation_id"],
+            "method": reviewed["method"],
+            "path": reviewed["path"],
+            "response_media_type": reviewed["response_media_type"],
+            "included_parameters": sorted(selected_names),
+            "fixed_query": fixed,
+        },
+    }
+
+
+def create_openapi_draft(
+    candidate: dict[str, Any],
+    *,
+    tool_name: str,
+    description: str,
+    include_parameters: list[str] | None = None,
+    fixed_query: dict[str, Any] | None = None,
+    timeout_seconds: int | float = 20,
+    workspace: str | Path | None = None,
+) -> dict[str, Any]:
+    """Create an inert, content-addressed draft from one OpenAPI candidate."""
+    config = build_openapi_tool_config(
+        candidate,
+        tool_name=tool_name,
+        description=description,
+        include_parameters=include_parameters,
+        fixed_query=fixed_query,
+        timeout_seconds=timeout_seconds,
+    )
+    return _create_draft_from_config(config, workspace=workspace)
 
 
 def _load_draft(root: Path, draft_id: str) -> dict[str, Any]:
@@ -389,20 +622,33 @@ def _validated_cases(cases: Any) -> list[dict[str, Any]]:
         expect = case.get("expect")
         if not isinstance(expect, dict):
             raise VSDPromotionError(f"Verification case {index} requires expectations")
-        minimum = expect.get("min_items")
-        maximum = expect.get("max_items")
+        result_type = expect.get("result_type", "array")
+        minimum = expect.get("min_items") if result_type == "array" else None
+        maximum = expect.get("max_items") if result_type == "array" else None
         fields = expect.get("required_fields")
         equals = expect.get("equals", {})
+        required_paths = expect.get("required_paths", [])
+        equals_paths = expect.get("equals_paths", {})
         if (
-            isinstance(minimum, bool)
-            or not isinstance(minimum, int)
-            or minimum < 0
-            or isinstance(maximum, bool)
-            or not isinstance(maximum, int)
-            or maximum < minimum
-            or maximum > 100
+            result_type not in {"array", "object"}
+            or (
+                result_type == "array"
+                and (
+                    isinstance(minimum, bool)
+                    or not isinstance(minimum, int)
+                    or minimum < 0
+                    or isinstance(maximum, bool)
+                    or not isinstance(maximum, int)
+                    or maximum < minimum
+                    or maximum > 100
+                )
+            )
+            or (
+                result_type == "object"
+                and ("min_items" in expect or "max_items" in expect)
+            )
             or not isinstance(fields, list)
-            or not fields
+            or (not fields and not required_paths)
             or any(
                 not isinstance(field, str) or not _FIELD_RE.fullmatch(field)
                 for field in fields
@@ -412,22 +658,73 @@ def _validated_cases(cases: Any) -> list[dict[str, Any]]:
                 not isinstance(field, str) or not _FIELD_RE.fullmatch(field)
                 for field in equals
             )
+            or not isinstance(required_paths, list)
+            or any(not _valid_json_pointer(path) for path in required_paths)
+            or len(required_paths) != len(set(required_paths))
+            or not isinstance(equals_paths, dict)
+            or any(not _valid_json_pointer(path) for path in equals_paths)
         ):
             raise VSDPromotionError(
                 f"Verification case {index} has invalid expectations"
+            )
+        try:
+            encoded_expectations = json.dumps(
+                {"equals": equals, "equals_paths": equals_paths},
+                allow_nan=False,
+                ensure_ascii=True,
+            )
+        except (TypeError, ValueError) as exc:
+            raise VSDPromotionError(
+                f"Verification case {index} expectations must be finite JSON"
+            ) from exc
+        if len(encoded_expectations.encode("utf-8")) > 16_384:
+            raise VSDPromotionError(
+                f"Verification case {index} expectations exceed 16 KiB"
             )
         validated.append(
             {
                 "arguments": dict(case["arguments"]),
                 "expect": {
+                    "result_type": result_type,
                     "min_items": minimum,
                     "max_items": maximum,
                     "required_fields": list(fields),
                     "equals": dict(equals),
+                    "required_paths": list(required_paths),
+                    "equals_paths": dict(equals_paths),
                 },
             }
         )
     return validated
+
+
+_POINTER_MISSING = object()
+
+
+def _valid_json_pointer(value: Any) -> bool:
+    if not isinstance(value, str) or not value.startswith("/") or len(value) > 512:
+        return False
+    if any(ord(character) < 32 for character in value):
+        return False
+    return all(not re.search(r"~(?:[^01]|$)", token) for token in value.split("/")[1:])
+
+
+def _json_pointer_value(document: Any, pointer: str) -> Any:
+    current = document
+    for raw_token in pointer.split("/")[1:]:
+        token = raw_token.replace("~1", "/").replace("~0", "~")
+        if isinstance(current, dict):
+            if token not in current:
+                return _POINTER_MISSING
+            current = current[token]
+        elif isinstance(current, list) and token.isdigit():
+            index = int(token)
+            if index >= len(current):
+                return _POINTER_MISSING
+            current = current[index]
+        else:
+            return _POINTER_MISSING
+    return current
 
 
 def verify_draft(
@@ -454,15 +751,20 @@ def verify_draft(
                     f"Verification case {index} did not execute successfully: {response!r}"
                 )
             envelope = response.get("data")
-            rows = envelope.get("result") if isinstance(envelope, dict) else None
+            result = envelope.get("result") if isinstance(envelope, dict) else None
             provenance = (
                 envelope.get("provenance") if isinstance(envelope, dict) else None
             )
-            if not isinstance(rows, list) or not isinstance(provenance, dict):
+            expectation = case["expect"]
+            result_type = expectation["result_type"]
+            if (
+                (result_type == "array" and not isinstance(result, list))
+                or (result_type == "object" and not isinstance(result, dict))
+                or not isinstance(provenance, dict)
+            ):
                 raise VSDPromotionError(
                     f"Verification case {index} returned an invalid evidence envelope"
                 )
-            expectation = case["expect"]
             if (
                 provenance.get("operation_sha256") != draft["operation_sha256"]
                 or provenance.get("http_status") != 200
@@ -474,7 +776,10 @@ def verify_draft(
                 raise VSDPromotionError(
                     f"Verification case {index} returned invalid provenance"
                 )
-            if not expectation["min_items"] <= len(rows) <= expectation["max_items"]:
+            rows = result if result_type == "array" else [result]
+            if result_type == "array" and not (
+                expectation["min_items"] <= len(rows) <= expectation["max_items"]
+            ):
                 raise VSDPromotionError(
                     f"Verification case {index} returned {len(rows)} rows outside "
                     f"{expectation['min_items']}..{expectation['max_items']}"
@@ -487,7 +792,7 @@ def verify_draft(
                 missing = [
                     field
                     for field in expectation["required_fields"]
-                    if not row.get(field)
+                    if field not in row or row[field] is None
                 ]
                 if missing:
                     raise VSDPromotionError(
@@ -502,12 +807,34 @@ def verify_draft(
                     raise VSDPromotionError(
                         f"Verification case {index} row {row_index} failed equality assertions"
                     )
+                missing_paths = [
+                    pointer
+                    for pointer in expectation["required_paths"]
+                    if _json_pointer_value(row, pointer) is _POINTER_MISSING
+                    or _json_pointer_value(row, pointer) is None
+                ]
+                if missing_paths:
+                    raise VSDPromotionError(
+                        f"Verification case {index} row {row_index} lacks values "
+                        f"for JSON pointers {missing_paths!r}"
+                    )
+                mismatched_paths = {
+                    pointer: _json_pointer_value(row, pointer)
+                    for pointer, expected in expectation["equals_paths"].items()
+                    if _json_pointer_value(row, pointer) != expected
+                }
+                if mismatched_paths:
+                    raise VSDPromotionError(
+                        f"Verification case {index} row {row_index} failed JSON "
+                        "pointer equality assertions"
+                    )
             results.append(
                 {
                     "case_index": index,
                     "arguments": case["arguments"],
                     "expect": expectation,
-                    "row_count": len(rows),
+                    "result_type": result_type,
+                    "row_count": len(rows) if result_type == "array" else None,
                     "observed_fields": sorted(
                         {
                             field
@@ -743,8 +1070,10 @@ def list_promotion_state(
 __all__ = [
     "VSDPromotionError",
     "approve_draft",
+    "build_openapi_tool_config",
     "build_socrata_tool_config",
     "create_draft",
+    "create_openapi_draft",
     "list_promotion_state",
     "load_published_tools",
     "publish_draft",

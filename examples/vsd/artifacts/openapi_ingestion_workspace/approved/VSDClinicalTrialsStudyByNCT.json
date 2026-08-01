@@ -1,0 +1,4432 @@
+{
+  "approval_sha256": "a8a7689c9dceb80d7682dcbf663d7f14bd4db281c597c4d5db8dc52d37958a46",
+  "config": {
+    "cacheable": false,
+    "category": "special_tools",
+    "description": "Fetch one reviewed ClinicalTrials.gov study record by its validated NCT identifier using the provider's official OpenAPI contract.",
+    "mcp_annotations": {
+      "destructiveHint": false,
+      "readOnlyHint": true
+    },
+    "name": "VSDClinicalTrialsStudyByNCT",
+    "parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "nctId": {
+          "description": "NCT Number of a study. If found in [NCTIdAlias](data-api/about-api/study-data-structure#NCTIdAlias) field, 301 HTTP redirect to the actual study will be returned.",
+          "pattern": "^[Nn][Cc][Tt]0*[1-9]\\d{0,7}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nctId"
+      ],
+      "type": "object"
+    },
+    "return_schema": {
+      "$defs": {
+        "AdverseEvent": {
+          "properties": {
+            "assessmentType": {
+              "$ref": "#/$defs/EventAssessment"
+            },
+            "notes": {
+              "type": "string"
+            },
+            "organSystem": {
+              "type": "string"
+            },
+            "sourceVocabulary": {
+              "type": "string"
+            },
+            "stats": {
+              "items": {
+                "$ref": "#/$defs/EventStats"
+              },
+              "type": "array"
+            },
+            "term": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "AdverseEventsModule": {
+          "properties": {
+            "allCauseMortalityComment": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "eventGroups": {
+              "items": {
+                "$ref": "#/$defs/EventGroup"
+              },
+              "type": "array"
+            },
+            "frequencyThreshold": {
+              "type": "string"
+            },
+            "otherEvents": {
+              "items": {
+                "$ref": "#/$defs/AdverseEvent"
+              },
+              "type": "array"
+            },
+            "seriousEvents": {
+              "items": {
+                "$ref": "#/$defs/AdverseEvent"
+              },
+              "type": "array"
+            },
+            "timeFrame": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "AgencyClass": {
+          "enum": [
+            "NIH",
+            "FED",
+            "OTHER_GOV",
+            "INDIV",
+            "INDUSTRY",
+            "NETWORK",
+            "AMBIG",
+            "OTHER",
+            "UNKNOWN"
+          ],
+          "type": "string"
+        },
+        "AgreementRestrictionType": {
+          "enum": [
+            "LTE60",
+            "GT60",
+            "OTHER"
+          ],
+          "type": "string"
+        },
+        "AnalysisDispersionType": {
+          "enum": [
+            "STANDARD_DEVIATION",
+            "STANDARD_ERROR_OF_MEAN"
+          ],
+          "type": "string"
+        },
+        "AnnotationModule": {
+          "properties": {
+            "unpostedAnnotation": {
+              "$ref": "#/$defs/UnpostedAnnotation"
+            },
+            "violationAnnotation": {
+              "$ref": "#/$defs/ViolationAnnotation"
+            }
+          },
+          "type": "object"
+        },
+        "AnnotationSection": {
+          "properties": {
+            "annotationModule": {
+              "$ref": "#/$defs/AnnotationModule"
+            }
+          },
+          "type": "object"
+        },
+        "ArmGroup": {
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "interventionNames": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "label": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/ArmGroupType"
+            }
+          },
+          "type": "object"
+        },
+        "ArmGroupType": {
+          "enum": [
+            "EXPERIMENTAL",
+            "ACTIVE_COMPARATOR",
+            "PLACEBO_COMPARATOR",
+            "SHAM_COMPARATOR",
+            "NO_INTERVENTION",
+            "OTHER"
+          ],
+          "type": "string"
+        },
+        "ArmsInterventionsModule": {
+          "properties": {
+            "armGroups": {
+              "items": {
+                "$ref": "#/$defs/ArmGroup"
+              },
+              "type": "array"
+            },
+            "interventions": {
+              "items": {
+                "$ref": "#/$defs/Intervention"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "AvailIpd": {
+          "properties": {
+            "comment": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "BaselineCharacteristicsModule": {
+          "properties": {
+            "denoms": {
+              "items": {
+                "$ref": "#/$defs/Denom"
+              },
+              "type": "array"
+            },
+            "groups": {
+              "items": {
+                "$ref": "#/$defs/MeasureGroup"
+              },
+              "type": "array"
+            },
+            "measures": {
+              "items": {
+                "$ref": "#/$defs/BaselineMeasure"
+              },
+              "type": "array"
+            },
+            "populationDescription": {
+              "type": "string"
+            },
+            "typeUnitsAnalyzed": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "BaselineMeasure": {
+          "properties": {
+            "calculatePct": {
+              "type": "boolean"
+            },
+            "classes": {
+              "items": {
+                "$ref": "#/$defs/MeasureClass"
+              },
+              "type": "array"
+            },
+            "denomUnitsSelected": {
+              "type": "string"
+            },
+            "denoms": {
+              "items": {
+                "$ref": "#/$defs/Denom"
+              },
+              "type": "array"
+            },
+            "description": {
+              "type": "string"
+            },
+            "dispersionType": {
+              "$ref": "#/$defs/MeasureDispersionType"
+            },
+            "paramType": {
+              "$ref": "#/$defs/MeasureParam"
+            },
+            "populationDescription": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "unitOfMeasure": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "BioSpec": {
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "retention": {
+              "$ref": "#/$defs/BioSpecRetention"
+            }
+          },
+          "type": "object"
+        },
+        "BioSpecRetention": {
+          "enum": [
+            "NONE_RETAINED",
+            "SAMPLES_WITH_DNA",
+            "SAMPLES_WITHOUT_DNA"
+          ],
+          "type": "string"
+        },
+        "BrowseBranch": {
+          "properties": {
+            "abbrev": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "BrowseLeaf": {
+          "properties": {
+            "asFound": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "relevance": {
+              "$ref": "#/$defs/BrowseLeafRelevance"
+            }
+          },
+          "type": "object"
+        },
+        "BrowseLeafRelevance": {
+          "enum": [
+            "LOW",
+            "HIGH"
+          ],
+          "type": "string"
+        },
+        "BrowseModule": {
+          "properties": {
+            "ancestors": {
+              "items": {
+                "$ref": "#/$defs/Mesh"
+              },
+              "type": "array"
+            },
+            "browseBranches": {
+              "items": {
+                "$ref": "#/$defs/BrowseBranch"
+              },
+              "type": "array"
+            },
+            "browseLeaves": {
+              "items": {
+                "$ref": "#/$defs/BrowseLeaf"
+              },
+              "type": "array"
+            },
+            "meshes": {
+              "items": {
+                "$ref": "#/$defs/Mesh"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "CertainAgreement": {
+          "properties": {
+            "otherDetails": {
+              "type": "string"
+            },
+            "piSponsorEmployee": {
+              "type": "boolean"
+            },
+            "restrictionType": {
+              "$ref": "#/$defs/AgreementRestrictionType"
+            },
+            "restrictiveAgreement": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "ConditionsModule": {
+          "properties": {
+            "conditions": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "keywords": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "ConfidenceIntervalNumSides": {
+          "enum": [
+            "ONE_SIDED",
+            "TWO_SIDED"
+          ],
+          "type": "string"
+        },
+        "Contact": {
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "phoneExt": {
+              "type": "string"
+            },
+            "role": {
+              "$ref": "#/$defs/ContactRole"
+            }
+          },
+          "type": "object"
+        },
+        "ContactRole": {
+          "enum": [
+            "STUDY_CHAIR",
+            "STUDY_DIRECTOR",
+            "PRINCIPAL_INVESTIGATOR",
+            "SUB_INVESTIGATOR",
+            "CONTACT"
+          ],
+          "type": "string"
+        },
+        "ContactsLocationsModule": {
+          "properties": {
+            "centralContacts": {
+              "items": {
+                "$ref": "#/$defs/Contact"
+              },
+              "type": "array"
+            },
+            "locations": {
+              "items": {
+                "$ref": "#/$defs/Location"
+              },
+              "type": "array"
+            },
+            "overallOfficials": {
+              "items": {
+                "$ref": "#/$defs/Official"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "DateStruct": {
+          "properties": {
+            "date": {
+              "format": "date",
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/DateType"
+            }
+          },
+          "type": "object"
+        },
+        "DateTimeMinutes": {
+          "description": "Date and time in `yyyy-MM-dd'T'HH:mm` format",
+          "type": "string"
+        },
+        "DateType": {
+          "enum": [
+            "ACTUAL",
+            "ESTIMATED"
+          ],
+          "type": "string"
+        },
+        "Denom": {
+          "properties": {
+            "counts": {
+              "items": {
+                "$ref": "#/$defs/DenomCount"
+              },
+              "type": "array"
+            },
+            "units": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "DenomCount": {
+          "properties": {
+            "groupId": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "DerivedSection": {
+          "properties": {
+            "conditionBrowseModule": {
+              "$ref": "#/$defs/BrowseModule"
+            },
+            "interventionBrowseModule": {
+              "$ref": "#/$defs/BrowseModule"
+            },
+            "miscInfoModule": {
+              "$ref": "#/$defs/MiscInfoModule"
+            }
+          },
+          "type": "object"
+        },
+        "DescriptionModule": {
+          "properties": {
+            "briefSummary": {
+              "type": "string"
+            },
+            "detailedDescription": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "DesignAllocation": {
+          "enum": [
+            "RANDOMIZED",
+            "NON_RANDOMIZED",
+            "NA"
+          ],
+          "type": "string"
+        },
+        "DesignInfo": {
+          "properties": {
+            "allocation": {
+              "$ref": "#/$defs/DesignAllocation"
+            },
+            "interventionModel": {
+              "$ref": "#/$defs/InterventionalAssignment"
+            },
+            "interventionModelDescription": {
+              "type": "string"
+            },
+            "maskingInfo": {
+              "$ref": "#/$defs/MaskingBlock"
+            },
+            "observationalModel": {
+              "$ref": "#/$defs/ObservationalModel"
+            },
+            "primaryPurpose": {
+              "$ref": "#/$defs/PrimaryPurpose"
+            },
+            "timePerspective": {
+              "$ref": "#/$defs/DesignTimePerspective"
+            }
+          },
+          "type": "object"
+        },
+        "DesignMasking": {
+          "enum": [
+            "NONE",
+            "SINGLE",
+            "DOUBLE",
+            "TRIPLE",
+            "QUADRUPLE"
+          ],
+          "type": "string"
+        },
+        "DesignModule": {
+          "properties": {
+            "bioSpec": {
+              "$ref": "#/$defs/BioSpec"
+            },
+            "designInfo": {
+              "$ref": "#/$defs/DesignInfo"
+            },
+            "enrollmentInfo": {
+              "$ref": "#/$defs/EnrollmentInfo"
+            },
+            "expandedAccessTypes": {
+              "$ref": "#/$defs/ExpandedAccessTypes"
+            },
+            "nPtrsToThisExpAccNctId": {
+              "type": "integer"
+            },
+            "patientRegistry": {
+              "type": "boolean"
+            },
+            "phases": {
+              "items": {
+                "$ref": "#/$defs/Phase"
+              },
+              "type": "array"
+            },
+            "studyType": {
+              "$ref": "#/$defs/StudyType"
+            },
+            "targetDuration": {
+              "pattern": "^\\d+ (Year|Years|Month|Months|Week|Weeks|Day|Days|Hour|Hours|Minute|Minutes)$",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "DesignTimePerspective": {
+          "enum": [
+            "RETROSPECTIVE",
+            "PROSPECTIVE",
+            "CROSS_SECTIONAL",
+            "OTHER"
+          ],
+          "type": "string"
+        },
+        "DocumentSection": {
+          "properties": {
+            "largeDocumentModule": {
+              "$ref": "#/$defs/LargeDocumentModule"
+            }
+          },
+          "type": "object"
+        },
+        "DropWithdraw": {
+          "properties": {
+            "comment": {
+              "type": "string"
+            },
+            "reasons": {
+              "items": {
+                "$ref": "#/$defs/FlowStats"
+              },
+              "type": "array"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "EligibilityModule": {
+          "properties": {
+            "eligibilityCriteria": {
+              "type": "string"
+            },
+            "genderBased": {
+              "type": "boolean"
+            },
+            "genderDescription": {
+              "type": "string"
+            },
+            "healthyVolunteers": {
+              "type": "boolean"
+            },
+            "maximumAge": {
+              "pattern": "^\\d+ (Year|Years|Month|Months|Week|Weeks|Day|Days|Hour|Hours|Minute|Minutes)$",
+              "type": "string"
+            },
+            "minimumAge": {
+              "pattern": "^\\d+ (Year|Years|Month|Months|Week|Weeks|Day|Days|Hour|Hours|Minute|Minutes)$",
+              "type": "string"
+            },
+            "samplingMethod": {
+              "$ref": "#/$defs/SamplingMethod"
+            },
+            "sex": {
+              "$ref": "#/$defs/Sex"
+            },
+            "stdAges": {
+              "items": {
+                "$ref": "#/$defs/StandardAge"
+              },
+              "type": "array"
+            },
+            "studyPopulation": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "EnrollmentInfo": {
+          "properties": {
+            "count": {
+              "type": "integer"
+            },
+            "type": {
+              "$ref": "#/$defs/EnrollmentType"
+            }
+          },
+          "type": "object"
+        },
+        "EnrollmentType": {
+          "enum": [
+            "ACTUAL",
+            "ESTIMATED"
+          ],
+          "type": "string"
+        },
+        "EventAssessment": {
+          "enum": [
+            "NON_SYSTEMATIC_ASSESSMENT",
+            "SYSTEMATIC_ASSESSMENT"
+          ],
+          "type": "string"
+        },
+        "EventGroup": {
+          "properties": {
+            "deathsNumAffected": {
+              "type": "integer"
+            },
+            "deathsNumAtRisk": {
+              "type": "integer"
+            },
+            "description": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "otherNumAffected": {
+              "type": "integer"
+            },
+            "otherNumAtRisk": {
+              "type": "integer"
+            },
+            "seriousNumAffected": {
+              "type": "integer"
+            },
+            "seriousNumAtRisk": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "EventStats": {
+          "properties": {
+            "groupId": {
+              "type": "string"
+            },
+            "numAffected": {
+              "type": "integer"
+            },
+            "numAtRisk": {
+              "type": "integer"
+            },
+            "numEvents": {
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "ExpandedAccessInfo": {
+          "properties": {
+            "hasExpandedAccess": {
+              "type": "boolean"
+            },
+            "nctId": {
+              "$ref": "#/$defs/nct"
+            },
+            "statusForNctId": {
+              "$ref": "#/$defs/ExpandedAccessStatus"
+            }
+          },
+          "type": "object"
+        },
+        "ExpandedAccessStatus": {
+          "enum": [
+            "AVAILABLE",
+            "NO_LONGER_AVAILABLE",
+            "TEMPORARILY_NOT_AVAILABLE",
+            "APPROVED_FOR_MARKETING"
+          ],
+          "type": "string"
+        },
+        "ExpandedAccessTypes": {
+          "properties": {
+            "individual": {
+              "type": "boolean"
+            },
+            "intermediate": {
+              "type": "boolean"
+            },
+            "treatment": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "FirstMcpInfo": {
+          "properties": {
+            "postDateStruct": {
+              "$ref": "#/$defs/DateStruct"
+            }
+          },
+          "type": "object"
+        },
+        "FlowGroup": {
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "FlowMilestone": {
+          "properties": {
+            "achievements": {
+              "items": {
+                "$ref": "#/$defs/FlowStats"
+              },
+              "type": "array"
+            },
+            "comment": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "FlowPeriod": {
+          "properties": {
+            "dropWithdraws": {
+              "items": {
+                "$ref": "#/$defs/DropWithdraw"
+              },
+              "type": "array"
+            },
+            "milestones": {
+              "items": {
+                "$ref": "#/$defs/FlowMilestone"
+              },
+              "type": "array"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "FlowStats": {
+          "properties": {
+            "comment": {
+              "type": "string"
+            },
+            "groupId": {
+              "type": "string"
+            },
+            "numSubjects": {
+              "type": "string"
+            },
+            "numUnits": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "GeoName": {
+          "description": "State/province or city name",
+          "type": "string"
+        },
+        "GeoPoint": {
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lon": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "lat",
+            "lon"
+          ],
+          "type": "object"
+        },
+        "IdentificationModule": {
+          "properties": {
+            "acronym": {
+              "type": "string"
+            },
+            "briefTitle": {
+              "type": "string"
+            },
+            "nctId": {
+              "$ref": "#/$defs/nct"
+            },
+            "nctIdAliases": {
+              "items": {
+                "$ref": "#/$defs/nct"
+              },
+              "type": "array"
+            },
+            "officialTitle": {
+              "type": "string"
+            },
+            "orgStudyIdInfo": {
+              "$ref": "#/$defs/OrgStudyIdInfo"
+            },
+            "organization": {
+              "$ref": "#/$defs/Organization"
+            },
+            "secondaryIdInfos": {
+              "items": {
+                "$ref": "#/$defs/SecondaryIdInfo"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "Intervention": {
+          "properties": {
+            "armGroupLabels": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "description": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "otherNames": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "$ref": "#/$defs/InterventionType"
+            }
+          },
+          "type": "object"
+        },
+        "InterventionType": {
+          "enum": [
+            "BEHAVIORAL",
+            "BIOLOGICAL",
+            "COMBINATION_PRODUCT",
+            "DEVICE",
+            "DIAGNOSTIC_TEST",
+            "DIETARY_SUPPLEMENT",
+            "DRUG",
+            "GENETIC",
+            "PROCEDURE",
+            "RADIATION",
+            "OTHER"
+          ],
+          "type": "string"
+        },
+        "InterventionalAssignment": {
+          "enum": [
+            "SINGLE_GROUP",
+            "PARALLEL",
+            "CROSSOVER",
+            "FACTORIAL",
+            "SEQUENTIAL"
+          ],
+          "type": "string"
+        },
+        "IpdSharing": {
+          "enum": [
+            "YES",
+            "NO",
+            "UNDECIDED"
+          ],
+          "type": "string"
+        },
+        "IpdSharingInfoType": {
+          "enum": [
+            "STUDY_PROTOCOL",
+            "SAP",
+            "ICF",
+            "CSR",
+            "ANALYTIC_CODE"
+          ],
+          "type": "string"
+        },
+        "IpdSharingStatementModule": {
+          "properties": {
+            "accessCriteria": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "infoTypes": {
+              "items": {
+                "$ref": "#/$defs/IpdSharingInfoType"
+              },
+              "type": "array"
+            },
+            "ipdSharing": {
+              "$ref": "#/$defs/IpdSharing"
+            },
+            "timeFrame": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "LargeDoc": {
+          "properties": {
+            "date": {
+              "format": "date",
+              "type": "string"
+            },
+            "filename": {
+              "type": "string"
+            },
+            "hasIcf": {
+              "type": "boolean"
+            },
+            "hasProtocol": {
+              "type": "boolean"
+            },
+            "hasSap": {
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "size": {
+              "type": "integer"
+            },
+            "typeAbbrev": {
+              "type": "string"
+            },
+            "uploadDate": {
+              "$ref": "#/$defs/DateTimeMinutes"
+            }
+          },
+          "type": "object"
+        },
+        "LargeDocumentModule": {
+          "properties": {
+            "largeDocs": {
+              "items": {
+                "$ref": "#/$defs/LargeDoc"
+              },
+              "type": "array"
+            },
+            "noSap": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "LimitationsAndCaveats": {
+          "properties": {
+            "description": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "Location": {
+          "properties": {
+            "city": {
+              "$ref": "#/$defs/GeoName"
+            },
+            "contacts": {
+              "items": {
+                "$ref": "#/$defs/Contact"
+              },
+              "type": "array"
+            },
+            "country": {
+              "type": "string"
+            },
+            "facility": {
+              "type": "string"
+            },
+            "geoPoint": {
+              "$ref": "#/$defs/GeoPoint"
+            },
+            "state": {
+              "$ref": "#/$defs/GeoName"
+            },
+            "status": {
+              "$ref": "#/$defs/RecruitmentStatus"
+            },
+            "zip": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "MaskingBlock": {
+          "properties": {
+            "masking": {
+              "$ref": "#/$defs/DesignMasking"
+            },
+            "maskingDescription": {
+              "type": "string"
+            },
+            "whoMasked": {
+              "items": {
+                "$ref": "#/$defs/WhoMasked"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "MeasureAnalysis": {
+          "properties": {
+            "ciLowerLimit": {
+              "type": "string"
+            },
+            "ciLowerLimitComment": {
+              "type": "string"
+            },
+            "ciNumSides": {
+              "$ref": "#/$defs/ConfidenceIntervalNumSides"
+            },
+            "ciPctValue": {
+              "type": "string"
+            },
+            "ciUpperLimit": {
+              "type": "string"
+            },
+            "ciUpperLimitComment": {
+              "type": "string"
+            },
+            "dispersionType": {
+              "$ref": "#/$defs/AnalysisDispersionType"
+            },
+            "dispersionValue": {
+              "type": "string"
+            },
+            "estimateComment": {
+              "type": "string"
+            },
+            "groupDescription": {
+              "type": "string"
+            },
+            "groupIds": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "nonInferiorityComment": {
+              "type": "string"
+            },
+            "nonInferiorityType": {
+              "$ref": "#/$defs/NonInferiorityType"
+            },
+            "otherAnalysisDescription": {
+              "type": "string"
+            },
+            "pValue": {
+              "type": "string"
+            },
+            "pValueComment": {
+              "type": "string"
+            },
+            "paramType": {
+              "type": "string"
+            },
+            "paramValue": {
+              "type": "string"
+            },
+            "statisticalComment": {
+              "type": "string"
+            },
+            "statisticalMethod": {
+              "type": "string"
+            },
+            "testedNonInferiority": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "MeasureCategory": {
+          "properties": {
+            "measurements": {
+              "items": {
+                "$ref": "#/$defs/Measurement"
+              },
+              "type": "array"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "MeasureClass": {
+          "properties": {
+            "categories": {
+              "items": {
+                "$ref": "#/$defs/MeasureCategory"
+              },
+              "type": "array"
+            },
+            "denoms": {
+              "items": {
+                "$ref": "#/$defs/Denom"
+              },
+              "type": "array"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "MeasureDispersionType": {
+          "enum": [
+            "NA",
+            "STANDARD_DEVIATION",
+            "STANDARD_ERROR",
+            "INTER_QUARTILE_RANGE",
+            "FULL_RANGE",
+            "CONFIDENCE_80",
+            "CONFIDENCE_90",
+            "CONFIDENCE_95",
+            "CONFIDENCE_975",
+            "CONFIDENCE_99",
+            "CONFIDENCE_OTHER",
+            "GEOMETRIC_COEFFICIENT"
+          ],
+          "type": "string"
+        },
+        "MeasureGroup": {
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "MeasureParam": {
+          "enum": [
+            "GEOMETRIC_MEAN",
+            "GEOMETRIC_LEAST_SQUARES_MEAN",
+            "LEAST_SQUARES_MEAN",
+            "LOG_MEAN",
+            "MEAN",
+            "MEDIAN",
+            "NUMBER",
+            "COUNT_OF_PARTICIPANTS",
+            "COUNT_OF_UNITS"
+          ],
+          "type": "string"
+        },
+        "Measurement": {
+          "properties": {
+            "comment": {
+              "type": "string"
+            },
+            "groupId": {
+              "type": "string"
+            },
+            "lowerLimit": {
+              "type": "string"
+            },
+            "spread": {
+              "type": "string"
+            },
+            "upperLimit": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "Mesh": {
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "term": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "MiscInfoModule": {
+          "properties": {
+            "removedCountries": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "submissionTracking": {
+              "$ref": "#/$defs/SubmissionTracking"
+            },
+            "versionHolder": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "MoreInfoModule": {
+          "properties": {
+            "certainAgreement": {
+              "$ref": "#/$defs/CertainAgreement"
+            },
+            "limitationsAndCaveats": {
+              "$ref": "#/$defs/LimitationsAndCaveats"
+            },
+            "pointOfContact": {
+              "$ref": "#/$defs/PointOfContact"
+            }
+          },
+          "type": "object"
+        },
+        "NonInferiorityType": {
+          "enum": [
+            "SUPERIORITY",
+            "NON_INFERIORITY",
+            "EQUIVALENCE",
+            "OTHER",
+            "NON_INFERIORITY_OR_EQUIVALENCE",
+            "SUPERIORITY_OR_OTHER",
+            "NON_INFERIORITY_OR_EQUIVALENCE_LEGACY",
+            "SUPERIORITY_OR_OTHER_LEGACY"
+          ],
+          "type": "string"
+        },
+        "ObservationalModel": {
+          "enum": [
+            "COHORT",
+            "CASE_CONTROL",
+            "CASE_ONLY",
+            "CASE_CROSSOVER",
+            "ECOLOGIC_OR_COMMUNITY",
+            "FAMILY_BASED",
+            "DEFINED_POPULATION",
+            "NATURAL_HISTORY",
+            "OTHER"
+          ],
+          "type": "string"
+        },
+        "Official": {
+          "properties": {
+            "affiliation": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "role": {
+              "$ref": "#/$defs/OfficialRole"
+            }
+          },
+          "type": "object"
+        },
+        "OfficialRole": {
+          "enum": [
+            "STUDY_CHAIR",
+            "STUDY_DIRECTOR",
+            "PRINCIPAL_INVESTIGATOR",
+            "SUB_INVESTIGATOR"
+          ],
+          "type": "string"
+        },
+        "OrgStudyIdInfo": {
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "link": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/OrgStudyIdType"
+            }
+          },
+          "type": "object"
+        },
+        "OrgStudyIdType": {
+          "enum": [
+            "NIH",
+            "FDA",
+            "VA",
+            "CDC",
+            "AHRQ",
+            "SAMHSA"
+          ],
+          "type": "string"
+        },
+        "Organization": {
+          "properties": {
+            "class": {
+              "$ref": "#/$defs/AgencyClass"
+            },
+            "fullName": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "Outcome": {
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "measure": {
+              "type": "string"
+            },
+            "timeFrame": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "OutcomeMeasure": {
+          "properties": {
+            "analyses": {
+              "items": {
+                "$ref": "#/$defs/MeasureAnalysis"
+              },
+              "type": "array"
+            },
+            "anticipatedPostingDate": {
+              "$ref": "#/$defs/PartialDate"
+            },
+            "calculatePct": {
+              "type": "boolean"
+            },
+            "classes": {
+              "items": {
+                "$ref": "#/$defs/MeasureClass"
+              },
+              "type": "array"
+            },
+            "denomUnitsSelected": {
+              "type": "string"
+            },
+            "denoms": {
+              "items": {
+                "$ref": "#/$defs/Denom"
+              },
+              "type": "array"
+            },
+            "description": {
+              "type": "string"
+            },
+            "dispersionType": {
+              "type": "string"
+            },
+            "groups": {
+              "items": {
+                "$ref": "#/$defs/MeasureGroup"
+              },
+              "type": "array"
+            },
+            "paramType": {
+              "$ref": "#/$defs/MeasureParam"
+            },
+            "populationDescription": {
+              "type": "string"
+            },
+            "reportingStatus": {
+              "$ref": "#/$defs/ReportingStatus"
+            },
+            "timeFrame": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/OutcomeMeasureType"
+            },
+            "typeUnitsAnalyzed": {
+              "type": "string"
+            },
+            "unitOfMeasure": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "OutcomeMeasureType": {
+          "enum": [
+            "PRIMARY",
+            "SECONDARY",
+            "OTHER_PRE_SPECIFIED",
+            "POST_HOC"
+          ],
+          "type": "string"
+        },
+        "OutcomeMeasuresModule": {
+          "properties": {
+            "outcomeMeasures": {
+              "items": {
+                "$ref": "#/$defs/OutcomeMeasure"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "OutcomesModule": {
+          "properties": {
+            "otherOutcomes": {
+              "items": {
+                "$ref": "#/$defs/Outcome"
+              },
+              "type": "array"
+            },
+            "primaryOutcomes": {
+              "items": {
+                "$ref": "#/$defs/Outcome"
+              },
+              "type": "array"
+            },
+            "secondaryOutcomes": {
+              "items": {
+                "$ref": "#/$defs/Outcome"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "OversightModule": {
+          "properties": {
+            "fdaaa801Violation": {
+              "type": "boolean"
+            },
+            "isFdaRegulatedDevice": {
+              "type": "boolean"
+            },
+            "isFdaRegulatedDrug": {
+              "type": "boolean"
+            },
+            "isPpsd": {
+              "type": "boolean"
+            },
+            "isUnapprovedDevice": {
+              "type": "boolean"
+            },
+            "isUsExport": {
+              "type": "boolean"
+            },
+            "oversightHasDmc": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "PartialDate": {
+          "description": "Date in `yyyy`, `yyyy-MM`, or `yyyy-MM-dd` format",
+          "type": "string"
+        },
+        "PartialDateStruct": {
+          "properties": {
+            "date": {
+              "$ref": "#/$defs/PartialDate"
+            },
+            "type": {
+              "$ref": "#/$defs/DateType"
+            }
+          },
+          "type": "object"
+        },
+        "ParticipantFlowModule": {
+          "properties": {
+            "groups": {
+              "items": {
+                "$ref": "#/$defs/FlowGroup"
+              },
+              "type": "array"
+            },
+            "periods": {
+              "items": {
+                "$ref": "#/$defs/FlowPeriod"
+              },
+              "type": "array"
+            },
+            "preAssignmentDetails": {
+              "type": "string"
+            },
+            "recruitmentDetails": {
+              "type": "string"
+            },
+            "typeUnitsAnalyzed": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "Phase": {
+          "enum": [
+            "NA",
+            "EARLY_PHASE1",
+            "PHASE1",
+            "PHASE2",
+            "PHASE3",
+            "PHASE4"
+          ],
+          "type": "string"
+        },
+        "PointOfContact": {
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "organization": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "phoneExt": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "PrimaryPurpose": {
+          "enum": [
+            "TREATMENT",
+            "PREVENTION",
+            "DIAGNOSTIC",
+            "ECT",
+            "SUPPORTIVE_CARE",
+            "SCREENING",
+            "HEALTH_SERVICES_RESEARCH",
+            "BASIC_SCIENCE",
+            "DEVICE_FEASIBILITY",
+            "OTHER"
+          ],
+          "type": "string"
+        },
+        "ProtocolSection": {
+          "properties": {
+            "armsInterventionsModule": {
+              "$ref": "#/$defs/ArmsInterventionsModule"
+            },
+            "conditionsModule": {
+              "$ref": "#/$defs/ConditionsModule"
+            },
+            "contactsLocationsModule": {
+              "$ref": "#/$defs/ContactsLocationsModule"
+            },
+            "descriptionModule": {
+              "$ref": "#/$defs/DescriptionModule"
+            },
+            "designModule": {
+              "$ref": "#/$defs/DesignModule"
+            },
+            "eligibilityModule": {
+              "$ref": "#/$defs/EligibilityModule"
+            },
+            "identificationModule": {
+              "$ref": "#/$defs/IdentificationModule"
+            },
+            "ipdSharingStatementModule": {
+              "$ref": "#/$defs/IpdSharingStatementModule"
+            },
+            "outcomesModule": {
+              "$ref": "#/$defs/OutcomesModule"
+            },
+            "oversightModule": {
+              "$ref": "#/$defs/OversightModule"
+            },
+            "referencesModule": {
+              "$ref": "#/$defs/ReferencesModule"
+            },
+            "sponsorCollaboratorsModule": {
+              "$ref": "#/$defs/SponsorCollaboratorsModule"
+            },
+            "statusModule": {
+              "$ref": "#/$defs/StatusModule"
+            }
+          },
+          "type": "object"
+        },
+        "RecruitmentStatus": {
+          "enum": [
+            "ACTIVE_NOT_RECRUITING",
+            "COMPLETED",
+            "ENROLLING_BY_INVITATION",
+            "NOT_YET_RECRUITING",
+            "RECRUITING",
+            "SUSPENDED",
+            "TERMINATED",
+            "WITHDRAWN",
+            "AVAILABLE"
+          ],
+          "type": "string"
+        },
+        "Reference": {
+          "properties": {
+            "citation": {
+              "type": "string"
+            },
+            "pmid": {
+              "type": "string"
+            },
+            "retractions": {
+              "items": {
+                "$ref": "#/$defs/Retraction"
+              },
+              "type": "array"
+            },
+            "type": {
+              "$ref": "#/$defs/ReferenceType"
+            }
+          },
+          "type": "object"
+        },
+        "ReferenceType": {
+          "enum": [
+            "BACKGROUND",
+            "RESULT",
+            "DERIVED"
+          ],
+          "type": "string"
+        },
+        "ReferencesModule": {
+          "properties": {
+            "availIpds": {
+              "items": {
+                "$ref": "#/$defs/AvailIpd"
+              },
+              "type": "array"
+            },
+            "references": {
+              "items": {
+                "$ref": "#/$defs/Reference"
+              },
+              "type": "array"
+            },
+            "seeAlsoLinks": {
+              "items": {
+                "$ref": "#/$defs/SeeAlsoLink"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "ReportingStatus": {
+          "enum": [
+            "NOT_POSTED",
+            "POSTED"
+          ],
+          "type": "string"
+        },
+        "ResponsibleParty": {
+          "properties": {
+            "investigatorAffiliation": {
+              "type": "string"
+            },
+            "investigatorFullName": {
+              "type": "string"
+            },
+            "investigatorTitle": {
+              "type": "string"
+            },
+            "oldNameTitle": {
+              "type": "string"
+            },
+            "oldOrganization": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/ResponsiblePartyType"
+            }
+          },
+          "type": "object"
+        },
+        "ResponsiblePartyType": {
+          "enum": [
+            "SPONSOR",
+            "PRINCIPAL_INVESTIGATOR",
+            "SPONSOR_INVESTIGATOR"
+          ],
+          "type": "string"
+        },
+        "ResultsSection": {
+          "properties": {
+            "adverseEventsModule": {
+              "$ref": "#/$defs/AdverseEventsModule"
+            },
+            "baselineCharacteristicsModule": {
+              "$ref": "#/$defs/BaselineCharacteristicsModule"
+            },
+            "moreInfoModule": {
+              "$ref": "#/$defs/MoreInfoModule"
+            },
+            "outcomeMeasuresModule": {
+              "$ref": "#/$defs/OutcomeMeasuresModule"
+            },
+            "participantFlowModule": {
+              "$ref": "#/$defs/ParticipantFlowModule"
+            }
+          },
+          "type": "object"
+        },
+        "Retraction": {
+          "properties": {
+            "pmid": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "SamplingMethod": {
+          "enum": [
+            "PROBABILITY_SAMPLE",
+            "NON_PROBABILITY_SAMPLE"
+          ],
+          "type": "string"
+        },
+        "SecondaryIdInfo": {
+          "properties": {
+            "domain": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "link": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/SecondaryIdType"
+            }
+          },
+          "type": "object"
+        },
+        "SecondaryIdType": {
+          "enum": [
+            "NIH",
+            "FDA",
+            "VA",
+            "CDC",
+            "AHRQ",
+            "SAMHSA",
+            "OTHER_GRANT",
+            "EUDRACT_NUMBER",
+            "CTIS",
+            "REGISTRY",
+            "OTHER"
+          ],
+          "type": "string"
+        },
+        "SeeAlsoLink": {
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "Sex": {
+          "enum": [
+            "FEMALE",
+            "MALE",
+            "ALL"
+          ],
+          "type": "string"
+        },
+        "Sponsor": {
+          "properties": {
+            "class": {
+              "$ref": "#/$defs/AgencyClass"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "SponsorCollaboratorsModule": {
+          "properties": {
+            "collaborators": {
+              "items": {
+                "$ref": "#/$defs/Sponsor"
+              },
+              "type": "array"
+            },
+            "leadSponsor": {
+              "$ref": "#/$defs/Sponsor"
+            },
+            "responsibleParty": {
+              "$ref": "#/$defs/ResponsibleParty"
+            }
+          },
+          "type": "object"
+        },
+        "StandardAge": {
+          "enum": [
+            "CHILD",
+            "ADULT",
+            "OLDER_ADULT"
+          ],
+          "type": "string"
+        },
+        "Status": {
+          "enum": [
+            "ACTIVE_NOT_RECRUITING",
+            "COMPLETED",
+            "ENROLLING_BY_INVITATION",
+            "NOT_YET_RECRUITING",
+            "RECRUITING",
+            "SUSPENDED",
+            "TERMINATED",
+            "WITHDRAWN",
+            "AVAILABLE",
+            "NO_LONGER_AVAILABLE",
+            "TEMPORARILY_NOT_AVAILABLE",
+            "APPROVED_FOR_MARKETING",
+            "WITHHELD",
+            "UNKNOWN"
+          ],
+          "type": "string"
+        },
+        "StatusModule": {
+          "properties": {
+            "completionDateStruct": {
+              "$ref": "#/$defs/PartialDateStruct"
+            },
+            "delayedPosting": {
+              "type": "boolean"
+            },
+            "dispFirstPostDateStruct": {
+              "$ref": "#/$defs/DateStruct"
+            },
+            "dispFirstSubmitDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "dispFirstSubmitQcDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "expandedAccessInfo": {
+              "$ref": "#/$defs/ExpandedAccessInfo"
+            },
+            "lastKnownStatus": {
+              "$ref": "#/$defs/Status"
+            },
+            "lastUpdatePostDateStruct": {
+              "$ref": "#/$defs/DateStruct"
+            },
+            "lastUpdateSubmitDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "overallStatus": {
+              "$ref": "#/$defs/Status"
+            },
+            "primaryCompletionDateStruct": {
+              "$ref": "#/$defs/PartialDateStruct"
+            },
+            "resultsFirstPostDateStruct": {
+              "$ref": "#/$defs/DateStruct"
+            },
+            "resultsFirstSubmitDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "resultsFirstSubmitQcDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "resultsWaived": {
+              "type": "boolean"
+            },
+            "startDateStruct": {
+              "$ref": "#/$defs/PartialDateStruct"
+            },
+            "statusVerifiedDate": {
+              "$ref": "#/$defs/PartialDate"
+            },
+            "studyFirstPostDateStruct": {
+              "$ref": "#/$defs/DateStruct"
+            },
+            "studyFirstSubmitDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "studyFirstSubmitQcDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "whyStopped": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "Study": {
+          "properties": {
+            "annotationSection": {
+              "$ref": "#/$defs/AnnotationSection"
+            },
+            "derivedSection": {
+              "$ref": "#/$defs/DerivedSection"
+            },
+            "documentSection": {
+              "$ref": "#/$defs/DocumentSection"
+            },
+            "hasResults": {
+              "type": "boolean"
+            },
+            "protocolSection": {
+              "$ref": "#/$defs/ProtocolSection"
+            },
+            "resultsSection": {
+              "$ref": "#/$defs/ResultsSection"
+            }
+          },
+          "type": "object"
+        },
+        "StudyType": {
+          "enum": [
+            "EXPANDED_ACCESS",
+            "INTERVENTIONAL",
+            "OBSERVATIONAL"
+          ],
+          "type": "string"
+        },
+        "SubmissionInfo": {
+          "properties": {
+            "mcpReleaseN": {
+              "type": "integer"
+            },
+            "releaseDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "resetDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "unreleaseDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "unreleaseDateUnknown": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "SubmissionTracking": {
+          "properties": {
+            "estimatedResultsFirstSubmitDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "firstMcpInfo": {
+              "$ref": "#/$defs/FirstMcpInfo"
+            },
+            "submissionInfos": {
+              "items": {
+                "$ref": "#/$defs/SubmissionInfo"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "UnpostedAnnotation": {
+          "properties": {
+            "unpostedEvents": {
+              "items": {
+                "$ref": "#/$defs/UnpostedEvent"
+              },
+              "type": "array"
+            },
+            "unpostedResponsibleParty": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "UnpostedEvent": {
+          "properties": {
+            "date": {
+              "format": "date",
+              "type": "string"
+            },
+            "dateUnknown": {
+              "type": "boolean"
+            },
+            "type": {
+              "$ref": "#/$defs/UnpostedEventType"
+            }
+          },
+          "type": "object"
+        },
+        "UnpostedEventType": {
+          "enum": [
+            "RESET",
+            "RELEASE",
+            "UNRELEASE"
+          ],
+          "type": "string"
+        },
+        "ViolationAnnotation": {
+          "properties": {
+            "violationEvents": {
+              "items": {
+                "$ref": "#/$defs/ViolationEvent"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "ViolationEvent": {
+          "properties": {
+            "creationDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "issuedDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "postedDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "releaseDate": {
+              "format": "date",
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/ViolationEventType"
+            }
+          },
+          "type": "object"
+        },
+        "ViolationEventType": {
+          "enum": [
+            "VIOLATION_IDENTIFIED",
+            "CORRECTION_CONFIRMED",
+            "PENALTY_IMPOSED",
+            "ISSUES_IN_LETTER_ADDRESSED_CONFIRMED"
+          ],
+          "type": "string"
+        },
+        "WhoMasked": {
+          "enum": [
+            "PARTICIPANT",
+            "CARE_PROVIDER",
+            "INVESTIGATOR",
+            "OUTCOMES_ASSESSOR"
+          ],
+          "type": "string"
+        },
+        "nct": {
+          "description": "NCT number",
+          "maxLength": 11,
+          "minLength": 11,
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "provenance": {
+          "type": "object"
+        },
+        "result": {
+          "$ref": "#/$defs/Study"
+        }
+      },
+      "required": [
+        "result",
+        "provenance"
+      ],
+      "type": "object"
+    },
+    "type": "VSDDynamicRESTTool",
+    "vsd_operation": {
+      "auth": {
+        "type": "none"
+      },
+      "endpoint": "https://clinicaltrials.gov/api/v2/studies/{nctId}",
+      "fixed_query": {
+        "format": "json"
+      },
+      "method": "GET",
+      "path_arguments": {
+        "nctId": "nctId"
+      },
+      "query_arguments": {},
+      "query_serialization": {},
+      "response_schema": {
+        "$defs": {
+          "AdverseEvent": {
+            "properties": {
+              "assessmentType": {
+                "$ref": "#/$defs/EventAssessment"
+              },
+              "notes": {
+                "type": "string"
+              },
+              "organSystem": {
+                "type": "string"
+              },
+              "sourceVocabulary": {
+                "type": "string"
+              },
+              "stats": {
+                "items": {
+                  "$ref": "#/$defs/EventStats"
+                },
+                "type": "array"
+              },
+              "term": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "AdverseEventsModule": {
+            "properties": {
+              "allCauseMortalityComment": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "eventGroups": {
+                "items": {
+                  "$ref": "#/$defs/EventGroup"
+                },
+                "type": "array"
+              },
+              "frequencyThreshold": {
+                "type": "string"
+              },
+              "otherEvents": {
+                "items": {
+                  "$ref": "#/$defs/AdverseEvent"
+                },
+                "type": "array"
+              },
+              "seriousEvents": {
+                "items": {
+                  "$ref": "#/$defs/AdverseEvent"
+                },
+                "type": "array"
+              },
+              "timeFrame": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "AgencyClass": {
+            "enum": [
+              "NIH",
+              "FED",
+              "OTHER_GOV",
+              "INDIV",
+              "INDUSTRY",
+              "NETWORK",
+              "AMBIG",
+              "OTHER",
+              "UNKNOWN"
+            ],
+            "type": "string"
+          },
+          "AgreementRestrictionType": {
+            "enum": [
+              "LTE60",
+              "GT60",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "AnalysisDispersionType": {
+            "enum": [
+              "STANDARD_DEVIATION",
+              "STANDARD_ERROR_OF_MEAN"
+            ],
+            "type": "string"
+          },
+          "AnnotationModule": {
+            "properties": {
+              "unpostedAnnotation": {
+                "$ref": "#/$defs/UnpostedAnnotation"
+              },
+              "violationAnnotation": {
+                "$ref": "#/$defs/ViolationAnnotation"
+              }
+            },
+            "type": "object"
+          },
+          "AnnotationSection": {
+            "properties": {
+              "annotationModule": {
+                "$ref": "#/$defs/AnnotationModule"
+              }
+            },
+            "type": "object"
+          },
+          "ArmGroup": {
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "interventionNames": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "label": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/ArmGroupType"
+              }
+            },
+            "type": "object"
+          },
+          "ArmGroupType": {
+            "enum": [
+              "EXPERIMENTAL",
+              "ACTIVE_COMPARATOR",
+              "PLACEBO_COMPARATOR",
+              "SHAM_COMPARATOR",
+              "NO_INTERVENTION",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "ArmsInterventionsModule": {
+            "properties": {
+              "armGroups": {
+                "items": {
+                  "$ref": "#/$defs/ArmGroup"
+                },
+                "type": "array"
+              },
+              "interventions": {
+                "items": {
+                  "$ref": "#/$defs/Intervention"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "AvailIpd": {
+            "properties": {
+              "comment": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "BaselineCharacteristicsModule": {
+            "properties": {
+              "denoms": {
+                "items": {
+                  "$ref": "#/$defs/Denom"
+                },
+                "type": "array"
+              },
+              "groups": {
+                "items": {
+                  "$ref": "#/$defs/MeasureGroup"
+                },
+                "type": "array"
+              },
+              "measures": {
+                "items": {
+                  "$ref": "#/$defs/BaselineMeasure"
+                },
+                "type": "array"
+              },
+              "populationDescription": {
+                "type": "string"
+              },
+              "typeUnitsAnalyzed": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "BaselineMeasure": {
+            "properties": {
+              "calculatePct": {
+                "type": "boolean"
+              },
+              "classes": {
+                "items": {
+                  "$ref": "#/$defs/MeasureClass"
+                },
+                "type": "array"
+              },
+              "denomUnitsSelected": {
+                "type": "string"
+              },
+              "denoms": {
+                "items": {
+                  "$ref": "#/$defs/Denom"
+                },
+                "type": "array"
+              },
+              "description": {
+                "type": "string"
+              },
+              "dispersionType": {
+                "$ref": "#/$defs/MeasureDispersionType"
+              },
+              "paramType": {
+                "$ref": "#/$defs/MeasureParam"
+              },
+              "populationDescription": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "unitOfMeasure": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "BioSpec": {
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "retention": {
+                "$ref": "#/$defs/BioSpecRetention"
+              }
+            },
+            "type": "object"
+          },
+          "BioSpecRetention": {
+            "enum": [
+              "NONE_RETAINED",
+              "SAMPLES_WITH_DNA",
+              "SAMPLES_WITHOUT_DNA"
+            ],
+            "type": "string"
+          },
+          "BrowseBranch": {
+            "properties": {
+              "abbrev": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "BrowseLeaf": {
+            "properties": {
+              "asFound": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "relevance": {
+                "$ref": "#/$defs/BrowseLeafRelevance"
+              }
+            },
+            "type": "object"
+          },
+          "BrowseLeafRelevance": {
+            "enum": [
+              "LOW",
+              "HIGH"
+            ],
+            "type": "string"
+          },
+          "BrowseModule": {
+            "properties": {
+              "ancestors": {
+                "items": {
+                  "$ref": "#/$defs/Mesh"
+                },
+                "type": "array"
+              },
+              "browseBranches": {
+                "items": {
+                  "$ref": "#/$defs/BrowseBranch"
+                },
+                "type": "array"
+              },
+              "browseLeaves": {
+                "items": {
+                  "$ref": "#/$defs/BrowseLeaf"
+                },
+                "type": "array"
+              },
+              "meshes": {
+                "items": {
+                  "$ref": "#/$defs/Mesh"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "CertainAgreement": {
+            "properties": {
+              "otherDetails": {
+                "type": "string"
+              },
+              "piSponsorEmployee": {
+                "type": "boolean"
+              },
+              "restrictionType": {
+                "$ref": "#/$defs/AgreementRestrictionType"
+              },
+              "restrictiveAgreement": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "ConditionsModule": {
+            "properties": {
+              "conditions": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "keywords": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "ConfidenceIntervalNumSides": {
+            "enum": [
+              "ONE_SIDED",
+              "TWO_SIDED"
+            ],
+            "type": "string"
+          },
+          "Contact": {
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "phoneExt": {
+                "type": "string"
+              },
+              "role": {
+                "$ref": "#/$defs/ContactRole"
+              }
+            },
+            "type": "object"
+          },
+          "ContactRole": {
+            "enum": [
+              "STUDY_CHAIR",
+              "STUDY_DIRECTOR",
+              "PRINCIPAL_INVESTIGATOR",
+              "SUB_INVESTIGATOR",
+              "CONTACT"
+            ],
+            "type": "string"
+          },
+          "ContactsLocationsModule": {
+            "properties": {
+              "centralContacts": {
+                "items": {
+                  "$ref": "#/$defs/Contact"
+                },
+                "type": "array"
+              },
+              "locations": {
+                "items": {
+                  "$ref": "#/$defs/Location"
+                },
+                "type": "array"
+              },
+              "overallOfficials": {
+                "items": {
+                  "$ref": "#/$defs/Official"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "DateStruct": {
+            "properties": {
+              "date": {
+                "format": "date",
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/DateType"
+              }
+            },
+            "type": "object"
+          },
+          "DateTimeMinutes": {
+            "description": "Date and time in `yyyy-MM-dd'T'HH:mm` format",
+            "type": "string"
+          },
+          "DateType": {
+            "enum": [
+              "ACTUAL",
+              "ESTIMATED"
+            ],
+            "type": "string"
+          },
+          "Denom": {
+            "properties": {
+              "counts": {
+                "items": {
+                  "$ref": "#/$defs/DenomCount"
+                },
+                "type": "array"
+              },
+              "units": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "DenomCount": {
+            "properties": {
+              "groupId": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "DerivedSection": {
+            "properties": {
+              "conditionBrowseModule": {
+                "$ref": "#/$defs/BrowseModule"
+              },
+              "interventionBrowseModule": {
+                "$ref": "#/$defs/BrowseModule"
+              },
+              "miscInfoModule": {
+                "$ref": "#/$defs/MiscInfoModule"
+              }
+            },
+            "type": "object"
+          },
+          "DescriptionModule": {
+            "properties": {
+              "briefSummary": {
+                "type": "string"
+              },
+              "detailedDescription": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "DesignAllocation": {
+            "enum": [
+              "RANDOMIZED",
+              "NON_RANDOMIZED",
+              "NA"
+            ],
+            "type": "string"
+          },
+          "DesignInfo": {
+            "properties": {
+              "allocation": {
+                "$ref": "#/$defs/DesignAllocation"
+              },
+              "interventionModel": {
+                "$ref": "#/$defs/InterventionalAssignment"
+              },
+              "interventionModelDescription": {
+                "type": "string"
+              },
+              "maskingInfo": {
+                "$ref": "#/$defs/MaskingBlock"
+              },
+              "observationalModel": {
+                "$ref": "#/$defs/ObservationalModel"
+              },
+              "primaryPurpose": {
+                "$ref": "#/$defs/PrimaryPurpose"
+              },
+              "timePerspective": {
+                "$ref": "#/$defs/DesignTimePerspective"
+              }
+            },
+            "type": "object"
+          },
+          "DesignMasking": {
+            "enum": [
+              "NONE",
+              "SINGLE",
+              "DOUBLE",
+              "TRIPLE",
+              "QUADRUPLE"
+            ],
+            "type": "string"
+          },
+          "DesignModule": {
+            "properties": {
+              "bioSpec": {
+                "$ref": "#/$defs/BioSpec"
+              },
+              "designInfo": {
+                "$ref": "#/$defs/DesignInfo"
+              },
+              "enrollmentInfo": {
+                "$ref": "#/$defs/EnrollmentInfo"
+              },
+              "expandedAccessTypes": {
+                "$ref": "#/$defs/ExpandedAccessTypes"
+              },
+              "nPtrsToThisExpAccNctId": {
+                "type": "integer"
+              },
+              "patientRegistry": {
+                "type": "boolean"
+              },
+              "phases": {
+                "items": {
+                  "$ref": "#/$defs/Phase"
+                },
+                "type": "array"
+              },
+              "studyType": {
+                "$ref": "#/$defs/StudyType"
+              },
+              "targetDuration": {
+                "pattern": "^\\d+ (Year|Years|Month|Months|Week|Weeks|Day|Days|Hour|Hours|Minute|Minutes)$",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "DesignTimePerspective": {
+            "enum": [
+              "RETROSPECTIVE",
+              "PROSPECTIVE",
+              "CROSS_SECTIONAL",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "DocumentSection": {
+            "properties": {
+              "largeDocumentModule": {
+                "$ref": "#/$defs/LargeDocumentModule"
+              }
+            },
+            "type": "object"
+          },
+          "DropWithdraw": {
+            "properties": {
+              "comment": {
+                "type": "string"
+              },
+              "reasons": {
+                "items": {
+                  "$ref": "#/$defs/FlowStats"
+                },
+                "type": "array"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "EligibilityModule": {
+            "properties": {
+              "eligibilityCriteria": {
+                "type": "string"
+              },
+              "genderBased": {
+                "type": "boolean"
+              },
+              "genderDescription": {
+                "type": "string"
+              },
+              "healthyVolunteers": {
+                "type": "boolean"
+              },
+              "maximumAge": {
+                "pattern": "^\\d+ (Year|Years|Month|Months|Week|Weeks|Day|Days|Hour|Hours|Minute|Minutes)$",
+                "type": "string"
+              },
+              "minimumAge": {
+                "pattern": "^\\d+ (Year|Years|Month|Months|Week|Weeks|Day|Days|Hour|Hours|Minute|Minutes)$",
+                "type": "string"
+              },
+              "samplingMethod": {
+                "$ref": "#/$defs/SamplingMethod"
+              },
+              "sex": {
+                "$ref": "#/$defs/Sex"
+              },
+              "stdAges": {
+                "items": {
+                  "$ref": "#/$defs/StandardAge"
+                },
+                "type": "array"
+              },
+              "studyPopulation": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "EnrollmentInfo": {
+            "properties": {
+              "count": {
+                "type": "integer"
+              },
+              "type": {
+                "$ref": "#/$defs/EnrollmentType"
+              }
+            },
+            "type": "object"
+          },
+          "EnrollmentType": {
+            "enum": [
+              "ACTUAL",
+              "ESTIMATED"
+            ],
+            "type": "string"
+          },
+          "EventAssessment": {
+            "enum": [
+              "NON_SYSTEMATIC_ASSESSMENT",
+              "SYSTEMATIC_ASSESSMENT"
+            ],
+            "type": "string"
+          },
+          "EventGroup": {
+            "properties": {
+              "deathsNumAffected": {
+                "type": "integer"
+              },
+              "deathsNumAtRisk": {
+                "type": "integer"
+              },
+              "description": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "otherNumAffected": {
+                "type": "integer"
+              },
+              "otherNumAtRisk": {
+                "type": "integer"
+              },
+              "seriousNumAffected": {
+                "type": "integer"
+              },
+              "seriousNumAtRisk": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "EventStats": {
+            "properties": {
+              "groupId": {
+                "type": "string"
+              },
+              "numAffected": {
+                "type": "integer"
+              },
+              "numAtRisk": {
+                "type": "integer"
+              },
+              "numEvents": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "ExpandedAccessInfo": {
+            "properties": {
+              "hasExpandedAccess": {
+                "type": "boolean"
+              },
+              "nctId": {
+                "$ref": "#/$defs/nct"
+              },
+              "statusForNctId": {
+                "$ref": "#/$defs/ExpandedAccessStatus"
+              }
+            },
+            "type": "object"
+          },
+          "ExpandedAccessStatus": {
+            "enum": [
+              "AVAILABLE",
+              "NO_LONGER_AVAILABLE",
+              "TEMPORARILY_NOT_AVAILABLE",
+              "APPROVED_FOR_MARKETING"
+            ],
+            "type": "string"
+          },
+          "ExpandedAccessTypes": {
+            "properties": {
+              "individual": {
+                "type": "boolean"
+              },
+              "intermediate": {
+                "type": "boolean"
+              },
+              "treatment": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "FirstMcpInfo": {
+            "properties": {
+              "postDateStruct": {
+                "$ref": "#/$defs/DateStruct"
+              }
+            },
+            "type": "object"
+          },
+          "FlowGroup": {
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "FlowMilestone": {
+            "properties": {
+              "achievements": {
+                "items": {
+                  "$ref": "#/$defs/FlowStats"
+                },
+                "type": "array"
+              },
+              "comment": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "FlowPeriod": {
+            "properties": {
+              "dropWithdraws": {
+                "items": {
+                  "$ref": "#/$defs/DropWithdraw"
+                },
+                "type": "array"
+              },
+              "milestones": {
+                "items": {
+                  "$ref": "#/$defs/FlowMilestone"
+                },
+                "type": "array"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "FlowStats": {
+            "properties": {
+              "comment": {
+                "type": "string"
+              },
+              "groupId": {
+                "type": "string"
+              },
+              "numSubjects": {
+                "type": "string"
+              },
+              "numUnits": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "GeoName": {
+            "description": "State/province or city name",
+            "type": "string"
+          },
+          "GeoPoint": {
+            "properties": {
+              "lat": {
+                "type": "number"
+              },
+              "lon": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "lat",
+              "lon"
+            ],
+            "type": "object"
+          },
+          "IdentificationModule": {
+            "properties": {
+              "acronym": {
+                "type": "string"
+              },
+              "briefTitle": {
+                "type": "string"
+              },
+              "nctId": {
+                "$ref": "#/$defs/nct"
+              },
+              "nctIdAliases": {
+                "items": {
+                  "$ref": "#/$defs/nct"
+                },
+                "type": "array"
+              },
+              "officialTitle": {
+                "type": "string"
+              },
+              "orgStudyIdInfo": {
+                "$ref": "#/$defs/OrgStudyIdInfo"
+              },
+              "organization": {
+                "$ref": "#/$defs/Organization"
+              },
+              "secondaryIdInfos": {
+                "items": {
+                  "$ref": "#/$defs/SecondaryIdInfo"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "Intervention": {
+            "properties": {
+              "armGroupLabels": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "description": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "otherNames": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "type": {
+                "$ref": "#/$defs/InterventionType"
+              }
+            },
+            "type": "object"
+          },
+          "InterventionType": {
+            "enum": [
+              "BEHAVIORAL",
+              "BIOLOGICAL",
+              "COMBINATION_PRODUCT",
+              "DEVICE",
+              "DIAGNOSTIC_TEST",
+              "DIETARY_SUPPLEMENT",
+              "DRUG",
+              "GENETIC",
+              "PROCEDURE",
+              "RADIATION",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "InterventionalAssignment": {
+            "enum": [
+              "SINGLE_GROUP",
+              "PARALLEL",
+              "CROSSOVER",
+              "FACTORIAL",
+              "SEQUENTIAL"
+            ],
+            "type": "string"
+          },
+          "IpdSharing": {
+            "enum": [
+              "YES",
+              "NO",
+              "UNDECIDED"
+            ],
+            "type": "string"
+          },
+          "IpdSharingInfoType": {
+            "enum": [
+              "STUDY_PROTOCOL",
+              "SAP",
+              "ICF",
+              "CSR",
+              "ANALYTIC_CODE"
+            ],
+            "type": "string"
+          },
+          "IpdSharingStatementModule": {
+            "properties": {
+              "accessCriteria": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "infoTypes": {
+                "items": {
+                  "$ref": "#/$defs/IpdSharingInfoType"
+                },
+                "type": "array"
+              },
+              "ipdSharing": {
+                "$ref": "#/$defs/IpdSharing"
+              },
+              "timeFrame": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "LargeDoc": {
+            "properties": {
+              "date": {
+                "format": "date",
+                "type": "string"
+              },
+              "filename": {
+                "type": "string"
+              },
+              "hasIcf": {
+                "type": "boolean"
+              },
+              "hasProtocol": {
+                "type": "boolean"
+              },
+              "hasSap": {
+                "type": "boolean"
+              },
+              "label": {
+                "type": "string"
+              },
+              "size": {
+                "type": "integer"
+              },
+              "typeAbbrev": {
+                "type": "string"
+              },
+              "uploadDate": {
+                "$ref": "#/$defs/DateTimeMinutes"
+              }
+            },
+            "type": "object"
+          },
+          "LargeDocumentModule": {
+            "properties": {
+              "largeDocs": {
+                "items": {
+                  "$ref": "#/$defs/LargeDoc"
+                },
+                "type": "array"
+              },
+              "noSap": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "LimitationsAndCaveats": {
+            "properties": {
+              "description": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Location": {
+            "properties": {
+              "city": {
+                "$ref": "#/$defs/GeoName"
+              },
+              "contacts": {
+                "items": {
+                  "$ref": "#/$defs/Contact"
+                },
+                "type": "array"
+              },
+              "country": {
+                "type": "string"
+              },
+              "facility": {
+                "type": "string"
+              },
+              "geoPoint": {
+                "$ref": "#/$defs/GeoPoint"
+              },
+              "state": {
+                "$ref": "#/$defs/GeoName"
+              },
+              "status": {
+                "$ref": "#/$defs/RecruitmentStatus"
+              },
+              "zip": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "MaskingBlock": {
+            "properties": {
+              "masking": {
+                "$ref": "#/$defs/DesignMasking"
+              },
+              "maskingDescription": {
+                "type": "string"
+              },
+              "whoMasked": {
+                "items": {
+                  "$ref": "#/$defs/WhoMasked"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "MeasureAnalysis": {
+            "properties": {
+              "ciLowerLimit": {
+                "type": "string"
+              },
+              "ciLowerLimitComment": {
+                "type": "string"
+              },
+              "ciNumSides": {
+                "$ref": "#/$defs/ConfidenceIntervalNumSides"
+              },
+              "ciPctValue": {
+                "type": "string"
+              },
+              "ciUpperLimit": {
+                "type": "string"
+              },
+              "ciUpperLimitComment": {
+                "type": "string"
+              },
+              "dispersionType": {
+                "$ref": "#/$defs/AnalysisDispersionType"
+              },
+              "dispersionValue": {
+                "type": "string"
+              },
+              "estimateComment": {
+                "type": "string"
+              },
+              "groupDescription": {
+                "type": "string"
+              },
+              "groupIds": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "nonInferiorityComment": {
+                "type": "string"
+              },
+              "nonInferiorityType": {
+                "$ref": "#/$defs/NonInferiorityType"
+              },
+              "otherAnalysisDescription": {
+                "type": "string"
+              },
+              "pValue": {
+                "type": "string"
+              },
+              "pValueComment": {
+                "type": "string"
+              },
+              "paramType": {
+                "type": "string"
+              },
+              "paramValue": {
+                "type": "string"
+              },
+              "statisticalComment": {
+                "type": "string"
+              },
+              "statisticalMethod": {
+                "type": "string"
+              },
+              "testedNonInferiority": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "MeasureCategory": {
+            "properties": {
+              "measurements": {
+                "items": {
+                  "$ref": "#/$defs/Measurement"
+                },
+                "type": "array"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "MeasureClass": {
+            "properties": {
+              "categories": {
+                "items": {
+                  "$ref": "#/$defs/MeasureCategory"
+                },
+                "type": "array"
+              },
+              "denoms": {
+                "items": {
+                  "$ref": "#/$defs/Denom"
+                },
+                "type": "array"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "MeasureDispersionType": {
+            "enum": [
+              "NA",
+              "STANDARD_DEVIATION",
+              "STANDARD_ERROR",
+              "INTER_QUARTILE_RANGE",
+              "FULL_RANGE",
+              "CONFIDENCE_80",
+              "CONFIDENCE_90",
+              "CONFIDENCE_95",
+              "CONFIDENCE_975",
+              "CONFIDENCE_99",
+              "CONFIDENCE_OTHER",
+              "GEOMETRIC_COEFFICIENT"
+            ],
+            "type": "string"
+          },
+          "MeasureGroup": {
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "MeasureParam": {
+            "enum": [
+              "GEOMETRIC_MEAN",
+              "GEOMETRIC_LEAST_SQUARES_MEAN",
+              "LEAST_SQUARES_MEAN",
+              "LOG_MEAN",
+              "MEAN",
+              "MEDIAN",
+              "NUMBER",
+              "COUNT_OF_PARTICIPANTS",
+              "COUNT_OF_UNITS"
+            ],
+            "type": "string"
+          },
+          "Measurement": {
+            "properties": {
+              "comment": {
+                "type": "string"
+              },
+              "groupId": {
+                "type": "string"
+              },
+              "lowerLimit": {
+                "type": "string"
+              },
+              "spread": {
+                "type": "string"
+              },
+              "upperLimit": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Mesh": {
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "term": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "MiscInfoModule": {
+            "properties": {
+              "removedCountries": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "submissionTracking": {
+                "$ref": "#/$defs/SubmissionTracking"
+              },
+              "versionHolder": {
+                "format": "date",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "MoreInfoModule": {
+            "properties": {
+              "certainAgreement": {
+                "$ref": "#/$defs/CertainAgreement"
+              },
+              "limitationsAndCaveats": {
+                "$ref": "#/$defs/LimitationsAndCaveats"
+              },
+              "pointOfContact": {
+                "$ref": "#/$defs/PointOfContact"
+              }
+            },
+            "type": "object"
+          },
+          "NonInferiorityType": {
+            "enum": [
+              "SUPERIORITY",
+              "NON_INFERIORITY",
+              "EQUIVALENCE",
+              "OTHER",
+              "NON_INFERIORITY_OR_EQUIVALENCE",
+              "SUPERIORITY_OR_OTHER",
+              "NON_INFERIORITY_OR_EQUIVALENCE_LEGACY",
+              "SUPERIORITY_OR_OTHER_LEGACY"
+            ],
+            "type": "string"
+          },
+          "ObservationalModel": {
+            "enum": [
+              "COHORT",
+              "CASE_CONTROL",
+              "CASE_ONLY",
+              "CASE_CROSSOVER",
+              "ECOLOGIC_OR_COMMUNITY",
+              "FAMILY_BASED",
+              "DEFINED_POPULATION",
+              "NATURAL_HISTORY",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "Official": {
+            "properties": {
+              "affiliation": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "$ref": "#/$defs/OfficialRole"
+              }
+            },
+            "type": "object"
+          },
+          "OfficialRole": {
+            "enum": [
+              "STUDY_CHAIR",
+              "STUDY_DIRECTOR",
+              "PRINCIPAL_INVESTIGATOR",
+              "SUB_INVESTIGATOR"
+            ],
+            "type": "string"
+          },
+          "OrgStudyIdInfo": {
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "link": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/OrgStudyIdType"
+              }
+            },
+            "type": "object"
+          },
+          "OrgStudyIdType": {
+            "enum": [
+              "NIH",
+              "FDA",
+              "VA",
+              "CDC",
+              "AHRQ",
+              "SAMHSA"
+            ],
+            "type": "string"
+          },
+          "Organization": {
+            "properties": {
+              "class": {
+                "$ref": "#/$defs/AgencyClass"
+              },
+              "fullName": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Outcome": {
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "measure": {
+                "type": "string"
+              },
+              "timeFrame": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "OutcomeMeasure": {
+            "properties": {
+              "analyses": {
+                "items": {
+                  "$ref": "#/$defs/MeasureAnalysis"
+                },
+                "type": "array"
+              },
+              "anticipatedPostingDate": {
+                "$ref": "#/$defs/PartialDate"
+              },
+              "calculatePct": {
+                "type": "boolean"
+              },
+              "classes": {
+                "items": {
+                  "$ref": "#/$defs/MeasureClass"
+                },
+                "type": "array"
+              },
+              "denomUnitsSelected": {
+                "type": "string"
+              },
+              "denoms": {
+                "items": {
+                  "$ref": "#/$defs/Denom"
+                },
+                "type": "array"
+              },
+              "description": {
+                "type": "string"
+              },
+              "dispersionType": {
+                "type": "string"
+              },
+              "groups": {
+                "items": {
+                  "$ref": "#/$defs/MeasureGroup"
+                },
+                "type": "array"
+              },
+              "paramType": {
+                "$ref": "#/$defs/MeasureParam"
+              },
+              "populationDescription": {
+                "type": "string"
+              },
+              "reportingStatus": {
+                "$ref": "#/$defs/ReportingStatus"
+              },
+              "timeFrame": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/OutcomeMeasureType"
+              },
+              "typeUnitsAnalyzed": {
+                "type": "string"
+              },
+              "unitOfMeasure": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "OutcomeMeasureType": {
+            "enum": [
+              "PRIMARY",
+              "SECONDARY",
+              "OTHER_PRE_SPECIFIED",
+              "POST_HOC"
+            ],
+            "type": "string"
+          },
+          "OutcomeMeasuresModule": {
+            "properties": {
+              "outcomeMeasures": {
+                "items": {
+                  "$ref": "#/$defs/OutcomeMeasure"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "OutcomesModule": {
+            "properties": {
+              "otherOutcomes": {
+                "items": {
+                  "$ref": "#/$defs/Outcome"
+                },
+                "type": "array"
+              },
+              "primaryOutcomes": {
+                "items": {
+                  "$ref": "#/$defs/Outcome"
+                },
+                "type": "array"
+              },
+              "secondaryOutcomes": {
+                "items": {
+                  "$ref": "#/$defs/Outcome"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "OversightModule": {
+            "properties": {
+              "fdaaa801Violation": {
+                "type": "boolean"
+              },
+              "isFdaRegulatedDevice": {
+                "type": "boolean"
+              },
+              "isFdaRegulatedDrug": {
+                "type": "boolean"
+              },
+              "isPpsd": {
+                "type": "boolean"
+              },
+              "isUnapprovedDevice": {
+                "type": "boolean"
+              },
+              "isUsExport": {
+                "type": "boolean"
+              },
+              "oversightHasDmc": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "PartialDate": {
+            "description": "Date in `yyyy`, `yyyy-MM`, or `yyyy-MM-dd` format",
+            "type": "string"
+          },
+          "PartialDateStruct": {
+            "properties": {
+              "date": {
+                "$ref": "#/$defs/PartialDate"
+              },
+              "type": {
+                "$ref": "#/$defs/DateType"
+              }
+            },
+            "type": "object"
+          },
+          "ParticipantFlowModule": {
+            "properties": {
+              "groups": {
+                "items": {
+                  "$ref": "#/$defs/FlowGroup"
+                },
+                "type": "array"
+              },
+              "periods": {
+                "items": {
+                  "$ref": "#/$defs/FlowPeriod"
+                },
+                "type": "array"
+              },
+              "preAssignmentDetails": {
+                "type": "string"
+              },
+              "recruitmentDetails": {
+                "type": "string"
+              },
+              "typeUnitsAnalyzed": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Phase": {
+            "enum": [
+              "NA",
+              "EARLY_PHASE1",
+              "PHASE1",
+              "PHASE2",
+              "PHASE3",
+              "PHASE4"
+            ],
+            "type": "string"
+          },
+          "PointOfContact": {
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "organization": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "phoneExt": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "PrimaryPurpose": {
+            "enum": [
+              "TREATMENT",
+              "PREVENTION",
+              "DIAGNOSTIC",
+              "ECT",
+              "SUPPORTIVE_CARE",
+              "SCREENING",
+              "HEALTH_SERVICES_RESEARCH",
+              "BASIC_SCIENCE",
+              "DEVICE_FEASIBILITY",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "ProtocolSection": {
+            "properties": {
+              "armsInterventionsModule": {
+                "$ref": "#/$defs/ArmsInterventionsModule"
+              },
+              "conditionsModule": {
+                "$ref": "#/$defs/ConditionsModule"
+              },
+              "contactsLocationsModule": {
+                "$ref": "#/$defs/ContactsLocationsModule"
+              },
+              "descriptionModule": {
+                "$ref": "#/$defs/DescriptionModule"
+              },
+              "designModule": {
+                "$ref": "#/$defs/DesignModule"
+              },
+              "eligibilityModule": {
+                "$ref": "#/$defs/EligibilityModule"
+              },
+              "identificationModule": {
+                "$ref": "#/$defs/IdentificationModule"
+              },
+              "ipdSharingStatementModule": {
+                "$ref": "#/$defs/IpdSharingStatementModule"
+              },
+              "outcomesModule": {
+                "$ref": "#/$defs/OutcomesModule"
+              },
+              "oversightModule": {
+                "$ref": "#/$defs/OversightModule"
+              },
+              "referencesModule": {
+                "$ref": "#/$defs/ReferencesModule"
+              },
+              "sponsorCollaboratorsModule": {
+                "$ref": "#/$defs/SponsorCollaboratorsModule"
+              },
+              "statusModule": {
+                "$ref": "#/$defs/StatusModule"
+              }
+            },
+            "type": "object"
+          },
+          "RecruitmentStatus": {
+            "enum": [
+              "ACTIVE_NOT_RECRUITING",
+              "COMPLETED",
+              "ENROLLING_BY_INVITATION",
+              "NOT_YET_RECRUITING",
+              "RECRUITING",
+              "SUSPENDED",
+              "TERMINATED",
+              "WITHDRAWN",
+              "AVAILABLE"
+            ],
+            "type": "string"
+          },
+          "Reference": {
+            "properties": {
+              "citation": {
+                "type": "string"
+              },
+              "pmid": {
+                "type": "string"
+              },
+              "retractions": {
+                "items": {
+                  "$ref": "#/$defs/Retraction"
+                },
+                "type": "array"
+              },
+              "type": {
+                "$ref": "#/$defs/ReferenceType"
+              }
+            },
+            "type": "object"
+          },
+          "ReferenceType": {
+            "enum": [
+              "BACKGROUND",
+              "RESULT",
+              "DERIVED"
+            ],
+            "type": "string"
+          },
+          "ReferencesModule": {
+            "properties": {
+              "availIpds": {
+                "items": {
+                  "$ref": "#/$defs/AvailIpd"
+                },
+                "type": "array"
+              },
+              "references": {
+                "items": {
+                  "$ref": "#/$defs/Reference"
+                },
+                "type": "array"
+              },
+              "seeAlsoLinks": {
+                "items": {
+                  "$ref": "#/$defs/SeeAlsoLink"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "ReportingStatus": {
+            "enum": [
+              "NOT_POSTED",
+              "POSTED"
+            ],
+            "type": "string"
+          },
+          "ResponsibleParty": {
+            "properties": {
+              "investigatorAffiliation": {
+                "type": "string"
+              },
+              "investigatorFullName": {
+                "type": "string"
+              },
+              "investigatorTitle": {
+                "type": "string"
+              },
+              "oldNameTitle": {
+                "type": "string"
+              },
+              "oldOrganization": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/ResponsiblePartyType"
+              }
+            },
+            "type": "object"
+          },
+          "ResponsiblePartyType": {
+            "enum": [
+              "SPONSOR",
+              "PRINCIPAL_INVESTIGATOR",
+              "SPONSOR_INVESTIGATOR"
+            ],
+            "type": "string"
+          },
+          "ResultsSection": {
+            "properties": {
+              "adverseEventsModule": {
+                "$ref": "#/$defs/AdverseEventsModule"
+              },
+              "baselineCharacteristicsModule": {
+                "$ref": "#/$defs/BaselineCharacteristicsModule"
+              },
+              "moreInfoModule": {
+                "$ref": "#/$defs/MoreInfoModule"
+              },
+              "outcomeMeasuresModule": {
+                "$ref": "#/$defs/OutcomeMeasuresModule"
+              },
+              "participantFlowModule": {
+                "$ref": "#/$defs/ParticipantFlowModule"
+              }
+            },
+            "type": "object"
+          },
+          "Retraction": {
+            "properties": {
+              "pmid": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "SamplingMethod": {
+            "enum": [
+              "PROBABILITY_SAMPLE",
+              "NON_PROBABILITY_SAMPLE"
+            ],
+            "type": "string"
+          },
+          "SecondaryIdInfo": {
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "link": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/SecondaryIdType"
+              }
+            },
+            "type": "object"
+          },
+          "SecondaryIdType": {
+            "enum": [
+              "NIH",
+              "FDA",
+              "VA",
+              "CDC",
+              "AHRQ",
+              "SAMHSA",
+              "OTHER_GRANT",
+              "EUDRACT_NUMBER",
+              "CTIS",
+              "REGISTRY",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "SeeAlsoLink": {
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Sex": {
+            "enum": [
+              "FEMALE",
+              "MALE",
+              "ALL"
+            ],
+            "type": "string"
+          },
+          "Sponsor": {
+            "properties": {
+              "class": {
+                "$ref": "#/$defs/AgencyClass"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "SponsorCollaboratorsModule": {
+            "properties": {
+              "collaborators": {
+                "items": {
+                  "$ref": "#/$defs/Sponsor"
+                },
+                "type": "array"
+              },
+              "leadSponsor": {
+                "$ref": "#/$defs/Sponsor"
+              },
+              "responsibleParty": {
+                "$ref": "#/$defs/ResponsibleParty"
+              }
+            },
+            "type": "object"
+          },
+          "StandardAge": {
+            "enum": [
+              "CHILD",
+              "ADULT",
+              "OLDER_ADULT"
+            ],
+            "type": "string"
+          },
+          "Status": {
+            "enum": [
+              "ACTIVE_NOT_RECRUITING",
+              "COMPLETED",
+              "ENROLLING_BY_INVITATION",
+              "NOT_YET_RECRUITING",
+              "RECRUITING",
+              "SUSPENDED",
+              "TERMINATED",
+              "WITHDRAWN",
+              "AVAILABLE",
+              "NO_LONGER_AVAILABLE",
+              "TEMPORARILY_NOT_AVAILABLE",
+              "APPROVED_FOR_MARKETING",
+              "WITHHELD",
+              "UNKNOWN"
+            ],
+            "type": "string"
+          },
+          "StatusModule": {
+            "properties": {
+              "completionDateStruct": {
+                "$ref": "#/$defs/PartialDateStruct"
+              },
+              "delayedPosting": {
+                "type": "boolean"
+              },
+              "dispFirstPostDateStruct": {
+                "$ref": "#/$defs/DateStruct"
+              },
+              "dispFirstSubmitDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "dispFirstSubmitQcDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "expandedAccessInfo": {
+                "$ref": "#/$defs/ExpandedAccessInfo"
+              },
+              "lastKnownStatus": {
+                "$ref": "#/$defs/Status"
+              },
+              "lastUpdatePostDateStruct": {
+                "$ref": "#/$defs/DateStruct"
+              },
+              "lastUpdateSubmitDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "overallStatus": {
+                "$ref": "#/$defs/Status"
+              },
+              "primaryCompletionDateStruct": {
+                "$ref": "#/$defs/PartialDateStruct"
+              },
+              "resultsFirstPostDateStruct": {
+                "$ref": "#/$defs/DateStruct"
+              },
+              "resultsFirstSubmitDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "resultsFirstSubmitQcDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "resultsWaived": {
+                "type": "boolean"
+              },
+              "startDateStruct": {
+                "$ref": "#/$defs/PartialDateStruct"
+              },
+              "statusVerifiedDate": {
+                "$ref": "#/$defs/PartialDate"
+              },
+              "studyFirstPostDateStruct": {
+                "$ref": "#/$defs/DateStruct"
+              },
+              "studyFirstSubmitDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "studyFirstSubmitQcDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "whyStopped": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Study": {
+            "properties": {
+              "annotationSection": {
+                "$ref": "#/$defs/AnnotationSection"
+              },
+              "derivedSection": {
+                "$ref": "#/$defs/DerivedSection"
+              },
+              "documentSection": {
+                "$ref": "#/$defs/DocumentSection"
+              },
+              "hasResults": {
+                "type": "boolean"
+              },
+              "protocolSection": {
+                "$ref": "#/$defs/ProtocolSection"
+              },
+              "resultsSection": {
+                "$ref": "#/$defs/ResultsSection"
+              }
+            },
+            "type": "object"
+          },
+          "StudyType": {
+            "enum": [
+              "EXPANDED_ACCESS",
+              "INTERVENTIONAL",
+              "OBSERVATIONAL"
+            ],
+            "type": "string"
+          },
+          "SubmissionInfo": {
+            "properties": {
+              "mcpReleaseN": {
+                "type": "integer"
+              },
+              "releaseDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "resetDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "unreleaseDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "unreleaseDateUnknown": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "SubmissionTracking": {
+            "properties": {
+              "estimatedResultsFirstSubmitDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "firstMcpInfo": {
+                "$ref": "#/$defs/FirstMcpInfo"
+              },
+              "submissionInfos": {
+                "items": {
+                  "$ref": "#/$defs/SubmissionInfo"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "UnpostedAnnotation": {
+            "properties": {
+              "unpostedEvents": {
+                "items": {
+                  "$ref": "#/$defs/UnpostedEvent"
+                },
+                "type": "array"
+              },
+              "unpostedResponsibleParty": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "UnpostedEvent": {
+            "properties": {
+              "date": {
+                "format": "date",
+                "type": "string"
+              },
+              "dateUnknown": {
+                "type": "boolean"
+              },
+              "type": {
+                "$ref": "#/$defs/UnpostedEventType"
+              }
+            },
+            "type": "object"
+          },
+          "UnpostedEventType": {
+            "enum": [
+              "RESET",
+              "RELEASE",
+              "UNRELEASE"
+            ],
+            "type": "string"
+          },
+          "ViolationAnnotation": {
+            "properties": {
+              "violationEvents": {
+                "items": {
+                  "$ref": "#/$defs/ViolationEvent"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "ViolationEvent": {
+            "properties": {
+              "creationDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "issuedDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "postedDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "releaseDate": {
+                "format": "date",
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/ViolationEventType"
+              }
+            },
+            "type": "object"
+          },
+          "ViolationEventType": {
+            "enum": [
+              "VIOLATION_IDENTIFIED",
+              "CORRECTION_CONFIRMED",
+              "PENALTY_IMPOSED",
+              "ISSUES_IN_LETTER_ADDRESSED_CONFIRMED"
+            ],
+            "type": "string"
+          },
+          "WhoMasked": {
+            "enum": [
+              "PARTICIPANT",
+              "CARE_PROVIDER",
+              "INVESTIGATOR",
+              "OUTCOMES_ASSESSOR"
+            ],
+            "type": "string"
+          },
+          "nct": {
+            "description": "NCT number",
+            "maxLength": 11,
+            "minLength": 11,
+            "type": "string"
+          }
+        },
+        "$ref": "#/$defs/Study"
+      },
+      "timeout_seconds": 30,
+      "version": 1
+    },
+    "vsd_promotion": {
+      "api_title": "ClinicalTrials.gov REST API",
+      "api_version": "2.0.5",
+      "candidate_id": "47a4c7402dfb7b86",
+      "candidate_sha256": "47a4c7402dfb7b8699690b6ba5146eb2755472d21b0cc330e5fc620b097da99f",
+      "fixed_query": {
+        "format": "json"
+      },
+      "generator_version": 1,
+      "included_parameters": [
+        "nctId"
+      ],
+      "method": "GET",
+      "openapi_version": "3.0.3",
+      "operation_id": "fetchStudy",
+      "path": "/studies/{nctId}",
+      "response_media_type": "application/json",
+      "source_document_sha256": "ba31adaea67e6bb09ff77af5c0c11daf36d5aff7f5d6cbed89f0aab04b297aea",
+      "source_type": "openapi"
+    }
+  },
+  "decision_note": "Approved after schema review and three distinct ALS registry records passed exact nested-identifier verification.",
+  "draft_id": "vsdclinicaltrialsstudybynct_27f9c4e92c3f",
+  "draft_sha256": "2d97d81a7723e51789beedc77210be958ea438368c472b3533ca738729f4d3cd",
+  "operation_sha256": "27f9c4e92c3ff99ea44fe05456c6f34a90fb6cf0ac29a21163a41398e7992be0",
+  "publication_sha256": "38541a6ba926f5fe3937ff0a60fffce88293afb3e711bdad9267b62c5914080a",
+  "published_at": "2026-08-01T18:52:48.353591+00:00",
+  "reviewed_by": "ToolUniverse VSD case-study reviewer",
+  "tool_name": "VSDClinicalTrialsStudyByNCT",
+  "verification_sha256": "55d799070ea17713f2b0355eff968acf031d69bd04973d5d0bc62c0f8b7a67f0",
+  "version": 1
+}

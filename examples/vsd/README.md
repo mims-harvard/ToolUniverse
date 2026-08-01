@@ -1,5 +1,61 @@
 # ToolUniverse VSD Validation Case Studies
 
+## OpenAPI-to-Tool ALS Registry Pipeline
+
+`openapi_als_case_study.py` demonstrates how an administrator can turn one
+operation from a provider's official OpenAPI document into a narrow, reviewed
+ToolUniverse tool. The inspector reads only a local JSON or YAML file; it does
+not fetch the contract, execute candidates, register tools, or make candidates
+available to an agent.
+
+The live study uses the current ClinicalTrials.gov OpenAPI 3.0 contract. It
+inspects all nine operations, selects `fetchStudy`, exposes only the required
+`nctId` path argument, fixes the provider format to JSON, and preserves the
+provider's complete response schema. The candidate remains inert until the
+existing promotion pipeline verifies three distinct ALS records, records an
+explicit approval, publishes the exact hash chain, and loads it into a fresh
+ToolUniverse instance.
+
+Download the official contract and run the study from the repository root:
+
+```console
+curl -fsS https://clinicaltrials.gov/api/oas/v2 -o ctg-oas-v2.yaml
+PYTHONPATH=src python examples/vsd/openapi_als_case_study.py --spec ctg-oas-v2.yaml
+```
+
+The checked run retrieved `NCT03019419`, `NCT04428775`, and `NCT04745299`.
+Each verification required nested title, status, condition, and identifier
+fields and asserted that the returned NCT identifier exactly matched the
+request. It also proved that malformed identifiers are rejected by the reviewed
+input schema before transport and that every live response used HTTPS, returned
+HTTP 200, and followed zero redirects.
+
+Review `artifacts/openapi_als_snapshot.md` for the readable report,
+`artifacts/openapi_als_snapshot.json` for the machine-readable audit ledger, and
+`artifacts/openapi_ingestion_workspace/` for the draft, verification, approval,
+and publication records. The checked audit links the official document hash to
+the candidate, generated operation, verification evidence, approval, and
+publication.
+
+For administrator scripting, the same two entry points are available through
+the promotion CLI:
+
+```console
+tooluniverse-vsd-promote inspect-openapi ctg-oas-v2.yaml > inspection.json
+tooluniverse-vsd-promote --workspace ./vsd-review draft-openapi inspection.json \
+  --candidate-id 47a4c7402dfb7b86 \
+  --tool-name VSDClinicalTrialsStudyByNCT \
+  --description "Fetch one reviewed ClinicalTrials.gov record by NCT identifier." \
+  --fixed-query-file fixed-query.json
+```
+
+`candidate-id` values are content-addressed and change when the provider
+contract changes. Administrators must select the value produced by their own
+inspection rather than reuse the example value above. Authentication, write
+methods, external schema references, non-JSON responses, unsupported parameter
+styles, and oversized schemas are emitted with explicit blockers and cannot be
+drafted.
+
 ## Complete Oncology Source-Governance Pipeline
 
 `complete_pipeline_case_study.py` exercises the entire VSD stack in one

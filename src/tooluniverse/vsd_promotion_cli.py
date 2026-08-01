@@ -7,9 +7,11 @@ import json
 from pathlib import Path
 from typing import Any, Sequence
 
+from .vsd_openapi import inspect_openapi_document, select_openapi_candidate
 from .vsd_promotion import (
     approve_draft,
     create_draft,
+    create_openapi_draft,
     list_promotion_state,
     publish_draft,
     verify_draft,
@@ -49,6 +51,19 @@ def build_parser() -> argparse.ArgumentParser:
     draft.add_argument("--return-fields", required=True, type=_csv)
     draft.add_argument("--max-records", type=int, default=25)
 
+    inspect_openapi = commands.add_parser("inspect-openapi")
+    inspect_openapi.add_argument("spec_file", type=Path)
+    inspect_openapi.add_argument("--server-index", type=int, default=0)
+
+    draft_openapi = commands.add_parser("draft-openapi")
+    draft_openapi.add_argument("candidate_file", type=Path)
+    draft_openapi.add_argument("--candidate-id")
+    draft_openapi.add_argument("--tool-name", required=True)
+    draft_openapi.add_argument("--description", required=True)
+    draft_openapi.add_argument("--include-parameters", type=_csv)
+    draft_openapi.add_argument("--fixed-query-file", type=Path)
+    draft_openapi.add_argument("--timeout-seconds", type=float, default=20)
+
     verify = commands.add_parser("verify")
     verify.add_argument("draft_id")
     verify.add_argument("cases_file", type=Path)
@@ -85,6 +100,29 @@ def _execute(namespace: argparse.Namespace) -> Any:
             filter_fields=namespace.filter_fields,
             return_fields=namespace.return_fields,
             max_records=namespace.max_records,
+            workspace=workspace,
+        )
+    if namespace.command == "inspect-openapi":
+        return inspect_openapi_document(
+            namespace.spec_file, server_index=namespace.server_index
+        )
+    if namespace.command == "draft-openapi":
+        report = _json_file(namespace.candidate_file)
+        candidate = select_openapi_candidate(report, namespace.candidate_id)
+        fixed_query = (
+            _json_file(namespace.fixed_query_file)
+            if namespace.fixed_query_file is not None
+            else None
+        )
+        if fixed_query is not None and not isinstance(fixed_query, dict):
+            raise argparse.ArgumentTypeError("fixed query file must contain an object")
+        return create_openapi_draft(
+            candidate,
+            tool_name=namespace.tool_name,
+            description=namespace.description,
+            include_parameters=namespace.include_parameters,
+            fixed_query=fixed_query,
+            timeout_seconds=namespace.timeout_seconds,
             workspace=workspace,
         )
     if namespace.command == "verify":
