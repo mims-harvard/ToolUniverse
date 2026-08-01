@@ -3621,6 +3621,7 @@ class ToolUniverse:
                     "GrepTools",
                     "GetToolInfo",
                     "ExecuteTool",
+                    "VSDResolveCapability",
                 ]:
                     # Tool discovery tools need tooluniverse parameter
                     new_tool = tool_class(tool_config=tool, tooluniverse=self)

@@ -2588,6 +2588,7 @@ from .VSDDiscoverAPICandidates import VSDDiscoverAPICandidates
 from .VSDDiscoverSources import VSDDiscoverSources
 from .VSDEnsemblServiceStatus import VSDEnsemblServiceStatus
 from .VSDOpenFDALabelBySetId import VSDOpenFDALabelBySetId
+from .VSDResolveCapability import VSDResolveCapability
 from .VSDWHOHypertensionIndicator import VSDWHOHypertensionIndicator
 from .VariantValidator_format_genomic_to_transcripts import (
     VariantValidator_format_genomic_to_transcripts,
@@ -5418,6 +5419,7 @@ __all__ = [
     "VSDDiscoverSources",
     "VSDEnsemblServiceStatus",
     "VSDOpenFDALabelBySetId",
+    "VSDResolveCapability",
     "VSDWHOHypertensionIndicator",
     "VariantValidator_format_genomic_to_transcripts",
     "VariantValidator_gene2transcripts",

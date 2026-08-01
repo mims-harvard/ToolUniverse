@@ -13,6 +13,7 @@ pytestmark = pytest.mark.unit
 
 
 SOURCE_TOOL_NAMES = (
+    "VSDResolveCapability",
     "VSDDiscoverAPICandidates",
     "VSDDiscoverSources",
     "VSDWHOHypertensionIndicator",
@@ -46,7 +47,7 @@ def test_default_surface_contains_only_read_only_source_specific_tools():
 
         for name in SOURCE_TOOL_NAMES:
             config = tooluniverse.all_tool_dict[name]
-            assert config["cacheable"] is True
+            assert config["cacheable"] is (name != "VSDResolveCapability")
             assert config["mcp_annotations"] == {
                 "readOnlyHint": True,
                 "destructiveHint": False,

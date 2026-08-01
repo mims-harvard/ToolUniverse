@@ -682,6 +682,7 @@ STATIC_LAZY_REGISTRY = {
     "VSDQuerySource": "vsd_tool",
     "VSDRegisterSource": "vsd_tool",
     "VSDRemoveSource": "vsd_tool",
+    "VSDResolveCapability": "vsd_coverage",
     "VisualizationTool": "visualization_tool",
     "WFGYPromptBundleTool": "wfgy_promptbundle_tool",
     "WHOGHOQueryTool": "who_gho_tool",
