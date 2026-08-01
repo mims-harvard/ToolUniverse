@@ -258,6 +258,8 @@ def _field_recall(requested: Iterable[str], available: set[str]) -> float:
 
 def _registry_tools(tooluniverse: Any) -> list[dict[str, Any]]:
     """Read built-in specifications plus runtime registrations without loading tools."""
+    from .tool_registry import get_config_registry, get_list_config_registry
+
     indexed: dict[str, dict[str, Any]] = {}
     tool_files = getattr(tooluniverse, "tool_files", {})
     if isinstance(tool_files, dict):
@@ -275,6 +277,12 @@ def _registry_tools(tooluniverse: Any) -> list[dict[str, Any]]:
                     record = dict(entry)
                     record.setdefault("category", category)
                     indexed[record["name"]] = record
+    if callable(getattr(tooluniverse, "_load_auto_discovered_configs", None)):
+        auto_discovered = list(get_config_registry().values())
+        auto_discovered.extend(get_list_config_registry())
+        for entry in auto_discovered:
+            if isinstance(entry, dict) and isinstance(entry.get("name"), str):
+                indexed.setdefault(entry["name"], dict(entry))
     for entry in getattr(tooluniverse, "all_tools", []):
         if isinstance(entry, dict) and isinstance(entry.get("name"), str):
             indexed[entry["name"]] = dict(entry)

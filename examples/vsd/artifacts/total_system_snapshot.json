@@ -1,0 +1,189 @@
+{
+  "answer": "Yes. One missing protected registry step was privately ranked and explicitly proposed, reviewed through source and OpenAPI boundaries, verified on three diseases, published, reused by planning and Finder, executed, explicitly closed in the demand ledger, suspended on drift, and safely reactivated after contract repair.",
+  "audit_sha256": "6290c8a27385b1ea8834111e525f287805be6d2d6e2e704cfb8e75ea37e506cc",
+  "candidate_boundaries": {
+    "catalog_candidate_execution_allowed": false,
+    "catalog_candidate_id": "40030771112fec80",
+    "openapi_auth": {
+      "header": "X-Rare-Disease-Key",
+      "scheme_name": "registryKey",
+      "type": "api_key_header"
+    },
+    "openapi_candidate_execution_allowed": false,
+    "openapi_candidate_id": "4ec7cf2f223d79e5",
+    "openapi_candidate_sha256": "4ec7cf2f223d79e5abf4e910a6c2623d7802f7482d5bc9367281de5cc1dab53f"
+  },
+  "docker_boundary": {
+    "pull_request": "https://github.com/mims-harvard/ToolUniverse/pull/420",
+    "relationship": "Independent administrator-only Docker provisioning phase; it is intentionally not callable from this VSD agent workflow."
+  },
+  "end_to_end_assertions": {
+    "admin_source_lifecycle_is_complete_and_restored": true,
+    "administrative_mutations_are_not_agent_facing": true,
+    "api_catalog_candidate_is_inert": true,
+    "breaking_drift_recommends_suspension": true,
+    "credential_reference_is_persisted_without_value": true,
+    "credential_rotation_preserves_operation_identity": true,
+    "demand_closure_is_explicit_and_hash_bound": true,
+    "demand_export_is_sanitized_local_and_hash_bound": true,
+    "exact_observation_updates_original_demand": true,
+    "final_reactivated_tool_executes": true,
+    "finder_and_replanner_share_expanded_registry": true,
+    "initial_capability_is_missing": true,
+    "initial_workflow_routes_only_real_gap": true,
+    "lifecycle_anchor_and_events_are_consistent": true,
+    "openapi_candidate_is_authenticated_inert_and_promotable": true,
+    "post_publication_capability_is_exact": true,
+    "provider_transport_uses_only_reviewed_header": true,
+    "repaired_contract_supports_safe_activation": true,
+    "repeated_private_demand_ranks_first": true,
+    "replanned_workflow_reuses_published_tool": true,
+    "secret_values_are_absent_from_artifacts_and_results": true,
+    "source_and_credential_environment_is_restored": true,
+    "suspension_prevents_fresh_loading": true,
+    "three_protected_verification_cases_pass": true,
+    "tool_is_absent_until_explicit_publication_load": true,
+    "workflow_and_demand_inputs_remain_private": true
+  },
+  "expanded_registry": {
+    "classification": "existing_exact",
+    "finder_registry_sha256": "32019fdbf8c8d77569bba573404ce0e7f8f225adb1e0e5782a800ac6822225ab",
+    "overall_action": "compose_existing_tools",
+    "plan_id": "0a6b871965763be3",
+    "plan_sha256": "0a6b871965763be3b1bd6e98abb566b733754f3775e90b7cffa6873000a631ea",
+    "registry_sha256": "32019fdbf8c8d77569bba573404ce0e7f8f225adb1e0e5782a800ac6822225ab",
+    "selected_tool": "VSDProtectedRareDiseaseEvidenceById"
+  },
+  "initial_gap": {
+    "capability_id": "002bca752f012bb7",
+    "classification": "missing",
+    "overall_action": "discover_missing_capabilities",
+    "plan_id": "4a205eac81354673",
+    "plan_sha256": "4a205eac81354673822d69044d5769b252a89db4a7f651f7294cd8eb65375274",
+    "registry_sha256": "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752"
+  },
+  "lifecycle": {
+    "breaking_assessment_sha256": "46572bc6e59898a2a6d9bb30fdbe072d3ba4d658776e562413e251b5da7260a7",
+    "event_sha256": [
+      "b4d7917c74ab9780121acc87f3a10be05306d91ea2454df06a4f5f45ed0ad817",
+      "119a8be43a385e95501d02d630be9a5a3748d1d3af6acff0142a9fe3c4519f6a"
+    ],
+    "final_loaded_tools": [
+      "VSDProtectedRareDiseaseEvidenceById"
+    ],
+    "repaired_assessment_sha256": "7f67c0eccacd76517ab16e0a87898e24b2f0cf38248edd527312c0062f9c7371",
+    "states": [
+      "suspended",
+      "active"
+    ],
+    "suspended_loaded_tools": [],
+    "unchanged_assessment_sha256": "dde26749f82cdb57f8fd4e33783345f8699f3d9bee1ea457cdd604be6d29b56c"
+  },
+  "private_demand": {
+    "closure_ledger_sha256": "4536719c6cbeebfbabe82a9d3c8e83128470701aa10c0cb115f70ba6735738a0",
+    "demand_id": "7fd44af18bd83619",
+    "final_demand_count": 0,
+    "initial_observation_count": 3,
+    "initial_priority_score": 15,
+    "proposal_id": "77080321a4dd930c",
+    "proposal_sha256": "9fd9fc666c7e2745dcceecbbceeeb089418433521925237c751c864af0f22455",
+    "resolved_observation_counts": {
+      "exact": 1,
+      "missing": 3,
+      "partial": 0
+    },
+    "resolved_unmet_rate": 0.75
+  },
+  "promotion": {
+    "approval_sha256": "65049f384a082eb70c1315ba873a372ecee40c52cbe3e3a25356a864ff39621d",
+    "draft_id": "vsdprotectedrarediseaseevidencebyid_0f6c114c1d00",
+    "draft_sha256": "090caaafe70bf10acd0c452b63039b1b14eb9e6dd390aa8b2cce07f879913e37",
+    "lifecycle_anchor_id": "5d3f0a6e6c579013a202f35c87b901cc5fadb8c71c6ebfb6625dcb439d10acac",
+    "operation_sha256": "0f6c114c1d00fb3254f8934322cdb011e4c05d319ae1b89ebb8536ce1cd6c072",
+    "publication_sha256": "7c61b882193f8222ffe3602fb76de9f67ed3c952c1cc431e652c6e6f9fd35c0d",
+    "verification_case_count": 3,
+    "verification_sha256": "443a778d8fcaa14ce983f642409724318c4dc491b7417fa5074b01ece4c9bcfc"
+  },
+  "provider_fixture": "The protected rare-disease provider and fixed catalog response are deterministic because the repository cannot bundle a live credential. All registry, planning, demand, admin, inspection, promotion, runtime, credential, lifecycle, and audit paths use production code.",
+  "question": "Can repeated unmet ALS workflow demand safely become a reviewed, credentialed, lifecycle-managed ToolUniverse capability?",
+  "runtime": {
+    "loaded_tools": [
+      "VSDProtectedRareDiseaseEvidenceById"
+    ],
+    "operation_sha256_after_rotation": "0f6c114c1d00fb3254f8934322cdb011e4c05d319ae1b89ebb8536ce1cd6c072",
+    "operation_sha256_before_rotation": "0f6c114c1d00fb3254f8934322cdb011e4c05d319ae1b89ebb8536ce1cd6c072",
+    "record_ids": [
+      "RD-ALS",
+      "RD-DMD",
+      "RD-SMA"
+    ],
+    "transport_log": [
+      {
+        "credential_slot": "initial",
+        "endpoint": "https://rare-registry.example.org/v1/evidence/RD-ALS",
+        "params": {},
+        "record_id": "RD-ALS",
+        "timeout": 20.0
+      },
+      {
+        "credential_slot": "initial",
+        "endpoint": "https://rare-registry.example.org/v1/evidence/RD-DMD",
+        "params": {},
+        "record_id": "RD-DMD",
+        "timeout": 20.0
+      },
+      {
+        "credential_slot": "initial",
+        "endpoint": "https://rare-registry.example.org/v1/evidence/RD-SMA",
+        "params": {},
+        "record_id": "RD-SMA",
+        "timeout": 20.0
+      },
+      {
+        "credential_slot": "initial",
+        "endpoint": "https://rare-registry.example.org/v1/evidence/RD-ALS",
+        "params": {},
+        "record_id": "RD-ALS",
+        "timeout": 20.0
+      },
+      {
+        "credential_slot": "rotated",
+        "endpoint": "https://rare-registry.example.org/v1/evidence/RD-DMD",
+        "params": {},
+        "record_id": "RD-DMD",
+        "timeout": 20.0
+      },
+      {
+        "credential_slot": "rotated",
+        "endpoint": "https://rare-registry.example.org/v1/evidence/RD-SMA",
+        "params": {},
+        "record_id": "RD-SMA",
+        "timeout": 20.0
+      }
+    ]
+  },
+  "source_review": {
+    "catalog_restored": true,
+    "probe_result_type": "dict",
+    "query_record_id": "RD-ALS",
+    "source_id": "protected_rare_registry",
+    "transport_calls": [
+      {
+        "params": {
+          "disease": "ALS"
+        },
+        "timeout": 20.0,
+        "url": "https://rare-registry.example.org/v1/search"
+      },
+      {
+        "params": {
+          "disease": "ALS",
+          "limit": 1
+        },
+        "timeout": 20.0,
+        "url": "https://rare-registry.example.org/v1/search"
+      }
+    ]
+  },
+  "title": "ALS Demand-To-Reviewed-Tool Total VSD System Study"
+}

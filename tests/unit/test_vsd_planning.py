@@ -4,6 +4,8 @@ import json
 
 import pytest
 
+from tooluniverse import ToolUniverse
+from tooluniverse.base_tool import BaseTool
 from tooluniverse.tool_finder_keyword import ToolFinderKeyword
 from tooluniverse.vsd_planning import (
     VSDPlanWorkflow,
@@ -443,3 +445,51 @@ def test_finder_enrichment_does_not_mutate_original_result():
     )
     assert "capability_coverage" not in finder_result
     assert enriched["capability_coverage"]["registry_tool_count"] == 1
+
+
+def test_keyword_finder_auto_load_preserves_runtime_vsd_tool(tmp_path):
+    """Finder's full-load fallback must retain a just-published runtime tool."""
+
+    class RuntimeVSDTool(BaseTool):
+        def run(self, arguments=None, **kwargs):
+            return {"status": "success", "registry_id": "REG-1"}
+
+    universe = ToolUniverse(workspace=tmp_path / "finder-workspace")
+    try:
+        universe.load_tools(include_tools=["Tool_Finder_Keyword"], quiet=True)
+        config = _dynamic_tool("RuntimeRegistryRecords")
+        universe.register_custom_tool(
+            RuntimeVSDTool,
+            tool_config=config,
+            instantiate=True,
+        )
+
+        result = universe.run_one_function(
+            {
+                "name": "Tool_Finder_Keyword",
+                "arguments": {
+                    "description": "disease registry records",
+                    "limit": 3,
+                    "include_capability_coverage": True,
+                    "capability_request": {
+                        "provider": "registry.example.org",
+                        "operation_id": "registry.search_diseases",
+                        "required_inputs": ["disease"],
+                        "output_fields": ["registry_id"],
+                    },
+                },
+            },
+            use_cache=False,
+        )
+
+        assert "RuntimeRegistryRecords" in universe.all_tool_dict
+        assert result["capability_coverage"]["classification"] == "existing_exact"
+        assert result["capability_coverage"]["matches"][0]["name"] == (
+            "RuntimeRegistryRecords"
+        )
+        assert universe.run_one_function(
+            {"name": "RuntimeRegistryRecords", "arguments": {"disease": "ALS"}},
+            use_cache=False,
+        ) == {"status": "success", "registry_id": "REG-1"}
+    finally:
+        universe.close()

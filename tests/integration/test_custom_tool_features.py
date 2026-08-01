@@ -198,6 +198,53 @@ class TestRegisterCustomTool:
         result = tu.run({"name": "auto_type", "arguments": {}})
         assert result.get("status") == "success"
 
+    def test_full_reload_preserves_runtime_registration(self):
+        """A static registry refresh must not discard instance-local custom tools."""
+        tu = _make_tu()
+
+        class ReloadSafeTool(BaseTool):
+            def run(self, arguments=None, **kwargs):
+                return {"status": "success", "preserved": True}
+
+        cfg = {
+            "name": "reload_safe_tool",
+            "description": "Runtime tool that remains available after a full reload.",
+            "type": "ReloadSafeTool",
+            "parameter": {"type": "object", "properties": {}, "required": []},
+        }
+        tu.register_custom_tool(ReloadSafeTool, tool_config=cfg, instantiate=True)
+
+        tu.load_tools()
+
+        assert tu.all_tool_dict["reload_safe_tool"] is cfg
+        assert tu.callable_functions["reload_safe_tool"].__class__ is ReloadSafeTool
+        assert tu.run({"name": "reload_safe_tool", "arguments": {}}) == {
+            "status": "success",
+            "preserved": True,
+        }
+
+    def test_explicit_clear_does_not_restore_runtime_registration(self):
+        """clear_tools remains an explicit removal boundary for runtime tools."""
+        tu = _make_tu()
+
+        class ClearableTool(BaseTool):
+            def run(self, arguments=None, **kwargs):
+                return {"status": "success"}
+
+        cfg = {
+            "name": "clearable_runtime_tool",
+            "description": "Runtime tool removed by an explicit registry clear.",
+            "type": "ClearableTool",
+            "parameter": {"type": "object", "properties": {}, "required": []},
+        }
+        tu.register_custom_tool(ClearableTool, tool_config=cfg, instantiate=True)
+
+        tu.clear_tools()
+        tu.load_tools()
+
+        assert "clearable_runtime_tool" not in tu.all_tool_dict
+        assert "clearable_runtime_tool" not in tu.callable_functions
+
 
 # ===========================================================================
 # B. load_tools(python_files=[...])

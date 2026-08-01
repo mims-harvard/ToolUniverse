@@ -1,0 +1,40 @@
+{
+  "created_at": "2026-08-04T12:00:00+00:00",
+  "export_sha256": "9fd9fc666c7e2745dcceecbbceeeb089418433521925237c751c864af0f22455",
+  "proposals": [
+    {
+      "capability": {
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [
+          "record_id",
+          "disease",
+          "genes",
+          "phenotypes",
+          "trials"
+        ],
+        "provider": "rare-registry.example.org",
+        "required_inputs": [
+          "recordId"
+        ]
+      },
+      "observation_counts": {
+        "exact": 0,
+        "missing": 3,
+        "partial": 0
+      },
+      "priority_score": 15,
+      "proposal_id": "77080321a4dd930c",
+      "public_summary": "Protected rare-disease genes phenotypes and trials retrieval for ALS workflows",
+      "recommended_next_step": "review_external_api_candidates",
+      "total_observations": 3,
+      "unmet_rate": 1.0
+    }
+  ],
+  "review": {
+    "decision_note": "Selected after three independent workflow preflights found the gap.",
+    "reviewed_by": "Total System Case Reviewer"
+  },
+  "transmission": "none; this file was written locally for explicit human review",
+  "version": 1
+}

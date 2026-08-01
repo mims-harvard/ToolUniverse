@@ -1,5 +1,54 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Total Demand-To-Reviewed-Tool System Proof
+
+`total_system_case_study.py` answers one complete operational question: can a
+repeatedly missing capability in a real workflow become a reviewed ToolUniverse
+tool, be reused safely, and remain governed when its provider changes? The case
+starts with an ALS evidence workflow that needs one protected rare-disease
+registry operation returning genes, phenotypes, and clinical-trial identifiers.
+The initial registry cannot satisfy that step.
+
+Three independent workflow preflights record the same missing capability in the
+private demand ledger. An administrator selects one sanitized proposal, reviews
+a source through the mutable source CLI, searches the fixed public API catalog,
+and inspects the protected provider's local OpenAPI contract. Both discovered
+candidates remain inert. The reviewed OpenAPI candidate becomes a draft with an
+environment-backed header credential reference, passes exact ALS, Duchenne
+muscular dystrophy, and spinal muscular atrophy verification cases, receives an
+explicit approval, and is published with a lifecycle anchor.
+
+A fresh ToolUniverse instance cannot see the tool until it explicitly loads the
+publication. After loading, capability resolution, workflow replanning, and
+Tool Finder agree that the original gap now has exact coverage. The runtime
+executes two disease records across credential rotation without changing the
+reviewed operation identity. The demand ledger records that exact coverage and
+is then explicitly cleared by its local administrator.
+
+Finally, the case classifies a provider endpoint move as breaking, explicitly
+suspends the publication, and proves a fresh runtime cannot load it. An
+unchanged assessment of the repaired reviewed contract permits explicit
+reactivation, after which a fresh runtime executes the third disease record.
+The checked report contains 26 end-to-end assertions and SHA-256 identities for
+the proposal, draft, operation, verification, approval, publication, lifecycle
+events, and complete case audit.
+
+Run the deterministic offline proof from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/total_system_case_study.py
+```
+
+Review the human-readable
+`artifacts/total_system_snapshot.md`, the machine-verifiable
+`artifacts/total_system_snapshot.json`, and the sanitized
+`artifacts/total_system_demand_proposal.json`. The protected provider and fixed
+catalog responses are deterministic because the repository cannot bundle a
+live credential; all registry, planning, demand, administration, inspection,
+promotion, runtime, credential, lifecycle, and audit logic uses production
+code. Docker provisioning remains the independent administrator-only boundary
+reviewed in [#420](https://github.com/mims-harvard/ToolUniverse/pull/420).
+
 ## Provider Drift And Publication Lifecycle
 
 Published VSD tools retain the exact provider contract that was reviewed, but

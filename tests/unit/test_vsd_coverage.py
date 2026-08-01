@@ -5,6 +5,7 @@ import json
 import pytest
 
 from tooluniverse import ToolUniverse
+from tooluniverse import tool_registry
 from tooluniverse.vsd_coverage import (
     VSDCoverageError,
     normalize_capability_request,
@@ -150,6 +151,42 @@ def test_capability_and_registry_digests_are_deterministic():
     assert first["capability_id"] == second["capability_id"]
     assert first["registry_sha256"] == second["registry_sha256"]
     json.dumps(first, allow_nan=False)
+
+
+def test_registry_snapshot_includes_auto_discovered_configuration(
+    monkeypatch, tmp_path
+):
+    """Planning must see the same decorator and plugin configs as full loading."""
+    config = _dynamic_tool("AutoDiscoveredRegistry")
+    monkeypatch.setattr(
+        tool_registry,
+        "get_config_registry",
+        lambda: {"AutoDiscoveredRegistryType": config},
+    )
+    monkeypatch.setattr(tool_registry, "get_list_config_registry", lambda: [])
+
+    universe = ToolUniverse(
+        tool_files={},
+        keep_default_tools=False,
+        workspace=tmp_path / "auto-discovery-workspace",
+    )
+    try:
+        result = resolve_capability(
+            universe,
+            {
+                "description": "Retrieve disease registry records",
+                "provider": "registry.example.org",
+                "operation_id": "registry.search_diseases",
+                "required_inputs": ["disease"],
+                "output_fields": ["registry_id"],
+            },
+        )["data"]
+    finally:
+        universe.close()
+
+    assert result["classification"] == "existing_exact"
+    assert result["registry_tool_count"] == 1
+    assert result["matches"][0]["name"] == "AutoDiscoveredRegistry"
 
 
 def test_real_registry_resolves_als_to_orphanet_without_loading_every_tool():
