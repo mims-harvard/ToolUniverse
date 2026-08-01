@@ -14,6 +14,8 @@ def Tool_Finder_Keyword(
     picked_tool_names: Optional[list[str]] = None,
     return_call_result: Optional[bool] = None,
     categories: Optional[list[str]] = None,
+    include_capability_coverage: Optional[bool] = False,
+    capability_request: Optional[dict[str, Any]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,6 +36,10 @@ def Tool_Finder_Keyword(
         Whether to return both prompts and tool names. If false, returns only tool pr...
     categories : list[str]
         Optional list of tool categories to filter by
+    include_capability_coverage : bool
+        Include local exact, partial, or missing VSD coverage.
+    capability_request : dict[str, Any]
+        Optional structured capability fields; description defaults to the query.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +62,8 @@ def Tool_Finder_Keyword(
             "picked_tool_names": picked_tool_names,
             "return_call_result": return_call_result,
             "categories": categories,
+            "include_capability_coverage": include_capability_coverage,
+            "capability_request": capability_request,
         }.items()
         if v is not None
     }

@@ -1,5 +1,39 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Registry-First ALS Workflow Planning
+
+`workflow_planning_case_study.py` tests whether an agent can preflight a
+multi-step ALS research workflow before it searches for another API. It asks
+for genes, phenotypes, literature, trials, an FDA label, quantitative
+microscopy calibration, and a final synthesis, with explicit dependencies
+between the steps.
+
+The planner reads one local registry snapshot without loading or executing the
+registered tools. It preserves dependency order, classifies each step as exact,
+partial, or missing coverage, routes known tools to full specification review,
+and routes only the intentionally absent microscopy capability to bounded API
+discovery. The final synthesis is explicitly agent-fulfilled, so it remains in
+the dependency graph but can never be mistaken for an API gap. A separate
+whole-goal check proves that the existing
+`ComprehensiveDrugDiscoveryPipeline` is selected only when every named workflow
+dependency is present in the registry.
+
+The same run calls `Tool_Finder_Keyword` with optional VSD enrichment and proves
+that Finder and the workflow planner used the same registry digest. The default
+Finder response remains unchanged when enrichment is not requested.
+
+Run the offline study from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/workflow_planning_case_study.py
+```
+
+The run writes `artifacts/workflow_planning_snapshot.md` and
+`artifacts/workflow_planning_snapshot.json`. Both capture the ordered decisions,
+candidate matches, dependency blockers, non-executable handoffs, twelve runtime
+assertions, and a SHA-256 audit digest. The study does not call scientific APIs,
+execute selected tools, create candidates, persist demand, or publish tools.
+
 ## OpenAPI-to-Tool ALS Registry Pipeline
 
 `openapi_als_case_study.py` demonstrates how an administrator can turn one

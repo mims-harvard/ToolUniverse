@@ -3622,6 +3622,7 @@ class ToolUniverse:
                     "GetToolInfo",
                     "ExecuteTool",
                     "VSDResolveCapability",
+                    "VSDPlanWorkflow",
                 ]:
                     # Tool discovery tools need tooluniverse parameter
                     new_tool = tool_class(tool_config=tool, tooluniverse=self)

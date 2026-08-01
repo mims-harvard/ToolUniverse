@@ -679,6 +679,7 @@ STATIC_LAZY_REGISTRY = {
     "VSDDiscoverAPICandidates": "vsd_discovery",
     "VSDDiscoverSources": "vsd_tool",
     "VSDListSources": "vsd_tool",
+    "VSDPlanWorkflow": "vsd_planning",
     "VSDQuerySource": "vsd_tool",
     "VSDRegisterSource": "vsd_tool",
     "VSDRemoveSource": "vsd_tool",

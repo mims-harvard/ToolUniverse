@@ -77,6 +77,108 @@
     ]
   },
   {
+    "name": "VSDPlanWorkflow",
+    "type": "VSDPlanWorkflow",
+    "description": "Preflight an agent-proposed multi-step workflow against registered ToolUniverse tools and composed workflows. Returns an ordered, non-executable plan that reuses exact coverage, flags partial coverage for review, and sends only real gaps to API discovery.",
+    "category": "special_tools",
+    "cacheable": false,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "goal": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 500,
+          "description": "Non-sensitive overall workflow goal."
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "properties": {
+              "step_id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]{1,63}$"
+              },
+              "description": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 500
+              },
+              "provider": {"type": "string", "minLength": 3, "maxLength": 500},
+              "method": {"type": "string", "enum": ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"], "default": "GET"},
+              "endpoint": {"type": "string"},
+              "operation_id": {"type": "string"},
+              "required_inputs": {
+                "type": "array",
+                "maxItems": 20,
+                "uniqueItems": true,
+                "items": {"type": "string"},
+                "default": []
+              },
+              "output_fields": {
+                "type": "array",
+                "maxItems": 20,
+                "uniqueItems": true,
+                "items": {"type": "string"},
+                "default": []
+              },
+              "depends_on": {
+                "type": "array",
+                "maxItems": 20,
+                "uniqueItems": true,
+                "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"},
+                "default": []
+              },
+              "optional": {"type": "boolean", "default": false},
+              "fulfillment": {
+                "type": "string",
+                "enum": ["tool", "agent"],
+                "default": "tool",
+                "description": "Use agent for reasoning or assembly steps that must never trigger API discovery."
+              }
+            },
+            "required": ["step_id", "description"],
+            "additionalProperties": false
+          }
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 5
+        }
+      },
+      "required": ["goal", "capabilities"],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {"type": "object"}
+      },
+      "required": ["status", "data"]
+    },
+    "test_examples": [
+      {
+        "goal": "Build an ALS evidence workflow from registry genes, phenotypes, and trials",
+        "capabilities": [
+          {"step_id": "genes", "description": "rare disease registry genes", "required_inputs": ["disease"]},
+          {"step_id": "phenotypes", "description": "rare disease registry phenotypes", "required_inputs": ["disease"]},
+          {"step_id": "trials", "description": "clinical trials by disease", "required_inputs": ["condition"], "depends_on": ["genes", "phenotypes"]}
+        ],
+        "limit": 5
+      }
+    ]
+  },
+  {
     "name": "VSDDiscoverAPICandidates",
     "type": "VSDDiscoverAPICandidates",
     "description": "Search the fixed Socrata public-data catalog for API-ready datasets related to a research demand. Returned metadata is untrusted and non-executable until separately reviewed, verified, and approved.",

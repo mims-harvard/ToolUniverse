@@ -415,14 +415,13 @@ def _match_tool(
     }
 
 
-def resolve_capability(
-    tooluniverse: Any, request: dict[str, Any], *, limit: int = 10
+def _resolve_normalized_capability(
+    normalized: dict[str, Any],
+    registry: list[dict[str, Any]],
+    *,
+    limit: int,
 ) -> dict[str, Any]:
-    """Classify a capability against existing tools and composed workflows."""
-    if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 20:
-        raise VSDCoverageError("limit must be an integer between 1 and 20")
-    normalized = normalize_capability_request(request)
-    registry = _registry_tools(tooluniverse)
+    """Resolve one validated request against one immutable registry snapshot."""
     matches = [
         match
         for config in registry
@@ -492,6 +491,20 @@ def resolve_capability(
             ),
         },
     }
+
+
+def resolve_capability(
+    tooluniverse: Any, request: dict[str, Any], *, limit: int = 10
+) -> dict[str, Any]:
+    """Classify a capability against existing tools and composed workflows."""
+    if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 20:
+        raise VSDCoverageError("limit must be an integer between 1 and 20")
+    normalized = normalize_capability_request(request)
+    return _resolve_normalized_capability(
+        normalized,
+        _registry_tools(tooluniverse),
+        limit=limit,
+    )
 
 
 @register_tool("VSDResolveCapability")
