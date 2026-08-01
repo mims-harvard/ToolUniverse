@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -203,7 +204,7 @@ def run_case(
                 "tool_name": "DockerEvidenceSynthesizer",
                 "prompt_sha256": prompt_hash,
                 "prompt_hash_verified": prompt_hash_verified,
-                "prompt_words": len(PROMPT.split()),
+                "prompt_words": len(re.findall(r"\b[\w'-]+\b", PROMPT)),
                 "evidence_sections": PROMPT.count("## "),
                 "response": data["response"],
                 "model": data["model"],
