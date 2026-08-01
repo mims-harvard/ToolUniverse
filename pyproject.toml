@@ -158,6 +158,7 @@ tooluniverse-smcp-stdio = "tooluniverse.smcp_server:run_stdio_server"
 # HTTP API Server for ToolUniverse class methods
 tooluniverse-http-api = "tooluniverse.http_api_server_cli:run_http_api_server"
 generate-mcp-tools = "tooluniverse.generate_mcp_tools:run_generate"
+tooluniverse-docker-llm-admin = "tooluniverse.remote.docker_llm.cli:main"
 # Human Expert Feedback System
 tooluniverse-expert-feedback = "tooluniverse.remote.expert_feedback.human_expert_mcp_tools:main"
 tooluniverse-expert-feedback-web = "tooluniverse.remote.expert_feedback.start_web_interface:main"
@@ -168,7 +169,6 @@ tu-datastore = "tooluniverse.database_setup.cli:main"
 # tooluniverse-wide-research = "tooluniverse.web_tools.literature_search_ui.simple_app:main"
 # Health Check Tool
 tooluniverse-doctor = "tooluniverse.doctor:main"
-tooluniverse-docker-llm-admin = "tooluniverse.remote.docker_llm.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
