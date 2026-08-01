@@ -1,6 +1,6 @@
 # Registry-First ALS Workflow Planning Case Study
 
-**Generated:** 2026-08-01T19:30:19.485163+00:00
+**Generated:** 2026-08-01T19:45:04.241132+00:00
 
 ## Decision Question
 
@@ -64,4 +64,4 @@ The existing keyword finder was called with capability coverage enabled. It retu
 
 This study plans and inspects only. It does not execute scientific tools, download data, persist demand, or create API candidates.
 
-**Audit SHA-256:** `f687bfaacee2e21ec95ec90ec186e807fea0cbce785a6456464086415eeb0b83`
+**Audit SHA-256:** `8f2863ca0fdfd5f5577f36a33f72fb0efe1043e6156b3743b7e7ab54b88e2d0a`

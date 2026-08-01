@@ -1,5 +1,66 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Private Capability-Demand Ledger
+
+`demand_ledger_case_study.py` demonstrates how a library user can learn which
+capabilities recur without silently sending searches to the ToolUniverse team.
+The administrator-only `tooluniverse-vsd-demand` CLI resolves current registry
+coverage, records an explicit local observation, ranks repeated missing and
+partial coverage, and writes only explicitly selected proposals to a sanitized
+file. It is not registered as an agent-facing tool.
+
+The private ledger never stores the raw capability description or caller event
+ID. Each observation requires a separate 10-240 character public summary; URLs,
+email addresses, and credential-like assignments are rejected. The ledger is
+bounded, requests restrictive filesystem modes, uses atomic replacement, locks
+across threads and processes, and carries a content digest. Replayed event IDs
+are represented only by hashes and do not increase counts.
+
+Workflow plans can be recorded as one transaction with
+`record_plan_demands()`. The function verifies the complete plan SHA-256 and its
+non-execution boundary before it validates every selected step and public
+summary. A missing summary or altered plan aborts the entire batch without
+writing a partial ledger.
+
+The checked ALS study records three hash-bound seven-step workflow preflights, then
+replays one run to prove deduplication. It adds two observations for a distinct
+adaptive-optics retinal calibration gap and one exact FDA-label observation.
+The resulting unmet ranking contains six entries: the repeated ALS calibration
+gap scores 15, retinal calibration scores 10, and four partially covered ALS
+retrieval capabilities score 6 each. The satisfied FDA capability remains
+local but does not enter the ranking or export.
+
+Run the offline study from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/demand_ledger_case_study.py
+```
+
+The study writes `artifacts/demand_ledger_snapshot.md`, the corresponding JSON
+audit snapshot, and `artifacts/demand_proposals.json`. The proposal file contains
+only the two reviewer-selected unmet capabilities and explicitly records that
+no transmission occurred. Its reduced public capability schema includes the
+provider identity, method, operation ID, and field names, but omits endpoint
+paths so tenant or record identifiers cannot cross the export boundary.
+
+A direct CLI lifecycle is:
+
+```console
+tooluniverse-vsd-demand --workspace ./private-vsd-demand record \
+  --description "calibrate adaptive optics retinal imaging phantoms" \
+  --public-summary "Adaptive-optics retinal calibration for research workflows" \
+  --source scheduled_scan --event-id scan-2026-08-01
+tooluniverse-vsd-demand --workspace ./private-vsd-demand rank
+tooluniverse-vsd-demand --workspace ./private-vsd-demand export proposals.json \
+  --demand-id 0123456789abcdef --reviewed-by "Local Maintainer" \
+  --decision-note "Selected after reviewing repeated unmet local demand."
+```
+
+The user must deliberately share the resulting proposal file through a normal
+issue or pull-request process if the core team should see it. There is no
+telemetry, upload endpoint, background reporting, candidate execution, tool
+registration, or approval bypass.
+
 ## Registry-First ALS Workflow Planning
 
 `workflow_planning_case_study.py` tests whether an agent can preflight a

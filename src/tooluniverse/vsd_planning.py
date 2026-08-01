@@ -304,6 +304,7 @@ def plan_workflow(
                 "depends_on": step["depends_on"],
                 "optional": step["optional"],
                 "fulfillment": step["fulfillment"],
+                "request": deepcopy(step["capability"]),
                 "state": state,
                 "dependency_blockers": dependency_blockers,
                 "classification": classification,

@@ -4,8 +4,8 @@
     "goal": "Build an ALS evidence workflow from rare disease genes, phenotypes, literature, clinical trials, drug labels, and quantitative microscopy",
     "optional_gap_count": 0,
     "overall_action": "discover_missing_capabilities",
-    "plan_id": "fd56f4bffc949afc",
-    "plan_sha256": "fd56f4bffc949afcfc38f85feb9979b2bd21f22ab6d80a2e9b65f24a8e77baff",
+    "plan_id": "66bb1aa37bc9e144",
+    "plan_sha256": "66bb1aa37bc9e144ac155a12e31a073f07bc4a9e15e146b5e01db673b3738917",
     "privacy": "Workflow planning is local, read-only, and not persisted or reported.",
     "ready_agent_step_count": 0,
     "ready_step_count": 1,
@@ -106,6 +106,18 @@
         "optional": false,
         "position": 1,
         "recommended_action": "review_existing_or_extend_provider",
+        "request": {
+          "description": "rare disease registry genes",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "disease"
+          ]
+        },
         "selected_match": {
           "category": "orphanet",
           "coverage": "partial",
@@ -212,6 +224,18 @@
         "optional": false,
         "position": 2,
         "recommended_action": "review_existing_or_extend_provider",
+        "request": {
+          "description": "rare disease registry phenotypes",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "disease"
+          ]
+        },
         "selected_match": {
           "category": "orphanet",
           "coverage": "partial",
@@ -318,6 +342,18 @@
         "optional": false,
         "position": 3,
         "recommended_action": "review_existing_or_extend_provider",
+        "request": {
+          "description": "search biomedical literature articles by disease",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "query"
+          ]
+        },
         "selected_match": {
           "category": "pubtator3_ext",
           "coverage": "partial",
@@ -430,6 +466,18 @@
         "optional": false,
         "position": 4,
         "recommended_action": "review_existing_or_extend_provider",
+        "request": {
+          "description": "search clinical trials by disease condition",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "condition"
+          ]
+        },
         "selected_match": {
           "category": "clinical_trials",
           "coverage": "partial",
@@ -536,6 +584,18 @@
         "optional": false,
         "position": 5,
         "recommended_action": "use_existing",
+        "request": {
+          "description": "retrieve FDA drug label by set identifier",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "fda",
+          "required_inputs": [
+            "set_id"
+          ]
+        },
         "selected_match": {
           "category": "fda_drug_label",
           "coverage": "exact",
@@ -574,6 +634,16 @@
         "optional": false,
         "position": 6,
         "recommended_action": "discover_external_candidate",
+        "request": {
+          "description": "quantum microscope calibration waveform optimizer",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": []
+        },
         "selected_match": null,
         "state": "missing",
         "step_id": "microscopy_calibration"
@@ -607,6 +677,16 @@
         "optional": false,
         "position": 7,
         "recommended_action": "perform_after_dependencies",
+        "request": {
+          "description": "combine ALS genes phenotypes literature clinical trials drug labels and quantitative microscopy evidence",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": []
+        },
         "selected_match": null,
         "state": "blocked_by_dependencies",
         "step_id": "synthesis"
@@ -617,7 +697,7 @@
     "workflow_shortcut": null
   },
   "answer": "Yes. The planner retained exact and partial registry coverage for review, sent only the microscopy-calibration gap to non-executable discovery, and recognized an existing drug-discovery workflow with all dependencies present.",
-  "audit_sha256": "f687bfaacee2e21ec95ec90ec186e807fea0cbce785a6456464086415eeb0b83",
+  "audit_sha256": "8f2863ca0fdfd5f5577f36a33f72fb0efe1043e6156b3743b7e7ab54b88e2d0a",
   "end_to_end_assertions": {
     "dependency_order_is_valid": true,
     "drug_label_reuses_exact_tools": true,
@@ -638,8 +718,8 @@
     "goal": "complete disease target compound ADMET literature workflow",
     "optional_gap_count": 0,
     "overall_action": "use_existing_workflow",
-    "plan_id": "d48b35428955eec4",
-    "plan_sha256": "d48b35428955eec49a4df05a766f381af9f008ffba4039b3737212f235b68dc1",
+    "plan_id": "d07579f2fcc7ef9d",
+    "plan_sha256": "d07579f2fcc7ef9d5bc14cf5c45b262634b06af7c9a04819cc769a628894282c",
     "privacy": "Workflow planning is local, read-only, and not persisted or reported.",
     "ready_agent_step_count": 0,
     "ready_step_count": 1,
@@ -684,6 +764,16 @@
         "optional": false,
         "position": 1,
         "recommended_action": "use_existing",
+        "request": {
+          "description": "complete disease target compound ADMET literature workflow",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": []
+        },
         "selected_match": {
           "category": "compose",
           "coverage": "exact",
@@ -1031,7 +1121,7 @@
     ],
     "total_matches": 739
   },
-  "generated_at": "2026-08-01T19:30:19.485163+00:00",
+  "generated_at": "2026-08-01T19:45:04.241132+00:00",
   "initially_loaded_tools": [
     "Tool_Finder_Keyword",
     "VSDPlanWorkflow"
