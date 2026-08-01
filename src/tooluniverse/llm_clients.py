@@ -822,6 +822,249 @@ class OpenRouterClient(BaseLLMClient):
         return None
 
 
+class BedrockClient(BaseLLMClient):
+    """
+    Amazon Bedrock client using the Bedrock Runtime Converse API.
+    Supports Bedrock model IDs and inference profile IDs across providers.
+    """
+
+    DEFAULT_MODEL_LIMITS: Dict[str, Dict[str, int]] = {
+        "anthropic.claude": {"max_output": 4096, "context_window": 200_000},
+        "amazon.nova": {"max_output": 5000, "context_window": 300_000},
+        "meta.llama": {"max_output": 4096, "context_window": 128_000},
+        "mistral.": {"max_output": 4096, "context_window": 32_000},
+    }
+
+    def __init__(self, model_id: str, logger):
+        try:
+            import boto3  # type: ignore
+        except Exception as e:  # pragma: no cover
+            raise RuntimeError(
+                "boto3 is required for Bedrock; install tooluniverse[bedrock]"
+            ) from e
+
+        self.model_name = model_id
+        self.logger = logger
+
+        session = boto3.Session()
+        region = (
+            os.getenv("BEDROCK_REGION")
+            or os.getenv("AWS_REGION")
+            or os.getenv("AWS_DEFAULT_REGION")
+            or session.region_name
+        )
+        if not region:
+            raise ValueError(
+                "Configure an AWS profile region or set BEDROCK_REGION, AWS_REGION, "
+                "or AWS_DEFAULT_REGION for Bedrock"
+            )
+
+        self.client = session.client("bedrock-runtime", region_name=region)
+
+        env_limits_raw = os.getenv("BEDROCK_DEFAULT_MODEL_LIMITS")
+        self._default_limits: Dict[str, Dict[str, int]] = (
+            self.DEFAULT_MODEL_LIMITS.copy()
+        )
+        if env_limits_raw:
+            try:
+                env_limits = _json.loads(env_limits_raw)
+                for k, v in env_limits.items():
+                    if isinstance(v, dict):
+                        base = self._default_limits.get(k, {}).copy()
+                        base.update(
+                            {
+                                kk: int(vv)
+                                for kk, vv in v.items()
+                                if isinstance(vv, (int, float, str))
+                            }
+                        )
+                        self._default_limits[k] = base
+            except Exception:
+                pass
+
+    def _resolve_default_max_tokens(self, model_id: str) -> Optional[int]:
+        mapping_raw = os.getenv("BEDROCK_MAX_TOKENS_BY_MODEL")
+        mapping: Dict[str, Any] = {}
+        if mapping_raw:
+            try:
+                mapping = _json.loads(mapping_raw)
+            except Exception:
+                mapping = {}
+
+        if model_id in mapping:
+            try:
+                return int(mapping[model_id])
+            except Exception:
+                pass
+
+        for k, v in mapping.items():
+            try:
+                if model_id.startswith(k):
+                    return int(v)
+            except Exception:
+                continue
+
+        if model_id in self._default_limits:
+            return int(self._default_limits[model_id].get("max_output", 0)) or None
+
+        for k, v in self._default_limits.items():
+            try:
+                if model_id.startswith(k):
+                    return int(v.get("max_output", 0)) or None
+            except Exception:
+                continue
+
+        return None
+
+    def _prepare_converse_messages(
+        self, messages: List[Dict[str, str]], return_json: bool
+    ) -> Dict[str, Any]:
+        bedrock_messages: List[Dict[str, Any]] = []
+        system_blocks: List[Dict[str, str]] = []
+
+        for message in messages:
+            role = message.get("role", "user")
+            content = message.get("content", "")
+            if not isinstance(content, str):
+                content = str(content)
+
+            if role == "system":
+                system_blocks.append({"text": content})
+                continue
+
+            bedrock_role = "assistant" if role == "assistant" else "user"
+            bedrock_messages.append(
+                {"role": bedrock_role, "content": [{"text": content}]}
+            )
+
+        if return_json:
+            system_blocks.append({"text": "Return only valid JSON."})
+
+        if not bedrock_messages:
+            bedrock_messages.append({"role": "user", "content": [{"text": "ping"}]})
+
+        payload: Dict[str, Any] = {"messages": bedrock_messages}
+        if system_blocks:
+            payload["system"] = system_blocks
+        return payload
+
+    @staticmethod
+    def _extract_text(response: Dict[str, Any]) -> str:
+        content_blocks = (
+            response.get("output", {}).get("message", {}).get("content", [])
+        )
+        return "".join(
+            block.get("text", "") for block in content_blocks if isinstance(block, dict)
+        )
+
+    def test_api(self) -> None:
+        try:
+            self.client.converse(
+                modelId=self.model_name,
+                messages=[{"role": "user", "content": [{"text": "ping"}]}],
+                inferenceConfig={"maxTokens": 8, "temperature": 0},
+            )
+        except Exception as e:
+            raise ValueError(f"Bedrock API test failed: {e}") from e
+
+    def infer(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: Optional[float],
+        max_tokens: Optional[int],
+        return_json: bool,
+        custom_format: Any = None,
+        max_retries: int = 5,
+        retry_delay: int = 5,
+    ) -> Optional[str]:
+        if custom_format is not None:
+            self.logger.warning("Bedrock does not support custom format, ignoring")
+
+        payload = self._prepare_converse_messages(messages, return_json)
+        inference_config: Dict[str, Any] = {}
+        if temperature is not None:
+            inference_config["temperature"] = temperature
+
+        eff_max = (
+            max_tokens
+            if max_tokens is not None
+            else self._resolve_default_max_tokens(self.model_name)
+        )
+        if eff_max is not None:
+            inference_config["maxTokens"] = eff_max
+
+        retries = 0
+        while retries < max_retries:
+            try:
+                kwargs: Dict[str, Any] = {"modelId": self.model_name, **payload}
+                if inference_config:
+                    kwargs["inferenceConfig"] = inference_config
+                response = self.client.converse(**kwargs)
+                return self._extract_text(response)
+            except Exception as e:
+                self.logger.error(f"Bedrock error: {e}")
+                retries += 1
+                if retries < max_retries:
+                    time.sleep(retry_delay * retries)
+
+        self.logger.error("Max retries exceeded for Bedrock request")
+        return None
+
+    def infer_stream(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: Optional[float],
+        max_tokens: Optional[int],
+        return_json: bool,
+        custom_format: Any = None,
+        max_retries: int = 5,
+        retry_delay: int = 5,
+    ):
+        if custom_format is not None:
+            self.logger.warning("Bedrock does not support custom format, ignoring")
+
+        payload = self._prepare_converse_messages(messages, return_json)
+        inference_config: Dict[str, Any] = {}
+        if temperature is not None:
+            inference_config["temperature"] = temperature
+        eff_max = (
+            max_tokens
+            if max_tokens is not None
+            else self._resolve_default_max_tokens(self.model_name)
+        )
+        if eff_max is not None:
+            inference_config["maxTokens"] = eff_max
+
+        retries = 0
+        while retries < max_retries:
+            try:
+                kwargs: Dict[str, Any] = {"modelId": self.model_name, **payload}
+                if inference_config:
+                    kwargs["inferenceConfig"] = inference_config
+                response = self.client.converse_stream(**kwargs)
+                for event in response.get("stream", []):
+                    delta = event.get("contentBlockDelta", {}).get("delta", {})
+                    text = delta.get("text")
+                    if text:
+                        yield text
+                return
+            except Exception as e:
+                self.logger.error(f"Bedrock streaming error: {e}")
+                retries += 1
+                if retries < max_retries:
+                    time.sleep(retry_delay * retries)
+
+        yield from super().infer_stream(
+            messages,
+            temperature,
+            max_tokens,
+            return_json,
+            custom_format,
+            max_retries,
+            retry_delay,
+        )
+
+
 class VLLMClient(BaseLLMClient):
     def __init__(self, model_name: str, server_url: str, logger):
         try:

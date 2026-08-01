@@ -32,6 +32,10 @@ class TestAgenticToolEnvironmentVariables:
             "GEMINI_MODEL_ID",
             "AGENTIC_TOOL_FALLBACK_CHAIN",
             "VLLM_SERVER_URL",
+            "BEDROCK_REGION",
+            "AWS_REGION",
+            "AWS_DEFAULT_REGION",
+            "AWS_PROFILE",
         ]
         for var in env_vars_to_clear:
             if var in os.environ:
@@ -373,6 +377,35 @@ class TestAgenticToolEnvironmentVariables:
             # Verify the VLLM server URL was correctly read
             # This is tested indirectly through the VLLM client initialization
             assert os.getenv("VLLM_SERVER_URL") == "http://localhost:8000"
+
+    def test_bedrock_provider_is_supported(self):
+        """Test that Bedrock provider config is accepted."""
+        os.environ["AWS_REGION"] = "us-east-1"
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+            "api_type": "BEDROCK",
+            "model_id": "anthropic.claude-3-5-sonnet-20240620-v1:0",
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            tool = AgenticTool(tool_config)
+
+            assert tool._api_type == "BEDROCK"
+            assert AgenticTool.has_any_api_keys() is True
+
+    def test_bedrock_profile_marks_provider_available(self):
+        """Test that an explicit AWS profile enables Bedrock discovery."""
+        os.environ["AWS_PROFILE"] = "research"
+
+        assert AgenticTool.has_any_api_keys() is True
 
     def test_task_specific_model_env_var(self):
         """Test that task-specific model environment variables work."""
