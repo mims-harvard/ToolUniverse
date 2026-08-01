@@ -1,0 +1,112 @@
+{
+  "all_cases_passed": true,
+  "case_count": 3,
+  "cases": [
+    {
+      "arguments": {
+        "study_phase": "I"
+      },
+      "case_index": 0,
+      "expect": {
+        "equals": {
+          "study_phase": "I"
+        },
+        "max_items": 25,
+        "min_items": 1,
+        "required_fields": [
+          "protocol",
+          "title",
+          "study_phase"
+        ]
+      },
+      "http_status": 200,
+      "observed_fields": [
+        "date_closed",
+        "date_opened",
+        "primary_site",
+        "principal_investigator",
+        "protocol",
+        "study_phase",
+        "title"
+      ],
+      "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+      "payload_sha256": "7de1c8fb37ce5a26b9a25de4e6d12fc6b639735d8a221bdf3ecdc2912501893a",
+      "redirects": 0,
+      "retrieved_at": "2026-08-01T04:31:34.786244+00:00",
+      "row_count": 25
+    },
+    {
+      "arguments": {
+        "study_phase": "II"
+      },
+      "case_index": 1,
+      "expect": {
+        "equals": {
+          "study_phase": "II"
+        },
+        "max_items": 25,
+        "min_items": 1,
+        "required_fields": [
+          "protocol",
+          "title",
+          "study_phase"
+        ]
+      },
+      "http_status": 200,
+      "observed_fields": [
+        "date_closed",
+        "date_opened",
+        "primary_site",
+        "principal_investigator",
+        "protocol",
+        "study_phase",
+        "title"
+      ],
+      "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+      "payload_sha256": "7898177fe582799b118a98de9de2bd4603d9d60589e46d488af43a342812026a",
+      "redirects": 0,
+      "retrieved_at": "2026-08-01T04:31:35.235030+00:00",
+      "row_count": 25
+    },
+    {
+      "arguments": {
+        "study_phase": "III"
+      },
+      "case_index": 2,
+      "expect": {
+        "equals": {
+          "study_phase": "III"
+        },
+        "max_items": 25,
+        "min_items": 1,
+        "required_fields": [
+          "protocol",
+          "title",
+          "study_phase"
+        ]
+      },
+      "http_status": 200,
+      "observed_fields": [
+        "date_closed",
+        "date_opened",
+        "primary_site",
+        "principal_investigator",
+        "protocol",
+        "study_phase",
+        "title"
+      ],
+      "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+      "payload_sha256": "322b0476c5a33b91b7eae1117283468bac557db1ac748bbf8645b4d2d8a7795d",
+      "redirects": 0,
+      "retrieved_at": "2026-08-01T04:31:35.639377+00:00",
+      "row_count": 25
+    }
+  ],
+  "draft_id": "vsdtotalcancertrialsbyphase_df24873e96db",
+  "draft_sha256": "1118f91aaa25b923cebbb0e4de34954570409faf0d45bdb3410ce26d30aae86f",
+  "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+  "tool_name": "VSDTotalCancerTrialsByPhase",
+  "verification_sha256": "2ce8b64fbf79cc1ad747ecbf28dd222dd8a6399a4d2b51f85374f1b04475d790",
+  "verified_at": "2026-08-01T04:31:35.641290+00:00",
+  "version": 1
+}

@@ -92,17 +92,53 @@ Review the concise report at
 `examples/vsd/artifacts/tool_promotion_snapshot.json`, and the complete audit chain
 under `examples/vsd/artifacts/promotion_workspace/`.
 
+## Complete VSD Pipeline Case
+
+The oncology source-governance case is the integration proof for all four VSD
+phases. Unlike the focused examples, it does not begin from a checked discovery
+snapshot. It performs live administrative source inspection, reviewed source
+execution, reviewed dynamic REST search and detail calls, demand-driven catalog
+discovery, candidate screening, draft generation, six live verification calls,
+approval, publication, explicit loading into a fresh ToolUniverse instance, and
+two post-publication calls in one run.
+
+The run fails closed unless all 12 cross-stage assertions pass. Those assertions
+cover catalog cleanup, control-plane isolation, identity consistency, candidate
+non-executability, required discovery fields, verification outcomes, all five
+promotion hashes per tool, absence before explicit loading, exact loaded names,
+and exact-filter runtime results. A final SHA-256 digest binds the provider,
+operation, discovery, promotion, and runtime evidence hashes into one audit
+record.
+
+The live search originally exceeded the 1 MB transport ceiling when requesting
+twenty full ClinicalTrials.gov protocols. The contract was narrowed to an
+explicit ten-field projection, producing the same bounded record count in about
+372 KB. This is an important validation result: the integration adapted its data
+contract instead of relaxing the transport policy.
+
+```console
+PYTHONPATH=src python examples/vsd/complete_pipeline_case_study.py
+```
+
+- Detailed report: `examples/vsd/artifacts/complete_pipeline_snapshot.md`
+- Machine ledger: `examples/vsd/artifacts/complete_pipeline_snapshot.json`
+- Promotion chain: `examples/vsd/artifacts/complete_pipeline_workspace/promotion/`
+- Isolated final catalog: `examples/vsd/artifacts/complete_pipeline_workspace/catalog/sources.json`
+
 ## Verification Commands
 
 ```console
 PYTHONPATH=src python -m pytest \
   tests/unit/test_vsd_promotion.py \
-  tests/unit/test_vsd_promotion_cli.py -q
+  tests/unit/test_vsd_promotion_cli.py \
+  tests/unit/test_vsd_complete_pipeline_case_study.py -q
 
 uvx --from ruff==0.14.5 ruff check \
   src/tooluniverse/vsd_promotion.py \
   src/tooluniverse/vsd_promotion_cli.py \
   tests/unit/test_vsd_promotion.py \
   tests/unit/test_vsd_promotion_cli.py \
+  tests/unit/test_vsd_complete_pipeline_case_study.py \
+  examples/vsd/complete_pipeline_case_study.py \
   examples/vsd/tool_promotion_cancer_case_study.py
 ```

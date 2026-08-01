@@ -1,4 +1,52 @@
-# ToolUniverse VSD Heart-Health Evidence Dossier
+# ToolUniverse VSD Validation Case Studies
+
+## Complete Oncology Source-Governance Pipeline
+
+`complete_pipeline_case_study.py` exercises the entire VSD stack in one
+continuous workflow. It starts with a breast-cancer evidence need and crosses
+each trust boundary explicitly:
+
+1. The administrator CLI registers, probes, lists, queries, and removes a
+   temporary openFDA tamoxifen source in an isolated catalog.
+2. A real ToolUniverse instance confirms that the administrative operations are
+   absent, discovers the packaged openFDA integration offline, and retrieves the
+   same label through the fixed `VSDOpenFDALabelBySetId` contract.
+3. Two reviewed dynamic REST operations search active or upcoming New York
+   breast-cancer studies and retrieve one deterministic NCT record.
+4. `VSDDiscoverAPICandidates` searches the fixed Socrata catalog for a source
+   with six demanded trial fields. The selected candidate remains explicitly
+   non-executable.
+5. The administrator creates two narrow drafts from that candidate, runs three
+   live cases per draft, approves the exact evidence hashes, and publishes the
+   approved records.
+6. A fresh ToolUniverse instance proves the new tools were absent before the
+   explicit load, loads both publications, and executes independent site and
+   phase queries.
+
+The first live attempt was rejected because twenty unprojected ClinicalTrials.gov
+records exceeded the transport's 1 MB response ceiling. The reviewed search
+contract was corrected to request only the ten fields used by the study; the
+successful response retained twenty records while shrinking to roughly 372 KB.
+The safety limit was not weakened.
+
+Run the complete case from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/complete_pipeline_case_study.py
+```
+
+The checked live run passed all 12 end-to-end assertions, six promotion cases,
+two post-publication executions, catalog cleanup, search/detail identity, and
+the final cross-stage audit digest. Review the detailed report at
+`artifacts/complete_pipeline_snapshot.md`, the complete machine-readable ledger
+at `artifacts/complete_pipeline_snapshot.json`, and the draft/evidence/approval/
+publication records under `artifacts/complete_pipeline_workspace/promotion/`.
+
+The report is a software-governance and public-record retrieval proof. It does
+not match patients, establish trial eligibility, compare treatments, or join
+the state and national registries at record level.
+
+## Heart-Health Evidence Dossier
 
 This example builds a reproducible population-health screening dossier for
 Autauga County, Alabama. It asks which census tracts show concurrent modeled
@@ -11,7 +59,7 @@ The output is designed for an analyst deciding what to investigate next. It is
 not a neighborhood ranking, patient-risk model, causal analysis, clinical
 recommendation, or resource-allocation algorithm.
 
-## Workflow
+### Workflow
 
 The script creates one `ToolUniverse` instance, selectively loads six tools, and
 executes all work through the documented `run_one_function()` API with caching
@@ -43,7 +91,7 @@ inactivity, obesity, lack of insurance, and routine checkups. It validates the
 measure IDs and names, county, unique tract-measure pairs, percentage bounds,
 and confidence-interval ordering before returning data.
 
-## Analysis
+### Analysis
 
 The live Autauga query is expected to form a complete 17-tract by 8-measure grid.
 The script refuses to build a dossier if the response reaches its record limit or
@@ -73,7 +121,7 @@ point estimates and each context measure. These are diagnostics only: they do
 not use confidence intervals or adjust for shared model inputs, demographics, or
 spatial dependence.
 
-## Run And Artifacts
+### Run And Artifacts
 
 From the repository root:
 
@@ -99,7 +147,7 @@ size, redirect count, and raw-payload SHA-256. PubMed and ClinicalTrials.gov are
 supporting ToolUniverse integrations and do not inherit the VSD transport or
 provenance contract.
 
-## Scientific Boundaries
+### Scientific Boundaries
 
 CDC PLACES estimates are modeled aggregates derived from BRFSS and Census inputs,
 not patient observations. CDC cautions against using the estimates to rank the

@@ -1,14 +1,30 @@
 from __future__ import annotations
 
+import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
 
-from examples.vsd import tool_promotion_cancer_case_study as study
 from tooluniverse import vsd_dynamic_rest
 
 pytestmark = pytest.mark.unit
+
+
+MODULE_PATH = (
+    Path(__file__).parents[2]
+    / "examples"
+    / "vsd"
+    / "tool_promotion_cancer_case_study.py"
+)
+SPEC = importlib.util.spec_from_file_location(
+    "vsd_tool_promotion_case_study", MODULE_PATH
+)
+assert SPEC and SPEC.loader
+study = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = study
+SPEC.loader.exec_module(study)
 
 
 def test_complex_case_promotes_loads_and_executes_two_tools(
