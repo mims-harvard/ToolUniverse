@@ -25,6 +25,11 @@ dataset identifier, and field schema. The deterministic score combines:
 
 The complete score breakdown is returned; no candidate is silently promoted.
 
+Field hints describe the provider's JSON wire shape. Socrata `Number` and `Money`
+columns are reported as strings because SODA preserves their arbitrary precision by
+serializing them as JSON strings. See the provider documentation:
+https://dev.socrata.com/docs/datatypes/number.html.
+
 ## End-to-End Proof
 
 `examples/vsd/api_discovery_case_study.py` asks for an active cancer-trial data

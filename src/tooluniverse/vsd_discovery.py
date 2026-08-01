@@ -43,8 +43,9 @@ _STOPWORDS = frozenset(
 _TYPE_NAMES = {
     "Calendar date": "string",
     "Checkbox": "boolean",
-    "Money": "number",
-    "Number": "number",
+    # SODA JSON serializes arbitrary-precision numeric values as strings.
+    "Money": "string",
+    "Number": "string",
     "Point": "object",
     "Text": "string",
 }
