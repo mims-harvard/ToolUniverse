@@ -20,7 +20,7 @@ import yaml
 from yaml.constructor import ConstructorError
 from yaml.events import AliasEvent
 
-from .vsd_dynamic_rest import VSDDynamicRESTError, _schema_validator
+from .vsd_dynamic_rest import VSDDynamicRESTError, _schema_validator, _validated_auth
 
 _FORMAT_VERSION = 1
 _MAX_DOCUMENT_BYTES = 1_000_000
@@ -455,6 +455,87 @@ def _response_schema(
     return schema, media_type, []
 
 
+def _authentication_descriptor(
+    operation: dict[str, Any], document: dict[str, Any]
+) -> tuple[dict[str, str] | None, list[str]]:
+    security = operation.get("security", document.get("security", []))
+    if security in (None, []):
+        return None, []
+    blockers = ["authentication_required"]
+    if not isinstance(security, list) or not 1 <= len(security) <= 20:
+        return None, [*blockers, "authentication_requirements_invalid"]
+    if any(requirement == {} for requirement in security):
+        return None, []
+    if len(security) != 1 or not isinstance(security[0], dict) or len(security[0]) != 1:
+        return None, [*blockers, "authentication_alternatives_unsupported"]
+    scheme_name, scopes = next(iter(security[0].items()))
+    if not isinstance(scheme_name, str) or not scheme_name or scopes != []:
+        return None, [*blockers, "authentication_scopes_unsupported"]
+    components = document.get("components")
+    schemes = (
+        components.get("securitySchemes") if isinstance(components, dict) else None
+    )
+    raw_scheme = schemes.get(scheme_name) if isinstance(schemes, dict) else None
+    try:
+        scheme = _resolved_object(raw_scheme, document, kind="security_scheme")
+    except VSDOpenAPIError as exc:
+        return None, [*blockers, f"authentication_scheme:{exc}"]
+    scheme_type = str(scheme.get("type") or "").casefold()
+    if scheme_type == "apikey" and str(scheme.get("in") or "").casefold() == "header":
+        header = scheme.get("name")
+        try:
+            normalized = _validated_auth(
+                {
+                    "type": "api_key_header_env",
+                    "env_var": "TOOLUNIVERSE_VSD_INSPECTION_PLACEHOLDER",
+                    "header": header,
+                }
+            )
+        except VSDDynamicRESTError as exc:
+            return None, [*blockers, f"authentication_scheme:{exc}"]
+        return {
+            "type": "api_key_header",
+            "scheme_name": _text(scheme_name),
+            "header": normalized["header"],
+        }, []
+    if scheme_type == "http" and str(scheme.get("scheme") or "").casefold() == "bearer":
+        return {
+            "type": "bearer",
+            "scheme_name": _text(scheme_name),
+        }, []
+    return None, [*blockers, "authentication_scheme_unsupported"]
+
+
+def _validate_auth_descriptor(value: Any) -> None:
+    if value is None:
+        return
+    if not isinstance(value, dict):
+        raise VSDOpenAPIError("OpenAPI candidate authentication is invalid")
+    auth_type = value.get("type")
+    scheme_name = value.get("scheme_name")
+    if not isinstance(scheme_name, str) or not scheme_name or len(scheme_name) > 2000:
+        raise VSDOpenAPIError("OpenAPI candidate authentication is invalid")
+    try:
+        if auth_type == "api_key_header" and set(value) == {
+            "type",
+            "scheme_name",
+            "header",
+        }:
+            _validated_auth(
+                {
+                    "type": "api_key_header_env",
+                    "env_var": "TOOLUNIVERSE_VSD_INSPECTION_PLACEHOLDER",
+                    "header": value.get("header"),
+                }
+            )
+            return
+        if auth_type == "bearer" and set(value) == {"type", "scheme_name"}:
+            return
+    except VSDDynamicRESTError as exc:
+        raise VSDOpenAPIError("OpenAPI candidate authentication is invalid") from exc
+    raise VSDOpenAPIError("OpenAPI candidate authentication is invalid")
+
+
 def _candidate_digest(body: dict[str, Any]) -> str:
     encoded = json.dumps(
         body, sort_keys=True, separators=(",", ":"), ensure_ascii=True
@@ -512,9 +593,10 @@ def inspect_openapi_document(
                 blockers.append("request_body_not_supported")
             if "callbacks" in operation:
                 blockers.append("callbacks_not_supported")
-            security = operation.get("security", document.get("security", []))
-            if security not in (None, []):
-                blockers.append("authentication_required")
+            auth, authentication_blockers = _authentication_descriptor(
+                operation, document
+            )
+            blockers.extend(authentication_blockers)
             try:
                 server_url = _server_url(
                     operation, path_item, document, server_index=server_index
@@ -565,6 +647,7 @@ def inspect_openapi_document(
                     if isinstance(tag, str)
                 ][:20],
                 "parameters": parameters,
+                "auth": auth,
                 "response_media_type": response_media_type,
                 "response_schema": response_schema,
                 "blockers": sorted(set(blockers)),
@@ -623,6 +706,7 @@ def validate_openapi_candidate(candidate: Any) -> dict[str, Any]:
     parameters = candidate.get("parameters")
     if not isinstance(parameters, list) or len(parameters) > _MAX_PARAMETERS:
         raise VSDOpenAPIError("OpenAPI candidate parameters are invalid")
+    _validate_auth_descriptor(candidate.get("auth"))
     argument_names: set[str] = set()
     path_names: set[str] = set()
     for parameter in parameters:

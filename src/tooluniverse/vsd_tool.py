@@ -54,6 +54,17 @@ _SECRET_PATH_RE = re.compile(
     r"AKIA[A-Z0-9]{12,}|eyJ[a-z0-9_-]{12,}\.[a-z0-9_-]{8,})",
     re.IGNORECASE,
 )
+_HEADER_NAME_RE = re.compile(r"^[!#$%&'*+.^_`|~0-9A-Za-z-]{1,128}$")
+_FORBIDDEN_REQUEST_HEADERS = {
+    "accept",
+    "accept-encoding",
+    "connection",
+    "content-length",
+    "cookie",
+    "host",
+    "proxy-authorization",
+    "transfer-encoding",
+}
 
 # Exact hosts only. Additional exact hosts require an explicit administrator or
 # user opt-in through TOOLUNIVERSE_VSD_ALLOWED_HOSTS.
@@ -374,6 +385,38 @@ def _validated_params(params: Any) -> dict[str, Any]:
     return validated
 
 
+def _validated_request_headers(headers: Any) -> dict[str, str]:
+    if headers is None:
+        return {}
+    if not isinstance(headers, dict) or len(headers) > 4:
+        raise VSDPolicyError("Request headers must contain at most four entries")
+    validated: dict[str, str] = {}
+    seen: set[str] = set()
+    for name, value in headers.items():
+        if not isinstance(name, str) or not _HEADER_NAME_RE.fullmatch(name):
+            raise VSDPolicyError("Request header names must be stable HTTP tokens")
+        normalized = name.casefold()
+        if (
+            normalized in seen
+            or normalized in _FORBIDDEN_REQUEST_HEADERS
+            or normalized.startswith(("proxy-", "sec-", "x-forwarded-"))
+        ):
+            raise VSDPolicyError(f"Request header {name!r} is prohibited")
+        if (
+            not isinstance(value, str)
+            or not 1 <= len(value) <= 4096
+            or any(ord(character) < 32 or ord(character) > 126 for character in value)
+        ):
+            raise VSDPolicyError(
+                f"Request header {name!r} must contain 1-4096 printable ASCII characters"
+            )
+        seen.add(normalized)
+        validated[name] = value
+    if sum(len(name) + len(value) for name, value in validated.items()) > 8192:
+        raise VSDPolicyError("Request headers exceed the 8 KiB limit")
+    return validated
+
+
 def _bounded_text(value: Any, *, field: str, maximum: int, fallback: str = "") -> str:
     text = str(value or fallback).strip()
     if len(text) > maximum:
@@ -491,6 +534,7 @@ def _safe_get_json(
     *,
     timeout: float = 20.0,
     session: requests.Session | None = None,
+    headers: dict[str, str] | None = None,
 ) -> tuple[Any, dict[str, Any]]:
     """GET JSON through a DNS-pinned HTTPS connection with bounded decoding."""
     if (
@@ -504,6 +548,7 @@ def _safe_get_json(
     normalized_url, hostname, addresses = _validated_source_target(url)
     pinned_address = addresses[0]
     validated_params = _validated_params(params)
+    validated_headers = _validated_request_headers(headers)
     owned_session = session is None
     http = session or requests.Session()
     http.trust_env = False
@@ -523,6 +568,7 @@ def _safe_get_json(
                 headers={
                     "Accept": "application/json",
                     "Accept-Encoding": "identity",
+                    **validated_headers,
                 },
                 timeout=Urllib3Timeout(
                     total=remaining,

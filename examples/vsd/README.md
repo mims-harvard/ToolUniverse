@@ -1,5 +1,58 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Environment-Backed Credentials For Reviewed APIs
+
+VSD can promote a reviewed OpenAPI operation that requires either one header
+API key or one HTTP bearer token. The inspector derives the authentication
+contract from the OpenAPI security scheme, while the administrator supplies a
+`TOOLUNIVERSE_VSD_*` environment-variable reference during drafting. Only the
+reference is persisted; the credential value is read separately for every
+execution and is excluded from the operation result and provenance.
+
+Query and cookie API keys, HTTP basic authentication, OAuth flows, scopes,
+multiple simultaneous schemes, and ambiguous security alternatives remain
+blocked. Header names and values are bounded and validated before transport.
+Missing or malformed credentials fail before a request, and a provider payload
+that contains the exact credential value is rejected before result
+construction. Because the environment value is not part of the reviewed
+operation digest, an operator can rotate it without republishing the tool.
+
+The checked rare-disease study inspects a protected OpenAPI 3.1 contract,
+creates an inert candidate, binds the reviewed `X-Rare-Disease-Key` header to an
+environment reference, verifies ALS, Duchenne muscular dystrophy, and spinal
+muscular atrophy records, approves and publishes the hash-bound operation, and
+loads it into a fresh ToolUniverse instance. It then proves credential rotation,
+pre-network failure, provider-reflection rejection, and absence of all test
+credential values from persisted JSON and ToolUniverse results.
+
+Run the deterministic offline study from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/credential_reference_case_study.py
+```
+
+The study writes `artifacts/credential_reference_snapshot.md` and the
+corresponding JSON audit snapshot. A deterministic protected rare-disease
+provider replaces only network transport because the repository cannot bundle
+a live credential; OpenAPI inspection, promotion, verification, publication,
+fresh loading, and execution all use the production code paths.
+
+For a real reviewed contract, use the same administrator flow:
+
+```console
+tooluniverse-vsd-promote inspect-openapi protected-api.yaml > inspection.json
+tooluniverse-vsd-promote --workspace ./vsd-review draft-openapi inspection.json \
+  --candidate-id <candidate-id> \
+  --tool-name VSDProtectedEvidenceById \
+  --description "Retrieve one reviewed protected evidence record by identifier." \
+  --credential-env TOOLUNIVERSE_VSD_PROVIDER_KEY
+```
+
+Configure `TOOLUNIVERSE_VSD_PROVIDER_KEY` in the runtime's secret manager or
+process environment before verification and execution. Do not put a credential
+value in the inspection file, command line, tool configuration, or case
+artifact.
+
 ## Private Capability-Demand Ledger
 
 `demand_ledger_case_study.py` demonstrates how a library user can learn which
@@ -146,10 +199,10 @@ tooluniverse-vsd-promote --workspace ./vsd-review draft-openapi inspection.json 
 
 `candidate-id` values are content-addressed and change when the provider
 contract changes. Administrators must select the value produced by their own
-inspection rather than reuse the example value above. Authentication, write
-methods, external schema references, non-JSON responses, unsupported parameter
-styles, and oversized schemas are emitted with explicit blockers and cannot be
-drafted.
+inspection rather than reuse the example value above. Authentication schemes
+outside the supported header API-key and bearer-token subset, write methods,
+external schema references, non-JSON responses, unsupported parameter styles,
+and oversized schemas are emitted with explicit blockers and cannot be drafted.
 
 ## Complete Oncology Source-Governance Pipeline
 

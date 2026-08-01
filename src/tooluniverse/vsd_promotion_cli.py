@@ -63,6 +63,7 @@ def build_parser() -> argparse.ArgumentParser:
     draft_openapi.add_argument("--include-parameters", type=_csv)
     draft_openapi.add_argument("--fixed-query-file", type=Path)
     draft_openapi.add_argument("--timeout-seconds", type=float, default=20)
+    draft_openapi.add_argument("--credential-env")
 
     verify = commands.add_parser("verify")
     verify.add_argument("draft_id")
@@ -123,6 +124,7 @@ def _execute(namespace: argparse.Namespace) -> Any:
             include_parameters=namespace.include_parameters,
             fixed_query=fixed_query,
             timeout_seconds=namespace.timeout_seconds,
+            credential_env=namespace.credential_env,
             workspace=workspace,
         )
     if namespace.command == "verify":

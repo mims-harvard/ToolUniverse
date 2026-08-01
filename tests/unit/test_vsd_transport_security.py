@@ -97,6 +97,52 @@ def test_request_pins_the_single_vetted_dns_result(monkeypatch):
     assert session.request[1]["headers"]["Accept-Encoding"] == "identity"
 
 
+def test_reviewed_auth_header_is_bounded_and_not_returned_in_metadata(monkeypatch):
+    monkeypatch.setattr(
+        vsd_tool,
+        "_resolve_public_addresses",
+        lambda host, port: ("93.184.216.34",),
+    )
+    session = _Session(_Response())
+    secret = "reviewed-secret-value"
+
+    _, metadata = vsd_tool._safe_get_json(
+        "https://api.fda.gov/drug/label.json",
+        session=session,
+        headers={"X-API-Key": secret},
+    )
+
+    assert session.request[1]["headers"]["X-API-Key"] == secret
+    assert secret not in json.dumps(metadata)
+    assert "X-API-Key" not in json.dumps(metadata)
+
+
+@pytest.mark.parametrize(
+    "headers",
+    [
+        {"Host": "attacker.example"},
+        {"Cookie": "session=private"},
+        {"X-Forwarded-For": "127.0.0.1"},
+        {"X-API-Key": "line-one\nline-two"},
+        {"Bad Header": "value"},
+    ],
+)
+def test_unsafe_request_headers_fail_before_network(monkeypatch, headers):
+    monkeypatch.setattr(
+        vsd_tool,
+        "_resolve_public_addresses",
+        lambda host, port: ("93.184.216.34",),
+    )
+    session = _Session(_Response())
+    with pytest.raises(vsd_tool.VSDPolicyError, match="header"):
+        vsd_tool._safe_get_json(
+            "https://api.fda.gov/drug/label.json",
+            session=session,
+            headers=headers,
+        )
+    assert session.request is None
+
+
 def test_pinned_adapter_preserves_tls_and_http_hostname():
     """IP pinning retains hostname validation and the original Host header."""
     adapter = vsd_tool._PinnedHTTPSAdapter("api.fda.gov", "93.184.216.34")

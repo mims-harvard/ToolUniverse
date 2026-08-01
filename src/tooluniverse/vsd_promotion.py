@@ -20,6 +20,7 @@ from jsonschema.exceptions import ValidationError
 from .execute_function import ToolUniverse
 from .vsd_dynamic_rest import (
     VSDDynamicRESTError,
+    _validated_auth,
     operation_digest,
     register_reviewed_rest_tool,
 )
@@ -394,6 +395,7 @@ def build_openapi_tool_config(
     include_parameters: list[str] | None = None,
     fixed_query: dict[str, Any] | None = None,
     timeout_seconds: int | float = 20,
+    credential_env: str | None = None,
 ) -> dict[str, Any]:
     """Generate one narrow read-only tool from an inspected OpenAPI operation."""
     try:
@@ -484,6 +486,34 @@ def build_openapi_tool_config(
     ):
         raise VSDPromotionError("timeout_seconds must be between 1 and 60")
 
+    auth_descriptor = reviewed.get("auth")
+    if auth_descriptor is None:
+        if credential_env is not None:
+            raise VSDPromotionError(
+                "credential_env is not allowed for an anonymous OpenAPI operation"
+            )
+        auth = {"type": "none"}
+    else:
+        if not isinstance(credential_env, str) or not credential_env:
+            raise VSDPromotionError(
+                "credential_env is required for this authenticated OpenAPI operation"
+            )
+        if auth_descriptor["type"] == "api_key_header":
+            requested_auth = {
+                "type": "api_key_header_env",
+                "env_var": credential_env,
+                "header": auth_descriptor["header"],
+            }
+        else:
+            requested_auth = {
+                "type": "bearer_env",
+                "env_var": credential_env,
+            }
+        try:
+            auth = _validated_auth(requested_auth)
+        except VSDDynamicRESTError as exc:
+            raise VSDPromotionError(str(exc)) from exc
+
     input_definitions: dict[str, Any] = {}
     properties: dict[str, Any] = {}
     path_arguments: dict[str, str] = {}
@@ -547,7 +577,7 @@ def build_openapi_tool_config(
             "query_serialization": query_serialization,
             "fixed_query": fixed,
             "timeout_seconds": timeout_seconds,
-            "auth": {"type": "none"},
+            "auth": auth,
             "response_schema": reviewed["response_schema"],
         },
         "vsd_promotion": {
@@ -565,6 +595,7 @@ def build_openapi_tool_config(
             "response_media_type": reviewed["response_media_type"],
             "included_parameters": sorted(selected_names),
             "fixed_query": fixed,
+            "authentication": copy.deepcopy(auth_descriptor),
         },
     }
 
@@ -577,6 +608,7 @@ def create_openapi_draft(
     include_parameters: list[str] | None = None,
     fixed_query: dict[str, Any] | None = None,
     timeout_seconds: int | float = 20,
+    credential_env: str | None = None,
     workspace: str | Path | None = None,
 ) -> dict[str, Any]:
     """Create an inert, content-addressed draft from one OpenAPI candidate."""
@@ -587,6 +619,7 @@ def create_openapi_draft(
         include_parameters=include_parameters,
         fixed_query=fixed_query,
         timeout_seconds=timeout_seconds,
+        credential_env=credential_env,
     )
     return _create_draft_from_config(config, workspace=workspace)
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from copy import deepcopy
 
 import pytest
@@ -47,8 +48,8 @@ def _search_config() -> dict:
     }
 
 
-def test_rejects_mutating_or_authenticated_operations():
-    """Mutating methods and embedded credentials never reach the network."""
+def test_rejects_mutating_or_embedded_credentials():
+    """Mutating methods and embedded credential values never reach the network."""
     config = _search_config()
     config["vsd_operation"]["method"] = "POST"
     with pytest.raises(vsd_dynamic_rest.VSDDynamicRESTError, match="read-only"):
@@ -59,8 +60,152 @@ def test_rejects_mutating_or_authenticated_operations():
         "type": "api_key",
         "value": "must-not-be-embedded",
     }
-    with pytest.raises(vsd_dynamic_rest.VSDDynamicRESTError, match="credentials"):
+    with pytest.raises(vsd_dynamic_rest.VSDDynamicRESTError, match="auth"):
         vsd_dynamic_rest.VSDDynamicRESTTool(config)
+
+
+@pytest.mark.parametrize(
+    "auth, message",
+    [
+        (
+            {
+                "type": "api_key_header_env",
+                "env_var": "AWS_SECRET_ACCESS_KEY",
+                "header": "X-API-Key",
+            },
+            "TOOLUNIVERSE_VSD_",
+        ),
+        (
+            {
+                "type": "api_key_header_env",
+                "env_var": "TOOLUNIVERSE_VSD_TEST_KEY",
+                "header": "Authorization",
+            },
+            "prohibited",
+        ),
+        (
+            {
+                "type": "bearer_env",
+                "env_var": "TOOLUNIVERSE_VSD_TEST_KEY",
+                "value": "embedded-secret-value",
+            },
+            "unsupported fields",
+        ),
+        (
+            {
+                "type": "api_key_query_env",
+                "env_var": "TOOLUNIVERSE_VSD_TEST_KEY",
+            },
+            "supports only",
+        ),
+    ],
+)
+def test_rejects_unsafe_credential_references(auth, message):
+    config = _search_config()
+    config["vsd_operation"]["auth"] = auth
+    with pytest.raises(vsd_dynamic_rest.VSDDynamicRESTError, match=message):
+        vsd_dynamic_rest.VSDDynamicRESTTool(config)
+
+
+def test_api_key_header_is_read_at_runtime_and_never_returned(monkeypatch):
+    config = _search_config()
+    config["vsd_operation"]["auth"] = {
+        "type": "api_key_header_env",
+        "env_var": "TOOLUNIVERSE_VSD_TRIALS_API_KEY",
+        "header": "X-API-Key",
+    }
+    secret = "runtime-api-key-value"
+    monkeypatch.setenv("TOOLUNIVERSE_VSD_TRIALS_API_KEY", secret)
+    captured = {}
+
+    def fake_get(url, params, *, timeout, headers):
+        captured.update(url=url, params=params, timeout=timeout, headers=headers)
+        return {"studies": []}, {
+            "status_code": 200,
+            "content_type": "application/json",
+            "response_bytes": 15,
+            "redirects": 0,
+        }
+
+    monkeypatch.setattr(vsd_dynamic_rest, "_safe_get_json", fake_get)
+    result = vsd_dynamic_rest.VSDDynamicRESTTool(config).run({"condition": "ALS"})
+    serialized = json.dumps(result, sort_keys=True)
+
+    assert captured["headers"] == {"X-API-Key": secret}
+    assert secret not in serialized
+    assert "X-API-Key" not in serialized
+    assert "TOOLUNIVERSE_VSD_TRIALS_API_KEY" not in serialized
+    assert result["data"]["provenance"]["authentication"] == {
+        "type": "api_key_header_env",
+        "credential_source": "environment",
+    }
+
+
+def test_bearer_token_rotates_without_changing_reviewed_contract(monkeypatch):
+    config = _search_config()
+    config["vsd_operation"]["auth"] = {
+        "type": "bearer_env",
+        "env_var": "TOOLUNIVERSE_VSD_TRIALS_BEARER",
+    }
+    headers_seen = []
+
+    def fake_get(url, params, *, timeout, headers):
+        headers_seen.append(headers)
+        return {"studies": []}, {
+            "status_code": 200,
+            "content_type": "application/json",
+            "response_bytes": 15,
+            "redirects": 0,
+        }
+
+    monkeypatch.setattr(vsd_dynamic_rest, "_safe_get_json", fake_get)
+    tool = vsd_dynamic_rest.VSDDynamicRESTTool(config)
+    digest = tool._operation_digest
+    monkeypatch.setenv("TOOLUNIVERSE_VSD_TRIALS_BEARER", "first-bearer-token")
+    tool.run({"condition": "ALS"})
+    monkeypatch.setenv("TOOLUNIVERSE_VSD_TRIALS_BEARER", "second-bearer-token")
+    tool.run({"condition": "ALS"})
+
+    assert headers_seen == [
+        {"Authorization": "Bearer first-bearer-token"},
+        {"Authorization": "Bearer second-bearer-token"},
+    ]
+    assert tool._operation_digest == digest
+
+
+def test_missing_invalid_or_reflected_credentials_fail_closed(monkeypatch):
+    config = _search_config()
+    config["vsd_operation"]["auth"] = {
+        "type": "bearer_env",
+        "env_var": "TOOLUNIVERSE_VSD_TRIALS_BEARER",
+    }
+    calls = []
+
+    def fake_get(url, params, *, timeout, headers):
+        calls.append(headers)
+        secret = headers["Authorization"].removeprefix("Bearer ")
+        return {"studies": [], "echo": secret}, {
+            "status_code": 200,
+            "content_type": "application/json",
+            "response_bytes": 50,
+            "redirects": 0,
+        }
+
+    monkeypatch.setattr(vsd_dynamic_rest, "_safe_get_json", fake_get)
+    tool = vsd_dynamic_rest.VSDDynamicRESTTool(config)
+    with pytest.raises(vsd_dynamic_rest.VSDDynamicRESTError, match="not set"):
+        tool.run({"condition": "ALS"})
+    assert calls == []
+
+    monkeypatch.setenv("TOOLUNIVERSE_VSD_TRIALS_BEARER", "bad token spaces")
+    with pytest.raises(vsd_dynamic_rest.VSDDynamicRESTError, match="bearer token"):
+        tool.run({"condition": "ALS"})
+    assert calls == []
+
+    monkeypatch.setenv("TOOLUNIVERSE_VSD_TRIALS_BEARER", "reflected-token-value")
+    with pytest.raises(vsd_dynamic_rest.VSDDynamicRESTError, match="reflected"):
+        tool.run({"condition": "ALS"})
+    assert len(calls) == 1
 
 
 def test_rejects_external_schema_references():

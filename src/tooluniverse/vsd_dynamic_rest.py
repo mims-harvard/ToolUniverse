@@ -1,9 +1,10 @@
 """Validated runtime execution for explicitly reviewed public JSON operations.
 
 This module intentionally does not discover, persist, approve, or automatically
-load tools.  It provides the execution boundary used after an administrator has
-reviewed an operation definition.  Only HTTPS GET operations are supported so a
-generated tool cannot mutate an upstream service or transmit credentials.
+load tools. It provides the execution boundary used after an administrator has
+reviewed an operation definition. Only HTTPS GET operations are supported.
+Optional header credentials are read from narrowly named environment variables
+at execution time and are never embedded in the operation contract or result.
 """
 
 from __future__ import annotations
@@ -11,6 +12,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 import re
 from datetime import datetime, timezone
 from typing import Any
@@ -27,10 +29,106 @@ _TOOL_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]{2,127}$")
 _ARGUMENT_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]{0,63}$")
 _PATH_TOKEN_RE = re.compile(r"\{([A-Za-z][A-Za-z0-9_]{0,63})\}")
 _QUERY_NAME_RE = re.compile(r"^[A-Za-z0-9_.\[\]-]{1,128}$")
+_HEADER_NAME_RE = re.compile(r"^[!#$%&'*+.^_`|~0-9A-Za-z-]{1,128}$")
+_ENV_NAME_RE = re.compile(r"^TOOLUNIVERSE_VSD_[A-Z0-9_]{1,108}$")
+_FORBIDDEN_AUTH_HEADERS = {
+    "accept",
+    "accept-encoding",
+    "connection",
+    "content-length",
+    "content-type",
+    "cookie",
+    "host",
+    "origin",
+    "referer",
+    "transfer-encoding",
+    "user-agent",
+}
 
 
 class VSDDynamicRESTError(VSDPolicyError):
     """Raised when an operation or provider result violates its reviewed contract."""
+
+
+def _validated_auth(value: Any) -> dict[str, str]:
+    if value in (None, {"type": "none"}):
+        return {"type": "none"}
+    if not isinstance(value, dict):
+        raise VSDDynamicRESTError("auth must be a reviewed environment reference")
+    auth_type = value.get("type")
+    if auth_type == "bearer_env":
+        if set(value) != {"type", "env_var"}:
+            raise VSDDynamicRESTError("bearer_env auth has unsupported fields")
+        header = "Authorization"
+    elif auth_type == "api_key_header_env":
+        if set(value) != {"type", "env_var", "header"}:
+            raise VSDDynamicRESTError("api_key_header_env auth has unsupported fields")
+        header = value.get("header")
+        if not isinstance(header, str) or not _HEADER_NAME_RE.fullmatch(header):
+            raise VSDDynamicRESTError("API-key header must be a stable HTTP token")
+        normalized_header = header.casefold()
+        if (
+            normalized_header == "authorization"
+            or normalized_header in _FORBIDDEN_AUTH_HEADERS
+            or normalized_header.startswith(
+                ("proxy-", "sec-", "x-forwarded-", "content-")
+            )
+        ):
+            raise VSDDynamicRESTError("API-key header is prohibited")
+    else:
+        raise VSDDynamicRESTError(
+            "auth supports only none, bearer_env, or api_key_header_env"
+        )
+    env_var = value.get("env_var")
+    if not isinstance(env_var, str) or not _ENV_NAME_RE.fullmatch(env_var):
+        raise VSDDynamicRESTError(
+            "credential env_var must start with TOOLUNIVERSE_VSD_"
+        )
+    return {
+        "type": auth_type,
+        "env_var": env_var,
+        **({"header": header} if auth_type == "api_key_header_env" else {}),
+    }
+
+
+def _credential_headers(auth: dict[str, str]) -> tuple[dict[str, str], str | None]:
+    if auth["type"] == "none":
+        return {}, None
+    env_var = auth["env_var"]
+    secret = os.environ.get(env_var)
+    if secret is None:
+        raise VSDDynamicRESTError(
+            f"Required credential environment variable {env_var!r} is not set"
+        )
+    if (
+        not 8 <= len(secret) <= 4096
+        or secret != secret.strip()
+        or any(ord(character) < 32 or ord(character) > 126 for character in secret)
+    ):
+        raise VSDDynamicRESTError(
+            f"Credential environment variable {env_var!r} is not a valid bounded value"
+        )
+    if auth["type"] == "bearer_env":
+        if any(character.isspace() for character in secret):
+            raise VSDDynamicRESTError(
+                f"Credential environment variable {env_var!r} is not a bearer token"
+            )
+        return {"Authorization": f"Bearer {secret}"}, secret
+    return {auth["header"]: secret}, secret
+
+
+def _contains_secret(value: Any, secret: str) -> bool:
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if isinstance(item, str) and secret in item:
+            return True
+        if isinstance(item, dict):
+            pending.extend(item.keys())
+            pending.extend(item.values())
+        elif isinstance(item, list):
+            pending.extend(item)
+    return False
 
 
 def _schema_validator(schema: Any, *, field: str) -> Draft202012Validator:
@@ -204,10 +302,7 @@ def _validated_operation_config(config: Any) -> dict[str, Any]:
         raise VSDDynamicRESTError("timeout_seconds must be between 1 and 60")
     operation["response_schema"] = operation.get("response_schema", {})
     _schema_validator(operation["response_schema"], field="response_schema")
-    if operation.get("auth") not in (None, {"type": "none"}):
-        raise VSDDynamicRESTError(
-            "Dynamic VSD operations cannot carry credentials; use a dedicated tool"
-        )
+    operation["auth"] = _validated_auth(operation.get("auth"))
     return normalized
 
 
@@ -284,11 +379,15 @@ class VSDDynamicRESTTool(BaseTool):
 
         endpoint, query = _provider_request(self.tool_config, values)
         operation = self.tool_config["vsd_operation"]
-        payload, request = _safe_get_json(
-            endpoint,
-            query,
-            timeout=float(operation["timeout_seconds"]),
-        )
+        headers, secret = _credential_headers(operation["auth"])
+        request_kwargs: dict[str, Any] = {
+            "timeout": float(operation["timeout_seconds"])
+        }
+        if headers:
+            request_kwargs["headers"] = headers
+        payload, request = _safe_get_json(endpoint, query, **request_kwargs)
+        if secret is not None and _contains_secret(payload, secret):
+            raise VSDDynamicRESTError("Provider response reflected credential material")
         try:
             self._response_validator.validate(payload)
         except ValidationError as exc:
@@ -314,6 +413,14 @@ class VSDDynamicRESTTool(BaseTool):
                     "redirects": request["redirects"],
                     "payload_sha256": hashlib.sha256(canonical).hexdigest(),
                     "operation_sha256": self._operation_digest,
+                    "authentication": {
+                        "type": operation["auth"]["type"],
+                        "credential_source": (
+                            "none"
+                            if operation["auth"]["type"] == "none"
+                            else "environment"
+                        ),
+                    },
                 },
             },
         }

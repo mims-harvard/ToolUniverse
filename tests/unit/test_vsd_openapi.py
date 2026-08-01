@@ -107,6 +107,25 @@ def _candidate(tmp_path):
     return report["candidates"][0]
 
 
+def _authenticated_document(auth_type: str) -> dict:
+    document = _document()
+    components = document["components"]
+    if auth_type == "api_key":
+        components["securitySchemes"] = {
+            "trialKey": {"type": "apiKey", "in": "header", "name": "X-Trial-Key"}
+        }
+        security = [{"trialKey": []}]
+    elif auth_type == "bearer":
+        components["securitySchemes"] = {
+            "trialBearer": {"type": "http", "scheme": "bearer"}
+        }
+        security = [{"trialBearer": []}]
+    else:
+        raise AssertionError(auth_type)
+    document["paths"]["/studies/{nctId}"]["get"]["security"] = security
+    return document
+
+
 def _object_cases():
     return [
         {
@@ -236,6 +255,78 @@ def test_inspection_exposes_explicit_non_promotable_reasons(tmp_path):
         validate_openapi_candidate(by_method["GET"])
 
 
+@pytest.mark.parametrize(
+    "auth_type, expected",
+    [
+        (
+            "api_key",
+            {
+                "type": "api_key_header",
+                "scheme_name": "trialKey",
+                "header": "X-Trial-Key",
+            },
+        ),
+        (
+            "bearer",
+            {"type": "bearer", "scheme_name": "trialBearer"},
+        ),
+    ],
+)
+def test_inspection_supports_only_reviewable_header_authentication(
+    tmp_path, auth_type, expected
+):
+    candidate = inspect_openapi_document(
+        _write_document(tmp_path, _authenticated_document(auth_type))
+    )["candidates"][0]
+
+    assert candidate["blockers"] == []
+    assert candidate["auth"] == expected
+    assert validate_openapi_candidate(candidate)["auth"] == expected
+
+
+@pytest.mark.parametrize(
+    "scheme, security, blocker",
+    [
+        (
+            {"type": "apiKey", "in": "query", "name": "api_key"},
+            [{"unsafe": []}],
+            "authentication_scheme_unsupported",
+        ),
+        (
+            {"type": "http", "scheme": "basic"},
+            [{"unsafe": []}],
+            "authentication_scheme_unsupported",
+        ),
+        (
+            {"type": "oauth2", "flows": {}},
+            [{"unsafe": ["read"]}],
+            "authentication_scopes_unsupported",
+        ),
+        (
+            {"type": "apiKey", "in": "header", "name": "X-API-Key"},
+            [{"unsafe": []}, {}],
+            None,
+        ),
+    ],
+)
+def test_inspection_blocks_unsafe_auth_and_honors_anonymous_alternative(
+    tmp_path, scheme, security, blocker
+):
+    document = _document()
+    document["components"]["securitySchemes"] = {"unsafe": scheme}
+    document["paths"]["/studies/{nctId}"]["get"]["security"] = security
+    candidate = inspect_openapi_document(_write_document(tmp_path, document))[
+        "candidates"
+    ][0]
+
+    if blocker is None:
+        assert candidate["auth"] is None
+        assert candidate["blockers"] == []
+    else:
+        assert blocker in candidate["blockers"]
+        assert "authentication_required" in candidate["blockers"]
+
+
 def test_external_schema_reference_blocks_only_affected_operation(tmp_path):
     document = _document()
     schema = document["paths"]["/studies/{nctId}"]["get"]["responses"]["200"][
@@ -299,6 +390,44 @@ def test_generator_builds_narrow_mappings_and_serialization(tmp_path):
     )
     assert endpoint.endswith("/studies/NCT00522899")
     assert query == {"format": "json", "fields": "NCTId|BriefTitle"}
+
+
+@pytest.mark.parametrize("auth_type", ["api_key", "bearer"])
+def test_generator_requires_bounded_environment_reference_for_auth(tmp_path, auth_type):
+    candidate = inspect_openapi_document(
+        _write_document(tmp_path, _authenticated_document(auth_type))
+    )["candidates"][0]
+    kwargs = {
+        "candidate": candidate,
+        "tool_name": "GeneratedAuthenticatedTrialRecord",
+        "description": "Fetch one authenticated reviewed trial registry record.",
+    }
+    with pytest.raises(
+        vsd_promotion.VSDPromotionError, match="credential_env is required"
+    ):
+        vsd_promotion.build_openapi_tool_config(**kwargs)
+    with pytest.raises(vsd_promotion.VSDPromotionError, match="TOOLUNIVERSE_VSD_"):
+        vsd_promotion.build_openapi_tool_config(
+            **kwargs, credential_env="UNSAFE_API_KEY"
+        )
+
+    config = vsd_promotion.build_openapi_tool_config(
+        **kwargs, credential_env="TOOLUNIVERSE_VSD_TRIAL_REGISTRY_KEY"
+    )
+    auth = config["vsd_operation"]["auth"]
+    assert auth["env_var"] == "TOOLUNIVERSE_VSD_TRIAL_REGISTRY_KEY"
+    assert "value" not in auth
+    assert config["vsd_promotion"]["authentication"] == candidate["auth"]
+
+
+def test_anonymous_candidate_rejects_unnecessary_credential_reference(tmp_path):
+    with pytest.raises(vsd_promotion.VSDPromotionError, match="not allowed"):
+        vsd_promotion.build_openapi_tool_config(
+            _candidate(tmp_path),
+            tool_name="GeneratedTrialRecord",
+            description="Fetch one reviewed anonymous trial registry record.",
+            credential_env="TOOLUNIVERSE_VSD_UNUSED_KEY",
+        )
 
 
 def test_generator_rejects_unknown_conflicting_and_invalid_fixed_parameters(tmp_path):
@@ -369,6 +498,73 @@ def test_openapi_object_operation_completes_promotion_and_fresh_load(
     assert response["data"]["result"]["nctId"] == "NCT00522899"
 
 
+def test_authenticated_openapi_completes_promotion_without_persisting_secret(
+    tmp_path, monkeypatch
+):
+    candidate = inspect_openapi_document(
+        _write_document(tmp_path, _authenticated_document("api_key"))
+    )["candidates"][0]
+    env_var = "TOOLUNIVERSE_VSD_TRIAL_REGISTRY_KEY"
+    secret = "private-runtime-trial-key"
+    monkeypatch.setenv(env_var, secret)
+    calls = []
+
+    def authenticated_get(url, params, *, timeout, headers):
+        calls.append(headers)
+        assert headers == {"X-Trial-Key": secret}
+        return _fake_get(url, params, timeout=timeout)
+
+    monkeypatch.setattr(vsd_dynamic_rest, "_safe_get_json", authenticated_get)
+    workspace = tmp_path / "authenticated-promotion"
+    draft = vsd_promotion.create_openapi_draft(
+        candidate,
+        tool_name="GeneratedAuthenticatedTrialRecord",
+        description="Fetch one authenticated reviewed trial registry record.",
+        fixed_query={"format": "json"},
+        credential_env=env_var,
+        workspace=workspace,
+    )
+    evidence = vsd_promotion.verify_draft(
+        draft["draft_id"], _object_cases(), workspace=workspace
+    )
+    vsd_promotion.approve_draft(
+        draft["draft_id"],
+        reviewed_by="Credential Test Reviewer",
+        decision_note="Approved after three authenticated provider cases passed.",
+        workspace=workspace,
+    )
+    publication = vsd_promotion.publish_draft(draft["draft_id"], workspace=workspace)
+    tooluniverse = ToolUniverse()
+    try:
+        assert vsd_promotion.load_published_tools(
+            tooluniverse, workspace=workspace
+        ) == ["GeneratedAuthenticatedTrialRecord"]
+        result = tooluniverse.run_one_function(
+            {
+                "name": "GeneratedAuthenticatedTrialRecord",
+                "arguments": {"nctId": "NCT00522899"},
+            },
+            use_cache=False,
+        )
+    finally:
+        tooluniverse.close()
+
+    assert evidence["case_count"] == 3
+    assert len(calls) == 4
+    assert result["data"]["result"]["nctId"] == "NCT00522899"
+    assert publication["config"]["vsd_operation"]["auth"] == {
+        "type": "api_key_header_env",
+        "env_var": env_var,
+        "header": "X-Trial-Key",
+    }
+    persisted = "\n".join(
+        path.read_text(encoding="utf-8") for path in workspace.rglob("*.json")
+    )
+    assert secret not in persisted
+    assert secret not in json.dumps(result)
+    assert env_var in persisted
+
+
 def test_cli_inspects_selects_and_creates_openapi_draft(tmp_path):
     spec_path = _write_document(tmp_path)
     report = _execute(build_parser().parse_args(["inspect-openapi", str(spec_path)]))
@@ -399,3 +595,32 @@ def test_cli_inspects_selects_and_creates_openapi_draft(tmp_path):
     assert select_openapi_candidate(
         report, draft["config"]["vsd_promotion"]["candidate_id"]
     )
+
+
+def test_cli_requires_and_persists_only_authenticated_environment_reference(tmp_path):
+    spec_path = _write_document(tmp_path, _authenticated_document("bearer"))
+    report = _execute(build_parser().parse_args(["inspect-openapi", str(spec_path)]))
+    report_path = tmp_path / "authenticated-report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+    env_var = "TOOLUNIVERSE_VSD_TRIAL_BEARER"
+
+    draft = _execute(
+        build_parser().parse_args(
+            [
+                "--workspace",
+                str(tmp_path / "promotion"),
+                "draft-openapi",
+                str(report_path),
+                "--tool-name",
+                "GeneratedAuthenticatedTrialRecord",
+                "--description",
+                "Fetch one authenticated reviewed trial registry record.",
+                "--credential-env",
+                env_var,
+            ]
+        )
+    )
+    assert draft["config"]["vsd_operation"]["auth"] == {
+        "type": "bearer_env",
+        "env_var": env_var,
+    }
