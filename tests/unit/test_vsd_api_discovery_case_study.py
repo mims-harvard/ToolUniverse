@@ -1,14 +1,25 @@
 from __future__ import annotations
 
+import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
 
-from examples.vsd import api_discovery_case_study as study
 from tooluniverse import vsd_discovery
 
 pytestmark = pytest.mark.unit
+
+
+MODULE_PATH = (
+    Path(__file__).parents[2] / "examples" / "vsd" / "api_discovery_case_study.py"
+)
+SPEC = importlib.util.spec_from_file_location("vsd_api_discovery_case_study", MODULE_PATH)
+assert SPEC and SPEC.loader
+study = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = study
+SPEC.loader.exec_module(study)
 
 
 def _catalog_payload() -> dict:
