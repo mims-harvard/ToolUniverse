@@ -1,14 +1,21 @@
-# ToolUniverse VSD Coronary-Heart-Disease Study
+# ToolUniverse VSD Heart-Health Evidence Dossier
 
-This example asks a bounded descriptive question: what variation does CDC
-PLACES report in modeled adult coronary-heart-disease prevalence across Autauga
-County, Alabama census tracts? It retrieves WHO hypertension-indicator metadata
-and one public aspirin label as independent context, without joining those
-sources or turning them into treatment evidence.
+This example builds a reproducible population-health screening dossier for
+Autauga County, Alabama. It asks which census tracts show concurrent modeled
+coronary heart disease (CHD) and heart-health context signals that merit local
+data review, then uses ToolUniverse to retrieve candidate literature, active or
+upcoming Alabama-matched trial records, global indicator metadata, and a public
+drug-label safety record.
 
-## How ToolUniverse Is Used
+The output is designed for an analyst deciding what to investigate next. It is
+not a neighborhood ranking, patient-risk model, causal analysis, clinical
+recommendation, or resource-allocation algorithm.
 
-The script follows the documented Python execution model:
+## Workflow
+
+The script creates one `ToolUniverse` instance, selectively loads six tools, and
+executes all work through the documented `run_one_function()` API with caching
+disabled:
 
 ```python
 from tooluniverse import ToolUniverse
@@ -21,26 +28,52 @@ result = tu.run_one_function(
 )
 ```
 
-It loads and calls exactly four agent-facing tools:
+| Step | Tool | Purpose |
+| ---: | --- | --- |
+| 1 | `VSDDiscoverSources` | Resolve reviewed VSD integrations to concrete tool names without a network call. |
+| 2 | `VSDCDCPlacesHeartHealthProfile` | Retrieve a fixed eight-measure, tract-level heart-health profile for one county. |
+| 3 | `VSDWHOHypertensionIndicator` | Retrieve one validated WHO hypertension-indicator definition. |
+| 4 | `VSDOpenFDALabelBySetId` | Retrieve one normalized public label and bounded warning terms. |
+| 5 | `PubMed_search_articles` | Discover up to eight tract-level CHD articles with a recorded query. |
+| 6 | `ClinicalTrials_search_studies` | Discover up to ten active or upcoming CHD records matching an Alabama location-area query. |
 
-1. `VSDDiscoverSources` identifies packaged reviewed integrations and their
-   concrete ToolUniverse tool names without a network request.
-2. `VSDWHOHypertensionIndicator` calls a fixed WHO endpoint and returns one
-   validated indicator definition.
-3. `VSDCDCPlacesCoronaryHeartDisease` accepts only a state, county, and bounded
-   limit, then returns normalized tract-level CHD estimates from a fixed CDC
-   endpoint.
-4. `VSDOpenFDALabelBySetId` accepts a UUID and returns a normalized label from a
-   fixed openFDA endpoint.
+The CDC tool does not accept an arbitrary measure. Its reviewed contract always
+requests CHD, high blood pressure, high cholesterol, smoking, physical
+inactivity, obesity, lack of insurance, and routine checkups. It validates the
+measure IDs and names, county, unique tract-measure pairs, percentage bounds,
+and confidence-interval ordering before returning data.
 
-The checked JSON artifact records every `run_one_function` call, exact arguments,
-status, normalized output keys, and a bounded result summary such as returned
-tract count and whether the limit may have truncated the response. Mutable source
-registration and generic JSON querying are not loaded into ToolUniverse; they are
-available only through the explicit `tooluniverse-vsd-admin` command for
-human-controlled administration.
+## Analysis
 
-## Run
+The live Autauga query is expected to form a complete 17-tract by 8-measure grid.
+The script refuses to build a dossier if the response reaches its record limit or
+any tract lacks a measure.
+
+For each measure, it reports the unweighted tract mean, median, interquartile
+range, minimum, maximum, observed range, and 95% confidence intervals at the
+extremes. It then applies one reproducible, direction-aware screening rule:
+
+> Include a tract when its CHD point estimate is above the county tract median
+> and at least four of seven context measures are on the attention side of their
+> respective county tract medians.
+
+For adverse measures, higher values trigger a point signal. For routine
+checkups, lower values trigger a point signal. A separate conservative count
+requires the entire reported confidence interval to be beyond the median. The
+resulting set is shown in census-tract order and is explicitly not ranked.
+
+Because the four-of-seven threshold is a modeling choice, the report includes a
+three-through-seven signal sensitivity table. It also reports a stricter
+heuristic that requires the CHD confidence interval and at least three context
+confidence intervals to be entirely beyond their respective tract medians. That
+heuristic is not a statistical-significance test.
+
+The report also calculates descriptive Pearson correlations between tract CHD
+point estimates and each context measure. These are diagnostics only: they do
+not use confidence intervals or adjust for shared model inputs, demographics, or
+spatial dependence.
+
+## Run And Artifacts
 
 From the repository root:
 
@@ -48,46 +81,45 @@ From the repository root:
 python examples/vsd/public_health_case_study.py
 ```
 
-The run performs one offline discovery and three bounded HTTPS requests. It
-retrieves all matching Autauga County census tracts up to a hard maximum of 500,
-computes an unweighted descriptive mean, median, minimum, maximum, and observed
-range, and writes:
+The live run performs one offline discovery plus bounded provider calls and
+writes four synchronized artifacts:
 
-- `artifacts/snapshot.json`: machine-readable calls, findings, and provenance.
-- `artifacts/snapshot.md`: human-readable method, findings, VSD contribution,
-  and interpretation limits.
+- `artifacts/snapshot.json`: machine-readable calls, normalized inputs,
+  findings, source records, and VSD provenance.
+- `artifacts/snapshot.md`: a decision-oriented report with methods, result
+  tables, evidence candidates, guardrails, and exact calls.
+- `artifacts/tract_profiles.csv`: one row per tract with every estimate,
+  confidence interval, and screening flag.
+- `artifacts/measure_summary.csv`: one row per measure with descriptive
+  statistics and population semantics.
 
-## Why VSD Helps
+Raw openFDA warning text is intentionally omitted from the checked outputs. VSD
+results retain the exact endpoint and query, retrieval time, media type, response
+size, redirect count, and raw-payload SHA-256. PubMed and ClinicalTrials.gov are
+supporting ToolUniverse integrations and do not inherit the VSD transport or
+provenance contract.
 
-The value is not merely fetching JSON. Each reviewed source has a fixed endpoint,
-constrained parameters, a concrete return schema, source-specific response
-validation, and common provenance. The transport resolves and pins one vetted
-public address, preserves TLS hostname validation, verifies the connected peer,
-rejects redirects and encoded bodies, requires strict JSON, caps the raw body at
-1 MB, and applies one wall-clock deadline.
+## Scientific Boundaries
 
-This turns a broad network capability into three inspectable scientific data
-contracts. A source adapter being reviewed means its technical integration and
-schema handling were reviewed; it does not certify the provider's methodology or
-scientific conclusions.
+CDC PLACES estimates are modeled aggregates derived from BRFSS and Census inputs,
+not patient observations. CDC cautions against using the estimates to rank the
+overall health of counties, places, census tracts, or ZCTAs. This example uses a
+transparent screening rule only to form follow-up questions; local counts,
+population denominators, stakeholder knowledge, and other data are required
+before a decision.
 
-## Evidence Boundaries
-
-CDC explains that PLACES estimates use small-area estimation and are derived from
-BRFSS, Census, and American Community Survey inputs. The values are modeled
-aggregate estimates, not patient records. The tract mean in this example is
-unweighted and is only a compact description of the retrieved rows.
-
-The WHO result is indicator metadata, not an Autauga County measurement. The
-openFDA result is public labeling and warning context, not evidence that aspirin
-causes, prevents, or treats the CDC estimates. The three sources are independent
-and must not be joined at record level or used for clinical advice.
+The measures do not all share a denominator. Insurance covers adults aged 18-64,
+and high cholesterol covers adults who have ever been screened. The WHO result
+is metadata, the trial output is a registry scan, and the openFDA output is label
+safety context. None is joined to the CDC records or used as evidence that an
+intervention is effective, safe for a person, locally available, or appropriate.
 
 Official references:
 
 - ToolUniverse Python guide: https://zitniklab.hms.harvard.edu/ToolUniverse/getting_started.html
 - ToolUniverse loading guide: https://zitniklab.hms.harvard.edu/ToolUniverse/guide/loading_tools.html
 - CDC PLACES methodology: https://www.cdc.gov/places/methodology/index.html
-- CDC PLACES data portal: https://www.cdc.gov/places/tools/data-portal.html
+- CDC PLACES measure definitions: https://www.cdc.gov/places/measure-definitions/index.html
+- CDC PLACES FAQ: https://www.cdc.gov/places/faqs/index.html
+- ClinicalTrials.gov API: https://clinicaltrials.gov/data-about-studies/learn-about-api
 - openFDA label API: https://open.fda.gov/apis/drug/label/how-to-use-the-endpoint/
-- WHO cardiovascular diseases: https://www.who.int/news-room/fact-sheets/detail/cardiovascular-diseases-(cvds)

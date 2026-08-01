@@ -1,14 +1,14 @@
 """
-VSDCDCPlacesCoronaryHeartDisease
+VSDCDCPlacesHeartHealthProfile
 
-Retrieve validated CDC PLACES coronary-heart-disease estimates for census tracts in one US county...
+Retrieve a validated eight-measure CDC PLACES heart-health profile for census tracts in one US co...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def VSDCDCPlacesCoronaryHeartDisease(
+def VSDCDCPlacesHeartHealthProfile(
     state_abbr: str,
     county_name: str,
     limit: Optional[int] = 500,
@@ -18,7 +18,7 @@ def VSDCDCPlacesCoronaryHeartDisease(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve validated CDC PLACES coronary-heart-disease estimates for census tracts in one US county...
+    Retrieve a validated eight-measure CDC PLACES heart-health profile for census tracts in one US co...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def VSDCDCPlacesCoronaryHeartDisease(
     county_name : str
         County name without the word County, for example Autauga.
     limit : int
-        Maximum census-tract records to retrieve.
+        Maximum census-tract measure records to retrieve.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -53,7 +53,7 @@ def VSDCDCPlacesCoronaryHeartDisease(
     }
     return get_shared_client().run_one_function(
         {
-            "name": "VSDCDCPlacesCoronaryHeartDisease",
+            "name": "VSDCDCPlacesHeartHealthProfile",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -62,4 +62,4 @@ def VSDCDCPlacesCoronaryHeartDisease(
     )
 
 
-__all__ = ["VSDCDCPlacesCoronaryHeartDisease"]
+__all__ = ["VSDCDCPlacesHeartHealthProfile"]

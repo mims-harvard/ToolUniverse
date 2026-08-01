@@ -52,21 +52,24 @@ python -m pytest -o addopts= \
   tests/unit/test_vsd_public_health_case_study.py -q
 ```
 
-The final focused lane passed all 66 transport, concurrency, administration,
-source-adapter, ToolUniverse-contract, and disease-study tests. An additional 60
-generated-wrapper, package-import, validator, and base-tool tests passed; hosted
-CI status is recorded on the pull request.
+The focused lane passed all 68 transport, concurrency, administration,
+source-adapter, ToolUniverse-contract, complete-grid, screening, evidence, and
+artifact tests. An additional 60 generated-wrapper, package-import, validator,
+and base-tool tests passed as adjacent regression lanes. Hosted CI status is
+recorded on the pull request.
 
 ## Live Case Study
 
 [`examples/vsd/public_health_case_study.py`](../../examples/vsd/public_health_case_study.py)
-creates one `ToolUniverse` instance, selectively loads four VSD tools, and makes
-every call through `run_one_function()` with caching disabled:
+creates one `ToolUniverse` instance, selectively loads six tools, and makes every
+call through `run_one_function()` with caching disabled:
 
-1. Offline discovery of reviewed source-specific tool names.
-2. WHO hypertension indicator metadata through a fixed adapter.
-3. All 17 returned 2023 Autauga County CDC PLACES CHD tract estimates.
+1. Offline discovery of reviewed source-specific VSD tool names.
+2. A fixed eight-measure CDC PLACES heart-health profile for Autauga County.
+3. WHO hypertension indicator metadata through a fixed adapter.
 4. One identified public openFDA aspirin label through a UUID adapter.
+5. A bounded PubMed scan for tract-level CHD and risk-factor literature.
+6. A bounded ClinicalTrials.gov scan for active or upcoming Alabama-matched CHD records.
 
 Run it with:
 
@@ -76,21 +79,33 @@ python examples/vsd/public_health_case_study.py
 
 The machine-readable artifact is
 [`examples/vsd/artifacts/snapshot.json`](../../examples/vsd/artifacts/snapshot.json),
-and the rendered evidence report is
+the rendered evidence report is
 [`examples/vsd/artifacts/snapshot.md`](../../examples/vsd/artifacts/snapshot.md).
-They retain the exact ToolUniverse call ledger, normalized findings, endpoint,
-query, status, media type, response size, timestamp, and a SHA-256 digest of each
-raw response while omitting raw provider payloads and label warning text.
+Two analyst-ready tables are also checked:
+[`examples/vsd/artifacts/tract_profiles.csv`](../../examples/vsd/artifacts/tract_profiles.csv)
+contains one row per tract with all estimates, intervals, and flags, while
+[`examples/vsd/artifacts/measure_summary.csv`](../../examples/vsd/artifacts/measure_summary.csv)
+contains one row per measure with population semantics and descriptive statistics.
 
-The recorded case-study run completed three hardened HTTPS calls across WHO,
-CDC, and openFDA. It produced a bounded descriptive result for the CDC rows: an
-unweighted tract mean of 6.75%, median of 6.8%, minimum of 4.0%, and maximum of
-10.0%. These values demonstrate the workflow; they are not patient-level or
-causal findings.
+The study refuses to produce a report if the CDC result reaches its limit or if
+the expected tract-by-measure grid is incomplete. It applies a reproducible rule
+that selects, without ranking, tracts whose CHD point estimate is above the county
+tract median and that show at least four of seven direction-aware context signals.
+A three-through-seven signal sensitivity table exposes dependence on the selected
+threshold. A separate strict heuristic requires the CHD interval and at least
+three context intervals to be entirely beyond the relevant medians; this is
+reported as a sensitivity check, not a statistical-significance test.
 
-The sources are independent and cannot support record-level joins, causal claims,
-treatment-effect claims, or clinical advice. Live APIs can change, so later runs
-may legitimately produce different timestamps, hashes, estimates, or label data.
+The checked JSON retains the exact ToolUniverse call ledger and bounded source
+records. VSD provider results include endpoint, query, status, media type,
+response size, timestamp, and a raw-response SHA-256 while omitting raw provider
+payloads and label warning text. Supporting PubMed and ClinicalTrials.gov tools
+are explicitly identified as outside the VSD transport and provenance contract.
+
+The sources are independent and cannot support record-level joins, neighborhood
+health rankings, causal claims, treatment-effect claims, or clinical advice.
+Live APIs can change, so later runs may legitimately produce different records,
+timestamps, hashes, estimates, or label data.
 
 ## Remaining Boundaries
 

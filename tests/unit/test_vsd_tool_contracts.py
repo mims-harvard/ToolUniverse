@@ -7,8 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from tooluniverse import ToolUniverse
-from tooluniverse import vsd_tool
+from tooluniverse import ToolUniverse, vsd_tool
 
 pytestmark = pytest.mark.unit
 
@@ -16,7 +15,7 @@ pytestmark = pytest.mark.unit
 SOURCE_TOOL_NAMES = (
     "VSDDiscoverSources",
     "VSDWHOHypertensionIndicator",
-    "VSDCDCPlacesCoronaryHeartDisease",
+    "VSDCDCPlacesHeartHealthProfile",
     "VSDOpenFDALabelBySetId",
     "VSDEnsemblServiceStatus",
 )
@@ -60,14 +59,22 @@ def test_source_contracts_are_fixed_and_typed():
     """Reviewed providers expose constrained inputs and normalized outputs."""
     tooluniverse = _loaded_vsd()
     try:
-        cdc = tooluniverse.all_tool_dict["VSDCDCPlacesCoronaryHeartDisease"]
+        cdc = tooluniverse.all_tool_dict["VSDCDCPlacesHeartHealthProfile"]
         assert cdc["parameter"]["required"] == ["state_abbr", "county_name"]
         assert cdc["parameter"]["properties"]["limit"]["maximum"] == 500
         assert (
-            cdc["return_schema"]["properties"]["tracts"]["items"][
+            cdc["return_schema"]["properties"]["estimates"]["items"][
                 "additionalProperties"
             ]
             is False
+        )
+        definitions = cdc["return_schema"]["properties"]["measure_definitions"]
+        assert definitions["minItems"] == definitions["maxItems"] == 8
+        assert (
+            cdc["return_schema"]["properties"]["estimates"]["items"]["properties"][
+                "measureid"
+            ]["type"]
+            == "string"
         )
 
         fda = tooluniverse.all_tool_dict["VSDOpenFDALabelBySetId"]
@@ -78,7 +85,7 @@ def test_source_contracts_are_fixed_and_typed():
             {"name": "VSDDiscoverSources", "arguments": {"query": "CDC"}}
         )
         source = discovery["data"]["sources"][0]
-        assert source["tool_name"] == "VSDCDCPlacesCoronaryHeartDisease"
+        assert source["tool_name"] == "VSDCDCPlacesHeartHealthProfile"
         assert source["review_scope"].endswith("not scientific endorsement.")
     finally:
         tooluniverse.close()
@@ -127,13 +134,13 @@ def test_generated_wrappers_and_metadata_match_source_surface():
     """Generated SDK wrappers expose source contracts and omit admin commands."""
     tools_path = Path(__file__).parents[2] / "src" / "tooluniverse" / "tools"
     wrapper = ast.parse(
-        (tools_path / "VSDCDCPlacesCoronaryHeartDisease.py").read_text(encoding="utf-8")
+        (tools_path / "VSDCDCPlacesHeartHealthProfile.py").read_text(encoding="utf-8")
     )
     function = next(
         node
         for node in wrapper.body
         if isinstance(node, ast.FunctionDef)
-        and node.name == "VSDCDCPlacesCoronaryHeartDisease"
+        and node.name == "VSDCDCPlacesHeartHealthProfile"
     )
     positional = [argument.arg for argument in function.args.args]
     assert positional[:3] == ["state_abbr", "county_name", "limit"]

@@ -113,9 +113,9 @@
     }
   },
   {
-    "name": "VSDCDCPlacesCoronaryHeartDisease",
-    "type": "VSDCDCPlacesCoronaryHeartDisease",
-    "description": "Retrieve validated CDC PLACES coronary-heart-disease estimates for census tracts in one US county through a fixed endpoint.",
+    "name": "VSDCDCPlacesHeartHealthProfile",
+    "type": "VSDCDCPlacesHeartHealthProfile",
+    "description": "Retrieve a validated eight-measure CDC PLACES heart-health profile for census tracts in one US county through a fixed endpoint.",
     "category": "special_tools",
     "cacheable": true,
     "mcp_annotations": {
@@ -141,7 +141,7 @@
           "minimum": 1,
           "maximum": 500,
           "default": 500,
-          "description": "Maximum census-tract records to retrieve."
+          "description": "Maximum census-tract measure records to retrieve."
         }
       },
       "required": ["state_abbr", "county_name"],
@@ -150,11 +150,33 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "measure": {"type": "string"},
+        "measure_definitions": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "properties": {
+              "measure_id": {"type": "string"},
+              "name": {"type": "string"},
+              "domain": {
+                "type": "string",
+                "enum": ["access", "clinical_risk", "health_behavior", "health_outcome", "prevention"]
+              },
+              "population": {"type": "string"},
+              "direction": {
+                "type": "string",
+                "enum": ["higher_is_worse", "higher_is_better"]
+              }
+            },
+            "required": ["measure_id", "name", "domain", "population", "direction"],
+            "additionalProperties": false
+          }
+        },
         "state_abbr": {"type": "string"},
         "county_name": {"type": "string"},
         "possibly_truncated": {"type": "boolean"},
-        "tracts": {
+        "estimates": {
           "type": "array",
           "items": {
             "type": "object",
@@ -164,6 +186,7 @@
               "countyname": {"type": "string"},
               "locationname": {"type": "string"},
               "measure": {"type": "string"},
+              "measureid": {"type": "string"},
               "data_value": {"type": "string"},
               "low_confidence_limit": {"type": "string"},
               "high_confidence_limit": {"type": "string"}
@@ -174,6 +197,7 @@
               "countyname",
               "locationname",
               "measure",
+              "measureid",
               "data_value",
               "low_confidence_limit",
               "high_confidence_limit"
@@ -209,11 +233,11 @@
         }
       },
       "required": [
-        "measure",
+        "measure_definitions",
         "state_abbr",
         "county_name",
         "possibly_truncated",
-        "tracts",
+        "estimates",
         "provenance"
       ],
       "additionalProperties": false

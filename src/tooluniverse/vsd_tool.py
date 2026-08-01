@@ -28,7 +28,7 @@ import time
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, BinaryIO, Iterator
+from typing import Any, BinaryIO, ClassVar, Iterator
 from urllib.parse import urljoin, urlsplit
 
 import requests
@@ -96,7 +96,7 @@ _PACKAGED_SOURCES = (
         "endpoint": "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json",
         "description": "CDC local chronic-disease and preventive-service estimates.",
         "default_params": {"$limit": 5},
-        "tool_name": "VSDCDCPlacesCoronaryHeartDisease",
+        "tool_name": "VSDCDCPlacesHeartHealthProfile",
         "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
     },
     {
@@ -828,14 +828,63 @@ class VSDWHOHypertensionIndicator(BaseTool):
         }
 
 
-@register_tool("VSDCDCPlacesCoronaryHeartDisease")
-class VSDCDCPlacesCoronaryHeartDisease(BaseTool):
-    """Return typed CDC PLACES CHD estimates for one county."""
+@register_tool("VSDCDCPlacesHeartHealthProfile")
+class VSDCDCPlacesHeartHealthProfile(BaseTool):
+    """Return a fixed CDC PLACES heart-health profile for one county."""
 
     ENDPOINT = "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json"
-    MEASURE = "Coronary heart disease among adults"
+    MEASURES: ClassVar[dict[str, dict[str, str]]] = {
+        "ACCESS2": {
+            "name": "Current lack of health insurance among adults aged 18-64 years",
+            "domain": "access",
+            "population": "Adults aged 18-64 years",
+            "direction": "higher_is_worse",
+        },
+        "BPHIGH": {
+            "name": "High blood pressure among adults",
+            "domain": "clinical_risk",
+            "population": "Adults",
+            "direction": "higher_is_worse",
+        },
+        "CHD": {
+            "name": "Coronary heart disease among adults",
+            "domain": "health_outcome",
+            "population": "Adults",
+            "direction": "higher_is_worse",
+        },
+        "CHECKUP": {
+            "name": "Visits to doctor for routine checkup within the past year among adults",
+            "domain": "prevention",
+            "population": "Adults",
+            "direction": "higher_is_better",
+        },
+        "CSMOKING": {
+            "name": "Current cigarette smoking among adults",
+            "domain": "health_behavior",
+            "population": "Adults",
+            "direction": "higher_is_worse",
+        },
+        "HIGHCHOL": {
+            "name": "High cholesterol among adults who have ever been screened",
+            "domain": "clinical_risk",
+            "population": "Adults who have ever been screened",
+            "direction": "higher_is_worse",
+        },
+        "LPA": {
+            "name": "No leisure-time physical activity among adults",
+            "domain": "health_behavior",
+            "population": "Adults",
+            "direction": "higher_is_worse",
+        },
+        "OBESITY": {
+            "name": "Obesity among adults",
+            "domain": "clinical_risk",
+            "population": "Adults",
+            "direction": "higher_is_worse",
+        },
+    }
     SELECT = (
-        "year,stateabbr,countyname,locationname,measure,data_value,"
+        "year,stateabbr,countyname,locationname,measure,measureid,data_value,"
         "low_confidence_limit,high_confidence_limit"
     )
 
@@ -858,13 +907,14 @@ class VSDCDCPlacesCoronaryHeartDisease(BaseTool):
             raise ValueError("limit must be an integer between 1 and 500")
 
         escaped_county = county_name.replace("'", "''")
+        measure_ids = ",".join(f"'{value}'" for value in self.MEASURES)
         params = {
             "$select": self.SELECT,
             "$where": (
                 f"stateabbr='{state_abbr}' AND countyname='{escaped_county}' "
-                f"AND measure='{self.MEASURE}'"
+                f"AND measureid in({measure_ids})"
             ),
-            "$order": "locationname ASC",
+            "$order": "locationname ASC,measureid ASC",
             "$limit": limit,
         }
         payload, request = _safe_get_json(self.ENDPOINT, params)
@@ -879,11 +929,13 @@ class VSDCDCPlacesCoronaryHeartDisease(BaseTool):
             "countyname",
             "locationname",
             "measure",
+            "measureid",
             "data_value",
             "low_confidence_limit",
             "high_confidence_limit",
         )
-        tracts = []
+        estimates = []
+        seen: set[tuple[str, str]] = set()
         for row in payload:
             if not isinstance(row, dict):
                 raise VSDPolicyError("CDC response contained a non-object record")
@@ -895,11 +947,17 @@ class VSDCDCPlacesCoronaryHeartDisease(BaseTool):
             if (
                 normalized["stateabbr"] != state_abbr
                 or normalized["countyname"] != county_name
-                or normalized["measure"] != self.MEASURE
             ):
                 raise VSDPolicyError(
-                    "CDC response escaped the requested disease geography"
+                    "CDC response escaped the requested county geography"
                 )
+            measure = self.MEASURES.get(normalized["measureid"])
+            if measure is None or normalized["measure"] != measure["name"]:
+                raise VSDPolicyError("CDC response escaped the reviewed measure set")
+            record_key = (normalized["locationname"], normalized["measureid"])
+            if record_key in seen:
+                raise VSDPolicyError("CDC response contained a duplicate tract measure")
+            seen.add(record_key)
             try:
                 numeric = [
                     float(normalized[field])
@@ -911,18 +969,24 @@ class VSDCDCPlacesCoronaryHeartDisease(BaseTool):
                 ]
             except ValueError as exc:
                 raise VSDPolicyError("CDC estimate fields were not numeric") from exc
-            if not all(math.isfinite(value) for value in numeric):
-                raise VSDPolicyError("CDC estimate fields were not finite")
-            tracts.append(normalized)
+            if not all(math.isfinite(value) and 0 <= value <= 100 for value in numeric):
+                raise VSDPolicyError("CDC estimate fields were outside 0-100")
+            estimate, low, high = numeric
+            if not low <= estimate <= high:
+                raise VSDPolicyError("CDC confidence interval did not contain estimate")
+            estimates.append(normalized)
 
         return {
             "status": "success",
             "data": {
-                "measure": self.MEASURE,
+                "measure_definitions": [
+                    {"measure_id": measure_id, **definition}
+                    for measure_id, definition in self.MEASURES.items()
+                ],
                 "state_abbr": state_abbr,
                 "county_name": county_name,
-                "tracts": tracts,
-                "possibly_truncated": len(tracts) == limit,
+                "estimates": estimates,
+                "possibly_truncated": len(estimates) == limit,
                 "provenance": _source_provenance(
                     "CDC PLACES", request, params, payload
                 ),
