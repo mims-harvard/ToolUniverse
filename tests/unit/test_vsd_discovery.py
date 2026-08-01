@@ -102,6 +102,24 @@ def test_catalog_metadata_is_bounded_and_html_is_removed():
     assert candidate["metadata_trust"] == "untrusted_catalog_metadata"
 
 
+def test_numeric_field_hints_match_socrata_json_wire_types():
+    """SODA preserves arbitrary-precision Number and Money values as JSON strings."""
+    payload = _catalog_payload()
+    resource = payload["results"][0]["resource"]
+    resource["columns_name"] = ["Enrollment", "Award"]
+    resource["columns_field_name"] = ["enrollment", "award"]
+    resource["columns_datatype"] = ["Number", "Money"]
+    resource["columns_description"] = ["Participant count", "Award amount"]
+
+    candidate = vsd_discovery.discover_api_candidates(
+        "clinical trials", limit=1, catalog_payload=payload
+    )[0]
+    assert [field["json_type"] for field in candidate["fields"]] == [
+        "string",
+        "string",
+    ]
+
+
 @pytest.mark.parametrize("payload", [None, [], {}, {"results": "bad"}])
 def test_rejects_malformed_catalog_payload(payload):
     """Catalog schema drift fails closed instead of becoming a candidate."""
