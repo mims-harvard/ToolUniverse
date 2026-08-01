@@ -32,7 +32,7 @@ jobs:
       - name: Install focused dependencies
         run: >-
           python -m pip install
-          pytest pytest-cov requests pyyaml jsonschema huggingface_hub python-dotenv
+          pytest pytest-asyncio pytest-cov requests pyyaml jsonschema huggingface_hub python-dotenv
 
       - name: Run Docker policy tests
         env:
