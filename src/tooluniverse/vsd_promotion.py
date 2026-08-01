@@ -998,17 +998,30 @@ def publish_draft(
         evidence = _load_evidence(root, draft)
         approval = _load_approval(root, draft, evidence)
         tool_name = _tool_name(draft["config"]["name"])
+        published_at = datetime.now(timezone.utc).isoformat()
+        lifecycle = {
+            "format": "vsd_publication_lifecycle_anchor_v1",
+            "anchor_id": _canonical_digest(
+                {
+                    "tool_name": tool_name,
+                    "draft_sha256": draft["draft_sha256"],
+                    "operation_sha256": draft["operation_sha256"],
+                    "published_at": published_at,
+                }
+            ),
+        }
         published_body = {
             "version": _PROMOTION_VERSION,
             "tool_name": tool_name,
             "draft_id": draft_id,
-            "published_at": datetime.now(timezone.utc).isoformat(),
+            "published_at": published_at,
             "draft_sha256": draft["draft_sha256"],
             "operation_sha256": draft["operation_sha256"],
             "verification_sha256": evidence["verification_sha256"],
             "approval_sha256": approval["approval_sha256"],
             "reviewed_by": approval["reviewed_by"],
             "decision_note": approval["decision_note"],
+            "lifecycle": lifecycle,
             "config": draft["config"],
         }
         published = {
@@ -1022,8 +1035,11 @@ def publish_draft(
             )
         if path.exists():
             existing = _read_json(path)
-            if existing.get("tool_name") != tool_name:
+            if not isinstance(existing, dict) or existing.get("tool_name") != tool_name:
                 raise VSDPromotionError("Published filename collides with another tool")
+        from .vsd_lifecycle import _initialize_publication_lifecycle
+
+        _initialize_publication_lifecycle(root, published)
         _atomic_write_json(path, published)
     return published
 
@@ -1045,6 +1061,14 @@ def _validated_publication(record: Any) -> dict[str, Any]:
     config = record.get("config")
     if not isinstance(config, dict) or config.get("name") != tool_name:
         raise VSDPromotionError("Published tool name does not match its configuration")
+    lifecycle = record.get("lifecycle")
+    if lifecycle is not None and (
+        not isinstance(lifecycle, dict)
+        or set(lifecycle) != {"format", "anchor_id"}
+        or lifecycle.get("format") != "vsd_publication_lifecycle_anchor_v1"
+        or not re.fullmatch(r"[0-9a-f]{64}", str(lifecycle.get("anchor_id", "")))
+    ):
+        raise VSDPromotionError("Published lifecycle anchor is invalid")
     try:
         digest = operation_digest(config)
     except VSDDynamicRESTError as exc:
@@ -1064,26 +1088,34 @@ def load_published_tools(
 ) -> list[str]:
     """Explicitly load valid published records into one ToolUniverse instance."""
     root = _root(workspace)
-    approved = root / "approved"
-    paths = sorted(approved.glob("*.json")) if approved.exists() else []
-    if len(paths) > _MAX_PUBLISHED_TOOLS:
-        raise VSDPromotionError("Approved tool count exceeds the configured limit")
-    records = [_validated_publication(_read_json(path)) for path in paths]
-    names = [record["tool_name"] for record in records]
-    if len({name.casefold() for name in names}) != len(names):
-        raise VSDPromotionError(
-            "Published tool names contain a case-insensitive collision"
-        )
-    for name in names:
-        if name in tooluniverse.all_tool_dict:
+    with _promotion_transaction(root):
+        approved = root / "approved"
+        paths = sorted(approved.glob("*.json")) if approved.exists() else []
+        if len(paths) > _MAX_PUBLISHED_TOOLS:
+            raise VSDPromotionError("Approved tool count exceeds the configured limit")
+        records = [_validated_publication(_read_json(path)) for path in paths]
+        from .vsd_lifecycle import _state_for_publication
+
+        active_records = [
+            record
+            for record in records
+            if _state_for_publication(root, record)["state"] == "active"
+        ]
+        names = [record["tool_name"] for record in active_records]
+        if len({name.casefold() for name in names}) != len(names):
             raise VSDPromotionError(
-                f"Published tool {name!r} would replace a loaded tool"
+                "Published tool names contain a case-insensitive collision"
             )
-    loaded: list[str] = []
-    for record in records:
-        name = record["tool_name"]
-        register_reviewed_rest_tool(tooluniverse, record["config"])
-        loaded.append(name)
+        for name in names:
+            if name in tooluniverse.all_tool_dict:
+                raise VSDPromotionError(
+                    f"Published tool {name!r} would replace a loaded tool"
+                )
+        loaded: list[str] = []
+        for record in active_records:
+            name = record["tool_name"]
+            register_reviewed_rest_tool(tooluniverse, record["config"])
+            loaded.append(name)
     return loaded
 
 

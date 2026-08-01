@@ -1,5 +1,73 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Provider Drift And Publication Lifecycle
+
+Published VSD tools retain the exact provider contract that was reviewed, but
+provider OpenAPI documents can change later. The administrator-only
+`tooluniverse-vsd-lifecycle` CLI compares a local current OpenAPI file with the
+published operation and persists an inert, content-addressed assessment:
+
+- `unchanged` means the source document and inspected operation are identical.
+- `metadata_only` means documentation changed without changing request or
+  response validation behavior.
+- `review_required` means an input or response schema changed and a new draft,
+  verification run, and approval are required.
+- `breaking` means the operation disappeared, became policy-blocked, cannot be
+  reconstructed, or changed its endpoint, authentication, fixed query, or
+  argument mapping.
+
+`review_required` and `breaking` assessments recommend suspension, but an
+assessment cannot change state. An administrator must explicitly append a
+`suspended`, `active`, or `retired` event. Events are immutable, contiguous,
+hash-chained, bound to one exact publication digest, and can reference one
+validated assessment. Reactivation requires an `unchanged` or `metadata_only`
+assessment for that publication. Retirement is terminal for that publication.
+A newly reviewed replacement has a new publication digest and begins active.
+
+The publication loader validates the complete applicable history before it
+registers any tool. Suspended and retired publications are excluded from fresh
+ToolUniverse instances. A missing, modified, noncontiguous, or invalid event or
+referenced assessment fails the load before registration. Lifecycle changes do
+not remove a tool from an already-running instance; its host must restart or
+otherwise unload that instance.
+
+The checked protected rare-disease study promotes one authenticated operation,
+classifies unchanged, metadata-only, response-schema, endpoint, and unsafe-auth
+contracts, explicitly suspends the publication, proves fresh loading is empty,
+and proves a modified event fails closed. It then reassesses the repaired
+contract, explicitly activates it, executes two records across credential
+rotation, retires it, and proves both exclusion and terminal state. All six
+assessments remain inert, all three state events form one hash chain, and no
+credential value appears in an artifact or ToolUniverse result.
+
+Run the deterministic offline study from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/lifecycle_drift_case_study.py
+```
+
+The study writes `artifacts/lifecycle_drift_snapshot.md` and its JSON audit
+snapshot. Its protected provider is deterministic because the repository
+cannot bundle a live credential; only network transport is replaced.
+
+A cron or release job can download a provider contract to a local file and run
+assessment separately from state decisions:
+
+```console
+tooluniverse-vsd-lifecycle --workspace ./vsd-review assess-openapi \
+  VSDProtectedEvidenceById current-provider-openapi.yaml
+tooluniverse-vsd-lifecycle --workspace ./vsd-review status \
+  VSDProtectedEvidenceById
+tooluniverse-vsd-lifecycle --workspace ./vsd-review suspend \
+  VSDProtectedEvidenceById --changed-by "Local Maintainer" \
+  --reason "Suspended while the changed provider contract is reviewed." \
+  --assessment-sha256 <assessment-sha256>
+```
+
+The CLI does not fetch contracts, make provider requests, change state based on
+an assessment, create a replacement draft, approve, publish, or transmit
+evidence. Those boundaries remain deliberate administrator actions.
+
 ## Environment-Backed Credentials For Reviewed APIs
 
 VSD can promote a reviewed OpenAPI operation that requires either one header
