@@ -1,0 +1,63 @@
+name: Docker LLM Administrator Smoke
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/docker-llm-smoke.yml"
+      - "src/tooluniverse/remote/docker_llm/**"
+      - "tests/fixtures/docker_llm_smoke/**"
+      - "tests/unit/test_docker_llm_*.py"
+      - "examples/docker_llm/**"
+      - "pyproject.toml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-smoke:
+    name: Real container lifecycle and ToolUniverse call
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install focused dependencies
+        run: >-
+          python -m pip install
+          pytest pytest-cov requests pyyaml jsonschema huggingface_hub python-dotenv
+
+      - name: Run Docker policy tests
+        env:
+          PYTHONPATH: src
+          TOOLUNIVERSE_LIGHT_IMPORT: "true"
+        run: >-
+          python -m pytest
+          tests/unit/test_docker_llm_provision.py
+          tests/unit/test_docker_llm_cli.py
+          tests/unit/test_docker_llm_case_study.py
+          -q --no-cov
+
+      - name: Run real Docker smoke case
+        env:
+          PYTHONPATH: src
+          TOOLUNIVERSE_LIGHT_IMPORT: "true"
+        run: python examples/docker_llm/run_smoke_case.py
+
+      - name: Upload Docker validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-llm-smoke-evidence
+          path: |
+            examples/docker_llm/artifacts/docker_smoke_snapshot.json
+            examples/docker_llm/artifacts/docker_smoke_snapshot.md
+            examples/docker_llm/artifacts/docker_provision_record.json
+          if-no-files-found: error
