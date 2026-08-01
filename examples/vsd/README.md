@@ -1,5 +1,57 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Trusted-Source Intelligence And Review Handoff
+
+`source_intelligence_case_study.py` asks whether ToolUniverse can identify the
+interfaces needed to connect ALS grant evidence with reusable neurophysiology
+datasets without duplicating configured sources or silently installing
+discovered operations. It first audits the real built-in configuration
+inventory, then runs eleven focused cases covering the 50-source review
+catalog, exact-host duplicate detection, genuine gap detection, bounded
+multi-host crawling, robots and host boundaries, seven contract formats,
+content-addressed snapshots, local contract inspection, cron history, private
+demand linkage, and explicit core-team handoff.
+
+The 50 sources are not an allowlist for execution. A catalog entry permits only
+bounded candidate discovery. Every discovered document remains inert and must
+be explicitly snapshotted, inspected, reduced to an exact operation, verified
+against representative cases, approved, published, and loaded through the
+existing VSD lifecycle. Source scans and unmet-demand records remain local by
+default; the core team sees a sanitized subset only when an administrator
+selects candidate IDs, supplies review text, gives consent, and separately
+confirms issue submission.
+
+Run the deterministic offline portfolio from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/source_intelligence_case_study.py
+```
+
+Review `artifacts/source_intelligence_snapshot.md`, its machine-verifiable JSON
+counterpart, the sanitized demand proposal, and the local handoff preview. The
+portfolio checks 28 end-to-end properties and renders an issue without
+submitting it.
+
+The administrator CLI supports the same lifecycle:
+
+```console
+tooluniverse-vsd-sources coverage
+tooluniverse-vsd-sources scan --seed https://api.example.org/developer \
+  --report-directory ./private-vsd-source-history
+tooluniverse-vsd-sources snapshot scan.json <candidate-id> ./private-snapshots \
+  --manifest-file snapshot-manifest.json
+tooluniverse-vsd-sources handoff handoff.json scan.json \
+  --candidate-id <candidate-id> --snapshot snapshot-manifest.json \
+  --reviewed-by "Local Maintainer" \
+  --decision-note "Reviewed source ownership, coverage, contract, and terms." \
+  --consent
+tooluniverse-vsd-sources render handoff.json
+```
+
+`submit handoff.json --confirm` is the only command that transmits anything. It
+uses the fixed `mims-harvard/ToolUniverse` issue endpoint and reads the token
+only from `TOOLUNIVERSE_VSD_GITHUB_TOKEN`.
+
 ## Reviewed Multi-protocol Runtime Portfolio
 
 `reviewed_runtime_case_study.py` asks whether one spinal muscular atrophy study
