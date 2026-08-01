@@ -1,14 +1,25 @@
 from __future__ import annotations
 
+import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
 
-from examples.vsd import dynamic_rest_als_case_study as study
 from tooluniverse import vsd_dynamic_rest
 
 pytestmark = pytest.mark.unit
+
+
+MODULE_PATH = (
+    Path(__file__).parents[2] / "examples" / "vsd" / "dynamic_rest_als_case_study.py"
+)
+SPEC = importlib.util.spec_from_file_location("vsd_dynamic_rest_case_study", MODULE_PATH)
+assert SPEC and SPEC.loader
+study = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = study
+SPEC.loader.exec_module(study)
 
 
 def _request_metadata(size: int = 100) -> dict:
