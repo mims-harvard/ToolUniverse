@@ -169,6 +169,7 @@ tu-datastore = "tooluniverse.database_setup.cli:main"
 # Health Check Tool
 tooluniverse-doctor = "tooluniverse.doctor:main"
 tooluniverse-vsd-admin = "tooluniverse.vsd_admin_cli:main"
+tooluniverse-vsd-promote = "tooluniverse.vsd_promotion_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -64,6 +64,7 @@ _BUILTIN_ALLOWED_HOSTS = frozenset(
         "api.us.socrata.com",
         "chronicdata.cdc.gov",
         "clinicaltrials.gov",
+        "data.ny.gov",
         "data.cdc.gov",
         "eutils.ncbi.nlm.nih.gov",
         "ghoapi.azureedge.net",
