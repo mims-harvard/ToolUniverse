@@ -38,6 +38,7 @@ LLM Providers
 
 * **vLLM Support** → :doc:`vllm_support` - Use self-hosted LLM models with vLLM for high-performance inference
 * **OpenRouter Support** → :doc:`openrouter_support` - Access multiple LLM providers through OpenRouter API
+* **OpenAI-Compatible Support** → :doc:`openai_compatible_support` - Use OpenAI and compatible chat-completions endpoints
 
 Advanced Features
 -----------------

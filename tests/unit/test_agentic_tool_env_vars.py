@@ -32,6 +32,8 @@ class TestAgenticToolEnvironmentVariables:
             "GEMINI_MODEL_ID",
             "AGENTIC_TOOL_FALLBACK_CHAIN",
             "VLLM_SERVER_URL",
+            "OPENAI_API_KEY",
+            "OPENAI_BASE_URL",
         ]
         for var in env_vars_to_clear:
             if var in os.environ:
@@ -374,6 +376,29 @@ class TestAgenticToolEnvironmentVariables:
             # This is tested indirectly through the VLLM client initialization
             assert os.getenv("VLLM_SERVER_URL") == "http://localhost:8000"
 
+    def test_openai_provider_is_supported(self):
+        """Test that OpenAI-compatible provider config is accepted."""
+        os.environ["OPENAI_API_KEY"] = "test-key"
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+            "api_type": "OPENAI",
+            "model_id": "gpt-4o-mini",
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            tool = AgenticTool(tool_config)
+
+            assert tool._api_type == "OPENAI"
+            assert AgenticTool.has_any_api_keys() is True
+
     def test_task_specific_model_env_var(self):
         """Test that task-specific model environment variables work."""
         # Set task-specific environment variable
@@ -520,6 +545,45 @@ class TestAgenticToolEnvironmentVariables:
 
         with patch.object(AgenticTool, "_try_initialize_api"):
             with pytest.raises(ValueError, match="Expected boolean environment value"):
+                AgenticTool(tool_config)
+
+    def test_invalid_temperature_env_var_fails_fast(self):
+        """Invalid temperature env values should fail with a clear error."""
+        os.environ["TOOLUNIVERSE_LLM_TEMPERATURE"] = "not-a-number"
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            with pytest.raises(ValueError, match="TOOLUNIVERSE_LLM_TEMPERATURE"):
+                AgenticTool(tool_config)
+
+    @pytest.mark.parametrize("value", ["nan", "inf", "-inf"])
+    def test_non_finite_temperature_env_var_fails_fast(self, value):
+        """Reject non-finite floats before they reach a provider client."""
+        os.environ["TOOLUNIVERSE_LLM_TEMPERATURE"] = value
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            with pytest.raises(ValueError, match="finite numeric"):
                 AgenticTool(tool_config)
 
 

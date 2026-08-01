@@ -2,13 +2,20 @@ from __future__ import annotations
 
 import os
 import json
+import math
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .logging_config import get_logger
-from .llm_clients import AzureOpenAIClient, GeminiClient, OpenRouterClient, VLLMClient
+from .llm_clients import (
+    AzureOpenAIClient,
+    GeminiClient,
+    OpenAICompatibleClient,
+    OpenRouterClient,
+    VLLMClient,
+)
 
 
 # Global default fallback configuration
@@ -21,6 +28,7 @@ DEFAULT_FALLBACK_CHAIN = [
 # API key environment variable mapping
 API_KEY_ENV_VARS = {
     "CHATGPT": ["AZURE_OPENAI_API_KEY", "AZURE_OPENAI_ENDPOINT"],
+    "OPENAI": ["OPENAI_API_KEY"],
     "OPENROUTER": ["OPENROUTER_API_KEY"],
     "GEMINI": ["GEMINI_API_KEY"],
     "VLLM": ["VLLM_SERVER_URL"],
@@ -43,6 +51,22 @@ class AgenticTool(BaseTool):
         if normalized in {"0", "false", "no", "off"}:
             return False
         raise ValueError(f"Expected boolean environment value, got: {value!r}")
+
+    @staticmethod
+    def _parse_float_env(value: Optional[str]) -> Optional[float]:
+        if value is None or value == "":
+            return None
+        try:
+            parsed = float(value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                f"Expected numeric TOOLUNIVERSE_LLM_TEMPERATURE, got: {value!r}"
+            ) from exc
+        if not math.isfinite(parsed):
+            raise ValueError(
+                f"Expected finite numeric TOOLUNIVERSE_LLM_TEMPERATURE, got: {value!r}"
+            )
+        return parsed
 
     @staticmethod
     def has_any_api_keys() -> bool:
@@ -100,8 +124,9 @@ class AgenticTool(BaseTool):
                     "TOOLUNIVERSE_LLM_MODEL_DEFAULT"
                 )
             elif key == "temperature":
-                temp_str = os.getenv("TOOLUNIVERSE_LLM_TEMPERATURE")
-                env_value = float(temp_str) if temp_str else None
+                env_value = self._parse_float_env(
+                    os.getenv("TOOLUNIVERSE_LLM_TEMPERATURE")
+                )
             elif key == "return_json":
                 env_value = self._parse_bool_env(
                     os.getenv("TOOLUNIVERSE_LLM_RETURN_JSON")
@@ -287,6 +312,8 @@ class AgenticTool(BaseTool):
         try:
             if api_type == "CHATGPT":
                 self._llm_client = AzureOpenAIClient(model_id, None, self.logger)
+            elif api_type == "OPENAI":
+                self._llm_client = OpenAICompatibleClient(model_id, self.logger)
             elif api_type == "OPENROUTER":
                 self._llm_client = OpenRouterClient(model_id, self.logger)
             elif api_type == "GEMINI":
@@ -330,7 +357,7 @@ class AgenticTool(BaseTool):
 
     # ------------------------------------------------------------------ LLM utilities -----------
     def _validate_model_config(self):
-        supported_api_types = ["CHATGPT", "OPENROUTER", "GEMINI", "VLLM"]
+        supported_api_types = ["CHATGPT", "OPENAI", "OPENROUTER", "GEMINI", "VLLM"]
         if self._api_type not in supported_api_types:
             raise ValueError(
                 f"Unsupported API type: {self._api_type}. Supported types: {supported_api_types}"
@@ -633,6 +660,8 @@ class AgenticTool(BaseTool):
         try:
             if self._api_type == "CHATGPT":
                 self._llm_client = AzureOpenAIClient(self._model_id, None, self.logger)
+            elif self._api_type == "OPENAI":
+                self._llm_client = OpenAICompatibleClient(self._model_id, self.logger)
             elif self._api_type == "OPENROUTER":
                 self._llm_client = OpenRouterClient(self._model_id, self.logger)
             elif self._api_type == "GEMINI":

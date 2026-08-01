@@ -361,6 +361,7 @@
     "used_by": [
       "epigenomics_tools.json",
       "icite_tools.json",
+      "ncbi_datasets_tools.json",
       "pubmed_tools.json",
       "pubtator3_ext_tools.json"
     ]

@@ -1,12 +1,13 @@
 [
     {
         "name": "NCBIDatasets_get_gene",
-        "description": "Get comprehensive gene information from NCBI by Gene ID. Returns gene symbol, description, chromosomal location, genomic coordinates, cross-references to UniProt/Ensembl/OMIM, synonyms, and annotation details. Covers all organisms in NCBI Gene database. Example: gene_id 7157 returns TP53 (tumor protein p53) on chromosome 17.",
+        "description": "Get comprehensive gene information from the National Center for Biotechnology Information (NCBI) by Gene ID. Returns gene symbol, description, chromosomal location, genomic coordinates, cross-references to UniProt/Ensembl/OMIM, synonyms, and annotation details. Covers all organisms in the NCBI Gene database. No API key is required; optionally set NCBI_API_KEY for a higher request-rate limit. Example: gene_id 7157 returns TP53 (tumor protein p53) on chromosome 17.",
         "parameter": {
             "type": "object",
             "properties": {
                 "gene_id": {
                     "type": "string",
+                    "pattern": "^[1-9][0-9]*$",
                     "description": "NCBI Gene ID (numeric). Examples: '7157' (TP53), '672' (BRCA1), '3630' (INS), '22059' (mouse Trp53)."
                 }
             },
@@ -18,6 +19,9 @@
             "endpoint_type": "gene_by_id"
         },
         "type": "NCBIDatasetsTool",
+        "optional_api_keys": [
+            "NCBI_API_KEY"
+        ],
         "test_examples": [
             {
                 "gene_id": "7157"
@@ -31,9 +35,6 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
                                 "gene_id": {
                                     "type": [
                                         "string",
@@ -170,25 +171,6 @@
                                     }
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "total_results": {
-                                    "type": "integer"
-                                },
-                                "query_gene_id": {
-                                    "type": "string"
-                                },
-                                "source": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "required": [
-                        "data"
-                    ]
                 },
                 {
                     "type": "object",
@@ -212,10 +194,14 @@
             "properties": {
                 "symbol": {
                     "type": "string",
+                    "minLength": 1,
+                    "pattern": ".*\\S.*",
                     "description": "Gene symbol. Examples: 'TP53', 'BRCA1', 'INS', 'EGFR'."
                 },
                 "taxon": {
                     "type": "string",
+                    "minLength": 1,
+                    "pattern": ".*\\S.*",
                     "description": "Organism as common name or taxonomy ID. Examples: 'human', 'mouse', 'rat', '9606', '10090'. Default: 'human'."
                 }
             },
@@ -227,6 +213,9 @@
             "endpoint_type": "gene_by_symbol"
         },
         "type": "NCBIDatasetsTool",
+        "optional_api_keys": [
+            "NCBI_API_KEY"
+        ],
         "test_examples": [
             {
                 "symbol": "BRCA1",
@@ -240,11 +229,8 @@
         "return_schema": {
             "oneOf": [
                 {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
+                    "type": "array",
+                    "items": {
                                 "type": "object",
                                 "properties": {
                                     "gene_id": {
@@ -309,28 +295,6 @@
                                     }
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "total_results": {
-                                    "type": "integer"
-                                },
-                                "query_symbol": {
-                                    "type": "string"
-                                },
-                                "query_taxon": {
-                                    "type": "string"
-                                },
-                                "source": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "required": [
-                        "data"
-                    ]
                 },
                 {
                     "type": "object",
@@ -354,10 +318,13 @@
             "properties": {
                 "gene_id": {
                     "type": "string",
+                    "pattern": "^[1-9][0-9]*$",
                     "description": "NCBI Gene ID (numeric). Examples: '7157' (TP53), '672' (BRCA1), '3630' (INS)."
                 },
                 "page_size": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
                     "description": "Maximum number of orthologs to return (1-100). Default: 20."
                 }
             },
@@ -369,6 +336,9 @@
             "endpoint_type": "gene_orthologs"
         },
         "type": "NCBIDatasetsTool",
+        "optional_api_keys": [
+            "NCBI_API_KEY"
+        ],
         "test_examples": [
             {
                 "gene_id": "7157",
@@ -381,11 +351,8 @@
         "return_schema": {
             "oneOf": [
                 {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
+                    "type": "array",
+                    "items": {
                                 "type": "object",
                                 "properties": {
                                     "gene_id": {
@@ -438,25 +405,6 @@
                                     }
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "total_results": {
-                                    "type": "integer"
-                                },
-                                "query_gene_id": {
-                                    "type": "string"
-                                },
-                                "source": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "required": [
-                        "data"
-                    ]
                 },
                 {
                     "type": "object",
@@ -474,12 +422,13 @@
     },
     {
         "name": "NCBIDatasets_get_taxonomy",
-        "description": "Get detailed taxonomy information from NCBI by taxonomy ID. Returns organism name, rank, full lineage (as bare ancestor tax_ids in `lineage`, and as resolved organism_name/rank pairs in `lineage_names`), counts of genes/assemblies/RNA types, and child taxa. Covers all organisms in NCBI Taxonomy including bacteria, archaea, eukaryotes, and viruses. Example: tax_id 9606 returns Homo sapiens with 20,625 protein-coding genes.",
+        "description": "Get detailed taxonomy information from NCBI by taxonomy ID. Returns organism name, rank, full lineage (as bare ancestor tax_ids in `lineage`, and as resolved organism_name/rank pairs in `lineage_names`), current counts of genes/assemblies/RNA types, and child taxa. Covers all organisms in NCBI Taxonomy including bacteria, archaea, eukaryotes, and viruses. Example: tax_id 9606 returns Homo sapiens and its root-to-parent lineage.",
         "parameter": {
             "type": "object",
             "properties": {
                 "tax_id": {
                     "type": "string",
+                    "pattern": "^[1-9][0-9]*$",
                     "description": "NCBI Taxonomy ID (numeric). Examples: '9606' (Homo sapiens), '10090' (Mus musculus), '7227' (Drosophila melanogaster), '562' (E. coli)."
                 }
             },
@@ -491,6 +440,9 @@
             "endpoint_type": "taxonomy"
         },
         "type": "NCBIDatasetsTool",
+        "optional_api_keys": [
+            "NCBI_API_KEY"
+        ],
         "test_examples": [
             {
                 "tax_id": "9606"
@@ -504,9 +456,6 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
                                 "tax_id": {
                                     "type": [
                                         "integer",
@@ -588,25 +537,6 @@
                                     }
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "total_results": {
-                                    "type": "integer"
-                                },
-                                "query_tax_id": {
-                                    "type": "string"
-                                },
-                                "source": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "required": [
-                        "data"
-                    ]
                 },
                 {
                     "type": "object",
@@ -630,6 +560,8 @@
             "properties": {
                 "query": {
                     "type": "string",
+                    "minLength": 1,
+                    "pattern": ".*\\S.*",
                     "description": "Partial organism name to search. Examples: 'drosophila', 'escherichia', 'arabidopsis', 'saccharomyces'."
                 }
             },
@@ -641,6 +573,9 @@
             "endpoint_type": "taxonomy_suggest"
         },
         "type": "NCBIDatasetsTool",
+        "optional_api_keys": [
+            "NCBI_API_KEY"
+        ],
         "test_examples": [
             {
                 "query": "drosophila"
@@ -652,11 +587,8 @@
         "return_schema": {
             "oneOf": [
                 {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
+                    "type": "array",
+                    "items": {
                                 "type": "object",
                                 "properties": {
                                     "scientific_name": {
@@ -697,25 +629,6 @@
                                     }
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "total_results": {
-                                    "type": "integer"
-                                },
-                                "query": {
-                                    "type": "string"
-                                },
-                                "source": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "required": [
-                        "data"
-                    ]
                 },
                 {
                     "type": "object",
@@ -739,6 +652,7 @@
             "properties": {
                 "accession": {
                     "type": "string",
+                    "pattern": "^(GCF|GCA)_[0-9]+(?:\\.[0-9]+)?$",
                     "description": "Assembly accession, e.g. 'GCF_000005845.2' (E. coli K-12) or 'GCF_000001405.40' (human GRCh38.p14)."
                 }
             },
@@ -750,6 +664,9 @@
             "endpoint_type": "genome_assembly"
         },
         "type": "NCBIDatasetsTool",
+        "optional_api_keys": [
+            "NCBI_API_KEY"
+        ],
         "test_examples": [
             {
                 "accession": "GCF_000005845.2"
@@ -765,7 +682,30 @@
           "oneOf": [
             {
               "type": "object",
-              "description": "Curated assembly fields (accession, organism, level, stats)"
+              "description": "Curated assembly fields (accession, organism, level, stats)",
+              "properties": {
+                "accession": {"type": ["string", "null"]},
+                "paired_accession": {"type": ["string", "null"]},
+                "source_database": {"type": ["string", "null"]},
+                "organism_name": {"type": ["string", "null"]},
+                "tax_id": {"type": ["integer", "null"]},
+                "strain": {"type": ["string", "null"]},
+                "assembly_name": {"type": ["string", "null"]},
+                "assembly_level": {"type": ["string", "null"]},
+                "assembly_status": {"type": ["string", "null"]},
+                "refseq_category": {"type": ["string", "null"]},
+                "release_date": {"type": ["string", "null"]},
+                "submitter": {"type": ["string", "null"]},
+                "bioproject_accession": {"type": ["string", "null"]},
+                "total_sequence_length": {"type": ["string", "integer", "null"]},
+                "number_of_chromosomes": {"type": ["integer", "null"]},
+                "number_of_contigs": {"type": ["integer", "null"]},
+                "contig_n50": {"type": ["integer", "null"]},
+                "scaffold_n50": {"type": ["integer", "null"]},
+                "gc_percent": {"type": ["number", "null"]},
+                "annotation_provider": {"type": ["string", "null"]},
+                "annotation_name": {"type": ["string", "null"]}
+              }
             },
             {
               "type": "object",
@@ -789,6 +729,8 @@
             "properties": {
                 "taxon": {
                     "type": "string",
+                    "minLength": 1,
+                    "pattern": ".*\\S.*",
                     "description": "NCBI tax id or scientific name, e.g. '562', 'Escherichia coli', 'Saccharomyces cerevisiae'."
                 },
                 "limit": {
@@ -796,6 +738,8 @@
                         "integer",
                         "null"
                     ],
+                    "minimum": 1,
+                    "maximum": 100,
                     "description": "Max assemblies to return (default 20, max 100)."
                 },
                 "reference_only": {
@@ -814,6 +758,9 @@
             "endpoint_type": "genomes_by_taxon"
         },
         "type": "NCBIDatasetsTool",
+        "optional_api_keys": [
+            "NCBI_API_KEY"
+        ],
         "test_examples": [
             {
                 "taxon": "Saccharomyces cerevisiae",
@@ -834,7 +781,30 @@
             {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "accession": {"type": ["string", "null"]},
+                  "paired_accession": {"type": ["string", "null"]},
+                  "source_database": {"type": ["string", "null"]},
+                  "organism_name": {"type": ["string", "null"]},
+                  "tax_id": {"type": ["integer", "null"]},
+                  "strain": {"type": ["string", "null"]},
+                  "assembly_name": {"type": ["string", "null"]},
+                  "assembly_level": {"type": ["string", "null"]},
+                  "assembly_status": {"type": ["string", "null"]},
+                  "refseq_category": {"type": ["string", "null"]},
+                  "release_date": {"type": ["string", "null"]},
+                  "submitter": {"type": ["string", "null"]},
+                  "bioproject_accession": {"type": ["string", "null"]},
+                  "total_sequence_length": {"type": ["string", "integer", "null"]},
+                  "number_of_chromosomes": {"type": ["integer", "null"]},
+                  "number_of_contigs": {"type": ["integer", "null"]},
+                  "contig_n50": {"type": ["integer", "null"]},
+                  "scaffold_n50": {"type": ["integer", "null"]},
+                  "gc_percent": {"type": ["number", "null"]},
+                  "annotation_provider": {"type": ["string", "null"]},
+                  "annotation_name": {"type": ["string", "null"]}
+                }
               },
               "description": "Assembly summaries"
             },
@@ -854,13 +824,32 @@
     },
     {
         "name": "NCBIDatasets_get_sequence_reports",
-        "description": "Get per-sequence (chromosome/plasmid/scaffold) reports for a genome assembly via the NCBI Datasets v2 API. Returns each molecule's chromosome name, role, location type, RefSeq and GenBank accessions, length, and GC%. Use to map an assembly to its individual sequence accessions (e.g. resolve E. coli K-12 to NC_000913.3, or human chromosomes to their RefSeq NC_ accessions). No API key required.",
+        "description": "Get a page of per-sequence (chromosome/plasmid/scaffold) reports for a genome assembly via the NCBI Datasets v2 API. Returns each molecule's chromosome name, role, location type, RefSeq and GenBank accessions, length, and GC%, plus total_available and next_page_token metadata. Use next_page_token to retrieve additional pages for assemblies with many sequences. Use to map an assembly to its individual sequence accessions (e.g. resolve E. coli K-12 to NC_000913.3, or human chromosomes to their RefSeq NC_ accessions). No API key required.",
         "parameter": {
             "type": "object",
             "properties": {
                 "accession": {
                     "type": "string",
+                    "pattern": "^(GCF|GCA)_[0-9]+(?:\\.[0-9]+)?$",
                     "description": "Assembly accession, e.g. 'GCF_000005845.2'."
+                },
+                "page_size": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "minimum": 1,
+                    "maximum": 1000,
+                    "description": "Maximum sequence records in this page (default 100, maximum 1000)."
+                },
+                "page_token": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "minLength": 1,
+                    "pattern": ".*\\S.*",
+                    "description": "Opaque next_page_token returned by a previous call. Omit for the first page."
                 }
             },
             "required": [
@@ -871,6 +860,9 @@
             "endpoint_type": "sequence_reports"
         },
         "type": "NCBIDatasetsTool",
+        "optional_api_keys": [
+            "NCBI_API_KEY"
+        ],
         "test_examples": [
             {
                 "accession": "GCF_000005845.2"
@@ -887,7 +879,17 @@
             {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "chr_name": {"type": ["string", "null"]},
+                  "sequence_name": {"type": ["string", "null"]},
+                  "role": {"type": ["string", "null"]},
+                  "location_type": {"type": ["string", "null"]},
+                  "refseq_accession": {"type": ["string", "null"]},
+                  "genbank_accession": {"type": ["string", "null"]},
+                  "length": {"type": ["integer", "null"]},
+                  "gc_percent": {"type": ["number", "null"]}
+                }
               },
               "description": "Sequence records"
             },
