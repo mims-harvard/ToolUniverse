@@ -1,13 +1,22 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
+import sys
+from pathlib import Path
 
 import pytest
 
-from examples.docker_llm import run_smoke_case as study
-
 pytestmark = pytest.mark.unit
+
+
+MODULE_PATH = Path(__file__).parents[2] / "examples" / "docker_llm" / "run_smoke_case.py"
+SPEC = importlib.util.spec_from_file_location("docker_llm_smoke_case", MODULE_PATH)
+assert SPEC and SPEC.loader
+study = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = study
+SPEC.loader.exec_module(study)
 
 
 def test_case_orchestrates_full_lifecycle_and_writes_reports(monkeypatch, tmp_path):
