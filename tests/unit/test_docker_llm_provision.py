@@ -326,11 +326,23 @@ class FakeResponse:
 
 
 class FakeSession:
-    def __init__(self, response):
+    def __init__(self, response, health_response=None):
         self.response = response
+        self.health_response = health_response or FakeResponse(
+            {
+                "status": "ok",
+                "service_id": "reviewed-llm-service",
+                "model": "reviewed-model",
+            }
+        )
         self.trust_env = True
         self.request = None
+        self.health_request = None
         self.closed = False
+
+    def get(self, url, **kwargs):
+        self.health_request = (url, kwargs, self.trust_env)
+        return self.health_response
 
     def post(self, url, **kwargs):
         self.request = (url, kwargs, self.trust_env)
@@ -344,6 +356,9 @@ def test_published_client_executes_through_real_tooluniverse(
     tmp_path, monkeypatch, approved_image
 ):
     profile_path = _write_profile(tmp_path)
+    profile_data, digest = provision.load_profile(profile_path)
+    profile_data["tool"]["default_temperature"] = 0.65
+    profile_path = _write_profile(tmp_path, profile_data)
     profile_data, digest = provision.load_profile(profile_path)
     fake_docker = FakeDocker(profile_data, digest)
     monkeypatch.setattr(provision, "_run_docker", fake_docker)
@@ -393,9 +408,51 @@ def test_published_client_executes_through_real_tooluniverse(
     assert result["data"]["response"] == "bounded synthesis"
     assert result["data"]["provenance"]["image_id"] == IMAGE_ID
     assert session.request[0] == "http://127.0.0.1:19090/v1/chat/completions"
+    assert session.request[1]["json"]["temperature"] == 0.65
     assert session.request[1]["allow_redirects"] is False
     assert session.request[2] is False
-    assert response.closed and session.closed
+    assert session.health_request[0] == "http://127.0.0.1:19090/health"
+    assert session.health_request[1]["allow_redirects"] is False
+    assert session.health_request[2] is False
+    assert response.closed and session.health_response.closed and session.closed
+
+
+def test_client_rechecks_live_service_identity_before_inference(monkeypatch):
+    profile_data = _profile()
+    config = provision._client_config(profile_data, "c" * 64, IMAGE_ID, 19090)
+    inference = FakeResponse(
+        {"choices": [{"message": {"content": "must not be reached"}}]}
+    )
+    wrong_health = FakeResponse(
+        {
+            "status": "ok",
+            "service_id": "unrelated-loopback-service",
+            "model": "reviewed-model",
+        }
+    )
+    session = FakeSession(inference, health_response=wrong_health)
+    monkeypatch.setattr(client.requests, "Session", lambda: session)
+
+    with pytest.raises(client.DockerLLMClientError, match="identity"):
+        client.DockerLLMClientTool(config).run({"prompt": "test prompt"})
+
+    assert session.request is None
+    assert wrong_health.closed and session.closed
+
+
+def test_client_rejects_unknown_arguments(monkeypatch):
+    config = provision._client_config(_profile(), "c" * 64, IMAGE_ID, 19090)
+    session = FakeSession(
+        FakeResponse({"choices": [{"message": {"content": "unused"}}]})
+    )
+    monkeypatch.setattr(client.requests, "Session", lambda: session)
+
+    with pytest.raises(client.DockerLLMClientError, match="unknown fields"):
+        client.DockerLLMClientTool(config).run(
+            {"prompt": "test prompt", "endpoint": "http://example.com"}
+        )
+
+    assert session.health_request is None and session.request is None
 
 
 def test_client_rejects_redirects_oversize_and_non_loopback(monkeypatch):
@@ -438,7 +495,11 @@ def test_tampered_client_record_is_not_loaded(tmp_path, approved_image):
         "container_name": "tooluniverse-reviewed-llm",
         "host_port": 19090,
         "security": {"read_only_rootfs": True},
-        "health": {"status": "ok", "service_id": "reviewed-llm-service"},
+        "health": {
+            "status": "ok",
+            "service_id": "reviewed-llm-service",
+            "model": "reviewed-model",
+        },
         "tool_config": config,
     }
     record = {**record_body, "record_sha256": provision._canonical_digest(record_body)}

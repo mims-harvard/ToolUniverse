@@ -76,9 +76,11 @@ result = tu.run_one_function(
 ```
 
 The client can call only the generated `http://127.0.0.1:<port>/<reviewed-path>`
-endpoint. It disables proxy inheritance and redirects, caps the response at 1 MB,
-requires JSON and exactly one response choice, and reports image, profile, and payload
-hashes as provenance.
+endpoint. Before every inference it rechecks the reviewed health endpoint on the same
+port and requires the exact service and model identity, preventing a stopped container
+from silently falling through to an unrelated loopback service. It disables proxy
+inheritance and redirects, caps the response at 1 MB, requires JSON and exactly one
+response choice, and reports image, profile, health, and payload evidence as provenance.
 
 ## Real Container Case
 

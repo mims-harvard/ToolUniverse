@@ -14,6 +14,7 @@ from ...base_tool import BaseTool
 from ...tool_registry import register_tool
 
 _MAX_RESPONSE_BYTES = 1_000_000
+_MAX_HEALTH_RESPONSE_BYTES = 65_536
 _NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]{2,44}$")
 _SHA256_RE = re.compile(r"^(?:sha256:)?[0-9a-f]{64}$")
 
@@ -51,11 +52,13 @@ def _validated_client_config(config: Any) -> dict[str, Any]:
         raise DockerLLMClientError("docker_llm runtime configuration is required")
     if set(runtime) != {
         "endpoint",
+        "health_endpoint",
         "service_id",
         "model",
         "request_timeout_seconds",
         "max_prompt_chars",
         "max_tokens_cap",
+        "default_temperature",
         "image_id",
         "profile_sha256",
     }:
@@ -80,6 +83,24 @@ def _validated_client_config(config: Any) -> dict[str, Any]:
         raise DockerLLMClientError(
             "Inference endpoint must be a fixed loopback HTTP URL"
         )
+    health_endpoint = runtime["health_endpoint"]
+    health = urlsplit(health_endpoint) if isinstance(health_endpoint, str) else None
+    if (
+        health is None
+        or health.scheme != "http"
+        or health.hostname != "127.0.0.1"
+        or health.username
+        or health.password
+        or health.query
+        or health.fragment
+        or health.port != parsed.port
+        or not health.path.startswith("/")
+        or ".." in health.path
+        or health.path == parsed.path
+    ):
+        raise DockerLLMClientError(
+            "Health endpoint must be a distinct fixed loopback URL on the inference port"
+        )
     for field, maximum in (("service_id", 80), ("model", 200)):
         value = runtime[field]
         if (
@@ -92,6 +113,7 @@ def _validated_client_config(config: Any) -> dict[str, Any]:
     timeout = runtime["request_timeout_seconds"]
     prompt_limit = runtime["max_prompt_chars"]
     token_limit = runtime["max_tokens_cap"]
+    default_temperature = runtime["default_temperature"]
     if (
         isinstance(timeout, bool)
         or not isinstance(timeout, int)
@@ -110,6 +132,12 @@ def _validated_client_config(config: Any) -> dict[str, Any]:
         or not 1 <= token_limit <= 8192
     ):
         raise DockerLLMClientError("Token limit must be 1-8192")
+    if (
+        isinstance(default_temperature, bool)
+        or not isinstance(default_temperature, (int, float))
+        or not 0 <= default_temperature <= 2
+    ):
+        raise DockerLLMClientError("Default temperature must be between 0 and 2")
     if not _SHA256_RE.fullmatch(str(runtime["image_id"])):
         raise DockerLLMClientError("Container image ID is invalid")
     if not re.fullmatch(r"[0-9a-f]{64}", str(runtime["profile_sha256"])):
@@ -156,6 +184,65 @@ def _read_bounded_response(response: requests.Response) -> tuple[bytes, dict[str
     return bytes(body), payload
 
 
+def _verify_live_service(
+    session: requests.Session, runtime: dict[str, Any]
+) -> dict[str, Any]:
+    """Fail closed if the reviewed service identity is no longer on the port."""
+    response = None
+    try:
+        response = session.get(
+            runtime["health_endpoint"],
+            timeout=min(5, runtime["request_timeout_seconds"]),
+            allow_redirects=False,
+            stream=True,
+            headers={"Accept": "application/json"},
+        )
+        if response.is_redirect or response.is_permanent_redirect:
+            raise DockerLLMClientError("Health redirects are prohibited")
+        if response.status_code != 200:
+            raise DockerLLMClientError(
+                f"Health endpoint returned HTTP {response.status_code}"
+            )
+        content_type = response.headers.get("Content-Type", "").split(";", 1)[0].lower()
+        if content_type != "application/json":
+            raise DockerLLMClientError(
+                "Health endpoint did not return application/json"
+            )
+        length = response.headers.get("Content-Length")
+        if length:
+            try:
+                if int(length) > _MAX_HEALTH_RESPONSE_BYTES:
+                    raise DockerLLMClientError(
+                        "Health response exceeds the 64 KiB limit"
+                    )
+            except ValueError as exc:
+                raise DockerLLMClientError("Health Content-Length is invalid") from exc
+        body = bytearray()
+        for chunk in response.iter_content(chunk_size=16_384):
+            body.extend(chunk)
+            if len(body) > _MAX_HEALTH_RESPONSE_BYTES:
+                raise DockerLLMClientError("Health response exceeds the 64 KiB limit")
+        try:
+            payload = json.loads(bytes(body))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise DockerLLMClientError("Health response is not valid JSON") from exc
+        if (
+            not isinstance(payload, dict)
+            or payload.get("status") != "ok"
+            or payload.get("service_id") != runtime["service_id"]
+            or payload.get("model") != runtime["model"]
+        ):
+            raise DockerLLMClientError(
+                "Live service identity does not match the provisioned profile"
+            )
+        return payload
+    except requests.RequestException as exc:
+        raise DockerLLMClientError("Loopback health request failed") from exc
+    finally:
+        if response is not None:
+            response.close()
+
+
 @register_tool("DockerLLMClientTool")
 class DockerLLMClientTool(BaseTool):
     """Call one fixed, loopback-only OpenAI-compatible inference endpoint."""
@@ -167,6 +254,8 @@ class DockerLLMClientTool(BaseTool):
         values = {} if arguments is None else arguments
         if not isinstance(values, dict):
             raise DockerLLMClientError("Tool arguments must be an object")
+        if set(values) - {"prompt", "temperature", "max_tokens"}:
+            raise DockerLLMClientError("Tool arguments contain unknown fields")
         runtime = self.tool_config["docker_llm"]
         prompt = values.get("prompt")
         if (
@@ -181,7 +270,7 @@ class DockerLLMClientTool(BaseTool):
             raise DockerLLMClientError(
                 "prompt is empty, too long, or contains control characters"
             )
-        temperature = values.get("temperature", 0.0)
+        temperature = values.get("temperature", runtime["default_temperature"])
         max_tokens = values.get("max_tokens", min(512, runtime["max_tokens_cap"]))
         if (
             isinstance(temperature, bool)
@@ -205,6 +294,7 @@ class DockerLLMClientTool(BaseTool):
         session.trust_env = False
         response = None
         try:
+            _verify_live_service(session, runtime)
             response = session.post(
                 runtime["endpoint"],
                 json=request_body,
@@ -259,6 +349,7 @@ class DockerLLMClientTool(BaseTool):
                     "payload_sha256": hashlib.sha256(raw).hexdigest(),
                     "http_status": 200,
                     "redirects": 0,
+                    "health_verified": True,
                 },
             },
         }

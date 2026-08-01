@@ -512,6 +512,7 @@ def _wait_for_health(profile: dict[str, Any], host_port: int) -> dict[str, Any]:
                                 isinstance(payload, dict)
                                 and payload.get("status") == "ok"
                                 and payload.get("service_id") == profile["service_id"]
+                                and payload.get("model") == profile["model"]
                             ):
                                 return payload
                             last_error = "health identity did not match the profile"
@@ -577,11 +578,13 @@ def _client_config(
         },
         "docker_llm": {
             "endpoint": f"http://127.0.0.1:{host_port}{profile['inference_path']}",
+            "health_endpoint": f"http://127.0.0.1:{host_port}{profile['health_path']}",
             "service_id": profile["service_id"],
             "model": profile["model"],
             "request_timeout_seconds": profile["timeouts"]["inference_seconds"],
             "max_prompt_chars": tool["max_prompt_chars"],
             "max_tokens_cap": tool["max_tokens_cap"],
+            "default_temperature": tool["default_temperature"],
             "image_id": image_id,
             "profile_sha256": profile_sha256,
         },
@@ -856,6 +859,7 @@ def _validated_record(record: Any) -> dict[str, Any]:
         or config["docker_llm"]["image_id"] != record["image_id"]
         or urlsplit(config["docker_llm"]["endpoint"]).port != record["host_port"]
         or config["docker_llm"]["service_id"] != record["health"].get("service_id")
+        or config["docker_llm"]["model"] != record["health"].get("model")
     ):
         raise DockerProvisionError(
             "Client config does not match provisioning provenance"
