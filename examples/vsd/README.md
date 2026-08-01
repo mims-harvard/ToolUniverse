@@ -1,5 +1,35 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Reviewed Multi-protocol Runtime Portfolio
+
+`reviewed_runtime_case_study.py` asks whether one spinal muscular atrophy study
+can combine heterogeneous reviewed providers after contract inspection. Ten
+focused runtime cases cover an OAuth-protected GraphQL registry, paginated CSV
+natural-history data, a SOAP molecular panel, an HTML trial table, a binary
+evidence report, bounded server-sent safety events, in-memory multipart cohort
+analysis, gRPC variant evidence, a fixed MCP literature tool, and a signed
+webhook event. An eleventh case binds a WSDL candidate to a reviewed SOAP
+configuration and completes draft, three-case verification, approval,
+publication, fresh ToolUniverse loading, and a new execution.
+
+The runtime does not turn arbitrary POST operations into tools. POST is allowed
+only when an administrator records it as a read-only query, GraphQL accepts one
+query operation and rejects mutations/subscriptions, multipart accepts bounded
+base64 bytes rather than filesystem paths, pagination is page/item/byte bounded,
+and event validation opens no listener. OAuth client credentials and HMAC
+secrets come from narrowly named environment variables and are excluded from
+results and artifacts.
+
+Run the deterministic offline portfolio from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/reviewed_runtime_case_study.py
+```
+
+Review `artifacts/reviewed_runtime_snapshot.md` and the machine-verifiable JSON
+counterpart. The portfolio checks 33 properties across the ten runtime cases
+and the complete promotion proof.
+
 ## Multi-format Contract Inspection Portfolio
 
 `multiformat_contract_case_study.py` asks whether an SMA evidence workflow can

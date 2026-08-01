@@ -1,0 +1,416 @@
+{
+  "assertion_count": 33,
+  "assertions": [
+    {
+      "assertion": "successful_result",
+      "case": "Rare-disease GraphQL with OAuth",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "Rare-disease GraphQL with OAuth",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "Rare-disease GraphQL with OAuth",
+      "passed": true
+    },
+    {
+      "assertion": "successful_result",
+      "case": "Paginated SMA cohort CSV",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "Paginated SMA cohort CSV",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "Paginated SMA cohort CSV",
+      "passed": true
+    },
+    {
+      "assertion": "successful_result",
+      "case": "Legacy molecular panel SOAP",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "Legacy molecular panel SOAP",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "Legacy molecular panel SOAP",
+      "passed": true
+    },
+    {
+      "assertion": "successful_result",
+      "case": "Clinical-trial HTML table",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "Clinical-trial HTML table",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "Clinical-trial HTML table",
+      "passed": true
+    },
+    {
+      "assertion": "successful_result",
+      "case": "Binary evidence report",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "Binary evidence report",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "Binary evidence report",
+      "passed": true
+    },
+    {
+      "assertion": "successful_result",
+      "case": "Bounded safety SSE",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "Bounded safety SSE",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "Bounded safety SSE",
+      "passed": true
+    },
+    {
+      "assertion": "successful_result",
+      "case": "In-memory multipart analysis",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "In-memory multipart analysis",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "In-memory multipart analysis",
+      "passed": true
+    },
+    {
+      "assertion": "successful_result",
+      "case": "SMN1 variant gRPC",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "SMN1 variant gRPC",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "SMN1 variant gRPC",
+      "passed": true
+    },
+    {
+      "assertion": "successful_result",
+      "case": "Pinned literature MCP",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "Pinned literature MCP",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "Pinned literature MCP",
+      "passed": true
+    },
+    {
+      "assertion": "successful_result",
+      "case": "Signed safety webhook",
+      "passed": true
+    },
+    {
+      "assertion": "complete_provenance",
+      "case": "Signed safety webhook",
+      "passed": true
+    },
+    {
+      "assertion": "credentials_redacted",
+      "case": "Signed safety webhook",
+      "passed": true
+    },
+    {
+      "assertion": "candidate_bound_to_publication",
+      "case": "Promotion pipeline",
+      "passed": true
+    },
+    {
+      "assertion": "fresh_runtime_loaded_exact_tool",
+      "case": "Promotion pipeline",
+      "passed": true
+    },
+    {
+      "assertion": "published_tool_executed_new_case",
+      "case": "Promotion pipeline",
+      "passed": true
+    }
+  ],
+  "case_sha256": "05e0870fe14c61d560e483fcec472c9eeeabfb28f1042587fbe37e56ab8bd310",
+  "case_title": "SMA multi-protocol evidence execution portfolio",
+  "clinical_question": "Can ToolUniverse combine rare-disease genes, longitudinal motor scores, molecular diagnostics, trials, safety signals, literature, and variant classification when providers use incompatible reviewed protocols and formats?",
+  "conclusion": "Yes. Ten runtime cases exercised reviewed GraphQL, REST, SOAP, gRPC, MCP, webhook, OAuth, multipart, pagination, JSON, CSV, XML, HTML, binary, and SSE contracts; an eleventh case completed draft-through-fresh-runtime promotion.",
+  "format": "vsd_reviewed_runtime_case_v1",
+  "promotion": {
+    "approval_sha256": "fcc46f4a36719b8598eedf1f45c268c323c94e6b3ef38388392d24f1f3e0cbf7",
+    "candidate_id": "c837126c2a40ae52",
+    "candidate_sha256": "c837126c2a40ae5257d91e2e1b74bfbe4fc6853a24473f8eee537c9cdc256f0d",
+    "draft_id": "promotedsmnpanelsoap_75b3146b1be8",
+    "draft_sha256": "59deb42faa230b4c719b8bf134f392dd94938bda3783cba16285b87f24198979",
+    "final_sample": {
+      "copyNumber": "1",
+      "gene": "SMN1",
+      "sample": "S-404"
+    },
+    "loaded_tools": [
+      "PromotedSMNPanelSOAP"
+    ],
+    "publication_sha256": "95a952b8f25b0d952f2bf707a2d3922154f44fb4d035328e65671c3f7dc22332",
+    "verification_sha256": "91b489377927340233a6e326cfd85ce039808c67cbd4f826579b02ffb7c4d250"
+  },
+  "results": [
+    {
+      "operation_sha256": "48e9c42786bc9e52d98703147e8c26088b23c5a71ed21b630eef7ed951af7eb5",
+      "page_count": 1,
+      "payload_sha256": "2faaf6b7d55016e1e58d1242a070f75d085abb13798deb448a81b425c5ed2a00",
+      "protocol": "graphql",
+      "purpose": "Query ALS genes and trials through a fixed GraphQL document and rotating credential.",
+      "result": {
+        "type": "object",
+        "value": {
+          "data": {
+            "disease": {
+              "genes": [
+                "SOD1",
+                "C9orf72"
+              ],
+              "id": "MONDO:0004975",
+              "trials": [
+                "NCT04194944"
+              ]
+            }
+          }
+        }
+      },
+      "title": "Rare-disease GraphQL with OAuth",
+      "transport": "http"
+    },
+    {
+      "operation_sha256": "6e008f84584e5c110453fb1fe074331cba78c830b50d9c64aceae3b13464df93",
+      "page_count": 3,
+      "payload_sha256": "a4a734b55b652ad5cb49310bae64ebbc4f12dd9717917f8d58dc35782dc5dfc8",
+      "protocol": "rest",
+      "purpose": "Aggregate longitudinal motor scores across bounded CSV pages.",
+      "result": {
+        "items": 3,
+        "sample": [
+          {
+            "month": "0",
+            "participant": "P1",
+            "score": "32"
+          },
+          {
+            "month": "6",
+            "participant": "P1",
+            "score": "35"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Paginated SMA cohort CSV",
+      "transport": "http"
+    },
+    {
+      "operation_sha256": "39cc10d49f93b19e25f7e793e34944874a53986a58ba582731d774b25ada8a5b",
+      "page_count": 1,
+      "payload_sha256": "b68f75b308893a75e7463c157af8e39c50c0f8f88efe2e7f4f52991f08dc0ba5",
+      "protocol": "soap",
+      "purpose": "Retrieve one SMN1 copy-number panel with escaped XML input.",
+      "result": {
+        "type": "object",
+        "value": {
+          "Envelope": {
+            "Body": {
+              "Panel": {
+                "copyNumber": "1",
+                "gene": "SMN1",
+                "sample": "S-404"
+              }
+            }
+          }
+        }
+      },
+      "title": "Legacy molecular panel SOAP",
+      "transport": "http"
+    },
+    {
+      "operation_sha256": "044ee78619f7732694fd06a55b96d18db0a4c2f811498b941b076ccd16fef156",
+      "page_count": 1,
+      "payload_sha256": "9157eed716a090df3356c230cdec0d762d32abf7cc3b5640d92f7e42261e0c5e",
+      "protocol": "rest",
+      "purpose": "Extract structured trial rows while removing executable markup.",
+      "result": {
+        "type": "object",
+        "value": {
+          "links": [],
+          "tables": [
+            [
+              [
+                "NCT",
+                "Phase"
+              ],
+              [
+                "NCT04194944",
+                "3"
+              ]
+            ]
+          ],
+          "text_preview": "SMA trials NCT Phase NCT04194944 3",
+          "title": "SMA trials"
+        }
+      },
+      "title": "Clinical-trial HTML table",
+      "transport": "http"
+    },
+    {
+      "operation_sha256": "bffd9403c03821d633354940e263387dc4b6ca6d396b0ba23c8e8694676bf94d",
+      "page_count": 1,
+      "payload_sha256": "62c329fbc1737834afdb17acc6015e0cd6c186d4a32c64080858c17bbdc47f54",
+      "protocol": "rest",
+      "purpose": "Return a bounded base64 report and exact binary digest.",
+      "result": {
+        "type": "object",
+        "value": {
+          "bytes": 37,
+          "content_base64_length": 52,
+          "content_type": "application/pdf",
+          "sha256": "6f5ecc21082eb7451f2ad5a6507a153e893cc142266eac9e9ad1b87c7d24a739"
+        }
+      },
+      "title": "Binary evidence report",
+      "transport": "http"
+    },
+    {
+      "operation_sha256": "2acc590d4d3c3d495f6d2b76c95caee64eb3ef1dd9a19a2ff569998d59c950ba",
+      "page_count": 1,
+      "payload_sha256": "e93f3deb07ddbbdce9c78981212d2342a9def7cf1fd8e3d200ff4f119ef56efc",
+      "protocol": "rest",
+      "purpose": "Capture two safety events without leaving a stream open.",
+      "result": {
+        "items": 2,
+        "sample": [
+          {
+            "data": {
+              "cases": 7,
+              "event": "infection"
+            },
+            "event": "signal",
+            "id": "1"
+          },
+          {
+            "data": {
+              "status": "complete"
+            },
+            "event": "complete",
+            "id": "2"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Bounded safety SSE",
+      "transport": "http"
+    },
+    {
+      "operation_sha256": "79c0c60e9d124f375377f9f21a7d2a72662fd1f846dd6f2414218f5e21656ba9",
+      "page_count": 1,
+      "payload_sha256": "4a2c257c79113e6aa528f5bcf0942a855e56bd68ef17b66dda387be16a9340ba",
+      "protocol": "rest",
+      "purpose": "Analyze a cohort CSV without granting provider access to a local file path.",
+      "result": {
+        "type": "object",
+        "value": {
+          "mean_score": 32.0,
+          "participants": 1
+        }
+      },
+      "title": "In-memory multipart analysis",
+      "transport": "http"
+    },
+    {
+      "operation_sha256": "81e8546f8f8314203bb01e6b88bbd948c561e2c39877d0c8b0df4b35541b6b97",
+      "page_count": 1,
+      "payload_sha256": "dcdf7c836aabc11a3f1eda564dabf9dbd30e42c252ef9c4d9f061a0576bd031a",
+      "protocol": "grpc",
+      "purpose": "Serialize a descriptor-bound request and normalize the exact response type.",
+      "result": {
+        "type": "object",
+        "value": {
+          "classification": "pathogenic",
+          "gene": "SMN1",
+          "hgvs": "NM_000344.4:c.840C>T"
+        }
+      },
+      "title": "SMN1 variant gRPC",
+      "transport": "grpc"
+    },
+    {
+      "operation_sha256": "837e3522e670c36dd6158f43ca50280443cffbbdf85c2940350c1177d3fb8a58",
+      "page_count": 1,
+      "payload_sha256": "e1a9484cabbc1513a7f9f6f2b9800032d05a287fe5ec1a9b3e35be8b33a6fb22",
+      "protocol": "mcp",
+      "purpose": "Invoke only the reviewed literature tool rather than exposing arbitrary MCP calls.",
+      "result": {
+        "type": "object",
+        "value": {
+          "content": [
+            {
+              "text": "3 phase-3 SMA trials with linked evidence",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "title": "Pinned literature MCP",
+      "transport": "mcp"
+    },
+    {
+      "operation_sha256": "6f0572916bc6eab27d0ec4466eeb4ce3d9b51c0aa2089cd0f8aa3a15eceaff7d",
+      "page_count": 1,
+      "payload_sha256": "01abf0c0641f08dc17b45c532f986ab9cc575e2457a4659343b3706cc4794b43",
+      "protocol": "webhook",
+      "purpose": "Validate schema and HMAC before admitting an externally delivered event.",
+      "result": {
+        "type": "object",
+        "value": {
+          "case_count": 7,
+          "drug": "risdiplam",
+          "event": "respiratory infection"
+        }
+      },
+      "title": "Signed safety webhook",
+      "transport": "event"
+    }
+  ],
+  "runtime_case_count": 10
+}

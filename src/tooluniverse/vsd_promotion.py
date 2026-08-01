@@ -26,6 +26,7 @@ from .vsd_dynamic_rest import (
 )
 from .vsd_tool import _acquire_process_lock, _release_process_lock
 from .vsd_openapi import VSDOpenAPIError, validate_openapi_candidate
+from .vsd_contracts import VSDContractError, validate_contract_candidate
 
 _PROMOTION_VERSION = 1
 _GENERATOR_VERSION = 1
@@ -40,6 +41,22 @@ _PROMOTION_LOCK = threading.RLock()
 
 class VSDPromotionError(ValueError):
     """Raised when an artifact cannot cross a promotion boundary."""
+
+
+def _operation_digest(config: dict[str, Any]) -> str:
+    if config.get("type") == "VSDReviewedOperationTool":
+        from .vsd_reviewed_runtime import operation_digest as reviewed_digest
+
+        return reviewed_digest(config)
+    return operation_digest(config)
+
+
+def _register_reviewed_tool(tooluniverse, config: dict[str, Any]) -> str:
+    if config.get("type") == "VSDReviewedOperationTool":
+        from .vsd_reviewed_runtime import register_reviewed_operation_tool
+
+        return register_reviewed_operation_tool(tooluniverse, config)
+    return register_reviewed_rest_tool(tooluniverse, config)
 
 
 def _root(workspace: str | Path | None = None) -> Path:
@@ -341,7 +358,7 @@ def _create_draft_from_config(
     config: dict[str, Any], *, workspace: str | Path | None = None
 ) -> dict[str, Any]:
     """Persist one already-validated generated configuration as an inert draft."""
-    digest = operation_digest(config)
+    digest = _operation_digest(config)
     slug = re.sub(r"[^a-z0-9]+", "_", config["name"].casefold()).strip("_")
     draft_id = f"{slug}_{digest[:12]}"
     record_body = {
@@ -368,6 +385,69 @@ def _create_draft_from_config(
             return existing
         _atomic_write_json(path, record)
     return record
+
+
+def create_reviewed_operation_draft(
+    candidate: dict[str, Any],
+    config: dict[str, Any],
+    *,
+    resolved_blockers: list[str],
+    review_note: str,
+    workspace: str | Path | None = None,
+) -> dict[str, Any]:
+    """Bind an exact reviewed runtime config to one inert contract candidate."""
+    try:
+        reviewed = validate_contract_candidate(candidate)
+    except VSDContractError as exc:
+        raise VSDPromotionError(str(exc)) from exc
+    if not isinstance(config, dict) or "vsd_promotion" in config:
+        raise VSDPromotionError(
+            "Reviewed config must be an unbound configuration object"
+        )
+    if (
+        not isinstance(resolved_blockers, list)
+        or any(not isinstance(item, str) for item in resolved_blockers)
+        or sorted(set(resolved_blockers)) != reviewed["blockers"]
+    ):
+        raise VSDPromotionError(
+            "resolved_blockers must explicitly acknowledge every candidate blocker"
+        )
+    note = _review_text(review_note, field="review_note", minimum=20, maximum=1000)
+    expected = {
+        "graphql": ("http", "graphql"),
+        "asyncapi": ("event", "asyncapi"),
+        "postman": ("http", "rest"),
+        "wsdl": ("http", "soap"),
+        "protobuf": ("grpc", "grpc"),
+        "mcp": ("mcp", "mcp"),
+    }
+    operation = config.get("vsd_reviewed_operation")
+    if (
+        not isinstance(operation, dict)
+        or (operation.get("transport"), operation.get("protocol"))
+        != expected[reviewed["source_format"]]
+    ):
+        raise VSDPromotionError(
+            "Reviewed runtime transport does not match the contract format"
+        )
+    bound = copy.deepcopy(config)
+    bound["vsd_promotion"] = {
+        "generator_version": _GENERATOR_VERSION,
+        "source_type": "contract",
+        "source_format": reviewed["source_format"],
+        "candidate_id": reviewed["candidate_id"],
+        "candidate_sha256": reviewed["candidate_sha256"],
+        "source_document_sha256": reviewed["source_document_sha256"],
+        "candidate_name": reviewed["name"],
+        "candidate_kind": reviewed["kind"],
+        "resolved_blockers": sorted(set(resolved_blockers)),
+        "review_note": note,
+    }
+    try:
+        _operation_digest(bound)
+    except VSDDynamicRESTError as exc:
+        raise VSDPromotionError(str(exc)) from exc
+    return _create_draft_from_config(bound, workspace=workspace)
 
 
 def _hoist_schema_definitions(
@@ -634,7 +714,7 @@ def _load_draft(root: Path, draft_id: str) -> dict[str, Any]:
     ):
         raise VSDPromotionError("Draft artifact has an unsupported structure")
     try:
-        digest = operation_digest(record["config"])
+        digest = _operation_digest(record["config"])
     except VSDDynamicRESTError as exc:
         raise VSDPromotionError("Draft operation contract is invalid") from exc
     if record.get("operation_sha256") != digest:
@@ -773,7 +853,7 @@ def verify_draft(
     verified_cases = _validated_cases(cases)
     tooluniverse = ToolUniverse()
     try:
-        name = register_reviewed_rest_tool(tooluniverse, draft["config"])
+        name = _register_reviewed_tool(tooluniverse, draft["config"])
         results = []
         for index, case in enumerate(verified_cases):
             response = tooluniverse.run_one_function(
@@ -1070,7 +1150,7 @@ def _validated_publication(record: Any) -> dict[str, Any]:
     ):
         raise VSDPromotionError("Published lifecycle anchor is invalid")
     try:
-        digest = operation_digest(config)
+        digest = _operation_digest(config)
     except VSDDynamicRESTError as exc:
         raise VSDPromotionError("Published operation contract is invalid") from exc
     if digest != record.get("operation_sha256"):
@@ -1114,7 +1194,7 @@ def load_published_tools(
         loaded: list[str] = []
         for record in active_records:
             name = record["tool_name"]
-            register_reviewed_rest_tool(tooluniverse, record["config"])
+            _register_reviewed_tool(tooluniverse, record["config"])
             loaded.append(name)
     return loaded
 
@@ -1139,6 +1219,7 @@ __all__ = [
     "build_socrata_tool_config",
     "create_draft",
     "create_openapi_draft",
+    "create_reviewed_operation_draft",
     "list_promotion_state",
     "load_published_tools",
     "publish_draft",

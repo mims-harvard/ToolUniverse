@@ -272,6 +272,25 @@ def validate_contract_candidate(candidate: Any) -> dict[str, Any]:
     return copy.deepcopy(candidate)
 
 
+def select_contract_candidate(report: Any, candidate_id: str | None) -> dict[str, Any]:
+    """Select exactly one candidate from a unified inspection report."""
+    if isinstance(report, dict) and report.get("format") == "vsd_contract_candidate_v1":
+        if candidate_id is not None and report.get("candidate_id") != candidate_id:
+            raise VSDContractError("Requested candidate ID is not present")
+        return validate_contract_candidate(report)
+    candidates = report.get("candidates") if isinstance(report, dict) else None
+    if not isinstance(candidates, list):
+        raise VSDContractError("Contract inspection report is invalid")
+    matches = [
+        item
+        for item in candidates
+        if candidate_id is None or item.get("candidate_id") == candidate_id
+    ]
+    if len(matches) != 1:
+        raise VSDContractError("Select exactly one contract candidate by candidate ID")
+    return validate_contract_candidate(matches[0])
+
+
 def _report(
     source: Path,
     source_format: str,

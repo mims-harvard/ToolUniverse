@@ -8,10 +8,12 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from .vsd_openapi import inspect_openapi_document, select_openapi_candidate
+from .vsd_contracts import select_contract_candidate
 from .vsd_promotion import (
     approve_draft,
     create_draft,
     create_openapi_draft,
+    create_reviewed_operation_draft,
     list_promotion_state,
     publish_draft,
     verify_draft,
@@ -64,6 +66,13 @@ def build_parser() -> argparse.ArgumentParser:
     draft_openapi.add_argument("--fixed-query-file", type=Path)
     draft_openapi.add_argument("--timeout-seconds", type=float, default=20)
     draft_openapi.add_argument("--credential-env")
+
+    draft_reviewed = commands.add_parser("draft-reviewed")
+    draft_reviewed.add_argument("candidate_file", type=Path)
+    draft_reviewed.add_argument("config_file", type=Path)
+    draft_reviewed.add_argument("--candidate-id")
+    draft_reviewed.add_argument("--resolved-blockers", type=_csv, required=True)
+    draft_reviewed.add_argument("--review-note", required=True)
 
     verify = commands.add_parser("verify")
     verify.add_argument("draft_id")
@@ -131,6 +140,21 @@ def _execute(namespace: argparse.Namespace) -> Any:
         return verify_draft(
             namespace.draft_id,
             _json_file(namespace.cases_file),
+            workspace=workspace,
+        )
+    if namespace.command == "draft-reviewed":
+        report = _json_file(namespace.candidate_file)
+        candidate = select_contract_candidate(report, namespace.candidate_id)
+        config = _json_file(namespace.config_file)
+        if not isinstance(config, dict):
+            raise argparse.ArgumentTypeError(
+                "reviewed config file must contain an object"
+            )
+        return create_reviewed_operation_draft(
+            candidate,
+            config,
+            resolved_blockers=namespace.resolved_blockers,
+            review_note=namespace.review_note,
             workspace=workspace,
         )
     if namespace.command == "approve":
