@@ -15,7 +15,9 @@ pytestmark = pytest.mark.unit
 MODULE_PATH = (
     Path(__file__).parents[2] / "examples" / "vsd" / "api_discovery_case_study.py"
 )
-SPEC = importlib.util.spec_from_file_location("vsd_api_discovery_case_study", MODULE_PATH)
+SPEC = importlib.util.spec_from_file_location(
+    "vsd_api_discovery_case_study", MODULE_PATH
+)
 assert SPEC and SPEC.loader
 study = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = study
