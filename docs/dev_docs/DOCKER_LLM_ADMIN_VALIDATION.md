@@ -99,8 +99,9 @@ lifecycle, isolation, registration, payload integrity, response bounds, and clea
 it does not claim model-quality or scientific validation.
 
 The local development machine used for this change does not have Docker installed.
-The dedicated GitHub Actions job runs the real container case on Linux and uploads
-the JSON report, Markdown report, and provision record as build artifacts.
+The dedicated GitHub Actions job completed the real container case on Docker 28.0.4.
+Its validated outputs are checked in at `examples/docker_llm/artifacts/` and are also
+uploaded by every run as `docker-llm-smoke-evidence`.
 
 ## Local Verification
 
