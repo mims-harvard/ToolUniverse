@@ -54,7 +54,12 @@ Step 2: Choose Your LLM Provider
 
 ToolUniverse supports these AI providers:
 
-**OpenAI/Azure OpenAI**
+**OpenAI-Compatible**
+ - Models: GPT-5, GPT-4o, and compatible provider model IDs
+ - Configuration: Set ``OPENAI_API_KEY`` and optional ``OPENAI_BASE_URL``
+ - See :doc:`../guide/openai_compatible_support` for details
+
+**Azure OpenAI**
  - Models: GPT-4, GPT-4o, o1-mini, o1-preview
  - Configuration: Set ``AZURE_OPENAI_API_KEY`` and ``AZURE_OPENAI_ENDPOINT``
 
@@ -185,7 +190,7 @@ Set up AI model settings:
 
 **Configuration Options**:
 
-- ``api_type``: "CHATGPT", "GEMINI", "OPENROUTER", or "VLLM"
+- ``api_type``: "CHATGPT", "OPENAI", "GEMINI", "OPENROUTER", or "VLLM"
 - ``model_id``: Choose your model (see Step 2)
 
   - For vLLM: Must match the model name loaded on your vLLM server

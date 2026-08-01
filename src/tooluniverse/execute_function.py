@@ -1308,7 +1308,8 @@ class ToolUniverse:
                         f"Skipping agentic tool '{tool_name}' due to missing LLM API keys"
                     )
                     all_missing_keys.add(
-                        "LLM API keys (AZURE_OPENAI_API_KEY, OPENROUTER_API_KEY, or GEMINI_API_KEY)"
+                        "LLM API keys (AZURE_OPENAI_API_KEY, OPENAI_API_KEY, "
+                        "OPENROUTER_API_KEY, GEMINI_API_KEY, or VLLM_SERVER_URL)"
                     )
                     continue
 

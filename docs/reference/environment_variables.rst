@@ -157,7 +157,7 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
      - Description
    * - ``TOOLUNIVERSE_LLM_DEFAULT_PROVIDER``
      - (none)
-     - Default LLM provider: ``openai``, ``azure``, ``gemini``, ``anthropic``
+     - Default LLM provider: ``CHATGPT``, ``OPENAI``, ``OPENROUTER``, ``GEMINI``, ``VLLM``
    * - ``TOOLUNIVERSE_LLM_CONFIG_MODE``
      - ``default``
      - LLM configuration mode. Use ``default`` or custom profiles.
@@ -177,7 +177,7 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
 **Examples**::
 
    # Use OpenAI for all LLM tasks
-   export TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=openai
+   export TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENAI
    export TOOLUNIVERSE_LLM_MODEL_DEFAULT=gpt-4o-mini
    
    # Task-specific models
@@ -198,6 +198,28 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
 - **Custom Tools**: Your own tools that leverage LLM capabilities
 
 **See also**: Provider-specific API keys in :doc:`../guide/api_keys`.
+
+OpenAI-compatible variables:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 15 50
+
+   * - Variable
+     - Default
+     - Description
+   * - ``OPENAI_API_KEY``
+     - (none)
+     - API key for OpenAI or an OpenAI-compatible endpoint.
+   * - ``OPENAI_BASE_URL``
+     - SDK default
+     - Optional OpenAI-compatible API base URL.
+   * - ``OPENAI_MAX_TOKENS_BY_MODEL``
+     - (none)
+     - JSON mapping of model IDs or prefixes to default max output tokens.
+   * - ``OPENAI_DEFAULT_MODEL_LIMITS``
+     - built-in
+     - JSON mapping that extends or overrides built-in model-family defaults.
 
 Performance & System
 --------------------
@@ -563,6 +585,15 @@ Complete Variable List
      - LLM
    * - ``TOOLUNIVERSE_LLM_MODEL_{TASK}``
      - (none)
+     - LLM
+   * - ``OPENAI_BASE_URL``
+     - SDK default
+     - LLM
+   * - ``OPENAI_MAX_TOKENS_BY_MODEL``
+     - (none)
+     - LLM
+   * - ``OPENAI_DEFAULT_MODEL_LIMITS``
+     - built-in
      - LLM
    * - ``TOOLUNIVERSE_THREAD_POOL_SIZE``
      - 20

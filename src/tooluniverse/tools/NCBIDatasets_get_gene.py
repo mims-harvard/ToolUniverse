@@ -1,7 +1,7 @@
 """
 NCBIDatasets_get_gene
 
-Get comprehensive gene information from NCBI by Gene ID. Returns gene symbol, description, chromo...
+Get comprehensive gene information from the National Center for Biotechnology Information by Gene ID.
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def NCBIDatasets_get_gene(
     validate: bool = True,
 ) -> Any:
     """
-    Get comprehensive gene information from NCBI by Gene ID. Returns gene symbol, description, chromo...
+    Get comprehensive NCBI gene information by numeric Gene ID.
 
     Parameters
     ----------

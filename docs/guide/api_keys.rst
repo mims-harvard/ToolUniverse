@@ -398,7 +398,7 @@ Environment Variables
 
 .. code-block:: bash
 
-   # Default LLM provider (OPENAI, AZURE_OPENAI, GEMINI, VLLM)
+   # Default LLM provider (CHATGPT, OPENAI, OPENROUTER, GEMINI, VLLM)
    TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENAI
 
    # Model configuration per task
@@ -413,7 +413,7 @@ Environment Variables
    TOOLUNIVERSE_LLM_CONFIG_MODE=default
 
    # Custom fallback chain (JSON array of {api_type, model_id} objects)
-   AGENTIC_TOOL_FALLBACK_CHAIN='[{"api_type":"OPENAI","model_id":"gpt-4"},{"api_type":"GEMINI","model_id":"gemini-pro"}]'
+   AGENTIC_TOOL_FALLBACK_CHAIN='[{"api_type":"OPENAI","model_id":"gpt-4o-mini"},{"api_type":"GEMINI","model_id":"gemini-pro"}]'
 
 Configuration Modes
 ~~~~~~~~~~~~~~~~~~~
