@@ -172,6 +172,7 @@ tooluniverse-vsd-admin = "tooluniverse.vsd_admin_cli:main"
 tooluniverse-vsd-promote = "tooluniverse.vsd_promotion_cli:main"
 tooluniverse-vsd-demand = "tooluniverse.vsd_demand_cli:main"
 tooluniverse-vsd-lifecycle = "tooluniverse.vsd_lifecycle_cli:main"
+tooluniverse-vsd-contracts = "tooluniverse.vsd_contracts_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

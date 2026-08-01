@@ -1,5 +1,32 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Multi-format Contract Inspection Portfolio
+
+`multiformat_contract_case_study.py` asks whether an SMA evidence workflow can
+inventory providers whose contracts are expressed as GraphQL SDL, AsyncAPI 3,
+a Postman collection, WSDL/SOAP, gRPC/protobuf, and an MCP manifest. Its six
+focused cases cover a rare-disease registry, post-market safety alerts, natural
+history motor scores, a molecular diagnostics laboratory, variant evidence,
+and literature synthesis. The proof produces ten content-addressed operation
+candidates and checks 27 properties without making a provider request.
+
+The result is deliberately not ten new tools. It is a reviewable inventory:
+GraphQL and Postman reads can be distinguished from mutations and writes;
+event transports remain closed; SOAP and gRPC operations require a reviewed
+runtime; and a local-command MCP server is identified and blocked. Every
+candidate remains inert, retains the exact local source hash, and states the
+specific work still required before execution can be considered.
+
+Run the deterministic offline portfolio from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/multiformat_contract_case_study.py
+```
+
+Review `artifacts/multiformat_contract_snapshot.md` and its machine-verifiable
+JSON counterpart. The administrator CLI can inspect the same formats with
+`tooluniverse-vsd-contracts CONTRACT [--format FORMAT] [--endpoint HTTPS_URL]`.
+
 ## Total Demand-To-Reviewed-Tool System Proof
 
 `total_system_case_study.py` answers one complete operational question: can a
