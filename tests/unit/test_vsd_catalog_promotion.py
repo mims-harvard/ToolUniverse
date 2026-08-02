@@ -22,6 +22,9 @@ from tooluniverse.vsd_promotion_cli import _execute, build_parser
 pytestmark = pytest.mark.unit
 
 FIXTURE = Path(__file__).parents[1] / "fixtures" / "vsd_catalogs" / "datagov.json"
+GA4GH_FIXTURE = (
+    Path(__file__).parents[1] / "fixtures" / "vsd_catalogs" / "ga4gh_registry.json"
+)
 QUERY = "ALS rare disease longitudinal cohort outcomes specialist access"
 
 
@@ -29,6 +32,20 @@ def _candidate() -> dict:
     payload = json.loads(FIXTURE.read_text(encoding="utf-8"))
     candidates, _ = normalize_provider_payload("datagov", QUERY, payload)
     return next(item for item in candidates if item["response_format"] == "csv")
+
+
+def _ga4gh_candidate() -> dict:
+    payload = json.loads(GA4GH_FIXTURE.read_text(encoding="utf-8"))
+    candidates, _ = normalize_provider_payload(
+        "ga4gh_registry",
+        "genomic research data repository service",
+        payload,
+    )
+    return next(
+        item
+        for item in candidates
+        if item["service_binding"]["registry_service_id"] == "bio.terra.data"
+    )
 
 
 def _config(endpoint: str | None = None, response_format: str = "csv") -> dict:
@@ -174,9 +191,7 @@ def test_catalog_resource_completes_hash_bound_promotion_and_fresh_load(
         ),
         workspace=workspace,
     )
-    publication = vsd_promotion.publish_draft(
-        draft["draft_id"], workspace=workspace
-    )
+    publication = vsd_promotion.publish_draft(draft["draft_id"], workspace=workspace)
 
     tooluniverse = ToolUniverse()
     try:
@@ -193,9 +208,7 @@ def test_catalog_resource_completes_hash_bound_promotion_and_fresh_load(
     assert result["data"]["result"] == rows
     assert evidence["case_count"] == 3
     assert approval["verification_sha256"] == evidence["verification_sha256"]
-    assert publication["config"]["vsd_promotion"]["source_type"] == (
-        "catalog_resource"
-    )
+    assert publication["config"]["vsd_promotion"]["source_type"] == ("catalog_resource")
     assert _operation_identity(publication["config"]) == (
         "GET",
         "health.example.gov",
@@ -203,6 +216,124 @@ def test_catalog_resource_completes_hash_bound_promotion_and_fresh_load(
     )
     binding = publication["config"]["vsd_promotion"]["catalog_binding"]
     assert binding["candidate_sha256"] == _candidate()["candidate_sha256"]
+
+
+def test_ga4gh_service_info_completes_strict_registry_bound_promotion(
+    monkeypatch, tmp_path: Path
+):
+    candidate = _ga4gh_candidate()
+    payload = {
+        "id": "anvil.drs",
+        "name": "NHGRI AnVIL",
+        "type": {"group": "ORG.GA4GH", "artifact": "DRS", "version": "1.3.0"},
+        "organization": {"name": "NHGRI AnVIL"},
+        "version": "2.323.0",
+    }
+
+    def fake_exchange(**kwargs):
+        assert kwargs["method"] == "GET"
+        assert kwargs["url"] == candidate["api_endpoint"]
+        assert kwargs["params"] == {}
+        raw = json.dumps(payload).encode()
+        return raw, {
+            "url": kwargs["url"],
+            "status_code": 200,
+            "content_type": "application/json",
+            "response_bytes": len(raw),
+            "headers": {},
+            "peer_ip": "93.184.216.34",
+            "redirects": 0,
+        }
+
+    monkeypatch.setattr(runtime, "_http_exchange", fake_exchange)
+    workspace = tmp_path / "ga4gh-promotion"
+    draft = vsd_promotion.create_ga4gh_service_info_draft(
+        candidate,
+        tool_name="ReviewedAnvilServiceInfo",
+        description="Return the reviewed GA4GH service metadata for this registry entry.",
+        review_note=(
+            "Reviewed the registry identity, standard Service Info path, and expected "
+            "service type before verification."
+        ),
+        workspace=workspace,
+    )
+    evidence = vsd_promotion.verify_draft(
+        draft["draft_id"],
+        vsd_promotion.ga4gh_service_info_verification_cases(candidate),
+        workspace=workspace,
+    )
+    approval = vsd_promotion.approve_draft(
+        draft["draft_id"],
+        reviewed_by="Standards Registry Reviewer",
+        decision_note=(
+            "Approved after three executions matched the registered name and "
+            "GA4GH service type."
+        ),
+        workspace=workspace,
+    )
+    publication = vsd_promotion.publish_draft(draft["draft_id"], workspace=workspace)
+
+    assert evidence["case_count"] == 3
+    assert approval["verification_sha256"] == evidence["verification_sha256"]
+    binding = publication["config"]["vsd_promotion"]["catalog_binding"]
+    assert binding["service_binding"] == candidate["service_binding"]
+    assert publication["config"]["vsd_reviewed_operation"]["endpoint"] == (
+        "https://data.terra.bio/service-info"
+    )
+
+
+def test_ga4gh_service_info_approval_requires_registered_contract_assertions(
+    monkeypatch, tmp_path: Path
+):
+    candidate = _ga4gh_candidate()
+    payload = {
+        "id": "anvil.drs",
+        "name": "NHGRI AnVIL",
+        "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.3.0"},
+        "organization": {"name": "NHGRI AnVIL"},
+        "version": "2.323.0",
+    }
+
+    def fake_exchange(**kwargs):
+        raw = json.dumps(payload).encode()
+        return raw, {
+            "url": kwargs["url"],
+            "status_code": 200,
+            "content_type": "application/json",
+            "response_bytes": len(raw),
+            "headers": {},
+            "peer_ip": "93.184.216.34",
+            "redirects": 0,
+        }
+
+    monkeypatch.setattr(runtime, "_http_exchange", fake_exchange)
+    workspace = tmp_path / "weak-ga4gh-evidence"
+    draft = vsd_promotion.create_ga4gh_service_info_draft(
+        candidate,
+        tool_name="ReviewedAnvilServiceInfo",
+        description="Return the reviewed GA4GH service metadata for this registry entry.",
+        review_note="Reviewed the exact standard endpoint before running weak evidence.",
+        workspace=workspace,
+    )
+    weak_cases = [
+        {
+            "arguments": {},
+            "expect": {
+                "result_type": "object",
+                "required_fields": ["id", "name", "type"],
+            },
+        }
+        for _ in range(3)
+    ]
+    vsd_promotion.verify_draft(draft["draft_id"], weak_cases, workspace=workspace)
+
+    with pytest.raises(vsd_promotion.VSDPromotionError, match="registered contract"):
+        vsd_promotion.approve_draft(
+            draft["draft_id"],
+            reviewed_by="Standards Registry Reviewer",
+            decision_note="This approval must fail because type assertions were omitted.",
+            workspace=workspace,
+        )
 
 
 @pytest.mark.parametrize(
@@ -268,9 +399,7 @@ def test_catalog_resource_preserves_an_exact_fixed_query(tmp_path: Path):
     ).hexdigest()[:16]
     candidate["candidate_sha256"] = catalogs._candidate_digest(candidate)
     config = _config(endpoint=base_endpoint)
-    config["vsd_reviewed_operation"]["request"]["fixed_query"] = {
-        "download": "csv"
-    }
+    config["vsd_reviewed_operation"]["request"]["fixed_query"] = {"download": "csv"}
 
     draft = vsd_promotion.create_catalog_resource_draft(
         candidate,
@@ -281,9 +410,9 @@ def test_catalog_resource_preserves_an_exact_fixed_query(tmp_path: Path):
 
     binding = draft["config"]["vsd_promotion"]["catalog_binding"]
     assert binding["identity"] == candidate["api_endpoint"]
-    assert draft["config"]["vsd_reviewed_operation"]["request"][
-        "fixed_query"
-    ] == {"download": "csv"}
+    assert draft["config"]["vsd_reviewed_operation"]["request"]["fixed_query"] == {
+        "download": "csv"
+    }
 
 
 def test_catalog_resource_rejects_ambiguous_duplicate_query_names(tmp_path: Path):

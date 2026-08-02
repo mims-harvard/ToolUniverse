@@ -2,10 +2,12 @@
 
 VSD discovery can also search SmartAPI and the GA4GH Service Registry. SmartAPI
 records retain both the exact service root and content-addressed OpenAPI
-document, while GA4GH service records remain inert until an operation contract
-is independently inspected. A narrowly reviewed path handles read-only GET
-operations whose specification omits only the JSON response schema; every
-other inspection blocker remains enforced. See
+document. GA4GH records produce only the standard, input-free `service-info`
+operation relative to the registered service root; each candidate remains inert
+until repeated execution matches the registered name and service type. A
+narrowly reviewed path handles read-only GET operations whose specification
+omits only the JSON response schema; every other inspection blocker remains
+enforced. See
 `docs/dev_docs/VSD_API_DISCOVERY_VALIDATION.md` for the CLI and review contract.
 
 ## Multi-Catalog Cancer Source Evaluation

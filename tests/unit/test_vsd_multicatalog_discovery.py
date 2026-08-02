@@ -178,7 +178,7 @@ def test_registry_dedup_defers_smartapi_service_roots_to_contract_inspection():
     )
 
 
-def test_ga4gh_registry_keeps_services_inert_until_a_contract_is_reviewed():
+def test_ga4gh_registry_derives_only_the_standard_inert_service_info_operation():
     candidates, count = catalogs.normalize_provider_payload(
         "ga4gh_registry",
         "genomic research data repository service",
@@ -187,12 +187,43 @@ def test_ga4gh_registry_keeps_services_inert_until_a_contract_is_reviewed():
 
     assert count == 2
     assert len(candidates) == 2
-    assert all(item["candidate_kind"] == "service_endpoint" for item in candidates)
-    assert all(item["interface_type"] == "ga4gh" for item in candidates)
+    assert all(item["candidate_kind"] == "data_endpoint" for item in candidates)
+    assert all(item["interface_type"] == "ga4gh_service_info" for item in candidates)
     assert all(not item["specification_url"] for item in candidates)
+    assert all(item["api_endpoint"].endswith("/service-info") for item in candidates)
     assert all(item["execution_allowed"] is False for item in candidates)
     for candidate in candidates:
+        binding = candidate["service_binding"]
+        assert binding["registry_service_id"] == candidate["catalog_record_id"]
+        assert binding["registered_type"] == {
+            "group": "org.ga4gh",
+            "artifact": "drs",
+            "version": "1.3.0",
+        }
+        assert not binding["service_root"].endswith("/service-info")
         assert catalogs.validate_catalog_candidate(candidate) == candidate
+
+
+def test_ga4gh_service_info_candidate_rejects_binding_or_endpoint_substitution():
+    candidate = catalogs.normalize_provider_payload(
+        "ga4gh_registry",
+        "genomic research data repository service",
+        _payload("ga4gh_registry"),
+    )[0][0]
+
+    for mutation in (
+        lambda item: item["service_binding"].update(
+            registry_service_id="different.registry.id"
+        ),
+        lambda item: item["service_binding"].update(
+            service_root="https://different.example.org/v1"
+        ),
+    ):
+        changed = copy.deepcopy(candidate)
+        mutation(changed)
+        changed["candidate_sha256"] = catalogs._candidate_digest(changed)
+        with pytest.raises(catalogs.VSDCatalogProviderError, match="binding"):
+            catalogs.validate_catalog_candidate(changed)
 
 
 def test_smartapi_candidate_binds_to_the_exact_inspected_service(tmp_path):
@@ -254,11 +285,13 @@ def test_smartapi_candidate_binds_to_the_exact_inspected_service(tmp_path):
 
     promotion = draft["config"]["vsd_promotion"]
     assert promotion["source_type"] == "catalog_openapi"
-    assert promotion["catalog_binding"]["candidate_sha256"] == (
-        catalog_candidate["candidate_sha256"]
+    assert (
+        promotion["catalog_binding"]["candidate_sha256"]
+        == (catalog_candidate["candidate_sha256"])
     )
-    assert promotion["catalog_binding"]["source_document_sha256"] == (
-        operation["source_document_sha256"]
+    assert (
+        promotion["catalog_binding"]["source_document_sha256"]
+        == (operation["source_document_sha256"])
     )
     assert promotion["catalog_binding"]["binding_sha256"]
 
@@ -361,26 +394,23 @@ def test_reviewed_missing_response_schema_completes_full_promotion(
         }
         for identifier in ("MONDO:0004976", "HP:0001250", "NCBIGene:2034")
     ]
-    evidence = vsd_promotion.verify_draft(
-        draft["draft_id"], cases, workspace=workspace
-    )
+    evidence = vsd_promotion.verify_draft(draft["draft_id"], cases, workspace=workspace)
     vsd_promotion.approve_draft(
         draft["draft_id"],
         reviewed_by="Integration Reviewer",
         decision_note="Approved after all reviewed response contract cases passed.",
         workspace=workspace,
     )
-    publication = vsd_promotion.publish_draft(
-        draft["draft_id"], workspace=workspace
-    )
+    publication = vsd_promotion.publish_draft(draft["draft_id"], workspace=workspace)
 
     assert evidence["all_cases_passed"] is True
     promotion = publication["config"]["vsd_promotion"]
     assert promotion["source_type"] == "catalog_openapi_reviewed_response"
     assert promotion["resolved_blockers"] == ["json_response_missing"]
     assert promotion["reviewed_response_schema_sha256"]
-    assert promotion["catalog_binding"]["candidate_sha256"] == (
-        catalog_candidate["candidate_sha256"]
+    assert (
+        promotion["catalog_binding"]["candidate_sha256"]
+        == (catalog_candidate["candidate_sha256"])
     )
 
 
