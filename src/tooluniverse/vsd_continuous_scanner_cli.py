@@ -12,6 +12,7 @@ from .execute_function import ToolUniverse
 from .vsd_continuous_scanner import (
     load_latest_continuous_scan,
     run_scheduled_apis_guru_scan,
+    run_scheduled_smartapi_scan,
     summarize_continuous_scan,
 )
 
@@ -37,7 +38,9 @@ def build_parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
 
     run = commands.add_parser("run")
-    run.add_argument("--catalog", choices=["apis-guru"], default="apis-guru")
+    run.add_argument(
+        "--catalog", choices=["apis-guru", "smartapi"], default="apis-guru"
+    )
     run.add_argument("--max-contracts", type=int, default=100)
     run.add_argument("--draftable-tool-target", type=int, default=500)
     run.add_argument("--timeout", type=float, default=20)
@@ -58,7 +61,12 @@ def _execute(namespace: argparse.Namespace) -> dict[str, Any]:
     if namespace.command == "run":
         tooluniverse = ToolUniverse()
         try:
-            result = run_scheduled_apis_guru_scan(
+            runner = (
+                run_scheduled_smartapi_scan
+                if namespace.catalog == "smartapi"
+                else run_scheduled_apis_guru_scan
+            )
+            result = runner(
                 tooluniverse,
                 namespace.state_directory,
                 max_contracts=namespace.max_contracts,

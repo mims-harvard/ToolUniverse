@@ -23,6 +23,11 @@ def test_parser_exposes_bounded_run_options(tmp_path: Path):
     assert args.max_contracts == 25
     assert args.draftable_tool_target == 300
 
+    smartapi = cli.build_parser().parse_args(
+        ["--state-directory", str(tmp_path), "run", "--catalog", "smartapi"]
+    )
+    assert smartapi.catalog == "smartapi"
+
 
 def test_status_reports_empty_state(monkeypatch, tmp_path: Path):
     monkeypatch.setattr(cli, "load_latest_continuous_scan", lambda _path: None)
@@ -68,3 +73,40 @@ def test_run_closes_tooluniverse_and_returns_summary(monkeypatch, tmp_path: Path
     assert closed == [True]
     assert result["summary"] == cycle
     assert result["history_file"] == "history.json"
+
+
+def test_run_dispatches_to_smartapi_adapter(monkeypatch, tmp_path: Path):
+    closed = []
+
+    class FakeToolUniverse:
+        def close(self):
+            closed.append(True)
+
+    monkeypatch.setattr(cli, "ToolUniverse", FakeToolUniverse)
+    monkeypatch.setattr(
+        cli,
+        "run_scheduled_smartapi_scan",
+        lambda *_args, **_kwargs: {
+            "cycle": {"catalog": "smartapi"},
+            "history_file": "history.json",
+            "latest_file": "latest.json",
+            "snapshot_directory": "contracts",
+        },
+    )
+    monkeypatch.setattr(cli, "summarize_continuous_scan", lambda value: value)
+
+    result = cli._execute(
+        Namespace(
+            command="run",
+            catalog="smartapi",
+            state_directory=tmp_path,
+            max_contracts=10,
+            draftable_tool_target=30,
+            timeout=5,
+            max_contract_bytes=100_000,
+        )
+    )
+
+    assert closed == [True]
+    assert result["catalog"] == "smartapi"
+    assert result["summary"] == {"catalog": "smartapi"}

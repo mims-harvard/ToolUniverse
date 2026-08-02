@@ -1,0 +1,191 @@
+{
+  "format": "vsd_scanner_cancer_scenarios_v1",
+  "version": 1,
+  "scientific_boundary": "These workflows evaluate source discovery, identifier-preserving retrieval, provenance, and promotion controls. They do not establish causality, validate biomarkers, recommend treatment, or support patient-level decisions.",
+  "scenarios": [
+    {
+      "scenario_id": "breast_esr1",
+      "disease_name": "Breast neoplasms",
+      "cohd_query": "breast cancer",
+      "gene_symbol": "ESR1",
+      "mesh_id": "MESH:D001943",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D001943",
+      "question": "Can a reproducible evidence packet preserve the ESR1 identity while retrieving terminology matches, gene relationships, regulatory-link counts, and bounded drug-repositioning hypotheses for breast neoplasms?"
+    },
+    {
+      "scenario_id": "lung_egfr",
+      "disease_name": "Lung neoplasms",
+      "cohd_query": "malignant neoplasm of lung",
+      "gene_symbol": "EGFR",
+      "mesh_id": "MESH:D008175",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D008175",
+      "question": "Can the same reviewed tool set preserve the EGFR identity and assemble terminology, gene-regulation, and computational hypothesis evidence for lung neoplasms?"
+    },
+    {
+      "scenario_id": "colorectal_tp53",
+      "disease_name": "Colorectal neoplasms",
+      "cohd_query": "primary malignant neoplasm of colon",
+      "gene_symbol": "TP53",
+      "mesh_id": "MESH:D015179",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D015179",
+      "question": "Can the reviewed operations produce a provenance-linked terminology, TP53 identity, regulatory-link, and hypothesis packet for colorectal neoplasms?"
+    },
+    {
+      "scenario_id": "melanoma_braf",
+      "disease_name": "Melanoma",
+      "cohd_query": "malignant melanoma of skin",
+      "gene_symbol": "BRAF",
+      "mesh_id": "MESH:D008545",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D008545",
+      "question": "Can a scanner-discovered workflow preserve the BRAF identity while retrieving melanoma terminology, regulatory-link counts, and bounded drug hypotheses?"
+    },
+    {
+      "scenario_id": "prostate_pten",
+      "disease_name": "Prostatic neoplasms",
+      "cohd_query": "malignant neoplasm of prostate",
+      "gene_symbol": "PTEN",
+      "mesh_id": "MESH:D011471",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D011471",
+      "question": "Can the same governed workflow preserve the PTEN identity and assemble terminology, regulatory-link, and computational hypothesis evidence for prostatic neoplasms?"
+    }
+  ],
+  "accepted_operations": [
+    {
+      "key": "cohd_concepts",
+      "tool_name": "VSDScannerCOHDCancerConcepts",
+      "record_id": "smartapi:70117385218edc9bc01633829011dfcf",
+      "operation_id": "findConceptIDs",
+      "description": "Resolve a reviewed cancer term to bounded OMOP concept records from COHD.",
+      "include_parameters": ["q"],
+      "fixed_query": {},
+      "argument_fields": {"q": "cohd_query"},
+      "verification_expect": {
+        "result_type": "object",
+        "required_fields": ["results"],
+        "required_paths": ["/results/0/concept_id", "/results/0/concept_name", "/results/0/domain_id", "/results/0/concept_count"]
+      },
+      "observations": [
+        {"label": "candidate_concepts", "pointer": "/results", "limit": 5, "fields": ["concept_id", "concept_name", "domain_id", "concept_count"]}
+      ],
+      "interpretation": "The response is a terminology search result from a deidentified aggregate dataset. Returned concepts require semantic review and counts are not incidence estimates."
+    },
+    {
+      "key": "gene_relationships",
+      "tool_name": "VSDScannerGeneRelationships",
+      "record_id": "smartapi:d10ff85265d8b749fbe3ad7b51d0bf0a",
+      "operation_id": "relationships_for_gene_target_symbol_get",
+      "description": "Retrieve reviewed HGNC symbol relationships for one exact gene symbol.",
+      "include_parameters": ["target_symbol"],
+      "fixed_query": {},
+      "argument_fields": {"target_symbol": "gene_symbol"},
+      "verification_expect": {
+        "result_type": "object",
+        "required_fields": [],
+        "required_paths": ["/symbol-alias", "/symbol-approved/0", "/symbol-previous"],
+        "equals_paths_from": {"/symbol-approved/0": "gene_symbol"}
+      },
+      "observations": [
+        {"label": "approved_symbols", "pointer": "/symbol-approved", "limit": 10},
+        {"label": "alias_symbols", "pointer": "/symbol-alias", "limit": 10},
+        {"label": "previous_symbols", "pointer": "/symbol-previous", "limit": 10}
+      ],
+      "interpretation": "The response supports gene-symbol normalization only; it is not tumor-expression or functional evidence."
+    },
+    {
+      "key": "gene_regulation",
+      "tool_name": "VSDScannerGeneRegulationLinks",
+      "record_id": "smartapi:d1ac2227e079aa3cae4e1cd696431ff8",
+      "operation_id": "getEntTypeById",
+      "description": "Retrieve bounded linked-data counts for one reviewed gene entity.",
+      "include_parameters": ["entType", "val", "detail"],
+      "fixed_query": {},
+      "argument_fields": {"entType": {"constant": "Gene"}, "val": "gene_symbol", "detail": {"constant": "low"}},
+      "verification_expect": {
+        "result_type": "object",
+        "required_fields": ["data", "metadata", "status"],
+        "required_paths": ["/data/entId", "/data/entType", "/data/ld", "/status/code"],
+        "equals_paths": {"/data/entType": "Gene", "/status/code": 200},
+        "equals_paths_from": {"/data/entId": "gene_symbol"}
+      },
+      "observations": [
+        {"label": "gene_identifier", "pointer": "/data/entId"},
+        {"label": "linked_entity_counts", "pointer": "/data/ld"}
+      ],
+      "interpretation": "Linked-entity counts describe records in the provider's regulatory knowledge hub; they do not quantify biological effect or clinical relevance."
+    },
+    {
+      "key": "drug_hypotheses",
+      "tool_name": "VSDScannerDrugHypotheses",
+      "record_id": "smartapi:025600054bd8d6fb14ee66ee9d4a9830",
+      "operation_id": "Get__predicted_drugs_for_a_given_disease_drugrepositioning_get",
+      "description": "Retrieve five reviewed computational drug-repositioning hypotheses for one MeSH disease identifier.",
+      "include_parameters": ["disease_id", "n_results"],
+      "fixed_query": {},
+      "argument_fields": {"disease_id": "mesh_id", "n_results": {"constant": 5}},
+      "verification_expect": {
+        "result_type": "object",
+        "required_fields": ["hits", "count"],
+        "required_paths": ["/hits/0/id", "/hits/0/label", "/hits/0/score"],
+        "equals": {"count": 5}
+      },
+      "observations": [
+        {"label": "ranked_hypotheses", "pointer": "/hits", "limit": 5, "fields": ["id", "label", "score"]}
+      ],
+      "interpretation": "These are model-ranked hypotheses for research triage, not efficacy evidence or treatment recommendations."
+    }
+  ],
+  "rejected_operations": [
+    {
+      "key": "ebi_protein_schema_drift",
+      "record_id": "smartapi:43af91b3d7cae43591083bff9d75c6dd",
+      "operation_id": "getProteinsByAccession",
+      "tool_name": "VSDScannerRejectedEBIProtein",
+      "description": "Qualification-only EBI protein candidate used to test response-schema enforcement.",
+      "include_parameters": ["accession"],
+      "fixed_query": {},
+      "arguments": {"accession": "P04637"},
+      "verification_expect": {"result_type": "object", "required_fields": ["accession"], "required_paths": []},
+      "expected_error_substring": "Provider response failed the reviewed schema",
+      "failure_summary": "The live accession value is scalar where the published response schema requires an array."
+    },
+    {
+      "key": "translator_annotation_schema_drift",
+      "record_id": "smartapi:5a4c41bf2076b469a0e9cfcf2f2b8f29",
+      "operation_id": "get_/{curieid}",
+      "tool_name": "VSDScannerRejectedTranslatorAnnotation",
+      "description": "Qualification-only annotation candidate used to test response-schema enforcement.",
+      "include_parameters": ["curieid"],
+      "fixed_query": {},
+      "arguments": {"curieid": "NCBIGene:7157"},
+      "verification_expect": {"result_type": "object", "required_fields": [], "required_paths": ["/_id"]},
+      "expected_error_substring": "Provider response failed the reviewed schema",
+      "failure_summary": "The live annotation response omits the identifier field required by the published response schema."
+    },
+    {
+      "key": "cohd_frequency_schema_drift",
+      "record_id": "smartapi:70117385218edc9bc01633829011dfcf",
+      "operation_id": "singleConceptFreq",
+      "tool_name": "VSDScannerRejectedCOHDFrequency",
+      "description": "Qualification-only COHD frequency candidate used to test numeric schema enforcement.",
+      "include_parameters": ["q"],
+      "fixed_query": {},
+      "arguments": {"q": "141232"},
+      "verification_expect": {"result_type": "object", "required_fields": ["results"], "required_paths": ["/results/0/concept_frequency"]},
+      "expected_error_substring": "Provider response failed the reviewed schema",
+      "failure_summary": "The live frequency is decimal while the published response schema declares an integer."
+    },
+    {
+      "key": "hubmap_gene_detail_schema_drift",
+      "record_id": "smartapi:d10ff85265d8b749fbe3ad7b51d0bf0a",
+      "operation_id": "genes_detail_get",
+      "tool_name": "VSDScannerRejectedGeneDetail",
+      "description": "Qualification-only gene-detail candidate used to test nullable response enforcement.",
+      "include_parameters": ["ids"],
+      "fixed_query": {},
+      "arguments": {"ids": "TP53"},
+      "verification_expect": {"result_type": "object", "required_fields": ["approved_symbol"], "required_paths": []},
+      "expected_error_substring": "Provider response failed the reviewed schema",
+      "failure_summary": "The live gene-detail response contains null where the published response schema requires an array."
+    }
+  ]
+}
