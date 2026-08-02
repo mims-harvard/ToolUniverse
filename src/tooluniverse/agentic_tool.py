@@ -35,6 +35,49 @@ API_KEY_ENV_VARS = {
 }
 
 
+def render_agentic_instruction(
+    tool_config: Dict[str, Any], arguments: Optional[Dict[str, Any]] = None
+) -> str:
+    """Render an AgenticTool prompt without initializing or calling an LLM.
+
+    This is the shared, side-effect-free rendering path used by both the legacy
+    backend-executed ``AgenticTool`` and host-executed instruction surfaces such
+    as MCP prompts.
+    """
+    prompt_template = tool_config.get("prompt", "")
+    input_arguments = tool_config.get("input_arguments", [])
+    parameter_info = tool_config.get("parameter", {}) or {}
+    required_arguments = parameter_info.get("required", []) or []
+    properties = parameter_info.get("properties", {}) or {}
+
+    if not prompt_template:
+        raise ValueError("AgenticTool requires a 'prompt' in the configuration.")
+    if not input_arguments:
+        raise ValueError("AgenticTool requires 'input_arguments' in the configuration.")
+
+    rendered_arguments = dict(arguments or {})
+    missing_required_args = [
+        arg for arg in required_arguments if arg not in rendered_arguments
+    ]
+    if missing_required_args:
+        raise ValueError(f"Missing required input arguments: {missing_required_args}")
+
+    for arg in input_arguments:
+        if arg not in rendered_arguments:
+            rendered_arguments[arg] = properties.get(arg, {}).get("default", "")
+
+        value = rendered_arguments[arg]
+        if arg in required_arguments and isinstance(value, str) and not value.strip():
+            raise ValueError(f"Required argument '{arg}' cannot be empty")
+
+    prompt = prompt_template
+    for arg_name in input_arguments:
+        placeholder = f"{{{arg_name}}}"
+        if placeholder in prompt:
+            prompt = prompt.replace(placeholder, str(rendered_arguments[arg_name]))
+    return prompt
+
+
 @register_tool("AgenticTool")
 class AgenticTool(BaseTool):
     """Generic wrapper around LLM prompting supporting JSON-defined configs with prompts and input arguments."""
@@ -597,28 +640,11 @@ class AgenticTool(BaseTool):
                     pass
 
     def _format_prompt(self, arguments: Dict[str, Any]) -> str:
-        prompt = self._prompt_template
-        for arg_name in self._input_arguments:
-            placeholder = f"{{{arg_name}}}"
-            value = arguments.get(arg_name, "")
-            if placeholder in prompt:
-                prompt = prompt.replace(placeholder, str(value))
-        return prompt
+        return render_agentic_instruction(self.tool_config, arguments)
 
     def get_prompt_preview(self, arguments: Dict[str, Any]) -> str:
         try:
-            args_copy = arguments.copy()
-            missing_required_args = [
-                arg for arg in self._required_arguments if arg not in args_copy
-            ]
-            if missing_required_args:
-                raise ValueError(
-                    f"Missing required input arguments: {missing_required_args}"
-                )
-            for arg in self._input_arguments:
-                if arg not in args_copy:
-                    args_copy[arg] = self._argument_defaults.get(arg, "")
-            return self._format_prompt(args_copy)
+            return render_agentic_instruction(self.tool_config, arguments)
         except Exception as e:
             return f"Error formatting prompt: {str(e)}"
 

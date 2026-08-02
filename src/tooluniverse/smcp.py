@@ -104,6 +104,7 @@ from fastmcp import FastMCP
 FASTMCP_AVAILABLE = True
 
 from .execute_function import ToolUniverse
+from .agentic_tool import render_agentic_instruction
 from .logging_config import (
     get_logger,
 )
@@ -325,6 +326,12 @@ class SMCP(FastMCP):
         When True, all loaded tools become available via the MCP interface
         with automatic schema conversion and execution wrapping.
 
+    expose_agentic_prompts : bool, default False
+        Whether to expose loaded AgenticTool prompt templates as MCP prompts for
+        execution by the connected host model. This path only renders instructions;
+        it does not initialize or call a ToolUniverse backend LLM client. The legacy
+        AgenticTool execution path remains available when credentials are configured.
+
     search_enabled : bool, default True
         Enable AI-powered tool search functionality via tools/find method.
         Includes ToolFinderLLM (cost-optimized LLM-based), Tool_RAG (embedding-based),
@@ -398,6 +405,7 @@ class SMCP(FastMCP):
         workspace: Optional[str] = None,
         use_global: bool = False,
         auto_expose_tools: bool = True,
+        expose_agentic_prompts: bool = False,
         search_enabled: bool = True,
         max_workers: int = 5,
         hooks_enabled: bool = False,
@@ -471,6 +479,7 @@ class SMCP(FastMCP):
         self.compact_mode = compact_mode
         # In compact mode, don't auto-expose all tools
         self.auto_expose_tools = False if compact_mode else auto_expose_tools
+        self.expose_agentic_prompts = expose_agentic_prompts
         self.search_enabled = search_enabled
         self.max_workers = max_workers
         self.hooks_enabled = hooks_enabled
@@ -486,6 +495,7 @@ class SMCP(FastMCP):
 
         # Track exposed tools to avoid duplicates
         self._exposed_tools = set()
+        self._exposed_agentic_prompts = set()
 
         # Initialize TaskManager for MCP Tasks support
         from .task_manager import TaskManager
@@ -1024,7 +1034,9 @@ class SMCP(FastMCP):
             self._ensure_compact_mode_categories()
         elif preloaded_count == 0 and self.tool_categories:
             self._load_by_categories()
-        elif (self.auto_expose_tools or self.compact_mode) and not profile_loaded:
+        elif (
+            self.auto_expose_tools or self.compact_mode or self.expose_agentic_prompts
+        ) and not profile_loaded:
             # Load all tools by default (unless Profile already handled it)
             self._load_tools_with_filters()
             self._ensure_compact_mode_categories()
@@ -1037,6 +1049,12 @@ class SMCP(FastMCP):
         # In compact mode, _expose_tooluniverse_tools will call _expose_core_discovery_tools
         if self.auto_expose_tools or self.compact_mode:
             self._expose_tooluniverse_tools()
+
+        # AgenticTool configs can also be exposed as host-executed MCP prompts.
+        # This path is independent of backend LLM credentials and intentionally
+        # opt-in so existing servers retain their current surface area.
+        if self.expose_agentic_prompts:
+            self._expose_agentic_tool_prompts()
 
         # Add search functionality if enabled
         if self.search_enabled:
@@ -1105,6 +1123,157 @@ class SMCP(FastMCP):
 
         exposed_count = len(self._exposed_tools)
         self.logger.info(f"Successfully exposed {exposed_count} tools to MCP interface")
+
+    def _iter_agentic_prompt_configs(self):
+        """Yield filtered AgenticTool configs, including configs hidden for no API key.
+
+        ``ToolUniverse.load_tools`` retains the raw per-category configurations in
+        ``tool_category_dicts`` before availability filtering removes AgenticTools
+        from ``all_tools``. Reading both collections lets SMCP expose instructions
+        even when the backend-executed tool cannot initialize an LLM client.
+        """
+        candidates = []
+        category_dicts = getattr(self.tooluniverse, "tool_category_dicts", {}) or {}
+        for configs in category_dicts.values():
+            if isinstance(configs, list):
+                candidates.extend(configs)
+        candidates.extend(getattr(self.tooluniverse, "all_tools", []) or [])
+
+        include_names = set(self.include_tools or [])
+        if self.tools_file:
+            try:
+                include_names.update(
+                    self.tooluniverse._load_tool_names_from_file(self.tools_file)
+                )
+            except Exception as e:
+                self.logger.warning(
+                    f"Could not apply tools-file filtering to AgenticTool prompts: {e}"
+                )
+
+        exclude_names = set(self.exclude_tools or [])
+        include_types = set(self.include_tool_types or [])
+        exclude_types = set(self.exclude_tool_types or [])
+        seen = set()
+
+        for tool_config in candidates:
+            if not isinstance(tool_config, dict):
+                continue
+            tool_name = tool_config.get("name")
+            tool_type = tool_config.get("type")
+            if not tool_name or tool_name in seen or tool_type != "AgenticTool":
+                continue
+            if tool_name in exclude_names:
+                continue
+            if include_names and tool_name not in include_names:
+                continue
+            if include_types and tool_type not in include_types:
+                continue
+            if tool_type in exclude_types:
+                continue
+            if not tool_config.get("prompt") or not tool_config.get("input_arguments"):
+                self.logger.warning(
+                    f"Skipping invalid AgenticTool prompt config: {tool_name}"
+                )
+                continue
+
+            seen.add(tool_name)
+            yield tool_config
+
+    def _expose_agentic_tool_prompts(self):
+        """Register loaded AgenticTool prompt templates as MCP prompts."""
+        exposed_count = 0
+        for tool_config in self._iter_agentic_prompt_configs():
+            tool_name = tool_config["name"]
+            if tool_name in self._exposed_agentic_prompts:
+                continue
+            try:
+                self._create_mcp_prompt_from_agentic_tool(tool_config)
+                self._exposed_agentic_prompts.add(tool_name)
+                exposed_count += 1
+            except Exception as e:
+                self.logger.error(
+                    f"Failed to expose AgenticTool prompt {tool_name}: {e}"
+                )
+
+        self.logger.info(
+            f"Successfully exposed {exposed_count} AgenticTool prompts to MCP interface"
+        )
+
+    def _create_mcp_prompt_from_agentic_tool(self, tool_config: Dict[str, Any]):
+        """Create a typed, host-executed MCP prompt from an AgenticTool config."""
+        import inspect
+        from typing import Annotated
+
+        from pydantic import Field
+
+        tool_name = tool_config["name"]
+        tool_description = tool_config.get("description", "")
+        prompt_description = (
+            "Host-executed instruction derived from the ToolUniverse AgenticTool "
+            f"'{tool_name}'. {tool_description}"
+        ).strip()
+        parameters = tool_config.get("parameter", {}) or {}
+        properties = parameters.get("properties", {}) or {}
+        input_arguments = tool_config.get("input_arguments", []) or []
+        required_params = parameters.get("required", []) or []
+
+        func_params = []
+        param_annotations = {}
+        for is_required_phase in (True, False):
+            for param_name in input_arguments:
+                param_info = properties.get(param_name, {}) or {}
+                is_required = param_name in required_params
+                if is_required != is_required_phase:
+                    continue
+
+                python_type, extra_kwargs = self._resolve_param_type(param_info)
+                field = Field(
+                    description=param_info.get(
+                        "description", f"{param_name} parameter"
+                    ),
+                    **extra_kwargs,
+                )
+                if is_required:
+                    annotated_type = Annotated[python_type, field]
+                    default = inspect.Parameter.empty
+                else:
+                    annotated_type = Annotated[Union[python_type, type(None)], field]
+                    default = None
+
+                param_annotations[param_name] = annotated_type
+                func_params.append(
+                    inspect.Parameter(
+                        param_name,
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                        default=default,
+                        annotation=annotated_type,
+                    )
+                )
+
+        def dynamic_prompt_function(**kwargs) -> str:
+            prompt_arguments = {
+                key: value for key, value in kwargs.items() if value is not None
+            }
+            return render_agentic_instruction(tool_config, prompt_arguments)
+
+        dynamic_prompt_function.__name__ = tool_name
+        dynamic_prompt_function.__signature__ = inspect.Signature(func_params)
+        annotations = param_annotations.copy()
+        annotations["return"] = str
+        dynamic_prompt_function.__annotations__ = annotations
+        dynamic_prompt_function.__doc__ = prompt_description
+
+        self.prompt(
+            name=tool_name,
+            description=prompt_description,
+            tags={"tooluniverse", "agentic-instruction"},
+            meta={
+                "tooluniverse": {
+                    "source_type": "AgenticTool",
+                    "execution": "host",
+                }
+            },
+        )(dynamic_prompt_function)
 
     def _expose_core_discovery_tools(self):
         """
