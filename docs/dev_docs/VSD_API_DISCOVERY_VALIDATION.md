@@ -153,6 +153,22 @@ tooluniverse-vsd-promote --workspace ./private-vsd-promotion \
   --review-note "Reviewed the exact response structure and three representative calls."
 ```
 
+## GA4GH Service Qualification Evaluation
+
+`examples/vsd/ga4gh_service_qualification_portfolio.py` applies the standard
+Service Info path to 15 registry implementations through one data-driven
+runner. It covers service-registry, DRS, TRS, WES, and RNAget records and
+retains both successful and unsuccessful qualification outcomes.
+
+The checked portfolio admits three services after nine registry-bound
+verification executions and rejects twelve before approval. Accepted tools
+complete publication, fresh-universe loading, final execution, and exact
+duplicate suppression. Rejected drafts include live-looking JSON with standard
+type drift as well as unavailable, redirecting, and non-JSON paths; none gains
+an approval or publication artifact. See
+`examples/vsd/artifacts/ga4gh_service_qualification_portfolio.md` and its JSON
+counterpart for the source-by-source evidence.
+
 ## Biomedical Evaluation Portfolio
 
 `examples/vsd/biomedical_evaluation_portfolio.py` applies the same orchestration
