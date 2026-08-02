@@ -9,6 +9,7 @@ import pytest
 
 from tooluniverse import ToolUniverse, vsd_tool
 from tooluniverse.build_optimizer import calculate_tool_hash
+from tooluniverse.vsd_catalog_providers import PROVIDER_ORDER
 
 pytestmark = pytest.mark.unit
 
@@ -90,7 +91,7 @@ def test_source_contracts_are_fixed_and_typed():
         catalog_discovery = tooluniverse.all_tool_dict["VSDDiscoverAPICandidates"]
         assert catalog_discovery["parameter"]["properties"]["providers"][
             "maxItems"
-        ] == 5
+        ] == len(PROVIDER_ORDER)
         assert "requested_providers" in catalog_discovery["return_schema"][
             "properties"
         ]

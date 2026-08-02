@@ -1147,6 +1147,7 @@ def _build_openapi_tool_config(
         "category": "special_tools",
         "cacheable": False,
         "mcp_annotations": {"readOnlyHint": True, "destructiveHint": False},
+        "vsd_capability": {"operation_id": f"openapi.{reviewed['candidate_id']}"},
         "parameter": input_schema,
         "return_schema": return_schema,
         "vsd_operation": {

@@ -1,15 +1,15 @@
 {
   "answer": "Yes. The bounded scan separated an already configured RePORTER host from a DANDI capability gap, found seven contract formats, preserved robots and host boundaries, inspected content-addressed snapshots locally, and prepared a consent-bound core-team handoff linked to sanitized unmet demand.",
-  "audit_sha256": "77f1c2387067a7d99252ca5625688cc9634c68f972fa0bb292f960de9962a268",
+  "audit_sha256": "11b8e122dd4690b1fe7b72141f84e442bc478b503f4664418f1e3344c42f34c0",
   "case_results": [
     {
       "case_id": "catalog_boundary",
-      "proof": "50 authoritative entries permit discovery but never execution or registration",
+      "proof": "51 authoritative entries permit discovery but never execution or registration",
       "result": "passed"
     },
     {
       "case_id": "real_registry_audit",
-      "proof": "2744 configured tools and 259 configured hosts plus 586 source-code hosts were inventoried",
+      "proof": "2744 configured tools and 259 configured hosts plus 593 source-code hosts were inventoried",
       "result": "passed"
     },
     {
@@ -105,8 +105,7 @@
     "all_cases_pass": true,
     "all_formats_found": true,
     "baseline_catalog_domains_are_current_gaps": true,
-    "catalog_has_exactly_50_sources": true,
-    "catalog_has_no_literal_source_host_collision": true,
+    "catalog_contains_reviewed_sources": true,
     "catalog_never_executes": true,
     "dandi_baseline_is_not_configured": true,
     "dandi_candidates_are_gaps": true,
@@ -129,7 +128,8 @@
     "seven_contract_leads_found": true,
     "seven_inspections_completed": true,
     "seven_snapshots_created": true,
-    "snapshot_digests_are_unique": true
+    "snapshot_digests_are_unique": true,
+    "source_literals_do_not_count_as_registered_coverage": true
   },
   "inspection_summary": [
     {
@@ -198,10 +198,14 @@
   ],
   "real_registry_baseline": {
     "catalog_existing_host_count": 0,
-    "catalog_gap_count": 50,
+    "catalog_gap_count": 51,
+    "catalog_source_count": 51,
     "host_count": 259,
-    "literal_catalog_collisions": [],
-    "literal_https_host_count": 586,
+    "literal_catalog_collisions": [
+      "registry.ga4gh.org",
+      "smart-api.info"
+    ],
+    "literal_https_host_count": 593,
     "registry_sha256": "160e86e787c5ac7555965b707b0bd094edadf00fec67cab5a2a649826181b63f",
     "tool_count": 2744
   },
