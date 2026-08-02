@@ -15,7 +15,7 @@ from urllib.parse import urlsplit
 from google.protobuf import descriptor_pb2
 
 from tooluniverse import ToolUniverse, vsd_lifecycle, vsd_promotion
-from tooluniverse import vsd_reviewed_runtime as runtime
+import tooluniverse.vsd_reviewed_runtime as runtime
 from tooluniverse.vsd_contracts import inspect_contract_document
 
 try:

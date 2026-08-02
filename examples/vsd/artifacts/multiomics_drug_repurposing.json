@@ -1,0 +1,278 @@
+{
+  "answer": "Yes. Existing target and pathway resources remained available, the cross-study signature followed the full demand-to-lifecycle path, and the independent Docker evidence remained administrator-only.",
+  "audit_sha256": "484f1ff21282f983e4a55731f5cc909b3a08e2bc6ec727d3516049ddb0810b64",
+  "candidate_review": {
+    "auth": {
+      "header": "X-MultiOmics-Key",
+      "scheme_name": "reviewedKey",
+      "type": "api_key_header"
+    },
+    "catalog_candidate_execution_allowed": false,
+    "catalog_candidate_id": "1bbcb92428d03537",
+    "openapi_candidate_id": "5b344a675b12666d",
+    "openapi_candidate_sha256": "5b344a675b12666d801a14a16537ba3e26e2f04b81bd09113fe7197b96693c06",
+    "source_document_sha256": "866bcc021b32dca301143bd3331378112a4ec788ac7b1f496b9b8bb3d0ceef97"
+  },
+  "decision_outputs": [
+    "which response directions replicate across cohorts",
+    "which modalities or cell types remain missing",
+    "which compound classes warrant independent target and safety review"
+  ],
+  "end_to_end_assertions": {
+    "assessment_does_not_auto_suspend": true,
+    "breaking_drift_is_detected": true,
+    "candidate_is_inert_and_authenticated": true,
+    "credential_reference_excludes_secret_value": true,
+    "credential_rotation_preserves_operation_identity": true,
+    "demand_closure_is_explicit": true,
+    "discovery_candidate_is_inert": true,
+    "existing_registry_capabilities_are_reused": true,
+    "fresh_runtime_executes_all_three_records": true,
+    "initial_provider_specific_capability_is_missing": true,
+    "missing_credential_fails_before_transport": true,
+    "only_gap_routes_to_external_discovery": true,
+    "private_demand_is_repeated_ranked_and_sanitized": true,
+    "provider_transport_is_exact_and_bounded": true,
+    "publication_is_absent_until_explicit_load": true,
+    "published_capability_resolves_exactly": true,
+    "repaired_contract_requires_explicit_reactivation": true,
+    "replanning_reuses_published_tool": true,
+    "secret_values_are_absent_from_artifacts": true,
+    "suspension_prevents_fresh_loading": true,
+    "three_representative_verification_cases_pass": true,
+    "unapproved_draft_cannot_publish": true
+  },
+  "format": "vsd_growth_value_case_study_v1",
+  "initial_gap": {
+    "capability_id": "7c7d0712d6439e7b",
+    "classification": "missing",
+    "gap_step": "cross_study_signature",
+    "next_interface": "VSDDiscoverAPICandidates",
+    "plan_id": "603ee7441c88e59a",
+    "plan_sha256": "603ee7441c88e59a233cff5d13bf09f5fc05189fe279bc22bffb0401ec877fd8"
+  },
+  "interpretation_boundary": "The fixture does not validate differential-expression statistics, causal targets, compound efficacy, or local-model scientific reasoning.",
+  "lifecycle": {
+    "activation_event_sha256": "3f2b18236b1cb17129bae82c48ad40ec9ec53d1fef44452eece86a09b3b184d3",
+    "breaking_assessment_sha256": "f385ea2cf6e91b05263f318b929a04f386e351368ca796e3fa9a5ce7a5e83711",
+    "final_loaded_tools": [
+      "VSDMultiOmicResponseSignatureById"
+    ],
+    "repaired_assessment_sha256": "2f8fa60081e70d3abc5587a2c2f0b3645aecaddc5134398dec2a01a01c13ee7a",
+    "suspended_loaded_tools": [],
+    "suspension_event_sha256": "e6efe4877d9872a134b5915c0efa14352c85cac0844140231362183002c7df7d",
+    "unchanged_assessment_sha256": "834fb52d819a9e284fa46a3484073ae21c7143052c77bf7755ad82ac65dff54b"
+  },
+  "negative_controls": {
+    "breaking_assessment_did_not_change_state": true,
+    "missing_credential_rejected_before_transport": true,
+    "verified_but_unapproved_publish_rejected": true
+  },
+  "private_demand": {
+    "closure_ledger_sha256": "4536719c6cbeebfbabe82a9d3c8e83128470701aa10c0cb115f70ba6735738a0",
+    "demand_id": "3228432d8b1fdbf6",
+    "observation_count": 3,
+    "priority_score": 15,
+    "proposal_id": "dc7b77c35272dbeb",
+    "proposal_sha256": "528a209eab5d553445c3e432dfcfea3f4f4da3c6e74bdc35ba5660718a1ceb51",
+    "transmission": "none; this file was written locally for explicit human review"
+  },
+  "promotion": {
+    "approval_sha256": "e0436b97823a45b4ded86351d45c65dd81a2b0683b219ef3be2b0a768da42641",
+    "draft_sha256": "1896c7b0ff64718c7f578ffd0c2f54257c10fbbc48b709c08c528d23c69becec",
+    "operation_sha256": "317e0375110cc9c99840de79826a5b66580abecfd3166771f00b677e8c11295a",
+    "publication_sha256": "2c962b7494009a1d426b69c30c8a6d3acc1ff2d93dfebdd34e2e83f8b4a538ff",
+    "tool_name": "VSDMultiOmicResponseSignatureById",
+    "verification_case_count": 3,
+    "verification_sha256": "a1293373d1ecc0d9024a2e851668928e3a9a99f69ae5da09458fd57b28223e98"
+  },
+  "registry_reuse": {
+    "compound_search": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "AntibodyRegistry_search",
+        "ChEMBL_get_assay_activities",
+        "ChEMBL_get_target",
+        "ChEMBL_get_target_activities",
+        "ChEMBL_search_protein_classification"
+      ]
+    },
+    "pathway_network": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "STRING_get_network",
+        "humanbase_ppi_analysis",
+        "NDEx_search_networks",
+        "OmniPath_get_signaling_interactions",
+        "STRING_ppi_enrichment"
+      ]
+    },
+    "target_association": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "europepmc_disease_target_score",
+        "genomics_england_disease_target_score",
+        "OpenTargets_target_disease_evidence",
+        "reactome_disease_target_score",
+        "cancer_biomarkers_disease_target_score"
+      ]
+    }
+  },
+  "research_question": "Can a systems-biology workflow reuse target, pathway, and compound tools while adding one reviewed cross-study response signature and keeping local model provisioning outside the agent control plane?",
+  "runtime_evidence": {
+    "credential_slots": [
+      "initial",
+      "initial",
+      "initial",
+      "initial",
+      "rotated",
+      "rotated"
+    ],
+    "expanded_registry_classification": "existing_exact",
+    "operation_sha256": "317e0375110cc9c99840de79826a5b66580abecfd3166771f00b677e8c11295a",
+    "provider_call_count": 6,
+    "record_ids": [
+      "MO-AD-TREM2",
+      "MO-CRC-KRAS",
+      "MO-RA-TNFA"
+    ],
+    "records": [
+      {
+        "candidate_compounds": [
+          "PPAR agonist class for review"
+        ],
+        "cell_types": [
+          "microglia"
+        ],
+        "cohort_count": 4,
+        "disease": "Alzheimer disease",
+        "effect_directions": [
+          "TREM2 up",
+          "homeostatic markers down"
+        ],
+        "genes": [
+          "TREM2",
+          "APOE",
+          "TYROBP"
+        ],
+        "metabolites": [
+          "cholesteryl ester"
+        ],
+        "pathways": [
+          "lipid handling",
+          "phagosome"
+        ],
+        "perturbation": "TREM2-high microglial state",
+        "proteins": [
+          "TREM2",
+          "APOE"
+        ],
+        "replication_status": "replicated_direction",
+        "signature_id": "MO-AD-TREM2"
+      },
+      {
+        "candidate_compounds": [
+          "SHP2 inhibitor class for review"
+        ],
+        "cell_types": [
+          "tumor epithelial",
+          "fibroblast"
+        ],
+        "cohort_count": 3,
+        "disease": "KRAS-mutant colorectal cancer",
+        "effect_directions": [
+          "pERK down",
+          "lactate down"
+        ],
+        "genes": [
+          "DUSP6",
+          "ETV4",
+          "FOSL1"
+        ],
+        "metabolites": [
+          "lactate"
+        ],
+        "pathways": [
+          "MAPK signaling",
+          "glycolysis"
+        ],
+        "perturbation": "KRAS G12C inhibition",
+        "proteins": [
+          "pERK",
+          "DUSP6"
+        ],
+        "replication_status": "partial_replication",
+        "signature_id": "MO-CRC-KRAS"
+      },
+      {
+        "candidate_compounds": [
+          "JAK inhibitor class for comparison"
+        ],
+        "cell_types": [
+          "synovial fibroblast",
+          "monocyte"
+        ],
+        "cohort_count": 5,
+        "disease": "Rheumatoid arthritis",
+        "effect_directions": [
+          "CXCL8 down",
+          "IL6 down"
+        ],
+        "genes": [
+          "TNFAIP3",
+          "CXCL8",
+          "IL6"
+        ],
+        "metabolites": [
+          "kynurenine"
+        ],
+        "pathways": [
+          "TNF signaling",
+          "tryptophan metabolism"
+        ],
+        "perturbation": "TNF inhibition",
+        "proteins": [
+          "TNF",
+          "IL6"
+        ],
+        "replication_status": "replicated_direction",
+        "signature_id": "MO-RA-TNFA"
+      }
+    ],
+    "replanned_gap_classification": "existing_exact"
+  },
+  "scientific_value": "A repurposing workflow can add a harmonized institutional signature to ToolUniverse without hiding cohort count, replication status, or modality coverage, then pass a bounded evidence packet to separately provisioned local inference infrastructure.",
+  "study_id": "multiomics_drug_repurposing",
+  "title": "Multi-Omics Drug-Repurposing Evidence Growth Study",
+  "tooluniverse_alignment": {
+    "official_references": [
+      {
+        "label": "ToolUniverse overview",
+        "relevance": "ToolUniverse standardizes scientific tools for agents, Python, CLI, and MCP use.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/"
+      },
+      {
+        "label": "Scientific workflow guidance",
+        "relevance": "ToolUniverse workflows combine existing tools for disease research, drug discovery, genomics, and literature synthesis.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html"
+      },
+      {
+        "label": "AI agent skills catalog",
+        "relevance": "The five studies align with documented precision-oncology, safety, rare-disease, infectious-disease, and multi-omics workflows.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/skills_showcase.html"
+      },
+      {
+        "label": "Published drug-discovery case structure",
+        "relevance": "The official case study uses target selection, characterization, drug selection, prediction, IP review, and human review as a multi-stage model.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/tooluniverse_case_study.html"
+      }
+    ],
+    "registry_tool_count": 2744,
+    "skills": [
+      "multi-omics integration",
+      "drug repurposing",
+      "drug target validation"
+    ]
+  },
+  "version": 1
+}

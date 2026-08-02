@@ -1,5 +1,43 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Five-Domain Growth Evaluation Portfolio
+
+`growth_value_portfolio.py` is the reviewer-facing proof that VSD adds useful
+capabilities to real ToolUniverse workflow patterns rather than merely wrapping
+new APIs. It covers precision oncology, pregnancy pharmacovigilance,
+rare-disease natural history, infectious-disease genomic surveillance, and
+multi-omics drug repurposing. These domains were selected from ToolUniverse's
+official research-skill catalog and use the same registry-first, multi-tool
+workflow model as the documented hypercholesterolemia case study.
+
+Every case searches the real ToolUniverse registry and retains existing tools
+before creating anything. One provider-specific gap then moves through three
+private demand observations, explicit sanitized proposal export, inert catalog
+discovery, authenticated OpenAPI inspection, three representative verification
+cases, approval, publication, explicit fresh-runtime loading, credential
+rotation, demand closure, breaking-drift suspension, reviewed repair, and final
+execution. Missing credentials fail before transport, and a verified draft
+cannot publish without approval.
+
+Run all five deterministic studies from the repository root:
+
+```console
+PYTHONPATH=src TOOLUNIVERSE_CACHE_PERSIST=false \
+  python examples/vsd/growth_value_portfolio.py
+```
+
+The combined report is
+`artifacts/growth_value_portfolio.md`; its JSON counterpart and five pairs of
+domain-specific Markdown/JSON artifacts are audit-hashed and covered by
+determinism, synchronization, tamper, secret-leak, cross-format, and Docker
+evidence tests. The combined run adds 110 assertions, 15 verification
+executions, and 15 post-verification fresh-runtime executions.
+
+The `vsd-complete-evaluation-suite` branch combines current `main`, the full
+stack through the cross-format proof, and the independent administrator-only
+Docker phase for reviewer testing. The individual PRs remain the intended
+review and landing units.
+
 ## Cross-Format Source-To-Runtime Total Proof
 
 `cross_format_total_proof.py` connects the complete VSD stack in one ALS/DANDI

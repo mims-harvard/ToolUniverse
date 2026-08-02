@@ -1,0 +1,252 @@
+{
+  "answer": "Yes. Existing variant and trial capabilities remained reusable, while one provider-specific evidence gap moved through private demand, inert discovery, authenticated OpenAPI review, three-case verification, publication, fresh-runtime use, credential rotation, and drift recovery.",
+  "audit_sha256": "670208057574c36024cede267121d830d1a6be68dc70e9082ad9eaeab7ab0551",
+  "candidate_review": {
+    "auth": {
+      "header": "X-Oncology-Evidence-Key",
+      "scheme_name": "reviewedKey",
+      "type": "api_key_header"
+    },
+    "catalog_candidate_execution_allowed": false,
+    "catalog_candidate_id": "110e9439f837097e",
+    "openapi_candidate_id": "69ab594886c8c208",
+    "openapi_candidate_sha256": "69ab594886c8c2080ec4270ae705a1ca912da21f962af08dd53ae2c1f9485260",
+    "source_document_sha256": "c6e428911957aa56d65b9b9c145255646d86357896e5de91edfe68169e43db4b"
+  },
+  "decision_outputs": [
+    "which evidence needs specialist confirmation",
+    "which resistance mechanisms require literature review",
+    "which trial identifiers warrant eligibility checking"
+  ],
+  "end_to_end_assertions": {
+    "assessment_does_not_auto_suspend": true,
+    "breaking_drift_is_detected": true,
+    "candidate_is_inert_and_authenticated": true,
+    "credential_reference_excludes_secret_value": true,
+    "credential_rotation_preserves_operation_identity": true,
+    "demand_closure_is_explicit": true,
+    "discovery_candidate_is_inert": true,
+    "existing_registry_capabilities_are_reused": true,
+    "fresh_runtime_executes_all_three_records": true,
+    "initial_provider_specific_capability_is_missing": true,
+    "missing_credential_fails_before_transport": true,
+    "only_gap_routes_to_external_discovery": true,
+    "private_demand_is_repeated_ranked_and_sanitized": true,
+    "provider_transport_is_exact_and_bounded": true,
+    "publication_is_absent_until_explicit_load": true,
+    "published_capability_resolves_exactly": true,
+    "repaired_contract_requires_explicit_reactivation": true,
+    "replanning_reuses_published_tool": true,
+    "secret_values_are_absent_from_artifacts": true,
+    "suspension_prevents_fresh_loading": true,
+    "three_representative_verification_cases_pass": true,
+    "unapproved_draft_cannot_publish": true
+  },
+  "format": "vsd_growth_value_case_study_v1",
+  "initial_gap": {
+    "capability_id": "abe835f4a8b2a6b4",
+    "classification": "missing",
+    "gap_step": "reviewed_molecular_evidence",
+    "next_interface": "VSDDiscoverAPICandidates",
+    "plan_id": "ab860cfae84d813d",
+    "plan_sha256": "ab860cfae84d813d4479b17ceafd21d5df970e56b79935b3be3e4c42daa312ff"
+  },
+  "interpretation_boundary": "The records demonstrate software governance only. They are not patient data, clinical recommendations, evidence grading, or proof of efficacy.",
+  "lifecycle": {
+    "activation_event_sha256": "28eca6228e6c73edc477a4d1f7f715c8547be396182f4f5a6526e99d828132f6",
+    "breaking_assessment_sha256": "027b4c4c63c123b78454ca5352ec10c4ed29ae225303a7b248c3b3dae6ab93d2",
+    "final_loaded_tools": [
+      "VSDPrecisionOncologyEvidenceByCase"
+    ],
+    "repaired_assessment_sha256": "d7d03ec7f7dd5b3699cbe02749a14aef270940212e4f9f89ebc0de580f5bfdbb",
+    "suspended_loaded_tools": [],
+    "suspension_event_sha256": "9c54c5083c2a3445c3bbdd87bc86dbf62ea55c82d24be2cb179e2f597d488490",
+    "unchanged_assessment_sha256": "6cfb622095e720d0aa4038e841e251ab49216ce2b54f92c99a4cbb4c216517ed"
+  },
+  "negative_controls": {
+    "breaking_assessment_did_not_change_state": true,
+    "missing_credential_rejected_before_transport": true,
+    "verified_but_unapproved_publish_rejected": true
+  },
+  "private_demand": {
+    "closure_ledger_sha256": "4536719c6cbeebfbabe82a9d3c8e83128470701aa10c0cb115f70ba6735738a0",
+    "demand_id": "4d73c37499d94921",
+    "observation_count": 3,
+    "priority_score": 15,
+    "proposal_id": "7caa24ed5192e6ab",
+    "proposal_sha256": "1958f70cecb2262843c2e02c3818b199d6238734e7218f64473b994dee31a0a5",
+    "transmission": "none; this file was written locally for explicit human review"
+  },
+  "promotion": {
+    "approval_sha256": "d7484a31b1c177a6306382184db09612fb190e4f21edb7e4961031026196bd7a",
+    "draft_sha256": "0e14041ce102cb68eb6fb301a76b6b22f66172243ac6a0949b0effaaf9211f19",
+    "operation_sha256": "3693e681b78e3761ba8777ef2f0e07da3ea38c0430c2bed46f80e9bcc68c2642",
+    "publication_sha256": "09fd738eb14e79f0bcbfeca3ee73c2b2350c942baaa5969a035981b8542ee762",
+    "tool_name": "VSDPrecisionOncologyEvidenceByCase",
+    "verification_case_count": 3,
+    "verification_sha256": "86a17869fc8f893230f60fb07efd028c5d314655a0d4451064523e65acd8f536"
+  },
+  "registry_reuse": {
+    "drug_label": {
+      "classification": "existing_exact",
+      "top_matches": [
+        "OpenFDA_search_drug_labels",
+        "FDAGSRS_search_substances",
+        "OpenFDA_search_animalvet_adverse_events",
+        "OpenFDA_search_drug_enforcement",
+        "OpenFDA_search_drug_events"
+      ]
+    },
+    "trial_search": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "ClinicalTrials_search_by_intervention",
+        "ClinicalTrials_search_by_sponsor",
+        "ClinicalTrials_search_studies",
+        "CTIS_search_trials_filtered",
+        "search_clinical_trials"
+      ]
+    },
+    "variant_interpretation": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "civic_search_evidence_items",
+        "EBIProteins_get_variation",
+        "ClinVar_search_variants",
+        "civic_get_variant",
+        "ClinVar_get_clinical_significance"
+      ]
+    }
+  },
+  "research_question": "Can a molecular tumor-board workflow reuse ToolUniverse's variant and trial resources while safely adding one institution-reviewed evidence operation for therapy, resistance, and evidence-tier context?",
+  "runtime_evidence": {
+    "credential_slots": [
+      "initial",
+      "initial",
+      "initial",
+      "initial",
+      "rotated",
+      "rotated"
+    ],
+    "expanded_registry_classification": "existing_exact",
+    "operation_sha256": "3693e681b78e3761ba8777ef2f0e07da3ea38c0430c2bed46f80e9bcc68c2642",
+    "provider_call_count": 6,
+    "record_ids": [
+      "ONC-CRC-KRAS",
+      "ONC-MEL-BRAF",
+      "ONC-NSCLC-EGFR"
+    ],
+    "records": [
+      {
+        "approved_therapies": [
+          "adagrasib"
+        ],
+        "biomarkers": [
+          {
+            "evidence_tier": "B",
+            "gene": "KRAS",
+            "variant": "G12C"
+          }
+        ],
+        "cancer_type": "Colorectal cancer",
+        "case_id": "ONC-CRC-KRAS",
+        "evidence_limitations": [
+          "fixture record",
+          "combination context is simplified"
+        ],
+        "resistance_signals": [
+          "EGFR pathway reactivation"
+        ],
+        "trial_ids": [
+          "NCT03785249",
+          "NCT04720976"
+        ]
+      },
+      {
+        "approved_therapies": [
+          "dabrafenib",
+          "trametinib"
+        ],
+        "biomarkers": [
+          {
+            "evidence_tier": "A",
+            "gene": "BRAF",
+            "variant": "V600E"
+          }
+        ],
+        "cancer_type": "Cutaneous melanoma",
+        "case_id": "ONC-MEL-BRAF",
+        "evidence_limitations": [
+          "fixture record",
+          "tumor context is required"
+        ],
+        "resistance_signals": [
+          "MAP2K1 activation"
+        ],
+        "trial_ids": [
+          "NCT02902042"
+        ]
+      },
+      {
+        "approved_therapies": [
+          "osimertinib"
+        ],
+        "biomarkers": [
+          {
+            "evidence_tier": "A",
+            "gene": "EGFR",
+            "variant": "L858R"
+          }
+        ],
+        "cancer_type": "Non-small cell lung cancer",
+        "case_id": "ONC-NSCLC-EGFR",
+        "evidence_limitations": [
+          "fixture record",
+          "requires specialist review"
+        ],
+        "resistance_signals": [
+          "EGFR C797S"
+        ],
+        "trial_ids": [
+          "NCT04129502",
+          "NCT05256290"
+        ]
+      }
+    ],
+    "replanned_gap_classification": "existing_exact"
+  },
+  "scientific_value": "A research agent can assemble a reproducible tumor-board evidence packet without turning a hospital endpoint into an arbitrary proxy or treating fixture evidence as a treatment recommendation.",
+  "study_id": "precision_oncology_tumor_board",
+  "title": "Precision Oncology Molecular Evidence Growth Study",
+  "tooluniverse_alignment": {
+    "official_references": [
+      {
+        "label": "ToolUniverse overview",
+        "relevance": "ToolUniverse standardizes scientific tools for agents, Python, CLI, and MCP use.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/"
+      },
+      {
+        "label": "Scientific workflow guidance",
+        "relevance": "ToolUniverse workflows combine existing tools for disease research, drug discovery, genomics, and literature synthesis.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html"
+      },
+      {
+        "label": "AI agent skills catalog",
+        "relevance": "The five studies align with documented precision-oncology, safety, rare-disease, infectious-disease, and multi-omics workflows.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/skills_showcase.html"
+      },
+      {
+        "label": "Published drug-discovery case structure",
+        "relevance": "The official case study uses target selection, characterization, drug selection, prediction, IP review, and human review as a multi-stage model.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/tooluniverse_case_study.html"
+      }
+    ],
+    "registry_tool_count": 2744,
+    "skills": [
+      "precision oncology",
+      "cancer variant interpretation",
+      "clinical trial matching"
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,132 @@
+{
+  "answer": "Yes. Five distinct provider-specific gaps moved from real registry reuse and repeated private demand through review, verification, fresh-runtime use, credential rotation, demand closure, suspension, and recovery. The existing six-format proof and independent real-Docker evidence also remain valid.",
+  "audit_sha256": "403c5f7779f6e55ea00d255130350eb753d0092b0ea782092ff0161470c7d87b",
+  "branch_scope": {
+    "base": "current main at branch construction",
+    "docker_boundary": "PR 420 merged only for reviewer evaluation",
+    "review_intent": "This branch is a test assembly; the logically isolated PRs remain the review and landing units.",
+    "vsd_stack": "PRs 416-419, 421, and 423-432"
+  },
+  "combined_metrics": {
+    "cross_format_assertions": 21,
+    "cross_format_audit_sha256": "0223d236556c284746e7acf5985f7fc2195f74de8ffcbe796d3dd4092e32c10b",
+    "cross_format_promotions": 6,
+    "docker_payload_sha256": "b2cce5603b057dedf95450141f3f60b98bb3dd1205a8dac3b656f3224a6a6dac",
+    "docker_prompt_sha256": "1d9f7583b5f03ec83efb79e858fdc8dd7ce22d6a3d713a5c294d76ad37508673",
+    "new_post_verification_executions": 15,
+    "new_study_assertions": 110,
+    "new_verification_cases": 15,
+    "registry_tool_count": 2744
+  },
+  "end_to_end_assertions": {
+    "all_five_domain_studies_pass": true,
+    "all_studies_use_real_registry_reuse": true,
+    "docker_boundary_is_present_and_hardened": true,
+    "docker_remains_administrator_only": true,
+    "every_study_has_a_distinct_provider_and_tool": true,
+    "fifteen_post_verification_executions_pass": true,
+    "fifteen_verification_cases_pass": true,
+    "official_tooluniverse_alignment_is_documented": true,
+    "one_hundred_ten_study_assertions_pass": true,
+    "six_format_total_proof_remains_valid": true
+  },
+  "format": "vsd_growth_value_portfolio_v1",
+  "official_references": [
+    {
+      "label": "ToolUniverse overview",
+      "relevance": "ToolUniverse standardizes scientific tools for agents, Python, CLI, and MCP use.",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/"
+    },
+    {
+      "label": "Scientific workflow guidance",
+      "relevance": "ToolUniverse workflows combine existing tools for disease research, drug discovery, genomics, and literature synthesis.",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html"
+    },
+    {
+      "label": "AI agent skills catalog",
+      "relevance": "The five studies align with documented precision-oncology, safety, rare-disease, infectious-disease, and multi-omics workflows.",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/skills_showcase.html"
+    },
+    {
+      "label": "Published drug-discovery case structure",
+      "relevance": "The official case study uses target selection, characterization, drug selection, prediction, IP review, and human review as a multi-stage model.",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/tooluniverse_case_study.html"
+    }
+  ],
+  "question": "Does the complete pending VSD stack add useful, governed capabilities to realistic ToolUniverse research workflows rather than merely wrapping APIs?",
+  "study_count": 5,
+  "study_summaries": [
+    {
+      "assertion_count": 22,
+      "audit_sha256": "670208057574c36024cede267121d830d1a6be68dc70e9082ad9eaeab7ab0551",
+      "runtime_records": 3,
+      "skills": [
+        "precision oncology",
+        "cancer variant interpretation",
+        "clinical trial matching"
+      ],
+      "study_id": "precision_oncology_tumor_board",
+      "title": "Precision Oncology Molecular Evidence Growth Study",
+      "tool_name": "VSDPrecisionOncologyEvidenceByCase",
+      "verification_cases": 3
+    },
+    {
+      "assertion_count": 22,
+      "audit_sha256": "3f64603603eff7024d6756e42cbfbd985a62951f956a8e56fdf2699492ce9cfe",
+      "runtime_records": 3,
+      "skills": [
+        "pharmacovigilance",
+        "adverse event detection",
+        "chemical safety"
+      ],
+      "study_id": "pregnancy_pharmacovigilance",
+      "title": "Pregnancy Pharmacovigilance Signal Governance Study",
+      "tool_name": "VSDPregnancySafetySignalByExposure",
+      "verification_cases": 3
+    },
+    {
+      "assertion_count": 22,
+      "audit_sha256": "56c48e3e12025bedae6c85a9345b5ee9bcc0bec5b44934aebf7cf6335bc340e0",
+      "runtime_records": 3,
+      "skills": [
+        "rare disease diagnosis",
+        "clinical trial design",
+        "disease research"
+      ],
+      "study_id": "rare_disease_natural_history",
+      "title": "Rare-Disease Natural-History Cohort Growth Study",
+      "tool_name": "VSDRareDiseaseTrajectoryByCohort",
+      "verification_cases": 3
+    },
+    {
+      "assertion_count": 22,
+      "audit_sha256": "409cf2f88a547e2573f0cc1a3ed87f724edaef12272b7d9a613004c31fb11a3c",
+      "runtime_records": 3,
+      "skills": [
+        "infectious disease",
+        "sequence retrieval",
+        "phylogenetics"
+      ],
+      "study_id": "infectious_disease_surveillance",
+      "title": "Infectious-Disease Genomic Surveillance Growth Study",
+      "tool_name": "VSDPathogenClusterEvidenceById",
+      "verification_cases": 3
+    },
+    {
+      "assertion_count": 22,
+      "audit_sha256": "484f1ff21282f983e4a55731f5cc909b3a08e2bc6ec727d3516049ddb0810b64",
+      "runtime_records": 3,
+      "skills": [
+        "multi-omics integration",
+        "drug repurposing",
+        "drug target validation"
+      ],
+      "study_id": "multiomics_drug_repurposing",
+      "title": "Multi-Omics Drug-Repurposing Evidence Growth Study",
+      "tool_name": "VSDMultiOmicResponseSignatureById",
+      "verification_cases": 3
+    }
+  ],
+  "title": "Five-Domain ToolUniverse VSD Growth Evaluation Portfolio",
+  "version": 1
+}

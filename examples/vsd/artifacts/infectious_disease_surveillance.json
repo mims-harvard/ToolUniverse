@@ -1,0 +1,247 @@
+{
+  "answer": "Yes. Sequence and taxonomy capabilities stayed in place; one bounded aggregate cluster operation passed the full review and lifecycle path, with provider drift disabling fresh loading until explicit recovery.",
+  "audit_sha256": "409cf2f88a547e2573f0cc1a3ed87f724edaef12272b7d9a613004c31fb11a3c",
+  "candidate_review": {
+    "auth": {
+      "header": "X-Surveillance-Key",
+      "scheme_name": "reviewedKey",
+      "type": "api_key_header"
+    },
+    "catalog_candidate_execution_allowed": false,
+    "catalog_candidate_id": "e86667ac633f676c",
+    "openapi_candidate_id": "58ddddd93b798469",
+    "openapi_candidate_sha256": "58ddddd93b798469d65aa62b64d1aea638e398f1f6c3f9900c1563e84f8fcf65",
+    "source_document_sha256": "c11c1cfb2a8c0387e7df0a4842cb8cee49be4452c9b7db779c14c532484d1768"
+  },
+  "decision_outputs": [
+    "which sequence gaps require follow-up",
+    "which lineage statements are supported only at aggregate level",
+    "which quality flags must accompany any incident brief"
+  ],
+  "end_to_end_assertions": {
+    "assessment_does_not_auto_suspend": true,
+    "breaking_drift_is_detected": true,
+    "candidate_is_inert_and_authenticated": true,
+    "credential_reference_excludes_secret_value": true,
+    "credential_rotation_preserves_operation_identity": true,
+    "demand_closure_is_explicit": true,
+    "discovery_candidate_is_inert": true,
+    "existing_registry_capabilities_are_reused": true,
+    "fresh_runtime_executes_all_three_records": true,
+    "initial_provider_specific_capability_is_missing": true,
+    "missing_credential_fails_before_transport": true,
+    "only_gap_routes_to_external_discovery": true,
+    "private_demand_is_repeated_ranked_and_sanitized": true,
+    "provider_transport_is_exact_and_bounded": true,
+    "publication_is_absent_until_explicit_load": true,
+    "published_capability_resolves_exactly": true,
+    "repaired_contract_requires_explicit_reactivation": true,
+    "replanning_reuses_published_tool": true,
+    "secret_values_are_absent_from_artifacts": true,
+    "suspension_prevents_fresh_loading": true,
+    "three_representative_verification_cases_pass": true,
+    "unapproved_draft_cannot_publish": true
+  },
+  "format": "vsd_growth_value_case_study_v1",
+  "initial_gap": {
+    "capability_id": "e2177be36ee07ae8",
+    "classification": "missing",
+    "gap_step": "jurisdictional_cluster",
+    "next_interface": "VSDDiscoverAPICandidates",
+    "plan_id": "4f055c46cdfe1f56",
+    "plan_sha256": "4f055c46cdfe1f568f081a1e8ad6e926ae4ef0f7127d8985c57a5aaf92986e58"
+  },
+  "interpretation_boundary": "The deterministic records contain no individual data and do not establish transmission direction, outbreak magnitude, or public-health guidance.",
+  "lifecycle": {
+    "activation_event_sha256": "83e0af6eeeece1b95bf27c2de51e98f00583529af1e6e1c744138b6bac45d57f",
+    "breaking_assessment_sha256": "5fd74dbcf5f72d7acedadf69ad4919b991e146888c65def360ae8e50b5b41ec1",
+    "final_loaded_tools": [
+      "VSDPathogenClusterEvidenceById"
+    ],
+    "repaired_assessment_sha256": "ec402e0b6484cfec7731a43b0817e38da5c64f6be0e83b68fcf02e7249f5d58c",
+    "suspended_loaded_tools": [],
+    "suspension_event_sha256": "397eab7013fa8c8bb267b061c9267afb520996443d346271f8ff5b48210fd263",
+    "unchanged_assessment_sha256": "f9a97ff2e1c097a808f37c24eb374447d310227ff032907061ddb2d28b8fdecd"
+  },
+  "negative_controls": {
+    "breaking_assessment_did_not_change_state": true,
+    "missing_credential_rejected_before_transport": true,
+    "verified_but_unapproved_publish_rejected": true
+  },
+  "private_demand": {
+    "closure_ledger_sha256": "4536719c6cbeebfbabe82a9d3c8e83128470701aa10c0cb115f70ba6735738a0",
+    "demand_id": "2f2b085f253e8ac9",
+    "observation_count": 3,
+    "priority_score": 15,
+    "proposal_id": "0f6e7505d1e6b3df",
+    "proposal_sha256": "d29703f28dc56c666bb7a893999dd923827bd168da5b03e099001b88a1e144c6",
+    "transmission": "none; this file was written locally for explicit human review"
+  },
+  "promotion": {
+    "approval_sha256": "4420acbbded6d96368e99539befdad43b27d4f9df2a9308b053f34b5f84b7e68",
+    "draft_sha256": "321befbd570d0390b14ca97a31c2997abafac2cf427a3237b4697e4bcddfd3d6",
+    "operation_sha256": "626c2549f38f42eeb16eadbe8af09aae2e05e99c2ec6cbbb605700989820f75d",
+    "publication_sha256": "4ab48a1e4d1c9b48115d04110f6ce42c176830f56024fe7093ab5e4457879161",
+    "tool_name": "VSDPathogenClusterEvidenceById",
+    "verification_case_count": 3,
+    "verification_sha256": "528c9df77dba6b47dded8748c2bd5a9c893eb16857b0875ad753f35900a51a1c"
+  },
+  "registry_reuse": {
+    "outbreak_literature": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "BGPT_search_paper_evidence",
+        "BioGRID_get_ptms",
+        "BioGRID_search_by_pubmed",
+        "DisProt_search",
+        "EuropePMC_Guidelines_Search"
+      ]
+    },
+    "sequences": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "NCBIDatasets_get_sequence_reports",
+        "AMPSphere_get_family",
+        "NCBI_get_sequence",
+        "NCBI_SRA_search_runs",
+        "proteins_api_get_epitopes"
+      ]
+    },
+    "taxonomy": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "RCSBGraphQL_get_polymer_entity",
+        "ENCORI_get_RNA_RNA_interactions",
+        "euhealthinfo_search_diabetes_epidemiology_registry",
+        "NCBI_SRA_search_runs",
+        "VEuPathDB_search_genes_by_organism"
+      ]
+    }
+  },
+  "research_question": "Can an outbreak research workflow reuse sequence and taxonomy tools while adding one reviewed jurisdictional cluster summary without exposing individual records or accepting an unreviewed live event stream?",
+  "runtime_evidence": {
+    "credential_slots": [
+      "initial",
+      "initial",
+      "initial",
+      "initial",
+      "rotated",
+      "rotated"
+    ],
+    "expanded_registry_classification": "existing_exact",
+    "operation_sha256": "626c2549f38f42eeb16eadbe8af09aae2e05e99c2ec6cbbb605700989820f75d",
+    "provider_call_count": 6,
+    "record_ids": [
+      "OUT-H5N1-01",
+      "OUT-MPXV-01",
+      "OUT-NIPAH-01"
+    ],
+    "records": [
+      {
+        "case_count": 16,
+        "cluster_id": "OUT-H5N1-01",
+        "lineages": [
+          "2.3.4.4b"
+        ],
+        "mutation_markers": [
+          "PB2 E627K absent",
+          "HA marker under review"
+        ],
+        "pathogen": "Influenza A H5N1",
+        "public_health_actions": [
+          "cross-sector review",
+          "continued sampling"
+        ],
+        "quality_flags": [
+          "aggregate fixture",
+          "host mix recorded"
+        ],
+        "region": "Region C",
+        "sample_window": "2026-04-10/2026-05-10",
+        "sequence_count": 14,
+        "taxonomy_id": "11320"
+      },
+      {
+        "case_count": 28,
+        "cluster_id": "OUT-MPXV-01",
+        "lineages": [
+          "clade IIb"
+        ],
+        "mutation_markers": [
+          "APOBEC-context marker set"
+        ],
+        "pathogen": "Mpox virus",
+        "public_health_actions": [
+          "enhanced sequencing",
+          "contact review"
+        ],
+        "quality_flags": [
+          "aggregate fixture",
+          "nine cases unsequenced"
+        ],
+        "region": "Region A",
+        "sample_window": "2026-05-01/2026-05-21",
+        "sequence_count": 19,
+        "taxonomy_id": "10244"
+      },
+      {
+        "case_count": 11,
+        "cluster_id": "OUT-NIPAH-01",
+        "lineages": [
+          "Bangladesh lineage-like"
+        ],
+        "mutation_markers": [
+          "no reviewed escape marker"
+        ],
+        "pathogen": "Nipah virus",
+        "public_health_actions": [
+          "diagnostic review",
+          "sequence follow-up"
+        ],
+        "quality_flags": [
+          "aggregate fixture",
+          "short window"
+        ],
+        "region": "Region B",
+        "sample_window": "2026-06-03/2026-06-18",
+        "sequence_count": 7,
+        "taxonomy_id": "121791"
+      }
+    ],
+    "replanned_gap_classification": "existing_exact"
+  },
+  "scientific_value": "An incident-analysis workflow can connect public sequence resources to a narrow reviewed cluster feed while retaining sample windows, coverage, quality flags, and action provenance needed for cautious interpretation.",
+  "study_id": "infectious_disease_surveillance",
+  "title": "Infectious-Disease Genomic Surveillance Growth Study",
+  "tooluniverse_alignment": {
+    "official_references": [
+      {
+        "label": "ToolUniverse overview",
+        "relevance": "ToolUniverse standardizes scientific tools for agents, Python, CLI, and MCP use.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/"
+      },
+      {
+        "label": "Scientific workflow guidance",
+        "relevance": "ToolUniverse workflows combine existing tools for disease research, drug discovery, genomics, and literature synthesis.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html"
+      },
+      {
+        "label": "AI agent skills catalog",
+        "relevance": "The five studies align with documented precision-oncology, safety, rare-disease, infectious-disease, and multi-omics workflows.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/skills_showcase.html"
+      },
+      {
+        "label": "Published drug-discovery case structure",
+        "relevance": "The official case study uses target selection, characterization, drug selection, prediction, IP review, and human review as a multi-stage model.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/tooluniverse_case_study.html"
+      }
+    ],
+    "registry_tool_count": 2744,
+    "skills": [
+      "infectious disease",
+      "sequence retrieval",
+      "phylogenetics"
+    ]
+  },
+  "version": 1
+}

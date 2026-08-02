@@ -1,0 +1,265 @@
+{
+  "answer": "Yes. Existing phenotype and trial resources were preserved, and the missing cohort trajectory became a narrow, verified, lifecycle-managed tool rather than a generic registry proxy.",
+  "audit_sha256": "56c48e3e12025bedae6c85a9345b5ee9bcc0bec5b44934aebf7cf6335bc340e0",
+  "candidate_review": {
+    "auth": {
+      "header": "X-Natural-History-Key",
+      "scheme_name": "reviewedKey",
+      "type": "api_key_header"
+    },
+    "catalog_candidate_execution_allowed": false,
+    "catalog_candidate_id": "ffbc2017b7ab0d7a",
+    "openapi_candidate_id": "a3f86282c44cc8c9",
+    "openapi_candidate_sha256": "a3f86282c44cc8c947824118cd06e3ab4919ea9103d752ebd54176f36b093de4",
+    "source_document_sha256": "761941cdeea7ab5ff87e12e48ecb8ca20d976ac2ed950cea1b154185f5af2311"
+  },
+  "decision_outputs": [
+    "whether timepoints and outcomes can be harmonized",
+    "which genotype strata are underrepresented",
+    "which attrition and treatment-era caveats affect feasibility"
+  ],
+  "end_to_end_assertions": {
+    "assessment_does_not_auto_suspend": true,
+    "breaking_drift_is_detected": true,
+    "candidate_is_inert_and_authenticated": true,
+    "credential_reference_excludes_secret_value": true,
+    "credential_rotation_preserves_operation_identity": true,
+    "demand_closure_is_explicit": true,
+    "discovery_candidate_is_inert": true,
+    "existing_registry_capabilities_are_reused": true,
+    "fresh_runtime_executes_all_three_records": true,
+    "initial_provider_specific_capability_is_missing": true,
+    "missing_credential_fails_before_transport": true,
+    "only_gap_routes_to_external_discovery": true,
+    "private_demand_is_repeated_ranked_and_sanitized": true,
+    "provider_transport_is_exact_and_bounded": true,
+    "publication_is_absent_until_explicit_load": true,
+    "published_capability_resolves_exactly": true,
+    "repaired_contract_requires_explicit_reactivation": true,
+    "replanning_reuses_published_tool": true,
+    "secret_values_are_absent_from_artifacts": true,
+    "suspension_prevents_fresh_loading": true,
+    "three_representative_verification_cases_pass": true,
+    "unapproved_draft_cannot_publish": true
+  },
+  "format": "vsd_growth_value_case_study_v1",
+  "initial_gap": {
+    "capability_id": "c40e7fdd8d9eea4a",
+    "classification": "missing",
+    "gap_step": "longitudinal_trajectory",
+    "next_interface": "VSDDiscoverAPICandidates",
+    "plan_id": "90e2019e68a386fd",
+    "plan_sha256": "90e2019e68a386fd791e15cb0673a6953e10f2157c0b18825df455fab4f86813"
+  },
+  "interpretation_boundary": "The fixture contains aggregate cohort summaries only. It cannot diagnose a person, estimate individual prognosis, or validate a clinical endpoint.",
+  "lifecycle": {
+    "activation_event_sha256": "b89eea24f174b651557b3dd2fef94fea718a1abca2ba00abf14b94bd8b6e2d38",
+    "breaking_assessment_sha256": "9c13df5d4055660b8edec5ee3ea1951cab80445a6d387c14aebee70bb666b481",
+    "final_loaded_tools": [
+      "VSDRareDiseaseTrajectoryByCohort"
+    ],
+    "repaired_assessment_sha256": "cdb46da487698fae2272cca22e0712a3d5958444052e74b6f980892dd97db025",
+    "suspended_loaded_tools": [],
+    "suspension_event_sha256": "fb3e9f3ac32bb7fe4a76038d0e700fa256b7fdf81dc49845d00539f09fff7290",
+    "unchanged_assessment_sha256": "a823c6ba21c45eabf6935a8924da490f2325f002130c3958e46e19a24c18a783"
+  },
+  "negative_controls": {
+    "breaking_assessment_did_not_change_state": true,
+    "missing_credential_rejected_before_transport": true,
+    "verified_but_unapproved_publish_rejected": true
+  },
+  "private_demand": {
+    "closure_ledger_sha256": "4536719c6cbeebfbabe82a9d3c8e83128470701aa10c0cb115f70ba6735738a0",
+    "demand_id": "312bd5b3dda526ca",
+    "observation_count": 3,
+    "priority_score": 15,
+    "proposal_id": "a2012786131680e7",
+    "proposal_sha256": "fabad798410d0b63b80a99ea3bdeb712b1037723e101244cce3de530be7709fb",
+    "transmission": "none; this file was written locally for explicit human review"
+  },
+  "promotion": {
+    "approval_sha256": "2c5b65a6b853e91995351adb9c6f6f29b2bd4c32180dc98a87357f8753f9ab8a",
+    "draft_sha256": "e767cf4d1507675528404e5c2881e4a54556729f3bce503ed562566815570360",
+    "operation_sha256": "f29563af439b54bbe2998fb5a695cc932c8917104828e303bcbbaee8341ff5ca",
+    "publication_sha256": "3a495b155f01a714145f684895c2e0b9d816b0bcb6bd856d802fae3689346849",
+    "tool_name": "VSDRareDiseaseTrajectoryByCohort",
+    "verification_case_count": 3,
+    "verification_sha256": "9496581825e1d96b4f45be6423f7445def5d34682ee6292f471e3575760f5eb0"
+  },
+  "registry_reuse": {
+    "disease_genes": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "Alliance_get_disease_genes",
+        "DisGeNET_get_disease_genes",
+        "DisGeNET_search_disease",
+        "ensembl_vep_region",
+        "EnsemblPheno_get_by_term"
+      ]
+    },
+    "phenotype_annotations": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "HPO_get_disease_annotations",
+        "Mondo_get_disease_phenotypes",
+        "MyDisease_get_disease",
+        "Orphanet_get_phenotypes",
+        "Alliance_get_disease_genes"
+      ]
+    },
+    "trial_landscape": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "ClinicalTrials_get_field_values",
+        "ClinicalTrials_search_by_intervention",
+        "ClinicalTrials_search_by_sponsor",
+        "ClinicalTrials_search_studies",
+        "ImmPort_search_studies"
+      ]
+    }
+  },
+  "research_question": "Can a rare-disease workflow reuse HPO, Monarch, and trial tools while adding one reviewed longitudinal cohort trajectory needed for endpoint and feasibility research?",
+  "runtime_evidence": {
+    "credential_slots": [
+      "initial",
+      "initial",
+      "initial",
+      "initial",
+      "rotated",
+      "rotated"
+    ],
+    "expanded_registry_classification": "existing_exact",
+    "operation_sha256": "f29563af439b54bbe2998fb5a695cc932c8917104828e303bcbbaee8341ff5ca",
+    "provider_call_count": 6,
+    "record_ids": [
+      "NH-ALS",
+      "NH-DMD",
+      "NH-SMA"
+    ],
+    "records": [
+      {
+        "attrition_percent": 18.0,
+        "cohort_id": "NH-ALS",
+        "disease": "Amyotrophic lateral sclerosis",
+        "genotypes": [
+          "C9orf72",
+          "SOD1",
+          "sporadic"
+        ],
+        "motor_score_medians": [
+          40.0,
+          36.5,
+          31.0,
+          26.0
+        ],
+        "phenotype_terms": [
+          "HP:0007354",
+          "HP:0002460"
+        ],
+        "timepoints_months": [
+          0,
+          6,
+          12,
+          18
+        ],
+        "trial_readiness_flags": [
+          "common scale",
+          "genotype strata incomplete"
+        ]
+      },
+      {
+        "attrition_percent": 14.0,
+        "cohort_id": "NH-DMD",
+        "disease": "Duchenne muscular dystrophy",
+        "genotypes": [
+          "DMD exon 45-55 deletion",
+          "other DMD variants"
+        ],
+        "motor_score_medians": [
+          27.0,
+          25.0,
+          21.0,
+          16.0
+        ],
+        "phenotype_terms": [
+          "HP:0003323",
+          "HP:0003560"
+        ],
+        "timepoints_months": [
+          0,
+          12,
+          24,
+          36
+        ],
+        "trial_readiness_flags": [
+          "steroid exposure recorded",
+          "age stratification required"
+        ]
+      },
+      {
+        "attrition_percent": 11.0,
+        "cohort_id": "NH-SMA",
+        "disease": "Spinal muscular atrophy",
+        "genotypes": [
+          "SMN1 deletion",
+          "SMN2 copy strata"
+        ],
+        "motor_score_medians": [
+          22.0,
+          21.0,
+          19.5,
+          17.0
+        ],
+        "phenotype_terms": [
+          "HP:0001290",
+          "HP:0001324"
+        ],
+        "timepoints_months": [
+          0,
+          6,
+          12,
+          24
+        ],
+        "trial_readiness_flags": [
+          "treatment-era confounding",
+          "copy-number strata available"
+        ]
+      }
+    ],
+    "replanned_gap_classification": "existing_exact"
+  },
+  "scientific_value": "Researchers can compare harmonized cohort trajectories across ALS, DMD, and SMA while retaining cohort definitions, attrition, and readiness flags needed to judge whether downstream comparisons are defensible.",
+  "study_id": "rare_disease_natural_history",
+  "title": "Rare-Disease Natural-History Cohort Growth Study",
+  "tooluniverse_alignment": {
+    "official_references": [
+      {
+        "label": "ToolUniverse overview",
+        "relevance": "ToolUniverse standardizes scientific tools for agents, Python, CLI, and MCP use.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/"
+      },
+      {
+        "label": "Scientific workflow guidance",
+        "relevance": "ToolUniverse workflows combine existing tools for disease research, drug discovery, genomics, and literature synthesis.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html"
+      },
+      {
+        "label": "AI agent skills catalog",
+        "relevance": "The five studies align with documented precision-oncology, safety, rare-disease, infectious-disease, and multi-omics workflows.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/skills_showcase.html"
+      },
+      {
+        "label": "Published drug-discovery case structure",
+        "relevance": "The official case study uses target selection, characterization, drug selection, prediction, IP review, and human review as a multi-stage model.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/tooluniverse_case_study.html"
+      }
+    ],
+    "registry_tool_count": 2744,
+    "skills": [
+      "rare disease diagnosis",
+      "clinical trial design",
+      "disease research"
+    ]
+  },
+  "version": 1
+}

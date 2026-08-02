@@ -1,0 +1,240 @@
+{
+  "answer": "Yes. ToolUniverse retained its FDA coverage, isolated the missing pregnancy-signal series, verified three exposure records, and governed the added operation through credentials, explicit loading, and drift.",
+  "audit_sha256": "3f64603603eff7024d6756e42cbfbd985a62951f956a8e56fdf2699492ce9cfe",
+  "candidate_review": {
+    "auth": {
+      "header": "X-Pregnancy-Safety-Key",
+      "scheme_name": "reviewedKey",
+      "type": "api_key_header"
+    },
+    "catalog_candidate_execution_allowed": false,
+    "catalog_candidate_id": "a9300311ca7e1dfa",
+    "openapi_candidate_id": "ef3bf8743b99121e",
+    "openapi_candidate_sha256": "ef3bf8743b99121ee181c129dc4c6f41bf3610824e0e76ba760965b47a9ea7e6",
+    "source_document_sha256": "de7770a00f7c9f697de7586b50f06931716338b56dd41a2233bae338bb8f742a"
+  },
+  "decision_outputs": [
+    "which signals need formal epidemiologic follow-up",
+    "which label sections should be compared",
+    "which limitations prevent causal interpretation"
+  ],
+  "end_to_end_assertions": {
+    "assessment_does_not_auto_suspend": true,
+    "breaking_drift_is_detected": true,
+    "candidate_is_inert_and_authenticated": true,
+    "credential_reference_excludes_secret_value": true,
+    "credential_rotation_preserves_operation_identity": true,
+    "demand_closure_is_explicit": true,
+    "discovery_candidate_is_inert": true,
+    "existing_registry_capabilities_are_reused": true,
+    "fresh_runtime_executes_all_three_records": true,
+    "initial_provider_specific_capability_is_missing": true,
+    "missing_credential_fails_before_transport": true,
+    "only_gap_routes_to_external_discovery": true,
+    "private_demand_is_repeated_ranked_and_sanitized": true,
+    "provider_transport_is_exact_and_bounded": true,
+    "publication_is_absent_until_explicit_load": true,
+    "published_capability_resolves_exactly": true,
+    "repaired_contract_requires_explicit_reactivation": true,
+    "replanning_reuses_published_tool": true,
+    "secret_values_are_absent_from_artifacts": true,
+    "suspension_prevents_fresh_loading": true,
+    "three_representative_verification_cases_pass": true,
+    "unapproved_draft_cannot_publish": true
+  },
+  "format": "vsd_growth_value_case_study_v1",
+  "initial_gap": {
+    "capability_id": "782c7883d87bcf39",
+    "classification": "missing",
+    "gap_step": "pregnancy_signal_series",
+    "next_interface": "VSDDiscoverAPICandidates",
+    "plan_id": "890e49af33fd80a8",
+    "plan_sha256": "890e49af33fd80a84ba623d370a03b5594036d5d32870ba76f53dcc0a54a1cd0"
+  },
+  "interpretation_boundary": "Reporting odds ratios in these deterministic fixtures are not incidence rates, causal estimates, regulatory findings, or prescribing advice.",
+  "lifecycle": {
+    "activation_event_sha256": "4282318fded8c959baa314dcb1b6fbf28360017b2b47b4aa19f66fb48bf0cbcd",
+    "breaking_assessment_sha256": "ccbb217123d8888e5fc4ed5de011a571928229847952841ded91d366452b2262",
+    "final_loaded_tools": [
+      "VSDPregnancySafetySignalByExposure"
+    ],
+    "repaired_assessment_sha256": "bf5f63e1fb5dde67bef8f316b5c4c549e72c5313b653d6dd21f568329b522f21",
+    "suspended_loaded_tools": [],
+    "suspension_event_sha256": "f13286f930812ea6fb21894cd913729214a5a74d2d772999d8f219c10191ceab",
+    "unchanged_assessment_sha256": "7bdb19c73a6e7a460464163e59aeb219002777ee11b1657b31926f0985d65dec"
+  },
+  "negative_controls": {
+    "breaking_assessment_did_not_change_state": true,
+    "missing_credential_rejected_before_transport": true,
+    "verified_but_unapproved_publish_rejected": true
+  },
+  "private_demand": {
+    "closure_ledger_sha256": "4536719c6cbeebfbabe82a9d3c8e83128470701aa10c0cb115f70ba6735738a0",
+    "demand_id": "26bd5f1bce9232c7",
+    "observation_count": 3,
+    "priority_score": 15,
+    "proposal_id": "78618dd99fb3ca21",
+    "proposal_sha256": "a2a4fc66b63bd7d6374f3fe99d5532cfe35fa544be435ac23bf0e62cf5661082",
+    "transmission": "none; this file was written locally for explicit human review"
+  },
+  "promotion": {
+    "approval_sha256": "0a7283f265add32be9d3e2aa039f9cb2f9ed22acf1b0a4e9140d9375d596a04a",
+    "draft_sha256": "6031db7969587d875a0f999e5ddb6f96a2424de75a9ebf3f9fd061ae41370d8b",
+    "operation_sha256": "c095928f344e236f546d4fd462e776033a9b84e05b65ad457a5bb531ecfb06ad",
+    "publication_sha256": "23f087262595181336c827c6d93edf1609094502d30900bc092f944da048d21d",
+    "tool_name": "VSDPregnancySafetySignalByExposure",
+    "verification_case_count": 3,
+    "verification_sha256": "370e5011ff85e0951673f92499e2e549b3eaf19e0a04a46922708eea2da48b96"
+  },
+  "registry_reuse": {
+    "faers_reports": {
+      "classification": "existing_exact",
+      "top_matches": [
+        "FAERS_search_adverse_event_reports",
+        "FAERS_search_reports_by_drug_and_indication",
+        "FAERS_search_reports_by_drug_and_outcome",
+        "FAERS_search_reports_by_drug_and_reaction",
+        "FAERS_search_reports_by_drug_combination"
+      ]
+    },
+    "label_warnings": {
+      "classification": "existing_exact",
+      "top_matches": [
+        "FDA_get_adverse_reactions_by_drug_name",
+        "FDA_get_drug_label",
+        "FDA_get_drug_label_info_by_field_value",
+        "FDA_get_drug_name_by_environmental_warning",
+        "FDA_get_drug_name_by_pregnancy_or_breastfeeding_info"
+      ]
+    },
+    "safety_literature": {
+      "classification": "existing_partial",
+      "top_matches": [
+        "PubTator3_GetEntityRelations",
+        "BioGRID_get_ptms",
+        "MedicalLiteratureReviewer",
+        "EpiGraphDB_get_literature_evidence",
+        "FDA_get_drug_label_info_by_field_value"
+      ]
+    }
+  },
+  "research_question": "Can a drug-safety workflow reuse FAERS and FDA label tools while adding one reviewed longitudinal pregnancy-exposure signal operation without claiming that spontaneous reports prove causality?",
+  "runtime_evidence": {
+    "credential_slots": [
+      "initial",
+      "initial",
+      "initial",
+      "initial",
+      "rotated",
+      "rotated"
+    ],
+    "expanded_registry_classification": "existing_exact",
+    "operation_sha256": "c095928f344e236f546d4fd462e776033a9b84e05b65ad457a5bb531ecfb06ad",
+    "provider_call_count": 6,
+    "record_ids": [
+      "EXP-ISOTRETINOIN",
+      "EXP-SEMAGLUTIDE",
+      "EXP-VALPROATE"
+    ],
+    "records": [
+      {
+        "comparator_cases": 488,
+        "confidence_interval": [
+          2.19,
+          3.81
+        ],
+        "evidence_limitations": [
+          "no exposed-pregnancy denominator",
+          "prevention-program adherence unavailable"
+        ],
+        "exposed_cases": 121,
+        "exposure_id": "EXP-ISOTRETINOIN",
+        "ingredient": "isotretinoin",
+        "reporting_odds_ratio": 2.89,
+        "reporting_window": "2020-2025",
+        "seriousness_categories": [
+          "congenital anomaly"
+        ],
+        "signal_status": "established_context"
+      },
+      {
+        "comparator_cases": 512,
+        "confidence_interval": [
+          0.81,
+          1.72
+        ],
+        "evidence_limitations": [
+          "stimulated reporting",
+          "missing denominator",
+          "confounding by indication"
+        ],
+        "exposed_cases": 47,
+        "exposure_id": "EXP-SEMAGLUTIDE",
+        "ingredient": "semaglutide",
+        "reporting_odds_ratio": 1.18,
+        "reporting_window": "2022-2025",
+        "seriousness_categories": [
+          "hospitalization",
+          "other serious"
+        ],
+        "signal_status": "monitor"
+      },
+      {
+        "comparator_cases": 488,
+        "confidence_interval": [
+          2.71,
+          4.31
+        ],
+        "evidence_limitations": [
+          "duplicate reports possible",
+          "outcome coding varies"
+        ],
+        "exposed_cases": 193,
+        "exposure_id": "EXP-VALPROATE",
+        "ingredient": "valproate",
+        "reporting_odds_ratio": 3.42,
+        "reporting_window": "2020-2025",
+        "seriousness_categories": [
+          "congenital anomaly",
+          "hospitalization"
+        ],
+        "signal_status": "established_context"
+      }
+    ],
+    "replanned_gap_classification": "existing_exact"
+  },
+  "scientific_value": "Safety researchers can add a narrow institutional or jurisdictional signal feed to an existing FAERS workflow while preserving provenance, denominator caveats, and a reviewable shutdown path.",
+  "study_id": "pregnancy_pharmacovigilance",
+  "title": "Pregnancy Pharmacovigilance Signal Governance Study",
+  "tooluniverse_alignment": {
+    "official_references": [
+      {
+        "label": "ToolUniverse overview",
+        "relevance": "ToolUniverse standardizes scientific tools for agents, Python, CLI, and MCP use.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/"
+      },
+      {
+        "label": "Scientific workflow guidance",
+        "relevance": "ToolUniverse workflows combine existing tools for disease research, drug discovery, genomics, and literature synthesis.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html"
+      },
+      {
+        "label": "AI agent skills catalog",
+        "relevance": "The five studies align with documented precision-oncology, safety, rare-disease, infectious-disease, and multi-omics workflows.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/skills_showcase.html"
+      },
+      {
+        "label": "Published drug-discovery case structure",
+        "relevance": "The official case study uses target selection, characterization, drug selection, prediction, IP review, and human review as a multi-stage model.",
+        "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/en/guide/tooluniverse_case_study.html"
+      }
+    ],
+    "registry_tool_count": 2744,
+    "skills": [
+      "pharmacovigilance",
+      "adverse event detection",
+      "chemical safety"
+    ]
+  },
+  "version": 1
+}
