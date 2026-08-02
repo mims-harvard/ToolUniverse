@@ -1,0 +1,37 @@
+{
+  "result": {
+    "count": 2,
+    "results": [
+      {
+        "id": "eu-rare-disease-outcomes",
+        "resource": "https://data.europa.eu/data/datasets/eu-rare-disease-outcomes",
+        "title": {"en": "European Rare Disease Outcome Measures"},
+        "description": {"en": "Harmonized longitudinal outcome definitions for rare-disease cohorts."},
+        "modified": "2026-05-20T00:00:00Z",
+        "publisher": {"name": "European Rare Disease Research Network"},
+        "categories": [{"label": "Health"}, {"label": "Research"}],
+        "distributions": [
+          {
+            "title": {"en": "Outcome definitions XML"},
+            "description": {"en": "Machine-readable outcome definitions."},
+            "access_url": ["https://research.example.eu/rare-disease/outcomes.xml"],
+            "format": {"label": "XML"},
+            "media_type": "application/xml",
+            "license": {"label": "CC-BY-4.0"}
+          }
+        ]
+      },
+      {
+        "id": "archive-only",
+        "title": {"en": "Archive only"},
+        "distributions": [
+          {
+            "access_url": ["https://research.example.eu/archive.zip"],
+            "format": {"label": "ZIP"},
+            "media_type": "application/zip"
+          }
+        ]
+      }
+    ]
+  }
+}

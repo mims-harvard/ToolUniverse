@@ -181,7 +181,7 @@
   {
     "name": "VSDDiscoverAPICandidates",
     "type": "VSDDiscoverAPICandidates",
-    "description": "Search the fixed Socrata public-data catalog for API-ready datasets related to a research demand. Returned metadata is untrusted and non-executable until separately reviewed, verified, and approved.",
+    "description": "Search one or more explicit public catalogs for API-ready data endpoints and OpenAPI specifications related to a research demand. Defaults to Socrata for compatibility; multi-catalog results are deduplicated against each other and the ToolUniverse registry. Returned metadata is untrusted and non-executable until separately reviewed, verified, and approved.",
     "category": "special_tools",
     "cacheable": true,
     "mcp_annotations": {
@@ -203,6 +203,22 @@
           "maximum": 20,
           "default": 10,
           "description": "Maximum number of non-executable candidates to return."
+        },
+        "providers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["socrata", "datagov", "data_europa", "ckan_data_gov_uk", "apis_guru"]
+          },
+          "description": "Optional explicit catalog set. Omit for the backward-compatible Socrata search; provide several IDs for normalized multi-catalog discovery."
+        },
+        "exclude_registered": {
+          "type": "boolean",
+          "default": true,
+          "description": "For multi-catalog discovery, remove query-free endpoint candidates already covered exactly by a registered ToolUniverse tool."
         }
       },
       "required": ["query"],
@@ -212,9 +228,17 @@
       "type": "object",
       "properties": {
         "query": {"type": "string"},
+        "requested_providers": {"type": "array", "items": {"type": "string"}},
         "candidates": {"type": "array"},
         "candidate_count": {"type": "integer"},
         "catalog_result_count": {"type": ["integer", "null"]},
+        "provider_results": {"type": "array"},
+        "successful_provider_count": {"type": "integer"},
+        "failed_provider_count": {"type": "integer"},
+        "cross_catalog_duplicate_count": {"type": "integer"},
+        "registered_duplicate_count": {"type": "integer"},
+        "registered_duplicates": {"type": "array"},
+        "registry_tool_count": {"type": "integer"},
         "boundary": {"type": "string"},
         "provenance": {"type": "object"}
       },

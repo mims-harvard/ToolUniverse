@@ -1,0 +1,35 @@
+{
+  "rare.example.org": {
+    "preferred": "v2",
+    "versions": {
+      "v2": {
+        "added": "2026-04-01T00:00:00Z",
+        "updated": "2026-07-03T00:00:00Z",
+        "swaggerUrl": "https://api.apis.guru/v2/specs/rare.example.org/v2.json",
+        "link": "https://api.apis.guru/v2/rare.example.org/v2.json",
+        "info": {
+          "title": "Rare Disease Registry API",
+          "description": "Search longitudinal ALS cohorts, outcomes, and genotype strata.",
+          "version": "v2",
+          "license": {"name": "CC-BY-4.0"},
+          "x-apisguru-categories": ["health", "open_data"]
+        },
+        "externalDocs": {"url": "https://rare.example.org/api/docs"}
+      }
+    }
+  },
+  "weather.example.org": {
+    "preferred": "v1",
+    "versions": {
+      "v1": {
+        "updated": "2026-06-01T00:00:00Z",
+        "swaggerUrl": "https://api.apis.guru/v2/specs/weather.example.org/v1.json",
+        "info": {
+          "title": "Weather API",
+          "description": "Daily weather observations.",
+          "version": "v1"
+        }
+      }
+    }
+  }
+}

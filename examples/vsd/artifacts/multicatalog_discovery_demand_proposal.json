@@ -1,0 +1,43 @@
+{
+  "created_at": "2026-08-04T10:00:00+00:00",
+  "export_sha256": "49785a274d6bc170f6317b8160fb975f39503b0abc76f30295ea639658868e40",
+  "proposals": [
+    {
+      "capability": {
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [
+          "cohort_id",
+          "disease",
+          "participants",
+          "follow_up_months",
+          "progression_score_change",
+          "genes",
+          "specialist_access_days",
+          "active_trial_ids"
+        ],
+        "provider": "data.example.gov",
+        "required_inputs": [
+          "cohort_id"
+        ]
+      },
+      "observation_counts": {
+        "exact": 0,
+        "missing": 3,
+        "partial": 0
+      },
+      "priority_score": 15,
+      "proposal_id": "ee506c220c90ee7c",
+      "public_summary": "Rare disease cohort progression genotype outcomes and specialist access",
+      "recommended_next_step": "review_external_api_candidates",
+      "total_observations": 3,
+      "unmet_rate": 1.0
+    }
+  ],
+  "review": {
+    "decision_note": "Selected after three independent workflow preflights found the same missing longitudinal-cohort operation.",
+    "reviewed_by": "Multi-Catalog Case Study Reviewer"
+  },
+  "transmission": "none; this file was written locally for explicit human review",
+  "version": 1
+}

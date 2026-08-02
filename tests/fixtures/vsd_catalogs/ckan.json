@@ -1,0 +1,39 @@
+{
+  "success": true,
+  "result": {
+    "count": 2,
+    "results": [
+      {
+        "id": "uk-als-services",
+        "name": "uk-als-services",
+        "title": "Motor Neurone Disease Specialist Services",
+        "notes": "Specialist service locations and referral coverage.",
+        "metadata_modified": "2026-06-15T00:00:00Z",
+        "license_title": "Open Government Licence",
+        "organization": {"title": "Example NHS Authority"},
+        "tags": [{"name": "motor neurone disease"}, {"name": "specialist services"}],
+        "resources": [
+          {
+            "name": "Specialist services JSON",
+            "url": "https://health.example.gov/mnd/services.json",
+            "format": "JSON",
+            "mimetype": "application/json"
+          }
+        ]
+      },
+      {
+        "id": "unsafe-resource",
+        "name": "unsafe-resource",
+        "title": "Unsafe resource",
+        "resources": [
+          {
+            "name": "Private endpoint",
+            "url": "http://127.0.0.1/private.json",
+            "format": "JSON",
+            "mimetype": "application/json"
+          }
+        ]
+      }
+    ]
+  }
+}

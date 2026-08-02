@@ -1,0 +1,655 @@
+{
+  "answer": "Yes. Five verified catalogs yielded five relevant inert candidates; duplicate US listings converged on one endpoint, an administrator reviewed its contract, three disease cohorts passed verification, and the published tool closed the workflow gap.",
+  "audit_sha256": "7479851232c8a36a3cf641cdee17b7fa13ec4975c70cb692d6d92daa9d494161",
+  "catalog_search": {
+    "candidate_count": 5,
+    "candidates": [
+      {
+        "api_endpoint": "",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "a842b765b256e4be",
+        "candidate_kind": "openapi_specification",
+        "catalog_domain": "api.apis.guru",
+        "catalog_provider": "apis_guru",
+        "catalog_record_id": "rare.example.org:v2",
+        "catalog_sources": [
+          {
+            "documentation_url": "https://rare.example.org/api/docs",
+            "provider": "apis_guru",
+            "record_id": "rare.example.org:v2"
+          }
+        ],
+        "dataset_id": "rare.example.org:v2",
+        "description": "Search longitudinal ALS cohorts, outcomes, and genotype strata.",
+        "documentation_url": "https://rare.example.org/api/docs",
+        "execution_allowed": false,
+        "fields": [],
+        "interface_type": "openapi",
+        "license": "CC-BY-4.0",
+        "media_type": "application/vnd.oai.openapi+json",
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Rare Disease Registry API",
+        "provenance_label": "official_openapi_directory",
+        "publisher": "rare.example.org",
+        "registry_coverage": {
+          "classification": "not_assessed",
+          "matches": [],
+          "reason": "No query-free operation endpoint was available."
+        },
+        "response_format": "json",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 0.0,
+          "matched_query_terms": 5,
+          "metadata_completeness": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.625,
+          "query_term_count": 8,
+          "total": 0.7125
+        },
+        "specification_url": "https://api.apis.guru/v2/specs/rare.example.org/v2.json",
+        "tags": [
+          "health",
+          "open_data"
+        ],
+        "updated_at": "2026-07-03T00:00:00Z"
+      },
+      {
+        "api_endpoint": "https://data.example.gov/resource/abcd-1234.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "b732a65feecf080e",
+        "candidate_kind": "data_endpoint",
+        "catalog_domain": "data.example.gov",
+        "catalog_provider": "socrata",
+        "catalog_record_id": "abcd-1234",
+        "catalog_sources": [
+          {
+            "documentation_url": "https://catalog.data.gov/dataset/rare-disease-longitudinal-cohort",
+            "provider": "datagov",
+            "record_id": "https://data.example.gov/api/views/abcd-1234"
+          },
+          {
+            "documentation_url": "https://catalog.data.gov/dataset/rare-disease-longitudinal-cohort",
+            "provider": "datagov",
+            "record_id": "https://data.example.gov/api/views/abcd-1234#0"
+          },
+          {
+            "documentation_url": "https://data.example.gov/d/abcd-1234",
+            "provider": "socrata",
+            "record_id": "abcd-1234"
+          }
+        ],
+        "dataset_id": "abcd-1234",
+        "description": "Longitudinal ALS cohort outcomes by visit and genotype.",
+        "documentation_url": "https://data.example.gov/d/abcd-1234",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "Stable cohort",
+            "field": "cohort_id",
+            "json_type": "string",
+            "label": "Cohort ID",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Month",
+            "field": "visit_month",
+            "json_type": "string",
+            "label": "Visit Month",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Scale score",
+            "field": "outcome_score",
+            "json_type": "string",
+            "label": "Outcome Score",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Genotype stratum",
+            "field": "genotype",
+            "json_type": "string",
+            "label": "Genotype",
+            "provider_type": "Text"
+          }
+        ],
+        "interface_type": "soda",
+        "license": "",
+        "media_type": "application/json",
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Rare Disease Longitudinal Cohort",
+        "provenance_label": "official",
+        "publisher": "data.example.gov",
+        "registry_coverage": {
+          "classification": "missing",
+          "matches": [],
+          "registry_sha256": "1079fef71c5bd0a05ba912e79f9aa910d46a3b082006bb4caa72b98e61611d75",
+          "semantic_classification": "missing"
+        },
+        "response_format": "json",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 0.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "matched_query_terms": 6,
+          "metadata_completeness": 0.6667,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.75,
+          "query_term_count": 8,
+          "total": 0.7017
+        },
+        "specification_url": "",
+        "tags": [
+          "ALS",
+          "natural history",
+          "rare disease"
+        ],
+        "updated_at": "2026-07-01T00:00:00Z"
+      },
+      {
+        "api_endpoint": "https://health.example.gov/rare-disease/care-access.csv",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "f9711602da70bb0e",
+        "candidate_kind": "data_endpoint",
+        "catalog_domain": "api.gsa.gov",
+        "catalog_provider": "datagov",
+        "catalog_record_id": "urn:uuid:care-access#0",
+        "catalog_sources": [
+          {
+            "documentation_url": "https://catalog.data.gov/dataset/rare-disease-care-access",
+            "provider": "datagov",
+            "record_id": "urn:uuid:care-access#0"
+          }
+        ],
+        "dataset_id": "urn:uuid:care-access#0",
+        "description": "County specialist access and travel burden.",
+        "documentation_url": "https://catalog.data.gov/dataset/rare-disease-care-access",
+        "execution_allowed": false,
+        "fields": [],
+        "interface_type": "rest",
+        "license": "",
+        "media_type": "text/csv",
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "County care access CSV",
+        "provenance_label": "government_catalog",
+        "publisher": "Example Health Resources Agency",
+        "registry_coverage": {
+          "classification": "missing",
+          "matches": [],
+          "registry_sha256": "1079fef71c5bd0a05ba912e79f9aa910d46a3b082006bb4caa72b98e61611d75",
+          "semantic_classification": "missing"
+        },
+        "response_format": "csv",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 0.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "matched_query_terms": 3,
+          "metadata_completeness": 0.6667,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.375,
+          "query_term_count": 8,
+          "total": 0.5142
+        },
+        "specification_url": "",
+        "tags": [
+          "access",
+          "ALS",
+          "specialist"
+        ],
+        "updated_at": "2026-06-10"
+      },
+      {
+        "api_endpoint": "https://health.example.gov/mnd/services.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "164a411540aafe45",
+        "candidate_kind": "data_endpoint",
+        "catalog_domain": "ckan.publishing.service.gov.uk",
+        "catalog_provider": "ckan_data_gov_uk",
+        "catalog_record_id": "uk-als-services#0",
+        "catalog_sources": [
+          {
+            "documentation_url": "https://data.gov.uk/dataset/uk-als-services",
+            "provider": "ckan_data_gov_uk",
+            "record_id": "uk-als-services#0"
+          }
+        ],
+        "dataset_id": "uk-als-services#0",
+        "description": "Specialist service locations and referral coverage.",
+        "documentation_url": "https://data.gov.uk/dataset/uk-als-services",
+        "execution_allowed": false,
+        "fields": [],
+        "interface_type": "rest",
+        "license": "Open Government Licence",
+        "media_type": "application/json",
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Specialist services JSON",
+        "provenance_label": "government_catalog",
+        "publisher": "Example NHS Authority",
+        "registry_coverage": {
+          "classification": "missing",
+          "matches": [],
+          "registry_sha256": "1079fef71c5bd0a05ba912e79f9aa910d46a3b082006bb4caa72b98e61611d75",
+          "semantic_classification": "missing"
+        },
+        "response_format": "json",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 0.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "matched_query_terms": 2,
+          "metadata_completeness": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.25,
+          "query_term_count": 8,
+          "total": 0.475
+        },
+        "specification_url": "",
+        "tags": [
+          "motor neurone disease",
+          "specialist services"
+        ],
+        "updated_at": "2026-06-15T00:00:00Z"
+      },
+      {
+        "api_endpoint": "https://research.example.eu/rare-disease/outcomes.xml",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "ad83105fdfb9f6ee",
+        "candidate_kind": "data_endpoint",
+        "catalog_domain": "data.europa.eu",
+        "catalog_provider": "data_europa",
+        "catalog_record_id": "eu-rare-disease-outcomes#0",
+        "catalog_sources": [
+          {
+            "documentation_url": "https://data.europa.eu/data/datasets/eu-rare-disease-outcomes",
+            "provider": "data_europa",
+            "record_id": "eu-rare-disease-outcomes#0"
+          }
+        ],
+        "dataset_id": "eu-rare-disease-outcomes#0",
+        "description": "Machine-readable outcome definitions.",
+        "documentation_url": "https://data.europa.eu/data/datasets/eu-rare-disease-outcomes",
+        "execution_allowed": false,
+        "fields": [],
+        "interface_type": "rest",
+        "license": "CC-BY-4.0",
+        "media_type": "application/xml",
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Outcome definitions XML",
+        "provenance_label": "government_catalog",
+        "publisher": "European Rare Disease Research Network",
+        "registry_coverage": {
+          "classification": "missing",
+          "matches": [],
+          "registry_sha256": "1079fef71c5bd0a05ba912e79f9aa910d46a3b082006bb4caa72b98e61611d75",
+          "semantic_classification": "missing"
+        },
+        "response_format": "xml",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 0.0,
+          "exact_phrase": 0.0,
+          "government_domain": 0.0,
+          "matched_query_terms": 2,
+          "metadata_completeness": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.25,
+          "query_term_count": 8,
+          "total": 0.425
+        },
+        "specification_url": "",
+        "tags": [
+          "Health",
+          "Research"
+        ],
+        "updated_at": "2026-05-20T00:00:00Z"
+      }
+    ],
+    "catalog_result_count": 10,
+    "cross_catalog_duplicate_count": 2,
+    "provider_results": [
+      {
+        "candidate_count": 1,
+        "catalog_result_count": 2,
+        "provenance": {
+          "content_type": "application/json",
+          "credential_ref": null,
+          "endpoint": "https://api.us.socrata.com/api/catalog/v1",
+          "http_status": 200,
+          "payload_sha256": "e0d99c575dea8b1fffa1519fdae3a300ba33fdfe3578baedd915aa932d7787b9",
+          "provider": "Socrata Open Data API Catalog",
+          "provider_id": "socrata",
+          "query_params": {
+            "limit": 50,
+            "only": "datasets",
+            "q": "ALS rare disease longitudinal cohort outcomes specialist access"
+          },
+          "redirects": 0,
+          "request_header_names": [],
+          "response_bytes": 1001,
+          "retrieved_at": "2026-08-01T12:00:00+00:00"
+        },
+        "provider_id": "socrata",
+        "status": "success"
+      },
+      {
+        "candidate_count": 3,
+        "catalog_result_count": 2,
+        "provenance": {
+          "content_type": "application/json",
+          "credential_ref": "TOOLUNIVERSE_DATAGOV_API_KEY",
+          "endpoint": "https://api.gsa.gov/technology/datagov/v4/search",
+          "http_status": 200,
+          "payload_sha256": "55f274ff12cb3317c0fc7f079b4e11029abf620da5a785a0cc179a9d8547d5c5",
+          "provider": "Data.gov Catalog API",
+          "provider_id": "datagov",
+          "query_params": {
+            "q": "ALS rare disease longitudinal cohort outcomes specialist access",
+            "size": 50
+          },
+          "redirects": 0,
+          "request_header_names": [
+            "X-Api-Key"
+          ],
+          "response_bytes": 1430,
+          "retrieved_at": "2026-08-01T12:00:00+00:00"
+        },
+        "provider_id": "datagov",
+        "status": "success"
+      },
+      {
+        "candidate_count": 1,
+        "catalog_result_count": 2,
+        "provenance": {
+          "content_type": "application/json",
+          "credential_ref": null,
+          "endpoint": "https://data.europa.eu/api/hub/search/search",
+          "http_status": 200,
+          "payload_sha256": "477230cdeda70f0f0826b0416f6698bb380344c2103f74b452ec41337b914b95",
+          "provider": "European Data Portal Hub Search",
+          "provider_id": "data_europa",
+          "query_params": {
+            "limit": 10,
+            "q": "ALS rare disease longitudinal cohort outcomes specialist access"
+          },
+          "redirects": 0,
+          "request_header_names": [],
+          "response_bytes": 962,
+          "retrieved_at": "2026-08-01T12:00:00+00:00"
+        },
+        "provider_id": "data_europa",
+        "status": "success"
+      },
+      {
+        "candidate_count": 1,
+        "catalog_result_count": 2,
+        "provenance": {
+          "content_type": "application/json",
+          "credential_ref": null,
+          "endpoint": "https://ckan.publishing.service.gov.uk/api/3/action/package_search",
+          "http_status": 200,
+          "payload_sha256": "ac1d784cc9feb75ca9ac9fa68ad57cfa95230d99a4a86f0e11e6ad5d6035af14",
+          "provider": "Data.gov.uk CKAN Catalog",
+          "provider_id": "ckan_data_gov_uk",
+          "query_params": {
+            "q": "ALS rare disease longitudinal cohort outcomes specialist access",
+            "rows": 50
+          },
+          "redirects": 0,
+          "request_header_names": [],
+          "response_bytes": 820,
+          "retrieved_at": "2026-08-01T12:00:00+00:00"
+        },
+        "provider_id": "ckan_data_gov_uk",
+        "status": "success"
+      },
+      {
+        "candidate_count": 1,
+        "catalog_result_count": 2,
+        "provenance": {
+          "content_type": "application/json",
+          "credential_ref": null,
+          "endpoint": "https://api.apis.guru/v2/list.json",
+          "http_status": 200,
+          "payload_sha256": "2245a5431e3d0fa5f08c0333525be5b417f6074c552e1dfb992fe611b4352405",
+          "provider": "APIs.guru OpenAPI Directory",
+          "provider_id": "apis_guru",
+          "query_params": {},
+          "redirects": 0,
+          "request_header_names": [],
+          "response_bytes": 832,
+          "retrieved_at": "2026-08-01T12:00:00+00:00"
+        },
+        "provider_id": "apis_guru",
+        "status": "success"
+      }
+    ],
+    "query": "ALS rare disease longitudinal cohort outcomes specialist access",
+    "transport_log": [
+      {
+        "endpoint": "https://api.us.socrata.com/api/catalog/v1",
+        "max_response_bytes": 1000000,
+        "provider": "socrata",
+        "query_params": {
+          "limit": 50,
+          "only": "datasets",
+          "q": "ALS rare disease longitudinal cohort outcomes specialist access"
+        },
+        "request_header_names": []
+      },
+      {
+        "endpoint": "https://api.gsa.gov/technology/datagov/v4/search",
+        "max_response_bytes": 1000000,
+        "provider": "datagov",
+        "query_params": {
+          "q": "ALS rare disease longitudinal cohort outcomes specialist access",
+          "size": 50
+        },
+        "request_header_names": [
+          "X-Api-Key"
+        ]
+      },
+      {
+        "endpoint": "https://data.europa.eu/api/hub/search/search",
+        "max_response_bytes": 1000000,
+        "provider": "data_europa",
+        "query_params": {
+          "limit": 10,
+          "q": "ALS rare disease longitudinal cohort outcomes specialist access"
+        },
+        "request_header_names": []
+      },
+      {
+        "endpoint": "https://ckan.publishing.service.gov.uk/api/3/action/package_search",
+        "max_response_bytes": 1000000,
+        "provider": "ckan_data_gov_uk",
+        "query_params": {
+          "q": "ALS rare disease longitudinal cohort outcomes specialist access",
+          "rows": 50
+        },
+        "request_header_names": []
+      },
+      {
+        "endpoint": "https://api.apis.guru/v2/list.json",
+        "max_response_bytes": 10000000,
+        "provider": "apis_guru",
+        "query_params": {},
+        "request_header_names": []
+      }
+    ]
+  },
+  "closed_gap": {
+    "classification": "existing_exact",
+    "overall_action": "compose_existing_tools",
+    "plan_sha256": "8955b4da80343516b7285cfe49786749007caf4b78080178eb2b86c72d17dd10",
+    "registered_duplicate_count": 1,
+    "selected_tool": "VSDRareDiseaseLongitudinalCohort"
+  },
+  "end_to_end_assertions": {
+    "all_five_catalog_providers_succeeded": true,
+    "catalog_credentials_are_not_persisted": true,
+    "catalog_metadata_remained_inert": true,
+    "cross_catalog_duplicates_were_merged": true,
+    "demand_was_observed_three_times": true,
+    "discovered_endpoint_matches_reviewed_contract": true,
+    "five_distinct_candidates_survived_format_and_relevance_filters": true,
+    "initial_workflow_identified_the_real_gap": true,
+    "irrelevant_and_unusable_records_were_filtered": true,
+    "post_publication_discovery_suppressed_registered_endpoint": true,
+    "published_tool_closed_the_workflow_gap": true,
+    "published_tool_was_absent_until_explicit_load": true,
+    "review_gate_blocked_early_publication": true,
+    "three_complex_cohort_records_executed": true,
+    "three_verification_cases_passed": true,
+    "verification_approval_publication_hash_chain_is_complete": true
+  },
+  "executed_cohorts": [
+    {
+      "active_trial_ids": [
+        "NCT05163886",
+        "NCT05619783"
+      ],
+      "cohort_id": "ALS-NEURO-001",
+      "disease": "Amyotrophic lateral sclerosis",
+      "follow_up_months": 36,
+      "genes": [
+        "C9orf72",
+        "SOD1",
+        "TARDBP"
+      ],
+      "participants": 428,
+      "progression_score_change": -13.4,
+      "specialist_access_days": 47
+    },
+    {
+      "active_trial_ids": [
+        "NCT05096221",
+        "NCT05429372"
+      ],
+      "cohort_id": "DMD-PED-014",
+      "disease": "Duchenne muscular dystrophy",
+      "follow_up_months": 48,
+      "genes": [
+        "DMD"
+      ],
+      "participants": 312,
+      "progression_score_change": -8.1,
+      "specialist_access_days": 62
+    },
+    {
+      "active_trial_ids": [
+        "NCT05337553",
+        "NCT05794139"
+      ],
+      "cohort_id": "SMA-NAT-022",
+      "disease": "Spinal muscular atrophy",
+      "follow_up_months": 30,
+      "genes": [
+        "SMN1",
+        "SMN2"
+      ],
+      "participants": 196,
+      "progression_score_change": -5.7,
+      "specialist_access_days": 35
+    }
+  ],
+  "fixture_boundary": "Deterministic catalog and cohort responses replace network transport. Agent invocation, provider dispatch, normalization, ranking, deduplication, registry comparison, demand, planning, OpenAPI inspection, promotion, verification, publication, loading, execution, and provenance use production code.",
+  "initial_gap": {
+    "classification": "missing",
+    "demand_id": "f8b08737f5a438f5",
+    "demand_observations": {
+      "exact": 0,
+      "missing": 3,
+      "partial": 0
+    },
+    "overall_action": "discover_missing_capabilities",
+    "plan_sha256": "5718fc7608f18abf7fcfde1f8390657a8ffa2fd12808ff2b81b778644c011d46",
+    "proposal_sha256": "49785a274d6bc170f6317b8160fb975f39503b0abc76f30295ea639658868e40"
+  },
+  "promotion": {
+    "hash_chain": {
+      "approval": "5d5be8acdb8baa96f0df4dc38a6e059f1970366e3346f7f8e6557d8f44a78591",
+      "candidate": "6760cbb7c25b2945720e28b3fd402c25485f83297b096ac41408c3a8495f12e0",
+      "catalog_payloads": [
+        "e0d99c575dea8b1fffa1519fdae3a300ba33fdfe3578baedd915aa932d7787b9",
+        "55f274ff12cb3317c0fc7f079b4e11029abf620da5a785a0cc179a9d8547d5c5",
+        "477230cdeda70f0f0826b0416f6698bb380344c2103f74b452ec41337b914b95",
+        "ac1d784cc9feb75ca9ac9fa68ad57cfa95230d99a4a86f0e11e6ad5d6035af14",
+        "2245a5431e3d0fa5f08c0333525be5b417f6074c552e1dfb992fe611b4352405"
+      ],
+      "draft": "eef3cf4ab55cc529429d98002e1d92dd73d89062245f55ce641a85384ac52447",
+      "publication": "9f2ddc82d87491ef5cafca59b7fbad86dcdfaad934dc453f8cf1f8b1a4eb181c",
+      "source_document": "957657814eeb94c1f82bbba6e2a0765f434cfc2acf46cf0a74bd00251c6acefe",
+      "verification": "40c8be2cd848a3be5cbef977d9301668cf52bdc2f4bdbc869b432315c70cf4a5"
+    },
+    "loaded_tools": [
+      "VSDRareDiseaseLongitudinalCohort"
+    ],
+    "tool_name": "VSDRareDiseaseLongitudinalCohort",
+    "verification_case_count": 3
+  },
+  "provider_transport_log": [
+    {
+      "cohort_id": "ALS-NEURO-001",
+      "endpoint": "https://data.example.gov/resource/abcd-1234.json",
+      "timeout": 20.0
+    },
+    {
+      "cohort_id": "DMD-PED-014",
+      "endpoint": "https://data.example.gov/resource/abcd-1234.json",
+      "timeout": 20.0
+    },
+    {
+      "cohort_id": "SMA-NAT-022",
+      "endpoint": "https://data.example.gov/resource/abcd-1234.json",
+      "timeout": 20.0
+    },
+    {
+      "cohort_id": "ALS-NEURO-001",
+      "endpoint": "https://data.example.gov/resource/abcd-1234.json",
+      "timeout": 20.0
+    },
+    {
+      "cohort_id": "DMD-PED-014",
+      "endpoint": "https://data.example.gov/resource/abcd-1234.json",
+      "timeout": 20.0
+    },
+    {
+      "cohort_id": "SMA-NAT-022",
+      "endpoint": "https://data.example.gov/resource/abcd-1234.json",
+      "timeout": 20.0
+    }
+  ],
+  "question": "Can repeated demand for genotype-stratified rare-disease progression and specialist-access evidence become a narrow, proven ToolUniverse tool?",
+  "selected_handoff": {
+    "blockers": [],
+    "candidate_id": "b732a65feecf080e",
+    "catalog_sources": [
+      {
+        "documentation_url": "https://catalog.data.gov/dataset/rare-disease-longitudinal-cohort",
+        "provider": "datagov",
+        "record_id": "https://data.example.gov/api/views/abcd-1234"
+      },
+      {
+        "documentation_url": "https://catalog.data.gov/dataset/rare-disease-longitudinal-cohort",
+        "provider": "datagov",
+        "record_id": "https://data.example.gov/api/views/abcd-1234#0"
+      },
+      {
+        "documentation_url": "https://data.example.gov/d/abcd-1234",
+        "provider": "socrata",
+        "record_id": "abcd-1234"
+      }
+    ],
+    "endpoint": "https://data.example.gov/resource/abcd-1234.json",
+    "openapi_candidate_id": "6760cbb7c25b2945",
+    "openapi_candidate_sha256": "6760cbb7c25b2945720e28b3fd402c25485f83297b096ac41408c3a8495f12e0",
+    "operation_id": "getLongitudinalCohort"
+  },
+  "title": "Multi-Catalog Rare-Disease Capability Growth Study"
+}

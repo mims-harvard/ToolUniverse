@@ -1,0 +1,35 @@
+{
+  "resultSetSize": 2,
+  "results": [
+    {
+      "resource": {
+        "name": "Rare Disease Longitudinal Cohort",
+        "id": "abcd-1234",
+        "description": "Longitudinal ALS cohort outcomes by visit and genotype.",
+        "type": "dataset",
+        "updatedAt": "2026-07-01T00:00:00Z",
+        "provenance": "official",
+        "columns_name": ["Cohort ID", "Visit Month", "Outcome Score", "Genotype"],
+        "columns_field_name": ["cohort_id", "visit_month", "outcome_score", "genotype"],
+        "columns_datatype": ["Text", "Number", "Number", "Text"],
+        "columns_description": ["Stable cohort", "Month", "Scale score", "Genotype stratum"]
+      },
+      "metadata": {"domain": "data.example.gov"},
+      "classification": {"domain_tags": ["ALS", "rare disease", "natural history"]},
+      "permalink": "https://data.example.gov/d/abcd-1234"
+    },
+    {
+      "resource": {
+        "name": "Narrative page",
+        "id": "page-1234",
+        "description": "Not an API dataset.",
+        "type": "story",
+        "columns_name": [],
+        "columns_field_name": [],
+        "columns_datatype": [],
+        "columns_description": []
+      },
+      "metadata": {"domain": "data.example.gov"}
+    }
+  ]
+}

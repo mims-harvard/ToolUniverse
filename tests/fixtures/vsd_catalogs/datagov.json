@@ -1,0 +1,54 @@
+{
+  "after": null,
+  "results": [
+    {
+      "slug": "rare-disease-longitudinal-cohort",
+      "last_harvested_date": "2026-07-02T00:00:00Z",
+      "organization": {"name": "Example Department of Health"},
+      "dcat": {
+        "identifier": "https://data.example.gov/api/views/abcd-1234",
+        "title": "Rare Disease Longitudinal Cohort",
+        "description": "ALS natural-history visits and outcome measures.",
+        "keyword": ["ALS", "rare disease", "cohort"],
+        "landingPage": "https://catalog.data.gov/dataset/rare-disease-longitudinal-cohort",
+        "modified": "2026-07-01",
+        "publisher": {"name": "Example Department of Health"},
+        "license": "CC-BY-4.0",
+        "distribution": [
+          {
+            "title": "Cohort JSON API",
+            "accessURL": "https://data.example.gov/resource/abcd-1234.json",
+            "mediaType": "application/json",
+            "format": "JSON"
+          },
+          {
+            "title": "Documentation",
+            "accessURL": "https://data.example.gov/cohort.html",
+            "mediaType": "text/html",
+            "format": "HTML"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "rare-disease-care-access",
+      "organization": {"name": "Example Health Resources Agency"},
+      "dcat": {
+        "identifier": "urn:uuid:care-access",
+        "title": "Rare Disease Care Access",
+        "description": "County specialist access and travel burden.",
+        "keyword": ["ALS", "specialist", "access"],
+        "modified": "2026-06-10",
+        "publisher": {"name": "Example Health Resources Agency"},
+        "distribution": [
+          {
+            "title": "County care access CSV",
+            "accessURL": "https://health.example.gov/rare-disease/care-access.csv",
+            "mediaType": "text/csv",
+            "format": "CSV"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from tooluniverse import ToolUniverse, vsd_tool
+from tooluniverse.build_optimizer import calculate_tool_hash
 
 pytestmark = pytest.mark.unit
 
@@ -86,6 +87,14 @@ def test_source_contracts_are_fixed_and_typed():
         assert fda["parameter"]["required"] == ["set_id"]
         assert fda["parameter"]["properties"]["set_id"]["format"] == "uuid"
 
+        catalog_discovery = tooluniverse.all_tool_dict["VSDDiscoverAPICandidates"]
+        assert catalog_discovery["parameter"]["properties"]["providers"][
+            "maxItems"
+        ] == 5
+        assert "requested_providers" in catalog_discovery["return_schema"][
+            "properties"
+        ]
+
         discovery = tooluniverse.run_one_function(
             {"name": "VSDDiscoverSources", "arguments": {"query": "CDC"}}
         )
@@ -150,6 +159,25 @@ def test_generated_wrappers_and_metadata_match_source_surface():
     positional = [argument.arg for argument in function.args.args]
     assert positional[:3] == ["state_abbr", "county_name", "limit"]
 
+    discovery_wrapper = ast.parse(
+        (tools_path / "VSDDiscoverAPICandidates.py").read_text(encoding="utf-8")
+    )
+    discovery_function = next(
+        node
+        for node in discovery_wrapper.body
+        if isinstance(node, ast.FunctionDef)
+        and node.name == "VSDDiscoverAPICandidates"
+    )
+    discovery_arguments = [
+        argument.arg for argument in discovery_function.args.args
+    ]
+    assert discovery_arguments[:4] == [
+        "query",
+        "limit",
+        "providers",
+        "exclude_registered",
+    ]
+
     metadata = json.loads(
         (tools_path / ".tool_metadata.json").read_text(encoding="utf-8")
     )
@@ -157,3 +185,19 @@ def test_generated_wrappers_and_metadata_match_source_surface():
         assert re.fullmatch(r"[0-9a-f]{32}", metadata[name])
     for name in ADMIN_TOOL_NAMES:
         assert name not in metadata
+
+    configs = json.loads(
+        (
+            Path(__file__).parents[2]
+            / "src"
+            / "tooluniverse"
+            / "data"
+            / "vsd_tools.json"
+        ).read_text(encoding="utf-8")
+    )
+    discovery_config = next(
+        config for config in configs if config["name"] == "VSDDiscoverAPICandidates"
+    )
+    assert metadata["VSDDiscoverAPICandidates"] == calculate_tool_hash(
+        discovery_config
+    )

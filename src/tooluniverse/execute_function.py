@@ -3631,6 +3631,7 @@ class ToolUniverse:
                     "GrepTools",
                     "GetToolInfo",
                     "ExecuteTool",
+                    "VSDDiscoverAPICandidates",
                     "VSDResolveCapability",
                     "VSDPlanWorkflow",
                 ]:

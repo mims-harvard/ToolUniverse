@@ -1,5 +1,35 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Multi-Catalog Rare-Disease Capability Growth
+
+`multicatalog_discovery_case_study.py` demonstrates organic growth across five
+reviewed catalog interfaces rather than one hard-coded source. A comparative
+ALS, Duchenne muscular dystrophy, and spinal muscular atrophy workflow first
+identifies and records one missing longitudinal-cohort capability. The
+agent-facing discovery tool then searches Socrata, US Data.gov, the European
+Data Portal, data.gov.uk, and APIs.guru through their fixed bounded endpoints.
+
+Ten deterministic catalog records reduce to five relevant, machine-readable,
+non-executable candidates. Data.gov and Socrata independently identify the same
+endpoint, so exact-identity deduplication produces one candidate with both
+provenance records. An administrator obtains its OpenAPI contract, verifies
+three disease cohorts, approves and publishes the exact hash chain, loads the
+tool into a fresh ToolUniverse instance, and proves both exact workflow coverage
+and suppression of the now-registered endpoint on the next discovery pass.
+
+Run the deterministic proof from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/multicatalog_discovery_case_study.py
+```
+
+Review `artifacts/multicatalog_discovery_snapshot.md`, its machine-verifiable
+JSON counterpart, and the sanitized demand proposal. The proof contains 16
+end-to-end assertions, three verification executions, three post-publication
+executions, reproducibility coverage, and audit-hash tamper detection. The
+opt-in network test in `tests/integration/test_vsd_multicatalog_live.py` checks
+the five real catalog endpoints without making any candidate executable.
+
 ## Cross-Format Source-To-Runtime Total Proof
 
 `cross_format_total_proof.py` connects the complete VSD stack in one ALS/DANDI
