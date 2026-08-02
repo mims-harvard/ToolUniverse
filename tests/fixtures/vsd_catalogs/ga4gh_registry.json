@@ -1,0 +1,28 @@
+[
+  {
+    "id": "ai.viral",
+    "name": "Viral AI",
+    "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.3.0"},
+    "organization": {"id": "com.dnastack", "name": "DNAstack", "url": "https://dnastack.com"},
+    "version": "N/A (SaaS)",
+    "url": "https://viral.ai",
+    "description": "Global genomic surveillance and infectious disease research data repository service.",
+    "documentationUrl": "https://docs.omics.ai/products/command-line-interface/usage-examples",
+    "createdAt": "2025-10-06T23:16:00Z",
+    "updatedAt": "2025-10-06T23:16:00Z",
+    "environment": "Production"
+  },
+  {
+    "id": "bio.terra.data",
+    "name": "NHGRI AnVIL",
+    "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.3.0"},
+    "organization": {"id": "org.anvilproject", "name": "NHGRI AnVIL", "url": "https://anvilproject.org"},
+    "version": "2.323.0",
+    "url": "https://data.terra.bio/",
+    "description": "Genomic research datasets exposed through a GA4GH data repository service.",
+    "documentationUrl": "https://anvilproject.org/learn/find-data/requesting-data-access",
+    "createdAt": "2025-10-03T00:54:00Z",
+    "updatedAt": "2025-10-03T00:54:00Z",
+    "environment": "Production"
+  }
+]

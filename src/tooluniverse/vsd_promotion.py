@@ -958,6 +958,30 @@ def build_openapi_tool_config(
         reviewed = validate_openapi_candidate(candidate)
     except VSDOpenAPIError as exc:
         raise VSDPromotionError(str(exc)) from exc
+    return _build_openapi_tool_config(
+        reviewed,
+        response_schema=reviewed["response_schema"],
+        tool_name=tool_name,
+        description=description,
+        include_parameters=include_parameters,
+        fixed_query=fixed_query,
+        timeout_seconds=timeout_seconds,
+        credential_env=credential_env,
+    )
+
+
+def _build_openapi_tool_config(
+    reviewed: dict[str, Any],
+    *,
+    response_schema: dict[str, Any],
+    tool_name: str,
+    description: str,
+    include_parameters: list[str] | None = None,
+    fixed_query: dict[str, Any] | None = None,
+    timeout_seconds: float = 20,
+    credential_env: str | None = None,
+) -> dict[str, Any]:
+    """Build a runtime config from an already validated operation boundary."""
     name = _tool_name(tool_name)
     reviewed_description = _review_text(
         description, field="description", minimum=20, maximum=1000
@@ -1101,7 +1125,8 @@ def build_openapi_tool_config(
     if input_definitions:
         input_schema["$defs"] = input_definitions
 
-    response_schema = copy.deepcopy(reviewed["response_schema"])
+    runtime_response_schema = copy.deepcopy(response_schema)
+    response_schema = copy.deepcopy(runtime_response_schema)
     return_definitions = response_schema.pop("$defs", {})
     return_schema: dict[str, Any] = {
         "type": "object",
@@ -1134,7 +1159,7 @@ def build_openapi_tool_config(
             "fixed_query": fixed,
             "timeout_seconds": timeout_seconds,
             "auth": auth,
-            "response_schema": reviewed["response_schema"],
+            "response_schema": runtime_response_schema,
         },
         "vsd_promotion": {
             "generator_version": _GENERATOR_VERSION,
@@ -1176,6 +1201,162 @@ def create_openapi_draft(
         fixed_query=fixed_query,
         timeout_seconds=timeout_seconds,
         credential_env=credential_env,
+    )
+    return _create_draft_from_config(config, workspace=workspace)
+
+
+def _catalog_openapi_binding(
+    reviewed_catalog: dict[str, Any], reviewed_operation: dict[str, Any]
+) -> dict[str, Any]:
+    """Bind a catalog record to the exact server in its inspected document."""
+    if reviewed_catalog["candidate_kind"] != "openapi_specification":
+        raise VSDPromotionError(
+            "Catalog OpenAPI promotion requires a specification candidate"
+        )
+    catalog_endpoint = urlsplit(reviewed_catalog["api_endpoint"])
+    operation_server = urlsplit(reviewed_operation["server_url"])
+    catalog_base = (
+        catalog_endpoint.scheme,
+        (catalog_endpoint.hostname or "").casefold().rstrip("."),
+        catalog_endpoint.port,
+        (catalog_endpoint.path or "/").rstrip("/") or "/",
+    )
+    operation_base = (
+        operation_server.scheme,
+        (operation_server.hostname or "").casefold().rstrip("."),
+        operation_server.port,
+        (operation_server.path or "/").rstrip("/") or "/",
+    )
+    if catalog_base != operation_base:
+        raise VSDPromotionError(
+            "Inspected OpenAPI server does not match the catalog service endpoint"
+        )
+    binding = {
+        "candidate_id": reviewed_catalog["candidate_id"],
+        "candidate_sha256": reviewed_catalog["candidate_sha256"],
+        "catalog_provider": reviewed_catalog["catalog_provider"],
+        "catalog_sources": reviewed_catalog["catalog_sources"],
+        "service_endpoint": reviewed_catalog["api_endpoint"],
+        "specification_url": reviewed_catalog["specification_url"],
+        "source_document_sha256": reviewed_operation["source_document_sha256"],
+    }
+    binding["binding_sha256"] = _canonical_digest(binding)
+    return binding
+
+
+def create_catalog_openapi_draft(
+    catalog_candidate: dict[str, Any],
+    operation_candidate: dict[str, Any],
+    *,
+    tool_name: str,
+    description: str,
+    review_note: str,
+    include_parameters: list[str] | None = None,
+    fixed_query: dict[str, Any] | None = None,
+    timeout_seconds: float = 20,
+    credential_env: str | None = None,
+    workspace: str | Path | None = None,
+) -> dict[str, Any]:
+    """Bind an inspected OpenAPI operation to its exact catalog candidate."""
+    try:
+        reviewed_catalog = validate_catalog_candidate(catalog_candidate)
+        reviewed_operation = validate_openapi_candidate(operation_candidate)
+    except (VSDCatalogProviderError, VSDOpenAPIError) as exc:
+        raise VSDPromotionError(str(exc)) from exc
+    note = _review_text(review_note, field="review_note", minimum=20, maximum=1000)
+    binding = _catalog_openapi_binding(reviewed_catalog, reviewed_operation)
+
+    config = build_openapi_tool_config(
+        reviewed_operation,
+        tool_name=tool_name,
+        description=description,
+        include_parameters=include_parameters,
+        fixed_query=fixed_query,
+        timeout_seconds=timeout_seconds,
+        credential_env=credential_env,
+    )
+    config["vsd_promotion"].update(
+        {
+            "source_type": "catalog_openapi",
+            "review_note": note,
+            "catalog_binding": binding,
+        }
+    )
+    return _create_draft_from_config(config, workspace=workspace)
+
+
+def create_reviewed_catalog_openapi_draft(
+    catalog_candidate: dict[str, Any],
+    operation_candidate: dict[str, Any],
+    *,
+    tool_name: str,
+    description: str,
+    response_schema: dict[str, Any],
+    resolved_blockers: list[str],
+    review_note: str,
+    include_parameters: list[str] | None = None,
+    fixed_query: dict[str, Any] | None = None,
+    timeout_seconds: float = 20,
+    credential_env: str | None = None,
+    workspace: str | Path | None = None,
+) -> dict[str, Any]:
+    """Promote an exact catalog operation after a missing schema is reviewed."""
+    try:
+        reviewed_catalog = validate_catalog_candidate(catalog_candidate)
+        reviewed_operation = validate_openapi_candidate(
+            operation_candidate, permit_missing_json_response=True
+        )
+    except (VSDCatalogProviderError, VSDOpenAPIError) as exc:
+        raise VSDPromotionError(str(exc)) from exc
+    blockers = reviewed_operation["blockers"]
+    if blockers != ["json_response_missing"]:
+        raise VSDPromotionError(
+            "Reviewed OpenAPI promotion only resolves a missing JSON response schema"
+        )
+    if (
+        not isinstance(resolved_blockers, list)
+        or any(not isinstance(item, str) for item in resolved_blockers)
+        or sorted(set(resolved_blockers)) != blockers
+    ):
+        raise VSDPromotionError(
+            "resolved_blockers must explicitly acknowledge every candidate blocker"
+        )
+    if (
+        not isinstance(response_schema, dict)
+        or response_schema.get("type") not in {"object", "array"}
+    ):
+        raise VSDPromotionError(
+            "Reviewed response_schema must declare an object or array contract"
+        )
+    try:
+        from .vsd_dynamic_rest import _schema_validator
+
+        _schema_validator(response_schema, field="reviewed response_schema")
+    except VSDDynamicRESTError as exc:
+        raise VSDPromotionError(str(exc)) from exc
+    if len(json.dumps(response_schema, ensure_ascii=True).encode("utf-8")) > 100_000:
+        raise VSDPromotionError("Reviewed response_schema exceeds 100 KB")
+
+    note = _review_text(review_note, field="review_note", minimum=20, maximum=1000)
+    binding = _catalog_openapi_binding(reviewed_catalog, reviewed_operation)
+    config = _build_openapi_tool_config(
+        reviewed_operation,
+        response_schema=response_schema,
+        tool_name=tool_name,
+        description=description,
+        include_parameters=include_parameters,
+        fixed_query=fixed_query,
+        timeout_seconds=timeout_seconds,
+        credential_env=credential_env,
+    )
+    config["vsd_promotion"].update(
+        {
+            "source_type": "catalog_openapi_reviewed_response",
+            "review_note": note,
+            "resolved_blockers": blockers,
+            "reviewed_response_schema_sha256": _canonical_digest(response_schema),
+            "catalog_binding": binding,
+        }
     )
     return _create_draft_from_config(config, workspace=workspace)
 
@@ -1694,8 +1875,10 @@ __all__ = [
     "build_openapi_tool_config",
     "build_socrata_tool_config",
     "create_catalog_resource_draft",
+    "create_catalog_openapi_draft",
     "create_draft",
     "create_openapi_draft",
+    "create_reviewed_catalog_openapi_draft",
     "create_reviewed_operation_draft",
     "list_promotion_state",
     "load_published_tools",

@@ -980,7 +980,7 @@ def run_case(
                 observed_at=f"2026-08-02T06:0{index}:00+00:00",
             )
         demand = rank_demands(workspace=demand_workspace)["data"]
-        for provider in catalogs.PROVIDER_ORDER:
+        for provider in CATALOG_CASES:
             case = CATALOG_CASES[provider]
             result = runner(initial_universe, provider, case["query"], False)
             candidate = _select_candidate(result, case["identity"])

@@ -1,5 +1,13 @@
 # ToolUniverse VSD Validation Case Studies
 
+VSD discovery can also search SmartAPI and the GA4GH Service Registry. SmartAPI
+records retain both the exact service root and content-addressed OpenAPI
+document, while GA4GH service records remain inert until an operation contract
+is independently inspected. A narrowly reviewed path handles read-only GET
+operations whose specification omits only the JSON response schema; every
+other inspection blocker remains enforced. See
+`docs/dev_docs/VSD_API_DISCOVERY_VALIDATION.md` for the CLI and review contract.
+
 ## Multi-Catalog Cancer Source Evaluation
 
 `multicatalog_cancer_case_study.py` evaluates the new catalog sources as a

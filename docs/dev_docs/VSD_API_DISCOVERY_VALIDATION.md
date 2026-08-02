@@ -19,6 +19,8 @@ result = tu.run_one_function(
                 "data_europa",
                 "ckan_data_gov_uk",
                 "apis_guru",
+                "smartapi",
+                "ga4gh_registry",
             ],
             "exclude_registered": True,
             "limit": 20,
@@ -42,12 +44,15 @@ explicit loading before an agent can execute it.
 | `data_europa` | European Data Portal Hub Search | JSON, CSV, or XML distribution | 10-result page, 1 MB |
 | `ckan_data_gov_uk` | data.gov.uk CKAN backend | JSON, CSV, or XML resource | 1 MB, no credential |
 | `apis_guru` | APIs.guru OpenAPI Directory | OpenAPI document | complete directory, hard 10 MB ceiling |
+| `smartapi` | SmartAPI registry query | OpenAPI document plus exact service root | 10 results, hard 10 MB ceiling |
+| `ga4gh_registry` | GA4GH Service Registry | GA4GH service root | complete registry, hard 1 MB ceiling |
 
 The integrations follow the providers' published interfaces: [Data.gov Catalog
 API](https://resources.data.gov/catalog-api/), [European Data Portal Hub
 Search](https://data.europa.eu/api/hub/search/), [CKAN package
-search](https://docs.ckan.org/en/2.11/api/), and the [APIs.guru OpenAPI
-Directory](https://apis.guru/api-doc/). The data.gov.uk request uses its final
+search](https://docs.ckan.org/en/2.11/api/), the [APIs.guru OpenAPI
+Directory](https://apis.guru/api-doc/), [SmartAPI](https://smart-api.info/),
+and the [GA4GH Service Registry](https://registry.ga4gh.org/). The data.gov.uk request uses its final
 HTTPS CKAN backend because the public URL redirects across two hosts.
 
 Adding a provider is a code change. It requires a fixed endpoint, exact-host
@@ -61,7 +66,7 @@ arguments.
 All providers produce the same bounded record:
 
 - stable candidate ID derived from the endpoint or specification URL
-- `data_endpoint` or `openapi_specification` candidate kind
+- `data_endpoint`, `openapi_specification`, or `service_endpoint` candidate kind
 - catalog provider, record identity, publisher, license, and update metadata
 - machine-readable format and interface type
 - exact catalog provenance records retained during cross-catalog merging
@@ -99,6 +104,43 @@ One catalog failure does not discard successful results from the others. Each
 provider reports its own status, counts, bounded error, request metadata, and
 payload SHA-256. The operation fails closed only when every requested provider
 fails.
+
+SmartAPI performs server-side relevance search and returns complete registered
+OpenAPI documents. VSD preserves both the registry metadata endpoint and the
+declared service root, then binds any selected operation to the hashes of the
+catalog candidate and inspected document. GA4GH records identify services, not
+individual operations, so they remain `service_endpoint` candidates until an
+administrator obtains and inspects an exact supported contract.
+
+## Catalog OpenAPI Promotion
+
+A catalog OpenAPI candidate can cross into the standard draft pipeline only
+when the inspected document declares the same HTTPS service root and the
+selected operation passes the read-only OpenAPI boundary. The binding records
+the catalog candidate digest, catalog provenance, service endpoint,
+specification URL, and source-document digest. This prevents replacing a
+reviewed registry entry with a different contract or host.
+
+Some public specifications correctly describe a read-only GET and all of its
+inputs but omit the JSON success schema. The reviewed-response path can resolve
+only the exact `json_response_missing` blocker. An administrator must supply a
+valid object or array JSON Schema, acknowledge the blocker, document the
+review, pass three or more representative verification cases, approve the
+draft, publish it, and explicitly load it. Write methods, request bodies,
+unsupported authentication, external references, malformed parameters, and
+all other blockers remain non-promotable.
+
+```console
+tooluniverse-vsd-promote --workspace ./private-vsd-promotion \
+  draft-reviewed-catalog-openapi catalog.json inspection.json response.json \
+  --catalog-candidate-id <catalog-id> \
+  --operation-candidate-id <operation-id> \
+  --tool-name ReviewedRegistryOperation \
+  --description "Retrieve one reviewed record from the registered service." \
+  --include-parameters record_id \
+  --resolved-blockers json_response_missing \
+  --review-note "Reviewed the exact response structure and three representative calls."
+```
 
 ## Fixed-Resource Promotion
 

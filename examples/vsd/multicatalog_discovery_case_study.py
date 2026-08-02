@@ -46,6 +46,13 @@ DEFAULT_MARKDOWN = ARTIFACTS / "multicatalog_discovery_snapshot.md"
 DEFAULT_PROPOSALS = ARTIFACTS / "multicatalog_discovery_demand_proposal.json"
 
 QUERY = "ALS rare disease longitudinal cohort outcomes specialist access"
+CATALOG_PROVIDERS = (
+    "socrata",
+    "datagov",
+    "data_europa",
+    "ckan_data_gov_uk",
+    "apis_guru",
+)
 TOOL_NAME = "VSDRareDiseaseLongitudinalCohort"
 ENDPOINT = "https://data.example.gov/resource/abcd-1234.json"
 CAPABILITY = {
@@ -373,7 +380,7 @@ def run_case(workspace: Path) -> dict[str, Any]:
                 "VSDDiscoverAPICandidates",
                 {
                     "query": QUERY,
-                    "providers": list(catalogs.PROVIDER_ORDER),
+                    "providers": list(CATALOG_PROVIDERS),
                     "exclude_registered": True,
                     "limit": 20,
                 },
@@ -469,7 +476,7 @@ def run_case(workspace: Path) -> dict[str, Any]:
                 "VSDDiscoverAPICandidates",
                 {
                     "query": QUERY,
-                    "providers": list(catalogs.PROVIDER_ORDER),
+                    "providers": list(CATALOG_PROVIDERS),
                     "exclude_registered": True,
                     "limit": 20,
                 },

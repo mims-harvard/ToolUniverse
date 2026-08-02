@@ -258,7 +258,8 @@ class VSDDiscoverAPICandidates(BaseTool):
                 or any(provider not in PROVIDER_ORDER for provider in raw_providers)
             ):
                 raise VSDDiscoveryError(
-                    "providers must contain 1-5 unique supported provider IDs"
+                    "providers must contain "
+                    f"1-{len(PROVIDER_ORDER)} unique supported provider IDs"
                 )
             exclude_registered = arguments.get("exclude_registered", True)
             if type(exclude_registered) is not bool:

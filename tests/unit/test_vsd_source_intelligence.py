@@ -148,11 +148,11 @@ def _scan():
     )
 
 
-def test_catalog_has_fifty_unique_inert_authoritative_sources():
+def test_catalog_has_fifty_one_unique_inert_authoritative_sources():
     catalog = load_trusted_source_catalog()
-    assert len(catalog["sources"]) == 50
-    assert len({item["source_id"] for item in catalog["sources"]}) == 50
-    assert len({item["domain"] for item in catalog["sources"]}) == 50
+    assert len(catalog["sources"]) == 51
+    assert len({item["source_id"] for item in catalog["sources"]}) == 51
+    assert len({item["domain"] for item in catalog["sources"]}) == 51
     assert all(item["execution_allowed"] is False for item in catalog["sources"])
     assert all(
         item["review_state"] == "trusted_for_candidate_discovery"
@@ -190,7 +190,7 @@ def test_inventory_and_catalog_coverage_find_exact_host_duplicates():
         "existing_tools": ["ExistingReporterSearch"],
     }
     assert coverage["existing_host_count"] == 1
-    assert coverage["candidate_gap_count"] == 49
+    assert coverage["candidate_gap_count"] == len(catalog["sources"]) - 1
 
     tampered = copy.deepcopy(inventory)
     tampered["hosts"][0]["host"] = "changed.example"

@@ -85,6 +85,8 @@ _BUILTIN_ALLOWED_HOSTS = frozenset(
         "eutils.ncbi.nlm.nih.gov",
         "ghoapi.azureedge.net",
         "rest.ensembl.org",
+        "registry.ga4gh.org",
+        "smart-api.info",
         "www.ema.europa.eu",
     }
 )

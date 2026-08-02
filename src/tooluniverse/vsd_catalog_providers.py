@@ -21,6 +21,8 @@ PROVIDER_ORDER = (
     "data_europa",
     "ckan_data_gov_uk",
     "apis_guru",
+    "smartapi",
+    "ga4gh_registry",
 )
 
 _ENDPOINTS = {
@@ -31,6 +33,8 @@ _ENDPOINTS = {
         "https://ckan.publishing.service.gov.uk/api/3/action/package_search"
     ),
     "apis_guru": "https://api.apis.guru/v2/list.json",
+    "smartapi": "https://smart-api.info/api/query",
+    "ga4gh_registry": "https://registry.ga4gh.org/v1/services",
 }
 _PROVIDER_LABELS = {
     "socrata": "Socrata Open Data API Catalog",
@@ -38,6 +42,8 @@ _PROVIDER_LABELS = {
     "data_europa": "European Data Portal Hub Search",
     "ckan_data_gov_uk": "Data.gov.uk CKAN Catalog",
     "apis_guru": "APIs.guru OpenAPI Directory",
+    "smartapi": "NCATS SmartAPI Registry",
+    "ga4gh_registry": "GA4GH Service Registry",
 }
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 _HTML_TAG_RE = re.compile(r"<[^>]+>")
@@ -556,6 +562,137 @@ def normalize_apis_guru(query: str, payload: Any) -> tuple[list[dict[str, Any]],
     return candidates, len(payload)
 
 
+def _smartapi_fields(document: dict[str, Any]) -> list[dict[str, str]]:
+    fields: list[dict[str, str]] = []
+    paths = document.get("paths")
+    if not isinstance(paths, dict):
+        return fields
+    for path, path_item in list(paths.items())[:50]:
+        if not isinstance(path, str) or not isinstance(path_item, dict):
+            continue
+        for method in ("get", "head", "options", "post", "put", "patch", "delete"):
+            operation = path_item.get(method)
+            if not isinstance(operation, dict):
+                continue
+            label = operation.get("summary") or operation.get("operationId") or path
+            fields.append(
+                {
+                    "field": _bounded_text(f"{method.upper()} {path}", 200),
+                    "label": _bounded_text(label, 200),
+                    "provider_type": "openapi_operation",
+                    "json_type": "object",
+                    "description": _bounded_text(operation.get("description"), 300),
+                }
+            )
+            if len(fields) == 50:
+                return fields
+    return fields
+
+
+def normalize_smartapi(query: str, payload: Any) -> tuple[list[dict[str, Any]], int]:
+    """Normalize bounded SmartAPI search hits without trusting embedded contracts."""
+    if not isinstance(payload, dict):
+        raise VSDCatalogProviderError("SmartAPI response must be an object")
+    results = _require_results(payload.get("hits"), provider="SmartAPI", maximum=20)
+    candidates: list[dict[str, Any]] = []
+    for item in results:
+        if not isinstance(item, dict):
+            continue
+        record_id = _bounded_text(item.get("_id"), 128)
+        info = item.get("info") if isinstance(item.get("info"), dict) else {}
+        servers = item.get("servers") if isinstance(item.get("servers"), list) else []
+        server = next(
+            (
+                _https_url(entry.get("url"))
+                for entry in servers[:20]
+                if isinstance(entry, dict) and _https_url(entry.get("url"))
+            ),
+            "",
+        )
+        if not record_id or not server:
+            continue
+        specification_url = f"https://smart-api.info/api/metadata/{record_id}"
+        contact = info.get("contact") if isinstance(info.get("contact"), dict) else {}
+        license_value = (
+            info.get("license") if isinstance(info.get("license"), dict) else {}
+        )
+        metadata = item.get("_meta") if isinstance(item.get("_meta"), dict) else {}
+        tags = [
+            entry.get("name")
+            for entry in (item.get("tags") or [])[:30]
+            if isinstance(entry, dict)
+        ]
+        candidate = _candidate(
+            query,
+            provider="smartapi",
+            record_id=record_id,
+            name=info.get("title"),
+            description=info.get("description"),
+            api_endpoint=server,
+            specification_url=specification_url,
+            documentation_url=f"https://smart-api.info/ui/{record_id}",
+            publisher=contact.get("name") or urlsplit(server).hostname,
+            license_value=license_value.get("name") or license_value.get("url"),
+            updated_at=metadata.get("last_updated"),
+            tags=tags,
+            fields=_smartapi_fields(item),
+            media_type="application/vnd.oai.openapi+json",
+            response_format="json",
+            interface_type="openapi",
+            provenance_label="official_biomedical_openapi_registry",
+            candidate_kind="openapi_specification",
+        )
+        if candidate and _is_relevant(query, candidate):
+            candidates.append(candidate)
+    total = payload.get("total")
+    return candidates, total if isinstance(total, int) and total >= 0 else len(results)
+
+
+def normalize_ga4gh_registry(
+    query: str, payload: Any
+) -> tuple[list[dict[str, Any]], int]:
+    """Normalize GA4GH service records as inert, protocol-labelled candidates."""
+    results = _require_results(payload, provider="GA4GH", maximum=200)
+    candidates: list[dict[str, Any]] = []
+    for item in results:
+        if not isinstance(item, dict):
+            continue
+        service_type = item.get("type") if isinstance(item.get("type"), dict) else {}
+        artifact = _bounded_text(service_type.get("artifact"), 80).casefold()
+        organization = (
+            item.get("organization")
+            if isinstance(item.get("organization"), dict)
+            else {}
+        )
+        tags = [
+            artifact,
+            service_type.get("group"),
+            service_type.get("version"),
+            item.get("environment"),
+            organization.get("name"),
+        ]
+        candidate = _candidate(
+            query,
+            provider="ga4gh_registry",
+            record_id=item.get("id"),
+            name=item.get("name"),
+            description=item.get("description"),
+            api_endpoint=item.get("url"),
+            documentation_url=item.get("documentationUrl"),
+            publisher=organization.get("name"),
+            updated_at=item.get("updatedAt"),
+            tags=tags,
+            media_type="application/json",
+            response_format="json",
+            interface_type="ga4gh",
+            provenance_label="official_standards_registry",
+            candidate_kind="service_endpoint",
+        )
+        if candidate and _is_relevant(query, candidate):
+            candidates.append(candidate)
+    return candidates, len(results)
+
+
 def _augment_socrata(candidate: dict[str, Any]) -> dict[str, Any]:
     augmented = dict(candidate)
     augmented.update(
@@ -613,6 +750,10 @@ def normalize_provider_payload(
         return [item for item in candidates if _is_relevant(query, item)], count
     if provider == "apis_guru":
         return normalize_apis_guru(query, payload)
+    if provider == "smartapi":
+        return normalize_smartapi(query, payload)
+    if provider == "ga4gh_registry":
+        return normalize_ga4gh_registry(query, payload)
     raise VSDCatalogProviderError(f"Unsupported catalog provider {provider!r}")
 
 
@@ -660,6 +801,22 @@ def _request_plan(provider: str, query: str, limit: int) -> dict[str, Any]:
             "params": {},
             "headers": {},
             "max_response_bytes": 10_000_000,
+            "credential_ref": None,
+        }
+    if provider == "smartapi":
+        return {
+            "endpoint": _ENDPOINTS[provider],
+            "params": {"q": query, "size": min(10, catalog_limit), "raw": 1},
+            "headers": {},
+            "max_response_bytes": 10_000_000,
+            "credential_ref": None,
+        }
+    if provider == "ga4gh_registry":
+        return {
+            "endpoint": _ENDPOINTS[provider],
+            "params": {},
+            "headers": {},
+            "max_response_bytes": 1_000_000,
             "credential_ref": None,
         }
     raise VSDCatalogProviderError(f"Unsupported catalog provider {provider!r}")
@@ -745,6 +902,20 @@ def _registry_deduplicate(
     for candidate in candidates:
         endpoint = candidate["api_endpoint"]
         parsed = urlsplit(endpoint)
+        if candidate.get("candidate_kind") in {
+            "openapi_specification",
+            "service_endpoint",
+        }:
+            candidate["registry_coverage"] = {
+                "classification": "not_assessed",
+                "matches": [],
+                "reason": (
+                    "Registry deduplication requires an exact data operation; "
+                    "service roots and specifications require contract inspection."
+                ),
+            }
+            kept.append(candidate)
+            continue
         if not endpoint or parsed.query:
             candidate["registry_coverage"] = {
                 "classification": "not_assessed",
@@ -835,7 +1006,7 @@ def discover_multi_catalog_candidates(
         or any(provider not in PROVIDER_ORDER for provider in providers)
     ):
         raise VSDCatalogProviderError(
-            "providers must contain 1-5 unique supported provider IDs"
+            f"providers must contain 1-{len(PROVIDER_ORDER)} unique supported provider IDs"
         )
     if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 20:
         raise VSDCatalogProviderError("limit must be an integer between 1 and 20")
@@ -958,6 +1129,7 @@ def validate_catalog_candidate(candidate: Any) -> dict[str, Any]:
     if provider not in PROVIDER_ORDER or kind not in {
         "data_endpoint",
         "openapi_specification",
+        "service_endpoint",
     }:
         raise VSDCatalogProviderError("catalog candidate identity is invalid")
     endpoint = _https_url(reviewed.get("api_endpoint"))
@@ -966,11 +1138,13 @@ def validate_catalog_candidate(candidate: Any) -> dict[str, Any]:
         "specification_url"
     ):
         raise VSDCatalogProviderError("catalog candidate URL is not canonical HTTPS")
-    if kind == "data_endpoint" and (not endpoint or specification):
+    if kind in {"data_endpoint", "service_endpoint"} and (
+        not endpoint or specification
+    ):
         raise VSDCatalogProviderError("data candidate must contain one endpoint")
-    if kind == "openapi_specification" and (not specification or endpoint):
+    if kind == "openapi_specification" and not specification:
         raise VSDCatalogProviderError(
-            "specification candidate must contain one contract"
+            "specification candidate must contain a contract"
         )
     identity = specification or endpoint
     expected_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
@@ -984,6 +1158,7 @@ def validate_catalog_candidate(candidate: Any) -> dict[str, Any]:
         "rest",
         "soda",
         "openapi",
+        "ga4gh",
     }:
         raise VSDCatalogProviderError("catalog candidate interface is unsupported")
     if (
@@ -995,6 +1170,9 @@ def validate_catalog_candidate(candidate: Any) -> dict[str, Any]:
             interface_type not in {"rest", "soda"}
             or (interface_type == "soda" and response_format != "json")
         )
+    ) or (
+        kind == "service_endpoint"
+        and (interface_type != "ga4gh" or response_format != "json")
     ):
         raise VSDCatalogProviderError(
             "catalog candidate kind and interface do not match"
@@ -1061,6 +1239,8 @@ __all__ = [
     "VSDCatalogProviderError",
     "discover_multi_catalog_candidates",
     "normalize_apis_guru",
+    "normalize_ga4gh_registry",
+    "normalize_smartapi",
     "normalize_ckan",
     "normalize_data_europa",
     "normalize_datagov",

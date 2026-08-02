@@ -1,0 +1,66 @@
+{
+  "took": 2,
+  "total": 2,
+  "max_score": 9.08,
+  "hits": [
+    {
+      "_id": "b772ebfbfa536bba37764d7fddb11d6f",
+      "_meta": {
+        "last_updated": "2026-06-17T07:05:37.540396+00:00"
+      },
+      "openapi": "3.0.3",
+      "info": {
+        "title": "BioThings RARe-SOURCE API",
+        "description": "Query rare disease genes and annotations using Orphanet disease identifiers.",
+        "contact": {"name": "NCATS Translator"},
+        "license": {"name": "CC0"}
+      },
+      "servers": [
+        {"url": "https://biothings.transltr.io/rare_source"}
+      ],
+      "tags": [
+        {"name": "rare disease"},
+        {"name": "gene"},
+        {"name": "translator"}
+      ],
+      "paths": {
+        "/query": {
+          "get": {
+            "operationId": "queryRareSource",
+            "summary": "Query rare disease genes",
+            "description": "Search rare disease annotations by identifier."
+          }
+        }
+      }
+    },
+    {
+      "_id": "de00889d8f5f9f5fd92fd0f0198f22f2",
+      "_meta": {
+        "last_updated": "2026-06-19T08:00:00+00:00"
+      },
+      "openapi": "3.0.1",
+      "info": {
+        "title": "Open Real-world Annotation for Rare Disease",
+        "description": "Retrieve real-world phenotype frequencies and associations for rare disease cohorts.",
+        "contact": {"name": "NCATS Biomedical Data Translator"},
+        "license": {"name": "MIT"}
+      },
+      "servers": [
+        {"url": "https://rare.cohd.io/api"}
+      ],
+      "tags": [
+        {"name": "rare disease"},
+        {"name": "phenotype"},
+        {"name": "cohort"}
+      ],
+      "paths": {
+        "/frequencies/singleConceptFreq": {
+          "get": {
+            "operationId": "getSingleConceptFrequency",
+            "summary": "Retrieve rare disease phenotype frequency"
+          }
+        }
+      }
+    }
+  ]
+}
