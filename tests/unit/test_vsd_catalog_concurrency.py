@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from tooluniverse import vsd_tool
+import tooluniverse.vsd_tool as vsd_tool
 
 pytestmark = pytest.mark.unit
 

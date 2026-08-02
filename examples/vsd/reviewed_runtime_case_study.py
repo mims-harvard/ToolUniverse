@@ -183,7 +183,7 @@ def _configs() -> list[tuple[str, str, dict[str, Any], dict[str, Any]]]:
             "fixed_headers": {"SOAPAction": "urn:GetSMNPanel"},
             "body": {
                 "mode": "soap",
-                "envelope": "<Envelope><Body><GetPanel><sample>{sample_id}</sample></GetPanel></Body></Envelope>",
+                "envelope": "<Envelope><Body><GetSMNPanel><sample>{sample_id}</sample></GetSMNPanel></Body></Envelope>",
                 "arguments": {"sample_id": "sample"},
             },
         },

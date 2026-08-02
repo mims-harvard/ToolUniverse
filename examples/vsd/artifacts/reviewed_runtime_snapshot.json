@@ -167,17 +167,17 @@
       "passed": true
     }
   ],
-  "case_sha256": "05e0870fe14c61d560e483fcec472c9eeeabfb28f1042587fbe37e56ab8bd310",
+  "case_sha256": "2abc19e009936ad730ccb3a547d143c95b8dec992654e2d52e1d84d684a99386",
   "case_title": "SMA multi-protocol evidence execution portfolio",
   "clinical_question": "Can ToolUniverse combine rare-disease genes, longitudinal motor scores, molecular diagnostics, trials, safety signals, literature, and variant classification when providers use incompatible reviewed protocols and formats?",
   "conclusion": "Yes. Ten runtime cases exercised reviewed GraphQL, REST, SOAP, gRPC, MCP, webhook, OAuth, multipart, pagination, JSON, CSV, XML, HTML, binary, and SSE contracts; an eleventh case completed draft-through-fresh-runtime promotion.",
   "format": "vsd_reviewed_runtime_case_v1",
   "promotion": {
-    "approval_sha256": "fcc46f4a36719b8598eedf1f45c268c323c94e6b3ef38388392d24f1f3e0cbf7",
+    "approval_sha256": "5be1b6eb9856d477dec92ca88b4c18a09660348ac9ebfdf0a86ad8e18efc34f6",
     "candidate_id": "c837126c2a40ae52",
     "candidate_sha256": "c837126c2a40ae5257d91e2e1b74bfbe4fc6853a24473f8eee537c9cdc256f0d",
-    "draft_id": "promotedsmnpanelsoap_75b3146b1be8",
-    "draft_sha256": "59deb42faa230b4c719b8bf134f392dd94938bda3783cba16285b87f24198979",
+    "draft_id": "promotedsmnpanelsoap_604cf84ac2f4",
+    "draft_sha256": "e595d99e514624c188a6234073d37ee1614c5ff8165d87e79f882dab804186b4",
     "final_sample": {
       "copyNumber": "1",
       "gene": "SMN1",
@@ -186,8 +186,8 @@
     "loaded_tools": [
       "PromotedSMNPanelSOAP"
     ],
-    "publication_sha256": "95a952b8f25b0d952f2bf707a2d3922154f44fb4d035328e65671c3f7dc22332",
-    "verification_sha256": "91b489377927340233a6e326cfd85ce039808c67cbd4f826579b02ffb7c4d250"
+    "publication_sha256": "29837486a20587e839f2356f79e693d8af8bbdf2d80063b25dce0c5191bd3108",
+    "verification_sha256": "d55d34507079363da22f84972961b570f80fb97848548909e9ba9757fcd02324"
   },
   "results": [
     {
@@ -242,7 +242,7 @@
       "transport": "http"
     },
     {
-      "operation_sha256": "39cc10d49f93b19e25f7e793e34944874a53986a58ba582731d774b25ada8a5b",
+      "operation_sha256": "43ce75cad5e8cf60328ed767eb0c9ec8fcb18bdc06061ba46e67bff23ef4736a",
       "page_count": 1,
       "payload_sha256": "b68f75b308893a75e7463c157af8e39c50c0f8f88efe2e7f4f52991f08dc0ba5",
       "protocol": "soap",

@@ -1,5 +1,39 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Cross-Format Source-To-Runtime Total Proof
+
+`cross_format_total_proof.py` connects the complete VSD stack in one ALS/DANDI
+growth loop. It audits the real ToolUniverse registry and the 50-source review
+catalog, separates an existing NIH RePORTER host from a DANDI capability gap,
+runs the bounded two-host scan twice, snapshots and inspects seven contract
+formats, and selects six DANDI operations while leaving the duplicate OpenAPI
+source unpromoted.
+
+Each selected operation is bound to its exact provider and format-specific
+identity before a draft can exist: GraphQL root field and arguments, Postman
+method and explicit template-variable map, WSDL endpoint/SOAPAction/body
+operation, protobuf authority/RPC/messages/streaming/descriptor, MCP declared
+tool, or AsyncAPI source endpoint/channel/payload schema. The portfolio then
+runs three representative cases per format, approves and publishes all six,
+loads them into a fresh ToolUniverse instance, and executes one final ALS
+request through every format. Eight cross-provider or cross-operation
+substitution attempts must fail before draft creation.
+
+The professional report also indexes sixteen concrete studies across PRs
+#416-#431, including registry reuse, dynamic REST, discovery, promotion, Docker,
+OpenAPI, workflow planning, private demand, credentials, lifecycle drift,
+multi-format contracts, reviewed runtime, and source intelligence. Run it from
+the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/cross_format_total_proof.py
+```
+
+Review `artifacts/cross_format_total_proof.md` and its machine-verifiable JSON
+counterpart. The checked proof contains 21 end-to-end assertions, 18 promotion
+verification executions, six final executions, and eight fail-closed
+substitution cases.
+
 ## Trusted-Source Intelligence And Review Handoff
 
 `source_intelligence_case_study.py` asks whether ToolUniverse can identify the

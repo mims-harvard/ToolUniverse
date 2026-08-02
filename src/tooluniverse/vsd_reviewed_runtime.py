@@ -474,6 +474,47 @@ def _validated_http_request(
     }
 
 
+def _require_grpc_descriptor_identity(operation: dict[str, Any]) -> None:
+    try:
+        from google.protobuf import descriptor_pb2
+        from google.protobuf.message import DecodeError
+    except ImportError as exc:
+        raise VSDReviewedRuntimeError("protobuf runtime is not installed") from exc
+    descriptor_set = descriptor_pb2.FileDescriptorSet()
+    try:
+        descriptor_set.ParseFromString(
+            base64.b64decode(operation["descriptor_set_base64"], validate=True)
+        )
+    except (ValueError, DecodeError) as exc:
+        raise VSDReviewedRuntimeError("gRPC descriptor set is invalid") from exc
+    expected_path = operation["method"]
+    matches = []
+    for file_descriptor in descriptor_set.file:
+        for service in file_descriptor.service:
+            service_name = (
+                f"{file_descriptor.package}.{service.name}"
+                if file_descriptor.package
+                else service.name
+            )
+            for method in service.method:
+                if f"/{service_name}/{method.name}" == expected_path:
+                    matches.append(method)
+    if len(matches) != 1:
+        raise VSDReviewedRuntimeError(
+            "gRPC method must occur exactly once in the reviewed descriptor set"
+        )
+    method = matches[0]
+    if (
+        method.input_type.lstrip(".") != operation["request_type"]
+        or method.output_type.lstrip(".") != operation["response_type"]
+        or method.client_streaming
+        or ("server" if method.server_streaming else "unary") != operation["streaming"]
+    ):
+        raise VSDReviewedRuntimeError(
+            "gRPC method messages or streaming mode do not match the descriptor"
+        )
+
+
 def _validated_operation_config(config: Any) -> dict[str, Any]:
     if not isinstance(config, dict):
         raise VSDReviewedRuntimeError("Tool configuration must be an object")
@@ -625,6 +666,7 @@ def _validated_operation_config(config: Any) -> dict[str, Any]:
                 "max_messages": max_messages,
             }
         )
+        _require_grpc_descriptor_identity(normalized_operation)
         if set(properties) != {"request"}:
             raise VSDReviewedRuntimeError(
                 "gRPC tools expose exactly one request argument"
@@ -654,6 +696,16 @@ def _validated_operation_config(config: Any) -> dict[str, Any]:
         if normalized_operation["response"]["format"] != "json":
             raise VSDReviewedRuntimeError("MCP responses must use JSON normalization")
     else:
+        source_endpoint = operation.get("source_endpoint")
+        if source_endpoint is not None:
+            source_endpoint = _validated_endpoint(
+                source_endpoint, field="event source_endpoint"
+            )
+            if urlsplit(source_endpoint).query:
+                raise VSDReviewedRuntimeError(
+                    "Event source_endpoint cannot contain a query"
+                )
+            normalized_operation["source_endpoint"] = source_endpoint
         event_argument = operation.get("event_argument", "event")
         signature_argument = operation.get("signature_argument")
         if event_argument not in properties or not _ARGUMENT_RE.fullmatch(
@@ -1430,7 +1482,7 @@ class VSDReviewedOperationTool(BaseTool):
             method = "tools/call"
         else:
             result, request_metadata, secrets = _event_run(operation, values)
-            endpoint = operation["channel"]
+            endpoint = operation.get("source_endpoint", operation["channel"])
             method = "validate"
         if any(_contains_secret(result, secret) for secret in secrets):
             raise VSDReviewedRuntimeError("Runtime result contains credential material")

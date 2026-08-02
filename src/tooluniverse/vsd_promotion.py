@@ -15,7 +15,9 @@ from pathlib import Path
 from typing import Any, Iterator
 from urllib.parse import urlsplit
 
+from graphql import OperationType, parse as parse_graphql
 from jsonschema.exceptions import ValidationError
+from lxml import etree
 
 from .execute_function import ToolUniverse
 from .vsd_dynamic_rest import (
@@ -35,6 +37,7 @@ _MAX_PUBLISHED_TOOLS = 100
 _TOOL_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]{2,44}$")
 _DRAFT_ID_RE = re.compile(r"^[a-z][a-z0-9_]{2,127}_[0-9a-f]{12}$")
 _FIELD_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]{0,63}$")
+_CONTRACT_PARAMETER_RE = re.compile(r"^[A-Za-z0-9_.\[\]-]{1,128}$")
 _DATASET_ID_RE = re.compile(r"^[a-z0-9]{4}-[a-z0-9]{4}$")
 _PROMOTION_LOCK = threading.RLock()
 
@@ -147,6 +150,349 @@ def _review_text(value: Any, *, field: str, minimum: int, maximum: int) -> str:
     if any(ord(character) < 32 for character in text):
         raise VSDPromotionError(f"{field} contains control characters")
     return text
+
+
+def _normalized_reviewed_config(config: dict[str, Any]) -> dict[str, Any]:
+    from .vsd_reviewed_runtime import (
+        VSDReviewedRuntimeError,
+        _validated_operation_config,
+    )
+
+    try:
+        return _validated_operation_config(config)
+    except VSDReviewedRuntimeError as exc:
+        raise VSDPromotionError(str(exc)) from exc
+
+
+def _contract_parameter_map(value: Any) -> dict[str, str]:
+    if value is None:
+        return {}
+    if (
+        not isinstance(value, dict)
+        or len(value) > 32
+        or any(
+            not isinstance(source, str)
+            or not _CONTRACT_PARAMETER_RE.fullmatch(source)
+            or not isinstance(target, str)
+            or not _FIELD_RE.fullmatch(target)
+            for source, target in value.items()
+        )
+        or len(set(value.values())) != len(value)
+    ):
+        raise VSDPromotionError("vsd_contract_parameters must map unique identifiers")
+    return dict(sorted(value.items()))
+
+
+def _require_exact_endpoint(candidate: dict[str, Any], endpoint: Any) -> str:
+    expected = candidate.get("endpoint")
+    if not isinstance(expected, str) or not expected:
+        raise VSDPromotionError("Contract candidate has no bindable endpoint")
+    if endpoint != expected:
+        raise VSDPromotionError(
+            "Reviewed runtime endpoint does not match the contract candidate"
+        )
+    return expected
+
+
+def _graphql_binding(query: str) -> tuple[str, dict[str, str]]:
+    try:
+        document = parse_graphql(query)
+    except Exception as exc:
+        raise VSDPromotionError("Reviewed GraphQL query is invalid") from exc
+    operations = [
+        definition
+        for definition in document.definitions
+        if hasattr(definition, "operation")
+    ]
+    if (
+        len(operations) != 1
+        or operations[0].operation is not OperationType.QUERY
+        or len(operations[0].selection_set.selections) != 1
+    ):
+        raise VSDPromotionError(
+            "Contract-bound GraphQL must select exactly one query root field"
+        )
+    selection = operations[0].selection_set.selections[0]
+    name = getattr(getattr(selection, "name", None), "value", None)
+    if not isinstance(name, str):
+        raise VSDPromotionError("Contract-bound GraphQL root selection must be a field")
+    arguments: dict[str, str] = {}
+    for argument in getattr(selection, "arguments", ()):
+        argument_name = getattr(getattr(argument, "name", None), "value", None)
+        variable_name = getattr(
+            getattr(getattr(argument, "value", None), "name", None), "value", None
+        )
+        if (
+            not isinstance(argument_name, str)
+            or not isinstance(variable_name, str)
+            or argument_name in arguments
+        ):
+            raise VSDPromotionError(
+                "Contract-bound GraphQL root arguments must use unique variables"
+            )
+        arguments[argument_name] = variable_name
+    return name, arguments
+
+
+def _postman_endpoint(
+    candidate: dict[str, Any],
+    operation: dict[str, Any],
+    parameter_map: dict[str, str],
+) -> str:
+    endpoint = candidate.get("endpoint")
+    if not isinstance(endpoint, str) or not endpoint:
+        raise VSDPromotionError("Postman candidate has no bindable endpoint")
+    variables = sorted(
+        set(re.findall(r"\{\{([A-Za-z][A-Za-z0-9_]{0,63})\}\}", endpoint))
+    )
+    if set(parameter_map) != set(variables):
+        raise VSDPromotionError(
+            "Postman contract parameters must resolve every endpoint variable exactly"
+        )
+    path_arguments = operation["request"]["path_arguments"]
+    parameter_properties = set(operation.get("_parameter_properties", []))
+    expected = endpoint
+    for source in variables:
+        argument = parameter_map[source]
+        provider_name = path_arguments.get(argument)
+        if argument not in parameter_properties or provider_name is None:
+            raise VSDPromotionError(
+                "Postman contract parameter must bind one reviewed path argument"
+            )
+        expected = expected.replace(f"{{{{{source}}}}}", f"{{{provider_name}}}")
+    if "{{" in expected or "}}" in expected:
+        raise VSDPromotionError("Postman endpoint contains unresolved variables")
+    return expected
+
+
+def _soap_operation(envelope: str) -> str:
+    rendered = re.sub(r"\{[A-Za-z][A-Za-z0-9_]{0,63}\}", "value", envelope)
+    try:
+        root = etree.fromstring(
+            rendered.encode(),
+            parser=etree.XMLParser(
+                resolve_entities=False, no_network=True, load_dtd=False
+            ),
+        )
+    except etree.XMLSyntaxError as exc:
+        raise VSDPromotionError("Reviewed SOAP envelope is invalid") from exc
+    bodies = [
+        element for element in root.iter() if etree.QName(element).localname == "Body"
+    ]
+    children = [
+        child for body in bodies for child in body if isinstance(child.tag, str)
+    ]
+    if len(bodies) != 1 or len(children) != 1:
+        raise VSDPromotionError(
+            "Contract-bound SOAP envelope must contain exactly one body operation"
+        )
+    return etree.QName(children[0]).localname
+
+
+def _qualified_contract_type(package: Any, name: Any) -> str:
+    if not isinstance(name, str) or not name:
+        raise VSDPromotionError("gRPC contract message type is missing")
+    if not isinstance(package, str) or not package:
+        return name.lstrip(".")
+    prefix = f"{package}."
+    normalized = name.lstrip(".")
+    return normalized if normalized.startswith(prefix) else prefix + normalized
+
+
+def _bind_contract_candidate(
+    candidate: dict[str, Any],
+    normalized_config: dict[str, Any],
+    parameter_map: dict[str, str],
+) -> dict[str, Any]:
+    operation = normalized_config["vsd_reviewed_operation"]
+    properties = normalized_config["parameter"]["properties"]
+    operation["_parameter_properties"] = sorted(properties)
+    source_format = candidate["source_format"]
+    contract = candidate.get("contract")
+    if not isinstance(contract, dict):
+        raise VSDPromotionError("Contract candidate identity is invalid")
+    identity: dict[str, Any] = {
+        "endpoint": candidate.get("endpoint"),
+        "operation": candidate.get("name"),
+    }
+
+    if source_format == "graphql":
+        _require_exact_endpoint(candidate, operation.get("endpoint"))
+        if (
+            candidate.get("kind") != "graphql_query"
+            or contract.get("operation_type") != "query"
+            or operation["request"]["method"] != candidate.get("method")
+        ):
+            raise VSDPromotionError("GraphQL candidate is not the reviewed query")
+        body = operation["request"]["body"]
+        root_field, root_arguments = _graphql_binding(body["query"])
+        if root_field != contract.get("field") or root_field != candidate.get("name"):
+            raise VSDPromotionError(
+                "Reviewed GraphQL root field does not match the contract candidate"
+            )
+        input_schema = candidate.get("input_schema")
+        candidate_arguments = (
+            input_schema.get("properties") if isinstance(input_schema, dict) else None
+        )
+        required_arguments = (
+            set(input_schema.get("required", []))
+            if isinstance(input_schema, dict)
+            else set()
+        )
+        runtime_variables = set(body["arguments"].values()) | set(body["fixed"])
+        if (
+            not isinstance(candidate_arguments, dict)
+            or not required_arguments <= set(root_arguments)
+            or not set(root_arguments) <= set(candidate_arguments)
+            or set(root_arguments.values()) != runtime_variables
+        ):
+            raise VSDPromotionError(
+                "Reviewed GraphQL arguments do not match the contract field"
+            )
+        identity.update(
+            {"root_field": root_field, "argument_variables": root_arguments}
+        )
+    elif source_format == "postman":
+        expected_endpoint = _postman_endpoint(candidate, operation, parameter_map)
+        if operation.get("endpoint") != expected_endpoint:
+            raise VSDPromotionError(
+                "Reviewed runtime endpoint does not match the Postman request"
+            )
+        if operation["request"]["method"] != candidate.get("method"):
+            raise VSDPromotionError(
+                "Reviewed HTTP method does not match the Postman request"
+            )
+        input_schema = candidate.get("input_schema")
+        candidate_parameters = (
+            set(input_schema.get("properties", {}))
+            if isinstance(input_schema, dict)
+            else set()
+        )
+        reviewed_parameters = (
+            set(parameter_map)
+            | set(operation["request"]["query_arguments"].values())
+            | set(operation["request"]["fixed_query"])
+        )
+        if not reviewed_parameters <= candidate_parameters:
+            raise VSDPromotionError(
+                "Reviewed request parameters are absent from the Postman contract"
+            )
+        identity["endpoint"] = expected_endpoint
+    elif source_format == "wsdl":
+        _require_exact_endpoint(candidate, operation.get("endpoint"))
+        if operation["request"]["method"] != candidate.get("method"):
+            raise VSDPromotionError("Reviewed SOAP method does not match the WSDL")
+        headers = operation["request"]["fixed_headers"]
+        actions = [
+            value for name, value in headers.items() if name.casefold() == "soapaction"
+        ]
+        if actions != [contract.get("soap_action")]:
+            raise VSDPromotionError(
+                "Reviewed SOAPAction does not match the WSDL operation"
+            )
+        body_operation = _soap_operation(operation["request"]["body"]["envelope"])
+        if body_operation != contract.get("operation"):
+            raise VSDPromotionError(
+                "Reviewed SOAP body operation does not match the WSDL operation"
+            )
+        identity.update({"soap_action": actions[0], "body_operation": body_operation})
+    elif source_format == "protobuf":
+        endpoint = urlsplit(str(candidate.get("endpoint") or ""))
+        try:
+            endpoint_port = endpoint.port
+        except ValueError as exc:
+            raise VSDPromotionError(
+                "gRPC candidate endpoint has an invalid port"
+            ) from exc
+        if (
+            endpoint.scheme.casefold() != "https"
+            or not endpoint.hostname
+            or endpoint.username
+            or endpoint.password
+            or endpoint.query
+            or endpoint.fragment
+            or endpoint.path not in {"", "/"}
+            or endpoint_port not in {None, 443}
+        ):
+            raise VSDPromotionError(
+                "gRPC candidate endpoint is not a bindable authority"
+            )
+        expected_authority = f"{endpoint.hostname.casefold()}:443"
+        expected_method = (
+            f"/{contract.get('package') + '.' if contract.get('package') else ''}"
+            f"{contract.get('service')}/{contract.get('rpc')}"
+        )
+        expected_streaming = "server" if contract.get("server_streaming") else "unary"
+        if contract.get("client_streaming") is not False:
+            raise VSDPromotionError("Client-streaming gRPC candidates are unsupported")
+        if (
+            operation.get("endpoint", "").casefold() != expected_authority
+            or operation.get("method") != expected_method
+            or operation.get("request_type")
+            != _qualified_contract_type(
+                contract.get("package"), contract.get("input_type")
+            )
+            or operation.get("response_type")
+            != _qualified_contract_type(
+                contract.get("package"), contract.get("output_type")
+            )
+            or operation.get("streaming") != expected_streaming
+        ):
+            raise VSDPromotionError(
+                "Reviewed gRPC identity does not match the protobuf candidate"
+            )
+        identity.update(
+            {
+                "endpoint": expected_authority,
+                "method": expected_method,
+                "request_type": operation["request_type"],
+                "response_type": operation["response_type"],
+                "streaming": expected_streaming,
+            }
+        )
+    elif source_format == "mcp":
+        _require_exact_endpoint(candidate, operation.get("endpoint"))
+        declared = contract.get("declared_tools")
+        if not isinstance(declared, list) or operation.get("tool_name") not in declared:
+            raise VSDPromotionError(
+                "Reviewed MCP tool is not declared by the contract candidate"
+            )
+        identity["tool_name"] = operation["tool_name"]
+    elif source_format == "asyncapi":
+        _require_exact_endpoint(candidate, operation.get("source_endpoint"))
+        if contract.get("action") not in {"receive", "subscribe"}:
+            raise VSDPromotionError(
+                "Reviewed event runtime cannot bind an outbound AsyncAPI operation"
+            )
+        candidate_schema = candidate.get("input_schema")
+        if not isinstance(candidate_schema, dict) or not candidate_schema:
+            raise VSDPromotionError("AsyncAPI candidate has no bindable payload schema")
+        if (
+            operation.get("channel") != contract.get("channel")
+            or operation.get("event_schema") != candidate_schema
+        ):
+            raise VSDPromotionError(
+                "Reviewed event channel or schema does not match the AsyncAPI candidate"
+            )
+        identity.update(
+            {
+                "channel": operation["channel"],
+                "action": contract["action"],
+                "event_schema_sha256": _canonical_digest(operation["event_schema"]),
+            }
+        )
+    else:  # pragma: no cover - validate_contract_candidate owns this boundary
+        raise VSDPromotionError("Contract candidate format is unsupported")
+
+    operation.pop("_parameter_properties", None)
+    binding = {
+        "version": 1,
+        "source_format": source_format,
+        "candidate_id": candidate["candidate_id"],
+        "parameter_map": parameter_map,
+        "identity": identity,
+    }
+    return {**binding, "binding_sha256": _canonical_digest(binding)}
 
 
 def _candidate_fields(candidate: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -413,6 +759,11 @@ def create_reviewed_operation_draft(
             "resolved_blockers must explicitly acknowledge every candidate blocker"
         )
     note = _review_text(review_note, field="review_note", minimum=20, maximum=1000)
+    unbound = copy.deepcopy(config)
+    parameter_map = _contract_parameter_map(
+        unbound.pop("vsd_contract_parameters", None)
+    )
+    normalized = _normalized_reviewed_config(unbound)
     expected = {
         "graphql": ("http", "graphql"),
         "asyncapi": ("event", "asyncapi"),
@@ -421,7 +772,7 @@ def create_reviewed_operation_draft(
         "protobuf": ("grpc", "grpc"),
         "mcp": ("mcp", "mcp"),
     }
-    operation = config.get("vsd_reviewed_operation")
+    operation = normalized.get("vsd_reviewed_operation")
     if (
         not isinstance(operation, dict)
         or (operation.get("transport"), operation.get("protocol"))
@@ -430,7 +781,8 @@ def create_reviewed_operation_draft(
         raise VSDPromotionError(
             "Reviewed runtime transport does not match the contract format"
         )
-    bound = copy.deepcopy(config)
+    contract_binding = _bind_contract_candidate(reviewed, normalized, parameter_map)
+    bound = unbound
     bound["vsd_promotion"] = {
         "generator_version": _GENERATOR_VERSION,
         "source_type": "contract",
@@ -442,10 +794,11 @@ def create_reviewed_operation_draft(
         "candidate_kind": reviewed["kind"],
         "resolved_blockers": sorted(set(resolved_blockers)),
         "review_note": note,
+        "contract_binding": contract_binding,
     }
     try:
         _operation_digest(bound)
-    except VSDDynamicRESTError as exc:
+    except (VSDDynamicRESTError, ValueError) as exc:
         raise VSDPromotionError(str(exc)) from exc
     return _create_draft_from_config(bound, workspace=workspace)
 

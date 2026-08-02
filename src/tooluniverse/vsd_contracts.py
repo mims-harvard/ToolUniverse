@@ -66,6 +66,29 @@ _PROTO_FIELD_RE = re.compile(
     r"\b(?:optional\s+|required\s+|repeated\s+)?"
     r"([.A-Za-z_]\w*(?:\s*<[^;={}]+>)?)\s+([A-Za-z_]\w*)\s*=\s*(\d+)"
 )
+_CONTRACT_CANDIDATE_KEYS = {
+    "format",
+    "version",
+    "approval_state",
+    "execution_allowed",
+    "metadata_trust",
+    "source_format",
+    "source_document_sha256",
+    "kind",
+    "name",
+    "summary",
+    "protocol",
+    "endpoint",
+    "method",
+    "input_schema",
+    "output_schema",
+    "auth",
+    "blockers",
+    "warnings",
+    "contract",
+    "candidate_id",
+    "candidate_sha256",
+}
 
 
 class VSDContractError(ValueError):
@@ -236,6 +259,8 @@ def validate_contract_candidate(candidate: Any) -> dict[str, Any]:
     """Verify origin, integrity, bounds, and inert state of a candidate."""
     if not isinstance(candidate, dict):
         raise VSDContractError("Contract candidate must be an object")
+    if set(candidate) != _CONTRACT_CANDIDATE_KEYS:
+        raise VSDContractError("Contract candidate fields are invalid")
     if (
         candidate.get("format") != "vsd_contract_candidate_v1"
         or candidate.get("version") != _VERSION
@@ -454,17 +479,48 @@ def _asyncapi_servers(document: dict[str, Any]) -> dict[str, str]:
     return values
 
 
-def _schema_from_message(message: Any) -> dict[str, Any]:
+def _local_reference(document: dict[str, Any], reference: Any) -> Any:
+    if not isinstance(reference, str) or not reference.startswith("#/"):
+        return None
+    tokens = reference[2:].split("/")
+    if not 1 <= len(tokens) <= 20:
+        return None
+    value: Any = document
+    for token in tokens:
+        key = token.replace("~1", "/").replace("~0", "~")
+        if not isinstance(value, dict) or key not in value:
+            return None
+        value = value[key]
+    return value
+
+
+def _schema_from_message(
+    document: dict[str, Any], message: Any, seen: frozenset[str] = frozenset()
+) -> tuple[dict[str, Any], list[str]]:
     if not isinstance(message, dict):
-        return {}
+        return {}, []
+    reference = message.get("$ref")
+    if reference is not None:
+        if not isinstance(reference, str) or reference in seen:
+            return {}, ["asyncapi_message_reference_requires_local_resolution"]
+        resolved = _local_reference(document, reference)
+        if not isinstance(resolved, dict):
+            return {}, ["asyncapi_message_reference_requires_local_resolution"]
+        return _schema_from_message(document, resolved, seen | {reference})
     payload = message.get("payload")
     if isinstance(payload, dict):
-        return copy.deepcopy(payload)
+        return copy.deepcopy(payload), []
     one_of = message.get("oneOf")
     if isinstance(one_of, list):
-        schemas = [_schema_from_message(item) for item in one_of]
-        return {"oneOf": [item for item in schemas if item]}
-    return {}
+        schemas = []
+        blockers = []
+        for item in one_of:
+            schema, item_blockers = _schema_from_message(document, item, seen)
+            if schema:
+                schemas.append(schema)
+            blockers.extend(item_blockers)
+        return ({"oneOf": schemas} if schemas else {}), sorted(set(blockers))
+    return {}, []
 
 
 def _inspect_asyncapi(
@@ -528,11 +584,7 @@ def _inspect_asyncapi(
             message: Any = {}
             if isinstance(messages, list) and messages:
                 message = messages[0]
-                if isinstance(message, dict) and isinstance(message.get("$ref"), str):
-                    message_name = message["$ref"].split("/")[-1]
-                    message = (
-                        document.get("components", {}).get("messages", {}) or {}
-                    ).get(message_name, {})
+            message_schema, message_blockers = _schema_from_message(document, message)
             candidates.append(
                 _candidate(
                     source_format="asyncapi",
@@ -542,10 +594,11 @@ def _inspect_asyncapi(
                     summary=operation.get("summary") or operation.get("description"),
                     protocol="asyncapi",
                     endpoint=endpoint,
-                    input_schema=_schema_from_message(message),
-                    output_schema=_schema_from_message(message),
+                    input_schema=message_schema,
+                    output_schema=message_schema,
                     blockers=[
                         *endpoint_blockers,
+                        *message_blockers,
                         f"asyncapi_{action}_requires_bounded_event_runtime",
                     ],
                     contract={
@@ -573,13 +626,10 @@ def _inspect_asyncapi(
                 raw_endpoint = endpoint_override or next(iter(servers.values()), None)
             endpoint, endpoint_blockers = _https_endpoint(raw_endpoint)
             message = operation.get("message") or channel.get("messages", {})
-            if isinstance(message, dict) and "$ref" in message:
-                message_name = str(message["$ref"]).split("/")[-1]
-                message = (
-                    document.get("components", {}).get("messages", {}) or {}
-                ).get(message_name, {})
+            message_schema, message_blockers = _schema_from_message(document, message)
             blockers = [
                 *endpoint_blockers,
+                *message_blockers,
                 f"asyncapi_{action}_requires_bounded_event_runtime",
             ]
             candidates.append(
@@ -591,8 +641,8 @@ def _inspect_asyncapi(
                     summary=operation.get("summary") or operation.get("description"),
                     protocol="asyncapi",
                     endpoint=endpoint,
-                    input_schema=_schema_from_message(message),
-                    output_schema=_schema_from_message(message),
+                    input_schema=message_schema,
+                    output_schema=message_schema,
                     blockers=blockers,
                     contract={
                         "asyncapi_version": version,
@@ -693,6 +743,8 @@ def _inspect_postman(
             for query in url_object.get("query", []) or []:
                 if isinstance(query, dict) and isinstance(query.get("key"), str):
                     query_properties[query["key"]] = {"type": "string"}
+        for variable_name in unresolved:
+            query_properties.setdefault(variable_name, {"type": "string"})
         candidates.append(
             _candidate(
                 source_format="postman",

@@ -23,8 +23,8 @@ Yes. Ten runtime cases exercised reviewed GraphQL, REST, SOAP, gRPC, MCP, webhoo
 
 ## Promotion proof
 
-Candidate `c837126c2a40ae52` was bound to draft `promotedsmnpanelsoap_75b3146b1be8`, verified with three cases, approved, published, loaded into a fresh ToolUniverse instance, and executed for sample `S-404`.
+Candidate `c837126c2a40ae52` was bound to draft `promotedsmnpanelsoap_604cf84ac2f4`, verified with three cases, approved, published, loaded into a fresh ToolUniverse instance, and executed for sample `S-404`.
 
-All 33 assertions passed. Case identity: `05e0870fe14c61d560e483fcec472c9eeeabfb28f1042587fbe37e56ab8bd310`.
+All 33 assertions passed. Case identity: `2abc19e009936ad730ccb3a547d143c95b8dec992654e2d52e1d84d684a99386`.
 
 Provider fixtures are deterministic because no provider credentials are bundled. Contract validation, request construction, response decoding, schema validation, provenance, promotion, publication, and loading use production code.
