@@ -1,0 +1,58 @@
+{
+  "case_id": "tuberculosis_resistance_integration",
+  "title": "Tuberculosis Resistance Evidence Integration",
+  "research_question": "Can a tuberculosis resistance workflow verify that a discovered radiomics service is available before combining genomic, antimicrobial-resistance, and imaging evidence?",
+  "decision_context": "Gate an imaging branch on service readiness while existing tools assemble genome, resistance, drug, and study evidence; readiness does not authorize controlled-data access.",
+  "catalog_query": "TBPortals radiomics",
+  "catalog_record_id": "fc18c6cce884c23866beed24dce30a2d",
+  "service_endpoint": "https://ria.tbportals.niaid.nih.gov",
+  "specification_fixture": "tuberculosis_openapi.json",
+  "response_fixture": "tuberculosis_responses.json",
+  "operation_id": "get_/health_check",
+  "promotion_mode": "strict",
+  "tool_name": "VSDTBPortalsRadiomicsReadiness",
+  "tool_description": "Check the reviewed TB Portals radiomics service readiness endpoint.",
+  "include_parameters": [],
+  "fixed_query": {},
+  "review_note": "Reviewed the exact SmartAPI record, anonymous health-check operation, no-input request, and declared JSON status schema.",
+  "response_schema": null,
+  "workflow_capability": {
+    "step_id": "radiomics_service_readiness",
+    "description": "check the TB radiomics service readiness endpoint before an imaging branch",
+    "required_inputs": [],
+    "output_fields": ["status", "service"]
+  },
+  "verification_cases": [
+    {"arguments": {}, "expect": {"result_type": "object", "required_fields": ["status"], "equals": {"status": "ok"}}},
+    {"arguments": {}, "expect": {"result_type": "object", "required_fields": ["status", "service"], "equals_paths": {"/status": "ok"}}},
+    {"arguments": {}, "expect": {"result_type": "object", "required_fields": ["status"], "required_paths": ["/service"]}}
+  ],
+  "runtime_arguments": {},
+  "observations": [
+    {"label": "Radiomics service status", "pointer": "/status"},
+    {"label": "Service label", "pointer": "/service"}
+  ],
+  "reused_tools": [
+    {"name": "BVBRC_search_amr", "role": "Reuse antimicrobial-resistance phenotype evidence."},
+    {"name": "BVBRC_search_genomes", "role": "Reuse pathogen genome metadata."},
+    {"name": "PharmGKB_search_drugs", "role": "Reuse drug identifier and pharmacogenomic context."},
+    {"name": "search_clinical_trials", "role": "Reuse tuberculosis study discovery."}
+  ],
+  "without_vsd": {
+    "summary": "ToolUniverse can retrieve pathogen, resistance, drug, and trial evidence, but it has no exact operation for checking the cataloged radiomics service before the workflow enters its imaging branch."
+  },
+  "with_vsd": {
+    "summary": "The workflow gains a narrow readiness check bound to the cataloged service and contract; this prevents treating an unavailable imaging dependency as usable and does not create access to controlled images."
+  },
+  "limitations": [
+    "A health check establishes service readiness only; it does not validate a radiomics model or scientific result.",
+    "Controlled imaging data, consent, and authorization remain outside this tool.",
+    "The checked replay validates the lifecycle when the service is unreachable from the evaluation environment; current availability requires live mode."
+  ],
+  "references": [
+    {"title": "NIAID TB Portals multi-domain data platform", "url": "https://tbportals.niaid.nih.gov/what-are-the-tb-portals"},
+    {"title": "TB Portals data access policy", "url": "https://tbportals.niaid.nih.gov/access-data"},
+    {"title": "BV-BRC antimicrobial resistance resources", "url": "https://www.bv-brc.org/"},
+    {"title": "WHO tuberculosis data", "url": "https://www.who.int/teams/global-tuberculosis-programme/data"}
+  ]
+}

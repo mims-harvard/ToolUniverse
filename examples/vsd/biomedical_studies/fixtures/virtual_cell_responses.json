@@ -1,0 +1,17 @@
+[
+  {
+    "arguments": {"query_string": "trametinib"},
+    "payload": [{"Name": "TRAMETINIB", "pert_id": "BRD-K12343256"}]
+  },
+  {
+    "arguments": {"query_string": "selumetinib"},
+    "payload": [{"Name": "SELUMETINIB", "pert_id": "BRD-K57080016"}]
+  },
+  {
+    "arguments": {"query_string": "vemurafenib"},
+    "payload": [
+      {"Name": "VEMURAFENIB", "pert_id": "BRD-K56343971"},
+      {"Name": "VEMURAFENIB", "pert_id": "BRD-U73308409"}
+    ]
+  }
+]

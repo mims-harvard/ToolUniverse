@@ -153,6 +153,39 @@ tooluniverse-vsd-promote --workspace ./private-vsd-promotion \
   --review-note "Reviewed the exact response structure and three representative calls."
 ```
 
+## Biomedical Evaluation Portfolio
+
+`examples/vsd/biomedical_evaluation_portfolio.py` applies the same orchestration
+to five JSON scenarios rather than embedding scientific cases in runtime code.
+Each scenario supplies its research question, existing ToolUniverse roles,
+catalog query and record, OpenAPI operation, input selection, reviewed schema
+when required, representative cases, observations, limitations, and references.
+Adding a study does not change the discovery, inspection, promotion, runtime,
+planning, or reporting logic.
+
+The five checked workflows cover rare-disease identifier reconciliation,
+pan-cancer immune-checkpoint interactions, oncology combination review,
+virtual-cell perturbagen resolution, and tuberculosis radiomics readiness. In
+every case, the runner audits the real registry first and credits existing tools
+for their current roles. Only the missing exact operation is attributed to VSD.
+The lifecycle then proves inert discovery, catalog-to-contract binding, blocked
+early publication, at least three verification calls, approval, publication,
+absence from a fresh universe, explicit loading, execution, and replanning from
+`missing` to `existing_exact`.
+
+```console
+PYTHONPATH=src python examples/vsd/biomedical_evaluation_portfolio.py \
+  --mode replay
+PYTHONPATH=src python examples/vsd/biomedical_evaluation_portfolio.py \
+  --mode network_backed
+```
+
+Network-backed mode attempts the complete live path independently for every
+case. A failed catalog, contract, DNS, redirect, response-schema, or runtime
+boundary is recorded, and that case is rerun through its checked provider-shaped
+fixture. The Markdown and JSON artifacts label the resulting evidence mode, so
+replay output is never represented as a live scientific result.
+
 ## Fixed-Resource Promotion
 
 Machine-readable catalog distributions that have no operation contract can be

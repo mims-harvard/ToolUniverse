@@ -10,6 +10,38 @@ omits only the JSON response schema; every other inspection blocker remains
 enforced. See
 `docs/dev_docs/VSD_API_DISCOVERY_VALIDATION.md` for the CLI and review contract.
 
+## Biomedical Evaluation Portfolio
+
+`biomedical_evaluation_portfolio.py` runs five scenario files through one
+parameterized implementation. The scenarios cover rare-disease identifier
+reconciliation, pan-cancer checkpoint interactions, oncology combination
+review, virtual-cell perturbagen resolution, and tuberculosis radiomics
+readiness. Domain questions, source records, operation selections, schemas,
+test inputs, expected observations, existing-tool roles, and limitations live
+in JSON scenario data; the runner contains no disease-, gene-, or drug-specific
+branches.
+
+Every case audits the real ToolUniverse registry, proves that one exact
+operation is missing, discovers a SmartAPI record, inspects the bound OpenAPI
+operation, blocks early publication, runs at least three verification calls,
+approves and publishes the hash chain, confirms the tool is absent from a fresh
+universe, loads it explicitly, executes it, and replans to `existing_exact`.
+The comparison deliberately credits existing ToolUniverse tools for the work
+they already perform and attributes only the newly executable operation to VSD.
+
+```console
+PYTHONPATH=src python examples/vsd/biomedical_evaluation_portfolio.py \
+  --mode replay
+PYTHONPATH=src python examples/vsd/biomedical_evaluation_portfolio.py \
+  --mode network_backed
+```
+
+The checked network-backed artifact is
+`artifacts/biomedical_evaluation_portfolio.md` with a tamper-evident JSON
+counterpart. A case that cannot complete the live safety and contract checks is
+clearly labeled as checked replay; the report does not silently substitute
+fixture evidence or describe it as live.
+
 ## Multi-Catalog Cancer Source Evaluation
 
 `multicatalog_cancer_case_study.py` evaluates the new catalog sources as a

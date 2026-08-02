@@ -1,0 +1,36 @@
+{
+  "_id": "fc18c6cce884c23866beed24dce30a2d",
+  "_meta": {"last_updated": "2026-07-20T00:00:00Z"},
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TBPortals Radiomics Image Analysis API",
+    "version": "1.0.0",
+    "description": "Tuberculosis radiomics service readiness for resistance evidence workflows.",
+    "contact": {"name": "NIAID TB Portals"},
+    "license": {"name": "Public research API"}
+  },
+  "servers": [{"url": "https://ria.tbportals.niaid.nih.gov"}],
+  "tags": [{"name": "tuberculosis"}, {"name": "radiomics"}, {"name": "resistance"}],
+  "paths": {
+    "/health_check": {
+      "get": {
+        "operationId": "get_/health_check",
+        "summary": "Check radiomics service readiness",
+        "responses": {
+          "200": {
+            "description": "Service status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {"status": {"type": "string"}, "service": {"type": "string"}},
+                  "required": ["status"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

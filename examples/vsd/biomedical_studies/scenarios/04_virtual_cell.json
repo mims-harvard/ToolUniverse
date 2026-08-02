@@ -1,0 +1,57 @@
+{
+  "case_id": "virtual_cell_perturbation_selection",
+  "title": "Virtual-Cell Perturbation Dataset Selection",
+  "research_question": "Can a virtual-cell preparation workflow resolve candidate perturbagens to dataset identifiers before retrieving signatures and single-cell context?",
+  "decision_context": "Resolve perturbagen names before selecting expression signatures, cell contexts, and training data for perturbation-response modeling.",
+  "catalog_query": "single cell gene expression perturbation",
+  "catalog_record_id": "235e75417247f07e5fed6acf3f345bb7",
+  "service_endpoint": "https://maayanlab.cloud/L1000FWD",
+  "specification_fixture": "virtual_cell_openapi.json",
+  "response_fixture": "virtual_cell_responses.json",
+  "operation_id": "synonyms",
+  "promotion_mode": "strict",
+  "tool_name": "VSDL1000PerturbagenResolver",
+  "tool_description": "Resolve one reviewed perturbagen name to L1000 identifiers.",
+  "include_parameters": ["query_string"],
+  "fixed_query": {},
+  "review_note": "Reviewed the exact SmartAPI service root, read-only synonym path, perturbagen input, and declared array response schema.",
+  "response_schema": null,
+  "workflow_capability": {
+    "step_id": "perturbagen_resolution",
+    "description": "resolve one perturbagen name to L1000 perturbation identifiers",
+    "required_inputs": ["query_string"],
+    "output_fields": ["Name", "pert_id"]
+  },
+  "verification_cases": [
+    {"arguments": {"query_string": "trametinib"}, "expect": {"result_type": "array", "min_items": 1, "max_items": 5, "required_fields": ["Name", "pert_id"], "equals_paths": {"/pert_id": "BRD-K12343256"}}},
+    {"arguments": {"query_string": "selumetinib"}, "expect": {"result_type": "array", "min_items": 1, "max_items": 5, "required_fields": ["Name", "pert_id"], "equals_paths": {"/pert_id": "BRD-K57080016"}}},
+    {"arguments": {"query_string": "vemurafenib"}, "expect": {"result_type": "array", "min_items": 1, "max_items": 5, "required_fields": ["Name", "pert_id"], "required_paths": ["/pert_id"]}}
+  ],
+  "runtime_arguments": {"query_string": "trametinib"},
+  "observations": [
+    {"label": "Resolved perturbagen name", "pointer": "/0/Name"},
+    {"label": "Resolved L1000 perturbagen identifier", "pointer": "/0/pert_id"}
+  ],
+  "reused_tools": [
+    {"name": "CELLxGENE_get_cell_metadata", "role": "Reuse single-cell context and cohort metadata."},
+    {"name": "CELLxGENE_get_expression_data", "role": "Reuse cell-level expression retrieval."},
+    {"name": "L1000FWD_sig_search", "role": "Reuse the existing signature-search workflow after identifier resolution."}
+  ],
+  "without_vsd": {
+    "summary": "ToolUniverse already performs L1000 signature search and CELLxGENE retrieval, but it does not expose the provider's synonym operation, so free-text perturbagen names must be resolved outside the planned tool chain."
+  },
+  "with_vsd": {
+    "summary": "The workflow adds only the missing synonym operation from the already known provider, turning drug names into stable perturbagen identifiers before existing signature and single-cell tools run."
+  },
+  "limitations": [
+    "Identifier resolution does not determine whether a perturbation is biologically appropriate for a model.",
+    "Signature quality, dose, duration, cell state, and batch effects require separate evaluation.",
+    "The provider may return multiple identifiers for one name; downstream selection must retain that ambiguity."
+  ],
+  "references": [
+    {"title": "Benchmarking single-cell perturbation response prediction", "url": "https://www.nature.com/articles/s41592-025-02980-0"},
+    {"title": "L1000FWD", "url": "https://maayanlab.cloud/L1000FWD/"},
+    {"title": "CELLxGENE Census", "url": "https://chanzuckerberg.github.io/cellxgene-census/"},
+    {"title": "Virtual Cell Challenge", "url": "https://virtualcellchallenge.org/"}
+  ]
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "arguments": {"q": "PDCD1"},
+    "payload": {
+      "took": 1,
+      "total": 8,
+      "hits": [
+        {
+          "_id": "innatedb:PDCD1:interaction:1",
+          "object": {"alias": {"hgnc_name": "PDCD1"}, "interactor_type": {"label": "protein"}},
+          "relation": {"detection_method": "identification by antibody", "source": "InnateDB"},
+          "subject": {"alias": {"hgnc_name": "PD-L1"}}
+        }
+      ]
+    }
+  },
+  {
+    "arguments": {"q": "CTLA4"},
+    "payload": {
+      "took": 1,
+      "total": 5,
+      "hits": [
+        {
+          "_id": "innatedb:CTLA4:interaction:1",
+          "object": {"alias": {"hgnc_name": "CTLA4"}, "interactor_type": {"label": "protein"}},
+          "relation": {"detection_method": "affinity chromatography", "source": "InnateDB"},
+          "subject": {"alias": {"hgnc_name": "CD80"}}
+        }
+      ]
+    }
+  },
+  {
+    "arguments": {"q": "LAG3"},
+    "payload": {
+      "took": 1,
+      "total": 3,
+      "hits": [
+        {
+          "_id": "innatedb:LAG3:interaction:1",
+          "object": {"alias": {"hgnc_name": "LAG3"}, "interactor_type": {"label": "protein"}},
+          "relation": {"detection_method": "two hybrid", "source": "InnateDB"},
+          "subject": {"alias": {"hgnc_name": "HLA-DRA"}}
+        }
+      ]
+    }
+  }
+]
