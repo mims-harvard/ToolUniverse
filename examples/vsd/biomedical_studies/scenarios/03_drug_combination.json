@@ -1,0 +1,67 @@
+{
+  "case_id": "context_specific_drug_combinations",
+  "title": "Context-Specific Oncology Combination Review",
+  "research_question": "Can an oncology combination workflow add curated interaction severity before advancing experimentally promising drug pairs?",
+  "decision_context": "Combine target, dependency, synergy, and adverse-event evidence with curated interaction records to prioritize laboratory follow-up and safety review.",
+  "catalog_query": "drug combination interaction oncology",
+  "catalog_record_id": "00fb85fc776279163199e6c50f6ddfc6",
+  "service_endpoint": "https://biothings.transltr.io/ddinter",
+  "specification_fixture": "drug_combination_openapi.json",
+  "response_fixture": "drug_combination_responses.json",
+  "operation_id": "get_/query",
+  "promotion_mode": "reviewed_response",
+  "tool_name": "VSDDDInterCombinationQuery",
+  "tool_description": "Query reviewed curated drug-drug interaction records for a combination hypothesis.",
+  "include_parameters": ["q"],
+  "fixed_query": {"size": 5},
+  "review_note": "Reviewed the anonymous read-only query, bounded result size, and observed DDInter response envelope across three oncology drugs.",
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "took": {"type": "integer", "minimum": 0},
+      "total": {"type": "integer", "minimum": 0},
+      "hits": {"type": "array", "items": {"type": "object"}, "maxItems": 20}
+    },
+    "required": ["took", "total", "hits"]
+  },
+  "workflow_capability": {
+    "step_id": "combination_interaction_review",
+    "description": "retrieve curated drug interaction severity for an oncology combination query",
+    "required_inputs": ["q"],
+    "output_fields": ["total", "hits", "drug_a", "drug_b", "level"]
+  },
+  "verification_cases": [
+    {"arguments": {"q": "drug_a.name:\"Arsenic trioxide\" AND drug_b.name:Idarubicin"}, "expect": {"result_type": "object", "required_fields": ["total", "hits"], "equals": {"total": 1}, "equals_paths": {"/hits/0/level": "Major"}}},
+    {"arguments": {"q": "drug_a.name:Trametinib"}, "expect": {"result_type": "object", "required_fields": ["total", "hits"], "required_paths": ["/hits/0/drug_a/name", "/hits/0/level"], "equals_paths": {"/hits/0/drug_a/name": "Trametinib"}}},
+    {"arguments": {"q": "drug_a.name:Olaparib"}, "expect": {"result_type": "object", "required_fields": ["total", "hits"], "required_paths": ["/hits/0/drug_a/name", "/hits/0/level"], "equals_paths": {"/hits/0/drug_a/name": "Olaparib"}}}
+  ],
+  "runtime_arguments": {"q": "drug_a.name:\"Arsenic trioxide\" AND drug_b.name:Idarubicin"},
+  "observations": [
+    {"label": "Matching curated records", "pointer": "/total"},
+    {"label": "First combination", "pointer": "/hits/0/drug_b/name"},
+    {"label": "Interaction severity", "pointer": "/hits/0/level"}
+  ],
+  "reused_tools": [
+    {"name": "ChEMBL_get_target_activities", "role": "Reuse target activity evidence."},
+    {"name": "DepMap_get_gene_dependencies", "role": "Reuse cancer-context dependency evidence."},
+    {"name": "DrugSynergy_calculate_bliss", "role": "Reuse measured combination-effect scoring."},
+    {"name": "FAERS_compare_drugs", "role": "Reuse post-market safety signal comparison."}
+  ],
+  "without_vsd": {
+    "summary": "ToolUniverse can score observed synergy and retrieve target, dependency, and safety evidence, but it lacks this exact curated interaction query, so a promising pair can reach review without a DDInter severity check in the same workflow."
+  },
+  "with_vsd": {
+    "summary": "The workflow gains a bounded DDInter query that can flag curated interaction severity before experimental prioritization; it complements rather than replaces efficacy and safety analysis."
+  },
+  "limitations": [
+    "Interaction severity is not an efficacy estimate and does not replace pharmacology review.",
+    "The example query verifies retrieval and governance, not a treatment recommendation.",
+    "The upstream specification omits the response schema, so publication depends on explicit reviewed-schema evidence."
+  ],
+  "references": [
+    {"title": "Context-specific drug combinations in lung cancer", "url": "https://www.nature.com/articles/s41467-023-39528-9"},
+    {"title": "DDInter drug-drug interaction database", "url": "https://academic.oup.com/nar/article/50/D1/D1200/6389535"},
+    {"title": "DepMap", "url": "https://depmap.org/portal/"},
+    {"title": "ChEMBL", "url": "https://www.ebi.ac.uk/chembl/"}
+  ]
+}

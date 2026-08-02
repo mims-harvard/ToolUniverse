@@ -1,0 +1,40 @@
+{
+  "_id": "5a4c41bf2076b469a0e9cfcf2f2b8f29",
+  "_meta": {"last_updated": "2026-07-20T00:00:00Z"},
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Translator Annotation Service",
+    "version": "1.0.0",
+    "description": "Cross-ontology annotation service for rare disease, phenotype, and gene identifiers.",
+    "contact": {"name": "NCATS Biomedical Data Translator"},
+    "license": {"name": "CC0-1.0"}
+  },
+  "servers": [{"url": "https://biothings.transltr.io/annotator"}],
+  "tags": [{"name": "rare disease"}, {"name": "phenotype"}, {"name": "ontology"}],
+  "paths": {
+    "/{curieid}": {
+      "get": {
+        "operationId": "get_/{curieid}",
+        "summary": "Retrieve cross-ontology annotations for one CURIE",
+        "parameters": [
+          {
+            "name": "curieid",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string", "minLength": 3, "maxLength": 100}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Annotation groups keyed by input CURIE",
+            "content": {
+              "application/json": {
+                "schema": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

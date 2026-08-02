@@ -1,0 +1,42 @@
+{
+  "_id": "235e75417247f07e5fed6acf3f345bb7",
+  "_meta": {"last_updated": "2026-07-20T00:00:00Z"},
+  "openapi": "3.0.3",
+  "info": {
+    "title": "L1000FWD",
+    "version": "1.0.0",
+    "description": "Single-cell and gene-expression perturbation resource with perturbagen identifier resolution.",
+    "contact": {"name": "Ma'ayan Laboratory"},
+    "license": {"name": "Public research API"}
+  },
+  "servers": [{"url": "https://maayanlab.cloud/L1000FWD"}],
+  "tags": [{"name": "single cell"}, {"name": "gene expression"}, {"name": "perturbation"}],
+  "paths": {
+    "/synonyms/{query_string}": {
+      "get": {
+        "operationId": "synonyms",
+        "summary": "Resolve a perturbagen name to L1000 identifiers",
+        "parameters": [
+          {"name": "query_string", "in": "path", "required": true, "schema": {"type": "string", "minLength": 2, "maxLength": 100}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching perturbagen identifiers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {"Name": {"type": "string"}, "pert_id": {"type": "string"}},
+                    "required": ["Name", "pert_id"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
