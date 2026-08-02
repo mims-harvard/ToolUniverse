@@ -75,8 +75,9 @@ def test_multicatalog_case_closes_a_real_gap_and_is_reproducible(
     assert json.loads(output_proposal.read_text(encoding="utf-8")) == proposal
     report = output_markdown.read_text(encoding="utf-8")
     assert "Five-Catalog Search" in report
-    assert "Reviewed Handoff" in report
-    assert "Closed Growth Loop" in report
+    assert "Contract Review and Promotion" in report
+    assert "Post-Publication Registry Validation" in report
+    assert "Why This Case Matters" not in report
     assert "FAIL" not in report
 
     repeated_snapshot = study.run_case(tmp_path / "repeated")

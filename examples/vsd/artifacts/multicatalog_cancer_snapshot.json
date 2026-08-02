@@ -1,6 +1,5 @@
 {
-  "audit_sha256": "61fab0c67c77aacd3a6996fa1f7004bf6d13361359f77449bb6b9b41f07fe345",
-  "boundary": "This is a software-governance and public aggregate-data retrieval proof. It does not establish trial eligibility, compare treatments, infer patient risk, or certify the scientific quality of a catalog listing.",
+  "audit_sha256": "1ff0dc3fecde1eaef4067900dd915a5503b530344c8e3b77f9f46b81b4055fa1",
   "case": "multicatalog_breast_cancer_program_growth",
   "catalog_searches": [
     {
@@ -13,7 +12,7 @@
         "credential_ref": null,
         "endpoint": "https://api.us.socrata.com/api/catalog/v1",
         "http_status": 200,
-        "payload_sha256": "3aa728b83f29819c239c41a1d799131344f32aa22fe380b8b172981c4f7e6eab",
+        "payload_sha256": "4cd05b656db983f5ddc6cdce15cfaed54252cadac0386bca267f33d4d60d0643",
         "provider": "Socrata Open Data API Catalog",
         "provider_id": "socrata",
         "query_params": {
@@ -23,8 +22,8 @@
         },
         "redirects": 0,
         "request_header_names": [],
-        "response_bytes": 439402,
-        "retrieved_at": "2026-08-02T07:16:58.832210+00:00"
+        "response_bytes": 445832,
+        "retrieved_at": "2026-08-02T07:51:21.916219+00:00"
       },
       "provider": "socrata",
       "query": "active breast cancer clinical trials phase",
@@ -122,7 +121,7 @@
     },
     {
       "candidate_count": 5,
-      "catalog_result_count": 1128799,
+      "catalog_result_count": 1129091,
       "evidence_mode": "live",
       "failed_provider_count": 0,
       "provenance": {
@@ -130,7 +129,7 @@
         "credential_ref": null,
         "endpoint": "https://data.europa.eu/api/hub/search/search",
         "http_status": 200,
-        "payload_sha256": "b85262a5fc178a26c90f9b90fad0d3f08256f81ca0bc72f5c36befdb7e1bbe39",
+        "payload_sha256": "a4acf577a1c7b3b42e0f1d20ff0c8c500284ccb0691f895054568d35f0ac781b",
         "provider": "European Data Portal Hub Search",
         "provider_id": "data_europa",
         "query_params": {
@@ -139,8 +138,8 @@
         },
         "redirects": 0,
         "request_header_names": [],
-        "response_bytes": 253786,
-        "retrieved_at": "2026-08-02T07:16:59.940322+00:00"
+        "response_bytes": 251601,
+        "retrieved_at": "2026-08-02T07:51:23.195101+00:00"
       },
       "provider": "data_europa",
       "query": "cause of death cancer Ireland csv",
@@ -197,7 +196,7 @@
         "redirects": 0,
         "request_header_names": [],
         "response_bytes": 125911,
-        "retrieved_at": "2026-08-02T07:17:01.136170+00:00"
+        "retrieved_at": "2026-08-02T07:51:24.345590+00:00"
       },
       "provider": "ckan_data_gov_uk",
       "query": "cancer waiting times",
@@ -251,7 +250,7 @@
         "redirects": 0,
         "request_header_names": [],
         "response_bytes": 8855894,
-        "retrieved_at": "2026-08-02T07:17:02.315025+00:00"
+        "retrieved_at": "2026-08-02T07:51:25.591335+00:00"
       },
       "provider": "apis_guru",
       "query": "genomics",
@@ -327,7 +326,29 @@
       ]
     }
   },
-  "decision_question": "Can ToolUniverse turn a complex breast-cancer program need into a reviewed source portfolio while rejecting attractive but unsafe or unfit catalog results?",
+  "comparative_assessment": [
+    {
+      "activity": "Catalog search",
+      "direct_integration_baseline": "Implement and maintain five provider-specific search clients and normalize their different response schemas.",
+      "observed_vsd_contribution": "One discovery interface returned ranked, inert candidates with a common schema and source provenance."
+    },
+    {
+      "activity": "Source qualification",
+      "direct_integration_baseline": "Implement equivalent transport, schema, media-type, contract, and freshness checks separately for each source.",
+      "observed_vsd_contribution": "Uniform checks identified the Data.gov redirect, CKAN media-type mismatch, and five unsupported genomics operations before approval."
+    },
+    {
+      "activity": "Reusable integration",
+      "direct_integration_baseline": "A direct script can retrieve the same provider values but needs a separate review, provenance, publication, and loading convention.",
+      "observed_vsd_contribution": "Two resources became content-addressed ToolUniverse tools after six verification executions and explicit approval."
+    },
+    {
+      "activity": "Registry maintenance",
+      "direct_integration_baseline": "Compare each proposed operation with the existing registry and distinguish exact identity from semantic similarity.",
+      "observed_vsd_contribution": "Replanning resolved both published operations and repeat discovery suppressed only their exact method, host, and path identities."
+    }
+  ],
+  "decision_question": "Can ToolUniverse expand its registry for a multi-source cancer program while applying consistent qualification and publication controls to catalog candidates?",
   "demand": {
     "ledger_sha256": "3f2f719bf504ba75997946aeffd69be3774711cb4ebf16b3b2a423fd39489717",
     "observation_counts": [
@@ -364,7 +385,7 @@
       "datagov"
     ]
   },
-  "generated_at": "2026-08-02T07:16:54.994787+00:00",
+  "generated_at": "2026-08-02T07:51:17.431172+00:00",
   "initial_plan": {
     "overall_action": "discover_missing_capabilities",
     "plan_sha256": "1842f505458ed918f886bace59b79871a5a06a872acb3e115bd6baa70a765582",
@@ -374,14 +395,25 @@
       "trial_inventory": "missing"
     }
   },
+  "interpretation_limits": "This evaluation covers software governance and public aggregate-data retrieval. It does not establish trial eligibility, compare treatments, infer patient risk, certify the scientific quality of a catalog listing, or compare the accuracy of VSD with a manually engineered integration.",
+  "measured_outcomes": {
+    "catalogs_searched": 5,
+    "exact_capability_gaps_closed": 2,
+    "exact_registered_candidates_suppressed": 2,
+    "leads_not_published": 3,
+    "post_publication_executions": 2,
+    "selected_leads_qualified": 5,
+    "tools_published": 2,
+    "verification_executions_for_published_tools": 6
+  },
   "mode": "network_backed",
   "promotions": [
     {
-      "approval_sha256": "8e3da3508517041ed995d4d11ec897b25ec8fd135e3e7b5e221af014fd769e13",
+      "approval_sha256": "fea453e8ffd349ff576f97cd634640d90bdc219c723e3ee400c69aa87fd4e232",
       "candidate_sha256": "809225fa1f2891c5d9849d2caa45f5d69552218541a7711175d67ce84133e839",
       "draft_id": "vsdcancertrialsbyprimarysite_051610fedd01",
-      "draft_sha256": "750d2b50ada9679aad5a5a9f5326efabf96e14551dcfcaf17c8ac896fa0f483b",
-      "publication_sha256": "f3ceee3cb26a7f2545fd52735903618f21fea23aaed472bce5960dfdbd28a788",
+      "draft_sha256": "f355f33186edd5bf3f4a63e3a5998bb352d19302f6109646c34bf8fae0513a62",
+      "publication_sha256": "79fa7b176d302a5fe1cbc56d517652875fbdc0fc8deae91d74f3909b25112dc5",
       "tool_name": "VSDCancerTrialsByPrimarySite",
       "verification_arguments": [
         {
@@ -395,10 +427,10 @@
         }
       ],
       "verification_case_count": 3,
-      "verification_sha256": "4288f40d992b985bd6342ee1cf98c75f3e4c4a21db34b8405143b6750406d9d5"
+      "verification_sha256": "e764c2b086008d465c55977c4b02ae3c1677d52f7f4eecd967e946994edeacdd"
     },
     {
-      "approval_sha256": "14c816780cb529f4d6c670db3215493537bbefbf55f2b2ab02fd97a39276ed9b",
+      "approval_sha256": "c8a7d5427b1ab572b540706b858b99df8041d622b21bcfb9b1b59a76687494ea",
       "candidate_sha256": "b038d225bab663d64adba4966cb8066ff5580794438a3731ed8463453a27d064",
       "catalog_binding": {
         "binding_sha256": "23c9a14745f0cc6be89c601ed5b65e99767c24e106229806995be3010d9b0582",
@@ -416,11 +448,11 @@
         "response_format": "json"
       },
       "draft_id": "vsdirishcancermortalitycontext_a8409db950ff",
-      "draft_sha256": "216282468230ccd476601230d8d81f5b1a145a71f3985c162ec966ab7f69afe4",
-      "publication_sha256": "f6eb42f295e8f6d8dee9f678f6bd48220b2b7b12bd3366df946a799053f6d6b6",
+      "draft_sha256": "b24787d59717678460b66d0d7f11842fbc13acc2e778f556bc1569618dc38c46",
+      "publication_sha256": "a07e75fbc3c7aad847df2cd6db086873d4c9bef9644f974abcd19cdb7c10ad6f",
       "tool_name": "VSDIrishCancerMortalityContext",
       "verification_case_count": 3,
-      "verification_sha256": "2f1c8d204a9d0450000abfdfafe504a2366439495fd1e1d1be20515bb8e22a0c"
+      "verification_sha256": "01b74b661904595b18e1c792f4ebaee20d8439e3811d95c2a58d791d8ec3247c"
     }
   ],
   "qualification_decisions": {
@@ -512,7 +544,7 @@
       "provider": "ws.cso.ie",
       "redirects": 0,
       "response_bytes": 2637,
-      "retrieved_at": "2026-08-02T07:17:09.496266+00:00",
+      "retrieved_at": "2026-08-02T07:51:32.653925+00:00",
       "runtime": {
         "pages": [
           {
@@ -523,9 +555,9 @@
               "access-control-allow-origin": "",
               "cache-control": "no-cache",
               "connection": "keep-alive",
-              "content-disposition": "inline; filename=KTA31.20260802081709",
+              "content-disposition": "inline; filename=KTA31.20260802085132",
               "content-type": "application/json",
-              "date": "Sun, 02 Aug 2026 07:17:09 GMT",
+              "date": "Sun, 02 Aug 2026 07:51:32 GMT",
               "server": "n/a",
               "transfer-encoding": "chunked",
               "vary": "Origin",
@@ -574,7 +606,7 @@
       },
       "redirects": 0,
       "response_bytes": 7415,
-      "retrieved_at": "2026-08-02T07:17:08.913912+00:00"
+      "retrieved_at": "2026-08-02T07:51:32.072304+00:00"
     },
     "trial_rows": [
       {
@@ -766,27 +798,5 @@
         "title": "The Roswell Park Ciclib Study: A Prospective Study of Biomarkers and Clinical Features of Advanced/Metastatic Breast Cancer Treated with CDK4/6 Inhibitors."
       }
     ]
-  },
-  "with_without_vsd": [
-    {
-      "task": "Search five incompatible catalogs",
-      "with_vsd": "Invoke one agent-facing tool and receive one inert candidate contract.",
-      "without_vsd": "Write five provider-specific clients and compare raw schemas manually."
-    },
-    {
-      "task": "Decide whether a result is usable",
-      "with_vsd": "Bounded verification exposed a redirect boundary, a MIME mismatch, blocked genomics operations, and stale replayed values.",
-      "without_vsd": "A relevant title can be mistaken for a safe, current API."
-    },
-    {
-      "task": "Create reusable tools",
-      "with_vsd": "Publish only two exact hash-bound tools after verification and approval.",
-      "without_vsd": "Wire endpoints directly with no common review or evidence chain."
-    },
-    {
-      "task": "Avoid duplicate growth",
-      "with_vsd": "Replanning finds exact coverage and rediscovery suppresses both endpoints.",
-      "without_vsd": "Repeat searches can recreate an endpoint already in the registry."
-    }
-  ]
+  }
 }

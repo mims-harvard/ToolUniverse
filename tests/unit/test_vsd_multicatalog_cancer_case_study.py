@@ -56,6 +56,16 @@ def test_cancer_case_exercises_all_catalog_decisions_and_closes_two_gaps(
         study.MORTALITY_TOOL,
     ]
     assert snapshot["runtime_evidence"]["present_before_explicit_load"] == []
+    assert snapshot["measured_outcomes"] == {
+        "catalogs_searched": 5,
+        "selected_leads_qualified": 5,
+        "tools_published": 2,
+        "leads_not_published": 3,
+        "verification_executions_for_published_tools": 6,
+        "post_publication_executions": 2,
+        "exact_capability_gaps_closed": 2,
+        "exact_registered_candidates_suppressed": 2,
+    }
     assert snapshot["closed_loop"]["final_plan_states"] == {
         "program_review": "agent_native",
         "mortality_context": "existing_exact",
@@ -80,6 +90,10 @@ def test_checked_live_cancer_artifacts_are_synchronized_and_tamper_evident():
     assert study.DEFAULT_MARKDOWN.read_text(encoding="utf-8") == (
         study.render_markdown(snapshot)
     )
+    report = study.DEFAULT_MARKDOWN.read_text(encoding="utf-8")
+    assert "Why This Is Hard" not in report
+    assert "Exact VSD Advantage" not in report
+    assert "## Observed VSD Contribution" in report
 
     tampered = copy.deepcopy(snapshot)
     tampered["runtime_evidence"]["mortality_summary"]["latest_cancer_deaths"] = 1

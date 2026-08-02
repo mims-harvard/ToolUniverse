@@ -1,9 +1,9 @@
 # ToolUniverse VSD Validation Case Studies
 
-## Live Multi-Catalog Breast-Cancer Program Growth
+## Multi-Catalog Cancer Source Evaluation
 
-`multicatalog_cancer_case_study.py` tests the new catalog sources as a real
-growth system, not just as search adapters. A breast-cancer program needs five
+`multicatalog_cancer_case_study.py` evaluates the new catalog sources as a
+governed integration workflow. A breast-cancer program needs five
 different evidence roles: local trial inventory, population mortality context,
 treatment-access delays, outcome benchmarks, and a genomics workflow. Five
 focused searches run through Socrata, US Data.gov, the European Data Portal,
@@ -20,9 +20,11 @@ historical values. The Irish resource is direct, current through 2024, and
 supplies malignant-neoplasm counts split at age 65. A Northern Ireland CSV is
 blocked because the server returns `application/octet-stream`, and all five
 operations in the discovered Google Genomics contract remain blocked by
-authentication, write, body, or parameter constraints. This makes the central
-VSD advantage measurable: it finds useful new sources while preventing catalog
-relevance from being mistaken for runtime or evidence fitness.
+authentication, write, body, or parameter constraints. The measured result is
+two published tools, two closed capability gaps, and three rejected leads.
+VSD's contribution is a repeatable process for expanding ToolUniverse through
+candidate discovery, qualification, approval, loading, and exact registry
+deduplication while preserving the provider's values and provenance.
 
 Run the deterministic replay from the repository root:
 
@@ -30,8 +32,8 @@ Run the deterministic replay from the repository root:
 PYTHONPATH=src python examples/vsd/multicatalog_cancer_case_study.py --mode replay
 ```
 
-Run the complete network proof with a personal Data.gov key to avoid the public
-demo key's low quota:
+Run the complete network validation with a personal Data.gov key to avoid the
+public demo key's low quota:
 
 ```console
 TOOLUNIVERSE_DATAGOV_API_KEY=... PYTHONPATH=src \
@@ -44,7 +46,7 @@ searches and all five candidate resource/contract qualifications live. The
 artifact labels this distinction in both JSON and Markdown.
 
 Review `artifacts/multicatalog_cancer_snapshot.md` and its machine-verifiable
-JSON counterpart. The checked network-backed proof records five catalog
+JSON counterpart. The checked network-backed evaluation records five catalog
 searches, five qualification outcomes, two complete promotion hash chains, six
 verification executions, two final executions, two closed workflow gaps,
 duplicate suppression, credential-value exclusion, and 18 end-to-end
@@ -65,17 +67,17 @@ non-executable candidates. Data.gov and Socrata independently identify the same
 endpoint, so exact-identity deduplication produces one candidate with both
 provenance records. An administrator obtains its OpenAPI contract, verifies
 three disease cohorts, approves and publishes the exact hash chain, loads the
-tool into a fresh ToolUniverse instance, and proves both exact workflow coverage
+tool into a fresh ToolUniverse instance, and verifies both exact workflow coverage
 and suppression of the now-registered endpoint on the next discovery pass.
 
-Run the deterministic proof from the repository root:
+Run the deterministic validation from the repository root:
 
 ```console
 PYTHONPATH=src python examples/vsd/multicatalog_discovery_case_study.py
 ```
 
 Review `artifacts/multicatalog_discovery_snapshot.md`, its machine-verifiable
-JSON counterpart, and the sanitized demand proposal. The proof contains 16
+JSON counterpart, and the sanitized demand proposal. The evaluation contains 16
 end-to-end assertions, three verification executions, three post-publication
 executions, reproducibility coverage, and audit-hash tamper detection. The
 opt-in network test in `tests/integration/test_vsd_multicatalog_live.py` checks

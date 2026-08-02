@@ -123,7 +123,7 @@ representative verification, explicit approval, publication, and loading
 before execution. This path intentionally does not synthesize an arbitrary
 parameterized API from catalog metadata.
 
-## Live Cancer Portfolio Proof
+## Cancer Portfolio Validation
 
 `examples/vsd/multicatalog_cancer_case_study.py` starts with repeated unmet
 demand for exact breast-cancer trial and mortality capabilities. It then runs
@@ -132,18 +132,23 @@ Portal, data.gov.uk, and APIs.guru to cover trial, mortality, outcome, access,
 and molecular evidence roles. Each selected lead remains inert while its real
 resource or OpenAPI contract is qualified.
 
-Only two leads cross the lifecycle: the Roswell Park SODA endpoint by exact
+Only two leads complete the lifecycle: the Roswell Park SODA endpoint by exact
 primary-site query and Ireland's fixed principal-cause-of-death JSON-stat cube,
 which supplies malignant-neoplasm counts through 2024 by age group. Three other
-leads prove the rejection boundaries: the live Oklahoma outcome URL redirects
+leads exercise the rejection boundaries: the live Oklahoma outcome URL redirects
 to a signed object-store URL and is blocked before retrieval, its captured
 direct response is stale and sparse, a Northern Ireland resource fails its
 declared CSV media contract, and five Google Genomics operations fail contract
-inspection.
-The accepted tools pass six verification executions, cannot publish early, are
-absent from a fresh registry until explicitly loaded, execute through the
-normal ToolUniverse API, close both exact planning gaps, and suppress their own
-endpoints during repeat discovery.
+inspection. The measured outcome is two published tools from five qualified
+leads. The accepted tools pass six verification executions, cannot publish
+early, are absent from a fresh registry until explicitly loaded, execute
+through the normal ToolUniverse API, close both exact planning gaps, and
+suppress their own endpoints during repeat discovery.
+
+The result demonstrates controlled registry expansion and source qualification.
+VSD contributes a common discovery, qualification, provenance, approval,
+loading, and exact deduplication process while preserving provider values for
+domain-appropriate interpretation.
 
 ```console
 PYTHONPATH=src python examples/vsd/multicatalog_cancer_case_study.py --mode replay
@@ -161,7 +166,7 @@ catalogs and all five selected candidate resources/contracts live. The replay
 uses small excerpts captured from the same real responses, and the opt-in
 integration test performs the complete live run with a personal Data.gov key.
 
-## Rare-Disease Deduplication Proof
+## Rare-Disease Deduplication Validation
 
 `examples/vsd/multicatalog_discovery_case_study.py` starts with a real planning
 gap: a comparative ALS, Duchenne muscular dystrophy, and spinal muscular
@@ -178,7 +183,7 @@ ToolUniverse instance. Replanning then reports exact coverage, and a repeated
 catalog search suppresses the already-registered endpoint with an auditable
 reason.
 
-Run the proof from the repository root:
+Run the validation from the repository root:
 
 ```console
 PYTHONPATH=src python examples/vsd/multicatalog_discovery_case_study.py
@@ -190,8 +195,8 @@ The checked artifacts are:
 - `examples/vsd/artifacts/multicatalog_discovery_snapshot.json`
 - `examples/vsd/artifacts/multicatalog_discovery_demand_proposal.json`
 
-The unit portfolio runs the complete study twice to prove reproducibility and
-then modifies the snapshot to prove audit-hash tamper detection.
+The unit portfolio runs the complete study twice to verify reproducibility and
+then modifies the snapshot to verify audit-hash tamper detection.
 
 ## Security Boundary
 

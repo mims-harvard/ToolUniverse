@@ -597,7 +597,7 @@ def run_case(workspace: Path) -> dict[str, Any]:
         "title": "Multi-Catalog Rare-Disease Capability Growth Study",
         "question": (
             "Can repeated demand for genotype-stratified rare-disease progression "
-            "and specialist-access evidence become a narrow, proven ToolUniverse tool?"
+            "and specialist-access evidence become a reviewed ToolUniverse tool?"
         ),
         "answer": (
             "Yes. Five verified catalogs yielded five relevant inert candidates; "
@@ -694,25 +694,25 @@ def _markdown(snapshot: dict[str, Any]) -> str:
     lines = [
         "# Multi-Catalog Rare-Disease Capability Growth Study",
         "",
-        "## Decision Question",
+        "## Evaluation Objective",
         "",
         snapshot["question"],
         "",
         f"**Result:** {snapshot['answer']}",
         "",
-        "## Why This Case Matters",
+        "## Evaluation Context",
         "",
         (
             "A comparative ALS, Duchenne muscular dystrophy, and spinal muscular atrophy "
             "workflow needed longitudinal progression, genotype, clinical-outcome, and "
             "specialist-access measures from one machine-readable cohort operation. The "
             "existing registry could not satisfy that operation, so planning produced a "
-            "specific discovery handoff instead of pretending a related tool was enough."
+            "specific discovery handoff rather than treating a related tool as exact coverage."
         ),
         "",
         snapshot["fixture_boundary"],
         "",
-        "## Repeated Demand",
+        "## Demand Evidence",
         "",
         (
             f"Three independent preflights recorded the same missing capability as "
@@ -764,7 +764,7 @@ def _markdown(snapshot: dict[str, Any]) -> str:
                 "is evidence for review, not approval or scientific endorsement."
             ),
             "",
-            "## Reviewed Handoff",
+            "## Contract Review and Promotion",
             "",
             (
                 f"Data.gov and Socrata independently pointed to `{selected['endpoint']}`. "
@@ -805,7 +805,7 @@ def _markdown(snapshot: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "## Closed Growth Loop",
+            "## Post-Publication Registry Validation",
             "",
             (
                 f"Replanning classified the original gap as `{closed['classification']}` "
@@ -814,7 +814,7 @@ def _markdown(snapshot: dict[str, Any]) -> str:
                 "auditable duplicate reason, preventing the growth loop from proposing it again."
             ),
             "",
-            "## End-to-End Assertions",
+            "## Validation Results",
             "",
             "| Assertion | Result |",
             "| --- | --- |",
@@ -827,10 +827,10 @@ def _markdown(snapshot: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "## Boundary",
+            "## Interpretation Limits",
             "",
             (
-                "This proves discovery and software-governance behavior against "
+                "This evaluation covers discovery and software-governance behavior against "
                 "deterministic provider fixtures. It does not certify the scientific "
                 "quality of a catalog record, approve a provider automatically, or let "
                 "an agent bypass contract review and human approval."

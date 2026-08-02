@@ -1,18 +1,18 @@
 # Multi-Catalog Rare-Disease Capability Growth Study
 
-## Decision Question
+## Evaluation Objective
 
-Can repeated demand for genotype-stratified rare-disease progression and specialist-access evidence become a narrow, proven ToolUniverse tool?
+Can repeated demand for genotype-stratified rare-disease progression and specialist-access evidence become a reviewed ToolUniverse tool?
 
 **Result:** Yes. Five verified catalogs yielded five relevant inert candidates; duplicate US listings converged on one endpoint, an administrator reviewed its contract, three disease cohorts passed verification, and the published tool closed the workflow gap.
 
-## Why This Case Matters
+## Evaluation Context
 
-A comparative ALS, Duchenne muscular dystrophy, and spinal muscular atrophy workflow needed longitudinal progression, genotype, clinical-outcome, and specialist-access measures from one machine-readable cohort operation. The existing registry could not satisfy that operation, so planning produced a specific discovery handoff instead of pretending a related tool was enough.
+A comparative ALS, Duchenne muscular dystrophy, and spinal muscular atrophy workflow needed longitudinal progression, genotype, clinical-outcome, and specialist-access measures from one machine-readable cohort operation. The existing registry could not satisfy that operation, so planning produced a specific discovery handoff rather than treating a related tool as exact coverage.
 
 Deterministic catalog and cohort responses replace network transport. Agent invocation, provider dispatch, normalization, ranking, deduplication, registry comparison, demand, planning, OpenAPI inspection, promotion, verification, publication, loading, execution, and provenance use production code.
 
-## Repeated Demand
+## Demand Evidence
 
 Three independent preflights recorded the same missing capability as `f8b08737f5a438f5`. The reviewed local proposal is bound by `49785a274d6bc170f6317b8160fb975f39503b0abc76f30295ea639658868e40`; exporting it did not submit or approve a tool.
 
@@ -38,7 +38,7 @@ The agent-facing discovery tool searched all five providers and inspected 10 cat
 
 The APIs.guru result is an OpenAPI lead; the government-catalog results are endpoint leads. Neither form becomes executable. Catalog provenance is evidence for review, not approval or scientific endorsement.
 
-## Reviewed Handoff
+## Contract Review and Promotion
 
 Data.gov and Socrata independently pointed to `https://data.example.gov/resource/abcd-1234.json`. An administrator obtained and inspected the provider contract, selected `getLongitudinalCohort`, and confirmed that the contract endpoint matched the discovered identity. Publication was rejected before verification and approval.
 
@@ -61,11 +61,11 @@ Three records passed the reviewed response schema, required nested-value checks,
 | `DMD-PED-014` | Duchenne muscular dystrophy | 312 | 48 months | -8.1 | 62 days |
 | `SMA-NAT-022` | Spinal muscular atrophy | 196 | 30 months | -5.7 | 35 days |
 
-## Closed Growth Loop
+## Post-Publication Registry Validation
 
 Replanning classified the original gap as `existing_exact` and selected `VSDRareDiseaseLongitudinalCohort`. Repeating the same catalog search then removed the already-registered endpoint and returned an auditable duplicate reason, preventing the growth loop from proposing it again.
 
-## End-to-End Assertions
+## Validation Results
 
 | Assertion | Result |
 | --- | --- |
@@ -86,8 +86,8 @@ Replanning classified the original gap as `existing_exact` and selected `VSDRare
 | `three_verification_cases_passed` | PASS |
 | `verification_approval_publication_hash_chain_is_complete` | PASS |
 
-## Boundary
+## Interpretation Limits
 
-This proves discovery and software-governance behavior against deterministic provider fixtures. It does not certify the scientific quality of a catalog record, approve a provider automatically, or let an agent bypass contract review and human approval.
+This evaluation covers discovery and software-governance behavior against deterministic provider fixtures. It does not certify the scientific quality of a catalog record, approve a provider automatically, or let an agent bypass contract review and human approval.
 
 **Case audit SHA-256:** `9228fde0fa09fd290c1dba149b6c06675f16e75cfc21db9405882a2fd7b87f3f`

@@ -1156,9 +1156,9 @@ def run_case(
         },
         "generated_at": timestamp,
         "decision_question": (
-            "Can ToolUniverse turn a complex breast-cancer program need into a "
-            "reviewed source portfolio while rejecting attractive but unsafe or "
-            "unfit catalog results?"
+            "Can ToolUniverse expand its registry for a multi-source cancer program "
+            "while applying consistent qualification and publication controls to "
+            "catalog candidates?"
         ),
         "research_need": {
             "molecular": "Locate a usable genomics workflow contract.",
@@ -1222,33 +1222,69 @@ def run_case(
                 for provider in ("socrata", "data_europa")
             },
         },
-        "with_without_vsd": [
+        "measured_outcomes": {
+            "catalogs_searched": 5,
+            "selected_leads_qualified": 5,
+            "tools_published": 2,
+            "leads_not_published": 3,
+            "verification_executions_for_published_tools": 6,
+            "post_publication_executions": 2,
+            "exact_capability_gaps_closed": 2,
+            "exact_registered_candidates_suppressed": 2,
+        },
+        "comparative_assessment": [
             {
-                "task": "Search five incompatible catalogs",
-                "without_vsd": "Write five provider-specific clients and compare raw schemas manually.",
-                "with_vsd": "Invoke one agent-facing tool and receive one inert candidate contract.",
+                "activity": "Catalog search",
+                "direct_integration_baseline": (
+                    "Implement and maintain five provider-specific search clients and "
+                    "normalize their different response schemas."
+                ),
+                "observed_vsd_contribution": (
+                    "One discovery interface returned ranked, inert candidates with a "
+                    "common schema and source provenance."
+                ),
             },
             {
-                "task": "Decide whether a result is usable",
-                "without_vsd": "A relevant title can be mistaken for a safe, current API.",
-                "with_vsd": "Bounded verification exposed a redirect boundary, a MIME mismatch, blocked genomics operations, and stale replayed values.",
+                "activity": "Source qualification",
+                "direct_integration_baseline": (
+                    "Implement equivalent transport, schema, media-type, contract, and "
+                    "freshness checks separately for each source."
+                ),
+                "observed_vsd_contribution": (
+                    "Uniform checks identified the Data.gov redirect, CKAN media-type "
+                    "mismatch, and five unsupported genomics operations before approval."
+                ),
             },
             {
-                "task": "Create reusable tools",
-                "without_vsd": "Wire endpoints directly with no common review or evidence chain.",
-                "with_vsd": "Publish only two exact hash-bound tools after verification and approval.",
+                "activity": "Reusable integration",
+                "direct_integration_baseline": (
+                    "A direct script can retrieve the same provider values but needs a "
+                    "separate review, provenance, publication, and loading convention."
+                ),
+                "observed_vsd_contribution": (
+                    "Two resources became content-addressed ToolUniverse tools after six "
+                    "verification executions and explicit approval."
+                ),
             },
             {
-                "task": "Avoid duplicate growth",
-                "without_vsd": "Repeat searches can recreate an endpoint already in the registry.",
-                "with_vsd": "Replanning finds exact coverage and rediscovery suppresses both endpoints.",
+                "activity": "Registry maintenance",
+                "direct_integration_baseline": (
+                    "Compare each proposed operation with the existing registry and "
+                    "distinguish exact identity from semantic similarity."
+                ),
+                "observed_vsd_contribution": (
+                    "Replanning resolved both published operations and repeat discovery "
+                    "suppressed only their exact method, host, and path identities."
+                ),
             },
         ],
         "end_to_end_assertions": assertions,
-        "boundary": (
-            "This is a software-governance and public aggregate-data retrieval proof. "
+        "interpretation_limits": (
+            "This evaluation covers software governance and public aggregate-data "
+            "retrieval. "
             "It does not establish trial eligibility, compare treatments, infer patient "
-            "risk, or certify the scientific quality of a catalog listing."
+            "risk, certify the scientific quality of a catalog listing, or compare the "
+            "accuracy of VSD with a manually engineered integration."
         ),
     }
     snapshot["audit_sha256"] = _digest(snapshot)
@@ -1275,6 +1311,18 @@ def validate_snapshot(snapshot: dict[str, Any]) -> None:
             else ["invalid_assertion_envelope"]
         )
         raise ValueError(f"Cancer end-to-end assertions did not pass: {failed!r}")
+    expected_outcomes = {
+        "catalogs_searched": 5,
+        "selected_leads_qualified": 5,
+        "tools_published": 2,
+        "leads_not_published": 3,
+        "verification_executions_for_published_tools": 6,
+        "post_publication_executions": 2,
+        "exact_capability_gaps_closed": 2,
+        "exact_registered_candidates_suppressed": 2,
+    }
+    if snapshot.get("measured_outcomes") != expected_outcomes:
+        raise ValueError("Cancer case measured outcomes are invalid")
     expected = _digest(
         {key: value for key, value in snapshot.items() if key != "audit_sha256"}
     )
@@ -1289,13 +1337,13 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
     runtime = snapshot["runtime_evidence"]
     mortality = runtime["mortality_summary"]
     lines = [
-        "# Multi-Catalog Breast-Cancer Program Study",
+        "# Multi-Catalog Cancer Source Evaluation",
         "",
-        "## Decision Question",
+        "## Evaluation Objective",
         "",
         snapshot["decision_question"],
         "",
-        "## Evidence Mode",
+        "## Evidence Basis",
         "",
         f"- Study mode: `{snapshot['mode']}`",
         (
@@ -1311,14 +1359,15 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
         ),
         "",
         (
-            "`network_backed` means only the Data.gov catalog response is a captured "
-            "real replay because its shared `DEMO_KEY` quota returned HTTP 429. The "
-            "other four catalogs and all five selected resources/contracts are live."
+            "`network_backed` means only the Data.gov catalog response is replayed "
+            "from a previously captured live response because its shared `DEMO_KEY` "
+            "quota returned HTTP 429. The other four catalogs and all five selected "
+            "resources/contracts are live."
             if snapshot["mode"] == "network_backed"
             else "The mode above applies to both catalog search and candidate qualification."
         ),
         "",
-        "## Why This Is Hard",
+        "## Evaluation Scope",
         "",
         (
             "The program needs molecular, trial, mortality, access, and outcome evidence. "
@@ -1327,13 +1376,13 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
             "current, safely executable, correctly typed, or contract-compatible."
         ),
         "",
-        "## Initial Gap And Repeated Demand",
+        "## Baseline Capability Assessment",
         "",
         f"- Initial action: `{snapshot['initial_plan']['overall_action']}`",
         f"- Initial capability states: `{json.dumps(snapshot['initial_plan']['states'], sort_keys=True)}`",
         f"- Demand records: **{snapshot['demand']['record_count']}**, each observed **3** times",
         "",
-        "## Five Real Catalog Searches",
+        "## Catalog Search Results",
         "",
         "| Catalog | Evidence | Research role | Query | Catalog matches | Candidates | Selected lead |",
         "| --- | --- | --- | --- | ---: | ---: | --- |",
@@ -1355,7 +1404,7 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
                 "used for triage, never as approval."
             ),
             "",
-            "## Qualification Decisions",
+            "## Source Qualification Decisions",
             "",
             "| Catalog | Decision | Concrete reason |",
             "| --- | --- | --- |",
@@ -1365,7 +1414,7 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
             f"| Data.gov.uk CKAN | Blocked | Provider returned `{decisions['ckan_data_gov_uk']['observed_content_type']}` for catalog-declared CSV; the reviewed runtime refused the mismatch. |",
             f"| APIs.guru | Blocked | All {decisions['apis_guru']['blocked_count']} Google Genomics operations had authentication, write-method, request-body, or unsupported-parameter blockers. |",
             "",
-            "## Evidence Actually Retrieved",
+            "## Accepted Runtime Evidence",
             "",
             f"- **Trials:** `{TRIAL_TOOL}` returned **{len(runtime['trial_rows'])}** exact `Breast` rows in the checked execution. The dataset is a registry snapshot; a populated `date_closed` must not be presented as currently recruiting.",
             f"- **Mortality context:** `{MORTALITY_TOOL}` returned malignant-neoplasm counts through **{mortality['latest_year']}**: **{mortality['latest_age_65_and_under_deaths']}** deaths at age 65 or under and **{mortality['latest_age_65_and_over_deaths']}** over age 65, or **{mortality['latest_cancer_deaths']}** combined.",
@@ -1383,7 +1432,7 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
             "",
             "These are source observations, not clinical conclusions and not cross-population comparisons.",
             "",
-            "## Promotion And Closed Loop",
+            "## Promotion and Registry Validation",
             "",
             "| Tool | Verification cases | Draft | Verification | Approval | Publication |",
             "| --- | ---: | --- | --- | --- | --- |",
@@ -1402,18 +1451,60 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
             "",
             f"The two tools were absent before explicit loading. Replanning classified both operations as exact existing capabilities, and repeat Socrata/Data Europa discovery suppressed one registered endpoint each.",
             "",
-            "## Exact VSD Advantage",
+            "## Measured Outcomes",
             "",
-            "| Task | Without VSD | With VSD |",
-            "| --- | --- | --- |",
+            (
+                "The initial registry had no exact tool for either executable gap. "
+                "The completed workflow added two reviewed tools, closed both gaps, "
+                "and excluded three leads that did not meet publication requirements."
+            ),
+            "",
+            "| Metric | Result |",
+            "| --- | ---: |",
         ]
     )
-    for item in snapshot["with_without_vsd"]:
-        lines.append(f"| {item['task']} | {item['without_vsd']} | {item['with_vsd']} |")
+    outcome_labels = {
+        "catalogs_searched": "Catalogs searched",
+        "selected_leads_qualified": "Selected leads qualified",
+        "tools_published": "Tools published",
+        "leads_not_published": "Leads not published",
+        "verification_executions_for_published_tools": (
+            "Verification executions for published tools"
+        ),
+        "post_publication_executions": "Post-publication executions",
+        "exact_capability_gaps_closed": "Exact capability gaps closed",
+        "exact_registered_candidates_suppressed": (
+            "Exact registered candidates suppressed"
+        ),
+    }
+    for name, label in outcome_labels.items():
+        value = snapshot["measured_outcomes"][name]
+        rendered = "yes" if value is True else "no" if value is False else str(value)
+        lines.append(f"| {label} | {rendered} |")
     lines.extend(
         [
             "",
-            "## End-to-End Assertions",
+            "## Observed VSD Contribution",
+            "",
+            "VSD converted two unmet capabilities into reusable ToolUniverse tools "
+            "through one governed process spanning five catalogs. A direct integration "
+            "could retrieve the same raw provider records, but it would need to recreate "
+            "the catalog adapters, qualification controls, approval evidence, registry "
+            "loading, and duplicate checks represented below.",
+            "",
+            "| Activity | Direct-integration baseline | Observed VSD contribution |",
+            "| --- | --- | --- |",
+        ]
+    )
+    for item in snapshot["comparative_assessment"]:
+        lines.append(
+            f"| {item['activity']} | {item['direct_integration_baseline']} | "
+            f"{item['observed_vsd_contribution']} |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Validation Results",
             "",
             "| Assertion | Result |",
             "| --- | --- |",
@@ -1424,9 +1515,9 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "## Boundary",
+            "## Interpretation Limits",
             "",
-            snapshot["boundary"],
+            snapshot["interpretation_limits"],
             "",
             f"**Case audit SHA-256:** `{snapshot['audit_sha256']}`",
             "",
