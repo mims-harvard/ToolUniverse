@@ -1,0 +1,104 @@
+{
+  "container_name": "tooluniverse-docker-llm-smoke-case",
+  "created_at": "2026-08-01T02:16:21.210741+00:00",
+  "docker_context": "default",
+  "docker_server_version": "28.0.4",
+  "health": {
+    "model": "fixture-evidence-synthesizer",
+    "service_id": "tooluniverse-docker-llm-smoke",
+    "status": "ok"
+  },
+  "host_port": 19090,
+  "image": "tooluniverse/docker-llm-smoke:test",
+  "image_id": "sha256:6f9459d804c3546c24e184e5099fad16a9aea73c0e957bba4425c08824ded58a",
+  "profile_name": "docker-llm-smoke",
+  "profile_sha256": "5de381c0fe30a88ddd896b1e830a10ea40f794a09090cd9726e0de7c96fb81d8",
+  "record_sha256": "e422bb0cf2470c22f8dc9d6ea0663172ef9defc71ff73f895a6e2fda3c3d5951",
+  "security": {
+    "bind_mounts": 0,
+    "cap_drop": [
+      "ALL"
+    ],
+    "cpus": 1.0,
+    "host_binding": "127.0.0.1:19090",
+    "memory_mb": 256,
+    "no_new_privileges": true,
+    "pids_limit": 64,
+    "privileged": false,
+    "read_only_rootfs": true,
+    "running": true
+  },
+  "tool_config": {
+    "cacheable": false,
+    "category": "special_tools",
+    "description": "Send a bounded evidence-synthesis prompt to the reviewed loopback Docker service.",
+    "docker_llm": {
+      "endpoint": "http://127.0.0.1:19090/v1/chat/completions",
+      "image_id": "sha256:6f9459d804c3546c24e184e5099fad16a9aea73c0e957bba4425c08824ded58a",
+      "max_prompt_chars": 20000,
+      "max_tokens_cap": 1024,
+      "model": "fixture-evidence-synthesizer",
+      "profile_sha256": "5de381c0fe30a88ddd896b1e830a10ea40f794a09090cd9726e0de7c96fb81d8",
+      "request_timeout_seconds": 15,
+      "service_id": "tooluniverse-docker-llm-smoke"
+    },
+    "mcp_annotations": {
+      "destructiveHint": false,
+      "readOnlyHint": true
+    },
+    "name": "DockerEvidenceSynthesizer",
+    "parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "max_tokens": {
+          "default": 512,
+          "maximum": 1024,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "prompt": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "temperature": {
+          "default": 0.0,
+          "maximum": 2,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "type": "object"
+    },
+    "return_schema": {
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "provenance": {
+          "type": "object"
+        },
+        "response": {
+          "type": "string"
+        },
+        "usage": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "response",
+        "model",
+        "provenance"
+      ],
+      "type": "object"
+    },
+    "type": "DockerLLMClientTool"
+  },
+  "version": 1
+}
