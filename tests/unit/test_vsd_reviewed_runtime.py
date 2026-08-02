@@ -799,6 +799,35 @@ def test_low_level_http_exchange_pins_peer_disables_redirects_and_bounds_bytes(
     assert session.closed and response.closed
 
 
+def test_low_level_http_exchange_rejects_a_closed_zero_body_redirect(monkeypatch):
+    response = _FakeResponse(
+        b"",
+        status=302,
+        headers={"Location": "https://provider.example.org/moved"},
+    )
+    response.raw._connection = None
+    session = _FakeSession(response)
+    monkeypatch.setattr(runtime.requests, "Session", lambda: session)
+    monkeypatch.setattr(
+        runtime,
+        "_validated_source_target",
+        lambda url: (url, "provider.example.org", ("203.0.113.10",)),
+    )
+
+    with pytest.raises(runtime.VSDReviewedRuntimeError, match="redirects"):
+        runtime._http_exchange(
+            method="GET",
+            url="https://provider.example.org/data.csv",
+            params={},
+            headers={},
+            body=None,
+            timeout=10,
+            max_bytes=100,
+        )
+
+    assert session.closed and response.closed
+
+
 @pytest.mark.parametrize(
     "response, message",
     [

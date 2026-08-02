@@ -1,0 +1,735 @@
+{
+  "all_assertions_passed": true,
+  "case_count": 5,
+  "cases": [
+    {
+      "assertions": {
+        "catalog_and_openapi_service_roots_match": true,
+        "catalog_candidate_is_inert_and_hash_bound": true,
+        "complete_hash_chain_was_recorded": true,
+        "early_publication_was_blocked": true,
+        "existing_tool_roles_were_verified_in_the_registry": true,
+        "final_plan_resolved_the_exact_operation": true,
+        "initial_exact_operation_was_missing": true,
+        "publication_required_explicit_loading": true,
+        "three_or_more_verification_calls_passed": true
+      },
+      "case_id": "rare_disease_diagnostic_evidence",
+      "decision_context": "Normalize identifiers before combining phenotype, variant, natural-history, and trial evidence; the added annotations support evidence retrieval and do not establish a diagnosis.",
+      "evidence_mode": "replay",
+      "existing_tooluniverse_coverage": [
+        {
+          "config_sha256": "48952465b0677f7f5ec65eaf773c575bd6c3a7e08b1c5702691cf1d172c80e19",
+          "name": "Orphanet_get_natural_history",
+          "present": true,
+          "role": "Reuse curated rare-disease natural-history evidence."
+        },
+        {
+          "config_sha256": "d2173af5e4f943cf874edec662b89ab2ffee4cbef69b9e21f69f16bf3a165eb2",
+          "name": "HPO_get_diseases_by_phenotype",
+          "present": true,
+          "role": "Reuse phenotype-to-disease associations."
+        },
+        {
+          "config_sha256": "8d129131cec1ee4fdaffd6b35c798368b7cb2efe60ff84ca79a0e9af852f0660",
+          "name": "ClinVar_search_variants",
+          "present": true,
+          "role": "Reuse submitted variant interpretations."
+        }
+      ],
+      "governance": {
+        "early_publication_blocked": true,
+        "hash_chain": {
+          "approval_sha256": "ef994284b214334c53229ab65d99b1a0708cc9416aef3035360a4bc86daeb715",
+          "catalog_candidate_sha256": "cca8fd3463c502f8a46f0d794395ea6ced35e696045812ccea6712b47fc81077",
+          "draft_sha256": "c363aa942c6cb2af8e5029f6b87cf75d555bb5edf57a6e45216534ac990b3f7c",
+          "operation_candidate_sha256": "0c727f7ebe5c8bcaf8349aa265e30593e52e94a2707db7e365829e384d5314ee",
+          "publication_sha256": "cc37da87cd7568e1da8b392b112793e38e47488e083478c89dd30df637c102ba",
+          "source_document_sha256": "b5ab549ae8c60bdec3e9df62f2e5c6c5f228a8ebd707083d5feb7e5997160911",
+          "verification_sha256": "c4c3ecc0abffb2013f5c720d595d28c112c1274214e840e31672ef1e53f863a0"
+        },
+        "loaded_into_fresh_universe": [
+          "VSDTranslatorAnnotationLookup"
+        ],
+        "resolved_blockers": []
+      },
+      "limitations": [
+        "Annotation mappings are retrieval evidence, not a diagnostic conclusion.",
+        "Replay values are provider-shaped test evidence; live mode is required to assess current upstream content.",
+        "Conflicting or missing mappings still require domain review."
+      ],
+      "live_attempt": {
+        "completed": false,
+        "failure": {
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider response failed the reviewed schema: '_id' is a required property\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider response failed the reviewed schema: ",
+          "type": "VSDPromotionError"
+        },
+        "fallback": "checked replay"
+      },
+      "references": [
+        {
+          "title": "Phenotype-driven rare genetic disease diagnosis",
+          "url": "https://www.nature.com/articles/s41746-025-01749-1"
+        },
+        {
+          "title": "NCATS Biomedical Data Translator",
+          "url": "https://ncats.nih.gov/research/research-activities/translator"
+        },
+        {
+          "title": "Human Phenotype Ontology",
+          "url": "https://hpo.jax.org/"
+        },
+        {
+          "title": "Orphanet",
+          "url": "https://www.orpha.net/"
+        }
+      ],
+      "research_question": "Can a diagnostic review reconcile disease, phenotype, and gene identifiers before comparing rare-disease cohort and variant evidence?",
+      "source": {
+        "catalog": "SmartAPI",
+        "catalog_candidate_id": "de5a6332d9b9e52f",
+        "catalog_query": "rare disease phenotype ontology annotation",
+        "catalog_record_id": "5a4c41bf2076b469a0e9cfcf2f2b8f29",
+        "inspection": {
+          "candidate_count": 1,
+          "mode": "replay",
+          "promotable_count": 1,
+          "source": "checked provider-shaped OpenAPI fixture",
+          "source_document_sha256": "b5ab549ae8c60bdec3e9df62f2e5c6c5f228a8ebd707083d5feb7e5997160911"
+        },
+        "operation_blockers": [],
+        "operation_id": "get_/{curieid}",
+        "operation_path": "/{curieid}",
+        "promotion_mode": "strict",
+        "service_endpoint": "https://biothings.transltr.io/annotator"
+      },
+      "title": "Rare-Disease Diagnostic Evidence Reconciliation",
+      "with_vsd": {
+        "executable_new_operation": true,
+        "planned_operation_classification": "existing_exact",
+        "published_tool": "VSDTranslatorAnnotationLookup",
+        "runtime": {
+          "item_count": null,
+          "observations": [
+            {
+              "label": "Normalized disease label",
+              "pointer": "/MONDO:0004976/0/disease_ontology/name",
+              "value": "amyotrophic lateral sclerosis"
+            },
+            {
+              "label": "Disease Ontology identifier",
+              "pointer": "/MONDO:0004976/0/disease_ontology/doid",
+              "value": "DOID:332"
+            },
+            {
+              "label": "GARD cross-reference",
+              "pointer": "/MONDO:0004976/0/xrefs/gard",
+              "value": "5786"
+            }
+          ],
+          "payload_sha256": "13ba679e02f8eb852b54fb745a551b5139df4979dd23e115c71c3d259fd2bcd1",
+          "provider": "biothings.transltr.io",
+          "result_type": "object",
+          "top_level_fields": [
+            "MONDO:0004976"
+          ]
+        },
+        "summary": "The workflow gains one verified CURIE annotation operation that returns cross-ontology labels and identifiers with runtime provenance, allowing existing evidence tools to receive consistent identifiers.",
+        "verification_case_count": 3
+      },
+      "without_vsd": {
+        "executable_new_operation": false,
+        "planned_operation_classification": "missing",
+        "planned_operation_matches": [],
+        "summary": "ToolUniverse already covers phenotype, natural-history, and variant evidence, but this exact registered annotation operation is absent, so the workflow must reconcile identifier namespaces outside the governed tool path."
+      }
+    },
+    {
+      "assertions": {
+        "catalog_and_openapi_service_roots_match": true,
+        "catalog_candidate_is_inert_and_hash_bound": true,
+        "complete_hash_chain_was_recorded": true,
+        "early_publication_was_blocked": true,
+        "existing_tool_roles_were_verified_in_the_registry": true,
+        "final_plan_resolved_the_exact_operation": true,
+        "initial_exact_operation_was_missing": true,
+        "publication_required_explicit_loading": true,
+        "three_or_more_verification_calls_passed": true
+      },
+      "case_id": "pan_cancer_immunotherapy_validation",
+      "decision_context": "Use cohort, expression, immune-study, and interaction evidence to prioritize checkpoint hypotheses for retrospective validation rather than treatment selection.",
+      "evidence_mode": "live",
+      "existing_tooluniverse_coverage": [
+        {
+          "config_sha256": "5509a866f37e95ec429c64c6ade3c62aacf12bae6e150da8f4a1cd3b6b98e7a2",
+          "name": "GDC_search_cases",
+          "present": true,
+          "role": "Reuse pan-cancer cohort construction."
+        },
+        {
+          "config_sha256": "f7f9b71908a41c710993291eb2615c8f24a72ba9449e306091026a1077636380",
+          "name": "GDC_get_gene_expression",
+          "present": true,
+          "role": "Reuse tumor expression measurements."
+        },
+        {
+          "config_sha256": "b5ab2926dde93e9d91f2e6d2bacb01a1cd8ed7313e815bc5195c1beb0bd8346e",
+          "name": "ImmPort_search_studies",
+          "present": true,
+          "role": "Reuse immune-study discovery."
+        }
+      ],
+      "governance": {
+        "early_publication_blocked": true,
+        "hash_chain": {
+          "approval_sha256": "0a4592f2ccb3d5f11cf44c96cba68a371689a279ab00c8ca2e0e4038d5be255e",
+          "catalog_candidate_sha256": "19e680b129b77b5e848bb987d4e30cc2ac9ee9c0091580dedd424153c0e8328f",
+          "draft_sha256": "30d745f70508c693d1a40be7d33952e9513ea9bc43a0762b2e1b64e071025179",
+          "operation_candidate_sha256": "893fc0df06fdf16893095acd637172e8ab47c2528c6dc71129bbf9ca762d2033",
+          "publication_sha256": "0d59c73e9605d04d79167f0d87e874b3e1dafec3c306df13bc83060779743a7a",
+          "source_document_sha256": "2f09d3791ed113d98819af407fcc5feb8e303f1846b9a9f658e275b2c73c2d9d",
+          "verification_sha256": "71673d035c21696517f448b98ed3969dd5d7bd4a96ee4839d8f8ac0dd216fbcf"
+        },
+        "loaded_into_fresh_universe": [
+          "VSDInnateDBInteractionQuery"
+        ],
+        "resolved_blockers": [
+          "json_response_missing"
+        ]
+      },
+      "limitations": [
+        "Molecular interactions do not establish response causality or clinical benefit.",
+        "The reviewed response schema is intentionally bounded to the stable BioThings envelope because the registry document omits that schema.",
+        "Cancer-type, treatment, and assay-specific validation remains necessary."
+      ],
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "references": [
+        {
+          "title": "Pan-cancer longitudinal immunotherapy analysis",
+          "url": "https://www.nature.com/articles/s41467-021-25432-7"
+        },
+        {
+          "title": "NCI Genomic Data Commons",
+          "url": "https://gdc.cancer.gov/"
+        },
+        {
+          "title": "InnateDB",
+          "url": "https://www.innatedb.com/"
+        },
+        {
+          "title": "ImmPort",
+          "url": "https://www.immport.org/"
+        }
+      ],
+      "research_question": "Can a pan-cancer response analysis add molecular interaction evidence for immune checkpoints after cohort and expression tools identify candidate markers?",
+      "source": {
+        "catalog": "SmartAPI",
+        "catalog_candidate_id": "239f6354f7bbbba8",
+        "catalog_query": "innate immune interaction",
+        "catalog_record_id": "e9eb40ff7ad712e4e6f4f04b964b5966",
+        "inspection": {
+          "candidate_count": 6,
+          "http_status": 200,
+          "mode": "live",
+          "payload_sha256": "19731aa85d8969f0f7d7d73b747ea72bcb6cdc58870d44832a3e1ba49f26ac24",
+          "promotable_count": 0,
+          "source": "SmartAPI metadata endpoint",
+          "source_document_sha256": "2f09d3791ed113d98819af407fcc5feb8e303f1846b9a9f658e275b2c73c2d9d"
+        },
+        "operation_blockers": [
+          "json_response_missing"
+        ],
+        "operation_id": "get_/query",
+        "operation_path": "/query",
+        "promotion_mode": "reviewed_response",
+        "service_endpoint": "https://biothings.transltr.io/innatedb"
+      },
+      "title": "Pan-Cancer Immunotherapy Evidence Validation",
+      "with_vsd": {
+        "executable_new_operation": true,
+        "planned_operation_classification": "existing_exact",
+        "published_tool": "VSDInnateDBInteractionQuery",
+        "runtime": {
+          "item_count": null,
+          "observations": [
+            {
+              "label": "Matching interaction records",
+              "pointer": "/total",
+              "value": 8
+            },
+            {
+              "label": "Queried checkpoint",
+              "pointer": "/hits/0/object/alias/hgnc_name",
+              "value": "PDCD1"
+            },
+            {
+              "label": "First interacting marker",
+              "pointer": "/hits/0/subject/alias/hgnc_name",
+              "value": "SOCS1"
+            }
+          ],
+          "payload_sha256": "60b660eedc0d7bdbc744e23aeddea35fd3762d11b45953847d841147d7a22a20",
+          "provider": "biothings.transltr.io",
+          "result_type": "object",
+          "top_level_fields": [
+            "hits",
+            "max_score",
+            "took",
+            "total"
+          ]
+        },
+        "summary": "The workflow adds a bounded, verified interaction query for PDCD1, CTLA4, and LAG3, so interaction provenance can be compared alongside cohort and expression evidence.",
+        "verification_case_count": 3
+      },
+      "without_vsd": {
+        "executable_new_operation": false,
+        "planned_operation_classification": "missing",
+        "planned_operation_matches": [],
+        "summary": "The registry can assemble cancer cohorts and expression evidence, but it lacks the exact InnateDB query operation, leaving checkpoint interaction support outside the planned ToolUniverse workflow."
+      }
+    },
+    {
+      "assertions": {
+        "catalog_and_openapi_service_roots_match": true,
+        "catalog_candidate_is_inert_and_hash_bound": true,
+        "complete_hash_chain_was_recorded": true,
+        "early_publication_was_blocked": true,
+        "existing_tool_roles_were_verified_in_the_registry": true,
+        "final_plan_resolved_the_exact_operation": true,
+        "initial_exact_operation_was_missing": true,
+        "publication_required_explicit_loading": true,
+        "three_or_more_verification_calls_passed": true
+      },
+      "case_id": "context_specific_drug_combinations",
+      "decision_context": "Combine target, dependency, synergy, and adverse-event evidence with curated interaction records to prioritize laboratory follow-up and safety review.",
+      "evidence_mode": "live",
+      "existing_tooluniverse_coverage": [
+        {
+          "config_sha256": "92cb1a50f3cf9a3d299404f1aa864d3e8b804d39d1f47a8193a06beef5cd6886",
+          "name": "ChEMBL_get_target_activities",
+          "present": true,
+          "role": "Reuse target activity evidence."
+        },
+        {
+          "config_sha256": "8f780801e9b36906c90ccbee1fd492bed9af1ba845c23ea7650020d9085b6524",
+          "name": "DepMap_get_gene_dependencies",
+          "present": true,
+          "role": "Reuse cancer-context dependency evidence."
+        },
+        {
+          "config_sha256": "692167c20813433ccb94ed0237ac23f772a7e1278f436407429f934543d49da1",
+          "name": "DrugSynergy_calculate_bliss",
+          "present": true,
+          "role": "Reuse measured combination-effect scoring."
+        },
+        {
+          "config_sha256": "670e52fedeef850da2535035e455a6dd8cb41668c9df2815032c84f30e0dfbb0",
+          "name": "FAERS_compare_drugs",
+          "present": true,
+          "role": "Reuse post-market safety signal comparison."
+        }
+      ],
+      "governance": {
+        "early_publication_blocked": true,
+        "hash_chain": {
+          "approval_sha256": "d2e991e8ee3a951eea6cbc60c8ccb6fad8bbb071b8d03d461e8a6e7312313fae",
+          "catalog_candidate_sha256": "e764c7d17a49ddb302988acd7c4856234a8b8935593ad9e500af3d9164e19278",
+          "draft_sha256": "1a9968718110a76f67d6569e6d5d8004b07885603ab9615c2b712eb1faf3a158",
+          "operation_candidate_sha256": "0f6fc89539760b27570aafde39481f02c368def9b2802e58db12814b99a21125",
+          "publication_sha256": "83c8ec7ca716b59890d94d624ba0f458fc4649e3b37b9da1f418098ef06d21c8",
+          "source_document_sha256": "61f2215c207992b242e20938fa6d447d680f4cfe98744669aa8ec79a52d4cc2c",
+          "verification_sha256": "658524695337104e94a81f2ed09a328b8896cb42bab7a1899225def4426e003f"
+        },
+        "loaded_into_fresh_universe": [
+          "VSDDDInterCombinationQuery"
+        ],
+        "resolved_blockers": [
+          "json_response_missing"
+        ]
+      },
+      "limitations": [
+        "Interaction severity is not an efficacy estimate and does not replace pharmacology review.",
+        "The example query verifies retrieval and governance, not a treatment recommendation.",
+        "The upstream specification omits the response schema, so publication depends on explicit reviewed-schema evidence."
+      ],
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "references": [
+        {
+          "title": "Context-specific drug combinations in lung cancer",
+          "url": "https://www.nature.com/articles/s41467-023-39528-9"
+        },
+        {
+          "title": "DDInter drug-drug interaction database",
+          "url": "https://academic.oup.com/nar/article/50/D1/D1200/6389535"
+        },
+        {
+          "title": "DepMap",
+          "url": "https://depmap.org/portal/"
+        },
+        {
+          "title": "ChEMBL",
+          "url": "https://www.ebi.ac.uk/chembl/"
+        }
+      ],
+      "research_question": "Can an oncology combination workflow add curated interaction severity before advancing experimentally promising drug pairs?",
+      "source": {
+        "catalog": "SmartAPI",
+        "catalog_candidate_id": "bd648307adbc85ea",
+        "catalog_query": "drug combination interaction oncology",
+        "catalog_record_id": "00fb85fc776279163199e6c50f6ddfc6",
+        "inspection": {
+          "candidate_count": 6,
+          "http_status": 200,
+          "mode": "live",
+          "payload_sha256": "81f73c33265a86351341d07059a0bfbb273e526c43aa564b8fb41e5b000d6002",
+          "promotable_count": 0,
+          "source": "SmartAPI metadata endpoint",
+          "source_document_sha256": "61f2215c207992b242e20938fa6d447d680f4cfe98744669aa8ec79a52d4cc2c"
+        },
+        "operation_blockers": [
+          "json_response_missing"
+        ],
+        "operation_id": "get_/query",
+        "operation_path": "/query",
+        "promotion_mode": "reviewed_response",
+        "service_endpoint": "https://biothings.transltr.io/ddinter"
+      },
+      "title": "Context-Specific Oncology Combination Review",
+      "with_vsd": {
+        "executable_new_operation": true,
+        "planned_operation_classification": "existing_exact",
+        "published_tool": "VSDDDInterCombinationQuery",
+        "runtime": {
+          "item_count": null,
+          "observations": [
+            {
+              "label": "Matching curated records",
+              "pointer": "/total",
+              "value": 1
+            },
+            {
+              "label": "First combination",
+              "pointer": "/hits/0/drug_b/name",
+              "value": "Idarubicin"
+            },
+            {
+              "label": "Interaction severity",
+              "pointer": "/hits/0/level",
+              "value": "Major"
+            }
+          ],
+          "payload_sha256": "d6e36a367b623414b4c7a8d7ccb11b3bc43472af35971aa04c34a370e0f7ab1a",
+          "provider": "biothings.transltr.io",
+          "result_type": "object",
+          "top_level_fields": [
+            "hits",
+            "max_score",
+            "took",
+            "total"
+          ]
+        },
+        "summary": "The workflow gains a bounded DDInter query that can flag curated interaction severity before experimental prioritization; it complements rather than replaces efficacy and safety analysis.",
+        "verification_case_count": 3
+      },
+      "without_vsd": {
+        "executable_new_operation": false,
+        "planned_operation_classification": "missing",
+        "planned_operation_matches": [],
+        "summary": "ToolUniverse can score observed synergy and retrieve target, dependency, and safety evidence, but it lacks this exact curated interaction query, so a promising pair can reach review without a DDInter severity check in the same workflow."
+      }
+    },
+    {
+      "assertions": {
+        "catalog_and_openapi_service_roots_match": true,
+        "catalog_candidate_is_inert_and_hash_bound": true,
+        "complete_hash_chain_was_recorded": true,
+        "early_publication_was_blocked": true,
+        "existing_tool_roles_were_verified_in_the_registry": true,
+        "final_plan_resolved_the_exact_operation": true,
+        "initial_exact_operation_was_missing": true,
+        "publication_required_explicit_loading": true,
+        "three_or_more_verification_calls_passed": true
+      },
+      "case_id": "virtual_cell_perturbation_selection",
+      "decision_context": "Resolve perturbagen names before selecting expression signatures, cell contexts, and training data for perturbation-response modeling.",
+      "evidence_mode": "replay",
+      "existing_tooluniverse_coverage": [
+        {
+          "config_sha256": "91504156dca34322661b896b2e522f4a5b34e89b0429bfba568304c35f4e0992",
+          "name": "CELLxGENE_get_cell_metadata",
+          "present": true,
+          "role": "Reuse single-cell context and cohort metadata."
+        },
+        {
+          "config_sha256": "10f3c61a0ca20788adda91d3d7146a7759a4a46f41fb44220239a68f39f91fee",
+          "name": "CELLxGENE_get_expression_data",
+          "present": true,
+          "role": "Reuse cell-level expression retrieval."
+        },
+        {
+          "config_sha256": "1447627f27ce9d92e2c995f8828033dbe5907ac42fb75c21b1afa715033a1795",
+          "name": "L1000FWD_sig_search",
+          "present": true,
+          "role": "Reuse the existing signature-search workflow after identifier resolution."
+        }
+      ],
+      "governance": {
+        "early_publication_blocked": true,
+        "hash_chain": {
+          "approval_sha256": "8a0fc1f425ccb002e0bf1dc5a88d69f8269847bae484eab04cb9600bdc5608b0",
+          "catalog_candidate_sha256": "fe5713d8ac98de91a23a7293e43021e8bc2ea0cb2334326f8079baf81ed4ca8f",
+          "draft_sha256": "b36951f79ad1ac4f2ae0d27652413b5ee238231e7a642fb9efad0d81281a5324",
+          "operation_candidate_sha256": "3f6a0d89e0c102cfaf619a5a3d8c1272f1ab4806e7750897aeeb9ebfd8051141",
+          "publication_sha256": "2f838f5553428844ffa2bebc4599f26821e64545910dd4d79e752442f8acd436",
+          "source_document_sha256": "7bb4a7a252196b31ce54cbd5d0793826c46d1482d5898b1e916bdac3ccc60277",
+          "verification_sha256": "1eb2ab373aa79ac1d27d72f248bbb3b179efbcacebdb000e881a6250b7bd2924"
+        },
+        "loaded_into_fresh_universe": [
+          "VSDL1000PerturbagenResolver"
+        ],
+        "resolved_blockers": []
+      },
+      "limitations": [
+        "Identifier resolution does not determine whether a perturbation is biologically appropriate for a model.",
+        "Signature quality, dose, duration, cell state, and batch effects require separate evaluation.",
+        "The provider may return multiple identifiers for one name; downstream selection must retain that ambiguity."
+      ],
+      "live_attempt": {
+        "completed": false,
+        "failure": {
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': 'Validation error: Source redirects are not allowed', 'error_details': {'type': 'ToolValidationError', 'message': 'Validation error: Source redirects are not allowed', 'retriable': False, 'next_steps': ['Check parameter t",
+          "type": "VSDPromotionError"
+        },
+        "fallback": "checked replay"
+      },
+      "references": [
+        {
+          "title": "Benchmarking single-cell perturbation response prediction",
+          "url": "https://www.nature.com/articles/s41592-025-02980-0"
+        },
+        {
+          "title": "L1000FWD",
+          "url": "https://maayanlab.cloud/L1000FWD/"
+        },
+        {
+          "title": "CELLxGENE Census",
+          "url": "https://chanzuckerberg.github.io/cellxgene-census/"
+        },
+        {
+          "title": "Virtual Cell Challenge",
+          "url": "https://virtualcellchallenge.org/"
+        }
+      ],
+      "research_question": "Can a virtual-cell preparation workflow resolve candidate perturbagens to dataset identifiers before retrieving signatures and single-cell context?",
+      "source": {
+        "catalog": "SmartAPI",
+        "catalog_candidate_id": "80b5adb4ee2b2fb2",
+        "catalog_query": "single cell gene expression perturbation",
+        "catalog_record_id": "235e75417247f07e5fed6acf3f345bb7",
+        "inspection": {
+          "candidate_count": 1,
+          "mode": "replay",
+          "promotable_count": 1,
+          "source": "checked provider-shaped OpenAPI fixture",
+          "source_document_sha256": "7bb4a7a252196b31ce54cbd5d0793826c46d1482d5898b1e916bdac3ccc60277"
+        },
+        "operation_blockers": [],
+        "operation_id": "synonyms",
+        "operation_path": "/synonyms/{query_string}",
+        "promotion_mode": "strict",
+        "service_endpoint": "https://maayanlab.cloud/L1000FWD"
+      },
+      "title": "Virtual-Cell Perturbation Dataset Selection",
+      "with_vsd": {
+        "executable_new_operation": true,
+        "planned_operation_classification": "existing_exact",
+        "published_tool": "VSDL1000PerturbagenResolver",
+        "runtime": {
+          "item_count": 1,
+          "observations": [
+            {
+              "label": "Resolved perturbagen name",
+              "pointer": "/0/Name",
+              "value": "TRAMETINIB"
+            },
+            {
+              "label": "Resolved L1000 perturbagen identifier",
+              "pointer": "/0/pert_id",
+              "value": "BRD-K12343256"
+            }
+          ],
+          "payload_sha256": "ac8f046716e0695940927f47044ec4ea3b8f1b880cceab4931a6722c2aecdb96",
+          "provider": "maayanlab.cloud",
+          "result_type": "array",
+          "top_level_fields": []
+        },
+        "summary": "The workflow adds only the missing synonym operation from the already known provider, turning drug names into stable perturbagen identifiers before existing signature and single-cell tools run.",
+        "verification_case_count": 3
+      },
+      "without_vsd": {
+        "executable_new_operation": false,
+        "planned_operation_classification": "missing",
+        "planned_operation_matches": [],
+        "summary": "ToolUniverse already performs L1000 signature search and CELLxGENE retrieval, but it does not expose the provider's synonym operation, so free-text perturbagen names must be resolved outside the planned tool chain."
+      }
+    },
+    {
+      "assertions": {
+        "catalog_and_openapi_service_roots_match": true,
+        "catalog_candidate_is_inert_and_hash_bound": true,
+        "complete_hash_chain_was_recorded": true,
+        "early_publication_was_blocked": true,
+        "existing_tool_roles_were_verified_in_the_registry": true,
+        "final_plan_resolved_the_exact_operation": true,
+        "initial_exact_operation_was_missing": true,
+        "publication_required_explicit_loading": true,
+        "three_or_more_verification_calls_passed": true
+      },
+      "case_id": "tuberculosis_resistance_integration",
+      "decision_context": "Gate an imaging branch on service readiness while existing tools assemble genome, resistance, drug, and study evidence; readiness does not authorize controlled-data access.",
+      "evidence_mode": "replay",
+      "existing_tooluniverse_coverage": [
+        {
+          "config_sha256": "fc98501791d9561e98306ae1766a75c31a31a7d2ce02ff6f91ae54f523d1eca9",
+          "name": "BVBRC_search_amr",
+          "present": true,
+          "role": "Reuse antimicrobial-resistance phenotype evidence."
+        },
+        {
+          "config_sha256": "2c4ad07eeb26391623f10402b38cf7555540143be5b7f088cb51beb1ae843398",
+          "name": "BVBRC_search_genomes",
+          "present": true,
+          "role": "Reuse pathogen genome metadata."
+        },
+        {
+          "config_sha256": "985607bc9e0c1c9f8613f31d09944a812b0b2fb7036f4a8dc64ee56fe681bf1d",
+          "name": "PharmGKB_search_drugs",
+          "present": true,
+          "role": "Reuse drug identifier and pharmacogenomic context."
+        },
+        {
+          "config_sha256": "dae5c42c916b6de8d1e3105949ed950644bc85c7e33ff0c1af1778fc54e2c882",
+          "name": "search_clinical_trials",
+          "present": true,
+          "role": "Reuse tuberculosis study discovery."
+        }
+      ],
+      "governance": {
+        "early_publication_blocked": true,
+        "hash_chain": {
+          "approval_sha256": "eaa221308acc71431fe721508af537a967c2a4eec3db2bae65783c8872da5e8d",
+          "catalog_candidate_sha256": "c639660a63004ff5d9cbabdbef259f1ff5c93cc1e28ea13f4562b46fc13a324d",
+          "draft_sha256": "4e96113f130c5e4411e7f967299b6674190541a6e6dfb4349c2b3bf897fbf4a3",
+          "operation_candidate_sha256": "e921c9c7956142a34ff71b1746483f289e5ab373042d99aaed7f07c07b0b49fb",
+          "publication_sha256": "75997d5756fcc41f3fe717aad5a73e5d1cbbc5355bf9b4c99c2c1f130c689aff",
+          "source_document_sha256": "6bf6f848aef93068f1975b6ca91f9e160f988b44df0914002ed9f25fd691e28e",
+          "verification_sha256": "6bbdd8c0753cc346e44c1312e742fb2d21d41816680b23a9780f425fffe0584a"
+        },
+        "loaded_into_fresh_universe": [
+          "VSDTBPortalsRadiomicsReadiness"
+        ],
+        "resolved_blockers": []
+      },
+      "limitations": [
+        "A health check establishes service readiness only; it does not validate a radiomics model or scientific result.",
+        "Controlled imaging data, consent, and authorization remain outside this tool.",
+        "The checked replay validates the lifecycle when the service is unreachable from the evaluation environment; current availability requires live mode."
+      ],
+      "live_attempt": {
+        "completed": false,
+        "failure": {
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Could not resolve source host 'ria.tbportals.niaid.nih.gov'\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Could not resolve source host 'ria.tbportals.niaid.nih.gov'\",",
+          "type": "VSDPromotionError"
+        },
+        "fallback": "checked replay"
+      },
+      "references": [
+        {
+          "title": "NIAID TB Portals multi-domain data platform",
+          "url": "https://tbportals.niaid.nih.gov/what-are-the-tb-portals"
+        },
+        {
+          "title": "TB Portals data access policy",
+          "url": "https://tbportals.niaid.nih.gov/access-data"
+        },
+        {
+          "title": "BV-BRC antimicrobial resistance resources",
+          "url": "https://www.bv-brc.org/"
+        },
+        {
+          "title": "WHO tuberculosis data",
+          "url": "https://www.who.int/teams/global-tuberculosis-programme/data"
+        }
+      ],
+      "research_question": "Can a tuberculosis resistance workflow verify that a discovered radiomics service is available before combining genomic, antimicrobial-resistance, and imaging evidence?",
+      "source": {
+        "catalog": "SmartAPI",
+        "catalog_candidate_id": "a3ebe0d1765f8931",
+        "catalog_query": "TBPortals radiomics",
+        "catalog_record_id": "fc18c6cce884c23866beed24dce30a2d",
+        "inspection": {
+          "candidate_count": 1,
+          "mode": "replay",
+          "promotable_count": 1,
+          "source": "checked provider-shaped OpenAPI fixture",
+          "source_document_sha256": "6bf6f848aef93068f1975b6ca91f9e160f988b44df0914002ed9f25fd691e28e"
+        },
+        "operation_blockers": [],
+        "operation_id": "get_/health_check",
+        "operation_path": "/health_check",
+        "promotion_mode": "strict",
+        "service_endpoint": "https://ria.tbportals.niaid.nih.gov/"
+      },
+      "title": "Tuberculosis Resistance Evidence Integration",
+      "with_vsd": {
+        "executable_new_operation": true,
+        "planned_operation_classification": "existing_exact",
+        "published_tool": "VSDTBPortalsRadiomicsReadiness",
+        "runtime": {
+          "item_count": null,
+          "observations": [
+            {
+              "label": "Radiomics service status",
+              "pointer": "/status",
+              "value": "ok"
+            },
+            {
+              "label": "Service label",
+              "pointer": "/service",
+              "value": "TBPortals radiomics"
+            }
+          ],
+          "payload_sha256": "5ad2d7e7774a0ef7f8d05a993ed1d9cf389befd130f432df8c9657bc78f12766",
+          "provider": "ria.tbportals.niaid.nih.gov",
+          "result_type": "object",
+          "top_level_fields": [
+            "service",
+            "status"
+          ]
+        },
+        "summary": "The workflow gains a narrow readiness check bound to the cataloged service and contract; this prevents treating an unavailable imaging dependency as usable and does not create access to controlled images.",
+        "verification_case_count": 3
+      },
+      "without_vsd": {
+        "executable_new_operation": false,
+        "planned_operation_classification": "missing",
+        "planned_operation_matches": [],
+        "summary": "ToolUniverse can retrieve pathogen, resistance, drug, and trial evidence, but it has no exact operation for checking the cataloged radiomics service before the workflow enters its imaging branch."
+      }
+    }
+  ],
+  "format": "vsd_biomedical_evaluation_portfolio_v1",
+  "generated_at": "2026-08-02T09:11:15.540877+00:00",
+  "live_case_count": 2,
+  "portfolio_sha256": "036e12725bee5e98e700b5f94514ee6b9375bcab66a73b38165044047ba321f3",
+  "published_tool_count": 5,
+  "replay_case_count": 3,
+  "requested_mode": "network_backed",
+  "verification_execution_count": 15
+}

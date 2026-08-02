@@ -4,15 +4,20 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
-from .vsd_openapi import inspect_openapi_document, select_openapi_candidate
+from .vsd_catalog_providers import select_catalog_candidate
 from .vsd_contracts import select_contract_candidate
+from .vsd_openapi import inspect_openapi_document, select_openapi_candidate
 from .vsd_promotion import (
     approve_draft,
+    create_catalog_openapi_draft,
+    create_catalog_resource_draft,
     create_draft,
     create_openapi_draft,
+    create_reviewed_catalog_openapi_draft,
     create_reviewed_operation_draft,
     list_promotion_state,
     publish_draft,
@@ -67,12 +72,54 @@ def build_parser() -> argparse.ArgumentParser:
     draft_openapi.add_argument("--timeout-seconds", type=float, default=20)
     draft_openapi.add_argument("--credential-env")
 
+    draft_catalog_openapi = commands.add_parser("draft-catalog-openapi")
+    draft_catalog_openapi.add_argument("catalog_candidate_file", type=Path)
+    draft_catalog_openapi.add_argument("operation_candidate_file", type=Path)
+    draft_catalog_openapi.add_argument("--catalog-candidate-id")
+    draft_catalog_openapi.add_argument("--operation-candidate-id")
+    draft_catalog_openapi.add_argument("--tool-name", required=True)
+    draft_catalog_openapi.add_argument("--description", required=True)
+    draft_catalog_openapi.add_argument("--review-note", required=True)
+    draft_catalog_openapi.add_argument("--include-parameters", type=_csv)
+    draft_catalog_openapi.add_argument("--fixed-query-file", type=Path)
+    draft_catalog_openapi.add_argument("--timeout-seconds", type=float, default=20)
+    draft_catalog_openapi.add_argument("--credential-env")
+
+    draft_reviewed_catalog_openapi = commands.add_parser(
+        "draft-reviewed-catalog-openapi"
+    )
+    draft_reviewed_catalog_openapi.add_argument("catalog_candidate_file", type=Path)
+    draft_reviewed_catalog_openapi.add_argument(
+        "operation_candidate_file", type=Path
+    )
+    draft_reviewed_catalog_openapi.add_argument("response_schema_file", type=Path)
+    draft_reviewed_catalog_openapi.add_argument("--catalog-candidate-id")
+    draft_reviewed_catalog_openapi.add_argument("--operation-candidate-id")
+    draft_reviewed_catalog_openapi.add_argument("--tool-name", required=True)
+    draft_reviewed_catalog_openapi.add_argument("--description", required=True)
+    draft_reviewed_catalog_openapi.add_argument(
+        "--resolved-blockers", type=_csv, required=True
+    )
+    draft_reviewed_catalog_openapi.add_argument("--review-note", required=True)
+    draft_reviewed_catalog_openapi.add_argument("--include-parameters", type=_csv)
+    draft_reviewed_catalog_openapi.add_argument("--fixed-query-file", type=Path)
+    draft_reviewed_catalog_openapi.add_argument(
+        "--timeout-seconds", type=float, default=20
+    )
+    draft_reviewed_catalog_openapi.add_argument("--credential-env")
+
     draft_reviewed = commands.add_parser("draft-reviewed")
     draft_reviewed.add_argument("candidate_file", type=Path)
     draft_reviewed.add_argument("config_file", type=Path)
     draft_reviewed.add_argument("--candidate-id")
     draft_reviewed.add_argument("--resolved-blockers", type=_csv, required=True)
     draft_reviewed.add_argument("--review-note", required=True)
+
+    draft_catalog = commands.add_parser("draft-catalog-resource")
+    draft_catalog.add_argument("candidate_file", type=Path)
+    draft_catalog.add_argument("config_file", type=Path)
+    draft_catalog.add_argument("--candidate-id")
+    draft_catalog.add_argument("--review-note", required=True)
 
     verify = commands.add_parser("verify")
     verify.add_argument("draft_id")
@@ -154,6 +201,67 @@ def _execute(namespace: argparse.Namespace) -> Any:
             candidate,
             config,
             resolved_blockers=namespace.resolved_blockers,
+            review_note=namespace.review_note,
+            workspace=workspace,
+        )
+    if namespace.command in {
+        "draft-catalog-openapi",
+        "draft-reviewed-catalog-openapi",
+    }:
+        catalog_report = _json_file(namespace.catalog_candidate_file)
+        catalog_candidate = select_catalog_candidate(
+            catalog_report, namespace.catalog_candidate_id
+        )
+        operation_report = _json_file(namespace.operation_candidate_file)
+        operation_candidate = select_openapi_candidate(
+            operation_report,
+            namespace.operation_candidate_id,
+            permit_missing_json_response=(
+                namespace.command == "draft-reviewed-catalog-openapi"
+            ),
+        )
+        fixed_query = (
+            _json_file(namespace.fixed_query_file)
+            if namespace.fixed_query_file is not None
+            else None
+        )
+        if fixed_query is not None and not isinstance(fixed_query, dict):
+            raise argparse.ArgumentTypeError("fixed query file must contain an object")
+        common = {
+            "catalog_candidate": catalog_candidate,
+            "operation_candidate": operation_candidate,
+            "tool_name": namespace.tool_name,
+            "description": namespace.description,
+            "review_note": namespace.review_note,
+            "include_parameters": namespace.include_parameters,
+            "fixed_query": fixed_query,
+            "timeout_seconds": namespace.timeout_seconds,
+            "credential_env": namespace.credential_env,
+            "workspace": workspace,
+        }
+        if namespace.command == "draft-catalog-openapi":
+            return create_catalog_openapi_draft(**common)
+        response_schema = _json_file(namespace.response_schema_file)
+        if not isinstance(response_schema, dict):
+            raise argparse.ArgumentTypeError(
+                "response schema file must contain an object"
+            )
+        return create_reviewed_catalog_openapi_draft(
+            **common,
+            response_schema=response_schema,
+            resolved_blockers=namespace.resolved_blockers,
+        )
+    if namespace.command == "draft-catalog-resource":
+        report = _json_file(namespace.candidate_file)
+        candidate = select_catalog_candidate(report, namespace.candidate_id)
+        config = _json_file(namespace.config_file)
+        if not isinstance(config, dict):
+            raise argparse.ArgumentTypeError(
+                "reviewed config file must contain an object"
+            )
+        return create_catalog_resource_draft(
+            candidate,
+            config,
             review_note=namespace.review_note,
             workspace=workspace,
         )

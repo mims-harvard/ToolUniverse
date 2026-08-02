@@ -1,0 +1,67 @@
+{
+  "case_id": "rare_disease_diagnostic_evidence",
+  "title": "Rare-Disease Diagnostic Evidence Reconciliation",
+  "research_question": "Can a diagnostic review reconcile disease, phenotype, and gene identifiers before comparing rare-disease cohort and variant evidence?",
+  "decision_context": "Normalize identifiers before combining phenotype, variant, natural-history, and trial evidence; the added annotations support evidence retrieval and do not establish a diagnosis.",
+  "catalog_query": "rare disease phenotype ontology annotation",
+  "catalog_record_id": "5a4c41bf2076b469a0e9cfcf2f2b8f29",
+  "service_endpoint": "https://biothings.transltr.io/annotator",
+  "specification_fixture": "rare_disease_openapi.json",
+  "response_fixture": "rare_disease_responses.json",
+  "operation_id": "get_/{curieid}",
+  "promotion_mode": "strict",
+  "tool_name": "VSDTranslatorAnnotationLookup",
+  "tool_description": "Retrieve reviewed cross-ontology annotations for one biomedical CURIE.",
+  "include_parameters": ["curieid"],
+  "fixed_query": {},
+  "review_note": "Reviewed the exact SmartAPI record, service root, GET path, identifier input, and declared JSON response contract.",
+  "response_schema": null,
+  "workflow_capability": {
+    "step_id": "identifier_reconciliation",
+    "description": "retrieve cross-ontology disease phenotype and gene annotations for one CURIE",
+    "required_inputs": ["curieid"],
+    "output_fields": ["query", "ontology", "cross_references"]
+  },
+  "verification_cases": [
+    {
+      "arguments": {"curieid": "MONDO:0004976"},
+      "expect": {"result_type": "object", "required_fields": [], "required_paths": ["/MONDO:0004976/0/disease_ontology/name"], "equals_paths": {"/MONDO:0004976/0/disease_ontology/name": "amyotrophic lateral sclerosis"}}
+    },
+    {
+      "arguments": {"curieid": "HP:0001250"},
+      "expect": {"result_type": "object", "required_fields": [], "required_paths": ["/HP:0001250/0/hpo/label"], "equals_paths": {"/HP:0001250/0/hpo/label": "Seizure"}}
+    },
+    {
+      "arguments": {"curieid": "NCBIGene:2034"},
+      "expect": {"result_type": "object", "required_fields": [], "required_paths": ["/NCBIGene:2034/0/gene/symbol"], "equals_paths": {"/NCBIGene:2034/0/gene/symbol": "EPAS1"}}
+    }
+  ],
+  "runtime_arguments": {"curieid": "MONDO:0004976"},
+  "observations": [
+    {"label": "Normalized disease label", "pointer": "/MONDO:0004976/0/disease_ontology/name"},
+    {"label": "Disease Ontology identifier", "pointer": "/MONDO:0004976/0/disease_ontology/doid"},
+    {"label": "GARD cross-reference", "pointer": "/MONDO:0004976/0/xrefs/gard"}
+  ],
+  "reused_tools": [
+    {"name": "Orphanet_get_natural_history", "role": "Reuse curated rare-disease natural-history evidence."},
+    {"name": "HPO_get_diseases_by_phenotype", "role": "Reuse phenotype-to-disease associations."},
+    {"name": "ClinVar_search_variants", "role": "Reuse submitted variant interpretations."}
+  ],
+  "without_vsd": {
+    "summary": "ToolUniverse already covers phenotype, natural-history, and variant evidence, but this exact registered annotation operation is absent, so the workflow must reconcile identifier namespaces outside the governed tool path."
+  },
+  "with_vsd": {
+    "summary": "The workflow gains one verified CURIE annotation operation that returns cross-ontology labels and identifiers with runtime provenance, allowing existing evidence tools to receive consistent identifiers."
+  },
+  "limitations": [
+    "Annotation mappings are retrieval evidence, not a diagnostic conclusion.",
+    "Replay values are provider-shaped test evidence; live mode is required to assess current upstream content.",
+    "Conflicting or missing mappings still require domain review."
+  ],
+  "references": [
+    {"title": "Phenotype-driven rare genetic disease diagnosis", "url": "https://www.nature.com/articles/s41746-025-01749-1"},
+    {"title": "NCATS Biomedical Data Translator", "url": "https://ncats.nih.gov/research/research-activities/translator"},
+    {"title": "Human Phenotype Ontology", "url": "https://hpo.jax.org/"},
+    {"title": "Orphanet", "url": "https://www.orpha.net/"}
+  ]
+}

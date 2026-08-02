@@ -1,0 +1,27 @@
+{
+  "_id": "e9eb40ff7ad712e4e6f4f04b964b5966",
+  "_meta": {"last_updated": "2026-07-20T00:00:00Z"},
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BioThings InnateDB API",
+    "version": "1.0.0",
+    "description": "Tumor immune and innate immune molecular interaction evidence for pan-cancer analysis.",
+    "contact": {"name": "BioThings"},
+    "license": {"name": "Source-specific terms"}
+  },
+  "servers": [{"url": "https://biothings.transltr.io/innatedb"}],
+  "tags": [{"name": "tumor immune"}, {"name": "interaction"}],
+  "paths": {
+    "/query": {
+      "get": {
+        "operationId": "get_/query",
+        "summary": "Query immune molecular interactions",
+        "parameters": [
+          {"name": "q", "in": "query", "required": true, "schema": {"type": "string", "minLength": 2}},
+          {"name": "size", "in": "query", "required": false, "schema": {"type": "integer", "minimum": 1, "maximum": 20}}
+        ],
+        "responses": {"200": {"description": "BioThings query response"}}
+      }
+    }
+  }
+}

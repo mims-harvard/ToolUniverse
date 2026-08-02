@@ -376,6 +376,9 @@ def test_generator_builds_narrow_mappings_and_serialization(tmp_path):
         fixed_query={"format": "json"},
     )
     operation = config["vsd_operation"]
+    assert config["vsd_capability"] == {
+        "operation_id": f"openapi.{_candidate(tmp_path)['candidate_id']}"
+    }
     assert config["parameter"]["required"] == ["nctId"]
     assert operation["path_arguments"] == {"nctId": "nctId"}
     assert operation["query_arguments"] == {"fields": "fields"}

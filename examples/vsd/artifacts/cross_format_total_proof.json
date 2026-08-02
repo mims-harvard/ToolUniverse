@@ -50,13 +50,13 @@
     }
   ],
   "answer": "Yes. The case kept the already-covered NIH RePORTER interface out of promotion, selected six DANDI gap contracts, bound each to its exact provider and operation, passed eighteen verification executions, rejected eight substitution attempts, loaded six published tools into a fresh ToolUniverse instance, and executed a final ALS evidence request through each format.",
-  "audit_sha256": "0223d236556c284746e7acf5985f7fc2195f74de8ffcbe796d3dd4092e32c10b",
+  "audit_sha256": "b24ce5cfa14069f6545d05ddf13a810456b212476f01f578cbaf40fe82e8997b",
   "end_to_end_assertions": {
     "all_eight_substitution_attacks_were_rejected": true,
     "all_prior_case_artifacts_or_ci_evidence_pass": true,
     "all_six_publications_loaded_in_fresh_runtime": true,
     "all_six_published_tools_executed": true,
-    "catalog_contains_50_review_only_sources": true,
+    "catalog_sources_remain_review_only": true,
     "every_binding_names_its_contract_candidate": true,
     "every_format_passed_three_verification_cases": true,
     "every_promotion_has_exact_binding_hash": true,
@@ -248,7 +248,7 @@
     {
       "all_checks_passed": true,
       "artifact": "source_intelligence_snapshot.json",
-      "artifact_sha256": "cf1603032953a9b27a5891cd3c6c8866f547e54250885e4c47af074c93cb7ef8",
+      "artifact_sha256": "557eccbeb2e7876e0a4e8ef37d594ac6c09b914447f6812796b91d95778973ec",
       "assertion_count": 28,
       "evidence_boundary": "checked_repository_artifact",
       "id": "source_intelligence",
@@ -496,14 +496,14 @@
   },
   "research_question": "Can a real ToolUniverse capability gap move from reviewed source discovery through bounded scanning, content-addressed inspection, exact contract binding, representative verification, approval, publication, fresh-runtime loading, and useful execution across every supported format without duplicating an existing source or widening authority?",
   "source_stage": {
-    "catalog_source_count": 50,
+    "catalog_source_count": 51,
     "configured_host_count": 259,
     "configured_tool_count": 2744,
     "cron_scan_count": 2,
     "discovered_format_count": 7,
     "handoff_submitted": false,
     "snapshot_count": 7,
-    "source_audit_sha256": "77f1c2387067a7d99252ca5625688cc9634c68f972fa0bb292f960de9962a268"
+    "source_audit_sha256": "11b8e122dd4690b1fe7b72141f84e442bc478b503f4664418f1e3344c42f34c0"
   },
   "title": "ALS source-to-reviewed-runtime cross-format total proof",
   "version": 1

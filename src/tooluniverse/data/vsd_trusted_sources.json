@@ -84,6 +84,19 @@
     },
     {
       "access": "public",
+      "contract_formats": ["openapi", "rest"],
+      "documentation_url": "https://ga4gh.github.io/ga4gh-registry/docs/",
+      "domain": "registry.ga4gh.org",
+      "execution_allowed": false,
+      "name": "GA4GH Service Registry",
+      "organization": "Global Alliance for Genomics and Health",
+      "review_state": "trusted_for_candidate_discovery",
+      "source_id": "ga4gh_service_registry",
+      "topics": ["service_registry", "genomics", "interoperability"],
+      "trust_basis": "official_standards_body"
+    },
+    {
+      "access": "public",
       "contract_formats": ["rest"],
       "documentation_url": "https://cde.nlm.nih.gov/guides",
       "domain": "cde.nlm.nih.gov",

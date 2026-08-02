@@ -802,15 +802,15 @@ def _http_exchange(
             stream=True,
         )
         try:
-            peer_ip = _peer_address(response)
-            _require_global_ip(peer_ip, context="Connected peer")
-            if ipaddress.ip_address(peer_ip) != ipaddress.ip_address(pinned_address):
-                raise VSDReviewedRuntimeError("Connected peer did not match vetted DNS")
             if response.status_code in {301, 302, 303, 307, 308}:
                 location = response.headers.get("Location")
                 if location:
                     _validated_source_target(urljoin(normalized_url, location))
                 raise VSDReviewedRuntimeError("Provider redirects are not allowed")
+            peer_ip = _peer_address(response)
+            _require_global_ip(peer_ip, context="Connected peer")
+            if ipaddress.ip_address(peer_ip) != ipaddress.ip_address(pinned_address):
+                raise VSDReviewedRuntimeError("Connected peer did not match vetted DNS")
             response.raise_for_status()
             encodings = {
                 item.strip().casefold()

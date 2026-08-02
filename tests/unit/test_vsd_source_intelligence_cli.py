@@ -21,13 +21,14 @@ def test_catalog_and_coverage_commands_are_machine_readable(monkeypatch, capsys)
     monkeypatch.setattr(cli, "_tool_context", _EmptyToolUniverse)
     assert cli.main(["catalog"]) == 0
     catalog = json.loads(capsys.readouterr().out)
-    assert len(catalog["sources"]) == 50
+    source_count = len(catalog["sources"])
+    assert source_count > 0
     assert catalog["execution_allowed"] is False
 
     assert cli.main(["coverage"]) == 0
     coverage = json.loads(capsys.readouterr().out)
-    assert coverage["catalog_source_count"] == 50
-    assert coverage["candidate_gap_count"] == 50
+    assert coverage["catalog_source_count"] == source_count
+    assert coverage["candidate_gap_count"] == source_count
 
 
 def test_handoff_parser_does_not_imply_consent():

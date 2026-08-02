@@ -1,0 +1,27 @@
+[
+  {
+    "primary_site": "Breast",
+    "protocol": "I-724220",
+    "principal_investigator": "Ambrosone, C",
+    "date_opened": "2020-08-05T00:00:00.000",
+    "study_phase": "N/A",
+    "title": "The North-South Breast Cancer Study (NSBCS)"
+  },
+  {
+    "primary_site": "Breast",
+    "protocol": "I-60217",
+    "principal_investigator": "Bonaccio, E",
+    "date_opened": "2018-10-18T00:00:00.000",
+    "study_phase": "N/A",
+    "title": "Photoacoustic Imaging of Human Breast"
+  },
+  {
+    "primary_site": "Breast",
+    "protocol": "N-1764921",
+    "principal_investigator": "Fung-Kee-Fung, S",
+    "date_opened": "2021-09-16T00:00:00.000",
+    "date_closed": "2025-03-20T00:00:00.000",
+    "study_phase": "III",
+    "title": "NRG-BR007: De-escalation of breast radiation for selected stage I disease"
+  }
+]

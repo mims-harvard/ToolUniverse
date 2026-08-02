@@ -1,0 +1,59 @@
+{
+  "resultSetSize": 39,
+  "results": [
+    {
+      "resource": {
+        "name": "Current Active Clinical Trials - Roswell Park Cancer Institute",
+        "id": "2ig8-yxf8",
+        "description": "List of active studies submitted by Roswell Park Cancer Institute to the National Cancer Institute. It includes primary site, protocol, investigator, opening and closing dates, phase, and study name.",
+        "attribution": "Roswell Park Cancer Institute",
+        "type": "dataset",
+        "updatedAt": "2026-04-14T21:08:58.000Z",
+        "data_updated_at": "2025-06-20T14:10:28.000Z",
+        "provenance": "official",
+        "columns_name": [
+          "Study Phase",
+          "Date Opened",
+          "Date Closed",
+          "Protocol",
+          "Principal Investigator",
+          "Primary Site",
+          "Title"
+        ],
+        "columns_field_name": [
+          "study_phase",
+          "date_opened",
+          "date_closed",
+          "protocol",
+          "principal_investigator",
+          "primary_site",
+          "title"
+        ],
+        "columns_datatype": [
+          "Text",
+          "Calendar date",
+          "Calendar date",
+          "Text",
+          "Text",
+          "Text",
+          "Text"
+        ],
+        "columns_description": [
+          "Current study phase as of the dataset refresh.",
+          "Official trial activation date.",
+          "Date the study closed to accrual, blank when still open.",
+          "Unique study identifier.",
+          "Responsible principal investigator.",
+          "Primary anatomic cancer site.",
+          "Protocol title."
+        ]
+      },
+      "classification": {
+        "domain_category": "Health",
+        "domain_tags": ["nci", "cancer study", "rpci"]
+      },
+      "metadata": {"domain": "data.ny.gov"},
+      "permalink": "https://data.ny.gov/d/2ig8-yxf8"
+    }
+  ]
+}

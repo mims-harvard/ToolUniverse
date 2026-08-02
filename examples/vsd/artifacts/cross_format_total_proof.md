@@ -10,7 +10,7 @@ Yes. The case kept the already-covered NIH RePORTER interface out of promotion, 
 
 ## Connected end-to-end path
 
-1. Audit 2,744 configured tools, 259 configured hosts, and the review-only 50-source catalog.
+1. Audit 2,744 configured tools, 259 configured hosts, and the review-only 51-source catalog.
 2. Separate the existing NIH RePORTER host from the missing DANDI capability.
 3. Crawl two explicit hosts under robots, host, page, depth, byte, and time bounds.
 4. Snapshot and inspect OpenAPI, GraphQL, AsyncAPI, Postman, WSDL, protobuf, and MCP documents without execution.
@@ -70,7 +70,7 @@ Yes. The case kept the already-covered NIH RePORTER interface out of promotion, 
 - `all_prior_case_artifacts_or_ci_evidence_pass`: passed
 - `all_six_publications_loaded_in_fresh_runtime`: passed
 - `all_six_published_tools_executed`: passed
-- `catalog_contains_50_review_only_sources`: passed
+- `catalog_sources_remain_review_only`: passed
 - `every_binding_names_its_contract_candidate`: passed
 - `every_format_passed_three_verification_cases`: passed
 - `every_promotion_has_exact_binding_hash`: passed
@@ -92,4 +92,4 @@ Yes. The case kept the already-covered NIH RePORTER interface out of promotion, 
 
 This proves software behavior, provenance, review gates, bounded transport, and deterministic fixture execution. It does not certify a provider's scientific content, convert catalog membership into trust for execution, submit the local handoff, or expose Docker lifecycle operations to an agent.
 
-Audit SHA-256: `0223d236556c284746e7acf5985f7fc2195f74de8ffcbe796d3dd4092e32c10b`
+Audit SHA-256: `b24ce5cfa14069f6545d05ddf13a810456b212476f01f578cbaf40fe82e8997b`

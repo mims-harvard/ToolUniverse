@@ -24,10 +24,10 @@ gap, and give the core team enough evidence to decide what to build next.
 
 - Configured tools inspected: **2744**
 - Exact HTTPS hosts found: **259**
-- Literal HTTPS hosts found in Python/JSON source: **586**
+- Literal HTTPS hosts found in Python/JSON source: **593**
 - Catalog entries already present by exact host: **0**
-- Catalog entries remaining as review candidates: **50**
-- Catalog collisions with source-code URL literals: **0**
+- Catalog entries remaining as review candidates: **51**
+- Catalog collisions with source-code URL literals: **2**
 - Registry inventory SHA-256: `160e86e787c5ac7555965b707b0bd094edadf00fec67cab5a2a649826181b63f`
 
 For the duplicate-control case, the study then added one explicit RePORTER configuration.
@@ -74,8 +74,8 @@ rendered, but `submitted` remained **false**.
 
 | Case | Result | Concrete proof |
 |---|---|---|
-| `catalog_boundary` | passed | 50 authoritative entries permit discovery but never execution or registration |
-| `real_registry_audit` | passed | 2744 configured tools and 259 configured hosts plus 586 source-code hosts were inventoried |
+| `catalog_boundary` | passed | 51 authoritative entries permit discovery but never execution or registration |
+| `real_registry_audit` | passed | 2744 configured tools and 259 configured hosts plus 593 source-code hosts were inventoried |
 | `existing_source_detection` | passed | the controlled RePORTER host is marked existing with its exact tool name |
 | `candidate_gap_detection` | passed | the DANDI host remains a candidate gap instead of being treated as covered |
 | `bounded_multihost_crawl` | passed | two explicit hosts yielded seven unique contract leads within page/depth/byte limits |
@@ -88,11 +88,11 @@ rendered, but `submitted` remained **false**.
 
 ## Interpretation
 
-This feature does not autonomously add 50 new tools. It gives maintainers a controlled
+This feature does not autonomously add 51 new tools. It gives maintainers a controlled
 way to answer: which authoritative sources are worth scanning, which ones ToolUniverse
 already covers, which machine-readable contracts actually exist, which exact documents
 were inspected, and which unmet needs are worth bringing to the core team. Tool creation
 still begins only after a maintainer selects and reviews an operation through the
 existing promotion lifecycle.
 
-Audit SHA-256: `77f1c2387067a7d99252ca5625688cc9634c68f972fa0bb292f960de9962a268`
+Audit SHA-256: `11b8e122dd4690b1fe7b72141f84e442bc478b503f4664418f1e3344c42f34c0`

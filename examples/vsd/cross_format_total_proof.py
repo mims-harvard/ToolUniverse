@@ -915,8 +915,9 @@ def run_case(workspace: Path) -> dict[str, Any]:
         "source_intelligence_assertions_pass": all(
             source_snapshot["end_to_end_assertions"].values()
         ),
-        "catalog_contains_50_review_only_sources": (
-            source_snapshot["real_registry_baseline"]["catalog_gap_count"] == 50
+        "catalog_sources_remain_review_only": (
+            source_snapshot["real_registry_baseline"]["catalog_source_count"]
+            == source_snapshot["real_registry_baseline"]["catalog_gap_count"]
         ),
         "seven_formats_were_discovered": (
             source_snapshot["scan_summary"]["candidate_count"] == 7
@@ -1010,7 +1011,9 @@ def run_case(workspace: Path) -> dict[str, Any]:
             "each format."
         ),
         "source_stage": {
-            "catalog_source_count": 50,
+            "catalog_source_count": source_snapshot["real_registry_baseline"][
+                "catalog_source_count"
+            ],
             "configured_tool_count": source_snapshot["real_registry_baseline"][
                 "tool_count"
             ],
@@ -1079,7 +1082,12 @@ def _markdown(snapshot: dict[str, Any]) -> str:
         "",
         "## Connected end-to-end path",
         "",
-        "1. Audit 2,744 configured tools, 259 configured hosts, and the review-only 50-source catalog.",
+        (
+            f"1. Audit {snapshot['source_stage']['configured_tool_count']:,} configured "
+            f"tools, {snapshot['source_stage']['configured_host_count']:,} configured "
+            f"hosts, and the review-only "
+            f"{snapshot['source_stage']['catalog_source_count']}-source catalog."
+        ),
         "2. Separate the existing NIH RePORTER host from the missing DANDI capability.",
         "3. Crawl two explicit hosts under robots, host, page, depth, byte, and time bounds.",
         "4. Snapshot and inspect OpenAPI, GraphQL, AsyncAPI, Postman, WSDL, protobuf, and MCP documents without execution.",

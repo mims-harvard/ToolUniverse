@@ -43,6 +43,7 @@ _CATALOG_LOCK = threading.RLock()
 _CATALOG_LOCK_TIMEOUT = 10.0
 _CATALOG_VERSION = 1
 _MAX_RESPONSE_BYTES = 1_000_000
+_MAX_ALLOWED_RESPONSE_BYTES = 10_000_000
 _SOURCE_ID_RE = re.compile(r"^[a-z][a-z0-9_]{2,63}$")
 _CREDENTIAL_KEY_RE = re.compile(
     r"(?:api[_-]?key|access[_-]?key|(?:^|[_-])key(?:$|[_-])|token|secret|"
@@ -70,16 +71,22 @@ _FORBIDDEN_REQUEST_HEADERS = {
 # user opt-in through TOOLUNIVERSE_VSD_ALLOWED_HOSTS.
 _BUILTIN_ALLOWED_HOSTS = frozenset(
     {
+        "api.apis.guru",
+        "api.gsa.gov",
         "api.fda.gov",
         "api.reporter.nih.gov",
         "api.us.socrata.com",
         "chronicdata.cdc.gov",
         "clinicaltrials.gov",
-        "data.ny.gov",
         "data.cdc.gov",
+        "data.europa.eu",
+        "ckan.publishing.service.gov.uk",
+        "data.ny.gov",
         "eutils.ncbi.nlm.nih.gov",
         "ghoapi.azureedge.net",
         "rest.ensembl.org",
+        "registry.ga4gh.org",
+        "smart-api.info",
         "www.ema.europa.eu",
     }
 )
@@ -535,6 +542,7 @@ def _safe_get_json(
     timeout: float = 20.0,
     session: requests.Session | None = None,
     headers: dict[str, str] | None = None,
+    max_response_bytes: int = _MAX_RESPONSE_BYTES,
 ) -> tuple[Any, dict[str, Any]]:
     """GET JSON through a DNS-pinned HTTPS connection with bounded decoding."""
     if (
@@ -544,6 +552,12 @@ def _safe_get_json(
         or timeout <= 0
     ):
         raise ValueError("timeout must be a positive finite number")
+    if (
+        isinstance(max_response_bytes, bool)
+        or not isinstance(max_response_bytes, int)
+        or not 1 <= max_response_bytes <= _MAX_ALLOWED_RESPONSE_BYTES
+    ):
+        raise ValueError("max_response_bytes must be an integer between 1 and 10000000")
     deadline = time.monotonic() + timeout
     normalized_url, hostname, addresses = _validated_source_target(url)
     pinned_address = addresses[0]
@@ -583,19 +597,19 @@ def _safe_get_json(
         try:
             if time.monotonic() >= deadline:
                 raise VSDPolicyError("Source request exceeded its total timeout")
-            peer_ip = _peer_address(response)
-            _require_global_ip(peer_ip, context="Connected peer")
-            if ipaddress.ip_address(peer_ip) != ipaddress.ip_address(pinned_address):
-                raise VSDPolicyError(
-                    "Connected peer did not match the vetted DNS address"
-                )
-
             if response.status_code in {301, 302, 303, 307, 308}:
                 location = response.headers.get("Location")
                 if location:
                     # Preserve the more specific policy error for an unsafe target.
                     validate_source_url(urljoin(normalized_url, location))
                 raise VSDPolicyError("Source redirects are not allowed")
+
+            peer_ip = _peer_address(response)
+            _require_global_ip(peer_ip, context="Connected peer")
+            if ipaddress.ip_address(peer_ip) != ipaddress.ip_address(pinned_address):
+                raise VSDPolicyError(
+                    "Connected peer did not match the vetted DNS address"
+                )
 
             response.raise_for_status()
             content_encoding = response.headers.get("Content-Encoding", "")
@@ -624,15 +638,25 @@ def _safe_get_json(
                     ) from exc
                 if parsed_length < 0:
                     raise VSDPolicyError("Source returned an invalid Content-Length")
-                if parsed_length > _MAX_RESPONSE_BYTES:
-                    raise VSDPolicyError("Source response exceeds the 1 MB limit")
+                if parsed_length > max_response_bytes:
+                    detail = (
+                        "the 1 MB limit"
+                        if max_response_bytes == _MAX_RESPONSE_BYTES
+                        else "the configured byte limit"
+                    )
+                    raise VSDPolicyError(f"Source response exceeds {detail}")
 
             chunks: list[bytes] = []
             total = 0
             for chunk in _response_chunks(response, deadline=deadline):
                 total += len(chunk)
-                if total > _MAX_RESPONSE_BYTES:
-                    raise VSDPolicyError("Source response exceeds the 1 MB limit")
+                if total > max_response_bytes:
+                    detail = (
+                        "the 1 MB limit"
+                        if max_response_bytes == _MAX_RESPONSE_BYTES
+                        else "the configured byte limit"
+                    )
+                    raise VSDPolicyError(f"Source response exceeds {detail}")
                 chunks.append(chunk)
             try:
                 payload = json.loads(

@@ -676,8 +676,16 @@ def inspect_openapi_document(
     }
 
 
-def validate_openapi_candidate(candidate: Any) -> dict[str, Any]:
-    """Validate the integrity and inert state of one inspection candidate."""
+def validate_openapi_candidate(
+    candidate: Any, *, permit_missing_json_response: bool = False
+) -> dict[str, Any]:
+    """Validate the integrity and inert state of one inspection candidate.
+
+    ``permit_missing_json_response`` is reserved for the reviewed promotion
+    path. It accepts only the single, narrow case where an otherwise safe GET
+    operation omitted its JSON response contract; it never makes the candidate
+    directly promotable.
+    """
     if not isinstance(candidate, dict):
         raise VSDOpenAPIError("OpenAPI candidate must be an object")
     if (
@@ -699,9 +707,17 @@ def validate_openapi_candidate(candidate: Any) -> dict[str, Any]:
         or candidate.get("candidate_id") != digest[:16]
     ):
         raise VSDOpenAPIError("OpenAPI candidate digest does not match its content")
-    if candidate.get("blockers"):
+    blockers = candidate.get("blockers")
+    if (
+        not isinstance(blockers, list)
+        or any(not isinstance(item, str) or not item for item in blockers)
+        or blockers != sorted(set(blockers))
+    ):
+        raise VSDOpenAPIError("OpenAPI candidate blockers are invalid")
+    missing_json_response = blockers == ["json_response_missing"]
+    if blockers and not (permit_missing_json_response and missing_json_response):
         raise VSDOpenAPIError(
-            f"OpenAPI candidate is not promotable: {candidate['blockers']!r}"
+            f"OpenAPI candidate is not promotable: {blockers!r}"
         )
     parameters = candidate.get("parameters")
     if not isinstance(parameters, list) or len(parameters) > _MAX_PARAMETERS:
@@ -756,28 +772,45 @@ def validate_openapi_candidate(candidate: Any) -> dict[str, Any]:
             or not isinstance(candidate.get("path"), str)
             or not candidate["path"].startswith("/")
             or set(_PATH_TOKEN_RE.findall(candidate["path"])) != path_names
-            or candidate.get("response_media_type") is None
-            or not (
-                candidate["response_media_type"].casefold() == "application/json"
-                or candidate["response_media_type"].casefold().endswith("+json")
-            )
             or not re.fullmatch(
                 r"[0-9a-f]{64}", str(candidate.get("source_document_sha256", ""))
             )
         ):
             raise KeyError
-        _schema_validator(candidate.get("response_schema"), field="response_schema")
+        if missing_json_response:
+            if (
+                candidate.get("response_media_type") is not None
+                or candidate.get("response_schema") is not None
+            ):
+                raise KeyError
+        else:
+            response_media_type = candidate.get("response_media_type")
+            if not isinstance(response_media_type, str) or not (
+                response_media_type.casefold() == "application/json"
+                or response_media_type.casefold().endswith("+json")
+            ):
+                raise KeyError
+            _schema_validator(
+                candidate.get("response_schema"), field="response_schema"
+            )
     except (KeyError, TypeError, VSDDynamicRESTError) as exc:
         raise VSDOpenAPIError("OpenAPI candidate operation is invalid") from exc
     return copy.deepcopy(candidate)
 
 
-def select_openapi_candidate(report: Any, candidate_id: str | None) -> dict[str, Any]:
+def select_openapi_candidate(
+    report: Any,
+    candidate_id: str | None,
+    *,
+    permit_missing_json_response: bool = False,
+) -> dict[str, Any]:
     """Select exactly one operation from an inspection report or direct candidate."""
     if isinstance(report, dict) and report.get("format") == "vsd_openapi_operation_v1":
         if candidate_id is not None and report.get("candidate_id") != candidate_id:
             raise VSDOpenAPIError("Requested candidate ID is not present")
-        return validate_openapi_candidate(report)
+        return validate_openapi_candidate(
+            report, permit_missing_json_response=permit_missing_json_response
+        )
     candidates = report.get("candidates") if isinstance(report, dict) else None
     if not isinstance(candidates, list):
         raise VSDOpenAPIError("OpenAPI inspection report is invalid")
@@ -788,7 +821,9 @@ def select_openapi_candidate(report: Any, candidate_id: str | None) -> dict[str,
     ]
     if len(matches) != 1:
         raise VSDOpenAPIError("Select exactly one OpenAPI candidate by candidate ID")
-    return validate_openapi_candidate(matches[0])
+    return validate_openapi_candidate(
+        matches[0], permit_missing_json_response=permit_missing_json_response
+    )
 
 
 __all__ = [

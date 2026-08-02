@@ -1,0 +1,31 @@
+[
+  {
+    "arguments": {"curieid": "MONDO:0004976"},
+    "payload": {
+      "MONDO:0004976": [
+        {
+          "query": "MONDO:0004976",
+          "disease_ontology": {"doid": "DOID:332", "name": "amyotrophic lateral sclerosis"},
+          "mondo": {"label": "amyotrophic lateral sclerosis"},
+          "xrefs": {"gard": "5786", "mesh": "D000690"}
+        }
+      ]
+    }
+  },
+  {
+    "arguments": {"curieid": "HP:0001250"},
+    "payload": {
+      "HP:0001250": [
+        {"query": "HP:0001250", "hpo": {"label": "Seizure"}, "ontology": "Human Phenotype Ontology"}
+      ]
+    }
+  },
+  {
+    "arguments": {"curieid": "NCBIGene:2034"},
+    "payload": {
+      "NCBIGene:2034": [
+        {"query": "NCBIGene:2034", "gene": {"symbol": "EPAS1"}, "taxon": "NCBITaxon:9606"}
+      ]
+    }
+  }
+]

@@ -1,0 +1,802 @@
+{
+  "audit_sha256": "1ff0dc3fecde1eaef4067900dd915a5503b530344c8e3b77f9f46b81b4055fa1",
+  "case": "multicatalog_breast_cancer_program_growth",
+  "catalog_searches": [
+    {
+      "candidate_count": 1,
+      "catalog_result_count": 39,
+      "evidence_mode": "live",
+      "failed_provider_count": 0,
+      "provenance": {
+        "content_type": "application/json;charset=utf-8",
+        "credential_ref": null,
+        "endpoint": "https://api.us.socrata.com/api/catalog/v1",
+        "http_status": 200,
+        "payload_sha256": "4cd05b656db983f5ddc6cdce15cfaed54252cadac0386bca267f33d4d60d0643",
+        "provider": "Socrata Open Data API Catalog",
+        "provider_id": "socrata",
+        "query_params": {
+          "limit": 15,
+          "only": "datasets",
+          "q": "active breast cancer clinical trials phase"
+        },
+        "redirects": 0,
+        "request_header_names": [],
+        "response_bytes": 445832,
+        "retrieved_at": "2026-08-02T07:51:21.916219+00:00"
+      },
+      "provider": "socrata",
+      "query": "active breast cancer clinical trials phase",
+      "role": "local trial inventory",
+      "selected_candidate": {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "31dcb2ce74f62d7c",
+        "candidate_kind": "data_endpoint",
+        "candidate_sha256": "809225fa1f2891c5d9849d2caa45f5d69552218541a7711175d67ce84133e839",
+        "catalog_sources": [
+          {
+            "documentation_url": "https://data.ny.gov/d/2ig8-yxf8",
+            "provider": "socrata",
+            "record_id": "2ig8-yxf8"
+          }
+        ],
+        "execution_allowed": false,
+        "identity": "https://data.ny.gov/resource/2ig8-yxf8.json",
+        "interface_type": "soda",
+        "name": "Current Active Clinical Trials - Roswell Park Cancer Institute",
+        "response_format": "json",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 0.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "matched_query_terms": 5,
+          "metadata_completeness": 0.6667,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.8333,
+          "query_term_count": 6,
+          "total": 0.7433
+        }
+      },
+      "successful_provider_count": 1
+    },
+    {
+      "candidate_count": 1,
+      "catalog_result_count": 1,
+      "evidence_mode": "replay",
+      "failed_provider_count": 0,
+      "provenance": {
+        "content_type": "application/json",
+        "credential_ref": "DEMO_KEY",
+        "endpoint": "https://api.gsa.gov/technology/datagov/v4/search",
+        "http_status": 200,
+        "payload_sha256": "0dbdba9813a91e101ea41ba6b589ee63dc6eb1111c859763d96d1f4f751347c7",
+        "provider": "Data.gov Catalog API",
+        "provider_id": "datagov",
+        "query_params": {
+          "q": "cancer",
+          "size": 15
+        },
+        "redirects": 0,
+        "request_header_names": [
+          "X-Api-Key"
+        ],
+        "response_bytes": 814,
+        "retrieved_at": "2026-08-02T06:00:00+00:00"
+      },
+      "provider": "datagov",
+      "query": "cancer",
+      "role": "outcome benchmark",
+      "selected_candidate": {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "de19d7e8ae382322",
+        "candidate_kind": "data_endpoint",
+        "candidate_sha256": "9792f907819221118a6f2926332501530810a3508e4accaa376add36c049ef85",
+        "catalog_sources": [
+          {
+            "documentation_url": "https://catalog.data.gov/dataset/c-cancer-deaths-column-chart",
+            "provider": "datagov",
+            "record_id": "urn:uuid:03935a57-5192-4455-8e85-1b2ec6f4da5e#0"
+          }
+        ],
+        "execution_allowed": false,
+        "identity": "https://data.ok.gov/dataset/3c0493a5-079e-4cc8-95a9-c53967623009/resource/03935a57-5192-4455-8e85-1b2ec6f4da5e/download/c-cancer-deaths-column-chart.csv",
+        "interface_type": "rest",
+        "name": "(C) - Cancer Deaths - Column Chart",
+        "response_format": "csv",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 0.0,
+          "exact_phrase": 1.0,
+          "government_domain": 1.0,
+          "matched_query_terms": 1,
+          "metadata_completeness": 0.6667,
+          "official_catalog_label": 1.0,
+          "query_coverage": 1.0,
+          "query_term_count": 1,
+          "total": 0.8767
+        }
+      },
+      "successful_provider_count": 1
+    },
+    {
+      "candidate_count": 5,
+      "catalog_result_count": 1129091,
+      "evidence_mode": "live",
+      "failed_provider_count": 0,
+      "provenance": {
+        "content_type": "application/json",
+        "credential_ref": null,
+        "endpoint": "https://data.europa.eu/api/hub/search/search",
+        "http_status": 200,
+        "payload_sha256": "a4acf577a1c7b3b42e0f1d20ff0c8c500284ccb0691f895054568d35f0ac781b",
+        "provider": "European Data Portal Hub Search",
+        "provider_id": "data_europa",
+        "query_params": {
+          "limit": 10,
+          "q": "cause of death cancer Ireland csv"
+        },
+        "redirects": 0,
+        "request_header_names": [],
+        "response_bytes": 251601,
+        "retrieved_at": "2026-08-02T07:51:23.195101+00:00"
+      },
+      "provider": "data_europa",
+      "query": "cause of death cancer Ireland csv",
+      "role": "current age-stratified cancer mortality",
+      "selected_candidate": {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "0970081177fbc225",
+        "candidate_kind": "data_endpoint",
+        "candidate_sha256": "b038d225bab663d64adba4966cb8066ff5580794438a3731ed8463453a27d064",
+        "catalog_sources": [
+          {
+            "documentation_url": "",
+            "provider": "data_europa",
+            "record_id": "ef3f9605-f9f3-45b5-8c13-e412f1206b82#1"
+          }
+        ],
+        "execution_allowed": false,
+        "identity": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/KTA31/JSON-stat/1.0/en",
+        "interface_type": "rest",
+        "name": "Principal Cause of Death",
+        "response_format": "json",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 0.0,
+          "exact_phrase": 0.0,
+          "government_domain": 0.0,
+          "matched_query_terms": 2,
+          "metadata_completeness": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.4,
+          "query_term_count": 5,
+          "total": 0.5
+        }
+      },
+      "successful_provider_count": 1
+    },
+    {
+      "candidate_count": 5,
+      "catalog_result_count": 163,
+      "evidence_mode": "live",
+      "failed_provider_count": 0,
+      "provenance": {
+        "content_type": "application/json;charset=utf-8",
+        "credential_ref": null,
+        "endpoint": "https://ckan.publishing.service.gov.uk/api/3/action/package_search",
+        "http_status": 200,
+        "payload_sha256": "0a6a4e76c10c1fc454ff0ca85b8ca17b3a68f293c92949e1764fd9c48aafa051",
+        "provider": "Data.gov.uk CKAN Catalog",
+        "provider_id": "ckan_data_gov_uk",
+        "query_params": {
+          "q": "cancer waiting times",
+          "rows": 15
+        },
+        "redirects": 0,
+        "request_header_names": [],
+        "response_bytes": 125911,
+        "retrieved_at": "2026-08-02T07:51:24.345590+00:00"
+      },
+      "provider": "ckan_data_gov_uk",
+      "query": "cancer waiting times",
+      "role": "treatment-access delay",
+      "selected_candidate": {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "122e6c33db931f0a",
+        "candidate_kind": "data_endpoint",
+        "candidate_sha256": "9997cb5ba66ae6a3ade57523453a684778a42dde0e67e3babf4a75b79c33cc6d",
+        "catalog_sources": [
+          {
+            "documentation_url": "https://data.gov.uk/dataset/cancer-waiting-times",
+            "provider": "ckan_data_gov_uk",
+            "record_id": "5624cab2-85cc-4932-bb6e-63d67e49f516#1"
+          }
+        ],
+        "execution_allowed": false,
+        "identity": "https://www.health-ni.gov.uk/sites/default/files/publications/health/hs-niwts-cwt-62-day-wait-by-tumour-q1-19-20.csv",
+        "interface_type": "rest",
+        "name": "62 Day Cancer Waiting Times by Tumour Site",
+        "response_format": "csv",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 0.0,
+          "exact_phrase": 1.0,
+          "government_domain": 1.0,
+          "matched_query_terms": 3,
+          "metadata_completeness": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 1.0,
+          "query_term_count": 3,
+          "total": 0.9
+        }
+      },
+      "successful_provider_count": 1
+    },
+    {
+      "candidate_count": 1,
+      "catalog_result_count": 2529,
+      "evidence_mode": "live",
+      "failed_provider_count": 0,
+      "provenance": {
+        "content_type": "application/json",
+        "credential_ref": null,
+        "endpoint": "https://api.apis.guru/v2/list.json",
+        "http_status": 200,
+        "payload_sha256": "31abccfc070322d254d30721e1e55196850acf3f48b356df9278f1b3780669e9",
+        "provider": "APIs.guru OpenAPI Directory",
+        "provider_id": "apis_guru",
+        "query_params": {},
+        "redirects": 0,
+        "request_header_names": [],
+        "response_bytes": 8855894,
+        "retrieved_at": "2026-08-02T07:51:25.591335+00:00"
+      },
+      "provider": "apis_guru",
+      "query": "genomics",
+      "role": "genomics workflow contract",
+      "selected_candidate": {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "199888f4680c0b40",
+        "candidate_kind": "openapi_specification",
+        "candidate_sha256": "661527d6757b60f3934b43dc2c576e5677b5a42284d515679a622824fff84469",
+        "catalog_sources": [
+          {
+            "documentation_url": "https://cloud.google.com/genomics",
+            "provider": "apis_guru",
+            "record_id": "googleapis.com:genomics:v2alpha1"
+          }
+        ],
+        "execution_allowed": false,
+        "identity": "https://api.apis.guru/v2/specs/googleapis.com/genomics/v2alpha1/openapi.json",
+        "interface_type": "openapi",
+        "name": "Genomics API",
+        "response_format": "json",
+        "score": {
+          "api_ready": 1.0,
+          "contract_available": 1.0,
+          "exact_phrase": 1.0,
+          "government_domain": 0.0,
+          "matched_query_terms": 1,
+          "metadata_completeness": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 1.0,
+          "query_term_count": 1,
+          "total": 0.95
+        }
+      },
+      "successful_provider_count": 1
+    }
+  ],
+  "closed_loop": {
+    "final_plan_sha256": "ee184b70b72504a7a24e8addbf2a8c7ffa2d01fec7ae7f0fd7291ee653a234ea",
+    "final_plan_states": {
+      "mortality_context": "existing_exact",
+      "program_review": "agent_native",
+      "trial_inventory": "existing_exact"
+    },
+    "registered_duplicate_counts": {
+      "data_europa": 1,
+      "socrata": 1
+    },
+    "registered_duplicates": {
+      "data_europa": [
+        {
+          "candidate_id": "0970081177fbc225",
+          "classification": "existing_exact",
+          "identity": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/KTA31/JSON-stat/1.0/en",
+          "matches": [
+            "VSDIrishCancerMortalityContext"
+          ],
+          "registry_sha256": "47315b3d1066e14b3f94cd1ab8449f6d66c1238aa7d10a2e2de467e8ea57cda0",
+          "semantic_classification": "existing_exact"
+        }
+      ],
+      "socrata": [
+        {
+          "candidate_id": "31dcb2ce74f62d7c",
+          "classification": "existing_exact",
+          "identity": "https://data.ny.gov/resource/2ig8-yxf8.json",
+          "matches": [
+            "VSDCancerTrialsByPrimarySite"
+          ],
+          "registry_sha256": "47315b3d1066e14b3f94cd1ab8449f6d66c1238aa7d10a2e2de467e8ea57cda0",
+          "semantic_classification": "existing_exact"
+        }
+      ]
+    }
+  },
+  "comparative_assessment": [
+    {
+      "activity": "Catalog search",
+      "direct_integration_baseline": "Implement and maintain five provider-specific search clients and normalize their different response schemas.",
+      "observed_vsd_contribution": "One discovery interface returned ranked, inert candidates with a common schema and source provenance."
+    },
+    {
+      "activity": "Source qualification",
+      "direct_integration_baseline": "Implement equivalent transport, schema, media-type, contract, and freshness checks separately for each source.",
+      "observed_vsd_contribution": "Uniform checks identified the Data.gov redirect, CKAN media-type mismatch, and five unsupported genomics operations before approval."
+    },
+    {
+      "activity": "Reusable integration",
+      "direct_integration_baseline": "A direct script can retrieve the same provider values but needs a separate review, provenance, publication, and loading convention.",
+      "observed_vsd_contribution": "Two resources became content-addressed ToolUniverse tools after six verification executions and explicit approval."
+    },
+    {
+      "activity": "Registry maintenance",
+      "direct_integration_baseline": "Compare each proposed operation with the existing registry and distinguish exact identity from semantic similarity.",
+      "observed_vsd_contribution": "Replanning resolved both published operations and repeat discovery suppressed only their exact method, host, and path identities."
+    }
+  ],
+  "decision_question": "Can ToolUniverse expand its registry for a multi-source cancer program while applying consistent qualification and publication controls to catalog candidates?",
+  "demand": {
+    "ledger_sha256": "3f2f719bf504ba75997946aeffd69be3774711cb4ebf16b3b2a423fd39489717",
+    "observation_counts": [
+      3,
+      3
+    ],
+    "record_count": 2
+  },
+  "early_publication_error": "Required artifact 'vsdcancertrialsbyprimarysite_051610fedd01.json' does not exist",
+  "end_to_end_assertions": {
+    "all_five_catalogs_returned_live_or_replayed_results": true,
+    "all_selected_candidates_are_hash_bound_and_inert": true,
+    "catalog_credentials_were_not_persisted": true,
+    "ckan_mime_mismatch_blocked_verification": true,
+    "datagov_unfit_resource_was_not_approved": true,
+    "demand_was_observed_three_times_before_growth": true,
+    "early_publication_was_rejected": true,
+    "genomics_contract_operations_were_blocked_before_drafting": true,
+    "initial_plan_identified_both_exact_capability_gaps": true,
+    "mortality_resource_completed_three_verification_cases": true,
+    "mortality_runtime_returned_current_age_stratified_data": true,
+    "mortality_totals_were_computed_from_provider_values": true,
+    "post_publication_discovery_suppressed_both_resources": true,
+    "post_publication_plan_resolved_both_exact_capabilities": true,
+    "published_tools_were_absent_until_explicit_load": true,
+    "trial_registry_completed_three_distinct_verification_cases": true,
+    "trial_runtime_returned_exact_site_rows": true,
+    "two_hash_chains_reached_publication": true
+  },
+  "evidence_summary": {
+    "candidate_qualification": "live",
+    "live_catalog_count": 4,
+    "replayed_catalogs": [
+      "datagov"
+    ]
+  },
+  "generated_at": "2026-08-02T07:51:17.431172+00:00",
+  "initial_plan": {
+    "overall_action": "discover_missing_capabilities",
+    "plan_sha256": "1842f505458ed918f886bace59b79871a5a06a872acb3e115bd6baa70a765582",
+    "states": {
+      "mortality_context": "missing",
+      "program_review": "agent_native",
+      "trial_inventory": "missing"
+    }
+  },
+  "interpretation_limits": "This evaluation covers software governance and public aggregate-data retrieval. It does not establish trial eligibility, compare treatments, infer patient risk, certify the scientific quality of a catalog listing, or compare the accuracy of VSD with a manually engineered integration.",
+  "measured_outcomes": {
+    "catalogs_searched": 5,
+    "exact_capability_gaps_closed": 2,
+    "exact_registered_candidates_suppressed": 2,
+    "leads_not_published": 3,
+    "post_publication_executions": 2,
+    "selected_leads_qualified": 5,
+    "tools_published": 2,
+    "verification_executions_for_published_tools": 6
+  },
+  "mode": "network_backed",
+  "promotions": [
+    {
+      "approval_sha256": "fea453e8ffd349ff576f97cd634640d90bdc219c723e3ee400c69aa87fd4e232",
+      "candidate_sha256": "809225fa1f2891c5d9849d2caa45f5d69552218541a7711175d67ce84133e839",
+      "draft_id": "vsdcancertrialsbyprimarysite_051610fedd01",
+      "draft_sha256": "f355f33186edd5bf3f4a63e3a5998bb352d19302f6109646c34bf8fae0513a62",
+      "publication_sha256": "79fa7b176d302a5fe1cbc56d517652875fbdc0fc8deae91d74f3909b25112dc5",
+      "tool_name": "VSDCancerTrialsByPrimarySite",
+      "verification_arguments": [
+        {
+          "primary_site": "Brain and Nervous System"
+        },
+        {
+          "primary_site": "Breast"
+        },
+        {
+          "primary_site": "Prostate"
+        }
+      ],
+      "verification_case_count": 3,
+      "verification_sha256": "e764c2b086008d465c55977c4b02ae3c1677d52f7f4eecd967e946994edeacdd"
+    },
+    {
+      "approval_sha256": "c8a7d5427b1ab572b540706b858b99df8041d622b21bcfb9b1b59a76687494ea",
+      "candidate_sha256": "b038d225bab663d64adba4966cb8066ff5580794438a3731ed8463453a27d064",
+      "catalog_binding": {
+        "binding_sha256": "23c9a14745f0cc6be89c601ed5b65e99767c24e106229806995be3010d9b0582",
+        "candidate_id": "0970081177fbc225",
+        "candidate_sha256": "b038d225bab663d64adba4966cb8066ff5580794438a3731ed8463453a27d064",
+        "catalog_provider": "data_europa",
+        "catalog_sources": [
+          {
+            "documentation_url": "",
+            "provider": "data_europa",
+            "record_id": "ef3f9605-f9f3-45b5-8c13-e412f1206b82#1"
+          }
+        ],
+        "identity": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/KTA31/JSON-stat/1.0/en",
+        "response_format": "json"
+      },
+      "draft_id": "vsdirishcancermortalitycontext_a8409db950ff",
+      "draft_sha256": "b24787d59717678460b66d0d7f11842fbc13acc2e778f556bc1569618dc38c46",
+      "publication_sha256": "a07e75fbc3c7aad847df2cd6db086873d4c9bef9644f974abcd19cdb7c10ad6f",
+      "tool_name": "VSDIrishCancerMortalityContext",
+      "verification_case_count": 3,
+      "verification_sha256": "01b74b661904595b18e1c792f4ebaee20d8439e3811d95c2a58d791d8ec3247c"
+    }
+  ],
+  "qualification_decisions": {
+    "apis_guru": {
+      "approved": false,
+      "blocked_count": 5,
+      "blockers": [
+        "authentication_alternatives_unsupported",
+        "authentication_required",
+        "method_not_read_only",
+        "request_body_not_supported",
+        "unsupported_parameter_name:query:$.xgafv"
+      ],
+      "candidate_count": 5,
+      "decision": "blocked_at_contract_inspection",
+      "promotable_count": 0,
+      "published": false,
+      "reason": "Every operation requires unsupported authentication and/or exposes a write or otherwise unsupported request shape.",
+      "source_payload_sha256": "eb6ad331d7f388a87c088d9a7f5a667617049cbc9e27cff38b83e1ab96485df9",
+      "specification_url": "https://api.apis.guru/v2/specs/googleapis.com/genomics/v2alpha1/openapi.json",
+      "transport": {
+        "content_type": "application/json",
+        "peer_ip": "104.20.45.57",
+        "redirects": 0,
+        "response_bytes": 64625,
+        "status_code": 200,
+        "url": "https://api.apis.guru/v2/specs/googleapis.com/genomics/v2alpha1/openapi.json"
+      }
+    },
+    "ckan_data_gov_uk": {
+      "approved": false,
+      "decision": "blocked_at_verification",
+      "draft_id": "vsdnorthernirelandcancerwaitingsnapshot_5ade08a1cc32",
+      "expected_format": "csv",
+      "observed_content_type": "application/octet-stream",
+      "published": false,
+      "reason": "The provider returned application/octet-stream for a catalog-declared CSV, so the reviewed runtime refused the response.",
+      "verification_error": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider content type 'application/octet-stream' does not match csv\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider content type 'application/octet-stream' does not match csv\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}"
+    },
+    "data_europa": {
+      "approved": true,
+      "decision": "approved_and_published",
+      "published": true,
+      "reason": "The bounded resource supplied a current, parseable JSON-stat mortality cube through 2024.",
+      "verification_case_count": 3
+    },
+    "datagov": {
+      "approved": false,
+      "decision": "blocked_at_verification",
+      "draft_id": "vsdoklahomacancerdeathtargetsnapshot_b0c0a2f1c5d2",
+      "published": false,
+      "quality_review_completed": false,
+      "reason": "The catalog URL redirects to a signed object-store URL; the reviewed runtime rejected the redirect and query-bearing target before reading data.",
+      "verification_error": "Verification case 0 did not execute successfully: {'status': 'error', 'error': 'Validation error: Source endpoints must not contain query strings; use default_params', 'error_details': {'type': 'ToolValidationError', 'message': 'Validation error: Source endpoints must not contain query strings; use default_params', 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}"
+    },
+    "socrata": {
+      "approved": true,
+      "decision": "approved_and_published",
+      "published": true,
+      "reason": "Three distinct exact-site calls passed verification.",
+      "verification_case_count": 3
+    }
+  },
+  "research_need": {
+    "access": "Find treatment waiting-time evidence.",
+    "molecular": "Locate a usable genomics workflow contract.",
+    "mortality": "Measure current malignant-neoplasm deaths by age group.",
+    "outcomes": "Find a current cancer outcome benchmark.",
+    "trials": "Find registry studies by primary cancer site."
+  },
+  "runtime_evidence": {
+    "loaded_tools": [
+      "VSDCancerTrialsByPrimarySite",
+      "VSDIrishCancerMortalityContext"
+    ],
+    "mortality_provenance": {
+      "authentication": {
+        "credential_source": "none",
+        "type": "none"
+      },
+      "content_type": "application/json",
+      "endpoint": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/KTA31/JSON-stat/1.0/en",
+      "http_status": 200,
+      "method": "GET",
+      "operation_sha256": "a8409db950ff1750fee1a4605f6641c7226b42e5423c30fbb86c7afa9c94c0b5",
+      "page_count": 1,
+      "payload_sha256": "e3bcea1f0b4db6d2223b8ac90bc4c73c5979ce8c50b626f3c050d896c3efcf3d",
+      "protocol": "rest",
+      "provider": "ws.cso.ie",
+      "redirects": 0,
+      "response_bytes": 2637,
+      "retrieved_at": "2026-08-02T07:51:32.653925+00:00",
+      "runtime": {
+        "pages": [
+          {
+            "content_type": "application/json",
+            "headers": {
+              "access-control-allow-credentials": "true",
+              "access-control-allow-headers": "Origin, X-Requested-With, Content-Type, Accept, subscription_key",
+              "access-control-allow-origin": "",
+              "cache-control": "no-cache",
+              "connection": "keep-alive",
+              "content-disposition": "inline; filename=KTA31.20260802085132",
+              "content-type": "application/json",
+              "date": "Sun, 02 Aug 2026 07:51:32 GMT",
+              "server": "n/a",
+              "transfer-encoding": "chunked",
+              "vary": "Origin",
+              "www-authenticate": "Anonymous"
+            },
+            "peer_ip": "34.252.239.255",
+            "redirects": 0,
+            "response_bytes": 2637,
+            "status_code": 200,
+            "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/KTA31/JSON-stat/1.0/en"
+          }
+        ]
+      },
+      "transport": "http"
+    },
+    "mortality_summary": {
+      "change_from_first": 1285,
+      "change_from_first_percent": 14.24,
+      "first_cancer_deaths": 9022,
+      "first_year": 2014,
+      "latest_age_65_and_over_deaths": 8041,
+      "latest_age_65_and_under_deaths": 2266,
+      "latest_cancer_deaths": 10307,
+      "latest_year": 2024,
+      "period_count": 11,
+      "provider_updated_at": "2026-06-05T11:00:00Z",
+      "source": "Department of Health"
+    },
+    "present_before_explicit_load": [],
+    "trial_provenance": {
+      "authentication": {
+        "credential_source": "none",
+        "type": "none"
+      },
+      "content_type": "application/json;charset=utf-8",
+      "endpoint": "https://data.ny.gov/resource/2ig8-yxf8.json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_sha256": "051610fedd019ce46fc7cdfc01be40ed98e145512c7949407c369e17d0191434",
+      "payload_sha256": "5562338d7fdf189fa5ec3eecbfedadcb579778970ac266b82400116b84adb90f",
+      "provider": "data.ny.gov",
+      "query_params": {
+        "$limit": 25,
+        "$select": "protocol,primary_site,study_phase,title,date_opened,date_closed,principal_investigator",
+        "primary_site": "Breast"
+      },
+      "redirects": 0,
+      "response_bytes": 7415,
+      "retrieved_at": "2026-08-02T07:51:32.072304+00:00"
+    },
+    "trial_rows": [
+      {
+        "date_opened": "2020-08-05T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Ambrosone, C",
+        "protocol": "I-724220",
+        "study_phase": "N/A",
+        "title": "The North-South Breast Cancer Study (NSBCS)"
+      },
+      {
+        "date_opened": "2018-10-18T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Bonaccio, E",
+        "protocol": "I-60217",
+        "study_phase": "N/A",
+        "title": "Photoacoustic Imaging of Human Breast"
+      },
+      {
+        "date_closed": "2025-03-20T00:00:00.000",
+        "date_opened": "2021-09-16T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Fung-Kee-Fung, S",
+        "protocol": "N-1764921",
+        "study_phase": "III",
+        "title": "NRG-BR007: A PHASE III CLINICAL TRIAL EVALUATING DE-ESCALATION OF BREAST RADIATION FOR CONSERVATIVE TREATMENT OF STAGE I, HORMONE SENSITIVE, HER2-NEGATIVE, ONCOTYPE RECURRENCE SCORE &#8804; 18 BREAST CANCER"
+      },
+      {
+        "date_closed": "2024-07-01T00:00:00.000",
+        "date_opened": "2018-11-07T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Fung-Kee-Fung, S",
+        "protocol": "N-79418",
+        "study_phase": "II",
+        "title": "(S1706) A Phase II Randomized Trial of Olaparib (NSC-747856) Administered Concurrently with Radiotherapy versus Radiotherapy Alone for Inflammatory Breast Cancer"
+      },
+      {
+        "date_opened": "2024-05-06T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Glaser, K",
+        "protocol": "I-3858823",
+        "study_phase": "N/A",
+        "title": "Addressing Disparities in Breast Cancer Care: An approach to health equity"
+      },
+      {
+        "date_opened": "2022-04-07T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Kabraji, S",
+        "protocol": "I-19-04120",
+        "study_phase": "II",
+        "title": "A Phase IIa Study of Dendritic Cell Vaccines Against Her2/Her3 and Pembrolizumab in Patients with Asymptomatic Brain Metastasis from Triple Negative Breast Cancer (TNBC) or HER2+ Breast Cancer (HER2+BC) or Hormone Receptor Positive (HR+) Breast Cancer."
+      },
+      {
+        "date_opened": "2023-04-18T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Kabraji, S",
+        "protocol": "I-2612022",
+        "study_phase": "II",
+        "title": "B-Adrenergic Blockade with Chemotherapy and Checkpoint Inhibition in PD-L1\nPositive Metastatic Triple Negative Breast Cancer"
+      },
+      {
+        "date_opened": "2024-09-18T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Kabraji, S",
+        "protocol": "IC-3808823",
+        "study_phase": "II",
+        "title": "A Pragmatic Phase II Trial of Chemotherapy +/- Tocilizumab for Metastatic Triple Negative and ER-low Breast Cancers"
+      },
+      {
+        "date_opened": "2021-05-27T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "N-1274321",
+        "study_phase": "III",
+        "title": "(A011801) The COMPASSHER2 Trials (COMprehensive Use of Pathologic Response ASSessment to Optimize Therapy in HER2-Positive Breast Cancer): COMPASSHER2 Residual Disease (RD), A Double-Blinded, Phase III Randomized Trial of T-DM1 and Placebo Compared with T-DM1 and Tucatinib"
+      },
+      {
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "N-1519721",
+        "study_phase": "III",
+        "title": "Optimizing Endocrine Therapy Through Motivational Interviewing and Text Interventions"
+      },
+      {
+        "date_closed": "2024-10-30T00:00:00.000",
+        "date_opened": "2023-09-06T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "N-3684823",
+        "study_phase": "III",
+        "title": "A012103: OPTIMICE-PCR: DE-ESCALATION OF THERAPY IN EARLY-STAGE TNBC PATIENTS WHO ACHIEVE PCR AFTER NEOADJUVANT CHEMOTHERAPY WITH CHECKPOINT INHIBITOR THERAPY"
+      },
+      {
+        "date_opened": "2023-06-12T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "N-3550823",
+        "study_phase": "II",
+        "title": "EAY191; Molecular Analysis for Combination Therapy Choice \n(ComboMATCH)"
+      },
+      {
+        "date_closed": "2024-08-01T00:00:00.000",
+        "date_opened": "2023-12-13T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "N-3659223",
+        "study_phase": "II",
+        "title": "Interim FDG-PET/CT for PreDIcting REsponse of HER2+ Breast Cancer to Neoadjuvant Therapy: DIRECT trial"
+      },
+      {
+        "date_closed": "2024-10-30T00:00:00.000",
+        "date_opened": "2023-11-03T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "N-3804823",
+        "study_phase": "III",
+        "title": "NRG-BR009: A Phase III Adjuvant Trial Evaluating the Addition of Adjuvant \nChemotherapy to Ovarian Function Suppression plus Endocrine Therapy \nin Premenopausal Patients with pN0-1, ER-Positive/HER2-Negative Breast Cancer \nand an Oncotype Recurrence Score less than or equal to 25 (OFSET)"
+      },
+      {
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "N-2106021",
+        "study_phase": "II",
+        "title": "A Phase II Trial of Sacituzumab Govitecan (IMMU-132) (NSC #820016) for Patients with HER2-Negative Breast Cancer and Brain Metastases"
+      },
+      {
+        "date_opened": "2023-10-16T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "N-3550823-S3",
+        "study_phase": "II",
+        "title": "(EAY191-S3) Phase II Study of Paclitaxel (NSC #673089) + Ipatasertib (NSC #781451) in Taxane-Refractory Participants with AKT-Altered Advanced Non-Breast Solid Tumors (A ComboMatch Treatment Trial)"
+      },
+      {
+        "date_closed": "2025-04-03T00:00:00.000",
+        "date_opened": "2023-09-13T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "I-3010822",
+        "study_phase": "I/II",
+        "title": "Phase I/IIa Clinical Trial Evaluating the Safety and Efficacy of Rintatolimod Combined with IFN alpha2b (Bioferon\u00ae) to Enhance the Effectiveness of Pembrolizumab in Patients with Metastatic Triple Negative Breast Cancer"
+      },
+      {
+        "date_opened": "2020-12-22T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "I-778720",
+        "study_phase": "II",
+        "title": "A Phase IIA Trial Assessing the Tolerability of Abemaciclib in Combination with \nEndocrine Therapy in Patients Age 70 and Older with Hormone Receptor Positive \nMetastatic Breast Cancer Who Have Progressed on or After Prior CDK 4/6 Inhibition"
+      },
+      {
+        "date_opened": "2023-11-16T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "IC-3454822",
+        "study_phase": "II",
+        "title": "( I-SPY 2) Investigation of Serial Studies to Predict your Therapeutic Response with Imaging and Molecular Analysis 2"
+      },
+      {
+        "date_opened": "2023-05-24T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "I-3364822",
+        "study_phase": "N/A",
+        "title": "Respiratory Muscle Training During Breast Cancer Treatment: Effects on the Autonomic Nervous System and Cardiotoxicity"
+      },
+      {
+        "date_opened": "2024-12-17T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "P-3486923",
+        "study_phase": "III",
+        "title": "AFT-65/ASCENT-05 OptimICE-RD: A Randomized, Open-label, Phase 3 Study of Adjuvant Sacituzumab Govitecan and Pembrolizumab Versus Treatment of Physician's Choice in Patients With Triple Negative Breast Cancer Who Have Residual Invasive Disease After Surgery and Neoadjuvant Therapy."
+      },
+      {
+        "date_opened": "2018-07-23T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Levine, E",
+        "protocol": "P-48217",
+        "study_phase": "N/A",
+        "title": "MammaPrint, BluePrint, and Full-genome Data Linked with Clinical Data to Evaluate New Gene Expression Profiles: An Adaptable Registry (FLEX Registry)"
+      },
+      {
+        "date_opened": "2020-07-03T00:00:00.000",
+        "primary_site": "Breast",
+        "principal_investigator": "Witkiewicz, A",
+        "protocol": "I-571719",
+        "study_phase": "N/A",
+        "title": "The Roswell Park Ciclib Study: A Prospective Study of Biomarkers and Clinical Features of Advanced/Metastatic Breast Cancer Treated with CDK4/6 Inhibitors."
+      }
+    ]
+  }
+}

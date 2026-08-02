@@ -1,0 +1,72 @@
+{
+  "dataset": {
+    "dimension": {
+      "STATISTIC": {
+        "label": "Statistic",
+        "category": {
+          "index": {"KTA31C01": 0, "KTA31C02": 1},
+          "label": {
+            "KTA31C01": "Number of deaths",
+            "KTA31C02": "Percentage distribution of deaths"
+          },
+          "unit": {
+            "KTA31C01": {"base": "Number"},
+            "KTA31C02": {"base": "%"}
+          }
+        }
+      },
+      "TLIST(A1)": {
+        "label": "Year",
+        "category": {
+          "index": {"2014": 0, "2024": 1},
+          "label": {"2014": "2014", "2024": "2024"}
+        }
+      },
+      "C02076V03371": {
+        "label": "Age Group",
+        "category": {
+          "index": {"5642": 0, "5641": 1},
+          "label": {
+            "5642": "65 years and under",
+            "5641": "65 years and over"
+          }
+        }
+      },
+      "C04653V05438": {
+        "label": "Cause of Death",
+        "category": {
+          "index": {
+            "C00C97": 0,
+            "I00I99": 1,
+            "J00J99": 2,
+            "V01Y89": 3,
+            "DOH1002": 4
+          },
+          "label": {
+            "C00C97": "Total malignant neoplasm (C00-C97)",
+            "I00I99": "Diseases of the circulatory system (I00-I99)",
+            "J00J99": "Diseases of the respiratory system (J00-J99)",
+            "V01Y89": "External causes of injury and poisoning (V01-Y89)",
+            "DOH1002": "Other causes of death (A00-Y89 excl. S00-T98)"
+          }
+        }
+      },
+      "role": {"metric": ["STATISTIC"], "time": ["TLIST(A1)"]},
+      "id": ["STATISTIC", "TLIST(A1)", "C02076V03371", "C04653V05438"],
+      "size": [2, 2, 2, 5]
+    },
+    "label": "Principal Cause of Death",
+    "source": "Department of Health",
+    "updated": "2026-06-05T11:00:00Z",
+    "value": [
+      2296.0, 1118.0, 224.0, 1046.0, 1069.0,
+      6726.0, 7734.0, 3268.0, 484.0, 5287.0,
+      2266.0, 1121.0, 284.0, 883.0, 1343.0,
+      8041.0, 8473.0, 4000.0, 680.0, 8082.0,
+      39.9, 19.4, 3.9, 18.2, 18.6,
+      28.6, 32.9, 13.9, 2.1, 22.5,
+      38.4, 19.0, 4.8, 15.0, 22.8,
+      27.5, 28.9, 13.7, 2.3, 27.6
+    ]
+  }
+}

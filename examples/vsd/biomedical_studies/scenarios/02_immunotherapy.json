@@ -1,0 +1,66 @@
+{
+  "case_id": "pan_cancer_immunotherapy_validation",
+  "title": "Pan-Cancer Immunotherapy Evidence Validation",
+  "research_question": "Can a pan-cancer response analysis add molecular interaction evidence for immune checkpoints after cohort and expression tools identify candidate markers?",
+  "decision_context": "Use cohort, expression, immune-study, and interaction evidence to prioritize checkpoint hypotheses for retrospective validation rather than treatment selection.",
+  "catalog_query": "innate immune interaction",
+  "catalog_record_id": "e9eb40ff7ad712e4e6f4f04b964b5966",
+  "service_endpoint": "https://biothings.transltr.io/innatedb",
+  "specification_fixture": "immunotherapy_openapi.json",
+  "response_fixture": "immunotherapy_responses.json",
+  "operation_id": "get_/query",
+  "promotion_mode": "reviewed_response",
+  "tool_name": "VSDInnateDBInteractionQuery",
+  "tool_description": "Query reviewed innate-immune molecular interaction records by marker.",
+  "include_parameters": ["q"],
+  "fixed_query": {"size": 3},
+  "review_note": "Reviewed the anonymous read-only query, bounded result size, and observed BioThings response envelope for three checkpoint markers.",
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "took": {"type": "integer", "minimum": 0},
+      "total": {"type": "integer", "minimum": 0},
+      "hits": {"type": "array", "items": {"type": "object"}, "maxItems": 20}
+    },
+    "required": ["took", "total", "hits"]
+  },
+  "workflow_capability": {
+    "step_id": "checkpoint_interactions",
+    "description": "retrieve innate immune molecular interaction evidence for one checkpoint marker",
+    "required_inputs": ["q"],
+    "output_fields": ["total", "hits", "relation", "subject", "object"]
+  },
+  "verification_cases": [
+    {"arguments": {"q": "PDCD1"}, "expect": {"result_type": "object", "required_fields": ["took", "total", "hits"], "required_paths": ["/hits/0/object/alias/hgnc_name"], "equals_paths": {"/hits/0/object/alias/hgnc_name": "PDCD1"}}},
+    {"arguments": {"q": "CTLA4"}, "expect": {"result_type": "object", "required_fields": ["took", "total", "hits"], "required_paths": ["/hits/0/_id"]}},
+    {"arguments": {"q": "LAG3"}, "expect": {"result_type": "object", "required_fields": ["took", "total", "hits"], "required_paths": ["/hits/0/_id"]}}
+  ],
+  "runtime_arguments": {"q": "PDCD1"},
+  "observations": [
+    {"label": "Matching interaction records", "pointer": "/total"},
+    {"label": "Queried checkpoint", "pointer": "/hits/0/object/alias/hgnc_name"},
+    {"label": "First interacting marker", "pointer": "/hits/0/subject/alias/hgnc_name"}
+  ],
+  "reused_tools": [
+    {"name": "GDC_search_cases", "role": "Reuse pan-cancer cohort construction."},
+    {"name": "GDC_get_gene_expression", "role": "Reuse tumor expression measurements."},
+    {"name": "ImmPort_search_studies", "role": "Reuse immune-study discovery."}
+  ],
+  "without_vsd": {
+    "summary": "The registry can assemble cancer cohorts and expression evidence, but it lacks the exact InnateDB query operation, leaving checkpoint interaction support outside the planned ToolUniverse workflow."
+  },
+  "with_vsd": {
+    "summary": "The workflow adds a bounded, verified interaction query for PDCD1, CTLA4, and LAG3, so interaction provenance can be compared alongside cohort and expression evidence."
+  },
+  "limitations": [
+    "Molecular interactions do not establish response causality or clinical benefit.",
+    "The reviewed response schema is intentionally bounded to the stable BioThings envelope because the registry document omits that schema.",
+    "Cancer-type, treatment, and assay-specific validation remains necessary."
+  ],
+  "references": [
+    {"title": "Pan-cancer longitudinal immunotherapy analysis", "url": "https://www.nature.com/articles/s41467-021-25432-7"},
+    {"title": "NCI Genomic Data Commons", "url": "https://gdc.cancer.gov/"},
+    {"title": "InnateDB", "url": "https://www.innatedb.com/"},
+    {"title": "ImmPort", "url": "https://www.immport.org/"}
+  ]
+}

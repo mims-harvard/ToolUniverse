@@ -316,9 +316,9 @@ def validate_trusted_source_catalog(value: Any) -> dict[str, Any]:
     if _timestamp(value["verified_on"]) != value["verified_on"]:
         raise VSDSourceIntelligenceError("Catalog verification timestamp is invalid")
     sources = value.get("sources")
-    if not isinstance(sources, list) or len(sources) != 50:
+    if not isinstance(sources, list) or not 1 <= len(sources) <= 250:
         raise VSDSourceIntelligenceError(
-            "Trusted-source catalog must contain exactly 50 sources"
+            "Trusted-source catalog must contain 1-250 reviewed sources"
         )
     ids: set[str] = set()
     domains: set[str] = set()

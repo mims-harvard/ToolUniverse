@@ -226,7 +226,11 @@ def discover_api_candidates(
 
 @register_tool("VSDDiscoverAPICandidates")
 class VSDDiscoverAPICandidates(BaseTool):
-    """Search a fixed public catalog and return non-executable API candidates."""
+    """Search explicit public catalogs and return non-executable candidates."""
+
+    def __init__(self, tool_config, tooluniverse=None):
+        super().__init__(tool_config)
+        self.tooluniverse = tooluniverse
 
     def run(self, arguments=None, **_: Any):
         arguments = arguments or {}
@@ -240,6 +244,38 @@ class VSDDiscoverAPICandidates(BaseTool):
             or not 1 <= limit <= 20
         ):
             raise VSDDiscoveryError("limit must be an integer between 1 and 20")
+        raw_providers = arguments.get("providers")
+        if raw_providers is not None:
+            from .vsd_catalog_providers import (
+                PROVIDER_ORDER,
+                discover_multi_catalog_candidates,
+            )
+
+            if (
+                not isinstance(raw_providers, list)
+                or not 1 <= len(raw_providers) <= len(PROVIDER_ORDER)
+                or len(raw_providers) != len(set(raw_providers))
+                or any(provider not in PROVIDER_ORDER for provider in raw_providers)
+            ):
+                raise VSDDiscoveryError(
+                    "providers must contain "
+                    f"1-{len(PROVIDER_ORDER)} unique supported provider IDs"
+                )
+            exclude_registered = arguments.get("exclude_registered", True)
+            if type(exclude_registered) is not bool:
+                raise VSDDiscoveryError("exclude_registered must be a boolean")
+            return {
+                "status": "success",
+                "data": discover_multi_catalog_candidates(
+                    query,
+                    providers=list(raw_providers),
+                    limit=limit,
+                    fetch_json=_safe_get_json,
+                    socrata_normalizer=discover_api_candidates,
+                    tooluniverse=self.tooluniverse,
+                    exclude_registered=exclude_registered,
+                ),
+            }
         catalog_limit = min(50, max(10, limit * 3))
         payload, request = _safe_get_json(
             _CATALOG_ENDPOINT,

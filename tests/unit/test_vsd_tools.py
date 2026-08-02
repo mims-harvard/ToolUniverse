@@ -138,6 +138,7 @@ def test_safe_get_rejects_redirect_to_private_address():
         status_code=302,
         headers={"Location": "https://127.0.0.1/latest/meta-data"},
     )
+    response.raw._connection = None
     session = _FakeSession([response])
 
     with pytest.raises(vsd_tool.VSDPolicyError, match="IP-literal"):
@@ -167,6 +168,20 @@ def test_safe_get_rejects_oversized_decompressed_body():
             "https://api.fda.gov/drug/label.json",
             session=session,
         )
+
+
+def test_safe_get_honors_only_an_explicit_bounded_response_override():
+    body = b'{"data":"' + (b"x" * (vsd_tool._MAX_RESPONSE_BYTES + 1)) + b'"}'
+    session = _FakeSession([_FakeResponse(body=body)])
+
+    payload, metadata = vsd_tool._safe_get_json(
+        "https://api.apis.guru/v2/list.json",
+        session=session,
+        max_response_bytes=len(body),
+    )
+
+    assert len(payload["data"]) == vsd_tool._MAX_RESPONSE_BYTES + 1
+    assert metadata["response_bytes"] == len(body)
 
 
 @pytest.mark.parametrize("value", ["not-a-number", "-1"])

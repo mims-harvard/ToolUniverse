@@ -38,10 +38,133 @@ stack through the cross-format proof, and the independent administrator-only
 Docker phase for reviewer testing. The individual PRs remain the intended
 review and landing units.
 
+VSD discovery can also search SmartAPI and the GA4GH Service Registry. SmartAPI
+records retain both the exact service root and content-addressed OpenAPI
+document, while GA4GH service records remain inert until an operation contract
+is independently inspected. A narrowly reviewed path handles read-only GET
+operations whose specification omits only the JSON response schema; every
+other inspection blocker remains enforced. See
+`docs/dev_docs/VSD_API_DISCOVERY_VALIDATION.md` for the CLI and review contract.
+
+## Biomedical Evaluation Portfolio
+
+`biomedical_evaluation_portfolio.py` runs five scenario files through one
+parameterized implementation. The scenarios cover rare-disease identifier
+reconciliation, pan-cancer checkpoint interactions, oncology combination
+review, virtual-cell perturbagen resolution, and tuberculosis radiomics
+readiness. Domain questions, source records, operation selections, schemas,
+test inputs, expected observations, existing-tool roles, and limitations live
+in JSON scenario data; the runner contains no disease-, gene-, or drug-specific
+branches.
+
+Every case audits the real ToolUniverse registry, proves that one exact
+operation is missing, discovers a SmartAPI record, inspects the bound OpenAPI
+operation, blocks early publication, runs at least three verification calls,
+approves and publishes the hash chain, confirms the tool is absent from a fresh
+universe, loads it explicitly, executes it, and replans to `existing_exact`.
+The comparison deliberately credits existing ToolUniverse tools for the work
+they already perform and attributes only the newly executable operation to VSD.
+
+```console
+PYTHONPATH=src python examples/vsd/biomedical_evaluation_portfolio.py \
+  --mode replay
+PYTHONPATH=src python examples/vsd/biomedical_evaluation_portfolio.py \
+  --mode network_backed
+```
+
+The checked network-backed artifact is
+`artifacts/biomedical_evaluation_portfolio.md` with a tamper-evident JSON
+counterpart. A case that cannot complete the live safety and contract checks is
+clearly labeled as checked replay; the report does not silently substitute
+fixture evidence or describe it as live.
+
+## Multi-Catalog Cancer Source Evaluation
+
+`multicatalog_cancer_case_study.py` evaluates the new catalog sources as a
+governed integration workflow. A breast-cancer program needs five
+different evidence roles: local trial inventory, population mortality context,
+treatment-access delays, outcome benchmarks, and a genomics workflow. Five
+focused searches run through Socrata, US Data.gov, the European Data Portal,
+data.gov.uk, and APIs.guru, and one exact lead from each catalog is then tested
+against its underlying live resource or contract.
+
+The case deliberately does not publish every relevant-looking result. The
+Roswell Park trial endpoint and Ireland's principal-cause-of-death JSON-stat
+cube each pass three bounded verification calls, approval, publication, fresh
+loading, execution, workflow replanning, and duplicate suppression. The live
+Oklahoma outcome URL is blocked because it redirects to a signed object-store
+URL; its captured direct response also ends in 2019 and has only three non-zero
+historical values. The Irish resource is direct, current through 2024, and
+supplies malignant-neoplasm counts split at age 65. A Northern Ireland CSV is
+blocked because the server returns `application/octet-stream`, and all five
+operations in the discovered Google Genomics contract remain blocked by
+authentication, write, body, or parameter constraints. The measured result is
+two published tools, two closed capability gaps, and three rejected leads.
+VSD's contribution is a repeatable process for expanding ToolUniverse through
+candidate discovery, qualification, approval, loading, and exact registry
+deduplication while preserving the provider's values and provenance.
+
+Run the deterministic replay from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/multicatalog_cancer_case_study.py --mode replay
+```
+
+Run the complete network validation with a personal Data.gov key to avoid the
+public demo key's low quota:
+
+```console
+TOOLUNIVERSE_DATAGOV_API_KEY=... PYTHONPATH=src \
+  python examples/vsd/multicatalog_cancer_case_study.py --mode live
+```
+
+When that shared quota is unavailable, `--mode network_backed` replays only the
+captured real Data.gov catalog response while keeping the other four catalog
+searches and all five candidate resource/contract qualifications live. The
+artifact labels this distinction in both JSON and Markdown.
+
+Review `artifacts/multicatalog_cancer_snapshot.md` and its machine-verifiable
+JSON counterpart. The checked network-backed evaluation records five catalog
+searches, five qualification outcomes, two complete promotion hash chains, six
+verification executions, two final executions, two closed workflow gaps,
+duplicate suppression, credential-value exclusion, and 18 end-to-end
+assertions. The fixture replay and the opt-in full-live network test run the
+same orchestration code.
+
+## Multi-Catalog Rare-Disease Capability Growth
+
+`multicatalog_discovery_case_study.py` demonstrates organic growth across five
+reviewed catalog interfaces rather than one hard-coded source. A comparative
+ALS, Duchenne muscular dystrophy, and spinal muscular atrophy workflow first
+identifies and records one missing longitudinal-cohort capability. The
+agent-facing discovery tool then searches Socrata, US Data.gov, the European
+Data Portal, data.gov.uk, and APIs.guru through their fixed bounded endpoints.
+
+Ten deterministic catalog records reduce to five relevant, machine-readable,
+non-executable candidates. Data.gov and Socrata independently identify the same
+endpoint, so exact-identity deduplication produces one candidate with both
+provenance records. An administrator obtains its OpenAPI contract, verifies
+three disease cohorts, approves and publishes the exact hash chain, loads the
+tool into a fresh ToolUniverse instance, and verifies both exact workflow coverage
+and suppression of the now-registered endpoint on the next discovery pass.
+
+Run the deterministic validation from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/multicatalog_discovery_case_study.py
+```
+
+Review `artifacts/multicatalog_discovery_snapshot.md`, its machine-verifiable
+JSON counterpart, and the sanitized demand proposal. The evaluation contains 16
+end-to-end assertions, three verification executions, three post-publication
+executions, reproducibility coverage, and audit-hash tamper detection. The
+opt-in network test in `tests/integration/test_vsd_multicatalog_live.py` checks
+the five real catalog endpoints without making any candidate executable.
+
 ## Cross-Format Source-To-Runtime Total Proof
 
 `cross_format_total_proof.py` connects the complete VSD stack in one ALS/DANDI
-growth loop. It audits the real ToolUniverse registry and the 50-source review
+growth loop. It audits the real ToolUniverse registry and the 51-source review
 catalog, separates an existing NIH RePORTER host from a DANDI capability gap,
 runs the bounded two-host scan twice, snapshots and inspects seven contract
 formats, and selects six DANDI operations while leaving the duplicate OpenAPI
@@ -78,13 +201,13 @@ substitution cases.
 interfaces needed to connect ALS grant evidence with reusable neurophysiology
 datasets without duplicating configured sources or silently installing
 discovered operations. It first audits the real built-in configuration
-inventory, then runs eleven focused cases covering the 50-source review
+inventory, then runs eleven focused cases covering the 51-source review
 catalog, exact-host duplicate detection, genuine gap detection, bounded
 multi-host crawling, robots and host boundaries, seven contract formats,
 content-addressed snapshots, local contract inspection, cron history, private
 demand linkage, and explicit core-team handoff.
 
-The 50 sources are not an allowlist for execution. A catalog entry permits only
+The 51 sources are not an allowlist for execution. A catalog entry permits only
 bounded candidate discovery. Every discovered document remains inert and must
 be explicitly snapshotted, inspected, reduced to an exact operation, verified
 against representative cases, approved, published, and loaded through the

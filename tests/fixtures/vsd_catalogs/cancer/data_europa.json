@@ -1,0 +1,37 @@
+{
+  "result": {
+    "count": 1128658,
+    "results": [
+      {
+        "resource": "http://data.europa.eu/88u/dataset/ef3f9605-f9f3-45b5-8c13-e412f1206b82",
+        "description": {"en": "Principal Cause of Death"},
+        "title": {"en": "KTA31 - Principal Cause of Death"},
+        "distributions": [
+          {
+            "id": "549a2084-5bf7-4049-82d2-65117dedb7de",
+            "format": {"id": "PX", "label": "PX"},
+            "title": {"ga": "Principal Cause of Death"},
+            "access_url": [
+              "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/KTA31/PX/2013/en"
+            ]
+          },
+          {
+            "id": "3b0d044a-8e70-42de-8776-574f6ea71262",
+            "format": {"id": "JSON-STAT", "label": "JSON-STAT"},
+            "license": {
+              "label": "https://creativecommons.org/licenses/by/4.0/"
+            },
+            "title": {"ga": "Principal Cause of Death"},
+            "access_url": [
+              "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/KTA31/JSON-stat/1.0/en"
+            ]
+          }
+        ],
+        "publisher": {"type": "Agent", "name": "Department of Health"},
+        "id": "ef3f9605-f9f3-45b5-8c13-e412f1206b82",
+        "modified": "2026-08-01T01:13:30",
+        "catalog_record": {"modified": "2026-08-01T20:26:41Z"}
+      }
+    ]
+  }
+}

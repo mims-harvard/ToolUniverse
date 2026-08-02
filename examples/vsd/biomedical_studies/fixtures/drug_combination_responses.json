@@ -1,0 +1,47 @@
+[
+  {
+    "arguments": {"q": "drug_a.name:\"Arsenic trioxide\" AND drug_b.name:Idarubicin"},
+    "payload": {
+      "took": 2,
+      "total": 1,
+      "hits": [
+        {
+          "_id": "DDInter120_DDInter1458_Major",
+          "drug_a": {"name": "Arsenic trioxide", "chembl": "CHEMBL1200978"},
+          "drug_b": {"name": "Idarubicin"},
+          "level": "Major"
+        }
+      ]
+    }
+  },
+  {
+    "arguments": {"q": "drug_a.name:Trametinib"},
+    "payload": {
+      "took": 1,
+      "total": 12,
+      "hits": [
+        {
+          "_id": "DDInter_Trametinib_Encorafenib_Moderate",
+          "drug_a": {"name": "Trametinib"},
+          "drug_b": {"name": "Encorafenib"},
+          "level": "Moderate"
+        }
+      ]
+    }
+  },
+  {
+    "arguments": {"q": "drug_a.name:Olaparib"},
+    "payload": {
+      "took": 1,
+      "total": 119,
+      "hits": [
+        {
+          "_id": "DDInter_Olaparib_Ixazomib_Moderate",
+          "drug_a": {"name": "Olaparib"},
+          "drug_b": {"name": "Ixazomib"},
+          "level": "Moderate"
+        }
+      ]
+    }
+  }
+]
