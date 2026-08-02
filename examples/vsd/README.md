@@ -831,40 +831,61 @@ Official references:
 ## Continuous Catalog Scanner
 
 `continuous_catalog_scanner_case_study.py` evaluates the administrator/cron
-scanner against a complete live API directory. The scanner records additions,
+scanner against a complete live API directory. The broader
+`continuous_catalog_expansion_study.py` exhausts both the general APIs.guru
+directory and the biomedical SmartAPI registry. The scanner records additions,
 changes, and removals between hash-linked cycles, rotates through previously
 uninspected contracts, saves content-addressed local snapshots, and uses the
 existing VSD contract and configuration boundaries to prepare inert review
 candidates.
 
 The source-intelligence path accepts OpenAPI, GraphQL, AsyncAPI, Postman, WSDL,
-protobuf, and MCP contract inputs. The large live evaluation uses APIs.guru's
-OpenAPI directory because it supplies thousands of contracts through one
-bounded catalog response.
+protobuf, and MCP contract inputs. The scheduled adapters use OpenAPI 3 records.
+SmartAPI is fetched in bounded pages of 100 records; its Swagger 2 entries
+remain inventoried as unsupported.
 
-Run the reproducible two-cycle evaluation:
+Run the reproducible exhaustive evaluation with separate catalog state under
+one study directory:
 
 ```console
 PYTHONPATH=src TOOLUNIVERSE_CACHE_PERSIST=false \
-  uv run python examples/vsd/continuous_catalog_scanner_case_study.py
+  uv run python examples/vsd/continuous_catalog_expansion_study.py \
+  --state-directory ./.vsd-continuous-expansion
 ```
 
-The checked run inventoried 2,529 directory records, audited 2,744 existing
-ToolUniverse tools, inspected 127 unique contracts, and identified 4,925 unique
-operation candidates. The existing VSD generator accepted 717 unique operations
-as draft-ready configurations across 31 provider hosts; 4,281 operations were
-blocked and 24 contract failures were isolated. No candidate was approved,
-published, loaded, or executed.
+The checked run inventoried 2,799 directory records, processed all 1,748
+compatible records, audited 2,744 existing ToolUniverse tools, inspected 1,626
+unique contracts, and identified 37,570 unique operations. The existing VSD
+generator accepted 3,097 unique operations as inert draft-ready configurations
+across 203 provider hosts; 36,362 operations were blocked and 131 contract
+failures were isolated. No provider operation was called during scanning, and
+no scanner candidate was approved, published, loaded, or executed.
+
+`scanner_cancer_qualification_study.py` then selected eight exact operation gaps
+from that inventory. Four passed five representative live cases, explicit
+approval, publication, and fresh ToolUniverse loading; the resulting tools made
+20 post-publication calls across five cancer evidence workflows. Four other
+static candidates were rejected at live response-schema verification and could
+not be approved or published.
+
+Run the live qualification:
+
+```console
+PYTHONPATH=src TOOLUNIVERSE_CACHE_PERSIST=false \
+  uv run python examples/vsd/scanner_cancer_qualification_study.py
+```
 
 Use the scanner itself from an administrator-owned scheduler:
 
 ```console
-tooluniverse-vsd-scan --state-directory ~/.tooluniverse/vsd/scanner run \
-  --max-contracts 100 --draftable-tool-target 500
-tooluniverse-vsd-scan --state-directory ~/.tooluniverse/vsd/scanner status
+tooluniverse-vsd-scan --state-directory ~/.tooluniverse/vsd/scanner/apis-guru \
+  run --catalog apis-guru --max-contracts 100 --draftable-tool-target 500
+tooluniverse-vsd-scan --state-directory ~/.tooluniverse/vsd/scanner/smartapi \
+  run --catalog smartapi --max-contracts 100 --draftable-tool-target 500
 ```
 
-See `artifacts/continuous_catalog_scanner_portfolio.md` for the reviewer report,
-`artifacts/continuous_catalog_scanner_portfolio.json` for the tamper-evident
-ledger, and `docs/dev_docs/VSD_CONTINUOUS_SCANNER.md` for the operational and
-trust boundaries.
+See `artifacts/continuous_catalog_expansion_study.md` for the exhaustive scale
+report, `artifacts/scanner_cancer_qualification_study.md` for the five live
+scientific workflows, their JSON counterparts for tamper-evident evidence, and
+`docs/dev_docs/VSD_CONTINUOUS_SCANNER.md` for the operational and trust
+boundaries.

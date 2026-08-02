@@ -43,6 +43,13 @@ _VERSION = 1
 _APIS_GURU_ID = "apis_guru"
 _APIS_GURU_ENDPOINT = "https://api.apis.guru/v2/list.json"
 _APIS_GURU_HOST = "api.apis.guru"
+_SMARTAPI_ID = "smartapi"
+_SMARTAPI_ENDPOINT = "https://smart-api.info/api/query"
+_SMARTAPI_HOST = "smart-api.info"
+_CATALOG_ENDPOINTS = {
+    _APIS_GURU_ID: _APIS_GURU_ENDPOINT,
+    _SMARTAPI_ID: _SMARTAPI_ENDPOINT,
+}
 _MAX_DIRECTORY_RECORDS = 5_000
 _MAX_CONTRACTS_PER_CYCLE = 200
 _MAX_DRAFTABLE_TARGET = 2_000
@@ -110,6 +117,28 @@ def _apis_guru_specification_url(value: Any) -> str:
             "APIs.guru specification URL is outside the approved path"
         )
     return url
+
+
+def _smartapi_specification_url(value: Any) -> str:
+    try:
+        url = _canonical_url(value, allowed_hosts={_SMARTAPI_HOST})
+    except Exception as exc:  # noqa: BLE001
+        raise VSDContinuousScannerError(
+            "SmartAPI specification URL is outside the approved registry host"
+        ) from exc
+    if not re.fullmatch(r"/api/metadata/[0-9a-f]{32}", urlsplit(url).path):
+        raise VSDContinuousScannerError(
+            "SmartAPI specification URL is outside the approved metadata path"
+        )
+    return url
+
+
+def _catalog_specification_url(catalog_id: str, value: Any) -> str:
+    if catalog_id == _APIS_GURU_ID:
+        return _apis_guru_specification_url(value)
+    if catalog_id == _SMARTAPI_ID:
+        return _smartapi_specification_url(value)
+    raise VSDContinuousScannerError("Unsupported continuous scanner catalog")
 
 
 def normalize_apis_guru_directory(
@@ -200,6 +229,112 @@ def normalize_apis_guru_directory(
     return {**body, "directory_sha256": _digest(body)}
 
 
+def normalize_smartapi_directory(
+    payload: Any,
+    *,
+    request: Any,
+    retrieved_at: str | None = None,
+) -> dict[str, Any]:
+    """Normalize the complete SmartAPI registry without trusting its contracts."""
+    if not isinstance(payload, dict):
+        raise VSDContinuousScannerError("SmartAPI directory response must be an object")
+    hits = payload.get("hits")
+    total = payload.get("total")
+    if (
+        not isinstance(hits, list)
+        or not 1 <= len(hits) <= 1_000
+        or type(total) is not int
+        or total != len(hits)
+    ):
+        raise VSDContinuousScannerError(
+            "SmartAPI directory must contain one complete bounded result page"
+        )
+    records: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for item in hits:
+        if not isinstance(item, dict):
+            continue
+        raw_id = _text(item.get("_id"), 128).casefold()
+        if not re.fullmatch(r"[0-9a-f]{32}", raw_id):
+            continue
+        record_id = f"smartapi:{raw_id}"
+        if record_id in seen:
+            continue
+        info = item.get("info") if isinstance(item.get("info"), dict) else {}
+        contact = info.get("contact") if isinstance(info.get("contact"), dict) else {}
+        servers = item.get("servers") if isinstance(item.get("servers"), list) else []
+        server_host = ""
+        for server in servers[:20]:
+            if not isinstance(server, dict):
+                continue
+            candidate_host = (
+                urlsplit(str(server.get("url") or "")).hostname or ""
+            ).casefold()
+            if candidate_host:
+                server_host = candidate_host
+                break
+        raw_tags = item.get("tags") if isinstance(item.get("tags"), list) else []
+        categories = sorted(
+            {
+                category
+                for tag in raw_tags[:50]
+                if isinstance(tag, dict)
+                and (category := _text(tag.get("name"), 100))
+                and re.fullmatch(r"[A-Za-z][A-Za-z0-9 _.-]{0,99}", category)
+            },
+            key=str.casefold,
+        )
+        openapi_version = _text(item.get("openapi") or item.get("swagger"), 40)
+        compatible = bool(re.fullmatch(r"3\.(?:0|1)(?:\.[0-9]+)?", openapi_version))
+        specification_url = _smartapi_specification_url(
+            f"{_SMARTAPI_ENDPOINT.rsplit('/api/query', 1)[0]}/api/metadata/{raw_id}"
+        )
+        metadata = item.get("_meta") if isinstance(item.get("_meta"), dict) else {}
+        record_body = {
+            "record_id": record_id,
+            "source_id": hashlib.sha256(record_id.encode("utf-8")).hexdigest()[:16],
+            "provider_name": _text(
+                contact.get("name") or server_host or "SmartAPI", 300
+            ),
+            "title": _text(info.get("title") or record_id, 300),
+            "api_version": _text(info.get("version"), 100),
+            "openapi_version": openapi_version,
+            "specification_url": specification_url,
+            "format_hint": "openapi",
+            "categories": categories,
+            "updated_at": _text(metadata.get("last_updated"), 100),
+            "compatibility": (
+                "inspectable_openapi_3" if compatible else "unsupported_openapi_version"
+            ),
+            "approval_state": "unreviewed_directory_record",
+            "execution_allowed": False,
+        }
+        records.append({**record_body, "record_sha256": _record_digest(record_body)})
+        seen.add(record_id)
+    if not records:
+        raise VSDContinuousScannerError("SmartAPI directory yielded no valid records")
+    records.sort(key=lambda item: item["record_id"].casefold())
+    body = {
+        "format": "vsd_openapi_directory_snapshot_v1",
+        "version": _VERSION,
+        "catalog_id": _SMARTAPI_ID,
+        "catalog_endpoint": _SMARTAPI_ENDPOINT,
+        "retrieved_at": _timestamp(retrieved_at),
+        "request": _checked_request(request, payload),
+        "record_count": len(records),
+        "compatible_record_count": sum(
+            item["compatibility"] == "inspectable_openapi_3" for item in records
+        ),
+        "unsupported_record_count": sum(
+            item["compatibility"] != "inspectable_openapi_3" for item in records
+        ),
+        "records": records,
+        "approval_state": "unreviewed_directory_snapshot",
+        "execution_allowed": False,
+    }
+    return {**body, "directory_sha256": _digest(body)}
+
+
 def validate_directory_snapshot(value: Any) -> dict[str, Any]:
     required = {
         "format",
@@ -223,8 +358,8 @@ def validate_directory_snapshot(value: Any) -> dict[str, Any]:
     if (
         value["format"] != "vsd_openapi_directory_snapshot_v1"
         or value["version"] != _VERSION
-        or value["catalog_id"] != _APIS_GURU_ID
-        or value["catalog_endpoint"] != _APIS_GURU_ENDPOINT
+        or value["catalog_id"] not in _CATALOG_ENDPOINTS
+        or value["catalog_endpoint"] != _CATALOG_ENDPOINTS.get(value["catalog_id"])
         or _timestamp(value["retrieved_at"]) != value["retrieved_at"]
         or value["approval_state"] != "unreviewed_directory_snapshot"
         or value["execution_allowed"] is not False
@@ -275,7 +410,7 @@ def validate_directory_snapshot(value: Any) -> dict[str, Any]:
         ):
             raise VSDContinuousScannerError("Directory record identity is invalid")
         if (
-            _apis_guru_specification_url(record["specification_url"])
+            _catalog_specification_url(value["catalog_id"], record["specification_url"])
             != record["specification_url"]
         ):
             raise VSDContinuousScannerError("Directory record URL is not canonical")
@@ -352,7 +487,7 @@ def _select_records(
         if record["record_id"] not in previously_inspected
     ]
     _append_unique(output, seen, _balanced(uninspected), maximum)
-    if compatible and len(output) < maximum:
+    if compatible and not uninspected and len(output) < maximum:
         start = cursor % len(compatible)
         rotated = compatible[start:] + compatible[:start]
         _append_unique(output, seen, rotated, maximum)
@@ -558,7 +693,6 @@ def build_continuous_scan_cycle(
     contracts: list[dict[str, Any]] = []
     operations: list[dict[str, Any]] = []
     failures: list[dict[str, str]] = []
-    newly_inspected: set[str] = set()
     blocker_counts: dict[str, int] = {}
     draftable_count = 0
     existing_exact_count = 0
@@ -687,11 +821,13 @@ def build_continuous_scan_cycle(
                     "inspection_sha256": _digest(report),
                 }
             )
-            newly_inspected.add(record["record_id"])
         except Exception as exc:  # noqa: BLE001
             failures.append(_error_record(record, exc))
 
-    inspected = sorted(previously_inspected | newly_inspected, key=str.casefold)
+    # An unchanged failed contract is processed evidence too. Recording every
+    # attempted record prevents a persistently broken early entry from starving
+    # later directory records; a changed record becomes eligible again via delta.
+    inspected = sorted(previously_inspected | set(attempted), key=str.casefold)
     directory_records = [
         {"record_id": key, "record_sha256": current_index[key]}
         for key in sorted(current_index, key=str.casefold)
@@ -908,6 +1044,71 @@ def _read_latest(root: Path) -> dict[str, Any] | None:
     return validate_continuous_scan_cycle(value)
 
 
+def _read_history_cycle(path: Path) -> dict[str, Any]:
+    try:
+        if path.stat().st_size > _MAX_REPORT_BYTES:
+            raise VSDContinuousScannerError("Scan history report exceeds 12 MB")
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise VSDContinuousScannerError("Scan history report is unreadable") from exc
+    checked = validate_continuous_scan_cycle(value)
+    if path.name != f"cycle-{checked['cycle_id']}.json":
+        raise VSDContinuousScannerError("Scan history filename is invalid")
+    return checked
+
+
+def _recover_latest_from_history(
+    root: Path, latest: dict[str, Any] | None
+) -> dict[str, Any] | None:
+    """Advance latest across one unambiguous history chain after an interrupted write."""
+    cycles: dict[str, dict[str, Any]] = {}
+    children: dict[str | None, list[str]] = {}
+    for path in root.glob("cycle-*.json"):
+        cycle = _read_history_cycle(path)
+        if cycle["cycle_id"] in cycles:
+            raise VSDContinuousScannerError("Scan history contains a duplicate cycle")
+        cycles[cycle["cycle_id"]] = cycle
+        children.setdefault(cycle["previous_cycle_id"], []).append(cycle["cycle_id"])
+    if not cycles:
+        if latest is not None:
+            raise VSDContinuousScannerError("Latest scan has no immutable history")
+        return None
+    roots = children.get(None, [])
+    if len(roots) != 1:
+        raise VSDContinuousScannerError("Scan history must contain one root")
+    cycle_id = roots[0]
+    visited: set[str] = set()
+    while True:
+        if cycle_id in visited:
+            raise VSDContinuousScannerError("Scan history contains a cycle")
+        visited.add(cycle_id)
+        child_ids = children.get(cycle_id, [])
+        if not child_ids:
+            break
+        if len(child_ids) != 1:
+            raise VSDContinuousScannerError("Scan history contains a fork")
+        cycle_id = child_ids[0]
+    if len(visited) != len(cycles):
+        raise VSDContinuousScannerError("Scan history contains an unlinked cycle")
+    if latest is not None:
+        immutable = cycles.get(latest["cycle_id"])
+        if immutable is None or immutable != latest:
+            raise VSDContinuousScannerError(
+                "Latest scan does not match immutable history"
+            )
+    recovered = cycles[cycle_id]
+    raw = (
+        json.dumps(recovered, indent=2, sort_keys=True, ensure_ascii=True).encode(
+            "utf-8"
+        )
+        + b"\n"
+    )
+    latest_path = root / "latest.json"
+    if not latest_path.exists() or latest_path.read_bytes() != raw:
+        _atomic_write(latest_path, raw)
+    return recovered
+
+
 def load_latest_continuous_scan(state_directory: str | Path) -> dict[str, Any] | None:
     root = _state_root(state_directory)
     return _read_latest(root)
@@ -951,7 +1152,11 @@ def run_scheduled_apis_guru_scan(
 ) -> dict[str, Any]:
     """Run one serialized APIs.guru cycle suitable for cron or a scheduler."""
     with _state_transaction(state_directory) as root:
-        previous = _read_latest(root)
+        previous = _recover_latest_from_history(root, _read_latest(root))
+        if previous and previous["directory"]["catalog_id"] != _APIS_GURU_ID:
+            raise VSDContinuousScannerError(
+                "Scanner state belongs to a different catalog"
+            )
         payload, request = catalog_fetcher(
             _APIS_GURU_ENDPOINT,
             None,
@@ -959,6 +1164,110 @@ def run_scheduled_apis_guru_scan(
             max_response_bytes=10_000_000,
         )
         directory = normalize_apis_guru_directory(
+            payload, request=request, retrieved_at=scanned_at
+        )
+        inventory = configured_source_inventory(tooluniverse)
+        cycle = build_continuous_scan_cycle(
+            directory,
+            inventory=inventory,
+            registry_tools=_registry_tools(tooluniverse),
+            snapshot_directory=root / "contracts",
+            previous_cycle=previous,
+            max_contracts=max_contracts,
+            draftable_tool_target=draftable_tool_target,
+            timeout_seconds=timeout_seconds,
+            max_contract_bytes=max_contract_bytes,
+            contract_fetcher=contract_fetcher,
+            scanned_at=scanned_at,
+        )
+        history, latest = _write_cycle(root, cycle)
+        return {
+            "cycle": cycle,
+            "history_file": str(history),
+            "latest_file": str(latest),
+            "snapshot_directory": str(root / "contracts"),
+        }
+
+
+def run_scheduled_smartapi_scan(
+    tooluniverse: Any,
+    state_directory: str | Path,
+    *,
+    max_contracts: int = 100,
+    draftable_tool_target: int = 500,
+    timeout_seconds: float = 20,
+    max_contract_bytes: int = _MAX_CONTRACT_BYTES,
+    catalog_fetcher: _CatalogFetcher = _safe_get_json,
+    contract_fetcher: _ContractFetcher = _fetch_https,
+    scanned_at: str | None = None,
+) -> dict[str, Any]:
+    """Run one serialized SmartAPI cycle suitable for cron or a scheduler."""
+    with _state_transaction(state_directory) as root:
+        previous = _recover_latest_from_history(root, _read_latest(root))
+        if previous and previous["directory"]["catalog_id"] != _SMARTAPI_ID:
+            raise VSDContinuousScannerError(
+                "Scanner state belongs to a different catalog"
+            )
+        hits: list[Any] = []
+        seen_record_ids: set[str] = set()
+        total: int | None = None
+        response_bytes = 0
+        for offset in range(0, 1_000, 100):
+            page, page_request = catalog_fetcher(
+                _SMARTAPI_ENDPOINT,
+                {"q": "*", "size": 100, "from": offset, "raw": 1},
+                timeout=max(30, timeout_seconds),
+                max_response_bytes=10_000_000,
+            )
+            checked_request = _checked_request(page_request, page)
+            if not isinstance(page, dict):
+                raise VSDContinuousScannerError(
+                    "SmartAPI directory page must be an object"
+                )
+            page_hits = page.get("hits")
+            page_total = page.get("total")
+            if (
+                not isinstance(page_hits, list)
+                or len(page_hits) > 100
+                or type(page_total) is not int
+                or not 1 <= page_total <= 1_000
+                or (total is not None and page_total != total)
+            ):
+                raise VSDContinuousScannerError(
+                    "SmartAPI directory pagination is inconsistent"
+                )
+            total = page_total
+            for item in page_hits:
+                if not isinstance(item, dict):
+                    continue
+                record_id = _text(item.get("_id"), 128).casefold()
+                if not re.fullmatch(r"[0-9a-f]{32}", record_id):
+                    continue
+                if record_id in seen_record_ids:
+                    raise VSDContinuousScannerError(
+                        "SmartAPI directory pagination repeated a record"
+                    )
+                seen_record_ids.add(record_id)
+            hits.extend(page_hits)
+            response_bytes += checked_request["response_bytes"]
+            if len(hits) >= total:
+                break
+            if not page_hits:
+                raise VSDContinuousScannerError(
+                    "SmartAPI directory ended before its declared total"
+                )
+        if total is None or len(hits) != total:
+            raise VSDContinuousScannerError(
+                "SmartAPI directory exceeded its pagination boundary"
+            )
+        payload = {"total": total, "hits": hits}
+        request = {
+            "status_code": 200,
+            "content_type": "application/json",
+            "response_bytes": response_bytes,
+            "redirects": 0,
+        }
+        directory = normalize_smartapi_directory(
             payload, request=request, retrieved_at=scanned_at
         )
         inventory = configured_source_inventory(tooluniverse)
@@ -1008,7 +1317,9 @@ __all__ = [
     "build_continuous_scan_cycle",
     "load_latest_continuous_scan",
     "normalize_apis_guru_directory",
+    "normalize_smartapi_directory",
     "run_scheduled_apis_guru_scan",
+    "run_scheduled_smartapi_scan",
     "summarize_continuous_scan",
     "validate_continuous_scan_cycle",
     "validate_directory_snapshot",

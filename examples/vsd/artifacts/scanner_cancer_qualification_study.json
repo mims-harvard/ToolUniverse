@@ -1,0 +1,2167 @@
+{
+  "assertions": {
+    "accepted_hash_chains_are_complete": true,
+    "all_runtime_calls_have_zero_redirect_https_provenance": true,
+    "all_selected_operations_were_exact_registry_gaps": true,
+    "each_tool_returned_five_distinct_payloads": true,
+    "exhaustive_source_scan_passed": true,
+    "four_operations_passed_five_case_verification": true,
+    "four_static_candidates_were_rejected_by_live_gates": true,
+    "published_tools_were_absent_then_loaded_into_a_fresh_runtime": true,
+    "twenty_live_runtime_calls_succeeded": true,
+    "unverified_publication_was_blocked": true
+  },
+  "comparison": {
+    "measured_value": "VSD closed four exact capability gaps for five reproducible workflows without weakening ToolUniverse's registry, verification, approval, or runtime boundaries. The result is broader governed access, not a claim of improved clinical truth.",
+    "with_vsd": "The scanner supplied a hashed candidate inventory; promotion gates accepted four operations, rejected four, loaded the accepted tools explicitly, and retained operation and payload hashes for every call.",
+    "without_vsd": "The exact eight catalog operations were absent from the audited ToolUniverse registry. Using them would require separate HTTP integration, schema handling, provenance capture, and maintenance, and static contract inspection alone would not reveal the four live response failures."
+  },
+  "evaluation_mode": "live_network",
+  "expansion_evidence": {
+    "blocked_operation_count": 36362,
+    "catalog_record_count": 2799,
+    "portfolio_sha256": "10ce696555b9de42a2bdf1fa1c86ac746a8c631b8c0e4e9b2dff3d3c513e7bd8",
+    "processed_record_count": 1748,
+    "scientific_draft_ready_count": 309,
+    "unique_draft_ready_count": 3097,
+    "unique_operation_count": 37570
+  },
+  "format": "vsd_scanner_cancer_qualification_study_v1",
+  "generated_at": "2026-08-02T22:07:42.895708+00:00",
+  "method": "The data-driven manifest selected eight inert scanner candidates. Four passed five-case verification, explicit approval, publication, fresh-runtime loading, and twenty post-publication calls. Four other statically draft-ready candidates were withheld when live provider responses violated their published schemas.",
+  "objective": "Test whether an exhaustive VSD catalog scan can identify exact missing operations, promote only candidates that pass representative live verification, and use the resulting tools in five cancer evidence workflows.",
+  "promotions": [
+    {
+      "approval_sha256": "ea717bf7706a5fa8da11d244ec11d3c5791f8042cb20b81a275e5118d12f4be7",
+      "draft_id": "vsdscannercohdcancerconcepts_69bd1ec1169b",
+      "draft_sha256": "6f8b69461be9ba29ee18712b3684d63b5b0ccb11fa39d0cd2bad7dcf48731122",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdscannercohdcancerconcepts_69bd1ec1169b.json' does not exist",
+      "interpretation": "The response is a terminology search result from a deidentified aggregate dataset. Returned concepts require semantic review and counts are not incidence estimates.",
+      "key": "cohd_concepts",
+      "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+      "publication_sha256": "b49315f4494d197bf9cdd5a6e9b6d7d978d1bb7b3492fad0e537dfe0dac9e085",
+      "tool_name": "VSDScannerCOHDCancerConcepts",
+      "verification_case_count": 5,
+      "verification_cases": [
+        {
+          "arguments": {
+            "q": "breast cancer"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {},
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "results"
+            ],
+            "required_paths": [
+              "/results/0/concept_id",
+              "/results/0/concept_name",
+              "/results/0/domain_id",
+              "/results/0/concept_count"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "results"
+          ],
+          "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+          "payload_sha256": "fe2a8397e62f6457fba89d8964b698b278f113ea04fda6accc76efad8bde5a0c",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:06:55.992857+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "q": "malignant neoplasm of lung"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {},
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "results"
+            ],
+            "required_paths": [
+              "/results/0/concept_id",
+              "/results/0/concept_name",
+              "/results/0/domain_id",
+              "/results/0/concept_count"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "results"
+          ],
+          "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+          "payload_sha256": "0bee663d299205e29ecc1486d0926f43ef203c25f5375e1abde4637e5f6ac104",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:06:56.404245+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "q": "primary malignant neoplasm of colon"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {},
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "results"
+            ],
+            "required_paths": [
+              "/results/0/concept_id",
+              "/results/0/concept_name",
+              "/results/0/domain_id",
+              "/results/0/concept_count"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "results"
+          ],
+          "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+          "payload_sha256": "382a71bd9d5539c141cdc820dce6f8f901a72aad472fd269d4356264296dbf42",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:06:56.840389+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "q": "malignant melanoma of skin"
+          },
+          "case_index": 3,
+          "expect": {
+            "equals": {},
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "results"
+            ],
+            "required_paths": [
+              "/results/0/concept_id",
+              "/results/0/concept_name",
+              "/results/0/domain_id",
+              "/results/0/concept_count"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "results"
+          ],
+          "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+          "payload_sha256": "e3900c0248a062c21505ede958f59ebfac050dcc61948b4b41e58edb64ec27aa",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:06:57.263316+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "q": "malignant neoplasm of prostate"
+          },
+          "case_index": 4,
+          "expect": {
+            "equals": {},
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "results"
+            ],
+            "required_paths": [
+              "/results/0/concept_id",
+              "/results/0/concept_name",
+              "/results/0/domain_id",
+              "/results/0/concept_count"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "results"
+          ],
+          "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+          "payload_sha256": "d1f0720870c2ae3e04d0151a1a6dd066fd1456351cda463beba1f41820fb9f18",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:06:57.683845+00:00",
+          "row_count": null
+        }
+      ],
+      "verification_sha256": "e44d0e7073c41a3964b66018cd9c15e4e02be45502444f87339d921f4b40b3ad",
+      "verified_at": "2026-08-02T22:06:57.683845+00:00"
+    },
+    {
+      "approval_sha256": "4f331c1b65071ecf52e77c411ac6b26cf6cbc9d4245ffe6e0a63614e56f041a4",
+      "draft_id": "vsdscannergenerelationships_d7e9c1555932",
+      "draft_sha256": "1d44106fec9b32793b906719c51d6eed4548c52825a0259cf6f5f4ac6bd7d1d9",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdscannergenerelationships_d7e9c1555932.json' does not exist",
+      "interpretation": "The response supports gene-symbol normalization only; it is not tumor-expression or functional evidence.",
+      "key": "gene_relationships",
+      "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+      "publication_sha256": "f9fe2dc9a6fe805146f563e870613c4b471fd5929ab94f36f2bb93eacfc01269",
+      "tool_name": "VSDScannerGeneRelationships",
+      "verification_case_count": 5,
+      "verification_cases": [
+        {
+          "arguments": {
+            "target_symbol": "ESR1"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/symbol-approved/0": "ESR1"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/symbol-alias",
+              "/symbol-approved/0",
+              "/symbol-previous"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "symbol-alias",
+            "symbol-approved",
+            "symbol-previous"
+          ],
+          "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+          "payload_sha256": "6bb1a5d6890eb5e35b0bbc4aed1262fd9b49813b873c55c0cf6aeccaa9ce4d88",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:06:58.648735+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "target_symbol": "EGFR"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/symbol-approved/0": "EGFR"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/symbol-alias",
+              "/symbol-approved/0",
+              "/symbol-previous"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "symbol-alias",
+            "symbol-approved",
+            "symbol-previous"
+          ],
+          "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+          "payload_sha256": "fb3af14b09b66b32762b96f92de80f072527a4846aeb1baba781c3fa64a41ee3",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:06:59.193745+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "target_symbol": "TP53"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/symbol-approved/0": "TP53"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/symbol-alias",
+              "/symbol-approved/0",
+              "/symbol-previous"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "symbol-alias",
+            "symbol-approved",
+            "symbol-previous"
+          ],
+          "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+          "payload_sha256": "388cff120efa204b986b6c158d6f3b0a2c056fef5449b699bba2ded6c1a54082",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:06:59.744357+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "target_symbol": "BRAF"
+          },
+          "case_index": 3,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/symbol-approved/0": "BRAF"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/symbol-alias",
+              "/symbol-approved/0",
+              "/symbol-previous"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "symbol-alias",
+            "symbol-approved",
+            "symbol-previous"
+          ],
+          "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+          "payload_sha256": "bb81fb5f336f6f62e4a9f724756c698c0980e958d9bcb01261ec32288ea6ab74",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:00.349912+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "target_symbol": "PTEN"
+          },
+          "case_index": 4,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/symbol-approved/0": "PTEN"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/symbol-alias",
+              "/symbol-approved/0",
+              "/symbol-previous"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "symbol-alias",
+            "symbol-approved",
+            "symbol-previous"
+          ],
+          "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+          "payload_sha256": "f5740dfd48436ddaec50a5b1b12f0e71976acee79ed013e90cc008e663bdf6cd",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:00.908977+00:00",
+          "row_count": null
+        }
+      ],
+      "verification_sha256": "6f15741686da958ad514cd890f9bb66074790dc00b76bda716fb4c8088806602",
+      "verified_at": "2026-08-02T22:07:00.908977+00:00"
+    },
+    {
+      "approval_sha256": "0ba5565a4b00e9b5a3d1bf328ef209ecb681eaf4156b92e0943a44bca82ccc8f",
+      "draft_id": "vsdscannergeneregulationlinks_9386f8fb59fc",
+      "draft_sha256": "378ee826040534725dcf07523ee539be75fe71e5465af1b9bd6671709383ae58",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdscannergeneregulationlinks_9386f8fb59fc.json' does not exist",
+      "interpretation": "Linked-entity counts describe records in the provider's regulatory knowledge hub; they do not quantify biological effect or clinical relevance.",
+      "key": "gene_regulation",
+      "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+      "publication_sha256": "2731214c4658f57e36ee458f43d6c92ec1c97c0e9a988f036b13035a2a5b9ef4",
+      "tool_name": "VSDScannerGeneRegulationLinks",
+      "verification_case_count": 5,
+      "verification_cases": [
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "ESR1"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/data/entId": "ESR1",
+              "/data/entType": "Gene",
+              "/status/code": 200
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "data",
+              "metadata",
+              "status"
+            ],
+            "required_paths": [
+              "/data/entId",
+              "/data/entType",
+              "/data/ld",
+              "/status/code"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "data",
+            "metadata",
+            "status"
+          ],
+          "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+          "payload_sha256": "2c98ba8943259f3df5a781e19ac77944881a7ccb6e850d22e24d294df172530d",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:01.785371+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "EGFR"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/data/entId": "EGFR",
+              "/data/entType": "Gene",
+              "/status/code": 200
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "data",
+              "metadata",
+              "status"
+            ],
+            "required_paths": [
+              "/data/entId",
+              "/data/entType",
+              "/data/ld",
+              "/status/code"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "data",
+            "metadata",
+            "status"
+          ],
+          "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+          "payload_sha256": "0cc2ab30f105b6daf58f4c3301ea890f7c6c60d92af19427082ae8be94815527",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:02.089483+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "TP53"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/data/entId": "TP53",
+              "/data/entType": "Gene",
+              "/status/code": 200
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "data",
+              "metadata",
+              "status"
+            ],
+            "required_paths": [
+              "/data/entId",
+              "/data/entType",
+              "/data/ld",
+              "/status/code"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "data",
+            "metadata",
+            "status"
+          ],
+          "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+          "payload_sha256": "1f654a37460bcc06849868151d09e3dc6cc72c6f23950502399ca56a3d0d1695",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:02.371344+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "BRAF"
+          },
+          "case_index": 3,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/data/entId": "BRAF",
+              "/data/entType": "Gene",
+              "/status/code": 200
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "data",
+              "metadata",
+              "status"
+            ],
+            "required_paths": [
+              "/data/entId",
+              "/data/entType",
+              "/data/ld",
+              "/status/code"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "data",
+            "metadata",
+            "status"
+          ],
+          "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+          "payload_sha256": "6e2b2a2e75df77b6227c3f3074778d593c5c5a29e9631e17a7f10c39e1e83763",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:02.688428+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "PTEN"
+          },
+          "case_index": 4,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/data/entId": "PTEN",
+              "/data/entType": "Gene",
+              "/status/code": 200
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "data",
+              "metadata",
+              "status"
+            ],
+            "required_paths": [
+              "/data/entId",
+              "/data/entType",
+              "/data/ld",
+              "/status/code"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "data",
+            "metadata",
+            "status"
+          ],
+          "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+          "payload_sha256": "81ad8ceaeac43b0f68cf3c2c089efc8105f58525b474050d0685561536cdacc9",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:02.997374+00:00",
+          "row_count": null
+        }
+      ],
+      "verification_sha256": "46c33fab463ed76ed2f17109533b1b7387f76987d519d3ed355f340f6e5bea94",
+      "verified_at": "2026-08-02T22:07:02.997374+00:00"
+    },
+    {
+      "approval_sha256": "0dfa82a7679525ceae64bbcc6eda3a328e8dab0c17677fd1f9de9d00da51882e",
+      "draft_id": "vsdscannerdrughypotheses_4f96321a2039",
+      "draft_sha256": "7cdcda639e750cb451d13ff81127ace520a80cfe09c7d25b77e2e9ea9a65f8f1",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdscannerdrughypotheses_4f96321a2039.json' does not exist",
+      "interpretation": "These are model-ranked hypotheses for research triage, not efficacy evidence or treatment recommendations.",
+      "key": "drug_hypotheses",
+      "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+      "publication_sha256": "f311fb9363b2204dc1819f57117b0453788cee8123c5580db6a71c120bd9a844",
+      "tool_name": "VSDScannerDrugHypotheses",
+      "verification_case_count": 5,
+      "verification_cases": [
+        {
+          "arguments": {
+            "disease_id": "MESH:D001943",
+            "n_results": 5
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {
+              "count": 5
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "hits",
+              "count"
+            ],
+            "required_paths": [
+              "/hits/0/id",
+              "/hits/0/label",
+              "/hits/0/score"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "count",
+            "hits"
+          ],
+          "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+          "payload_sha256": "66e22fa34086e7e42c6f6600629a64f9471dfb5a1dceaa7d1bfe9986bb190e64",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:05.745349+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "disease_id": "MESH:D008175",
+            "n_results": 5
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {
+              "count": 5
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "hits",
+              "count"
+            ],
+            "required_paths": [
+              "/hits/0/id",
+              "/hits/0/label",
+              "/hits/0/score"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "count",
+            "hits"
+          ],
+          "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+          "payload_sha256": "a7eea7c4fb8673a94911da400ae148879857187b3d3373c823605f70a7e4dc69",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:07.972904+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "disease_id": "MESH:D015179",
+            "n_results": 5
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {
+              "count": 5
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "hits",
+              "count"
+            ],
+            "required_paths": [
+              "/hits/0/id",
+              "/hits/0/label",
+              "/hits/0/score"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "count",
+            "hits"
+          ],
+          "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+          "payload_sha256": "73ec942cddf30a83aa1f2e6c955a1152600059794b1a19ba46e9614740fa9a01",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:09.894464+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "disease_id": "MESH:D008545",
+            "n_results": 5
+          },
+          "case_index": 3,
+          "expect": {
+            "equals": {
+              "count": 5
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "hits",
+              "count"
+            ],
+            "required_paths": [
+              "/hits/0/id",
+              "/hits/0/label",
+              "/hits/0/score"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "count",
+            "hits"
+          ],
+          "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+          "payload_sha256": "c2cdf97af996530bdebbd2a3d9b36e4c53593a4fad7263f0272b5c1db6aa70a7",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:12.033095+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "disease_id": "MESH:D011471",
+            "n_results": 5
+          },
+          "case_index": 4,
+          "expect": {
+            "equals": {
+              "count": 5
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [
+              "hits",
+              "count"
+            ],
+            "required_paths": [
+              "/hits/0/id",
+              "/hits/0/label",
+              "/hits/0/score"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "count",
+            "hits"
+          ],
+          "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+          "payload_sha256": "a1ef54d5c507cba17cc14cfa21e0b4c9578509abe40d25c4839b3d984c79bdeb",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-02T22:07:13.999113+00:00",
+          "row_count": null
+        }
+      ],
+      "verification_sha256": "4bd05239a94463e1e446508f9d28366b59aa48a90745e1f8dd4244da3bf08f0a",
+      "verified_at": "2026-08-02T22:07:13.999113+00:00"
+    }
+  ],
+  "rejections": [
+    {
+      "approval_blocked": true,
+      "approval_error": "Required artifact 'vsdscannerrejectedebiprotein_eda7daec0026.json' does not exist",
+      "candidate_sha256": "e16cc33562737ad61e3491552ebadaea90dcbe3920db982a300f5384c98e9a14",
+      "decision": "rejected_at_live_verification",
+      "draft_sha256": "04d915f34067dd366788e9d7c47767da967a3e408466e57f7129f4ec843f3d23",
+      "failure_summary": "The live accession value is scalar where the published response schema requires an array.",
+      "key": "ebi_protein_schema_drift",
+      "publication_blocked": true,
+      "publication_error": "Required artifact 'vsdscannerrejectedebiprotein_eda7daec0026.json' does not exist",
+      "tool_name": "VSDScannerRejectedEBIProtein",
+      "verification_error": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider response failed the reviewed schema: 'P04637' is not of type 'array'\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider response failed the reviewed schema: 'P04637' is not of type 'array'\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}"
+    },
+    {
+      "approval_blocked": true,
+      "approval_error": "Required artifact 'vsdscannerrejectedtranslatorannotation_630d500d01f7.json' does not exist",
+      "candidate_sha256": "d2c2aa394797d110d5be02d8ac0cc356e1959fedd81b1947c03c25d9f1d81a62",
+      "decision": "rejected_at_live_verification",
+      "draft_sha256": "c4f3b420cc10bf7cb9fa2610f6be94b23860853b0f0847885088f7b51c20ac26",
+      "failure_summary": "The live annotation response omits the identifier field required by the published response schema.",
+      "key": "translator_annotation_schema_drift",
+      "publication_blocked": true,
+      "publication_error": "Required artifact 'vsdscannerrejectedtranslatorannotation_630d500d01f7.json' does not exist",
+      "tool_name": "VSDScannerRejectedTranslatorAnnotation",
+      "verification_error": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider response failed the reviewed schema: '_id' is a required property\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider response failed the reviewed schema: '_id' is a required property\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}"
+    },
+    {
+      "approval_blocked": true,
+      "approval_error": "Required artifact 'vsdscannerrejectedcohdfrequency_99b34774a827.json' does not exist",
+      "candidate_sha256": "a7b7ec492be93c638a4538960eacd4d34a487dfdbdaabcf42095c7e1425891a7",
+      "decision": "rejected_at_live_verification",
+      "draft_sha256": "8eb08cd9940fb46c75fbd9bf8292ed287acd9b9e64df149951ab0c9877fe585b",
+      "failure_summary": "The live frequency is decimal while the published response schema declares an integer.",
+      "key": "cohd_frequency_schema_drift",
+      "publication_blocked": true,
+      "publication_error": "Required artifact 'vsdscannerrejectedcohdfrequency_99b34774a827.json' does not exist",
+      "tool_name": "VSDScannerRejectedCOHDFrequency",
+      "verification_error": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider response failed the reviewed schema: 0.001373970848359976 is not of type 'integer'\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider response failed the reviewed schema: 0.001373970848359976 is not of type 'integer'\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}"
+    },
+    {
+      "approval_blocked": true,
+      "approval_error": "Required artifact 'vsdscannerrejectedgenedetail_d1f94af79065.json' does not exist",
+      "candidate_sha256": "f55b23d60670abba0fc1a4f31c7aded56c6f80e8685340e445c3074808a6f999",
+      "decision": "rejected_at_live_verification",
+      "draft_sha256": "e28f116675034470c91dd1c3a0939f39e2b6678f869c41148ba66f4b0fbb56c7",
+      "failure_summary": "The live gene-detail response contains null where the published response schema requires an array.",
+      "key": "hubmap_gene_detail_schema_drift",
+      "publication_blocked": true,
+      "publication_error": "Required artifact 'vsdscannerrejectedgenedetail_d1f94af79065.json' does not exist",
+      "tool_name": "VSDScannerRejectedGeneDetail",
+      "verification_error": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider response failed the reviewed schema: None is not of type 'array'\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider response failed the reviewed schema: None is not of type 'array'\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}"
+    }
+  ],
+  "scientific_boundary": "These workflows evaluate source discovery, identifier-preserving retrieval, provenance, and promotion controls. They do not establish causality, validate biomarkers, recommend treatment, or support patient-level decisions.",
+  "source_evidence": {
+    "cohd_concepts": {
+      "candidate_id": "9b553de8160a7fe8",
+      "candidate_sha256": "9b553de8160a7fe8d8ccd909663ad4a896dbbf2914b9720a33b19ef1c57ccb93",
+      "content_type": "application/json; charset=utf-8",
+      "existing_tools": [],
+      "preview_config_sha256": "f0c6f26234522ba3feb7f315165bab5556a3dd9d56917abec8874a199ebb5df9",
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 63201,
+      "source_document_sha256": "a784e1c305a4ce3be370d4d41361e85c9946abd56cf694fd88a15d1f4258aef2",
+      "specification_url": "https://smart-api.info/api/metadata/70117385218edc9bc01633829011dfcf",
+      "status_code": 200
+    },
+    "cohd_frequency_schema_drift": {
+      "candidate_id": "a7b7ec492be93c63",
+      "candidate_sha256": "a7b7ec492be93c638a4538960eacd4d34a487dfdbdaabcf42095c7e1425891a7",
+      "content_type": "application/json; charset=utf-8",
+      "existing_tools": [],
+      "preview_config_sha256": "dbb033eaf0419ccd3f33b62985d8146af7a0928b033be7fd79fddf79fc7e5714",
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 63201,
+      "source_document_sha256": "a784e1c305a4ce3be370d4d41361e85c9946abd56cf694fd88a15d1f4258aef2",
+      "specification_url": "https://smart-api.info/api/metadata/70117385218edc9bc01633829011dfcf",
+      "status_code": 200
+    },
+    "drug_hypotheses": {
+      "candidate_id": "36d881fa985f8511",
+      "candidate_sha256": "36d881fa985f85113985cb0ad59e09220b5d8f22096ab7060e341201e8299bae",
+      "content_type": "application/json; charset=utf-8",
+      "existing_tools": [],
+      "preview_config_sha256": "4ec11c534fcd6a8f0e02c179f6655833524a322459ca58fbdc8a714cac184ea5",
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 61925,
+      "source_document_sha256": "4a9778f479474841c446eec002810e81c92ebeaff398d73fbbca5f0b0c628398",
+      "specification_url": "https://smart-api.info/api/metadata/025600054bd8d6fb14ee66ee9d4a9830",
+      "status_code": 200
+    },
+    "ebi_protein_schema_drift": {
+      "candidate_id": "e16cc33562737ad6",
+      "candidate_sha256": "e16cc33562737ad61e3491552ebadaea90dcbe3920db982a300f5384c98e9a14",
+      "content_type": "application/json; charset=utf-8",
+      "existing_tools": [],
+      "preview_config_sha256": "f64715e7769356a98fe50099ebfb1733481b4956a825e91308ba8236f5347bb4",
+      "redirects": 0,
+      "registry_coverage": "existing_host_gap",
+      "response_bytes": 31795,
+      "source_document_sha256": "1e09f4bbca963c7ff6ca812c21c94dc50353acd08022ef9e62a664cfbbe6f5b9",
+      "specification_url": "https://smart-api.info/api/metadata/43af91b3d7cae43591083bff9d75c6dd",
+      "status_code": 200
+    },
+    "gene_regulation": {
+      "candidate_id": "0a79530e87efef0c",
+      "candidate_sha256": "0a79530e87efef0cf82b12d6b3caf6ef053f9364b8284dfe446080500ddf209e",
+      "content_type": "application/json; charset=utf-8",
+      "existing_tools": [],
+      "preview_config_sha256": "0c95c177cb535d8cf7fb86492a2a81b7035638a740e45ccade579d6db94f3ecb",
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 42494,
+      "source_document_sha256": "38a3e24668069c8de847a931bb31959952b7e38ed820dfc268ca3843407bc2a6",
+      "specification_url": "https://smart-api.info/api/metadata/d1ac2227e079aa3cae4e1cd696431ff8",
+      "status_code": 200
+    },
+    "gene_relationships": {
+      "candidate_id": "b0df504edbeedecb",
+      "candidate_sha256": "b0df504edbeedecb295642c243a18c7bed890b5d8dc4cb56a84a32921989c1e3",
+      "content_type": "application/json; charset=utf-8",
+      "existing_tools": [],
+      "preview_config_sha256": "0de227d18afcae6caca8800e1423416f29a9ee1469eb83deb76816334035f4d9",
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 97161,
+      "source_document_sha256": "34e553785343e3e39cc22ff1edc4d172ae0026ad610875dc997dd2b8b258f58f",
+      "specification_url": "https://smart-api.info/api/metadata/d10ff85265d8b749fbe3ad7b51d0bf0a",
+      "status_code": 200
+    },
+    "hubmap_gene_detail_schema_drift": {
+      "candidate_id": "f55b23d60670abba",
+      "candidate_sha256": "f55b23d60670abba0fc1a4f31c7aded56c6f80e8685340e445c3074808a6f999",
+      "content_type": "application/json; charset=utf-8",
+      "existing_tools": [],
+      "preview_config_sha256": "fc7bf4383e2c4e9de0dd5244813af77bed9be5ebfce0e8313a641f6888fb87e2",
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 97161,
+      "source_document_sha256": "34e553785343e3e39cc22ff1edc4d172ae0026ad610875dc997dd2b8b258f58f",
+      "specification_url": "https://smart-api.info/api/metadata/d10ff85265d8b749fbe3ad7b51d0bf0a",
+      "status_code": 200
+    },
+    "translator_annotation_schema_drift": {
+      "candidate_id": "d2c2aa394797d110",
+      "candidate_sha256": "d2c2aa394797d110d5be02d8ac0cc356e1959fedd81b1947c03c25d9f1d81a62",
+      "content_type": "application/json; charset=utf-8",
+      "existing_tools": [],
+      "preview_config_sha256": "78343f866637481fedb9fb4c2a0f9f3cd66b618d0fdf9fb4ce4856d3349f4fe1",
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 3198,
+      "source_document_sha256": "02f62728332fbcfcd02ff81bc46dacb2584d1f8e20915bce8fdcce6dec08b2d4",
+      "specification_url": "https://smart-api.info/api/metadata/5a4c41bf2076b469a0e9cfcf2f2b8f29",
+      "status_code": 200
+    }
+  },
+  "studies": [
+    {
+      "calls": [
+        {
+          "arguments": {
+            "q": "breast cancer"
+          },
+          "key": "cohd_concepts",
+          "observations": [
+            {
+              "display_fields": [
+                "concept_id",
+                "concept_name",
+                "domain_id",
+                "concept_count"
+              ],
+              "full_count": 13,
+              "label": "candidate_concepts",
+              "pointer": "/results",
+              "value": [
+                {
+                  "concept_count": 1056,
+                  "concept_id": 40664624,
+                  "concept_name": "Clinician diagnosed breast cancer preoperatively by a minimally invasive biopsy method",
+                  "domain_id": "Observation"
+                },
+                {
+                  "concept_count": 629,
+                  "concept_id": 40664869,
+                  "concept_name": "Clinically node negative (t1n0m0 or t2n0m0) invasive breast cancer",
+                  "domain_id": "Observation"
+                },
+                {
+                  "concept_count": 274,
+                  "concept_id": 42742430,
+                  "concept_name": "Quantitative HER2 immunohistochemistry (IHC) evaluation of breast cancer consistent with the scoring system defined in the ASCO/CAP guidelines (PATH)",
+                  "domain_id": "Observation"
+                },
+                {
+                  "concept_count": 143,
+                  "concept_id": 40664896,
+                  "concept_name": "Documentation of reason(s) sentinel lymph node biopsy not performed (e.g., reasons could include but not limited to; non-invasive cancer, incidental discovery of breast cancer on prophylactic mastectomy, incidental discovery of breast cancer on reduction",
+                  "domain_id": "Observation"
+                },
+                {
+                  "concept_count": 137,
+                  "concept_id": 42742290,
+                  "concept_name": "BRCA2 (breast cancer 2) (eg, hereditary breast and ovarian cancer) gene analysis; full sequence analysis",
+                  "domain_id": "Measurement"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://cohd-api.transltr.io/api/omop/findConceptIDs",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+            "payload_sha256": "fe2a8397e62f6457fba89d8964b698b278f113ea04fda6accc76efad8bde5a0c",
+            "provider": "cohd-api.transltr.io",
+            "query_params": {
+              "q": "breast cancer"
+            },
+            "redirects": 0,
+            "response_bytes": 3550,
+            "retrieved_at": "2026-08-02T22:07:24.859938+00:00"
+          },
+          "tool_name": "VSDScannerCOHDCancerConcepts"
+        },
+        {
+          "arguments": {
+            "target_symbol": "ESR1"
+          },
+          "key": "gene_relationships",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": 1,
+              "label": "approved_symbols",
+              "pointer": "/symbol-approved",
+              "value": [
+                "ESR1"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 4,
+              "label": "alias_symbols",
+              "pointer": "/symbol-alias",
+              "value": [
+                "Era",
+                "ER-alpha",
+                "NR3A1",
+                "ER"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 1,
+              "label": "previous_symbols",
+              "pointer": "/symbol-previous",
+              "value": [
+                "ESR"
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://ontology.api.hubmapconsortium.org/relationships/gene/ESR1",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+            "payload_sha256": "6bb1a5d6890eb5e35b0bbc4aed1262fd9b49813b873c55c0cf6aeccaa9ce4d88",
+            "provider": "ontology.api.hubmapconsortium.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 102,
+            "retrieved_at": "2026-08-02T22:07:25.408688+00:00"
+          },
+          "tool_name": "VSDScannerGeneRelationships"
+        },
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "ESR1"
+          },
+          "key": "gene_regulation",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "gene_identifier",
+              "pointer": "/data/entId",
+              "value": "ESR1"
+            },
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "linked_entity_counts",
+              "pointer": "/data/ld",
+              "value": {
+                "RegulatoryElement": 216,
+                "xqtlEvidence": 1204
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://genboree.org/cfde-gene-dev/Gene/id/ESR1",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+            "payload_sha256": "a86b63cb1b68289cad4d66a2d3ddb072904ae255e34ef2190f426ca881c37c62",
+            "provider": "genboree.org",
+            "query_params": {
+              "detail": "low"
+            },
+            "redirects": 0,
+            "response_bytes": 523,
+            "retrieved_at": "2026-08-02T22:07:25.908232+00:00"
+          },
+          "tool_name": "VSDScannerGeneRegulationLinks"
+        },
+        {
+          "arguments": {
+            "disease_id": "MESH:D001943",
+            "n_results": 5
+          },
+          "key": "drug_hypotheses",
+          "observations": [
+            {
+              "display_fields": [
+                "id",
+                "label",
+                "score"
+              ],
+              "full_count": 5,
+              "label": "ranked_hypotheses",
+              "pointer": "/hits",
+              "value": [
+                {
+                  "id": "DB00675",
+                  "label": "Tamoxifen",
+                  "score": -0.0742775946855545
+                },
+                {
+                  "id": "DB00515",
+                  "label": "Cisplatin",
+                  "score": -0.079818494617939
+                },
+                {
+                  "id": "DB00441",
+                  "label": "Gemcitabine",
+                  "score": -0.08470036834478378
+                },
+                {
+                  "id": "DB09107",
+                  "label": "Ro 50-3821",
+                  "score": -0.0922989696264267
+                },
+                {
+                  "id": "DB08894",
+                  "label": "hematide",
+                  "score": -0.09347600489854813
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://openpredict.semanticscience.org/drugrepositioning",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+            "payload_sha256": "66e22fa34086e7e42c6f6600629a64f9471dfb5a1dceaa7d1bfe9986bb190e64",
+            "provider": "openpredict.semanticscience.org",
+            "query_params": {
+              "disease_id": "MESH:D001943",
+              "n_results": 5
+            },
+            "redirects": 0,
+            "response_bytes": 433,
+            "retrieved_at": "2026-08-02T22:07:28.131389+00:00"
+          },
+          "tool_name": "VSDScannerDrugHypotheses"
+        }
+      ],
+      "cohd_query": "breast cancer",
+      "disease_name": "Breast neoplasms",
+      "gene_symbol": "ESR1",
+      "mesh_id": "MESH:D001943",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D001943",
+      "question": "Can a reproducible evidence packet preserve the ESR1 identity while retrieving terminology matches, gene relationships, regulatory-link counts, and bounded drug-repositioning hypotheses for breast neoplasms?",
+      "scenario_id": "breast_esr1"
+    },
+    {
+      "calls": [
+        {
+          "arguments": {
+            "q": "malignant neoplasm of lung"
+          },
+          "key": "cohd_concepts",
+          "observations": [
+            {
+              "display_fields": [
+                "concept_id",
+                "concept_name",
+                "domain_id",
+                "concept_count"
+              ],
+              "full_count": 1,
+              "label": "candidate_concepts",
+              "pointer": "/results",
+              "value": [
+                {
+                  "concept_count": 2448,
+                  "concept_id": 254591,
+                  "concept_name": "Secondary malignant neoplasm of lung",
+                  "domain_id": "Condition"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://cohd-api.transltr.io/api/omop/findConceptIDs",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+            "payload_sha256": "0bee663d299205e29ecc1486d0926f43ef203c25f5375e1abde4637e5f6ac104",
+            "provider": "cohd-api.transltr.io",
+            "query_params": {
+              "q": "malignant neoplasm of lung"
+            },
+            "redirects": 0,
+            "response_bytes": 224,
+            "retrieved_at": "2026-08-02T22:07:28.615600+00:00"
+          },
+          "tool_name": "VSDScannerCOHDCancerConcepts"
+        },
+        {
+          "arguments": {
+            "target_symbol": "EGFR"
+          },
+          "key": "gene_relationships",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": 1,
+              "label": "approved_symbols",
+              "pointer": "/symbol-approved",
+              "value": [
+                "EGFR"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 2,
+              "label": "alias_symbols",
+              "pointer": "/symbol-alias",
+              "value": [
+                "ERBB1",
+                "ERRP"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 1,
+              "label": "previous_symbols",
+              "pointer": "/symbol-previous",
+              "value": [
+                "ERBB"
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://ontology.api.hubmapconsortium.org/relationships/gene/EGFR",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+            "payload_sha256": "fb3af14b09b66b32762b96f92de80f072527a4846aeb1baba781c3fa64a41ee3",
+            "provider": "ontology.api.hubmapconsortium.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 88,
+            "retrieved_at": "2026-08-02T22:07:29.373283+00:00"
+          },
+          "tool_name": "VSDScannerGeneRelationships"
+        },
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "EGFR"
+          },
+          "key": "gene_regulation",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "gene_identifier",
+              "pointer": "/data/entId",
+              "value": "EGFR"
+            },
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "linked_entity_counts",
+              "pointer": "/data/ld",
+              "value": {
+                "RegulatoryElement": 380,
+                "xqtlEvidence": 780
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://genboree.org/cfde-gene-dev/Gene/id/EGFR",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+            "payload_sha256": "2c2a6bf1b3b312c029a9d3ab4cb42ae013f9365edb9d4ad9e38d6df2afcc5bdd",
+            "provider": "genboree.org",
+            "query_params": {
+              "detail": "low"
+            },
+            "redirects": 0,
+            "response_bytes": 565,
+            "retrieved_at": "2026-08-02T22:07:29.694817+00:00"
+          },
+          "tool_name": "VSDScannerGeneRegulationLinks"
+        },
+        {
+          "arguments": {
+            "disease_id": "MESH:D008175",
+            "n_results": 5
+          },
+          "key": "drug_hypotheses",
+          "observations": [
+            {
+              "display_fields": [
+                "id",
+                "label",
+                "score"
+              ],
+              "full_count": 5,
+              "label": "ranked_hypotheses",
+              "pointer": "/hits",
+              "value": [
+                {
+                  "id": "DB00997",
+                  "label": "Doxorubicin",
+                  "score": -0.0759170651435852
+                },
+                {
+                  "id": "DB00515",
+                  "label": "Cisplatin",
+                  "score": -0.08980945497751236
+                },
+                {
+                  "id": "DB01229",
+                  "label": "Paclitaxel",
+                  "score": -0.09799187630414963
+                },
+                {
+                  "id": "DB00441",
+                  "label": "Gemcitabine",
+                  "score": -0.09976809471845627
+                },
+                {
+                  "id": "DB11672",
+                  "label": "Curcumin",
+                  "score": -0.11312627792358398
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://openpredict.semanticscience.org/drugrepositioning",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+            "payload_sha256": "a7eea7c4fb8673a94911da400ae148879857187b3d3373c823605f70a7e4dc69",
+            "provider": "openpredict.semanticscience.org",
+            "query_params": {
+              "disease_id": "MESH:D008175",
+              "n_results": 5
+            },
+            "redirects": 0,
+            "response_bytes": 438,
+            "retrieved_at": "2026-08-02T22:07:31.828521+00:00"
+          },
+          "tool_name": "VSDScannerDrugHypotheses"
+        }
+      ],
+      "cohd_query": "malignant neoplasm of lung",
+      "disease_name": "Lung neoplasms",
+      "gene_symbol": "EGFR",
+      "mesh_id": "MESH:D008175",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D008175",
+      "question": "Can the same reviewed tool set preserve the EGFR identity and assemble terminology, gene-regulation, and computational hypothesis evidence for lung neoplasms?",
+      "scenario_id": "lung_egfr"
+    },
+    {
+      "calls": [
+        {
+          "arguments": {
+            "q": "primary malignant neoplasm of colon"
+          },
+          "key": "cohd_concepts",
+          "observations": [
+            {
+              "display_fields": [
+                "concept_id",
+                "concept_name",
+                "domain_id",
+                "concept_count"
+              ],
+              "full_count": 1,
+              "label": "candidate_concepts",
+              "pointer": "/results",
+              "value": [
+                {
+                  "concept_count": 1807,
+                  "concept_id": 197500,
+                  "concept_name": "Primary malignant neoplasm of colon",
+                  "domain_id": "Condition"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://cohd-api.transltr.io/api/omop/findConceptIDs",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+            "payload_sha256": "382a71bd9d5539c141cdc820dce6f8f901a72aad472fd269d4356264296dbf42",
+            "provider": "cohd-api.transltr.io",
+            "query_params": {
+              "q": "primary malignant neoplasm of colon"
+            },
+            "redirects": 0,
+            "response_bytes": 223,
+            "retrieved_at": "2026-08-02T22:07:32.237269+00:00"
+          },
+          "tool_name": "VSDScannerCOHDCancerConcepts"
+        },
+        {
+          "arguments": {
+            "target_symbol": "TP53"
+          },
+          "key": "gene_relationships",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": 1,
+              "label": "approved_symbols",
+              "pointer": "/symbol-approved",
+              "value": [
+                "TP53"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 2,
+              "label": "alias_symbols",
+              "pointer": "/symbol-alias",
+              "value": [
+                "LFS1",
+                "p53"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 0,
+              "label": "previous_symbols",
+              "pointer": "/symbol-previous",
+              "value": []
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://ontology.api.hubmapconsortium.org/relationships/gene/TP53",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+            "payload_sha256": "388cff120efa204b986b6c158d6f3b0a2c056fef5449b699bba2ded6c1a54082",
+            "provider": "ontology.api.hubmapconsortium.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 80,
+            "retrieved_at": "2026-08-02T22:07:32.795667+00:00"
+          },
+          "tool_name": "VSDScannerGeneRelationships"
+        },
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "TP53"
+          },
+          "key": "gene_regulation",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "gene_identifier",
+              "pointer": "/data/entId",
+              "value": "TP53"
+            },
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "linked_entity_counts",
+              "pointer": "/data/ld",
+              "value": {
+                "RegulatoryElement": 74,
+                "xqtlEvidence": 1244
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://genboree.org/cfde-gene-dev/Gene/id/TP53",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+            "payload_sha256": "c2169264323ec27ecdab2d239b91243a10bcb4986e3aa958f9866dcf771323fb",
+            "provider": "genboree.org",
+            "query_params": {
+              "detail": "low"
+            },
+            "redirects": 0,
+            "response_bytes": 565,
+            "retrieved_at": "2026-08-02T22:07:33.319591+00:00"
+          },
+          "tool_name": "VSDScannerGeneRegulationLinks"
+        },
+        {
+          "arguments": {
+            "disease_id": "MESH:D015179",
+            "n_results": 5
+          },
+          "key": "drug_hypotheses",
+          "observations": [
+            {
+              "display_fields": [
+                "id",
+                "label",
+                "score"
+              ],
+              "full_count": 5,
+              "label": "ranked_hypotheses",
+              "pointer": "/hits",
+              "value": [
+                {
+                  "id": "DB00515",
+                  "label": "Cisplatin",
+                  "score": -0.09734850376844406
+                },
+                {
+                  "id": "DB08894",
+                  "label": "hematide",
+                  "score": -0.10236989706754684
+                },
+                {
+                  "id": "DB09107",
+                  "label": "Ro 50-3821",
+                  "score": -0.10461752116680145
+                },
+                {
+                  "id": "DB01229",
+                  "label": "Paclitaxel",
+                  "score": -0.108942911028862
+                },
+                {
+                  "id": "DB14765",
+                  "label": "Rivoceranib",
+                  "score": -0.11314454674720764
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://openpredict.semanticscience.org/drugrepositioning",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+            "payload_sha256": "73ec942cddf30a83aa1f2e6c955a1152600059794b1a19ba46e9614740fa9a01",
+            "provider": "openpredict.semanticscience.org",
+            "query_params": {
+              "disease_id": "MESH:D015179",
+              "n_results": 5
+            },
+            "redirects": 0,
+            "response_bytes": 436,
+            "retrieved_at": "2026-08-02T22:07:35.601027+00:00"
+          },
+          "tool_name": "VSDScannerDrugHypotheses"
+        }
+      ],
+      "cohd_query": "primary malignant neoplasm of colon",
+      "disease_name": "Colorectal neoplasms",
+      "gene_symbol": "TP53",
+      "mesh_id": "MESH:D015179",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D015179",
+      "question": "Can the reviewed operations produce a provenance-linked terminology, TP53 identity, regulatory-link, and hypothesis packet for colorectal neoplasms?",
+      "scenario_id": "colorectal_tp53"
+    },
+    {
+      "calls": [
+        {
+          "arguments": {
+            "q": "malignant melanoma of skin"
+          },
+          "key": "cohd_concepts",
+          "observations": [
+            {
+              "display_fields": [
+                "concept_id",
+                "concept_name",
+                "domain_id",
+                "concept_count"
+              ],
+              "full_count": 10,
+              "label": "candidate_concepts",
+              "pointer": "/results",
+              "value": [
+                {
+                  "concept_count": 2460,
+                  "concept_id": 141232,
+                  "concept_name": "Malignant melanoma of skin",
+                  "domain_id": "Condition"
+                },
+                {
+                  "concept_count": 1015,
+                  "concept_id": 133713,
+                  "concept_name": "Malignant melanoma of skin of face",
+                  "domain_id": "Condition"
+                },
+                {
+                  "concept_count": 896,
+                  "concept_id": 133714,
+                  "concept_name": "Malignant melanoma of skin of trunk",
+                  "domain_id": "Condition"
+                },
+                {
+                  "concept_count": 849,
+                  "concept_id": 438983,
+                  "concept_name": "Malignant melanoma of skin of upper limb",
+                  "domain_id": "Condition"
+                },
+                {
+                  "concept_count": 681,
+                  "concept_id": 139757,
+                  "concept_name": "Malignant melanoma of skin of lower limb",
+                  "domain_id": "Condition"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://cohd-api.transltr.io/api/omop/findConceptIDs",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+            "payload_sha256": "e3900c0248a062c21505ede958f59ebfac050dcc61948b4b41e58edb64ec27aa",
+            "provider": "cohd-api.transltr.io",
+            "query_params": {
+              "q": "malignant melanoma of skin"
+            },
+            "redirects": 0,
+            "response_bytes": 2097,
+            "retrieved_at": "2026-08-02T22:07:36.060271+00:00"
+          },
+          "tool_name": "VSDScannerCOHDCancerConcepts"
+        },
+        {
+          "arguments": {
+            "target_symbol": "BRAF"
+          },
+          "key": "gene_relationships",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": 1,
+              "label": "approved_symbols",
+              "pointer": "/symbol-approved",
+              "value": [
+                "BRAF"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 2,
+              "label": "alias_symbols",
+              "pointer": "/symbol-alias",
+              "value": [
+                "BRAF-1",
+                "BRAF1"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 0,
+              "label": "previous_symbols",
+              "pointer": "/symbol-previous",
+              "value": []
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://ontology.api.hubmapconsortium.org/relationships/gene/BRAF",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+            "payload_sha256": "bb81fb5f336f6f62e4a9f724756c698c0980e958d9bcb01261ec32288ea6ab74",
+            "provider": "ontology.api.hubmapconsortium.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 84,
+            "retrieved_at": "2026-08-02T22:07:36.889310+00:00"
+          },
+          "tool_name": "VSDScannerGeneRelationships"
+        },
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "BRAF"
+          },
+          "key": "gene_regulation",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "gene_identifier",
+              "pointer": "/data/entId",
+              "value": "BRAF"
+            },
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "linked_entity_counts",
+              "pointer": "/data/ld",
+              "value": {
+                "RegulatoryElement": 344,
+                "xqtlEvidence": 508
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://genboree.org/cfde-gene-dev/Gene/id/BRAF",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+            "payload_sha256": "4fa1f62a4cdfd30e7d734df901bf7a29fa0817210a75c77632e0c9cf4f8dc444",
+            "provider": "genboree.org",
+            "query_params": {
+              "detail": "low"
+            },
+            "redirects": 0,
+            "response_bytes": 522,
+            "retrieved_at": "2026-08-02T22:07:37.187856+00:00"
+          },
+          "tool_name": "VSDScannerGeneRegulationLinks"
+        },
+        {
+          "arguments": {
+            "disease_id": "MESH:D008545",
+            "n_results": 5
+          },
+          "key": "drug_hypotheses",
+          "observations": [
+            {
+              "display_fields": [
+                "id",
+                "label",
+                "score"
+              ],
+              "full_count": 5,
+              "label": "ranked_hypotheses",
+              "pointer": "/hits",
+              "value": [
+                {
+                  "id": "DB00515",
+                  "label": "Cisplatin",
+                  "score": -0.10456789284944534
+                },
+                {
+                  "id": "DB09107",
+                  "label": "Ro 50-3821",
+                  "score": -0.11128316819667816
+                },
+                {
+                  "id": "DB08894",
+                  "label": "hematide",
+                  "score": -0.11279206722974777
+                },
+                {
+                  "id": "DB00441",
+                  "label": "Gemcitabine",
+                  "score": -0.1150360181927681
+                },
+                {
+                  "id": "DB00997",
+                  "label": "Doxorubicin",
+                  "score": -0.11634187400341034
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://openpredict.semanticscience.org/drugrepositioning",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+            "payload_sha256": "c2cdf97af996530bdebbd2a3d9b36e4c53593a4fad7263f0272b5c1db6aa70a7",
+            "provider": "openpredict.semanticscience.org",
+            "query_params": {
+              "disease_id": "MESH:D008545",
+              "n_results": 5
+            },
+            "redirects": 0,
+            "response_bytes": 438,
+            "retrieved_at": "2026-08-02T22:07:39.283943+00:00"
+          },
+          "tool_name": "VSDScannerDrugHypotheses"
+        }
+      ],
+      "cohd_query": "malignant melanoma of skin",
+      "disease_name": "Melanoma",
+      "gene_symbol": "BRAF",
+      "mesh_id": "MESH:D008545",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D008545",
+      "question": "Can a scanner-discovered workflow preserve the BRAF identity while retrieving melanoma terminology, regulatory-link counts, and bounded drug hypotheses?",
+      "scenario_id": "melanoma_braf"
+    },
+    {
+      "calls": [
+        {
+          "arguments": {
+            "q": "malignant neoplasm of prostate"
+          },
+          "key": "cohd_concepts",
+          "observations": [
+            {
+              "display_fields": [
+                "concept_id",
+                "concept_name",
+                "domain_id",
+                "concept_count"
+              ],
+              "full_count": 2,
+              "label": "candidate_concepts",
+              "pointer": "/results",
+              "value": [
+                {
+                  "concept_count": 5957,
+                  "concept_id": 200962,
+                  "concept_name": "Primary malignant neoplasm of prostate",
+                  "domain_id": "Condition"
+                },
+                {
+                  "concept_count": 2526,
+                  "concept_id": 40481096,
+                  "concept_name": "Screening for malignant neoplasm of prostate",
+                  "domain_id": "Procedure"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://cohd-api.transltr.io/api/omop/findConceptIDs",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "69bd1ec1169b58b3c27bb85efcee22a83e0f9ecf38083c677946489bd1892285",
+            "payload_sha256": "d1f0720870c2ae3e04d0151a1a6dd066fd1456351cda463beba1f41820fb9f18",
+            "provider": "cohd-api.transltr.io",
+            "query_params": {
+              "q": "malignant neoplasm of prostate"
+            },
+            "redirects": 0,
+            "response_bytes": 440,
+            "retrieved_at": "2026-08-02T22:07:39.682200+00:00"
+          },
+          "tool_name": "VSDScannerCOHDCancerConcepts"
+        },
+        {
+          "arguments": {
+            "target_symbol": "PTEN"
+          },
+          "key": "gene_relationships",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": 1,
+              "label": "approved_symbols",
+              "pointer": "/symbol-approved",
+              "value": [
+                "PTEN"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 3,
+              "label": "alias_symbols",
+              "pointer": "/symbol-alias",
+              "value": [
+                "MMAC1",
+                "PTEN1",
+                "TEP1"
+              ]
+            },
+            {
+              "display_fields": [],
+              "full_count": 2,
+              "label": "previous_symbols",
+              "pointer": "/symbol-previous",
+              "value": [
+                "MHAM",
+                "BZS"
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://ontology.api.hubmapconsortium.org/relationships/gene/PTEN",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "d7e9c1555932665581c53123329e907a99288db9df5178261989744b5bd64bc2",
+            "payload_sha256": "f5740dfd48436ddaec50a5b1b12f0e71976acee79ed013e90cc008e663bdf6cd",
+            "provider": "ontology.api.hubmapconsortium.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 102,
+            "retrieved_at": "2026-08-02T22:07:40.238581+00:00"
+          },
+          "tool_name": "VSDScannerGeneRelationships"
+        },
+        {
+          "arguments": {
+            "detail": "low",
+            "entType": "Gene",
+            "val": "PTEN"
+          },
+          "key": "gene_regulation",
+          "observations": [
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "gene_identifier",
+              "pointer": "/data/entId",
+              "value": "PTEN"
+            },
+            {
+              "display_fields": [],
+              "full_count": null,
+              "label": "linked_entity_counts",
+              "pointer": "/data/ld",
+              "value": {
+                "RegulatoryElement": 181,
+                "xqtlEvidence": 265
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://genboree.org/cfde-gene-dev/Gene/id/PTEN",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "9386f8fb59fca31432b62426b8172f9d455e95a016ca3a204b373815a682c28c",
+            "payload_sha256": "f969963ba90ffb12436506f2143f9ed8f2c47221fcc56d7c4f20ff5015166d01",
+            "provider": "genboree.org",
+            "query_params": {
+              "detail": "low"
+            },
+            "redirects": 0,
+            "response_bytes": 522,
+            "retrieved_at": "2026-08-02T22:07:40.616770+00:00"
+          },
+          "tool_name": "VSDScannerGeneRegulationLinks"
+        },
+        {
+          "arguments": {
+            "disease_id": "MESH:D011471",
+            "n_results": 5
+          },
+          "key": "drug_hypotheses",
+          "observations": [
+            {
+              "display_fields": [
+                "id",
+                "label",
+                "score"
+              ],
+              "full_count": 5,
+              "label": "ranked_hypotheses",
+              "pointer": "/hits",
+              "value": [
+                {
+                  "id": "DB00515",
+                  "label": "Cisplatin",
+                  "score": -0.08556073904037476
+                },
+                {
+                  "id": "DB00675",
+                  "label": "Tamoxifen",
+                  "score": -0.09266618639230728
+                },
+                {
+                  "id": "DB01229",
+                  "label": "Paclitaxel",
+                  "score": -0.0977945327758789
+                },
+                {
+                  "id": "DB00755",
+                  "label": "Tretinoin",
+                  "score": -0.11763874441385269
+                },
+                {
+                  "id": "DB00997",
+                  "label": "Doxorubicin",
+                  "score": -0.12111058831214905
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://openpredict.semanticscience.org/drugrepositioning",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "4f96321a20390c7863c82e9f827bb4a073546f06df74f1bbbfa322adf05d3466",
+            "payload_sha256": "a1ef54d5c507cba17cc14cfa21e0b4c9578509abe40d25c4839b3d984c79bdeb",
+            "provider": "openpredict.semanticscience.org",
+            "query_params": {
+              "disease_id": "MESH:D011471",
+              "n_results": 5
+            },
+            "redirects": 0,
+            "response_bytes": 437,
+            "retrieved_at": "2026-08-02T22:07:42.895708+00:00"
+          },
+          "tool_name": "VSDScannerDrugHypotheses"
+        }
+      ],
+      "cohd_query": "malignant neoplasm of prostate",
+      "disease_name": "Prostatic neoplasms",
+      "gene_symbol": "PTEN",
+      "mesh_id": "MESH:D011471",
+      "mesh_reference": "https://meshb.nlm.nih.gov/record/ui?ui=D011471",
+      "question": "Can the same governed workflow preserve the PTEN identity and assemble terminology, regulatory-link, and computational hypothesis evidence for prostatic neoplasms?",
+      "scenario_id": "prostate_pten"
+    }
+  ],
+  "study_sha256": "cb5a36ae24abb4ccc6b7d98d7ab4aae0026e26b43aff709568e8c0a014e78a7e",
+  "version": 1
+}

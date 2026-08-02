@@ -11,7 +11,9 @@ from tooluniverse.vsd_continuous_scanner import (
     build_continuous_scan_cycle,
     load_latest_continuous_scan,
     normalize_apis_guru_directory,
+    normalize_smartapi_directory,
     run_scheduled_apis_guru_scan,
+    run_scheduled_smartapi_scan,
     summarize_continuous_scan,
     validate_continuous_scan_cycle,
     validate_directory_snapshot,
@@ -95,6 +97,44 @@ def _directory(payload: dict, *, when: str = "2026-08-02T00:00:00+00:00") -> dic
     )
 
 
+def _smartapi_catalog(count: int) -> tuple[dict, dict[str, bytes]]:
+    hits: list[dict] = []
+    contracts: dict[str, bytes] = {}
+    for index in range(count):
+        record_id = f"{index:032x}"
+        specification_url = f"https://smart-api.info/api/metadata/{record_id}"
+        document = {
+            "openapi": "3.0.3",
+            "info": {
+                "title": f"Biomedical Evidence {index}",
+                "version": "1.0.0",
+                "contact": {"name": "Example Research Program"},
+            },
+            "servers": [{"url": f"https://biomedical{index}.example.org/api"}],
+            "tags": [{"name": "genomics"}],
+            "paths": {
+                "/evidence": {
+                    "get": {
+                        "operationId": f"getEvidence{index}",
+                        "responses": {
+                            "200": {
+                                "description": "Evidence",
+                                "content": {
+                                    "application/json": {"schema": {"type": "object"}}
+                                },
+                            }
+                        },
+                    }
+                }
+            },
+            "_id": record_id,
+            "_meta": {"last_updated": "2026-08-02T00:00:00Z"},
+        }
+        hits.append(document)
+        contracts[specification_url] = json.dumps(document, sort_keys=True).encode()
+    return {"total": count, "hits": hits}, contracts
+
+
 def _fetcher(contracts: dict[str, bytes]):
     def fetch(url: str, _timeout: float, maximum: int):
         raw = contracts[url]
@@ -135,6 +175,28 @@ def test_directory_normalization_preserves_boundary_and_rejects_tampering():
     modified["records"][0]["title"] = "Changed without resealing"
     with pytest.raises(VSDContinuousScannerError):
         validate_directory_snapshot(modified)
+
+
+def test_smartapi_directory_normalization_is_complete_and_bounded():
+    payload, _ = _smartapi_catalog(2)
+    legacy = copy.deepcopy(payload["hits"][0])
+    legacy["_id"] = "f" * 32
+    legacy.pop("openapi")
+    legacy["swagger"] = "2.0"
+    payload["hits"].append(legacy)
+    payload["total"] = 3
+
+    directory = normalize_smartapi_directory(
+        payload,
+        request=_request(len(json.dumps(payload))),
+        retrieved_at="2026-08-02T00:00:00+00:00",
+    )
+
+    assert directory["catalog_id"] == "smartapi"
+    assert directory["record_count"] == 3
+    assert directory["compatible_record_count"] == 2
+    assert directory["unsupported_record_count"] == 1
+    assert validate_directory_snapshot(directory) == directory
 
 
 def test_scanner_builds_hundreds_of_inert_draftable_previews(tmp_path: Path):
@@ -215,6 +277,37 @@ def test_incremental_cycle_rotates_to_uninspected_contracts(tmp_path: Path):
     assert len(second["state"]["inspected_record_ids"]) == 2
 
 
+def test_partial_final_cycle_does_not_repeat_processed_records(tmp_path: Path):
+    payload, contracts = _catalog(3, operations=1)
+    tooluniverse = _ToolUniverse()
+    directory = _directory(payload)
+    first = build_continuous_scan_cycle(
+        directory,
+        inventory=configured_source_inventory(tooluniverse),
+        registry_tools=[],
+        snapshot_directory=tmp_path / "contracts",
+        max_contracts=2,
+        draftable_tool_target=10,
+        contract_fetcher=_fetcher(contracts),
+        scanned_at="2026-08-02T01:00:00+00:00",
+    )
+    second = build_continuous_scan_cycle(
+        directory,
+        inventory=configured_source_inventory(tooluniverse),
+        registry_tools=[],
+        snapshot_directory=tmp_path / "contracts",
+        previous_cycle=first,
+        max_contracts=2,
+        draftable_tool_target=10,
+        contract_fetcher=_fetcher(contracts),
+        scanned_at="2026-08-02T02:00:00+00:00",
+    )
+
+    assert first["metrics"]["selected_record_count"] == 2
+    assert second["metrics"]["selected_record_count"] == 1
+    assert set(first["attempted_record_ids"]).isdisjoint(second["attempted_record_ids"])
+
+
 def test_incremental_cycle_reports_add_change_and_remove(tmp_path: Path):
     payload, contracts = _catalog(2, operations=2)
     tooluniverse = _ToolUniverse()
@@ -292,6 +385,38 @@ def test_contract_failure_is_isolated_and_state_is_tamper_evident(tmp_path: Path
         validate_continuous_scan_cycle(modified)
 
 
+def test_unchanged_failed_contract_does_not_starve_later_records(tmp_path: Path):
+    payload, contracts = _catalog(2, operations=1)
+    contracts[sorted(contracts)[0]] = b'{"not": "openapi"}'
+    tooluniverse = _ToolUniverse()
+    directory = _directory(payload)
+    first = build_continuous_scan_cycle(
+        directory,
+        inventory=configured_source_inventory(tooluniverse),
+        registry_tools=[],
+        snapshot_directory=tmp_path / "contracts",
+        max_contracts=1,
+        draftable_tool_target=1,
+        contract_fetcher=_fetcher(contracts),
+        scanned_at="2026-08-02T01:00:00+00:00",
+    )
+    second = build_continuous_scan_cycle(
+        directory,
+        inventory=configured_source_inventory(tooluniverse),
+        registry_tools=[],
+        snapshot_directory=tmp_path / "contracts",
+        previous_cycle=first,
+        max_contracts=1,
+        draftable_tool_target=1,
+        contract_fetcher=_fetcher(contracts),
+        scanned_at="2026-08-02T02:00:00+00:00",
+    )
+
+    assert first["metrics"]["failed_contract_count"] == 1
+    assert first["attempted_record_ids"] != second["attempted_record_ids"]
+    assert len(second["state"]["inspected_record_ids"]) == 2
+
+
 def test_non_public_contract_server_is_blocked_before_preview(tmp_path: Path):
     payload, contracts = _catalog(1, operations=2)
     url, raw = next(iter(contracts.items()))
@@ -351,3 +476,123 @@ def test_cycle_history_and_scheduled_entrypoint_are_reproducible(tmp_path: Path)
     assert load_latest_continuous_scan(tmp_path / "state") == second["cycle"]
     history, latest = write_continuous_scan_cycle(second["cycle"], tmp_path / "copy")
     assert history.exists() and latest.exists()
+
+    recovery = tmp_path / "recovery"
+    write_continuous_scan_cycle(first["cycle"], recovery)
+    orphan = recovery / f"cycle-{second['cycle']['cycle_id']}.json"
+    orphan.write_text(
+        json.dumps(second["cycle"], indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    third = run_scheduled_apis_guru_scan(
+        tooluniverse,
+        recovery,
+        max_contracts=1,
+        draftable_tool_target=3,
+        catalog_fetcher=catalog_fetcher,
+        contract_fetcher=_fetcher(contracts),
+        scanned_at="2026-08-02T03:00:00+00:00",
+    )
+    assert third["cycle"]["previous_cycle_id"] == second["cycle"]["cycle_id"]
+
+
+def test_smartapi_scheduled_entrypoint_uses_complete_registry_query(tmp_path: Path):
+    payload, contracts = _smartapi_catalog(202)
+    tooluniverse = _ToolUniverse()
+    requests = []
+
+    def catalog_fetcher(url, params, **kwargs):
+        requests.append((url, params, kwargs))
+        offset = params["from"]
+        page = {
+            "total": payload["total"],
+            "hits": payload["hits"][offset : offset + params["size"]],
+        }
+        return page, _request(len(json.dumps(page)))
+
+    result = run_scheduled_smartapi_scan(
+        tooluniverse,
+        tmp_path / "state",
+        max_contracts=2,
+        draftable_tool_target=2,
+        catalog_fetcher=catalog_fetcher,
+        contract_fetcher=_fetcher(contracts),
+        scanned_at="2026-08-02T01:00:00+00:00",
+    )
+
+    assert requests[0][0] == "https://smart-api.info/api/query"
+    assert requests[0][1] == {"q": "*", "size": 100, "from": 0, "raw": 1}
+    assert [request[1]["from"] for request in requests] == [0, 100, 200]
+    assert result["cycle"]["directory"]["catalog_id"] == "smartapi"
+    assert result["cycle"]["directory"]["record_count"] == 202
+    assert result["cycle"]["metrics"]["inspected_contract_count"] == 2
+
+
+def test_smartapi_pagination_rejects_repeated_records(tmp_path: Path):
+    payload, _ = _smartapi_catalog(101)
+
+    def catalog_fetcher(_url, params, **_kwargs):
+        hits = payload["hits"][:100] if params["from"] == 0 else [payload["hits"][0]]
+        page = {"total": payload["total"], "hits": hits}
+        return page, _request(len(json.dumps(page)))
+
+    with pytest.raises(VSDContinuousScannerError, match="repeated a record"):
+        run_scheduled_smartapi_scan(
+            _ToolUniverse(),
+            tmp_path / "state",
+            catalog_fetcher=catalog_fetcher,
+            scanned_at="2026-08-02T01:00:00+00:00",
+        )
+
+
+def test_catalog_mismatch_and_unlinked_history_fail_before_network(tmp_path: Path):
+    payload, contracts = _catalog(1, operations=1)
+    tooluniverse = _ToolUniverse()
+
+    def catalog_fetcher(_url, _params, **_kwargs):
+        return payload, _request(len(json.dumps(payload)))
+
+    state = tmp_path / "state"
+    first = run_scheduled_apis_guru_scan(
+        tooluniverse,
+        state,
+        catalog_fetcher=catalog_fetcher,
+        contract_fetcher=_fetcher(contracts),
+        scanned_at="2026-08-02T01:00:00+00:00",
+    )
+    network_calls = []
+
+    def unexpected_fetch(*_args, **_kwargs):
+        network_calls.append(True)
+        raise AssertionError("Catalog mismatch made a network request")
+
+    with pytest.raises(VSDContinuousScannerError, match="different catalog"):
+        run_scheduled_smartapi_scan(
+            tooluniverse,
+            state,
+            catalog_fetcher=unexpected_fetch,
+            scanned_at="2026-08-02T02:00:00+00:00",
+        )
+    assert network_calls == []
+
+    unrelated = build_continuous_scan_cycle(
+        _directory(payload, when="2026-08-02T03:00:00+00:00"),
+        inventory=configured_source_inventory(tooluniverse),
+        registry_tools=[],
+        snapshot_directory=tmp_path / "other-contracts",
+        contract_fetcher=_fetcher(contracts),
+        scanned_at="2026-08-02T03:00:00+00:00",
+    )
+    (state / f"cycle-{unrelated['cycle_id']}.json").write_text(
+        json.dumps(unrelated, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(VSDContinuousScannerError, match="one root"):
+        run_scheduled_apis_guru_scan(
+            tooluniverse,
+            state,
+            catalog_fetcher=unexpected_fetch,
+            scanned_at="2026-08-02T04:00:00+00:00",
+        )
+    assert network_calls == []
+    assert first["cycle"]["directory"]["catalog_id"] == "apis_guru"
