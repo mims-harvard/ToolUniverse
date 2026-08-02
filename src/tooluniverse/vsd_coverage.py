@@ -298,6 +298,10 @@ def _ratio(requested: Iterable[str], available: set[str]) -> float:
 
 def _operation_identity(config: dict[str, Any]) -> tuple[str, str, str]:
     operation = config.get("vsd_operation")
+    reviewed = False
+    if not isinstance(operation, dict):
+        operation = config.get("vsd_reviewed_operation")
+        reviewed = isinstance(operation, dict)
     if not isinstance(operation, dict):
         return "", "", ""
     endpoint = operation.get("endpoint")
@@ -307,8 +311,10 @@ def _operation_identity(config: dict[str, Any]) -> tuple[str, str, str]:
     if not parsed.hostname:
         return "", "", ""
     path = re.sub(r"/+", "/", parsed.path or "/").rstrip("/") or "/"
+    request = operation.get("request") if reviewed else None
+    method = request.get("method") if isinstance(request, dict) else operation.get("method")
     return (
-        str(operation.get("method") or "GET").upper(),
+        str(method or "GET").upper(),
         parsed.hostname.casefold().rstrip("."),
         path,
     )

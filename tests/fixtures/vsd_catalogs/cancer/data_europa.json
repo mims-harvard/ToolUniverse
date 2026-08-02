@@ -1,0 +1,33 @@
+{
+  "result": {
+    "count": 3395,
+    "results": [
+      {
+        "resource": "http://data.europa.eu/88u/dataset/kpi-phof29",
+        "description": {
+          "en": "Cancer screening coverage - breast cancer (% eligible women screened adequately within previous 3 years)"
+        },
+        "title": {
+          "en": "Cancer screening coverage - breast cancer (% eligible women screened adequately within previous 3 years)"
+        },
+        "distributions": [
+          {
+            "id": "6b8dd6af-58c5-4fad-a1e6-6a9e82177287",
+            "description": {"en": "Breast-cancer screening coverage"},
+            "format": {"id": "CSV", "label": "CSV"},
+            "license": {
+              "label": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+            },
+            "title": {"en": "Performance Indicator : PHOF29"},
+            "access_url": [
+              "https://data.yorkopendata.org/dataset/8d4e5d21-a6e1-4ae1-9915-b09ef2a147c6/resource/cfba6e3c-08f3-452d-adb7-d65b075ac896/download/kpi-phof29.csv"
+            ]
+          }
+        ],
+        "publisher": {"type": "Agent", "name": "City of York Council"},
+        "id": "kpi-phof29",
+        "catalog_record": {"modified": "2026-07-30T04:14:13Z"}
+      }
+    ]
+  }
+}

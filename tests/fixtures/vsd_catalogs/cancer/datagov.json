@@ -1,0 +1,26 @@
+{
+  "results": [
+    {
+      "slug": "c-cancer-deaths-column-chart",
+      "last_harvested_date": "2026-07-31T00:00:00Z",
+      "organization": {"name": "data.ok.gov"},
+      "dcat": {
+        "identifier": "urn:uuid:03935a57-5192-4455-8e85-1b2ec6f4da5e",
+        "title": "(C) - Cancer Deaths - Column Chart",
+        "description": "Historical cancer death-rate chart data with an Oklahoma target.",
+        "keyword": ["cancer", "deaths", "mortality"],
+        "landingPage": "https://catalog.data.gov/dataset/c-cancer-deaths-column-chart",
+        "modified": "2019-01-01",
+        "publisher": {"name": "data.ok.gov"},
+        "distribution": [
+          {
+            "title": "(C) - Cancer Deaths - Column Chart",
+            "accessURL": "https://data.ok.gov/dataset/3c0493a5-079e-4cc8-95a9-c53967623009/resource/03935a57-5192-4455-8e85-1b2ec6f4da5e/download/c-cancer-deaths-column-chart.csv",
+            "mediaType": "text/csv",
+            "format": "CSV"
+          }
+        ]
+      }
+    }
+  ]
+}

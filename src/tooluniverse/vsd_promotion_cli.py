@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
-from .vsd_openapi import inspect_openapi_document, select_openapi_candidate
+from .vsd_catalog_providers import select_catalog_candidate
 from .vsd_contracts import select_contract_candidate
+from .vsd_openapi import inspect_openapi_document, select_openapi_candidate
 from .vsd_promotion import (
     approve_draft,
+    create_catalog_resource_draft,
     create_draft,
     create_openapi_draft,
     create_reviewed_operation_draft,
@@ -73,6 +76,12 @@ def build_parser() -> argparse.ArgumentParser:
     draft_reviewed.add_argument("--candidate-id")
     draft_reviewed.add_argument("--resolved-blockers", type=_csv, required=True)
     draft_reviewed.add_argument("--review-note", required=True)
+
+    draft_catalog = commands.add_parser("draft-catalog-resource")
+    draft_catalog.add_argument("candidate_file", type=Path)
+    draft_catalog.add_argument("config_file", type=Path)
+    draft_catalog.add_argument("--candidate-id")
+    draft_catalog.add_argument("--review-note", required=True)
 
     verify = commands.add_parser("verify")
     verify.add_argument("draft_id")
@@ -154,6 +163,20 @@ def _execute(namespace: argparse.Namespace) -> Any:
             candidate,
             config,
             resolved_blockers=namespace.resolved_blockers,
+            review_note=namespace.review_note,
+            workspace=workspace,
+        )
+    if namespace.command == "draft-catalog-resource":
+        report = _json_file(namespace.candidate_file)
+        candidate = select_catalog_candidate(report, namespace.candidate_id)
+        config = _json_file(namespace.config_file)
+        if not isinstance(config, dict):
+            raise argparse.ArgumentTypeError(
+                "reviewed config file must contain an object"
+            )
+        return create_catalog_resource_draft(
+            candidate,
+            config,
             review_note=namespace.review_note,
             workspace=workspace,
         )

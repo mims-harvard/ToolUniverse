@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import html
 import json
@@ -78,6 +79,20 @@ _FORMAT_HINTS = {
 
 class VSDCatalogProviderError(VSDPolicyError):
     """Raised when one catalog payload violates its bounded provider contract."""
+
+
+def _candidate_digest(candidate: dict[str, Any]) -> str:
+    body = {key: value for key, value in candidate.items() if key != "candidate_sha256"}
+    encoded = json.dumps(
+        body, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _seal_candidate(candidate: dict[str, Any]) -> dict[str, Any]:
+    sealed = copy.deepcopy(candidate)
+    sealed["candidate_sha256"] = _candidate_digest(sealed)
+    return sealed
 
 
 def _bounded_text(value: Any, maximum: int) -> str:
@@ -285,7 +300,7 @@ def _candidate(
         "execution_allowed": False,
     }
     candidate["score"] = _score_candidate(query, candidate)
-    return candidate
+    return _seal_candidate(candidate)
 
 
 def _require_results(value: Any, *, provider: str, maximum: int = 100) -> list[Any]:
@@ -564,7 +579,7 @@ def _augment_socrata(candidate: dict[str, Any]) -> dict[str, Any]:
         }
     )
     augmented["score"] = _score_candidate("", augmented)
-    return augmented
+    return _seal_candidate(augmented)
 
 
 def normalize_provider_payload(
@@ -580,8 +595,10 @@ def normalize_provider_payload(
             raise VSDCatalogProviderError("Socrata normalizer is required")
         candidates = socrata_normalizer(query, limit=limit, catalog_payload=payload)
         augmented = [_augment_socrata(candidate) for candidate in candidates]
-        for candidate in augmented:
-            candidate["score"] = _score_candidate(query, candidate)
+        augmented = [
+            _seal_candidate({**candidate, "score": _score_candidate(query, candidate)})
+            for candidate in augmented
+        ]
         count = payload.get("resultSetSize") if isinstance(payload, dict) else None
         relevant = [item for item in augmented if _is_relevant(query, item)]
         return relevant, count if isinstance(count, int) else len(relevant)
@@ -698,7 +715,7 @@ def _deduplicate(
             for item in [*winner["catalog_sources"], *other["catalog_sources"]]
         }
         merged["catalog_sources"] = [sources[key] for key in sorted(sources)]
-        deduplicated[identity] = merged
+        deduplicated[identity] = _seal_candidate(merged)
     ranked = sorted(
         deduplicated.values(),
         key=lambda item: (
@@ -884,7 +901,7 @@ def discover_multi_catalog_candidates(
         candidates, registry_duplicates, registry_tool_count = _registry_deduplicate(
             candidates, tooluniverse
         )
-    candidates = candidates[:limit]
+    candidates = [_seal_candidate(candidate) for candidate in candidates[:limit]]
     successful = sum(item["status"] == "success" for item in provider_results)
     if successful == 0:
         raise VSDCatalogProviderError("All requested catalog providers failed")
@@ -918,6 +935,110 @@ def discover_multi_catalog_candidates(
     }
 
 
+def validate_catalog_candidate(candidate: Any) -> dict[str, Any]:
+    """Validate one inert, content-addressed normalized catalog candidate."""
+    if not isinstance(candidate, dict):
+        raise VSDCatalogProviderError("catalog candidate must be an object")
+    reviewed = copy.deepcopy(candidate)
+    if (
+        reviewed.get("approval_state") != "unreviewed_candidate"
+        or reviewed.get("execution_allowed") is not False
+        or reviewed.get("metadata_trust") != "untrusted_catalog_metadata"
+    ):
+        raise VSDCatalogProviderError("catalog candidate crossed its trust boundary")
+    provider = reviewed.get("catalog_provider")
+    kind = reviewed.get("candidate_kind")
+    if provider not in PROVIDER_ORDER or kind not in {
+        "data_endpoint",
+        "openapi_specification",
+    }:
+        raise VSDCatalogProviderError("catalog candidate identity is invalid")
+    endpoint = _https_url(reviewed.get("api_endpoint"))
+    specification = _https_url(reviewed.get("specification_url"))
+    if endpoint != reviewed.get("api_endpoint") or specification != reviewed.get(
+        "specification_url"
+    ):
+        raise VSDCatalogProviderError("catalog candidate URL is not canonical HTTPS")
+    if kind == "data_endpoint" and (not endpoint or specification):
+        raise VSDCatalogProviderError("data candidate must contain one endpoint")
+    if kind == "openapi_specification" and (not specification or endpoint):
+        raise VSDCatalogProviderError("specification candidate must contain one contract")
+    identity = specification or endpoint
+    expected_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
+    if reviewed.get("candidate_id") != expected_id:
+        raise VSDCatalogProviderError("catalog candidate ID does not match its identity")
+    response_format = reviewed.get("response_format")
+    interface_type = reviewed.get("interface_type")
+    if response_format not in {"json", "csv", "xml"} or interface_type not in {
+        "rest",
+        "soda",
+        "openapi",
+    }:
+        raise VSDCatalogProviderError("catalog candidate interface is unsupported")
+    if (
+        kind == "openapi_specification"
+        and (interface_type != "openapi" or response_format != "json")
+    ) or (
+        kind == "data_endpoint"
+        and (
+            interface_type not in {"rest", "soda"}
+            or (interface_type == "soda" and response_format != "json")
+        )
+    ):
+        raise VSDCatalogProviderError(
+            "catalog candidate kind and interface do not match"
+        )
+    if any(
+        not isinstance(reviewed.get(field), str) or not reviewed[field]
+        for field in ("name", "catalog_record_id", "dataset_id", "catalog_domain")
+    ):
+        raise VSDCatalogProviderError("catalog candidate metadata is incomplete")
+    sources = reviewed.get("catalog_sources")
+    if (
+        not isinstance(sources, list)
+        or not 1 <= len(sources) <= len(PROVIDER_ORDER) * 20
+        or any(
+            not isinstance(source, dict)
+            or set(source) != {"provider", "record_id", "documentation_url"}
+            or source.get("provider") not in PROVIDER_ORDER
+            or not isinstance(source.get("record_id"), str)
+            or not source["record_id"]
+            or len(source["record_id"]) > 512
+            or _https_url(source.get("documentation_url"))
+            != source.get("documentation_url")
+            for source in sources
+        )
+        or provider not in {source["provider"] for source in sources}
+    ):
+        raise VSDCatalogProviderError("catalog candidate sources are invalid")
+    digest = reviewed.get("candidate_sha256")
+    if not isinstance(digest, str) or digest != _candidate_digest(reviewed):
+        raise VSDCatalogProviderError("catalog candidate digest does not match its content")
+    return reviewed
+
+
+def select_catalog_candidate(report: Any, candidate_id: str | None = None) -> dict[str, Any]:
+    """Select one validated candidate from a discovery result or tool envelope."""
+    if isinstance(report, dict) and report.get("status") == "success":
+        report = report.get("data")
+    if isinstance(report, dict) and "candidate_id" in report:
+        candidate = validate_catalog_candidate(report)
+        if candidate_id is not None and candidate["candidate_id"] != candidate_id:
+            raise VSDCatalogProviderError("requested catalog candidate was not found")
+        return candidate
+    candidates = report.get("candidates") if isinstance(report, dict) else None
+    if not isinstance(candidates, list) or not candidates:
+        raise VSDCatalogProviderError("catalog discovery report contains no candidates")
+    if candidate_id is None:
+        if len(candidates) != 1:
+            raise VSDCatalogProviderError("candidate_id is required for multiple candidates")
+        return validate_catalog_candidate(candidates[0])
+    matches = [item for item in candidates if item.get("candidate_id") == candidate_id]
+    if len(matches) != 1:
+        raise VSDCatalogProviderError("requested catalog candidate was not found")
+    return validate_catalog_candidate(matches[0])
+
+
 __all__ = [
     "PROVIDER_ORDER",
     "VSDCatalogProviderError",
@@ -927,4 +1048,6 @@ __all__ = [
     "normalize_data_europa",
     "normalize_datagov",
     "normalize_provider_payload",
+    "select_catalog_candidate",
+    "validate_catalog_candidate",
 ]

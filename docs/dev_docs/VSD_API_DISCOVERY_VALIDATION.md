@@ -65,6 +65,7 @@ All providers produce the same bounded record:
 - catalog provider, record identity, publisher, license, and update metadata
 - machine-readable format and interface type
 - exact catalog provenance records retained during cross-catalog merging
+- canonical SHA-256 digest covering the complete normalized candidate
 - transparent relevance, readiness, provenance, and completeness score
 - untrusted-metadata and non-executable boundary labels
 
@@ -99,7 +100,61 @@ provider reports its own status, counts, bounded error, request metadata, and
 payload SHA-256. The operation fails closed only when every requested provider
 fails.
 
-## End-to-End Proof
+## Fixed-Resource Promotion
+
+Machine-readable catalog distributions that have no operation contract can be
+promoted only through a narrow reviewed-resource path. The administrator must
+provide a valid `VSDReviewedOperationTool` configuration whose endpoint, fixed
+query, and response format exactly match the content-addressed candidate. The
+request must be an anonymous, input-free GET with no custom headers, body, or
+pagination. Endpoint substitution, format substitution, a modified candidate,
+or any variable or active request fails before a draft is written.
+
+```console
+tooluniverse-vsd-promote --workspace ./private-vsd-promotion \
+  draft-catalog-resource discovery.json reviewed-config.json \
+  --candidate-id <candidate-id> \
+  --review-note "Reviewed exact endpoint, format, schema, and response bounds."
+```
+
+The draft records the candidate digest, exact resource identity, catalog
+provenance, response format, and a binding digest. It still must pass
+representative verification, explicit approval, publication, and loading
+before execution. This path intentionally does not synthesize an arbitrary
+parameterized API from catalog metadata.
+
+## Live Cancer Portfolio Proof
+
+`examples/vsd/multicatalog_cancer_case_study.py` starts with repeated unmet
+demand for exact breast-cancer trial and screening capabilities. It then runs
+five focused cancer searches through Socrata, US Data.gov, the European Data
+Portal, data.gov.uk, and APIs.guru to cover trial, screening, outcome, access,
+and molecular evidence roles. Each selected lead remains inert while its real
+resource or OpenAPI contract is qualified.
+
+Only two leads cross the lifecycle: the Roswell Park SODA endpoint by exact
+primary-site query and the fixed City of York screening CSV. Three other leads
+prove the rejection boundaries: stale and sparse Oklahoma outcome data is
+withheld after retrieval, a Northern Ireland resource fails its declared CSV
+media contract, and five Google Genomics operations fail contract inspection.
+The accepted tools pass six verification executions, cannot publish early, are
+absent from a fresh registry until explicitly loaded, execute through the
+normal ToolUniverse API, close both exact planning gaps, and suppress their own
+endpoints during repeat discovery.
+
+```console
+PYTHONPATH=src python examples/vsd/multicatalog_cancer_case_study.py --mode replay
+TOOLUNIVERSE_DATAGOV_API_KEY=... PYTHONPATH=src \
+  python examples/vsd/multicatalog_cancer_case_study.py --mode live
+```
+
+The checked live report and audit snapshot are
+`examples/vsd/artifacts/multicatalog_cancer_snapshot.md` and
+`examples/vsd/artifacts/multicatalog_cancer_snapshot.json`. The replay uses
+small excerpts captured from the same real catalog and resource responses, and
+the opt-in integration test performs the complete live run.
+
+## Rare-Disease Deduplication Proof
 
 `examples/vsd/multicatalog_discovery_case_study.py` starts with a real planning
 gap: a comparative ALS, Duchenne muscular dystrophy, and spinal muscular
@@ -129,9 +184,7 @@ The checked artifacts are:
 - `examples/vsd/artifacts/multicatalog_discovery_demand_proposal.json`
 
 The unit portfolio runs the complete study twice to prove reproducibility and
-then modifies the snapshot to prove audit-hash tamper detection. The opt-in
-network test `tests/integration/test_vsd_multicatalog_live.py` calls all five
-current provider endpoints with a bounded cancer-clinical-trials query.
+then modifies the snapshot to prove audit-hash tamper detection.
 
 ## Security Boundary
 

@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "result": {
+    "count": 163,
+    "results": [
+      {
+        "id": "5624cab2-85cc-4932-bb6e-63d67e49f516",
+        "license_title": "UK Open Government Licence (OGL)",
+        "metadata_modified": "2019-12-21T12:05:25.557138",
+        "name": "cancer-waiting-times",
+        "notes": "Waiting times for patients accessing cancer services at hospitals in Northern Ireland, including the 62-day target by tumour site.",
+        "organization": {"name": "open-data-ni", "title": "OpenDataNI"},
+        "title": "Cancer Waiting Times",
+        "resources": [
+          {
+            "id": "a4ed6936-d1bc-4911-a3a8-4fe1620f7c35",
+            "description": "Patients receiving first cancer treatment within 62 days of an urgent referral, by tumour site.",
+            "format": "CSV",
+            "name": "62 Day Cancer Waiting Times by Tumour Site",
+            "url": "https://www.health-ni.gov.uk/sites/default/files/publications/health/hs-niwts-cwt-62-day-wait-by-tumour-q1-19-20.csv"
+          }
+        ],
+        "tags": [
+          {"display_name": "62 day", "name": "62 day"},
+          {"display_name": "breast cancer", "name": "breast cancer"},
+          {"display_name": "waiting", "name": "waiting"}
+        ]
+      }
+    ]
+  }
+}

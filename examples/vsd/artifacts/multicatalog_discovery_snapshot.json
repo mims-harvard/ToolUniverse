@@ -1,6 +1,6 @@
 {
   "answer": "Yes. Five verified catalogs yielded five relevant inert candidates; duplicate US listings converged on one endpoint, an administrator reviewed its contract, three disease cohorts passed verification, and the published tool closed the workflow gap.",
-  "audit_sha256": "7479851232c8a36a3cf641cdee17b7fa13ec4975c70cb692d6d92daa9d494161",
+  "audit_sha256": "9228fde0fa09fd290c1dba149b6c06675f16e75cfc21db9405882a2fd7b87f3f",
   "catalog_search": {
     "candidate_count": 5,
     "candidates": [
@@ -9,6 +9,7 @@
         "approval_state": "unreviewed_candidate",
         "candidate_id": "a842b765b256e4be",
         "candidate_kind": "openapi_specification",
+        "candidate_sha256": "fe9993a54250ccf647fd1f758cbe8fde01c9404add804b31cd3f52b77c3e77f4",
         "catalog_domain": "api.apis.guru",
         "catalog_provider": "apis_guru",
         "catalog_record_id": "rare.example.org:v2",
@@ -61,6 +62,7 @@
         "approval_state": "unreviewed_candidate",
         "candidate_id": "b732a65feecf080e",
         "candidate_kind": "data_endpoint",
+        "candidate_sha256": "f4420f988ae08babd5f9a95221522a6d3807b43a9b136a6b86d6794875e8fe35",
         "catalog_domain": "data.example.gov",
         "catalog_provider": "socrata",
         "catalog_record_id": "abcd-1234",
@@ -125,7 +127,7 @@
         "registry_coverage": {
           "classification": "missing",
           "matches": [],
-          "registry_sha256": "1079fef71c5bd0a05ba912e79f9aa910d46a3b082006bb4caa72b98e61611d75",
+          "registry_sha256": "ce2b1063f63af6606a06c360e0588d42004fe5f249a03f096b396a2f22c7a672",
           "semantic_classification": "missing"
         },
         "response_format": "json",
@@ -154,6 +156,7 @@
         "approval_state": "unreviewed_candidate",
         "candidate_id": "f9711602da70bb0e",
         "candidate_kind": "data_endpoint",
+        "candidate_sha256": "2165c9b7f0ba825884d23afa0addd1b164b4147212a357d95996e13dd74c00e2",
         "catalog_domain": "api.gsa.gov",
         "catalog_provider": "datagov",
         "catalog_record_id": "urn:uuid:care-access#0",
@@ -179,7 +182,7 @@
         "registry_coverage": {
           "classification": "missing",
           "matches": [],
-          "registry_sha256": "1079fef71c5bd0a05ba912e79f9aa910d46a3b082006bb4caa72b98e61611d75",
+          "registry_sha256": "ce2b1063f63af6606a06c360e0588d42004fe5f249a03f096b396a2f22c7a672",
           "semantic_classification": "missing"
         },
         "response_format": "csv",
@@ -208,6 +211,7 @@
         "approval_state": "unreviewed_candidate",
         "candidate_id": "164a411540aafe45",
         "candidate_kind": "data_endpoint",
+        "candidate_sha256": "cfc9c74b14ca4ba3f784c6d610ec48b58ea24c120ad9404a66503edf3a90bd10",
         "catalog_domain": "ckan.publishing.service.gov.uk",
         "catalog_provider": "ckan_data_gov_uk",
         "catalog_record_id": "uk-als-services#0",
@@ -233,7 +237,7 @@
         "registry_coverage": {
           "classification": "missing",
           "matches": [],
-          "registry_sha256": "1079fef71c5bd0a05ba912e79f9aa910d46a3b082006bb4caa72b98e61611d75",
+          "registry_sha256": "ce2b1063f63af6606a06c360e0588d42004fe5f249a03f096b396a2f22c7a672",
           "semantic_classification": "missing"
         },
         "response_format": "json",
@@ -261,6 +265,7 @@
         "approval_state": "unreviewed_candidate",
         "candidate_id": "ad83105fdfb9f6ee",
         "candidate_kind": "data_endpoint",
+        "candidate_sha256": "f13465006f830a7388bcb1cef5894e469f3113d995e59b61b1d479f9618f92a8",
         "catalog_domain": "data.europa.eu",
         "catalog_provider": "data_europa",
         "catalog_record_id": "eu-rare-disease-outcomes#0",
@@ -286,7 +291,7 @@
         "registry_coverage": {
           "classification": "missing",
           "matches": [],
-          "registry_sha256": "1079fef71c5bd0a05ba912e79f9aa910d46a3b082006bb4caa72b98e61611d75",
+          "registry_sha256": "ce2b1063f63af6606a06c360e0588d42004fe5f249a03f096b396a2f22c7a672",
           "semantic_classification": "missing"
         },
         "response_format": "xml",
@@ -486,7 +491,7 @@
   "closed_gap": {
     "classification": "existing_exact",
     "overall_action": "compose_existing_tools",
-    "plan_sha256": "8955b4da80343516b7285cfe49786749007caf4b78080178eb2b86c72d17dd10",
+    "plan_sha256": "3ac12602a5306e64d54bf0fe671459afcb9c951b903b42e9b05d7d03bed0906b",
     "registered_duplicate_count": 1,
     "selected_tool": "VSDRareDiseaseLongitudinalCohort"
   },
@@ -568,7 +573,7 @@
       "partial": 0
     },
     "overall_action": "discover_missing_capabilities",
-    "plan_sha256": "5718fc7608f18abf7fcfde1f8390657a8ffa2fd12808ff2b81b778644c011d46",
+    "plan_sha256": "cbcd273505abd0f444b2f67c44f052ce4e7029f6c6528e3177047c7d3b62bd95",
     "proposal_sha256": "49785a274d6bc170f6317b8160fb975f39503b0abc76f30295ea639658868e40"
   },
   "promotion": {

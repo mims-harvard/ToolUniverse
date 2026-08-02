@@ -9,26 +9,32 @@ import os
 import re
 import tempfile
 import threading
+from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterator
-from urllib.parse import urlsplit
+from typing import Any
+from urllib.parse import parse_qsl, urlsplit, urlunsplit
 
-from graphql import OperationType, parse as parse_graphql
+from graphql import OperationType
+from graphql import parse as parse_graphql
 from jsonschema.exceptions import ValidationError
 from lxml import etree
 
 from .execute_function import ToolUniverse
+from .vsd_catalog_providers import (
+    VSDCatalogProviderError,
+    validate_catalog_candidate,
+)
+from .vsd_contracts import VSDContractError, validate_contract_candidate
 from .vsd_dynamic_rest import (
     VSDDynamicRESTError,
     _validated_auth,
     operation_digest,
     register_reviewed_rest_tool,
 )
-from .vsd_tool import _acquire_process_lock, _release_process_lock
 from .vsd_openapi import VSDOpenAPIError, validate_openapi_candidate
-from .vsd_contracts import VSDContractError, validate_contract_candidate
+from .vsd_tool import _acquire_process_lock, _release_process_lock
 
 _PROMOTION_VERSION = 1
 _GENERATOR_VERSION = 1
@@ -522,6 +528,11 @@ def _validated_candidate(
 ) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
     if not isinstance(candidate, dict):
         raise VSDPromotionError("candidate must be an object")
+    if "candidate_sha256" in candidate:
+        try:
+            candidate = validate_catalog_candidate(candidate)
+        except VSDCatalogProviderError as exc:
+            raise VSDPromotionError(str(exc)) from exc
     if (
         candidate.get("approval_state") != "unreviewed_candidate"
         or candidate.get("execution_allowed") is not False
@@ -668,6 +679,11 @@ def build_socrata_tool_config(
         "vsd_promotion": {
             "generator_version": _GENERATOR_VERSION,
             "candidate_id": candidate["candidate_id"],
+            **(
+                {"candidate_sha256": candidate["candidate_sha256"]}
+                if candidate.get("candidate_sha256")
+                else {}
+            ),
             "catalog_domain": candidate["catalog_domain"],
             "dataset_id": candidate["dataset_id"],
             "dataset_updated_at": candidate.get("updated_at"),
@@ -803,6 +819,113 @@ def create_reviewed_operation_draft(
     return _create_draft_from_config(bound, workspace=workspace)
 
 
+def create_catalog_resource_draft(
+    candidate: dict[str, Any],
+    config: dict[str, Any],
+    *,
+    review_note: str,
+    workspace: str | Path | None = None,
+) -> dict[str, Any]:
+    """Bind one exact, input-free reviewed resource to a catalog candidate."""
+    try:
+        reviewed = validate_catalog_candidate(candidate)
+    except VSDCatalogProviderError as exc:
+        raise VSDPromotionError(str(exc)) from exc
+    if reviewed["candidate_kind"] != "data_endpoint":
+        raise VSDPromotionError(
+            "Catalog resource promotion requires a data endpoint candidate"
+        )
+    if not isinstance(config, dict) or "vsd_promotion" in config:
+        raise VSDPromotionError(
+            "Reviewed config must be an unbound configuration object"
+        )
+    note = _review_text(review_note, field="review_note", minimum=20, maximum=1000)
+    normalized = _normalized_reviewed_config(copy.deepcopy(config))
+    operation = normalized.get("vsd_reviewed_operation")
+    properties = normalized.get("parameter", {}).get("properties")
+    if (
+        normalized.get("type") != "VSDReviewedOperationTool"
+        or not isinstance(operation, dict)
+        or operation.get("transport") != "http"
+        or operation.get("protocol") != "rest"
+        or operation.get("auth") != {"type": "none"}
+        or properties != {}
+    ):
+        raise VSDPromotionError(
+            "Catalog resources require an anonymous, input-free reviewed REST tool"
+        )
+    request = operation.get("request")
+    pagination = operation.get("pagination")
+    if (
+        not isinstance(request, dict)
+        or request.get("method") != "GET"
+        or request.get("path_arguments") != {}
+        or request.get("query_arguments") != {}
+        or request.get("fixed_headers") != {}
+        or request.get("body")
+        != {"mode": "none", "arguments": {}, "fixed": {}}
+        or not isinstance(pagination, dict)
+        or pagination.get("type") != "none"
+    ):
+        raise VSDPromotionError(
+            "Catalog resources must use one exact GET without inputs, headers, or pagination"
+        )
+
+    candidate_url = urlsplit(reviewed["api_endpoint"])
+    endpoint = urlsplit(operation.get("endpoint", ""))
+    expected_endpoint = urlunsplit(
+        (candidate_url.scheme, candidate_url.netloc, candidate_url.path, "", "")
+    )
+    try:
+        query_pairs = (
+            parse_qsl(
+                candidate_url.query,
+                keep_blank_values=True,
+                strict_parsing=True,
+                max_num_fields=50,
+            )
+            if candidate_url.query
+            else []
+        )
+    except ValueError as exc:
+        raise VSDPromotionError("Catalog endpoint query is invalid") from exc
+    if len({name for name, _ in query_pairs}) != len(query_pairs):
+        raise VSDPromotionError("Catalog endpoint query names must be unique")
+    if (
+        urlunsplit((endpoint.scheme, endpoint.netloc, endpoint.path, "", ""))
+        != expected_endpoint
+        or request.get("fixed_query") != dict(query_pairs)
+    ):
+        raise VSDPromotionError(
+            "Reviewed resource endpoint does not exactly match the catalog candidate"
+        )
+    response = operation.get("response")
+    if (
+        not isinstance(response, dict)
+        or response.get("format") != reviewed["response_format"]
+    ):
+        raise VSDPromotionError(
+            "Reviewed response format does not match the catalog candidate"
+        )
+
+    binding = {
+        "candidate_id": reviewed["candidate_id"],
+        "candidate_sha256": reviewed["candidate_sha256"],
+        "identity": reviewed["api_endpoint"],
+        "catalog_provider": reviewed["catalog_provider"],
+        "catalog_sources": reviewed["catalog_sources"],
+        "response_format": reviewed["response_format"],
+    }
+    binding["binding_sha256"] = _canonical_digest(binding)
+    normalized["vsd_promotion"] = {
+        "generator_version": _GENERATOR_VERSION,
+        "source_type": "catalog_resource",
+        "review_note": note,
+        "catalog_binding": binding,
+    }
+    return _create_draft_from_config(normalized, workspace=workspace)
+
+
 def _hoist_schema_definitions(
     schema: dict[str, Any], definitions: dict[str, Any]
 ) -> dict[str, Any]:
@@ -827,7 +950,7 @@ def build_openapi_tool_config(
     description: str,
     include_parameters: list[str] | None = None,
     fixed_query: dict[str, Any] | None = None,
-    timeout_seconds: int | float = 20,
+    timeout_seconds: float = 20,
     credential_env: str | None = None,
 ) -> dict[str, Any]:
     """Generate one narrow read-only tool from an inspected OpenAPI operation."""
@@ -1040,7 +1163,7 @@ def create_openapi_draft(
     description: str,
     include_parameters: list[str] | None = None,
     fixed_query: dict[str, Any] | None = None,
-    timeout_seconds: int | float = 20,
+    timeout_seconds: float = 20,
     credential_env: str | None = None,
     workspace: str | Path | None = None,
 ) -> dict[str, Any]:
@@ -1570,6 +1693,7 @@ __all__ = [
     "approve_draft",
     "build_openapi_tool_config",
     "build_socrata_tool_config",
+    "create_catalog_resource_draft",
     "create_draft",
     "create_openapi_draft",
     "create_reviewed_operation_draft",

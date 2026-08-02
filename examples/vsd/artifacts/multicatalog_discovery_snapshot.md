@@ -90,4 +90,4 @@ Replanning classified the original gap as `existing_exact` and selected `VSDRare
 
 This proves discovery and software-governance behavior against deterministic provider fixtures. It does not certify the scientific quality of a catalog record, approve a provider automatically, or let an agent bypass contract review and human approval.
 
-**Case audit SHA-256:** `7479851232c8a36a3cf641cdee17b7fa13ec4975c70cb692d6d92daa9d494161`
+**Case audit SHA-256:** `9228fde0fa09fd290c1dba149b6c06675f16e75cfc21db9405882a2fd7b87f3f`

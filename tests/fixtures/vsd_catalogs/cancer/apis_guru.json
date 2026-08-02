@@ -1,0 +1,23 @@
+{
+  "googleapis.com:genomics": {
+    "added": "2021-09-21T23:08:31.735Z",
+    "preferred": "v2alpha1",
+    "versions": {
+      "v2alpha1": {
+        "added": "2021-09-21T23:08:31.735Z",
+        "info": {
+          "description": "Uploads, processes, queries, and searches Genomics data in the cloud.",
+          "license": {"name": "Creative Commons Attribution 3.0"},
+          "title": "Genomics API",
+          "version": "v2alpha1",
+          "x-apisguru-categories": ["analytics", "media"]
+        },
+        "externalDocs": {"url": "https://cloud.google.com/genomics"},
+        "updated": "2023-04-21T23:09:23.065Z",
+        "swaggerUrl": "https://api.apis.guru/v2/specs/googleapis.com/genomics/v2alpha1/openapi.json",
+        "openapiVer": "3.0.0",
+        "link": "https://api.apis.guru/v2/specs/googleapis.com:genomics/v2alpha1.json"
+      }
+    }
+  }
+}

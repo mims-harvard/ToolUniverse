@@ -1,5 +1,48 @@
 # ToolUniverse VSD Validation Case Studies
 
+## Live Multi-Catalog Breast-Cancer Program Growth
+
+`multicatalog_cancer_case_study.py` tests the new catalog sources as a real
+growth system, not just as search adapters. A breast-cancer program needs five
+different evidence roles: local trial inventory, population screening trends,
+treatment-access delays, outcome benchmarks, and a genomics workflow. Five
+focused searches run through Socrata, US Data.gov, the European Data Portal,
+data.gov.uk, and APIs.guru, and one exact lead from each catalog is then tested
+against its underlying live resource or contract.
+
+The case deliberately does not publish every relevant-looking result. The
+Roswell Park trial endpoint and City of York screening series each pass three
+bounded verification calls, approval, publication, fresh loading, execution,
+workflow replanning, and duplicate suppression. An Oklahoma outcome resource
+is withheld because it ends in 2019 and has only three non-zero historical
+values; a Northern Ireland CSV is blocked because the server returns
+`application/octet-stream`; and all five operations in the discovered Google
+Genomics contract remain blocked by authentication, write, body, or parameter
+constraints. This makes the central VSD advantage measurable: it finds useful
+new sources while preventing catalog relevance from being mistaken for runtime
+or evidence fitness.
+
+Run the deterministic replay from the repository root:
+
+```console
+PYTHONPATH=src python examples/vsd/multicatalog_cancer_case_study.py --mode replay
+```
+
+Run the complete network proof with a personal Data.gov key to avoid the public
+demo key's low quota:
+
+```console
+TOOLUNIVERSE_DATAGOV_API_KEY=... PYTHONPATH=src \
+  python examples/vsd/multicatalog_cancer_case_study.py --mode live
+```
+
+Review `artifacts/multicatalog_cancer_snapshot.md` and its machine-verifiable
+JSON counterpart. The checked live proof records five catalog searches, five
+qualification outcomes, two complete promotion hash chains, six verification
+executions, two final executions, two closed workflow gaps, duplicate
+suppression, credential-value exclusion, and 18 end-to-end assertions. The
+fixture replay and the opt-in network test run the same orchestration code.
+
 ## Multi-Catalog Rare-Disease Capability Growth
 
 `multicatalog_discovery_case_study.py` demonstrates organic growth across five
