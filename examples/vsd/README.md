@@ -789,3 +789,44 @@ Official references:
 - CDC PLACES FAQ: https://www.cdc.gov/places/faqs/index.html
 - ClinicalTrials.gov API: https://clinicaltrials.gov/data-about-studies/learn-about-api
 - openFDA label API: https://open.fda.gov/apis/drug/label/how-to-use-the-endpoint/
+
+## Continuous Catalog Scanner
+
+`continuous_catalog_scanner_case_study.py` evaluates the administrator/cron
+scanner against a complete live API directory. The scanner records additions,
+changes, and removals between hash-linked cycles, rotates through previously
+uninspected contracts, saves content-addressed local snapshots, and uses the
+existing VSD contract and configuration boundaries to prepare inert review
+candidates.
+
+The source-intelligence path accepts OpenAPI, GraphQL, AsyncAPI, Postman, WSDL,
+protobuf, and MCP contract inputs. The large live evaluation uses APIs.guru's
+OpenAPI directory because it supplies thousands of contracts through one
+bounded catalog response.
+
+Run the reproducible two-cycle evaluation:
+
+```console
+PYTHONPATH=src TOOLUNIVERSE_CACHE_PERSIST=false \
+  uv run python examples/vsd/continuous_catalog_scanner_case_study.py
+```
+
+The checked run inventoried 2,529 directory records, audited 2,744 existing
+ToolUniverse tools, inspected 127 unique contracts, and identified 4,925 unique
+operation candidates. The existing VSD generator accepted 717 unique operations
+as draft-ready configurations across 31 provider hosts; 4,281 operations were
+blocked and 24 contract failures were isolated. No candidate was approved,
+published, loaded, or executed.
+
+Use the scanner itself from an administrator-owned scheduler:
+
+```console
+tooluniverse-vsd-scan --state-directory ~/.tooluniverse/vsd/scanner run \
+  --max-contracts 100 --draftable-tool-target 500
+tooluniverse-vsd-scan --state-directory ~/.tooluniverse/vsd/scanner status
+```
+
+See `artifacts/continuous_catalog_scanner_portfolio.md` for the reviewer report,
+`artifacts/continuous_catalog_scanner_portfolio.json` for the tamper-evident
+ledger, and `docs/dev_docs/VSD_CONTINUOUS_SCANNER.md` for the operational and
+trust boundaries.
