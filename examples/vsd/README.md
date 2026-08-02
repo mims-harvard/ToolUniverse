@@ -40,11 +40,42 @@ review and landing units.
 
 VSD discovery can also search SmartAPI and the GA4GH Service Registry. SmartAPI
 records retain both the exact service root and content-addressed OpenAPI
-document, while GA4GH service records remain inert until an operation contract
-is independently inspected. A narrowly reviewed path handles read-only GET
-operations whose specification omits only the JSON response schema; every
-other inspection blocker remains enforced. See
+document. GA4GH records produce only the standard, input-free `service-info`
+operation relative to the registered service root; each candidate remains inert
+until repeated execution matches the registered name and service type. A
+narrowly reviewed path handles read-only GET operations whose specification
+omits only the JSON response schema; every other inspection blocker remains
+enforced. See
 `docs/dev_docs/VSD_API_DISCOVERY_VALIDATION.md` for the CLI and review contract.
+
+## GA4GH Service Qualification Portfolio
+
+`ga4gh_service_qualification_portfolio.py` evaluates 15 implementations from
+the GA4GH Service Registry through one parameterized pipeline. The scenario
+data spans service-registry, DRS, TRS, WES, and RNAget records. The runner has
+no organization, standard, or endpoint-specific branch.
+
+For every record, ToolUniverse performs demand-based registry discovery and
+derives the standard `service-info` operation. The case then creates a sealed
+draft and proves that publication is unavailable before verification. Three
+services match the registered name and type across three calls; each is
+approved, published, loaded into a fresh ToolUniverse, executed, and removed
+from the next candidate list by exact registry deduplication. Twelve services
+fail before approval because the standard path is unavailable, returns an
+unexpected media type or redirect, or reports type metadata that differs from
+the registry. Those cases contain no approval or publication artifact.
+
+```console
+PYTHONPATH=src python examples/vsd/ga4gh_service_qualification_portfolio.py \
+  --mode replay
+PYTHONPATH=src python examples/vsd/ga4gh_service_qualification_portfolio.py \
+  --mode network_backed
+```
+
+The checked report is
+`artifacts/ga4gh_service_qualification_portfolio.md`, with a tamper-evident
+JSON counterpart. It distinguishes live evidence from checked replay for each
+service and records bounded fallback reasons.
 
 ## Biomedical Evaluation Portfolio
 

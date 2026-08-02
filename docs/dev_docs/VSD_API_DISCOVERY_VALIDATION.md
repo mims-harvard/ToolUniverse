@@ -3,9 +3,9 @@
 ## Scope
 
 `VSDDiscoverAPICandidates` converts a non-sensitive research capability into
-reviewable data-endpoint and OpenAPI leads. Omitting `providers` preserves the
-original Socrata-only response contract. Supplying `providers` enables the
-normalized multi-catalog path:
+reviewable data-endpoint, standard Service Info, and OpenAPI leads. Omitting
+`providers` preserves the original Socrata-only response contract. Supplying
+`providers` enables the normalized multi-catalog path:
 
 ```python
 result = tu.run_one_function(
@@ -45,7 +45,7 @@ explicit loading before an agent can execute it.
 | `ckan_data_gov_uk` | data.gov.uk CKAN backend | JSON, CSV, or XML resource | 1 MB, no credential |
 | `apis_guru` | APIs.guru OpenAPI Directory | OpenAPI document | complete directory, hard 10 MB ceiling |
 | `smartapi` | SmartAPI registry query | OpenAPI document plus exact service root | 10 results, hard 10 MB ceiling |
-| `ga4gh_registry` | GA4GH Service Registry | GA4GH service root | complete registry, hard 1 MB ceiling |
+| `ga4gh_registry` | GA4GH Service Registry | standard `GET /service-info` operation | complete registry, hard 1 MB ceiling |
 
 The integrations follow the providers' published interfaces: [Data.gov Catalog
 API](https://resources.data.gov/catalog-api/), [European Data Portal Hub
@@ -108,9 +108,20 @@ fails.
 SmartAPI performs server-side relevance search and returns complete registered
 OpenAPI documents. VSD preserves both the registry metadata endpoint and the
 declared service root, then binds any selected operation to the hashes of the
-catalog candidate and inspected document. GA4GH records identify services, not
-individual operations, so they remain `service_endpoint` candidates until an
-administrator obtains and inspects an exact supported contract.
+catalog candidate and inspected document. GA4GH Service Info defines one
+standard input-free metadata operation for every conforming service, so VSD can
+derive that exact path without inferring a domain operation. The normalized
+candidate seals the registry ID, name, service root, environment, and standard
+group, artifact, and version. Discovery does not call the service.
+
+A GA4GH Service Info draft uses anonymous `GET`, accepts no inputs, follows no
+redirects, and has a bounded JSON schema. Approval requires at least three
+executions whose service name and standard version exactly match the registry;
+the standard group and artifact must match case-insensitively. A valid JSON
+response with different registered type metadata, an unavailable endpoint, or
+an unexpected content type cannot be approved. The live service ID may differ
+from the registry record ID and remains observable in the response rather than
+being treated as a type mismatch.
 
 ## Catalog OpenAPI Promotion
 
@@ -141,6 +152,22 @@ tooluniverse-vsd-promote --workspace ./private-vsd-promotion \
   --resolved-blockers json_response_missing \
   --review-note "Reviewed the exact response structure and three representative calls."
 ```
+
+## GA4GH Service Qualification Evaluation
+
+`examples/vsd/ga4gh_service_qualification_portfolio.py` applies the standard
+Service Info path to 15 registry implementations through one data-driven
+runner. It covers service-registry, DRS, TRS, WES, and RNAget records and
+retains both successful and unsuccessful qualification outcomes.
+
+The checked portfolio admits three services after nine registry-bound
+verification executions and rejects twelve before approval. Accepted tools
+complete publication, fresh-universe loading, final execution, and exact
+duplicate suppression. Rejected drafts include live-looking JSON with standard
+type drift as well as unavailable, redirecting, and non-JSON paths; none gains
+an approval or publication artifact. See
+`examples/vsd/artifacts/ga4gh_service_qualification_portfolio.md` and its JSON
+counterpart for the source-by-source evidence.
 
 ## Biomedical Evaluation Portfolio
 

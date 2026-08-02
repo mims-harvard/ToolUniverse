@@ -163,6 +163,26 @@ def _https_url(value: Any) -> str:
     return urlunsplit(("https", host, parsed.path or "/", parsed.query, ""))
 
 
+def _ga4gh_service_info_endpoint(value: Any) -> tuple[str, str] | None:
+    """Return a canonical service root and its standard Service Info operation."""
+    root = _https_url(value)
+    if not root:
+        return None
+    parsed = urlsplit(root)
+    if parsed.query:
+        return None
+    path = (parsed.path or "/").rstrip("/")
+    if path.casefold().endswith("/service-info"):
+        service_path = path
+        root_path = path[: -len("/service-info")] or "/"
+    else:
+        root_path = path or "/"
+        service_path = f"{path}/service-info" if path else "/service-info"
+    service_root = urlunsplit(("https", parsed.netloc, root_path, "", ""))
+    endpoint = urlunsplit(("https", parsed.netloc, service_path, "", ""))
+    return service_root, endpoint
+
+
 def _media_contract(media_type: Any, format_name: Any) -> tuple[str, str] | None:
     media = _bounded_text(media_type, 120).casefold().split(";", 1)[0].strip()
     label = _bounded_text(format_name, 120).casefold()
@@ -651,7 +671,7 @@ def normalize_smartapi(query: str, payload: Any) -> tuple[list[dict[str, Any]], 
 def normalize_ga4gh_registry(
     query: str, payload: Any
 ) -> tuple[list[dict[str, Any]], int]:
-    """Normalize GA4GH service records as inert, protocol-labelled candidates."""
+    """Normalize the standard Service Info operation for GA4GH service records."""
     results = _require_results(payload, provider="GA4GH", maximum=200)
     candidates: list[dict[str, Any]] = []
     for item in results:
@@ -659,6 +679,23 @@ def normalize_ga4gh_registry(
             continue
         service_type = item.get("type") if isinstance(item.get("type"), dict) else {}
         artifact = _bounded_text(service_type.get("artifact"), 80).casefold()
+        group = _bounded_text(service_type.get("group"), 120)
+        standard_version = _bounded_text(service_type.get("version"), 80)
+        registry_id = _bounded_text(item.get("id"), 500)
+        registered_name = _bounded_text(item.get("name"), 200)
+        service_urls = _ga4gh_service_info_endpoint(item.get("url"))
+        if not all(
+            (
+                artifact,
+                group,
+                standard_version,
+                registry_id,
+                registered_name,
+                service_urls,
+            )
+        ):
+            continue
+        service_root, service_info_endpoint = service_urls
         organization = (
             item.get("organization")
             if isinstance(item.get("organization"), dict)
@@ -674,20 +711,33 @@ def normalize_ga4gh_registry(
         candidate = _candidate(
             query,
             provider="ga4gh_registry",
-            record_id=item.get("id"),
-            name=item.get("name"),
+            record_id=registry_id,
+            name=f"{registered_name} Service Info",
             description=item.get("description"),
-            api_endpoint=item.get("url"),
+            api_endpoint=service_info_endpoint,
             documentation_url=item.get("documentationUrl"),
             publisher=organization.get("name"),
             updated_at=item.get("updatedAt"),
             tags=tags,
             media_type="application/json",
             response_format="json",
-            interface_type="ga4gh",
+            interface_type="ga4gh_service_info",
             provenance_label="official_standards_registry",
-            candidate_kind="service_endpoint",
+            candidate_kind="data_endpoint",
         )
+        if candidate:
+            candidate["service_binding"] = {
+                "registry_service_id": registry_id,
+                "registered_name": registered_name,
+                "service_root": service_root,
+                "registered_type": {
+                    "group": group,
+                    "artifact": artifact,
+                    "version": standard_version,
+                },
+                "environment": _bounded_text(item.get("environment"), 80),
+            }
+            candidate = _seal_candidate(candidate)
         if candidate and _is_relevant(query, candidate):
             candidates.append(candidate)
     return candidates, len(results)
@@ -1143,9 +1193,7 @@ def validate_catalog_candidate(candidate: Any) -> dict[str, Any]:
     ):
         raise VSDCatalogProviderError("data candidate must contain one endpoint")
     if kind == "openapi_specification" and not specification:
-        raise VSDCatalogProviderError(
-            "specification candidate must contain a contract"
-        )
+        raise VSDCatalogProviderError("specification candidate must contain a contract")
     identity = specification or endpoint
     expected_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
     if reviewed.get("candidate_id") != expected_id:
@@ -1159,23 +1207,83 @@ def validate_catalog_candidate(candidate: Any) -> dict[str, Any]:
         "soda",
         "openapi",
         "ga4gh",
+        "ga4gh_service_info",
     }:
         raise VSDCatalogProviderError("catalog candidate interface is unsupported")
     if (
-        kind == "openapi_specification"
-        and (interface_type != "openapi" or response_format != "json")
-    ) or (
-        kind == "data_endpoint"
-        and (
-            interface_type not in {"rest", "soda"}
-            or (interface_type == "soda" and response_format != "json")
+        (
+            kind == "openapi_specification"
+            and (interface_type != "openapi" or response_format != "json")
         )
-    ) or (
-        kind == "service_endpoint"
-        and (interface_type != "ga4gh" or response_format != "json")
+        or (
+            kind == "data_endpoint"
+            and (
+                interface_type not in {"rest", "soda", "ga4gh_service_info"}
+                or (interface_type == "soda" and response_format != "json")
+                or (
+                    interface_type == "ga4gh_service_info" and response_format != "json"
+                )
+            )
+        )
+        or (
+            kind == "service_endpoint"
+            and (interface_type != "ga4gh" or response_format != "json")
+        )
     ):
         raise VSDCatalogProviderError(
             "catalog candidate kind and interface do not match"
+        )
+    service_binding = reviewed.get("service_binding")
+    if interface_type == "ga4gh_service_info":
+        expected_keys = {
+            "registry_service_id",
+            "registered_name",
+            "service_root",
+            "registered_type",
+            "environment",
+        }
+        registered_type = (
+            service_binding.get("registered_type")
+            if isinstance(service_binding, dict)
+            else None
+        )
+        service_urls = (
+            _ga4gh_service_info_endpoint(service_binding.get("service_root"))
+            if isinstance(service_binding, dict)
+            else None
+        )
+        if (
+            not isinstance(service_binding, dict)
+            or set(service_binding) != expected_keys
+            or service_binding.get("registry_service_id")
+            != reviewed.get("catalog_record_id")
+            or not isinstance(service_binding.get("registered_name"), str)
+            or not service_binding["registered_name"]
+            or len(service_binding["registered_name"]) > 200
+            or not service_urls
+            or service_urls[0] != service_binding.get("service_root")
+            or service_urls[1] != endpoint
+            or not isinstance(service_binding.get("environment"), str)
+            or len(service_binding["environment"]) > 80
+            or not isinstance(registered_type, dict)
+            or set(registered_type) != {"group", "artifact", "version"}
+            or any(
+                not isinstance(registered_type.get(field), str)
+                or not registered_type[field]
+                or len(registered_type[field]) > maximum
+                for field, maximum in (
+                    ("group", 120),
+                    ("artifact", 80),
+                    ("version", 80),
+                )
+            )
+        ):
+            raise VSDCatalogProviderError(
+                "GA4GH Service Info candidate binding is invalid"
+            )
+    elif service_binding is not None:
+        raise VSDCatalogProviderError(
+            "service_binding is only valid for GA4GH Service Info candidates"
         )
     if any(
         not isinstance(reviewed.get(field), str) or not reviewed[field]

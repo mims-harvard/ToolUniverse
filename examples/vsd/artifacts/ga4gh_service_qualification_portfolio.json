@@ -1,0 +1,989 @@
+{
+  "accepted_count": 3,
+  "all_assertions_passed": true,
+  "case_count": 15,
+  "cases": [
+    {
+      "candidate_id": "629f064e4c2b1b67",
+      "case_id": "ga4gh_registry_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:22:55.006295+00:00"
+      },
+      "catalog_query": "GA4GH standards registry",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "GA4GH Standards and Implementations Registry",
+      "registered_type": {
+        "artifact": "service-registry",
+        "group": "org.ga4gh",
+        "version": "1.0.0"
+      },
+      "registry_record_id": "org.ga4gh.registry",
+      "service_info_endpoint": "https://registry.ga4gh.org/v1/service-info",
+      "service_root": "https://registry.ga4gh.org/v1",
+      "with_vsd": {
+        "assertions": {
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert_until_review": true,
+          "complete_hash_chain_was_recorded": true,
+          "early_publication_was_blocked": true,
+          "fresh_runtime_execution_succeeded": true,
+          "post_load_discovery_suppressed_the_exact_operation": true,
+          "publication_required_explicit_loading": true,
+          "three_conformance_executions_passed": true
+        },
+        "failure": null,
+        "final_execution_count": 1,
+        "governance": {
+          "early_publication_blocked": true,
+          "hash_chain": {
+            "approval_sha256": "56ee0d44ffb16c61305efdf883590c6e8f3dfa2e8f27802cc9b24f08240512ef",
+            "catalog_candidate_sha256": "5e3ff35180fe578932ece4ec72bd645c79dec8e2ed3fe39b287365d43b48e28d",
+            "draft_sha256": "3f3fdb094e2279b23decd614d8b3ac361a09696d45ea380d972244280f57ecb5",
+            "publication_sha256": "3c019ee27b2273954e0e0bbe8ad8a15d0fe09e3b36ecdc1acf731a58642cc4a0",
+            "verification_sha256": "207bb08cdc5088e05f1ecc0abdac31bee9b58294461b1287b6310af1ca54b5f2"
+          },
+          "loaded_into_fresh_universe": [
+            "ReviewedGA4GHRegistryInfo"
+          ],
+          "registered_duplicate_count": 1
+        },
+        "observed_service": {
+          "id": "org.ga4gh.registry",
+          "name": "GA4GH Standards and Implementations Registry",
+          "payload_sha256": "79bd47639405e91860a3067f3f3483832edb8bad75a56f9b1d18447f961bec98",
+          "type": {
+            "artifact": "service-registry",
+            "group": "org.ga4gh",
+            "version": "1.0.0"
+          }
+        },
+        "published_tool": "ReviewedGA4GHRegistryInfo",
+        "qualification": "accepted",
+        "verification_execution_count": 3
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "df5661ac79508e71",
+      "case_id": "ncbi_drs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:23:48.314546+00:00"
+      },
+      "catalog_query": "NCBI DRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "NCBI Data Repository Service",
+      "registered_type": {
+        "artifact": "drs",
+        "group": "org.ga4gh",
+        "version": "1.2.0"
+      },
+      "registry_record_id": "gov.nih.nlm.ncbi.drs",
+      "service_info_endpoint": "https://locate.be-md.ncbi.nlm.nih.gov/ga4gh/drs/v1/service-info",
+      "service_root": "https://locate.be-md.ncbi.nlm.nih.gov/ga4gh/drs/v1",
+      "with_vsd": {
+        "assertions": {
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert_until_review": true,
+          "complete_hash_chain_was_recorded": true,
+          "early_publication_was_blocked": true,
+          "fresh_runtime_execution_succeeded": true,
+          "post_load_discovery_suppressed_the_exact_operation": true,
+          "publication_required_explicit_loading": true,
+          "three_conformance_executions_passed": true
+        },
+        "failure": null,
+        "final_execution_count": 1,
+        "governance": {
+          "early_publication_blocked": true,
+          "hash_chain": {
+            "approval_sha256": "a13e1731365974e63ff9803a14b0bf1b7cff0f4e3b82c1d7e51ce5871f8c6933",
+            "catalog_candidate_sha256": "43d3e9a8560bfaff6f2e2cca6afdb5b2ffbe7837987c0314d1ab8cc1428b7081",
+            "draft_sha256": "ce30f2b2a698f4aabb15d01143d688d211e49fa1c459727ba0e1a633344492a4",
+            "publication_sha256": "e2752058b60797ca8904e844094af33e1c01131f991e9430fad116abc9bb646e",
+            "verification_sha256": "44ee1856b45c1be7858f4dde76abb77df65dbcf92b7fd61ea5e15ceb99136cd8"
+          },
+          "loaded_into_fresh_universe": [
+            "ReviewedNCBIDRSServiceInfo"
+          ],
+          "registered_duplicate_count": 1
+        },
+        "observed_service": {
+          "id": "ncbi.drs",
+          "name": "NCBI Data Repository Service",
+          "payload_sha256": "1ba752d31825db148249ebe1a11c38db2d262059bcf093cc3028ecc5cf59c8e6",
+          "type": {
+            "artifact": "drs",
+            "group": "org.ga4gh",
+            "version": "1.2.0"
+          }
+        },
+        "published_tool": "ReviewedNCBIDRSServiceInfo",
+        "qualification": "accepted",
+        "verification_execution_count": 3
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "14dd7a80ef4ac84b",
+      "case_id": "dockstore_trs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:24:55.207342+00:00"
+      },
+      "catalog_query": "Dockstore TRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "Dockstore",
+      "registered_type": {
+        "artifact": "trs",
+        "group": "org.ga4gh",
+        "version": "2.0.1"
+      },
+      "registry_record_id": "org.dockstore.dockstoreapi",
+      "service_info_endpoint": "https://dockstore.org/api/ga4gh/trs/v2/service-info",
+      "service_root": "https://dockstore.org/api/ga4gh/trs/v2",
+      "with_vsd": {
+        "assertions": {
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert_until_review": true,
+          "complete_hash_chain_was_recorded": true,
+          "early_publication_was_blocked": true,
+          "fresh_runtime_execution_succeeded": true,
+          "post_load_discovery_suppressed_the_exact_operation": true,
+          "publication_required_explicit_loading": true,
+          "three_conformance_executions_passed": true
+        },
+        "failure": null,
+        "final_execution_count": 1,
+        "governance": {
+          "early_publication_blocked": true,
+          "hash_chain": {
+            "approval_sha256": "e8a38daae63451569a61313937dc94c21d3dac2b7a09d7236a1d12315f686508",
+            "catalog_candidate_sha256": "043c0ca7c15ddad052bcb369c7fa9c6bfaec217ea403937590c1135502f298b9",
+            "draft_sha256": "06c17c42abf945657d4b5e2bcd2a0fa3b7b8f54ea7ce3d393e5c7e8eb23dfd78",
+            "publication_sha256": "beede88528db60e7d43b6579483cea21f2b73d9681d4a1a6fcc81a9c38df7ef4",
+            "verification_sha256": "620ff766335d29cf9f3d6e520113c62de809af3d9b64905e48e2e8299a0c0e2c"
+          },
+          "loaded_into_fresh_universe": [
+            "ReviewedDockstoreTRSServiceInfo"
+          ],
+          "registered_duplicate_count": 1
+        },
+        "observed_service": {
+          "id": "1",
+          "name": "Dockstore",
+          "payload_sha256": "b6c2adfc29ee475934da365f7cb88e19ff4b73e52a5ad4ada734671aed55deb0",
+          "type": {
+            "artifact": "TRS",
+            "group": "org.ga4gh",
+            "version": "2.0.1"
+          }
+        },
+        "published_tool": "ReviewedDockstoreTRSServiceInfo",
+        "qualification": "accepted",
+        "verification_execution_count": 3
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "6f1c71bf43fe5ab7",
+      "case_id": "cavatica_wes_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:25:11.658883+00:00"
+      },
+      "catalog_query": "Cavatica WES",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "Cavatica GA4GH WES API",
+      "registered_type": {
+        "artifact": "wes",
+        "group": "org.ga4gh",
+        "version": "1.0.0"
+      },
+      "registry_record_id": "com.sbgenomics.cavatica-ga4gh-api.wes",
+      "service_info_endpoint": "https://cavatica-ga4gh-api.sbgenomics.com/ga4gh/wes/v1/service-info",
+      "service_root": "https://cavatica-ga4gh-api.sbgenomics.com/ga4gh/wes/v1",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "registered_metadata_mismatch",
+          "message": "Verification case 0 row 0 failed JSON pointer equality assertions",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidatecavaticawesserviceinfo_6c45b143a468"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "b81fee8dc2e37310",
+      "case_id": "cgc_wes_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:25:25.934697+00:00"
+      },
+      "catalog_query": "CGC WES",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "CGC GA4GH WES API",
+      "registered_type": {
+        "artifact": "wes",
+        "group": "org.ga4gh",
+        "version": "1.0.0"
+      },
+      "registry_record_id": "com.sbgenomics.cgc-ga4gh-api.wes",
+      "service_info_endpoint": "https://cgc-ga4gh-api.sbgenomics.com/ga4gh/wes/v1/service-info",
+      "service_root": "https://cgc-ga4gh-api.sbgenomics.com/ga4gh/wes/v1",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "registered_metadata_mismatch",
+          "message": "Verification case 0 row 0 failed JSON pointer equality assertions",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidatecgcwesserviceinfo_07d7c4b80ff3"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "821922bf385cb457",
+      "case_id": "bdc_wes_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:25:34.445115+00:00"
+      },
+      "catalog_query": "BioData Catalyst WES",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "BDC GA4GH WES API",
+      "registered_type": {
+        "artifact": "wes",
+        "group": "org.ga4gh",
+        "version": "1.0.0"
+      },
+      "registry_record_id": "gov.nih.nhlbi.biodatacatalyst.sb.ga4gh-api.wes",
+      "service_info_endpoint": "https://ga4gh-api.sb.biodatacatalyst.nhlbi.nih.gov/ga4gh/wes/v1/service-info",
+      "service_root": "https://ga4gh-api.sb.biodatacatalyst.nhlbi.nih.gov/ga4gh/wes/v1",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "registered_metadata_mismatch",
+          "message": "Verification case 0 row 0 failed JSON pointer equality assertions",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidatebdcwesserviceinfo_507909b0fd31"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "654c3920a73481db",
+      "case_id": "cavatica_drs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:25:40.482810+00:00"
+      },
+      "catalog_query": "Cavatica DRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "Cavatica DRS API",
+      "registered_type": {
+        "artifact": "drs",
+        "group": "org.ga4gh",
+        "version": "1.3.0"
+      },
+      "registry_record_id": "com.sb.cavatica.drs",
+      "service_info_endpoint": "https://cavatica-ga4gh-api.sbgenomics.com/service-info",
+      "service_root": "https://cavatica-ga4gh-api.sbgenomics.com/",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "execution_failure",
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': 'Validation error: Provider request failed', 'error_details': {'type': 'ToolValidationError', 'message': 'Validation error: Provider request failed', 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidatecavaticadrsserviceinfo_bc91d222e460"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "949f34f2e1f42fe9",
+      "case_id": "cgc_drs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:25:57.982516+00:00"
+      },
+      "catalog_query": "Cancer Genomics Cloud DRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "Cancer Genomics Cloud DRS API",
+      "registered_type": {
+        "artifact": "drs",
+        "group": "org.ga4gh",
+        "version": "1.3.0"
+      },
+      "registry_record_id": "com.sb.cgc.drs",
+      "service_info_endpoint": "https://cgc-ga4gh-api.sbgenomics.com/service-info",
+      "service_root": "https://cgc-ga4gh-api.sbgenomics.com/",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "execution_failure",
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': 'Validation error: Provider request failed', 'error_details': {'type': 'ToolValidationError', 'message': 'Validation error: Provider request failed', 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidatecgcdrsserviceinfo_2a8813de78ba"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "b7f9fe008a100fe8",
+      "case_id": "bdc_drs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:26:06.855399+00:00"
+      },
+      "catalog_query": "BioData Catalyst DRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "BioData Catalyst powered by Seven Bridges DRS API",
+      "registered_type": {
+        "artifact": "drs",
+        "group": "org.ga4gh",
+        "version": "1.3.0"
+      },
+      "registry_record_id": "com.sb.bdc.drs",
+      "service_info_endpoint": "https://ga4gh-api.sb.biodatacatalyst.nhlbi.nih.gov/service-info",
+      "service_root": "https://ga4gh-api.sb.biodatacatalyst.nhlbi.nih.gov/",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "execution_failure",
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': 'Validation error: Provider request failed', 'error_details': {'type': 'ToolValidationError', 'message': 'Validation error: Provider request failed', 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidatebdcdrsserviceinfo_f8f2b6b030fb"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "a2826c59994b5a5d",
+      "case_id": "crg_rnaget_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:26:38.595996+00:00"
+      },
+      "catalog_query": "CRG RNAget",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "CRG RNAget Reference Implementation",
+      "registered_type": {
+        "artifact": "rnaget",
+        "group": "org.ga4gh",
+        "version": "1.0.0"
+      },
+      "registry_record_id": "eu.crg.rnaget",
+      "service_info_endpoint": "https://genome.crg.cat/rnaget/service-info",
+      "service_root": "https://genome.crg.cat/rnaget",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "execution_failure",
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': 'Validation error: Provider request failed', 'error_details': {'type': 'ToolValidationError', 'message': 'Validation error: Provider request failed', 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidatecrgrnagetserviceinfo_2ada31fa31d2"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "98329acb74d202c6",
+      "case_id": "anvil_drs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:26:45.509840+00:00"
+      },
+      "catalog_query": "AnVIL DRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "NHGRI AnVIL",
+      "registered_type": {
+        "artifact": "drs",
+        "group": "org.ga4gh",
+        "version": "1.3.0"
+      },
+      "registry_record_id": "bio.terra.data",
+      "service_info_endpoint": "https://data.terra.bio/service-info",
+      "service_root": "https://data.terra.bio/",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "response_media_type_mismatch",
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider content type 'text/html' does not match json\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider content type 'text/html' does not match json\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidateanvildrsserviceinfo_d37f078d645e"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "9bc5689c4fdd0dd8",
+      "case_id": "gen3_drs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:27:12.612854+00:00"
+      },
+      "catalog_query": "Gen3 Data Hub DRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "Gen3 Data Hub",
+      "registered_type": {
+        "artifact": "drs",
+        "group": "org.ga4gh",
+        "version": "1.2.0"
+      },
+      "registry_record_id": "io.datacommons.gen3.drs",
+      "service_info_endpoint": "https://gen3.datacommons.io/service-info",
+      "service_root": "https://gen3.datacommons.io/",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "response_media_type_mismatch",
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider content type 'text/html' does not match json\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider content type 'text/html' does not match json\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidategen3drsserviceinfo_af6e2f471d15"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "39ccae3937970e55",
+      "case_id": "nci_crdc_drs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:27:29.845573+00:00"
+      },
+      "catalog_query": "NCI CRDC DRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "NCI CRDC",
+      "registered_type": {
+        "artifact": "drs",
+        "group": "org.ga4gh",
+        "version": "1.2.0"
+      },
+      "registry_record_id": "io.datacommons.nci-crdc.drs",
+      "service_info_endpoint": "https://nci-crdc.datacommons.io/service-info",
+      "service_root": "https://nci-crdc.datacommons.io/",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "response_media_type_mismatch",
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider content type 'text/html' does not match json\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider content type 'text/html' does not match json\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidatencicrdcdrsserviceinfo_35cf8ebfd577"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "b6688940d858444a",
+      "case_id": "viral_ai_drs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:27:45.216421+00:00"
+      },
+      "catalog_query": "Viral AI DRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "Viral AI",
+      "registered_type": {
+        "artifact": "drs",
+        "group": "org.ga4gh",
+        "version": "1.3.0"
+      },
+      "registry_record_id": "ai.viral",
+      "service_info_endpoint": "https://viral.ai/service-info",
+      "service_root": "https://viral.ai/",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "redirect_rejected",
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': 'Validation error: Provider redirects are not allowed', 'error_details': {'type': 'ToolValidationError', 'message': 'Validation error: Provider redirects are not allowed', 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidateviralaidrsserviceinfo_f0c2a391f75a"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    },
+    {
+      "candidate_id": "b7821aebd9677a19",
+      "case_id": "nhs_drs_service_info",
+      "catalog_provenance": {
+        "endpoint": "https://registry.ga4gh.org/v1/services",
+        "http_status": 200,
+        "payload_sha256": "dcac9380b166adf0f1a86bcff476cc05ea282301b71b0870ca3baf46a10aa948",
+        "response_bytes": 24732,
+        "retrieved_at": "2026-08-02T17:28:00.555380+00:00"
+      },
+      "catalog_query": "NHS genomic DRS",
+      "evidence_mode": "live",
+      "live_attempt": {
+        "completed": true,
+        "fallback": null
+      },
+      "registered_name": "NHS Genomic Data Access & Management",
+      "registered_type": {
+        "artifact": "drs",
+        "group": "org.ga4gh",
+        "version": "1.4.0"
+      },
+      "registry_record_id": "api.service.nhs.uk/genomic-data-access",
+      "service_info_endpoint": "https://sandbox.api.service.nhs.uk/genomic-data-access/service-info",
+      "service_root": "https://sandbox.api.service.nhs.uk/genomic-data-access",
+      "with_vsd": {
+        "assertions": {
+          "approval_without_evidence_was_blocked": true,
+          "candidate_binding_was_hash_sealed": true,
+          "candidate_remained_inert": true,
+          "early_publication_was_blocked": true,
+          "no_approval_was_recorded": true,
+          "no_publication_was_recorded": true,
+          "qualification_failed_closed": true
+        },
+        "failure": {
+          "category": "execution_failure",
+          "message": "Verification case 0 did not execute successfully: {'status': 'error', 'error': 'Validation error: Provider request failed', 'error_details': {'type': 'ToolValidationError', 'message': 'Validation error: Provider request failed', 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}",
+          "type": "VSDPromotionError"
+        },
+        "final_execution_count": 0,
+        "governance": {
+          "approval_blocked": true,
+          "early_publication_blocked": true,
+          "promotion_state": {
+            "approvals": [],
+            "approved": [],
+            "drafts": [
+              "candidatenhsdrsserviceinfo_76b8eee6d4de"
+            ],
+            "evidence": []
+          }
+        },
+        "published_tool": null,
+        "qualification": "rejected",
+        "verification_execution_count": 0
+      },
+      "without_vsd": {
+        "catalog_record_discovered": true,
+        "executable_service_info_tool": false,
+        "qualification_evidence": false
+      }
+    }
+  ],
+  "final_execution_count": 3,
+  "format": "vsd_ga4gh_service_qualification_portfolio_v1",
+  "generated_at": "2026-08-02T17:28:18.323292+00:00",
+  "live_case_count": 15,
+  "portfolio_sha256": "8f20711089278a292c9f88d86fd40c8fa3fbc4f887f2d7d104f3408013e63243",
+  "published_tool_count": 3,
+  "rejected_count": 12,
+  "replay_case_count": 0,
+  "requested_mode": "network_backed",
+  "verification_execution_count": 9
+}

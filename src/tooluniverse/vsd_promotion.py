@@ -862,8 +862,7 @@ def create_catalog_resource_draft(
         or request.get("path_arguments") != {}
         or request.get("query_arguments") != {}
         or request.get("fixed_headers") != {}
-        or request.get("body")
-        != {"mode": "none", "arguments": {}, "fixed": {}}
+        or request.get("body") != {"mode": "none", "arguments": {}, "fixed": {}}
         or not isinstance(pagination, dict)
         or pagination.get("type") != "none"
     ):
@@ -891,11 +890,9 @@ def create_catalog_resource_draft(
         raise VSDPromotionError("Catalog endpoint query is invalid") from exc
     if len({name for name, _ in query_pairs}) != len(query_pairs):
         raise VSDPromotionError("Catalog endpoint query names must be unique")
-    if (
-        urlunsplit((endpoint.scheme, endpoint.netloc, endpoint.path, "", ""))
-        != expected_endpoint
-        or request.get("fixed_query") != dict(query_pairs)
-    ):
+    if urlunsplit(
+        (endpoint.scheme, endpoint.netloc, endpoint.path, "", "")
+    ) != expected_endpoint or request.get("fixed_query") != dict(query_pairs):
         raise VSDPromotionError(
             "Reviewed resource endpoint does not exactly match the catalog candidate"
         )
@@ -916,6 +913,8 @@ def create_catalog_resource_draft(
         "catalog_sources": reviewed["catalog_sources"],
         "response_format": reviewed["response_format"],
     }
+    if reviewed.get("interface_type") == "ga4gh_service_info":
+        binding["service_binding"] = copy.deepcopy(reviewed["service_binding"])
     binding["binding_sha256"] = _canonical_digest(binding)
     normalized["vsd_promotion"] = {
         "generator_version": _GENERATOR_VERSION,
@@ -924,6 +923,160 @@ def create_catalog_resource_draft(
         "catalog_binding": binding,
     }
     return _create_draft_from_config(normalized, workspace=workspace)
+
+
+def build_ga4gh_service_info_config(
+    candidate: dict[str, Any],
+    *,
+    tool_name: str,
+    description: str,
+    timeout_seconds: float = 20,
+) -> dict[str, Any]:
+    """Build an input-free tool for a discovered GA4GH Service Info operation."""
+    try:
+        reviewed = validate_catalog_candidate(candidate)
+    except VSDCatalogProviderError as exc:
+        raise VSDPromotionError(str(exc)) from exc
+    if (
+        reviewed["candidate_kind"] != "data_endpoint"
+        or reviewed["interface_type"] != "ga4gh_service_info"
+    ):
+        raise VSDPromotionError("Candidate is not a GA4GH Service Info operation")
+    name = _tool_name(tool_name)
+    reviewed_description = _review_text(
+        description, field="description", minimum=20, maximum=1000
+    )
+    if (
+        isinstance(timeout_seconds, bool)
+        or not isinstance(timeout_seconds, (int, float))
+        or not 1 <= timeout_seconds <= 60
+    ):
+        raise VSDPromotionError("timeout_seconds must be between 1 and 60")
+    response_schema = {
+        "type": "object",
+        "properties": {
+            "id": {"type": "string", "minLength": 1, "maxLength": 500},
+            "name": {"type": "string", "minLength": 1, "maxLength": 500},
+            "type": {
+                "type": "object",
+                "properties": {
+                    "group": {"type": "string", "minLength": 1, "maxLength": 120},
+                    "artifact": {"type": "string", "minLength": 1, "maxLength": 80},
+                    "version": {"type": "string", "minLength": 1, "maxLength": 80},
+                },
+                "required": ["group", "artifact", "version"],
+            },
+            "organization": {"type": "object"},
+            "version": {"type": "string", "minLength": 1, "maxLength": 200},
+        },
+        "required": ["id", "name", "type", "organization", "version"],
+    }
+    return {
+        "name": name,
+        "type": "VSDReviewedOperationTool",
+        "description": reviewed_description,
+        "category": "special_tools",
+        "cacheable": False,
+        "mcp_annotations": {"readOnlyHint": True, "destructiveHint": False},
+        "parameter": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": False,
+        },
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "result": response_schema,
+                "provenance": {"type": "object"},
+            },
+            "required": ["result", "provenance"],
+            "additionalProperties": False,
+        },
+        "vsd_reviewed_operation": {
+            "version": 1,
+            "transport": "http",
+            "protocol": "rest",
+            "endpoint": reviewed["api_endpoint"],
+            "timeout_seconds": timeout_seconds,
+            "auth": {"type": "none"},
+            "request": {
+                "method": "GET",
+                "path_arguments": {},
+                "query_arguments": {},
+                "fixed_query": {},
+                "fixed_headers": {},
+                "body": {"mode": "none", "arguments": {}, "fixed": {}},
+            },
+            "response": {
+                "format": "json",
+                "max_bytes": 100_000,
+                "schema": response_schema,
+                "root_pointer": "",
+            },
+            "pagination": {"type": "none"},
+        },
+    }
+
+
+def ga4gh_service_info_verification_cases(
+    candidate: dict[str, Any], *, repetitions: int = 3
+) -> list[dict[str, Any]]:
+    """Build the mandatory registry-to-Service-Info conformance assertions."""
+    try:
+        reviewed = validate_catalog_candidate(candidate)
+    except VSDCatalogProviderError as exc:
+        raise VSDPromotionError(str(exc)) from exc
+    if reviewed.get("interface_type") != "ga4gh_service_info":
+        raise VSDPromotionError("Candidate is not a GA4GH Service Info operation")
+    if (
+        isinstance(repetitions, bool)
+        or not isinstance(repetitions, int)
+        or not 3 <= repetitions <= 20
+    ):
+        raise VSDPromotionError("repetitions must be between 3 and 20")
+    binding = reviewed["service_binding"]
+    registered_type = binding["registered_type"]
+    expectation = {
+        "result_type": "object",
+        "required_fields": ["id", "name", "type", "organization", "version"],
+        "equals_paths": {
+            "/name": binding["registered_name"],
+            "/type/version": registered_type["version"],
+        },
+        "equals_paths_casefold": {
+            "/type/group": registered_type["group"],
+            "/type/artifact": registered_type["artifact"],
+        },
+    }
+    return [
+        {"arguments": {}, "expect": copy.deepcopy(expectation)}
+        for _ in range(repetitions)
+    ]
+
+
+def create_ga4gh_service_info_draft(
+    candidate: dict[str, Any],
+    *,
+    tool_name: str,
+    description: str,
+    review_note: str,
+    timeout_seconds: float = 20,
+    workspace: str | Path | None = None,
+) -> dict[str, Any]:
+    """Create a hash-bound draft for a standard GA4GH Service Info operation."""
+    config = build_ga4gh_service_info_config(
+        candidate,
+        tool_name=tool_name,
+        description=description,
+        timeout_seconds=timeout_seconds,
+    )
+    return create_catalog_resource_draft(
+        candidate,
+        config,
+        review_note=review_note,
+        workspace=workspace,
+    )
 
 
 def _hoist_schema_definitions(
@@ -1322,10 +1475,10 @@ def create_reviewed_catalog_openapi_draft(
         raise VSDPromotionError(
             "resolved_blockers must explicitly acknowledge every candidate blocker"
         )
-    if (
-        not isinstance(response_schema, dict)
-        or response_schema.get("type") not in {"object", "array"}
-    ):
+    if not isinstance(response_schema, dict) or response_schema.get("type") not in {
+        "object",
+        "array",
+    }:
         raise VSDPromotionError(
             "Reviewed response_schema must declare an object or array contract"
         )
@@ -1400,6 +1553,7 @@ def _validated_cases(cases: Any) -> list[dict[str, Any]]:
         equals = expect.get("equals", {})
         required_paths = expect.get("required_paths", [])
         equals_paths = expect.get("equals_paths", {})
+        equals_paths_casefold = expect.get("equals_paths_casefold", {})
         if (
             result_type not in {"array", "object"}
             or (
@@ -1434,13 +1588,22 @@ def _validated_cases(cases: Any) -> list[dict[str, Any]]:
             or len(required_paths) != len(set(required_paths))
             or not isinstance(equals_paths, dict)
             or any(not _valid_json_pointer(path) for path in equals_paths)
+            or not isinstance(equals_paths_casefold, dict)
+            or any(
+                not _valid_json_pointer(path) or not isinstance(expected, str)
+                for path, expected in equals_paths_casefold.items()
+            )
         ):
             raise VSDPromotionError(
                 f"Verification case {index} has invalid expectations"
             )
         try:
             encoded_expectations = json.dumps(
-                {"equals": equals, "equals_paths": equals_paths},
+                {
+                    "equals": equals,
+                    "equals_paths": equals_paths,
+                    "equals_paths_casefold": equals_paths_casefold,
+                },
                 allow_nan=False,
                 ensure_ascii=True,
             )
@@ -1463,6 +1626,7 @@ def _validated_cases(cases: Any) -> list[dict[str, Any]]:
                     "equals": dict(equals),
                     "required_paths": list(required_paths),
                     "equals_paths": dict(equals_paths),
+                    "equals_paths_casefold": dict(equals_paths_casefold),
                 },
             }
         )
@@ -1599,6 +1763,20 @@ def verify_draft(
                         f"Verification case {index} row {row_index} failed JSON "
                         "pointer equality assertions"
                     )
+                mismatched_casefold_paths = {
+                    pointer: _json_pointer_value(row, pointer)
+                    for pointer, expected in expectation[
+                        "equals_paths_casefold"
+                    ].items()
+                    if not isinstance(_json_pointer_value(row, pointer), str)
+                    or _json_pointer_value(row, pointer).casefold()
+                    != expected.casefold()
+                }
+                if mismatched_casefold_paths:
+                    raise VSDPromotionError(
+                        f"Verification case {index} row {row_index} failed "
+                        "case-insensitive JSON pointer equality assertions"
+                    )
             results.append(
                 {
                     "case_index": index,
@@ -1666,6 +1844,40 @@ def _load_evidence(root: Path, draft: dict[str, Any]) -> dict[str, Any]:
         raise VSDPromotionError(
             "Verification evidence digest does not match its content"
         )
+    binding = draft["config"].get("vsd_promotion", {}).get("catalog_binding", {})
+    service_binding = binding.get("service_binding")
+    if isinstance(service_binding, dict):
+        registered_type = service_binding["registered_type"]
+        required_exact = {
+            "/name": service_binding["registered_name"],
+            "/type/version": registered_type["version"],
+        }
+        required_casefold = {
+            "/type/group": registered_type["group"],
+            "/type/artifact": registered_type["artifact"],
+        }
+        invalid_case = False
+        for case in evidence["cases"]:
+            expectation = case.get("expect", {})
+            exact = expectation.get("equals_paths", {})
+            casefold = expectation.get("equals_paths_casefold", {})
+            if (
+                not isinstance(exact, dict)
+                or not isinstance(casefold, dict)
+                or any(
+                    exact.get(path) != value for path, value in required_exact.items()
+                )
+                or any(
+                    casefold.get(path) != value
+                    for path, value in required_casefold.items()
+                )
+            ):
+                invalid_case = True
+                break
+        if invalid_case:
+            raise VSDPromotionError(
+                "GA4GH Service Info evidence does not prove the registered contract"
+            )
     return evidence
 
 
@@ -1873,15 +2085,18 @@ def list_promotion_state(
 __all__ = [
     "VSDPromotionError",
     "approve_draft",
+    "build_ga4gh_service_info_config",
     "build_openapi_tool_config",
     "build_socrata_tool_config",
     "create_catalog_resource_draft",
+    "create_ga4gh_service_info_draft",
     "create_catalog_openapi_draft",
     "create_draft",
     "create_openapi_draft",
     "create_reviewed_catalog_openapi_draft",
     "create_reviewed_operation_draft",
     "list_promotion_state",
+    "ga4gh_service_info_verification_cases",
     "load_published_tools",
     "publish_draft",
     "verify_draft",

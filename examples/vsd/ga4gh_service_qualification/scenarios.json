@@ -1,0 +1,333 @@
+[
+  {
+    "case_id": "ga4gh_registry_service_info",
+    "catalog_query": "GA4GH standards registry",
+    "tool_name": "ReviewedGA4GHRegistryInfo",
+    "expected_qualification": "accepted",
+    "registry_record": {
+      "id": "org.ga4gh.registry",
+      "name": "GA4GH Standards and Implementations Registry",
+      "type": {"group": "org.ga4gh", "artifact": "service-registry", "version": "1.0.0"},
+      "organization": {"id": "org.ga4gh", "name": "Global Alliance for Genomics and Health", "url": "https://ga4gh.org"},
+      "version": "1.0.0",
+      "url": "https://registry.ga4gh.org/v1",
+      "description": "Registry of GA4GH standards and implementations.",
+      "documentationUrl": "https://ga4gh.github.io/ga4gh-registry/docs/index.html"
+    },
+    "replay_transport": {
+      "status_code": 200,
+      "content_type": "application/json;charset=UTF-8",
+      "payload": {
+        "id": "org.ga4gh.registry",
+        "name": "GA4GH Standards and Implementations Registry",
+        "type": {"group": "org.ga4gh", "artifact": "service-registry", "version": "1.0.0"},
+        "organization": {"id": "org.ga4gh", "name": "Global Alliance for Genomics and Health", "url": "https://ga4gh.org"},
+        "version": "1.0.0",
+        "url": "https://registry.ga4gh.org/v1"
+      }
+    }
+  },
+  {
+    "case_id": "ncbi_drs_service_info",
+    "catalog_query": "NCBI DRS",
+    "tool_name": "ReviewedNCBIDRSServiceInfo",
+    "expected_qualification": "accepted",
+    "registry_record": {
+      "id": "gov.nih.nlm.ncbi.drs",
+      "name": "NCBI Data Repository Service",
+      "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.2.0"},
+      "organization": {"id": "gov.nih.nlm.ncbi", "name": "dbGaP at NCBI/NLM/NIH", "url": "https://locate.be-md.ncbi.nlm.nih.gov/ga4gh/drs/v1/"},
+      "version": "v1",
+      "url": "https://locate.be-md.ncbi.nlm.nih.gov/ga4gh/drs/v1/",
+      "description": "Data Repository Service for sequence records available through NCBI.",
+      "documentationUrl": "https://locate.be-md.ncbi.nlm.nih.gov/ga4gh/drs/v1/",
+      "environment": "Production"
+    },
+    "replay_transport": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "payload": {
+        "id": "ncbi.drs",
+        "name": "NCBI Data Repository Service",
+        "type": {"artifact": "drs", "group": "org.ga4gh", "version": "1.2.0"},
+        "organization": {"id": "ror:02meqm098", "name": "National Center for Biotechnology Information", "url": "https://locate.ncbi.nlm.nih.gov"},
+        "version": "drs-v.5acd2b1f949",
+        "environment": "production"
+      }
+    }
+  },
+  {
+    "case_id": "dockstore_trs_service_info",
+    "catalog_query": "Dockstore TRS",
+    "tool_name": "ReviewedDockstoreTRSServiceInfo",
+    "expected_qualification": "accepted",
+    "registry_record": {
+      "id": "org.dockstore.dockstoreapi",
+      "name": "Dockstore",
+      "type": {"group": "org.ga4gh", "artifact": "trs", "version": "2.0.1"},
+      "organization": {"id": "org.dockstore", "name": "Dockstore", "url": "https://dockstore.org"},
+      "version": "1.15.0",
+      "url": "https://dockstore.org/api/ga4gh/trs/v2/",
+      "description": "Tool Registry Service implementation for tools and workflows.",
+      "documentationUrl": "https://dockstore.org/api/static/swagger-ui/index.html"
+    },
+    "replay_transport": {
+      "status_code": 200,
+      "content_type": "application/json;charset=utf-8",
+      "payload": {
+        "id": "1",
+        "name": "Dockstore",
+        "type": {"artifact": "TRS", "group": "org.ga4gh", "version": "2.0.1"},
+        "organization": {"name": "Dockstore", "url": "https://dockstore.org"},
+        "version": "1.19.2",
+        "environment": "prod"
+      }
+    }
+  },
+  {
+    "case_id": "cavatica_wes_service_info",
+    "catalog_query": "Cavatica WES",
+    "tool_name": "CandidateCavaticaWESServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "com.sbgenomics.cavatica-ga4gh-api.wes",
+      "name": "Cavatica GA4GH WES API",
+      "type": {"group": "org.ga4gh", "artifact": "wes", "version": "1.0.0"},
+      "organization": {"id": "com.sb", "name": "Seven Bridges", "url": "https://www.sevenbridges.com"},
+      "version": "1.0.1.4",
+      "url": "https://cavatica-ga4gh-api.sbgenomics.com/ga4gh/wes/v1/",
+      "description": "Workflow Execution Service implementation.",
+      "documentationUrl": "https://docs.cavatica.org/wes-api-overview",
+      "environment": "production"
+    },
+    "replay_transport": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "payload": {
+        "id": "com.sbgenomics.cavatica-ga4gh-api.wes",
+        "name": "Cavatica GA4GH WES API",
+        "type": {"artifact": "wes", "version": "1.0.1", "group": "com.sevenbridges"},
+        "organization": {"name": "Seven Bridges", "url": "https://www.sevenbridges.com"},
+        "version": "1.0.1.4"
+      }
+    }
+  },
+  {
+    "case_id": "cgc_wes_service_info",
+    "catalog_query": "CGC WES",
+    "tool_name": "CandidateCGCWESServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "com.sbgenomics.cgc-ga4gh-api.wes",
+      "name": "CGC GA4GH WES API",
+      "type": {"group": "org.ga4gh", "artifact": "wes", "version": "1.0.0"},
+      "organization": {"id": "com.sb", "name": "Seven Bridges", "url": "https://www.sevenbridges.com"},
+      "version": "1.0.1.4",
+      "url": "https://cgc-ga4gh-api.sbgenomics.com/ga4gh/wes/v1/",
+      "description": "Workflow Execution Service implementation.",
+      "documentationUrl": "https://docs.cancergenomicscloud.org/wes-api-overview",
+      "environment": "production"
+    },
+    "replay_transport": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "payload": {
+        "id": "com.sbgenomics.cgc-ga4gh-api.wes",
+        "name": "CGC GA4GH WES API",
+        "type": {"artifact": "wes", "version": "1.0.1", "group": "com.sevenbridges"},
+        "organization": {"name": "Seven Bridges", "url": "https://www.sevenbridges.com"},
+        "version": "1.0.1.4"
+      }
+    }
+  },
+  {
+    "case_id": "bdc_wes_service_info",
+    "catalog_query": "BioData Catalyst WES",
+    "tool_name": "CandidateBDCWESServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "gov.nih.nhlbi.biodatacatalyst.sb.ga4gh-api.wes",
+      "name": "BDC GA4GH WES API",
+      "type": {"group": "org.ga4gh", "artifact": "wes", "version": "1.0.0"},
+      "organization": {"id": "com.sb", "name": "Seven Bridges", "url": "https://www.sevenbridges.com"},
+      "version": "1.0.1.4",
+      "url": "https://ga4gh-api.sb.biodatacatalyst.nhlbi.nih.gov/ga4gh/wes/v1/",
+      "description": "Workflow Execution Service implementation.",
+      "documentationUrl": "https://sb-biodatacatalyst.readme.io/wes-api-overview",
+      "environment": "production"
+    },
+    "replay_transport": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "payload": {
+        "id": "gov.nih.nhlbi.biodatacatalyst.sb.ga4gh-api.wes",
+        "name": "BDC GA4GH WES API",
+        "type": {"artifact": "wes", "version": "1.0.1", "group": "com.sevenbridges"},
+        "organization": {"name": "Seven Bridges", "url": "https://www.sevenbridges.com"},
+        "version": "1.0.1.4"
+      }
+    }
+  },
+  {
+    "case_id": "cavatica_drs_service_info",
+    "catalog_query": "Cavatica DRS",
+    "tool_name": "CandidateCavaticaDRSServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "com.sb.cavatica.drs",
+      "name": "Cavatica DRS API",
+      "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.3.0"},
+      "organization": {"id": "com.sb.cavatica", "name": "Velsera1", "url": "https://velsera.com/"},
+      "version": "1.0.0",
+      "url": "https://cavatica-ga4gh-api.sbgenomics.com",
+      "description": "Cavatica Data Repository Service.",
+      "documentationUrl": "https://docs.cavatica.org/reference/drs-api-overview",
+      "environment": "Production"
+    },
+    "replay_transport": {"status_code": 404, "content_type": "text/html", "body": "Not Found"}
+  },
+  {
+    "case_id": "cgc_drs_service_info",
+    "catalog_query": "Cancer Genomics Cloud DRS",
+    "tool_name": "CandidateCGCDRSServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "com.sb.cgc.drs",
+      "name": "Cancer Genomics Cloud DRS API",
+      "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.3.0"},
+      "organization": {"id": "com.sb.cgc", "name": "Velsera", "url": "https://velsera.com/"},
+      "version": "1.0.0",
+      "url": "https://cgc-ga4gh-api.sbgenomics.com",
+      "description": "Cancer Genomics Cloud Data Repository Service.",
+      "documentationUrl": "https://docs.cancergenomicscloud.org/docs/drs-api-overview",
+      "environment": "Production"
+    },
+    "replay_transport": {"status_code": 404, "content_type": "text/html", "body": "Not Found"}
+  },
+  {
+    "case_id": "bdc_drs_service_info",
+    "catalog_query": "BioData Catalyst DRS",
+    "tool_name": "CandidateBDCDRSServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "com.sb.bdc.drs",
+      "name": "BioData Catalyst powered by Seven Bridges DRS API",
+      "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.3.0"},
+      "organization": {"id": "com.sb.bdc", "name": "Velsera2", "url": "https://velsera.com/"},
+      "version": "1.0.0",
+      "url": "https://ga4gh-api.sb.biodatacatalyst.nhlbi.nih.gov",
+      "description": "BioData Catalyst Data Repository Service.",
+      "documentationUrl": "https://sb-biodatacatalyst.readme.io/reference/drs-api",
+      "environment": "Production"
+    },
+    "replay_transport": {"status_code": 404, "content_type": "text/html", "body": "Not Found"}
+  },
+  {
+    "case_id": "crg_rnaget_service_info",
+    "catalog_query": "CRG RNAget",
+    "tool_name": "CandidateCRGRNAgetServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "eu.crg.rnaget",
+      "name": "CRG RNAget Reference Implementation",
+      "type": {"group": "org.ga4gh", "artifact": "rnaget", "version": "1.0.0"},
+      "organization": {"id": "eu.crg", "name": "Centre for Genomic Regulation", "url": "https://www.crg.eu/"},
+      "version": "1.0.0",
+      "url": "https://genome.crg.cat/rnaget",
+      "description": "RNAget reference implementation.",
+      "documentationUrl": "https://genome.crg.cat/rnaget",
+      "environment": "production"
+    },
+    "replay_transport": {"status_code": 404, "content_type": "text/html; charset=utf-8", "body": "Not Found"}
+  },
+  {
+    "case_id": "anvil_drs_service_info",
+    "catalog_query": "AnVIL DRS",
+    "tool_name": "CandidateAnvilDRSServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "bio.terra.data",
+      "name": "NHGRI AnVIL",
+      "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.3.0"},
+      "organization": {"id": "org.anvilproject", "name": "NHGRI AnVIL", "url": "https://anvilproject.org/"},
+      "version": "2.323.0",
+      "url": "https://data.terra.bio/",
+      "description": "Cloud-based genomic data sharing and analysis service.",
+      "documentationUrl": "https://anvilproject.org/learn/find-data/requesting-data-access",
+      "environment": "Production"
+    },
+    "replay_transport": {"status_code": 200, "content_type": "text/html; charset=UTF-8", "body": "<!doctype html><title>Terra</title>"}
+  },
+  {
+    "case_id": "gen3_drs_service_info",
+    "catalog_query": "Gen3 Data Hub DRS",
+    "tool_name": "CandidateGen3DRSServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "io.datacommons.gen3.drs",
+      "name": "Gen3 Data Hub",
+      "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.2.0"},
+      "organization": {"id": "io.datacommons.gen3", "name": "Gen3 Data Hub", "url": "https://gen3.datacommons.io/"},
+      "version": "5.1.3",
+      "url": "https://gen3.datacommons.io/",
+      "description": "Data Repository Service implementation.",
+      "documentationUrl": "https://gen3.org/resources/user/access-data/",
+      "environment": "Production"
+    },
+    "replay_transport": {"status_code": 200, "content_type": "text/html", "body": "<!doctype html><title>Gen3</title>"}
+  },
+  {
+    "case_id": "nci_crdc_drs_service_info",
+    "catalog_query": "NCI CRDC DRS",
+    "tool_name": "CandidateNCICRDCDRSServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "io.datacommons.nci-crdc.drs",
+      "name": "NCI CRDC",
+      "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.2.0"},
+      "organization": {"id": "io.datacommons.nci-crdc", "name": "NCI CRDC", "url": "https://nci-crdc.datacommons.io/"},
+      "version": "2025.09",
+      "url": "https://nci-crdc.datacommons.io/",
+      "description": "Cancer Research Data Commons repository service.",
+      "documentationUrl": "https://gen3.org/resources/user/access-data/",
+      "environment": "Production"
+    },
+    "replay_transport": {"status_code": 200, "content_type": "text/html", "body": "<!doctype html><title>NCI CRDC</title>"}
+  },
+  {
+    "case_id": "viral_ai_drs_service_info",
+    "catalog_query": "Viral AI DRS",
+    "tool_name": "CandidateViralAIDRSServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "ai.viral",
+      "name": "Viral AI",
+      "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.3.0"},
+      "organization": {"id": "com.dnastack", "name": "DNAstack", "url": "https://dnastack.com"},
+      "version": "N/A (SaaS)",
+      "url": "https://viral.ai",
+      "description": "Genomic surveillance and infectious-disease data repository service.",
+      "documentationUrl": "https://docs.omics.ai/products/command-line-interface/usage-examples",
+      "environment": "Production"
+    },
+    "replay_transport": {"status_code": 302, "content_type": "", "body": ""}
+  },
+  {
+    "case_id": "nhs_drs_service_info",
+    "catalog_query": "NHS genomic DRS",
+    "tool_name": "CandidateNHSDRSServiceInfo",
+    "expected_qualification": "rejected",
+    "registry_record": {
+      "id": "api.service.nhs.uk/genomic-data-access",
+      "name": "NHS Genomic Data Access & Management",
+      "type": {"group": "org.ga4gh", "artifact": "drs", "version": "1.4.0"},
+      "organization": {"id": "api.service.nhs.uk/genomic-data-access", "name": "NHS Genomic Medicine Service / Genomics England", "url": "https://www.genomicsengland.co.uk/"},
+      "version": "beta",
+      "url": "https://sandbox.api.service.nhs.uk/genomic-data-access",
+      "description": "Development Data Repository Service for genomic data access.",
+      "documentationUrl": "https://digital.nhs.uk/developer/api-catalogue/genomic-data-access-and-management",
+      "environment": "Development"
+    },
+    "replay_transport": {"status_code": 404, "content_type": "text/plain", "body": "Not Found"}
+  }
+]
