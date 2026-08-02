@@ -1,0 +1,335 @@
+{
+  "case": "one_discovered_source_to_two_reviewed_cancer_trial_tools",
+  "generated_at": "2026-08-01T01:36:36.257934+00:00",
+  "interpretation_boundary": "This validates software contracts and live retrieval, not trial quality, clinical relevance, or scientific conclusions.",
+  "loaded_tools": [
+    "VSDGeneratedCancerTrialsByPhase",
+    "VSDGeneratedCancerTrialsBySite"
+  ],
+  "promotion_state": {
+    "approvals": [
+      "vsdgeneratedcancertrialsbyphase_5e49d68e48d1",
+      "vsdgeneratedcancertrialsbysite_1b11bb8efdd7"
+    ],
+    "approved": [
+      "VSDGeneratedCancerTrialsByPhase",
+      "VSDGeneratedCancerTrialsBySite"
+    ],
+    "drafts": [
+      "vsdgeneratedcancertrialsbyphase_5e49d68e48d1",
+      "vsdgeneratedcancertrialsbysite_1b11bb8efdd7"
+    ],
+    "evidence": [
+      "vsdgeneratedcancertrialsbyphase_5e49d68e48d1",
+      "vsdgeneratedcancertrialsbysite_1b11bb8efdd7"
+    ]
+  },
+  "promotions": [
+    {
+      "approval_sha256": "f78987b36e730fbe88b12f46b37f84c365a18196fe1a006d6c6614263ae92a46",
+      "case_count": 3,
+      "cases": [
+        {
+          "arguments": {
+            "primary_site": "Brain and Nervous System"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {
+              "primary_site": "Brain and Nervous System"
+            },
+            "max_items": 25,
+            "min_items": 1,
+            "required_fields": [
+              "protocol",
+              "title",
+              "primary_site"
+            ]
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "date_closed",
+            "date_opened",
+            "primary_site",
+            "principal_investigator",
+            "protocol",
+            "study_phase",
+            "title"
+          ],
+          "operation_sha256": "1b11bb8efdd7de752ae3e00eade850728d236bbbd83e35543d1b68b61e660b12",
+          "payload_sha256": "177c396cab0849392b328bfb23a9cd648df0f4435c3d22920260f2c98a7454be",
+          "redirects": 0,
+          "retrieved_at": "2026-08-01T01:36:33.034833+00:00",
+          "row_count": 19
+        },
+        {
+          "arguments": {
+            "primary_site": "Breast"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {
+              "primary_site": "Breast"
+            },
+            "max_items": 25,
+            "min_items": 1,
+            "required_fields": [
+              "protocol",
+              "title",
+              "primary_site"
+            ]
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "date_closed",
+            "date_opened",
+            "primary_site",
+            "principal_investigator",
+            "protocol",
+            "study_phase",
+            "title"
+          ],
+          "operation_sha256": "1b11bb8efdd7de752ae3e00eade850728d236bbbd83e35543d1b68b61e660b12",
+          "payload_sha256": "5562338d7fdf189fa5ec3eecbfedadcb579778970ac266b82400116b84adb90f",
+          "redirects": 0,
+          "retrieved_at": "2026-08-01T01:36:33.440018+00:00",
+          "row_count": 23
+        },
+        {
+          "arguments": {
+            "primary_site": "Prostate"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {
+              "primary_site": "Prostate"
+            },
+            "max_items": 25,
+            "min_items": 1,
+            "required_fields": [
+              "protocol",
+              "title",
+              "primary_site"
+            ]
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "date_closed",
+            "date_opened",
+            "primary_site",
+            "principal_investigator",
+            "protocol",
+            "study_phase",
+            "title"
+          ],
+          "operation_sha256": "1b11bb8efdd7de752ae3e00eade850728d236bbbd83e35543d1b68b61e660b12",
+          "payload_sha256": "1dec38172ecdc0658609492f56125b67f2d0010c74509268a3019da6663af842",
+          "redirects": 0,
+          "retrieved_at": "2026-08-01T01:36:33.835258+00:00",
+          "row_count": 20
+        }
+      ],
+      "draft_id": "vsdgeneratedcancertrialsbysite_1b11bb8efdd7",
+      "draft_sha256": "50d1df7d7ac94e23c2bae37aff9a03e972261c985fed3b15690ec76a89817c6d",
+      "filter_field": "primary_site",
+      "operation_sha256": "1b11bb8efdd7de752ae3e00eade850728d236bbbd83e35543d1b68b61e660b12",
+      "publication_sha256": "fd7eb7288659acc38cb78dbef5dc9a6e54fece807c9913539059daf4ed6a8d7b",
+      "tool_name": "VSDGeneratedCancerTrialsBySite",
+      "verification_sha256": "7f63aeb2b7e77c1ddd1d1e74aabf89cd1b475cfd947bf53c6bc63cd6bba327b3"
+    },
+    {
+      "approval_sha256": "a941ad94c5738ee6fd4ffbc3c08b4a796222c423569dd878266a58db0b12255c",
+      "case_count": 3,
+      "cases": [
+        {
+          "arguments": {
+            "study_phase": "I"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {
+              "study_phase": "I"
+            },
+            "max_items": 25,
+            "min_items": 1,
+            "required_fields": [
+              "protocol",
+              "title",
+              "study_phase"
+            ]
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "date_closed",
+            "date_opened",
+            "primary_site",
+            "principal_investigator",
+            "protocol",
+            "study_phase",
+            "title"
+          ],
+          "operation_sha256": "5e49d68e48d1abf030940abe4a1ae1640546255018618ed6fb83fa5923ee8e13",
+          "payload_sha256": "7de1c8fb37ce5a26b9a25de4e6d12fc6b639735d8a221bdf3ecdc2912501893a",
+          "redirects": 0,
+          "retrieved_at": "2026-08-01T01:36:34.335218+00:00",
+          "row_count": 25
+        },
+        {
+          "arguments": {
+            "study_phase": "II"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {
+              "study_phase": "II"
+            },
+            "max_items": 25,
+            "min_items": 1,
+            "required_fields": [
+              "protocol",
+              "title",
+              "study_phase"
+            ]
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "date_closed",
+            "date_opened",
+            "primary_site",
+            "principal_investigator",
+            "protocol",
+            "study_phase",
+            "title"
+          ],
+          "operation_sha256": "5e49d68e48d1abf030940abe4a1ae1640546255018618ed6fb83fa5923ee8e13",
+          "payload_sha256": "7898177fe582799b118a98de9de2bd4603d9d60589e46d488af43a342812026a",
+          "redirects": 0,
+          "retrieved_at": "2026-08-01T01:36:34.765749+00:00",
+          "row_count": 25
+        },
+        {
+          "arguments": {
+            "study_phase": "III"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {
+              "study_phase": "III"
+            },
+            "max_items": 25,
+            "min_items": 1,
+            "required_fields": [
+              "protocol",
+              "title",
+              "study_phase"
+            ]
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "date_closed",
+            "date_opened",
+            "primary_site",
+            "principal_investigator",
+            "protocol",
+            "study_phase",
+            "title"
+          ],
+          "operation_sha256": "5e49d68e48d1abf030940abe4a1ae1640546255018618ed6fb83fa5923ee8e13",
+          "payload_sha256": "322b0476c5a33b91b7eae1117283468bac557db1ac748bbf8645b4d2d8a7795d",
+          "redirects": 0,
+          "retrieved_at": "2026-08-01T01:36:35.171574+00:00",
+          "row_count": 25
+        }
+      ],
+      "draft_id": "vsdgeneratedcancertrialsbyphase_5e49d68e48d1",
+      "draft_sha256": "48d8fd4e8be4ed8db3c719c72d3e8ce4f748ef96fb6f28e19ec39251fb1b8453",
+      "filter_field": "study_phase",
+      "operation_sha256": "5e49d68e48d1abf030940abe4a1ae1640546255018618ed6fb83fa5923ee8e13",
+      "publication_sha256": "e4dcf6b3ef5259c1d1d8690c76eed7ebf9a51dd9439463b8ff4360183ee21587",
+      "tool_name": "VSDGeneratedCancerTrialsByPhase",
+      "verification_sha256": "a523235b2149cffa21ac0ab93925cd7d721d3fb0bdf2d5cdbc305dee89b86f2d"
+    }
+  ],
+  "runtime_checks": [
+    {
+      "arguments": {
+        "primary_site": "Breast"
+      },
+      "operation_sha256": "1b11bb8efdd7de752ae3e00eade850728d236bbbd83e35543d1b68b61e660b12",
+      "payload_sha256": "5562338d7fdf189fa5ec3eecbfedadcb579778970ac266b82400116b84adb90f",
+      "retrieved_at": "2026-08-01T01:36:35.766153+00:00",
+      "row_count": 23,
+      "sample_rows": [
+        {
+          "date_opened": "2020-08-05T00:00:00.000",
+          "primary_site": "Breast",
+          "principal_investigator": "Ambrosone, C",
+          "protocol": "I-724220",
+          "study_phase": "N/A",
+          "title": "The North-South Breast Cancer Study (NSBCS)"
+        },
+        {
+          "date_opened": "2018-10-18T00:00:00.000",
+          "primary_site": "Breast",
+          "principal_investigator": "Bonaccio, E",
+          "protocol": "I-60217",
+          "study_phase": "N/A",
+          "title": "Photoacoustic Imaging of Human Breast"
+        },
+        {
+          "date_closed": "2025-03-20T00:00:00.000",
+          "date_opened": "2021-09-16T00:00:00.000",
+          "primary_site": "Breast",
+          "principal_investigator": "Fung-Kee-Fung, S",
+          "protocol": "N-1764921",
+          "study_phase": "III",
+          "title": "NRG-BR007: A PHASE III CLINICAL TRIAL EVALUATING DE-ESCALATION OF BREAST RADIATION FOR CONSERVATIVE TREATMENT OF STAGE I, HORMONE SENSITIVE, HER2-NEGATIVE, ONCOTYPE RECURRENCE SCORE &#8804; 18 BREAST CANCER"
+        }
+      ],
+      "tool_name": "VSDGeneratedCancerTrialsBySite"
+    },
+    {
+      "arguments": {
+        "study_phase": "III"
+      },
+      "operation_sha256": "5e49d68e48d1abf030940abe4a1ae1640546255018618ed6fb83fa5923ee8e13",
+      "payload_sha256": "322b0476c5a33b91b7eae1117283468bac557db1ac748bbf8645b4d2d8a7795d",
+      "retrieved_at": "2026-08-01T01:36:36.256929+00:00",
+      "row_count": 25,
+      "sample_rows": [
+        {
+          "date_opened": "2021-07-19T00:00:00.000",
+          "primary_site": "Brain and Nervous System",
+          "principal_investigator": "Barth, M",
+          "protocol": "N-1385821",
+          "study_phase": "III",
+          "title": "(ACNS1931) A Phase 3 Study of Selumetinib (NSC# 748727, IND# 77782) or Selumetinib in Combination with Vinblastine for non-NF1, non-TSC Patients with Recurrent or Progressive Low-Grade Gliomas (LGGs) Lacking BRAFV600E or IDH1 Mutations"
+        },
+        {
+          "date_opened": "2020-01-06T00:00:00.000",
+          "primary_site": "Brain and Nervous System",
+          "principal_investigator": "Barth, M",
+          "protocol": "N-564119",
+          "study_phase": "III",
+          "title": "(ACNS1831) A Phase 3 Randomized Study of Selumetinib (IND # 77782) Versus Carboplatin/Vincristine in Newly Diagnosed or Previously Untreated Neurofibromatosis Type 1 (NF1) Associated Low-Grade Glioma (LGG)"
+        },
+        {
+          "date_opened": "2020-02-26T00:00:00.000",
+          "primary_site": "Brain and Nervous System",
+          "principal_investigator": "Barth, M",
+          "protocol": "N-632820",
+          "study_phase": "III",
+          "title": "(ACNS1833) A Phase 3 Randomized Non-Inferiority Study of Carboplatin and Vincristine versus Selumetinib (NSC# 748727, IND# 77782) in Newly Diagnosed or Previously Untreated Low-Grade Glioma (LGG) not associated with BRAFV600E Mutations or Systemic Neurofibromatosis Type 1 (NF1)"
+        }
+      ],
+      "tool_name": "VSDGeneratedCancerTrialsByPhase"
+    }
+  ],
+  "source": {
+    "api_endpoint": "https://data.ny.gov/resource/2ig8-yxf8.json",
+    "candidate_id": "31dcb2ce74f62d7c",
+    "catalog_domain": "data.ny.gov",
+    "dataset_id": "2ig8-yxf8",
+    "dataset_updated_at": "2026-04-14T21:08:58.000Z"
+  }
+}

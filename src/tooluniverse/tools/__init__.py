@@ -2583,6 +2583,14 @@ from .VEuPathDB_list_gene_searches import VEuPathDB_list_gene_searches
 from .VEuPathDB_list_organism_searches import VEuPathDB_list_organism_searches
 from .VEuPathDB_list_record_types import VEuPathDB_list_record_types
 from .VEuPathDB_search_genes_by_organism import VEuPathDB_search_genes_by_organism
+from .VSDCDCPlacesHeartHealthProfile import VSDCDCPlacesHeartHealthProfile
+from .VSDDiscoverAPICandidates import VSDDiscoverAPICandidates
+from .VSDDiscoverSources import VSDDiscoverSources
+from .VSDEnsemblServiceStatus import VSDEnsemblServiceStatus
+from .VSDOpenFDALabelBySetId import VSDOpenFDALabelBySetId
+from .VSDPlanWorkflow import VSDPlanWorkflow
+from .VSDResolveCapability import VSDResolveCapability
+from .VSDWHOHypertensionIndicator import VSDWHOHypertensionIndicator
 from .VariantValidator_format_genomic_to_transcripts import (
     VariantValidator_format_genomic_to_transcripts,
 )
@@ -5407,6 +5415,14 @@ __all__ = [
     "VEuPathDB_list_organism_searches",
     "VEuPathDB_list_record_types",
     "VEuPathDB_search_genes_by_organism",
+    "VSDCDCPlacesHeartHealthProfile",
+    "VSDDiscoverAPICandidates",
+    "VSDDiscoverSources",
+    "VSDEnsemblServiceStatus",
+    "VSDOpenFDALabelBySetId",
+    "VSDPlanWorkflow",
+    "VSDResolveCapability",
+    "VSDWHOHypertensionIndicator",
     "VariantValidator_format_genomic_to_transcripts",
     "VariantValidator_gene2transcripts",
     "VariantValidator_validate_variant",

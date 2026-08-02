@@ -1,0 +1,40 @@
+{
+  "created_at": "2026-08-01T13:00:00+00:00",
+  "export_sha256": "efe13eee4861211f8ff2383478b32e5b0de456a4237562fef770715fdc1e45fc",
+  "proposals": [
+    {
+      "capability": {
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [
+          "dandiset_id",
+          "asset_id",
+          "project_id"
+        ],
+        "provider": "api.dandiarchive.org",
+        "required_inputs": [
+          "disease_term",
+          "species",
+          "recording_modality"
+        ]
+      },
+      "observation_counts": {
+        "exact": 0,
+        "missing": 1,
+        "partial": 0
+      },
+      "priority_score": 5,
+      "proposal_id": "724259ac7d2d2c9a",
+      "public_summary": "Connect ALS neurophysiology datasets to relevant funded research projects",
+      "recommended_next_step": "review_external_api_candidates",
+      "total_observations": 1,
+      "unmet_rate": 1.0
+    }
+  ],
+  "review": {
+    "decision_note": "Share this sanitized capability gap with selected reviewed source leads.",
+    "reviewed_by": "VSD Case Study Maintainer"
+  },
+  "transmission": "none; this file was written locally for explicit human review",
+  "version": 1
+}

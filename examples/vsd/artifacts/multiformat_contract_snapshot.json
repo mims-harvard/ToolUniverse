@@ -1,0 +1,303 @@
+{
+  "assertion_count": 27,
+  "assertions": [
+    {
+      "assertion": "format_detected",
+      "case": "Rare-disease registry GraphQL",
+      "passed": true
+    },
+    {
+      "assertion": "operation_count_exact",
+      "case": "Rare-disease registry GraphQL",
+      "passed": true
+    },
+    {
+      "assertion": "reviewable_count_exact",
+      "case": "Rare-disease registry GraphQL",
+      "passed": true
+    },
+    {
+      "assertion": "all_candidates_inert",
+      "case": "Rare-disease registry GraphQL",
+      "passed": true
+    },
+    {
+      "assertion": "format_detected",
+      "case": "Post-market safety AsyncAPI",
+      "passed": true
+    },
+    {
+      "assertion": "operation_count_exact",
+      "case": "Post-market safety AsyncAPI",
+      "passed": true
+    },
+    {
+      "assertion": "reviewable_count_exact",
+      "case": "Post-market safety AsyncAPI",
+      "passed": true
+    },
+    {
+      "assertion": "all_candidates_inert",
+      "case": "Post-market safety AsyncAPI",
+      "passed": true
+    },
+    {
+      "assertion": "format_detected",
+      "case": "Natural-history cohort Postman collection",
+      "passed": true
+    },
+    {
+      "assertion": "operation_count_exact",
+      "case": "Natural-history cohort Postman collection",
+      "passed": true
+    },
+    {
+      "assertion": "reviewable_count_exact",
+      "case": "Natural-history cohort Postman collection",
+      "passed": true
+    },
+    {
+      "assertion": "all_candidates_inert",
+      "case": "Natural-history cohort Postman collection",
+      "passed": true
+    },
+    {
+      "assertion": "format_detected",
+      "case": "Molecular diagnostics WSDL",
+      "passed": true
+    },
+    {
+      "assertion": "operation_count_exact",
+      "case": "Molecular diagnostics WSDL",
+      "passed": true
+    },
+    {
+      "assertion": "reviewable_count_exact",
+      "case": "Molecular diagnostics WSDL",
+      "passed": true
+    },
+    {
+      "assertion": "all_candidates_inert",
+      "case": "Molecular diagnostics WSDL",
+      "passed": true
+    },
+    {
+      "assertion": "format_detected",
+      "case": "Variant evidence gRPC/protobuf",
+      "passed": true
+    },
+    {
+      "assertion": "operation_count_exact",
+      "case": "Variant evidence gRPC/protobuf",
+      "passed": true
+    },
+    {
+      "assertion": "reviewable_count_exact",
+      "case": "Variant evidence gRPC/protobuf",
+      "passed": true
+    },
+    {
+      "assertion": "all_candidates_inert",
+      "case": "Variant evidence gRPC/protobuf",
+      "passed": true
+    },
+    {
+      "assertion": "format_detected",
+      "case": "Literature synthesis MCP manifest",
+      "passed": true
+    },
+    {
+      "assertion": "operation_count_exact",
+      "case": "Literature synthesis MCP manifest",
+      "passed": true
+    },
+    {
+      "assertion": "reviewable_count_exact",
+      "case": "Literature synthesis MCP manifest",
+      "passed": true
+    },
+    {
+      "assertion": "all_candidates_inert",
+      "case": "Literature synthesis MCP manifest",
+      "passed": true
+    },
+    {
+      "assertion": "six_contract_formats_covered",
+      "case": "Portfolio",
+      "passed": true
+    },
+    {
+      "assertion": "unsafe_operations_have_blockers",
+      "case": "Portfolio",
+      "passed": true
+    },
+    {
+      "assertion": "source_and_candidate_provenance_complete",
+      "case": "Portfolio",
+      "passed": true
+    }
+  ],
+  "case_count": 6,
+  "case_sha256": "13259b09e2177b83969f210445f9ed1bbe8013e7d715f493bebc6612dc268e35",
+  "case_title": "Spinal muscular atrophy heterogeneous evidence intake",
+  "conclusion": "Yes. Ten operations across six formats were inventoried with exact source and candidate identities; safe read candidates were separated from mutations, event transports, SOAP, gRPC, and local MCP commands that require later explicit review.",
+  "format": "vsd_multiformat_contract_case_v1",
+  "operation_count": 10,
+  "research_question": "Can six incompatible provider contract formats be converted into a reviewable inventory for an SMA evidence workflow without executing provider calls, opening listeners, or running local commands?",
+  "results": [
+    {
+      "blocked_count": 1,
+      "candidate_count": 2,
+      "case": "Rare-disease registry GraphQL",
+      "operations": [
+        {
+          "blockers": [],
+          "candidate_id": "03147f8a41850d19",
+          "endpoint": "https://rare-registry.example.org/graphql",
+          "kind": "graphql_query",
+          "name": "disease"
+        },
+        {
+          "blockers": [
+            "graphql_mutation_requires_explicit_review"
+          ],
+          "candidate_id": "6c01afc2c15f1280",
+          "endpoint": "https://rare-registry.example.org/graphql",
+          "kind": "graphql_mutation",
+          "name": "curateDisease"
+        }
+      ],
+      "question": "Which genes and trials are linked to spinal muscular atrophy?",
+      "reviewable_count": 1,
+      "source_document_sha256": "3abc4155767e4d6c23302f598324441d98271b68d156fe126e07921dc48fd55a",
+      "source_format": "graphql"
+    },
+    {
+      "blocked_count": 1,
+      "candidate_count": 1,
+      "case": "Post-market safety AsyncAPI",
+      "operations": [
+        {
+          "blockers": [
+            "asyncapi_receive_requires_bounded_event_runtime"
+          ],
+          "candidate_id": "dbbbb308ea82a6ac",
+          "endpoint": "https://safety.example.org",
+          "kind": "asyncapi_receive",
+          "name": "receiveSignal"
+        }
+      ],
+      "question": "Can new respiratory safety signals be represented without opening a listener?",
+      "reviewable_count": 0,
+      "source_document_sha256": "c2f2e5ea4291ed2b475f4f2de5339e98644de7efe6b9dd010d4876351594a49e",
+      "source_format": "asyncapi"
+    },
+    {
+      "blocked_count": 1,
+      "candidate_count": 2,
+      "case": "Natural-history cohort Postman collection",
+      "operations": [
+        {
+          "blockers": [],
+          "candidate_id": "d9a67713555c6524",
+          "endpoint": "https://cohort.example.org/trajectory",
+          "kind": "postman_request",
+          "name": "Participants/Motor trajectory"
+        },
+        {
+          "blockers": [
+            "postman_non_read_method_requires_explicit_review",
+            "postman_raw_body_requires_review"
+          ],
+          "candidate_id": "01db9af0b0228b94",
+          "endpoint": "https://cohort.example.org/visits",
+          "kind": "postman_request",
+          "name": "Participants/Annotate visit"
+        }
+      ],
+      "question": "Which longitudinal motor scores are available for the SMA cohort?",
+      "reviewable_count": 1,
+      "source_document_sha256": "a2744c6c57ec4d2e4a3199598c43468ef85352b3462647d222b14f07169032eb",
+      "source_format": "postman"
+    },
+    {
+      "blocked_count": 1,
+      "candidate_count": 1,
+      "case": "Molecular diagnostics WSDL",
+      "operations": [
+        {
+          "blockers": [
+            "soap_operation_requires_explicit_read_only_review"
+          ],
+          "candidate_id": "ea860150538d7c23",
+          "endpoint": "https://diagnostics.example.org/soap",
+          "kind": "soap_operation",
+          "name": "PanelPort.GetSMNPanel"
+        }
+      ],
+      "question": "Can a legacy laboratory panel result be identified without invoking SOAP?",
+      "reviewable_count": 0,
+      "source_document_sha256": "b75a4c4c844ea54d95661b456d948145e72508669e816c561c79e3f1fc281208",
+      "source_format": "wsdl"
+    },
+    {
+      "blocked_count": 2,
+      "candidate_count": 2,
+      "case": "Variant evidence gRPC/protobuf",
+      "operations": [
+        {
+          "blockers": [
+            "grpc_operation_requires_reviewed_channel"
+          ],
+          "candidate_id": "791e0c8135e1f38c",
+          "endpoint": "https://variants.example.org",
+          "kind": "grpc_rpc",
+          "name": "variants.v1.VariantEvidenceService.GetEvidence"
+        },
+        {
+          "blockers": [
+            "grpc_operation_requires_reviewed_channel",
+            "grpc_server_stream_requires_bounded_runtime"
+          ],
+          "candidate_id": "6e709922fe97b334",
+          "endpoint": "https://variants.example.org",
+          "kind": "grpc_rpc",
+          "name": "variants.v1.VariantEvidenceService.WatchEvidence"
+        }
+      ],
+      "question": "Can SMN1 variant evidence and a streaming update be distinguished?",
+      "reviewable_count": 0,
+      "source_document_sha256": "818f3daa0ab668de2bb1997c3e892f5a8d3bdf75f598a94e37627d829b7f277d",
+      "source_format": "protobuf"
+    },
+    {
+      "blocked_count": 1,
+      "candidate_count": 2,
+      "case": "Literature synthesis MCP manifest",
+      "operations": [
+        {
+          "blockers": [],
+          "candidate_id": "16047e4987d26575",
+          "endpoint": "https://literature.example.org/mcp",
+          "kind": "mcp_server",
+          "name": "literature"
+        },
+        {
+          "blockers": [
+            "endpoint_missing",
+            "mcp_live_tool_listing_required",
+            "mcp_local_command_not_allowed"
+          ],
+          "candidate_id": "5634a649c2505ace",
+          "endpoint": "",
+          "kind": "mcp_server",
+          "name": "local-unreviewed"
+        }
+      ],
+      "question": "Can remote literature tools be inventoried without running a local server command?",
+      "reviewable_count": 1,
+      "source_document_sha256": "822192f01175d54582e6c911f8dc218d3adbb438caff524644d43f53e6f86ac4",
+      "source_format": "mcp"
+    }
+  ]
+}

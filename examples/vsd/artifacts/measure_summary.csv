@@ -1,0 +1,9 @@
+measure_id,name,domain,population,direction,tract_count,years,mean_estimate_pct,median_estimate_pct,q1_pct,q3_pct,minimum_pct,minimum_tract,maximum_pct,maximum_tract,observed_range_percentage_points
+ACCESS2,Current lack of health insurance among adults aged 18-64 years,access,Adults aged 18-64 years,higher_is_worse,17,2023,9.04,9.0,7.5,10.6,5.7,01001020804,12.2,01001021100,6.5
+BPHIGH,High blood pressure among adults,clinical_risk,Adults,higher_is_worse,17,2023,41.72,41.8,39.0,42.9,33.6,01001020804,54.3,01001021100,20.7
+CHD,Coronary heart disease among adults,health_outcome,Adults,higher_is_worse,17,2023,6.75,6.8,6.1,7.3,4.0,01001020804,10.0,01001021100,6.0
+CHECKUP,Visits to doctor for routine checkup within the past year among adults,prevention,Adults,higher_is_better,17,2023,80.73,80.5,80.2,81.2,78.9,01001020901,83.5,01001021100,4.6
+CSMOKING,Current cigarette smoking among adults,health_behavior,Adults,higher_is_worse,17,2023,15.11,15.6,12.9,16.7,9.3,01001020804,21.3,01001021100,12.0
+HIGHCHOL,High cholesterol among adults who have ever been screened,clinical_risk,Adults who have ever been screened,higher_is_worse,17,2023,41.12,41.2,40.3,42.7,35.6,01001020502,45.0,01001021100,9.4
+LPA,No leisure-time physical activity among adults,health_behavior,Adults,higher_is_worse,17,2023,27.42,26.3,24.5,30.3,18.0,01001020804,39.5,01001021100,21.5
+OBESITY,Obesity among adults,clinical_risk,Adults,higher_is_worse,17,2023,40.05,39.4,38.1,42.6,34.6,01001020804,49.1,01001021100,14.5

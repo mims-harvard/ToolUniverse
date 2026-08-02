@@ -1,0 +1,112 @@
+{
+  "all_cases_passed": true,
+  "case_count": 3,
+  "cases": [
+    {
+      "arguments": {
+        "primary_site": "Brain and Nervous System"
+      },
+      "case_index": 0,
+      "expect": {
+        "equals": {
+          "primary_site": "Brain and Nervous System"
+        },
+        "max_items": 25,
+        "min_items": 1,
+        "required_fields": [
+          "protocol",
+          "title",
+          "primary_site"
+        ]
+      },
+      "http_status": 200,
+      "observed_fields": [
+        "date_closed",
+        "date_opened",
+        "primary_site",
+        "principal_investigator",
+        "protocol",
+        "study_phase",
+        "title"
+      ],
+      "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+      "payload_sha256": "177c396cab0849392b328bfb23a9cd648df0f4435c3d22920260f2c98a7454be",
+      "redirects": 0,
+      "retrieved_at": "2026-08-01T04:31:33.467679+00:00",
+      "row_count": 19
+    },
+    {
+      "arguments": {
+        "primary_site": "Breast"
+      },
+      "case_index": 1,
+      "expect": {
+        "equals": {
+          "primary_site": "Breast"
+        },
+        "max_items": 25,
+        "min_items": 1,
+        "required_fields": [
+          "protocol",
+          "title",
+          "primary_site"
+        ]
+      },
+      "http_status": 200,
+      "observed_fields": [
+        "date_closed",
+        "date_opened",
+        "primary_site",
+        "principal_investigator",
+        "protocol",
+        "study_phase",
+        "title"
+      ],
+      "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+      "payload_sha256": "5562338d7fdf189fa5ec3eecbfedadcb579778970ac266b82400116b84adb90f",
+      "redirects": 0,
+      "retrieved_at": "2026-08-01T04:31:33.887712+00:00",
+      "row_count": 23
+    },
+    {
+      "arguments": {
+        "primary_site": "Prostate"
+      },
+      "case_index": 2,
+      "expect": {
+        "equals": {
+          "primary_site": "Prostate"
+        },
+        "max_items": 25,
+        "min_items": 1,
+        "required_fields": [
+          "protocol",
+          "title",
+          "primary_site"
+        ]
+      },
+      "http_status": 200,
+      "observed_fields": [
+        "date_closed",
+        "date_opened",
+        "primary_site",
+        "principal_investigator",
+        "protocol",
+        "study_phase",
+        "title"
+      ],
+      "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+      "payload_sha256": "1dec38172ecdc0658609492f56125b67f2d0010c74509268a3019da6663af842",
+      "redirects": 0,
+      "retrieved_at": "2026-08-01T04:31:34.315035+00:00",
+      "row_count": 20
+    }
+  ],
+  "draft_id": "vsdtotalcancertrialsbysite_86a7b6f8e4f5",
+  "draft_sha256": "28bfd3429e704ebaeb16038f199491536822fe1098ac6b1619013c81934cd770",
+  "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+  "tool_name": "VSDTotalCancerTrialsBySite",
+  "verification_sha256": "318d81ea17d38bcf3094d92855d87785533ebfeb8fec74d639e841a3a8221d05",
+  "verified_at": "2026-08-01T04:31:34.317301+00:00",
+  "version": 1
+}

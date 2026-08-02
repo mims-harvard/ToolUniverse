@@ -1,0 +1,13 @@
+{
+  "approval_sha256": "a941ad94c5738ee6fd4ffbc3c08b4a796222c423569dd878266a58db0b12255c",
+  "approved_at": "2026-08-01T01:36:35.199192+00:00",
+  "decision": "approved",
+  "decision_note": "Technical approval after contract review and three live provider cases; this is not a scientific or clinical endorsement.",
+  "draft_id": "vsdgeneratedcancertrialsbyphase_5e49d68e48d1",
+  "draft_sha256": "48d8fd4e8be4ed8db3c719c72d3e8ce4f748ef96fb6f28e19ec39251fb1b8453",
+  "operation_sha256": "5e49d68e48d1abf030940abe4a1ae1640546255018618ed6fb83fa5923ee8e13",
+  "reviewed_by": "SufianTA",
+  "tool_name": "VSDGeneratedCancerTrialsByPhase",
+  "verification_sha256": "a523235b2149cffa21ac0ab93925cd7d721d3fb0bdf2d5cdbc305dee89b86f2d",
+  "version": 1
+}

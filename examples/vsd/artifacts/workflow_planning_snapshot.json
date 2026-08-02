@@ -1,0 +1,1135 @@
+{
+  "als_plan": {
+    "execution_allowed": false,
+    "goal": "Build an ALS evidence workflow from rare disease genes, phenotypes, literature, clinical trials, drug labels, and quantitative microscopy",
+    "optional_gap_count": 0,
+    "overall_action": "discover_missing_capabilities",
+    "plan_id": "66bb1aa37bc9e144",
+    "plan_sha256": "66bb1aa37bc9e144ac155a12e31a073f07bc4a9e15e146b5e01db673b3738917",
+    "privacy": "Workflow planning is local, read-only, and not persisted or reported.",
+    "ready_agent_step_count": 0,
+    "ready_step_count": 1,
+    "registry_sha256": "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752",
+    "registry_tool_count": 2744,
+    "required_gap_count": 1,
+    "selected_existing_tools": [
+      "FDA_get_drug_name_by_set_id"
+    ],
+    "steps": [
+      {
+        "classification": "existing_partial",
+        "dependency_blockers": [],
+        "depends_on": [],
+        "finder_handoff": {
+          "arguments": {
+            "detail_level": "full",
+            "tool_names": [
+              "Orphanet_get_genes",
+              "Alliance_get_disease_genes",
+              "CELLxGENE_get_expression_data",
+              "DisGeNET_get_disease_genes",
+              "DisGeNET_search_disease"
+            ]
+          },
+          "execution_allowed": false,
+          "next_tool": "get_tool_info"
+        },
+        "fulfillment": "tool",
+        "match_count": 74,
+        "matches": [
+          {
+            "category": "orphanet",
+            "coverage": "partial",
+            "description": "Get genes associated with a rare disease from Orphanet. Returns gene symbols, names, and association types (causative, modifier, susceptibility). Essential for rare disease genetic diagnosis.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "Orphanet_get_genes",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.625,
+            "semantic_recall": 0.75
+          },
+          {
+            "category": "alliance_genome",
+            "coverage": "partial",
+            "description": "Get genes associated with a disease across all model organisms from the Alliance of Genome Resources. Uses Disease Ontology (DO) IDs to find genes linked to a disease from human, mouse, rat, zebrafish, fly, worm, and other organisms. Includes both direct annotations and inferred associations from model organism phenotypes. Example: 'DOID:162' (cancer) returns TP53, BRCA1, and thousands more.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "Alliance_get_disease_genes",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          },
+          {
+            "category": "cellxgene_census",
+            "coverage": "partial",
+            "description": "Query gene expression data from CELLxGENE Census (50M+ cells, 60K+ genes). CRITICAL: At least one filter REQUIRED - unfiltered queries timeout. Start with: obs_value_filter='tissue_general == \"lung\" and disease == \"normal\"' AND var_value_filter='feature_name in [\"TP53\", \"EGFR\"]'. Returns AnnData summary (dimensions, metadata). For full matrix data, use Python API with sufficient memory. Note: requires the cellxgene-census Python package; install with `pip install cellxgene-census` for live acces",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "CELLxGENE_get_expression_data",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          },
+          {
+            "category": "disgenet",
+            "coverage": "partial",
+            "description": "Get all genes associated with a disease from DisGeNET. Returns ranked gene list with association scores and evidence counts. Filter by minimum score to get high-confidence associations. Useful for disease gene prioritization.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "DisGeNET_get_disease_genes",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          },
+          {
+            "category": "disgenet",
+            "coverage": "partial",
+            "description": "Search DisGeNET for genes associated with a disease. Query by disease name or UMLS CUI (e.g., C0006142 for breast cancer). Returns associated genes with scores and evidence. Requires DISGENET_API_KEY.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "DisGeNET_search_disease",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          }
+        ],
+        "optional": false,
+        "position": 1,
+        "recommended_action": "review_existing_or_extend_provider",
+        "request": {
+          "description": "rare disease registry genes",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "disease"
+          ]
+        },
+        "selected_match": {
+          "category": "orphanet",
+          "coverage": "partial",
+          "description": "Get genes associated with a rare disease from Orphanet. Returns gene symbols, names, and association types (causative, modifier, susceptibility). Essential for rare disease genetic diagnosis.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "Orphanet_get_genes",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.625,
+          "semantic_recall": 0.75
+        },
+        "state": "needs_review",
+        "step_id": "genes"
+      },
+      {
+        "classification": "existing_partial",
+        "dependency_blockers": [],
+        "depends_on": [],
+        "finder_handoff": {
+          "arguments": {
+            "detail_level": "full",
+            "tool_names": [
+              "Orphanet_get_phenotypes",
+              "Alliance_get_disease_genes",
+              "BioPortal_search_ontology_terms",
+              "ensembl_vep_region",
+              "FinnGen_list_phenotypes"
+            ]
+          },
+          "execution_allowed": false,
+          "next_tool": "get_tool_info"
+        },
+        "fulfillment": "tool",
+        "match_count": 58,
+        "matches": [
+          {
+            "category": "orphanet",
+            "coverage": "partial",
+            "description": "Get HPO (Human Phenotype Ontology) phenotypes associated with a rare disease from Orphanet. Returns HPO terms with their frequency (Very frequent, Frequent, Occasional, Very rare, Excluded) and whether they are diagnostic criteria. Essential for phenotype-driven rare disease diagnosis.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "Orphanet_get_phenotypes",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.625,
+            "semantic_recall": 0.75
+          },
+          {
+            "category": "alliance_genome",
+            "coverage": "partial",
+            "description": "Get genes associated with a disease across all model organisms from the Alliance of Genome Resources. Uses Disease Ontology (DO) IDs to find genes linked to a disease from human, mouse, rat, zebrafish, fly, worm, and other organisms. Includes both direct annotations and inferred associations from model organism phenotypes. Example: 'DOID:162' (cancer) returns TP53, BRCA1, and thousands more.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "Alliance_get_disease_genes",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          },
+          {
+            "category": "bioportal",
+            "coverage": "partial",
+            "description": "Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. BioPortal is the world's largest repository of biomedical ontologies including GO (gene function), HPO (phenotypes), DOID (diseases), CHEBI (chemicals), UBERON (anatomy), SNOMED, MeSH, and 900+ more. Returns matching concepts with labels, IDs, definitions, and synonyms. Optionally filter by specific ontologies. Example: search 'melanoma' to find disease terms across DOID, NCIT, MESH, SNOMED; search 'apopt",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "BioPortal_search_ontology_terms",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          },
+          {
+            "category": "ensembl",
+            "coverage": "partial",
+            "description": "Variant Effect Predictor (VEP) for genomic variants. Predicts functional consequences of variants including impact on genes, transcripts, and proteins. Returns SIFT/PolyPhen scores, consequence types, and affected transcripts. Essential for variant interpretation.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "ensembl_vep_region",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          },
+          {
+            "category": "finngen",
+            "coverage": "partial",
+            "description": "Search and list FinnGen disease endpoints (phenotypes). FinnGen is a Finnish population genomics study with 486,367 participants and 2,470 phenotypes. Search by keyword (e.g., 'diabetes', 'asthma', 'cancer') or browse by category. Returns phenotype codes, case/control counts, and number of genome-wide significant loci. Use phenocode values from results with FinnGen_get_phenotype and FinnGen_get_region_associations.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "FinnGen_list_phenotypes",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          }
+        ],
+        "optional": false,
+        "position": 2,
+        "recommended_action": "review_existing_or_extend_provider",
+        "request": {
+          "description": "rare disease registry phenotypes",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "disease"
+          ]
+        },
+        "selected_match": {
+          "category": "orphanet",
+          "coverage": "partial",
+          "description": "Get HPO (Human Phenotype Ontology) phenotypes associated with a rare disease from Orphanet. Returns HPO terms with their frequency (Very frequent, Frequent, Occasional, Very rare, Excluded) and whether they are diagnostic criteria. Essential for phenotype-driven rare disease diagnosis.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "Orphanet_get_phenotypes",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.625,
+          "semantic_recall": 0.75
+        },
+        "state": "needs_review",
+        "step_id": "phenotypes"
+      },
+      {
+        "classification": "existing_partial",
+        "dependency_blockers": [],
+        "depends_on": [],
+        "finder_handoff": {
+          "arguments": {
+            "detail_level": "full",
+            "tool_names": [
+              "PubTator3_GetEntityRelations",
+              "PubMed_search_articles",
+              "PubTator3_get_annotations",
+              "BioPortal_search_ontology_terms",
+              "biostudies_search"
+            ]
+          },
+          "execution_allowed": false,
+          "next_tool": "get_tool_info"
+        },
+        "fulfillment": "tool",
+        "match_count": 44,
+        "matches": [
+          {
+            "category": "pubtator3_ext",
+            "coverage": "partial",
+            "description": "Query the NCBI PubTator3 relation knowledge graph for a normalized biomedical entity and return RANKED relation edges aggregated across all of PubMed. Given a single entity (e1), returns every related entity with the relation type (associate, cause, treat, prevent, inhibit, stimulate, interact, compare, drug_interact, negative_correlate, positive_correlate, etc.), the source/target entities, and the aggregate publication count supporting each edge. Edges are returned ranked by supporting publica",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "PubTator3_GetEntityRelations",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.75,
+            "semantic_recall": 1.0
+          },
+          {
+            "category": "pubmed",
+            "coverage": "partial",
+            "description": "Search PubMed biomedical literature database using NCBI E-utilities (esearch + esummary). Returns articles with PMID, title, authors, journal, publication year, DOI, article type, and PubMed URL. Automatically fetches rich metadata for each article. Use this to discover medical/life sciences literature, find articles by topic, or search for publications by author or journal. Rate limiting is automatically handled (3 req/sec without API key, 10 req/sec with key set via NCBI_API_KEY environment va",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "PubMed_search_articles",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.625,
+            "semantic_recall": 0.75
+          },
+          {
+            "category": "pubtator3_ext",
+            "coverage": "partial",
+            "description": "Extract biomedical entity annotations from PubMed articles using NCBI PubTator3. Given one or more PubMed IDs (PMIDs), returns text-mined entities including genes, diseases, chemicals, species, mutations, and cell lines with their normalized identifiers (NCBI Gene ID, MeSH, NCBI Taxonomy, etc.) and text positions. Useful for extracting structured biomedical knowledge from literature. Provide PMIDs as a comma-separated string.",
+            "input_recall": 0.0,
+            "kind": "tool",
+            "name": "PubTator3_get_annotations",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.6,
+            "semantic_recall": 1.0
+          },
+          {
+            "category": "bioportal",
+            "coverage": "partial",
+            "description": "Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. BioPortal is the world's largest repository of biomedical ontologies including GO (gene function), HPO (phenotypes), DOID (diseases), CHEBI (chemicals), UBERON (anatomy), SNOMED, MeSH, and 900+ more. Returns matching concepts with labels, IDs, definitions, and synonyms. Optionally filter by specific ontologies. Example: search 'melanoma' to find disease terms across DOID, NCIT, MESH, SNOMED; search 'apopt",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "BioPortal_search_ontology_terms",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          },
+          {
+            "category": "biostudies",
+            "coverage": "partial",
+            "description": "Search BioStudies repository for biological studies across all collections. BioStudies is a comprehensive repository at EMBL-EBI that hosts diverse study types including genomics, transcriptomics, proteomics, imaging data, and more. Supports full-text search with pagination and sorting. HTML responses are automatically converted to Markdown using markitdown. Note: common biomedical phrases are frequently dominated by 'S-EPMC*' hits (full-text literature indexed via the EuropePMC collection) rath",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "biostudies_search",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.5,
+            "semantic_recall": 0.5
+          }
+        ],
+        "optional": false,
+        "position": 3,
+        "recommended_action": "review_existing_or_extend_provider",
+        "request": {
+          "description": "search biomedical literature articles by disease",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "query"
+          ]
+        },
+        "selected_match": {
+          "category": "pubtator3_ext",
+          "coverage": "partial",
+          "description": "Query the NCBI PubTator3 relation knowledge graph for a normalized biomedical entity and return RANKED relation edges aggregated across all of PubMed. Given a single entity (e1), returns every related entity with the relation type (associate, cause, treat, prevent, inhibit, stimulate, interact, compare, drug_interact, negative_correlate, positive_correlate, etc.), the source/target entities, and the aggregate publication count supporting each edge. Edges are returned ranked by supporting publica",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "PubTator3_GetEntityRelations",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.75,
+          "semantic_recall": 1.0
+        },
+        "state": "needs_review",
+        "step_id": "literature"
+      },
+      {
+        "classification": "existing_partial",
+        "dependency_blockers": [
+          "genes",
+          "phenotypes"
+        ],
+        "depends_on": [
+          "genes",
+          "phenotypes"
+        ],
+        "finder_handoff": {
+          "arguments": {
+            "detail_level": "full",
+            "tool_names": [
+              "ClinicalTrials_get_field_values",
+              "ClinicalTrials_search_by_intervention",
+              "ClinicalTrials_search_by_sponsor",
+              "ClinicalTrials_search_studies",
+              "ImmPort_search_studies"
+            ]
+          },
+          "execution_allowed": false,
+          "next_tool": "get_tool_info"
+        },
+        "fulfillment": "tool",
+        "match_count": 104,
+        "matches": [
+          {
+            "category": "clinical_trials",
+            "coverage": "partial",
+            "description": "Get value distribution for a specific field across ClinicalTrials.gov studies. Returns all unique values with study counts. Use to see what status, phase, or study type options exist. Example: 'Phase' field returns counts for PHASE1, PHASE2, PHASE3, etc.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "ClinicalTrials_get_field_values",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.75,
+            "semantic_recall": 1.0
+          },
+          {
+            "category": "clinical_trials",
+            "coverage": "partial",
+            "description": "Search ClinicalTrials.gov for all clinical trials testing a specific drug, biologic, device, or other intervention. Returns trial IDs, titles, phases, status, and conditions being studied. Ideal for finding all trials for a given drug (e.g., 'nivolumab') across all disease indications.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "ClinicalTrials_search_by_intervention",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.75,
+            "semantic_recall": 1.0
+          },
+          {
+            "category": "clinical_trials",
+            "coverage": "partial",
+            "description": "Search ClinicalTrials.gov for clinical trials by sponsor or lead organization. Returns trials funded by pharmaceutical companies, academic institutions, or government agencies. Example: find all Phase 3 trials sponsored by 'National Cancer Institute' for cancer conditions.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "ClinicalTrials_search_by_sponsor",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.75,
+            "semantic_recall": 1.0
+          },
+          {
+            "category": "clinical_trials",
+            "coverage": "partial",
+            "description": "Search ClinicalTrials.gov for clinical trial studies by condition, intervention, sponsor, or other criteria. Returns NCT IDs, titles, status, phase, enrollment, and key trial metadata. Example: search for 'breast cancer' trials with 'pembrolizumab' that are RECRUITING in Phase 3.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "ClinicalTrials_search_studies",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.75,
+            "semantic_recall": 1.0
+          },
+          {
+            "category": "immport",
+            "coverage": "partial",
+            "description": "Search the ImmPort immunology database for studies by keyword, disease condition, assay method, or research focus. ImmPort is a NIAID-funded repository with 900+ open studies covering vaccine trials, flow cytometry, ELISPOT, RNA-seq, and clinical immunology data. Assay methods include: Flow Cytometry, ELISPOT, ELISA, RNA sequencing, Transcription profiling by array, Hemagglutination Inhibition, Luminex xMAP, Q-PCR, CyTOF, and more. Research focuses include: Vaccine Response, Infection Response, ",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "ImmPort_search_studies",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.75,
+            "semantic_recall": 1.0
+          }
+        ],
+        "optional": false,
+        "position": 4,
+        "recommended_action": "review_existing_or_extend_provider",
+        "request": {
+          "description": "search clinical trials by disease condition",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "condition"
+          ]
+        },
+        "selected_match": {
+          "category": "clinical_trials",
+          "coverage": "partial",
+          "description": "Get value distribution for a specific field across ClinicalTrials.gov studies. Returns all unique values with study counts. Use to see what status, phase, or study type options exist. Example: 'Phase' field returns counts for PHASE1, PHASE2, PHASE3, etc.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "ClinicalTrials_get_field_values",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.75,
+          "semantic_recall": 1.0
+        },
+        "state": "needs_review",
+        "step_id": "trials"
+      },
+      {
+        "classification": "existing_exact",
+        "dependency_blockers": [],
+        "depends_on": [],
+        "finder_handoff": {
+          "arguments": {
+            "detail_level": "full",
+            "tool_names": [
+              "FDA_get_drug_name_by_set_id",
+              "FDA_get_drug_label_info_by_field_value",
+              "FDA_get_drug_name_by_SPL_ID",
+              "FAERS_search_serious_reports_by_drug",
+              "FDA_get_drug_name_by_document_id"
+            ]
+          },
+          "execution_allowed": false,
+          "next_tool": "get_tool_info"
+        },
+        "fulfillment": "tool",
+        "match_count": 207,
+        "matches": [
+          {
+            "category": "fda_drug_label",
+            "coverage": "exact",
+            "description": "Retrieve the drug name based on the Set ID of the labeling.",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "FDA_get_drug_name_by_set_id",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": true,
+            "score": 0.95,
+            "semantic_recall": 1.0
+          },
+          {
+            "category": "fda_drug_label",
+            "coverage": "exact",
+            "description": "Retrieve FDA drug label information by searching a specific FDA drug label field for a given value (field:value). This is a generic field-based lookup. Use `return_fields` to choose which sections/fields to return, or pass \"ALL\" to return full label records. Note: for `openfda.generic_name`, values are typically uppercase (e.g., \"ASPIRIN\").\n\nAllowed fields (use these for both `field` and `return_fields`): abuse, accessories, active_ingredient, adverse_reactions, alarms, animal_pharmacology_and_o",
+            "input_recall": 1.0,
+            "kind": "tool",
+            "name": "FDA_get_drug_label_info_by_field_value",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": true,
+            "score": 0.8667,
+            "semantic_recall": 0.8333
+          },
+          {
+            "category": "fda_drug_label",
+            "coverage": "partial",
+            "description": "Retrieve the drug name based on the FDA application number, NUI unique identifier, document ID of a specific version of the drug's Structured Product Label (SPL), or set ID of the drug's Structured Product Label that works across label versions.",
+            "input_recall": 0.0,
+            "kind": "tool",
+            "name": "FDA_get_drug_name_by_SPL_ID",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": true,
+            "score": 0.8,
+            "semantic_recall": 1.0
+          },
+          {
+            "category": "fda_drug_adverse_event_detail",
+            "coverage": "partial",
+            "description": "Search and retrieve detailed reports of serious adverse events for a specific drug. Returns individual case reports with patient information, adverse event details, drug information, and report metadata. Only medicinalproduct is required; all other parameters (limit, skip, seriousnessdeath, seriousnesshospitalization, seriousnesslifethreatening, seriousnessdisabling, patientsex, patientagegroup) are optional. Data source: FDA Adverse Event Reporting System (FAERS).",
+            "input_recall": 0.0,
+            "kind": "tool",
+            "name": "FAERS_search_serious_reports_by_drug",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": true,
+            "score": 0.7167,
+            "semantic_recall": 0.8333
+          },
+          {
+            "category": "fda_drug_label",
+            "coverage": "partial",
+            "description": "Retrieve the drug name based on the document ID.",
+            "input_recall": 0.0,
+            "kind": "tool",
+            "name": "FDA_get_drug_name_by_document_id",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": true,
+            "score": 0.7167,
+            "semantic_recall": 0.8333
+          }
+        ],
+        "optional": false,
+        "position": 5,
+        "recommended_action": "use_existing",
+        "request": {
+          "description": "retrieve FDA drug label by set identifier",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "fda",
+          "required_inputs": [
+            "set_id"
+          ]
+        },
+        "selected_match": {
+          "category": "fda_drug_label",
+          "coverage": "exact",
+          "description": "Retrieve the drug name based on the Set ID of the labeling.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "FDA_get_drug_name_by_set_id",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.95,
+          "semantic_recall": 1.0
+        },
+        "state": "ready_existing",
+        "step_id": "drug_label"
+      },
+      {
+        "classification": "missing",
+        "dependency_blockers": [
+          "genes"
+        ],
+        "depends_on": [
+          "genes"
+        ],
+        "finder_handoff": {
+          "arguments": {
+            "limit": 5,
+            "query": "quantum microscope calibration waveform optimizer"
+          },
+          "execution_allowed": false,
+          "next_tool": "VSDDiscoverAPICandidates"
+        },
+        "fulfillment": "tool",
+        "match_count": 0,
+        "matches": [],
+        "optional": false,
+        "position": 6,
+        "recommended_action": "discover_external_candidate",
+        "request": {
+          "description": "quantum microscope calibration waveform optimizer",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": []
+        },
+        "selected_match": null,
+        "state": "missing",
+        "step_id": "microscopy_calibration"
+      },
+      {
+        "classification": "agent_native",
+        "dependency_blockers": [
+          "genes",
+          "phenotypes",
+          "literature",
+          "trials",
+          "microscopy_calibration"
+        ],
+        "depends_on": [
+          "genes",
+          "phenotypes",
+          "literature",
+          "trials",
+          "drug_label",
+          "microscopy_calibration"
+        ],
+        "finder_handoff": {
+          "arguments": {},
+          "execution_allowed": false,
+          "next_tool": null,
+          "reason": "Agent-native steps do not trigger external API discovery."
+        },
+        "fulfillment": "agent",
+        "match_count": 0,
+        "matches": [],
+        "optional": false,
+        "position": 7,
+        "recommended_action": "perform_after_dependencies",
+        "request": {
+          "description": "combine ALS genes phenotypes literature clinical trials drug labels and quantitative microscopy evidence",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": []
+        },
+        "selected_match": null,
+        "state": "blocked_by_dependencies",
+        "step_id": "synthesis"
+      }
+    ],
+    "workflow_candidate_count": 0,
+    "workflow_candidates": [],
+    "workflow_shortcut": null
+  },
+  "answer": "Yes. The planner retained exact and partial registry coverage for review, sent only the microscopy-calibration gap to non-executable discovery, and recognized an existing drug-discovery workflow with all dependencies present.",
+  "audit_sha256": "8f2863ca0fdfd5f5577f36a33f72fb0efe1043e6156b3743b7e7ab54b88e2d0a",
+  "end_to_end_assertions": {
+    "dependency_order_is_valid": true,
+    "drug_label_reuses_exact_tools": true,
+    "finder_and_planner_share_registry_digest": true,
+    "finder_returns_coverage_with_ranked_tools": true,
+    "known_steps_never_route_to_discovery": true,
+    "missing_dependency_blocks_synthesis": true,
+    "only_real_gap_routes_to_discovery": true,
+    "planner_does_not_load_registry_tools": true,
+    "planner_is_deterministic": true,
+    "planner_is_local_non_executable": true,
+    "required_gap_controls_overall_action": true,
+    "whole_workflow_shortcut_has_complete_dependencies": true
+  },
+  "execution_boundary": "This study plans and inspects only. It does not execute scientific tools, download data, persist demand, or create API candidates.",
+  "existing_workflow_plan": {
+    "execution_allowed": false,
+    "goal": "complete disease target compound ADMET literature workflow",
+    "optional_gap_count": 0,
+    "overall_action": "use_existing_workflow",
+    "plan_id": "d07579f2fcc7ef9d",
+    "plan_sha256": "d07579f2fcc7ef9d5bc14cf5c45b262634b06af7c9a04819cc769a628894282c",
+    "privacy": "Workflow planning is local, read-only, and not persisted or reported.",
+    "ready_agent_step_count": 0,
+    "ready_step_count": 1,
+    "registry_sha256": "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752",
+    "registry_tool_count": 2744,
+    "required_gap_count": 0,
+    "selected_existing_tools": [
+      "ComprehensiveDrugDiscoveryPipeline"
+    ],
+    "steps": [
+      {
+        "classification": "existing_exact",
+        "dependency_blockers": [],
+        "depends_on": [],
+        "finder_handoff": {
+          "arguments": {
+            "detail_level": "full",
+            "tool_names": [
+              "ComprehensiveDrugDiscoveryPipeline"
+            ]
+          },
+          "execution_allowed": false,
+          "next_tool": "get_tool_info"
+        },
+        "fulfillment": "tool",
+        "match_count": 1,
+        "matches": [
+          {
+            "category": "compose",
+            "coverage": "exact",
+            "description": "Complete end-to-end drug discovery workflow from disease to optimized candidates. Identifies targets, discovers lead compounds, screens for ADMET properties, assesses safety, and validates with literature.",
+            "input_recall": 1.0,
+            "kind": "workflow",
+            "name": "ComprehensiveDrugDiscoveryPipeline",
+            "operation_match": false,
+            "output_recall": 1.0,
+            "provider_match": false,
+            "score": 0.75,
+            "semantic_recall": 1.0
+          }
+        ],
+        "optional": false,
+        "position": 1,
+        "recommended_action": "use_existing",
+        "request": {
+          "description": "complete disease target compound ADMET literature workflow",
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": []
+        },
+        "selected_match": {
+          "category": "compose",
+          "coverage": "exact",
+          "description": "Complete end-to-end drug discovery workflow from disease to optimized candidates. Identifies targets, discovers lead compounds, screens for ADMET properties, assesses safety, and validates with literature.",
+          "input_recall": 1.0,
+          "kind": "workflow",
+          "name": "ComprehensiveDrugDiscoveryPipeline",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.75,
+          "semantic_recall": 1.0
+        },
+        "state": "ready_existing",
+        "step_id": "pipeline"
+      }
+    ],
+    "workflow_candidate_count": 1,
+    "workflow_candidates": [
+      {
+        "can_auto_load_from_registry": true,
+        "coverage": "exact",
+        "dependencies_in_registry": [
+          "ADMETAI_predict_BBB_penetrance",
+          "ADMETAI_predict_bioavailability",
+          "ADMETAI_predict_toxicity",
+          "LiteratureSearchTool",
+          "OpenTargets_get_associated_drugs_by_disease_efoId",
+          "OpenTargets_get_associated_targets_by_disease_efoId",
+          "PubChem_get_CID_by_compound_name",
+          "PubChem_get_compound_properties_by_CID"
+        ],
+        "dependencies_loaded": [],
+        "dependencies_missing_from_registry": [],
+        "name": "ComprehensiveDrugDiscoveryPipeline",
+        "required_tools": [
+          "ADMETAI_predict_BBB_penetrance",
+          "ADMETAI_predict_bioavailability",
+          "ADMETAI_predict_toxicity",
+          "LiteratureSearchTool",
+          "OpenTargets_get_associated_drugs_by_disease_efoId",
+          "OpenTargets_get_associated_targets_by_disease_efoId",
+          "PubChem_get_CID_by_compound_name",
+          "PubChem_get_compound_properties_by_CID"
+        ],
+        "score": 0.75
+      }
+    ],
+    "workflow_shortcut": {
+      "can_auto_load_from_registry": true,
+      "coverage": "exact",
+      "dependencies_in_registry": [
+        "ADMETAI_predict_BBB_penetrance",
+        "ADMETAI_predict_bioavailability",
+        "ADMETAI_predict_toxicity",
+        "LiteratureSearchTool",
+        "OpenTargets_get_associated_drugs_by_disease_efoId",
+        "OpenTargets_get_associated_targets_by_disease_efoId",
+        "PubChem_get_CID_by_compound_name",
+        "PubChem_get_compound_properties_by_CID"
+      ],
+      "dependencies_loaded": [],
+      "dependencies_missing_from_registry": [],
+      "name": "ComprehensiveDrugDiscoveryPipeline",
+      "required_tools": [
+        "ADMETAI_predict_BBB_penetrance",
+        "ADMETAI_predict_bioavailability",
+        "ADMETAI_predict_toxicity",
+        "LiteratureSearchTool",
+        "OpenTargets_get_associated_drugs_by_disease_efoId",
+        "OpenTargets_get_associated_targets_by_disease_efoId",
+        "PubChem_get_CID_by_compound_name",
+        "PubChem_get_compound_properties_by_CID"
+      ],
+      "score": 0.75
+    }
+  },
+  "finder_integration": {
+    "capability_coverage": {
+      "capability_id": "21e61433f497c154",
+      "classification": "existing_exact",
+      "exact_match_count": 2,
+      "match_count": 207,
+      "matches": [
+        {
+          "category": "fda_drug_label",
+          "coverage": "exact",
+          "description": "Retrieve the drug name based on the Set ID of the labeling.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "FDA_get_drug_name_by_set_id",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.95,
+          "semantic_recall": 1.0
+        },
+        {
+          "category": "fda_drug_label",
+          "coverage": "exact",
+          "description": "Retrieve FDA drug label information by searching a specific FDA drug label field for a given value (field:value). This is a generic field-based lookup. Use `return_fields` to choose which sections/fields to return, or pass \"ALL\" to return full label records. Note: for `openfda.generic_name`, values are typically uppercase (e.g., \"ASPIRIN\").\n\nAllowed fields (use these for both `field` and `return_fields`): abuse, accessories, active_ingredient, adverse_reactions, alarms, animal_pharmacology_and_o",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "FDA_get_drug_label_info_by_field_value",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.85,
+          "semantic_recall": 0.8
+        },
+        {
+          "category": "fda_drug_label",
+          "coverage": "partial",
+          "description": "Retrieve the drug name based on the FDA application number, NUI unique identifier, document ID of a specific version of the drug's Structured Product Label (SPL), or set ID of the drug's Structured Product Label that works across label versions.",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FDA_get_drug_name_by_SPL_ID",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.8,
+          "semantic_recall": 1.0
+        },
+        {
+          "category": "fda_drug_adverse_event_detail",
+          "coverage": "partial",
+          "description": "Search and retrieve detailed reports of serious adverse events for a specific drug. Returns individual case reports with patient information, adverse event details, drug information, and report metadata. Only medicinalproduct is required; all other parameters (limit, skip, seriousnessdeath, seriousnesshospitalization, seriousnesslifethreatening, seriousnessdisabling, patientsex, patientagegroup) are optional. Data source: FDA Adverse Event Reporting System (FAERS).",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FAERS_search_serious_reports_by_drug",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.7,
+          "semantic_recall": 0.8
+        },
+        {
+          "category": "fda_drug_label",
+          "coverage": "partial",
+          "description": "Retrieve the drug name based on the document ID.",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FDA_get_drug_name_by_document_id",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.7,
+          "semantic_recall": 0.8
+        }
+      ],
+      "privacy": "Coverage resolution is local, read-only, and not persisted or reported.",
+      "recommended_action": "use_existing",
+      "registry_sha256": "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752",
+      "registry_tool_count": 2744,
+      "request": {
+        "description": "FDA drug label by set identifier",
+        "endpoint_host": "",
+        "endpoint_path": "",
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [],
+        "provider": "fda",
+        "required_inputs": [
+          "set_id"
+        ]
+      },
+      "tool_matches": 207,
+      "workflow_matches": 0
+    },
+    "categories_filtered": null,
+    "has_more": true,
+    "limit": 5,
+    "next_offset": 5,
+    "offset": 0,
+    "processing_info": {
+      "indexed_tools": 2601,
+      "query_phrases": 12,
+      "query_tokens": 5
+    },
+    "query": "FDA drug label by set identifier",
+    "search_method": "Advanced keyword matching (TF-IDF + NLP)",
+    "tools": [
+      {
+        "category": "fda_pharmacogenomic_biomarkers",
+        "description": "Retrieve pharmacogenomic biomarkers from FDA drug labels. This tool fetches the Table of Pharmacogenomic Biomarkers in Drug Labeling from the FDA website and allows filtering by drug name or biomarker.",
+        "name": "fda_pharmacogenomic_biomarkers",
+        "parameters": {
+          "properties": {
+            "biomarker": {
+              "description": "Filter by the specific biomarker (e.g., 'CYP2D6', 'HLA-B*5701'). Case-insensitive partial match.",
+              "type": "string"
+            },
+            "drug_name": {
+              "description": "Filter by the name of the drug (e.g., 'Sivextro', 'Abacavir'). Case-insensitive partial match.",
+              "type": "string"
+            },
+            "limit": {
+              "default": 10,
+              "description": "Maximum number of results to return.",
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "relevance_score": 14.8333,
+        "type": "FDAPharmacogenomicBiomarkersTool"
+      },
+      {
+        "category": "fda_drug_label",
+        "description": "Retrieve the drug name based on the FDA application number, NUI unique identifier, document ID of a specific version of the drug's Structured Product Label (SPL), or set ID of the drug's Structured Product Label that works across label versions.",
+        "name": "FDA_get_drug_name_by_SPL_ID",
+        "parameters": {
+          "properties": {
+            "field_info": {
+              "description": "The specific field information to search for.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "The number of records to return.",
+              "type": "integer"
+            },
+            "skip": {
+              "description": "The number of records to skip.",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "field_info"
+          ],
+          "type": "object"
+        },
+        "relevance_score": 14.5353,
+        "type": "FDADrugLabel"
+      },
+      {
+        "category": "fda_drug_label",
+        "description": "Retrieve FDA drug label information by searching a specific FDA drug label field for a given value (field:value). This is a generic field-based lookup. Use `return_fields` to choose which sections/fields to return, or pass \"ALL\" to return full label records. Note: for `openfda.generic_name`, values are typically uppercase (e.g., \"ASPIRIN\").\n\nAllowed fields (use these for both `field` and `return_fields`): abuse, accessories, active_ingredient, adverse_reactions, alarms, animal_pharmacology_and_or_toxicology, ask_doctor, ask_doctor_or_pharmacist, assembly_or_installation_instructions, boxed_warning, calibration_instructions, carcinogenesis_and_mutagenesis_and_impairment_of_fertility, cleaning, clinical_pharmacology, clinical_studies, compatible_accessories, components, contraindications, controlled_substance, dependence, description, diagram_of_device, disposal_and_waste_handling, do_not_use, dosage_and_administration, dosage_forms_and_strengths, drug_abuse_and_dependence, drug_and_or_laboratory_test_interactions, drug_interactions, effective_time, environmental_warning, food_safety_warning, general_precautions, geriatric_use, guaranteed_analysis_of_feed, health_care_provider_letter, health_claim, how_supplied, id, inactive_ingredient, indications_and_usage, information_for_owners_or_caregivers, information_for_patients, instructions_for_use, intended_use_of_the_device, keep_out_of_reach_of_children, labor_and_delivery, laboratory_tests, mechanism_of_action, microbiology, nonclinical_toxicology, nonteratogenic_effects, nursing_mothers, openfda, openfda.brand_name, openfda.generic_name, other_safety_information, overdosage, package_label_principal_display_panel, patient_medication_information, pediatric_use, pharmacodynamics, pharmacogenomics, pharmacokinetics, precautions, pregnancy, pregnancy_or_breast_feeding, purpose, questions, recent_major_changes, references, residue_warning, risks, route, safe_handling_warning, set_id, spl_indexing_data_elements, spl_medguide, spl_patient_package_insert, spl_product_data_elements, spl_unclassified_section, statement_of_identity, stop_use, storage_and_handling, summary_of_safety_and_effectiveness, teratogenic_effects, troubleshooting, use_in_specific_populations, user_safety_warnings, version, warnings, warnings_and_cautions, when_using.",
+        "name": "FDA_get_drug_label_info_by_field_value",
+        "parameters": {
+          "properties": {
+            "field": {
+              "description": "Which field to search. Choose one value from the Allowed fields list in this tool's description. Common choices: `openfda.generic_name`, `openfda.brand_name`, `id`, `set_id`, `indications_and_usage`, `dosage_and_administration`.",
+              "type": "string"
+            },
+            "field_value": {
+              "description": "The value to search for in the specified field (exact match).",
+              "type": "string"
+            },
+            "limit": {
+              "description": "The number of records to return (default: 100).",
+              "type": "integer"
+            },
+            "return_fields": {
+              "anyOf": [
+                {
+                  "description": "Return full label records.",
+                  "enum": [
+                    "ALL"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "description": "Fields/sections to return. Choose any subset from the Allowed fields list in this tool's description. Tip: include `openfda.brand_name`, `openfda.generic_name`, `id`, `set_id` for identifiers.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              ],
+              "description": "Which fields/sections to return. Use \"ALL\" to return full label records. If omitted, defaults to a small set of identifiers (brand/generic/id/set_id)."
+            },
+            "skip": {
+              "description": "The number of records to skip (default: 0).",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "field",
+            "field_value"
+          ],
+          "type": "object"
+        },
+        "relevance_score": 12.3097,
+        "type": "FDADrugLabelFieldValueTool"
+      },
+      {
+        "category": "openfda",
+        "description": "Search the FDA drug label (SPL - Structured Product Labeling) database via openFDA. Contains approved prescription and OTC drug labels including indications, warnings, dosage, adverse reactions, contraindications, and pharmacology sections. Use Lucene query syntax: 'openfda.brand_name:aspirin', 'openfda.generic_name:ibuprofen', 'openfda.manufacturer_name:pfizer'. Returns label text sections and openFDA cross-references (brand name, generic name, substance name, product type).",
+        "name": "OpenFDA_search_drug_labels",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "description": "Maximum number of results (default 1, max 100)",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "search": {
+              "description": "Lucene query to search drug labels (e.g., 'openfda.brand_name:aspirin', 'openfda.generic_name:metformin', 'indications_and_usage:diabetes', 'openfda.pharm_class_epc:\"beta blocker\"')",
+              "type": "string"
+            }
+          },
+          "required": [
+            "search"
+          ],
+          "type": "object"
+        },
+        "relevance_score": 11.2681,
+        "type": "BaseRESTTool"
+      },
+      {
+        "category": "openfda_labels",
+        "description": "Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Drug labels contain official clinical guidance: indications, dosing regimens, contraindications, black box warnings, drug interactions, and adverse reactions. Use drug_name for drug-specific lookups (e.g., 'metformin', 'warfarin') or indication for condition-based searches (e.g., 'hypertension', 'type 2 diabetes'). Returns a list of matching drug labels with key clinical sections.",
+        "name": "FDA_search_drug_labels",
+        "parameters": {
+          "properties": {
+            "drug_name": {
+              "description": "Brand or generic drug name to search (e.g., 'metformin', 'atorvastatin', 'lisinopril'). Mutually exclusive with indication.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "indication": {
+              "description": "Medical condition to search in indications sections (e.g., 'hypertension', 'type 2 diabetes', 'atrial fibrillation'). Mutually exclusive with drug_name.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "limit": {
+              "default": 5,
+              "description": "Maximum number of results to return (default: 5, max: 20)",
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "relevance_score": 10.8952,
+        "type": "FDALabelTool"
+      }
+    ],
+    "total_matches": 739
+  },
+  "generated_at": "2026-08-01T19:45:04.241132+00:00",
+  "initially_loaded_tools": [
+    "Tool_Finder_Keyword",
+    "VSDPlanWorkflow"
+  ],
+  "loaded_after_planning": [
+    "Tool_Finder_Keyword",
+    "VSDPlanWorkflow"
+  ],
+  "question": "Can an agent preflight a complicated ALS research workflow, reuse existing tools and workflows, and isolate only the truly missing capability?",
+  "title": "Registry-First ALS Workflow Planning Case Study"
+}

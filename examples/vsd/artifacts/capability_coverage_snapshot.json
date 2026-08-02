@@ -1,0 +1,405 @@
+{
+  "all_assertions_passed": true,
+  "assertions": {
+    "als_uses_existing_registry": true,
+    "fda_uses_existing_tool_family": true,
+    "real_gap_can_continue_to_discovery": true,
+    "workflow_is_detected": true
+  },
+  "case": "registry-first capability resolution",
+  "demands": {
+    "als_registry": {
+      "description": "rare disease registry genes and phenotypes",
+      "required_inputs": [
+        "disease"
+      ]
+    },
+    "drug_discovery_workflow": {
+      "description": "complete disease target compound ADMET literature workflow"
+    },
+    "fda_label": {
+      "description": "retrieve FDA drug label by set identifier",
+      "provider": "FDA",
+      "required_inputs": [
+        "set_id"
+      ]
+    },
+    "intentional_gap": {
+      "description": "quantum microscope calibration waveform optimizer"
+    }
+  },
+  "results": {
+    "als_registry": {
+      "capability_id": "64b118dddfd04d71",
+      "classification": "existing_partial",
+      "exact_match_count": 0,
+      "match_count": 23,
+      "matches": [
+        {
+          "category": "alliance_genome",
+          "coverage": "partial",
+          "description": "Get genes associated with a disease across all model organisms from the Alliance of Genome Resources. Uses Disease Ontology (DO) IDs to find genes linked to a disease from human, mouse, rat, zebrafish, fly, worm, and other organisms. Includes both direct annotations and inferred associations from model organism phenotypes. Example: 'DOID:162' (cancer) returns TP53, BRCA1, and thousands more.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "Alliance_get_disease_genes",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        },
+        {
+          "category": "ensembl",
+          "coverage": "partial",
+          "description": "Variant Effect Predictor (VEP) for genomic variants. Predicts functional consequences of variants including impact on genes, transcripts, and proteins. Returns SIFT/PolyPhen scores, consequence types, and affected transcripts. Essential for variant interpretation.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "ensembl_vep_region",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        },
+        {
+          "category": "hpo",
+          "coverage": "partial",
+          "description": "Get the full curated HPO annotation profile for a disease, keyed by a disease ID (OMIM / ORPHA / DECIPHER), from the JAX HPO network annotations. Returns three things: (1) medical_actions \u2014 MAxO curated treatments / management actions, each with TREATS / PREVENTS relations and the specific phenotypes they target; (2) categories \u2014 the disease's phenotypes grouped by body system (e.g., Cardiovascular, Nervous System, Eye), each with frequency / onset; (3) genes \u2014 the causative genes (NCBI gene IDs",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "HPO_get_disease_annotations",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        },
+        {
+          "category": "medgen",
+          "coverage": "partial",
+          "description": "Get detailed information about a specific genetic condition from NCBI MedGen by UID or UMLS CUI. Returns full definition, associated genes, OMIM IDs, synonyms, modes of inheritance, and clinical features (HPO phenotypes). Example: uid='41393' returns cystic fibrosis with CFTR/TGFB1/FCGR2A genes, autosomal recessive inheritance, 30+ clinical features.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "MedGen_get_condition",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        },
+        {
+          "category": "monarch_new",
+          "coverage": "partial",
+          "description": "Get detailed information about any biomedical entity in the Monarch Initiative knowledge graph by its CURIE identifier. Supports genes (HGNC), diseases (MONDO, OMIM), phenotypes (HP), variants, and more. Returns the entity name, category, description, synonyms, cross-references, and species. Example: HGNC:11998 returns TP53 gene; MONDO:0007739 returns Huntington disease with cross-refs to OMIM, DOID, ICD10.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "Monarch_get_entity",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        },
+        {
+          "category": "monarch_new",
+          "coverage": "partial",
+          "description": "Search the Monarch Initiative knowledge graph for biomedical entities by name or keyword. Returns genes, diseases, phenotypes, and other entities matching the query, with CURIE identifiers and categories. Filter by category (biolink:Gene, biolink:Disease, biolink:PhenotypicFeature) to narrow results. Use returned CURIEs with Monarch_get_entity and Monarch_get_associations for detailed lookups.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "Monarch_search",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        },
+        {
+          "category": "monarch_v3",
+          "coverage": "partial",
+          "description": "Search the Monarch Initiative knowledge graph for biomedical entities by name or keyword. Returns genes, diseases, phenotypes, and other entities matching the query, with their CURIE identifiers and categories. Useful for finding entity IDs to use with MonarchV3_get_entity and MonarchV3_get_associations. Example: searching 'BRCA1' returns HGNC:1100 (gene), 'Alzheimer' returns MONDO disease entries.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "MonarchV3_search",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        },
+        {
+          "category": "mondo",
+          "coverage": "partial",
+          "description": "Get detailed information about a disease from the Mondo Disease Ontology by its MONDO ID. Returns the disease name, description, synonyms, cross-references (OMIM, Orphanet, DOID, MeSH, ICD-10, NCIT, UMLS, SNOMED-CT), hierarchy (parent diseases), subtypes count, causal genes, inheritance pattern, and association counts (phenotypes, correlated genes, etc.). Essential for understanding disease classification and finding equivalent IDs across ontologies.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "Mondo_get_disease",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        },
+        {
+          "category": "mousemine",
+          "coverage": "partial",
+          "description": "Search MouseMine, the InterMine data warehouse for mouse (Mus musculus) genomics data from MGI (Mouse Genome Informatics). Searches across genes, alleles, proteins, publications, gene ontology terms, protein domains, and more. Returns matching records with category facets and relevance scores. MouseMine integrates data from MGI including gene annotations, phenotypes, alleles, expression data, pathways, and disease models. Use facet_Category parameter to filter by specific entity type (e.g., 'Pro",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "MouseMine_search",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        },
+        {
+          "category": "orphanet",
+          "coverage": "partial",
+          "description": "Get genes associated with a rare disease from Orphanet. Returns gene symbols, names, and association types (causative, modifier, susceptibility). Essential for rare disease genetic diagnosis.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "Orphanet_get_genes",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.55,
+          "semantic_recall": 0.6
+        }
+      ],
+      "privacy": "Coverage resolution is local, read-only, and not persisted or reported.",
+      "recommended_action": "review_existing_or_extend_provider",
+      "registry_sha256": "4c93a7a90997627fc06edc5c7d73977a0f4759195d9d3ccfe0d1ca0b55a78cb6",
+      "registry_tool_count": 2743,
+      "request": {
+        "description": "rare disease registry genes and phenotypes",
+        "endpoint_host": "",
+        "endpoint_path": "",
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [],
+        "provider": "",
+        "required_inputs": [
+          "disease"
+        ]
+      },
+      "tool_matches": 23,
+      "workflow_matches": 0
+    },
+    "drug_discovery_workflow": {
+      "capability_id": "1e1d26e0dfe20c68",
+      "classification": "existing_exact",
+      "exact_match_count": 1,
+      "match_count": 1,
+      "matches": [
+        {
+          "category": "compose",
+          "coverage": "exact",
+          "description": "Complete end-to-end drug discovery workflow from disease to optimized candidates. Identifies targets, discovers lead compounds, screens for ADMET properties, assesses safety, and validates with literature.",
+          "input_recall": 1.0,
+          "kind": "workflow",
+          "name": "ComprehensiveDrugDiscoveryPipeline",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": false,
+          "score": 0.75,
+          "semantic_recall": 1.0
+        }
+      ],
+      "privacy": "Coverage resolution is local, read-only, and not persisted or reported.",
+      "recommended_action": "use_existing",
+      "registry_sha256": "4c93a7a90997627fc06edc5c7d73977a0f4759195d9d3ccfe0d1ca0b55a78cb6",
+      "registry_tool_count": 2743,
+      "request": {
+        "description": "complete disease target compound ADMET literature workflow",
+        "endpoint_host": "",
+        "endpoint_path": "",
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [],
+        "provider": "",
+        "required_inputs": []
+      },
+      "tool_matches": 0,
+      "workflow_matches": 1
+    },
+    "fda_label": {
+      "capability_id": "5a4c0251f79f0f58",
+      "classification": "existing_exact",
+      "exact_match_count": 2,
+      "match_count": 207,
+      "matches": [
+        {
+          "category": "fda_drug_label",
+          "coverage": "exact",
+          "description": "Retrieve the drug name based on the Set ID of the labeling.",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "FDA_get_drug_name_by_set_id",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.95,
+          "semantic_recall": 1.0
+        },
+        {
+          "category": "fda_drug_label",
+          "coverage": "exact",
+          "description": "Retrieve FDA drug label information by searching a specific FDA drug label field for a given value (field:value). This is a generic field-based lookup. Use `return_fields` to choose which sections/fields to return, or pass \"ALL\" to return full label records. Note: for `openfda.generic_name`, values are typically uppercase (e.g., \"ASPIRIN\").\n\nAllowed fields (use these for both `field` and `return_fields`): abuse, accessories, active_ingredient, adverse_reactions, alarms, animal_pharmacology_and_o",
+          "input_recall": 1.0,
+          "kind": "tool",
+          "name": "FDA_get_drug_label_info_by_field_value",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.8667,
+          "semantic_recall": 0.8333
+        },
+        {
+          "category": "fda_drug_label",
+          "coverage": "partial",
+          "description": "Retrieve the drug name based on the FDA application number, NUI unique identifier, document ID of a specific version of the drug's Structured Product Label (SPL), or set ID of the drug's Structured Product Label that works across label versions.",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FDA_get_drug_name_by_SPL_ID",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.8,
+          "semantic_recall": 1.0
+        },
+        {
+          "category": "fda_drug_adverse_event_detail",
+          "coverage": "partial",
+          "description": "Search and retrieve detailed reports of serious adverse events for a specific drug. Returns individual case reports with patient information, adverse event details, drug information, and report metadata. Only medicinalproduct is required; all other parameters (limit, skip, seriousnessdeath, seriousnesshospitalization, seriousnesslifethreatening, seriousnessdisabling, patientsex, patientagegroup) are optional. Data source: FDA Adverse Event Reporting System (FAERS).",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FAERS_search_serious_reports_by_drug",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.7167,
+          "semantic_recall": 0.8333
+        },
+        {
+          "category": "fda_drug_label",
+          "coverage": "partial",
+          "description": "Retrieve the drug name based on the document ID.",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FDA_get_drug_name_by_document_id",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.7167,
+          "semantic_recall": 0.8333
+        },
+        {
+          "category": "fda_drug_adverse_event_detail",
+          "coverage": "partial",
+          "description": "Search and retrieve detailed adverse event reports from FAERS. Returns individual case reports with patient information, adverse event details, drug information, and report metadata. Only medicinalproduct is required; all other parameters (limit, skip, patientsex, patientagegroup, occurcountry, serious, seriousnessdeath) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FAERS_search_adverse_event_reports",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.6333,
+          "semantic_recall": 0.6667
+        },
+        {
+          "category": "fda_drug_adverse_event_detail",
+          "coverage": "partial",
+          "description": "Search and retrieve detailed adverse event reports for a specific drug and indication. Returns individual case reports with patient information, adverse event details, drug information, and report metadata. Only medicinalproduct is required; all other parameters (drugindication, limit, skip, patientsex, patientagegroup, serious) are optional. Data source: FDA Adverse Event Reporting System (FAERS).",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FAERS_search_reports_by_drug_and_indication",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.6333,
+          "semantic_recall": 0.6667
+        },
+        {
+          "category": "fda_drug_adverse_event_detail",
+          "coverage": "partial",
+          "description": "Search and retrieve detailed adverse event reports for a specific drug filtered by reaction outcome. Returns individual case reports with patient information, adverse event details, drug information, and report metadata. Only medicinalproduct is required; all other parameters (reactionoutcome, limit, skip, patientsex, patientagegroup, serious) are optional. Data source: FDA Adverse Event Reporting System (FAERS).",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FAERS_search_reports_by_drug_and_outcome",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.6333,
+          "semantic_recall": 0.6667
+        },
+        {
+          "category": "fda_drug_adverse_event_detail",
+          "coverage": "partial",
+          "description": "Search and retrieve detailed adverse event reports for a specific drug and reaction type. Returns individual case reports with patient information, adverse event details, drug information, and report metadata. Only medicinalproduct and reactionmeddrapt are required; all other parameters (limit, skip, patientsex, patientagegroup, serious) are optional. Data source: FDA Adverse Event Reporting System (FAERS).",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FAERS_search_reports_by_drug_and_reaction",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.6333,
+          "semantic_recall": 0.6667
+        },
+        {
+          "category": "fda_drug_adverse_event_detail",
+          "coverage": "partial",
+          "description": "Search and retrieve detailed adverse event reports involving multiple drugs (drug interactions). Returns individual case reports where all specified drugs are present. Only medicinalproducts (list of at least 2 drug names) is required; all other parameters (limit, skip, patientsex, patientagegroup, serious) are optional. Data source: FDA Adverse Event Reporting System (FAERS).",
+          "input_recall": 0.0,
+          "kind": "tool",
+          "name": "FAERS_search_reports_by_drug_combination",
+          "operation_match": false,
+          "output_recall": 1.0,
+          "provider_match": true,
+          "score": 0.6333,
+          "semantic_recall": 0.6667
+        }
+      ],
+      "privacy": "Coverage resolution is local, read-only, and not persisted or reported.",
+      "recommended_action": "use_existing",
+      "registry_sha256": "4c93a7a90997627fc06edc5c7d73977a0f4759195d9d3ccfe0d1ca0b55a78cb6",
+      "registry_tool_count": 2743,
+      "request": {
+        "description": "retrieve FDA drug label by set identifier",
+        "endpoint_host": "",
+        "endpoint_path": "",
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [],
+        "provider": "fda",
+        "required_inputs": [
+          "set_id"
+        ]
+      },
+      "tool_matches": 207,
+      "workflow_matches": 0
+    },
+    "intentional_gap": {
+      "capability_id": "e0d6ddae29dc09c9",
+      "classification": "missing",
+      "exact_match_count": 0,
+      "match_count": 0,
+      "matches": [],
+      "privacy": "Coverage resolution is local, read-only, and not persisted or reported.",
+      "recommended_action": "discover_external_candidate",
+      "registry_sha256": "4c93a7a90997627fc06edc5c7d73977a0f4759195d9d3ccfe0d1ca0b55a78cb6",
+      "registry_tool_count": 2743,
+      "request": {
+        "description": "quantum microscope calibration waveform optimizer",
+        "endpoint_host": "",
+        "endpoint_path": "",
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [],
+        "provider": "",
+        "required_inputs": []
+      },
+      "tool_matches": 0,
+      "workflow_matches": 0
+    }
+  }
+}

@@ -1,0 +1,596 @@
+[
+  {
+    "name": "VSDResolveCapability",
+    "type": "VSDResolveCapability",
+    "description": "Check a requested capability against registered ToolUniverse tools and composed workflows before searching for an external API. Returns exact, partial, or missing coverage with deterministic evidence and never persists or reports the request.",
+    "cacheable": false,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 500,
+          "description": "Non-sensitive description of the required capability."
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 500,
+          "description": "Optional provider name or HTTPS provider URL."
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"],
+          "default": "GET"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "Optional exact HTTPS operation endpoint without query parameters."
+        },
+        "operation_id": {
+          "type": "string",
+          "description": "Optional stable provider operation identifier."
+        },
+        "required_inputs": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {"type": "string"},
+          "default": []
+        },
+        "output_fields": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {"type": "string"},
+          "default": []
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 10
+        }
+      },
+      "required": ["description"],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {"type": "object"}
+      },
+      "required": ["status", "data"]
+    },
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "test_examples": [
+      {
+        "description": "Find a rare disease registry for ALS genes and phenotypes",
+        "required_inputs": ["disease"],
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "VSDPlanWorkflow",
+    "type": "VSDPlanWorkflow",
+    "description": "Preflight an agent-proposed multi-step workflow against registered ToolUniverse tools and composed workflows. Returns an ordered, non-executable plan that reuses exact coverage, flags partial coverage for review, and sends only real gaps to API discovery.",
+    "category": "special_tools",
+    "cacheable": false,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "goal": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 500,
+          "description": "Non-sensitive overall workflow goal."
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "properties": {
+              "step_id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]{1,63}$"
+              },
+              "description": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 500
+              },
+              "provider": {"type": "string", "minLength": 3, "maxLength": 500},
+              "method": {"type": "string", "enum": ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"], "default": "GET"},
+              "endpoint": {"type": "string"},
+              "operation_id": {"type": "string"},
+              "required_inputs": {
+                "type": "array",
+                "maxItems": 20,
+                "uniqueItems": true,
+                "items": {"type": "string"},
+                "default": []
+              },
+              "output_fields": {
+                "type": "array",
+                "maxItems": 20,
+                "uniqueItems": true,
+                "items": {"type": "string"},
+                "default": []
+              },
+              "depends_on": {
+                "type": "array",
+                "maxItems": 20,
+                "uniqueItems": true,
+                "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"},
+                "default": []
+              },
+              "optional": {"type": "boolean", "default": false},
+              "fulfillment": {
+                "type": "string",
+                "enum": ["tool", "agent"],
+                "default": "tool",
+                "description": "Use agent for reasoning or assembly steps that must never trigger API discovery."
+              }
+            },
+            "required": ["step_id", "description"],
+            "additionalProperties": false
+          }
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 5
+        }
+      },
+      "required": ["goal", "capabilities"],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {"type": "object"}
+      },
+      "required": ["status", "data"]
+    },
+    "test_examples": [
+      {
+        "goal": "Build an ALS evidence workflow from registry genes, phenotypes, and trials",
+        "capabilities": [
+          {"step_id": "genes", "description": "rare disease registry genes", "required_inputs": ["disease"]},
+          {"step_id": "phenotypes", "description": "rare disease registry phenotypes", "required_inputs": ["disease"]},
+          {"step_id": "trials", "description": "clinical trials by disease", "required_inputs": ["condition"], "depends_on": ["genes", "phenotypes"]}
+        ],
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "VSDDiscoverAPICandidates",
+    "type": "VSDDiscoverAPICandidates",
+    "description": "Search the fixed Socrata public-data catalog for API-ready datasets related to a research demand. Returned metadata is untrusted and non-executable until separately reviewed, verified, and approved.",
+    "category": "special_tools",
+    "cacheable": true,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 200,
+          "description": "Research capability or dataset need, such as active cancer clinical trials by site and phase."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 10,
+          "description": "Maximum number of non-executable candidates to return."
+        }
+      },
+      "required": ["query"],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string"},
+        "candidates": {"type": "array"},
+        "candidate_count": {"type": "integer"},
+        "catalog_result_count": {"type": ["integer", "null"]},
+        "boundary": {"type": "string"},
+        "provenance": {"type": "object"}
+      },
+      "required": ["query", "candidates", "candidate_count", "catalog_result_count", "boundary", "provenance"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "VSDDiscoverSources",
+    "type": "VSDDiscoverSources",
+    "description": "Search the packaged catalog of reviewed VSD integrations. Review covers the transport profile and response adapter, not scientific endorsement.",
+    "category": "special_tools",
+    "cacheable": true,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Optional case-insensitive filter over source metadata."
+        }
+      },
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {"type": "string"},
+              "name": {"type": "string"},
+              "endpoint": {"type": "string"},
+              "description": {"type": "string"},
+              "default_params": {"type": "object"},
+              "tool_name": {"type": "string"},
+              "review_scope": {"type": "string"}
+            },
+            "required": [
+              "source_id",
+              "name",
+              "endpoint",
+              "description",
+              "default_params",
+              "tool_name",
+              "review_scope"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["sources"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "VSDWHOHypertensionIndicator",
+    "type": "VSDWHOHypertensionIndicator",
+    "description": "Retrieve and validate the reviewed WHO hypertension diagnosis-coverage indicator definition through a fixed HTTPS endpoint.",
+    "category": "special_tools",
+    "cacheable": true,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "indicator": {
+          "type": "object",
+          "properties": {
+            "indicator_code": {"type": "string"},
+            "indicator_name": {"type": "string"},
+            "language": {"type": "string"}
+          },
+          "required": ["indicator_code", "indicator_name", "language"],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string"},
+            "endpoint": {"type": "string", "format": "uri"},
+            "query_params": {"type": "object"},
+            "retrieved_at": {"type": "string", "format": "date-time"},
+            "http_status": {"type": "integer"},
+            "content_type": {"type": "string"},
+            "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "redirects": {"type": "integer", "const": 0},
+            "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "required": [
+            "provider",
+            "endpoint",
+            "query_params",
+            "retrieved_at",
+            "http_status",
+            "content_type",
+            "response_bytes",
+            "redirects",
+            "payload_sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": ["indicator", "provenance"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "VSDCDCPlacesHeartHealthProfile",
+    "type": "VSDCDCPlacesHeartHealthProfile",
+    "description": "Retrieve a validated eight-measure CDC PLACES heart-health profile for census tracts in one US county through a fixed endpoint.",
+    "category": "special_tools",
+    "cacheable": true,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "state_abbr": {
+          "type": "string",
+          "pattern": "^[A-Za-z]{2}$",
+          "description": "Two-letter US state abbreviation."
+        },
+        "county_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "County name without the word County, for example Autauga."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 500,
+          "description": "Maximum census-tract measure records to retrieve."
+        }
+      },
+      "required": ["state_abbr", "county_name"],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "measure_definitions": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "properties": {
+              "measure_id": {"type": "string"},
+              "name": {"type": "string"},
+              "domain": {
+                "type": "string",
+                "enum": ["access", "clinical_risk", "health_behavior", "health_outcome", "prevention"]
+              },
+              "population": {"type": "string"},
+              "direction": {
+                "type": "string",
+                "enum": ["higher_is_worse", "higher_is_better"]
+              }
+            },
+            "required": ["measure_id", "name", "domain", "population", "direction"],
+            "additionalProperties": false
+          }
+        },
+        "state_abbr": {"type": "string"},
+        "county_name": {"type": "string"},
+        "possibly_truncated": {"type": "boolean"},
+        "estimates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {"type": "string"},
+              "stateabbr": {"type": "string"},
+              "countyname": {"type": "string"},
+              "locationname": {"type": "string"},
+              "measure": {"type": "string"},
+              "measureid": {"type": "string"},
+              "data_value": {"type": "string"},
+              "low_confidence_limit": {"type": "string"},
+              "high_confidence_limit": {"type": "string"}
+            },
+            "required": [
+              "year",
+              "stateabbr",
+              "countyname",
+              "locationname",
+              "measure",
+              "measureid",
+              "data_value",
+              "low_confidence_limit",
+              "high_confidence_limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string"},
+            "endpoint": {"type": "string", "format": "uri"},
+            "query_params": {"type": "object"},
+            "retrieved_at": {"type": "string", "format": "date-time"},
+            "http_status": {"type": "integer"},
+            "content_type": {"type": "string"},
+            "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "redirects": {"type": "integer", "const": 0},
+            "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "required": [
+            "provider",
+            "endpoint",
+            "query_params",
+            "retrieved_at",
+            "http_status",
+            "content_type",
+            "response_bytes",
+            "redirects",
+            "payload_sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "measure_definitions",
+        "state_abbr",
+        "county_name",
+        "possibly_truncated",
+        "estimates",
+        "provenance"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "VSDOpenFDALabelBySetId",
+    "type": "VSDOpenFDALabelBySetId",
+    "description": "Retrieve and normalize one public openFDA drug label by UUID set ID through a fixed endpoint.",
+    "category": "special_tools",
+    "cacheable": true,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "set_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Public openFDA label set UUID."
+        }
+      },
+      "required": ["set_id"],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "object",
+          "properties": {
+            "set_id": {"type": "string"},
+            "effective_time": {"type": "string"},
+            "brand_name": {"type": "string"},
+            "generic_name": {"type": "string"},
+            "route": {"type": "string"},
+            "warnings": {"type": "array", "items": {"type": "string"}}
+          },
+          "required": [
+            "set_id",
+            "effective_time",
+            "brand_name",
+            "generic_name",
+            "route",
+            "warnings"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string"},
+            "endpoint": {"type": "string", "format": "uri"},
+            "query_params": {"type": "object"},
+            "retrieved_at": {"type": "string", "format": "date-time"},
+            "http_status": {"type": "integer"},
+            "content_type": {"type": "string"},
+            "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "redirects": {"type": "integer", "const": 0},
+            "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "required": [
+            "provider",
+            "endpoint",
+            "query_params",
+            "retrieved_at",
+            "http_status",
+            "content_type",
+            "response_bytes",
+            "redirects",
+            "payload_sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": ["label", "provenance"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "VSDEnsemblServiceStatus",
+    "type": "VSDEnsemblServiceStatus",
+    "description": "Check the reviewed Ensembl REST service endpoint and return a typed availability result.",
+    "category": "special_tools",
+    "cacheable": true,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "service": {"type": "string"},
+        "available": {"type": "boolean"},
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string"},
+            "endpoint": {"type": "string", "format": "uri"},
+            "query_params": {"type": "object"},
+            "retrieved_at": {"type": "string", "format": "date-time"},
+            "http_status": {"type": "integer"},
+            "content_type": {"type": "string"},
+            "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "redirects": {"type": "integer", "const": 0},
+            "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "required": [
+            "provider",
+            "endpoint",
+            "query_params",
+            "retrieved_at",
+            "http_status",
+            "content_type",
+            "response_bytes",
+            "redirects",
+            "payload_sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": ["service", "available", "provenance"],
+      "additionalProperties": false
+    }
+  }
+]

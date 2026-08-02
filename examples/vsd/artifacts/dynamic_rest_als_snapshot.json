@@ -1,0 +1,1833 @@
+{
+  "case": {
+    "condition": "Amyotrophic Lateral Sclerosis",
+    "interpretation_boundary": "This is an API execution and record-consistency proof, not trial matching, eligibility assessment, or treatment advice.",
+    "location_query": "AREA[LocationCountry]United States",
+    "question": "Which active or upcoming US ALS studies are returned by the reviewed ClinicalTrials.gov search, and can a second generated operation retrieve the selected study consistently?",
+    "status_filter": [
+      "RECRUITING",
+      "NOT_YET_RECRUITING",
+      "ACTIVE_NOT_RECRUITING",
+      "ENROLLING_BY_INVITATION"
+    ]
+  },
+  "detail_follow_up": {
+    "identifier_matches_search": true,
+    "provenance": {
+      "content_type": "application/json",
+      "endpoint": "https://clinicaltrials.gov/api/v2/studies/NCT01772602",
+      "http_status": 200,
+      "method": "GET",
+      "operation_sha256": "3b4dd7f5717bd0f2dcf1d50c85a09a71c1b00ba44c7bccbfcf339bf0a53dbfa6",
+      "payload_sha256": "4dd3ccee9977ba69c9e8c35c179fdc25f212d39b101cc0c9e0a8e8fd7ca30c44",
+      "provider": "clinicaltrials.gov",
+      "query_params": {
+        "format": "json"
+      },
+      "redirects": 0,
+      "response_bytes": 4743,
+      "retrieved_at": "2026-08-01T01:07:10.720661+00:00"
+    },
+    "selected_nct_id": "NCT01772602",
+    "selection_rule": "Lexicographically smallest returned valid NCT identifier",
+    "study": {
+      "conditions": [
+        "Amyotrophic Lateral Sclerosis"
+      ],
+      "interventions": [],
+      "lead_sponsor": "Centers for Disease Control and Prevention",
+      "nct_id": "NCT01772602",
+      "overall_status": "RECRUITING",
+      "phases": [],
+      "study_type": "OBSERVATIONAL",
+      "title": "The National Amyotrophic Lateral Sclerosis Registry",
+      "us_locations": [
+        {
+          "city": "Atlanta",
+          "facility": "CDC",
+          "state": "Georgia",
+          "status": "RECRUITING"
+        }
+      ]
+    }
+  },
+  "search": {
+    "has_next_page": true,
+    "intervention_type_counts": {
+      "BEHAVIORAL": 2,
+      "BIOLOGICAL": 1,
+      "COMBINATION_PRODUCT": 1,
+      "DEVICE": 4,
+      "DIETARY_SUPPLEMENT": 1,
+      "DRUG": 14,
+      "GENETIC": 1,
+      "OTHER": 6
+    },
+    "phase_counts": {
+      "NA": 4,
+      "NOT_APPLICABLE": 8,
+      "PHASE1": 4,
+      "PHASE2": 3,
+      "PHASE3": 2
+    },
+    "provenance": {
+      "content_type": "application/json",
+      "endpoint": "https://clinicaltrials.gov/api/v2/studies",
+      "http_status": 200,
+      "method": "GET",
+      "operation_sha256": "79852cdcc0dc7695b4e430313b1574721303fb78b0dff1cd3eadcbcd66c9be1c",
+      "payload_sha256": "dbefbe106f242d10a0b52277d89cd4264b7fe52851b6f50ffbe65efcf23da6a9",
+      "provider": "clinicaltrials.gov",
+      "query_params": {
+        "countTotal": "true",
+        "filter.overallStatus": "RECRUITING|NOT_YET_RECRUITING|ACTIVE_NOT_RECRUITING|ENROLLING_BY_INVITATION",
+        "format": "json",
+        "pageSize": 20,
+        "query.cond": "Amyotrophic Lateral Sclerosis",
+        "query.locn": "AREA[LocationCountry]United States"
+      },
+      "redirects": 0,
+      "response_bytes": 336328,
+      "retrieved_at": "2026-08-01T01:07:10.515764+00:00"
+    },
+    "provider_total_count": 113,
+    "returned_records": 20,
+    "status_counts": {
+      "ACTIVE_NOT_RECRUITING": 5,
+      "NOT_YET_RECRUITING": 3,
+      "RECRUITING": 12
+    },
+    "studies": [
+      {
+        "conditions": [
+          "Frontotemporal Degeneration(FTD)",
+          "Primary Progressive Aphasia(PPA)",
+          "Familial Frontotemporal Lobar Degeneration (fFTLD)",
+          "Amyotrophic Lateral Sclerosis(ALS)",
+          "Lewy Body Disease(LBD)",
+          "Progressive Supranuclear Palsy(PSP)",
+          "Corticobasal Syndrome(CBS)",
+          "Posterior Cortical Atrophy(PCA)",
+          "Alzheimer's Disease(AD)"
+        ],
+        "interventions": [
+          {
+            "name": "No intervention",
+            "type": "OTHER"
+          }
+        ],
+        "lead_sponsor": "University of Pennsylvania",
+        "nct_id": "NCT04715399",
+        "overall_status": "RECRUITING",
+        "phases": [],
+        "study_type": "OBSERVATIONAL",
+        "title": "UPenn Observational Research Repository on Neurodegenerative Disease",
+        "us_locations": [
+          {
+            "city": "Philadelphia",
+            "facility": "University of Pennsylvania",
+            "state": "Pennsylvania",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis"
+        ],
+        "interventions": [],
+        "lead_sponsor": "Centers for Disease Control and Prevention",
+        "nct_id": "NCT01772602",
+        "overall_status": "RECRUITING",
+        "phases": [],
+        "study_type": "OBSERVATIONAL",
+        "title": "The National Amyotrophic Lateral Sclerosis Registry",
+        "us_locations": [
+          {
+            "city": "Atlanta",
+            "facility": "CDC",
+            "state": "Georgia",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis",
+          "Motor Neuron Disease"
+        ],
+        "interventions": [
+          {
+            "name": "Acamprosate calcium",
+            "type": "DRUG"
+          }
+        ],
+        "lead_sponsor": "National Institute of Neurological Disorders and Stroke (NINDS)",
+        "nct_id": "NCT07204977",
+        "overall_status": "ACTIVE_NOT_RECRUITING",
+        "phases": [
+          "PHASE1"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "Acamprosate in C9orf72 Hexanucleotide Repeat Expansion Amyotrophic Lateral Sclerosis (ACALS)",
+        "us_locations": [
+          {
+            "city": "Bethesda",
+            "facility": "National Institutes of Health Clinical Center",
+            "state": "Maryland",
+            "status": null
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "C9orf72 Amyotrophic Lateral Sclerosis (ALS)",
+          "Frontotemporal Dementia"
+        ],
+        "interventions": [
+          {
+            "name": "Metformin",
+            "type": "DRUG"
+          }
+        ],
+        "lead_sponsor": "University of Florida",
+        "nct_id": "NCT04220021",
+        "overall_status": "ACTIVE_NOT_RECRUITING",
+        "phases": [
+          "PHASE2"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "Safety and Therapeutic Potential of the FDA-approved Drug Metformin for C9orf72 ALS/FTD",
+        "us_locations": [
+          {
+            "city": "Gainesville",
+            "facility": "UF Health at the University of Florida",
+            "state": "Florida",
+            "status": null
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis",
+          "Primary Lateral Sclerosis"
+        ],
+        "interventions": [],
+        "lead_sponsor": "University of Minnesota",
+        "nct_id": "NCT02567136",
+        "overall_status": "RECRUITING",
+        "phases": [],
+        "study_type": "OBSERVATIONAL",
+        "title": "Imaging Biomarkers in ALS",
+        "us_locations": [
+          {
+            "city": "Minneapolis",
+            "facility": "University of Minnesota",
+            "state": "Minnesota",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis",
+          "Movement Disorders",
+          "Degenerative Disorder",
+          "Motor Neuron Disease"
+        ],
+        "interventions": [],
+        "lead_sponsor": "Target ALS Foundation, Inc.",
+        "nct_id": "NCT05137665",
+        "overall_status": "RECRUITING",
+        "phases": [],
+        "study_type": "OBSERVATIONAL",
+        "title": "Target ALS Biomarker Study; Longitudinal Biofluids, Clinical Measures, and At Home Measures",
+        "us_locations": [
+          {
+            "city": "Phoenix",
+            "facility": "Barrow Neurological Institute",
+            "state": "Arizona",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "San Diego",
+            "facility": "University of California San Diego",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Georgetown",
+            "facility": "Georgetown University",
+            "state": "District of Columbia",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Jacksonville",
+            "facility": "Mayo Clinic",
+            "state": "Florida",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Chicago",
+            "facility": "Northwestern University",
+            "state": "Illinois",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Boston",
+            "facility": "Massachusetts General Hospital",
+            "state": "Massachusetts",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "St Louis",
+            "facility": "Washington University",
+            "state": "Missouri",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "New York",
+            "facility": "Columbia University",
+            "state": "New York",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Houston",
+            "facility": "Baylor College of Medicine",
+            "state": "Texas",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Seattle",
+            "facility": "University of Washington",
+            "state": "Washington",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Tetraplegia/Tetraparesis",
+          "Quadriplegia",
+          "Cervical Spinal Cord Injury",
+          "Amyotrophic Lateral Sclerosis",
+          "Quadriplegia/Tetraplegia",
+          "Tetraplegic; Paralysis",
+          "Stroke"
+        ],
+        "interventions": [
+          {
+            "name": "N1 Implant",
+            "type": "DEVICE"
+          },
+          {
+            "name": "R1 Robot",
+            "type": "DEVICE"
+          }
+        ],
+        "lead_sponsor": "Neuralink Corp",
+        "nct_id": "NCT07224256",
+        "overall_status": "RECRUITING",
+        "phases": [
+          "NA"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "VOICE: An Early Feasibility Study of a Precise Robotically Implanted Brain-Computer Interface for Communication Restoration",
+        "us_locations": [
+          {
+            "city": "Dallas",
+            "facility": "The University of Texas Southwestern Medical Center",
+            "state": "Texas",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis (ALS)"
+        ],
+        "interventions": [
+          {
+            "name": "Antioxidants",
+            "type": "COMBINATION_PRODUCT"
+          }
+        ],
+        "lead_sponsor": "Dallas VA Medical Center",
+        "nct_id": "NCT04244630",
+        "overall_status": "RECRUITING",
+        "phases": [
+          "PHASE2"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "Mitochondrial Capacity Boost in ALS (MICABO-ALS) Trial",
+        "us_locations": [
+          {
+            "city": "Dallas",
+            "facility": "VA North Texas Health Care System",
+            "state": "Texas",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis",
+          "Hereditary Spastic Paraplegia",
+          "Primary Lateral Sclerosis",
+          "Progressive Muscular Atrophy",
+          "Frontotemporal Dementia"
+        ],
+        "interventions": [],
+        "lead_sponsor": "University of Miami",
+        "nct_id": "NCT04875416",
+        "overall_status": "ACTIVE_NOT_RECRUITING",
+        "phases": [],
+        "study_type": "OBSERVATIONAL",
+        "title": "Phenotype, Genotype and Biomarkers 2",
+        "us_locations": [
+          {
+            "city": "Miami",
+            "facility": "University of Miami",
+            "state": "Florida",
+            "status": null
+          },
+          {
+            "city": "Kansas City",
+            "facility": "University of Kansas Medical Center",
+            "state": "Kansas",
+            "status": null
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "University of Pennsylvania",
+            "state": "Pennsylvania",
+            "status": null
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis ALS"
+        ],
+        "interventions": [
+          {
+            "name": "\u03b2-hydroxy-\u03b2-methylbutyrate (HMB)",
+            "type": "DRUG"
+          }
+        ],
+        "lead_sponsor": "Duke University",
+        "nct_id": "NCT07589764",
+        "overall_status": "NOT_YET_RECRUITING",
+        "phases": [
+          "PHASE1"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "A Widely Inclusive, Hybrid-Decentralized Pilot Trial Utilizing \u03b2-hydroxy-\u03b2-methylbutyrate to Lower IGFBP7 Levels in People With ALS",
+        "us_locations": [
+          {
+            "city": "Durham",
+            "facility": "Duke University Medical Center",
+            "state": "North Carolina",
+            "status": null
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "Temple University",
+            "state": "Pennsylvania",
+            "status": null
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis"
+        ],
+        "interventions": [],
+        "lead_sponsor": "St. Joseph's Hospital and Medical Center, Phoenix",
+        "nct_id": "NCT06581861",
+        "overall_status": "RECRUITING",
+        "phases": [],
+        "study_type": "OBSERVATIONAL",
+        "title": "PREVENT ALL ALS Study",
+        "us_locations": [
+          {
+            "city": "Birmingham",
+            "facility": "University of Alabama Birmingham",
+            "state": "Alabama",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Phoenix",
+            "facility": "Barrow Neurological Institute",
+            "state": "Arizona",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "La Jolla",
+            "facility": "University of California San Diego",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Orange",
+            "facility": "University of California Irvine",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "San Francisco",
+            "facility": "University of California, San Francisco",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Aurora",
+            "facility": "University of Colorado Anschutz Medical Campus",
+            "state": "Colorado",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "New Britain",
+            "facility": "Hospital for Special Care",
+            "state": "Connecticut",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Washington D.C.",
+            "facility": "Georgetown University",
+            "state": "District of Columbia",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Jacksonville",
+            "facility": "Mayo Clinic",
+            "state": "Florida",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Boise",
+            "facility": "Saint Alphonsus Regional Medical Center",
+            "state": "Idaho",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Chicago",
+            "facility": "Northwestern University",
+            "state": "Illinois",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Indianapolis",
+            "facility": "Indiana University",
+            "state": "Indiana",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Baltimore",
+            "facility": "John Hopkins University",
+            "state": "Maryland",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Bethesda",
+            "facility": "Nih/Ninds",
+            "state": "Maryland",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Boston",
+            "facility": "Massachusetts General Brigham",
+            "state": "Massachusetts",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Ann Arbor",
+            "facility": "University of Michigan",
+            "state": "Michigan",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Detroit",
+            "facility": "Henry Ford Health",
+            "state": "Michigan",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Minneapolis",
+            "facility": "University of Minnesota",
+            "state": "Minnesota",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "St Louis",
+            "facility": "Washington University",
+            "state": "Missouri",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Omaha",
+            "facility": "University of Nebraska Medical Center",
+            "state": "Nebraska",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Lebanon",
+            "facility": "Dartmouth Hitchcock Medical Center",
+            "state": "New Hampshire",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "New York",
+            "facility": "Columbia University",
+            "state": "New York",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Durham",
+            "facility": "Duke University",
+            "state": "North Carolina",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Columbus",
+            "facility": "Ohio State University",
+            "state": "Ohio",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Portland",
+            "facility": "Providence ALS Center",
+            "state": "Oregon",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Hershey",
+            "facility": "Penn State Health",
+            "state": "Pennsylvania",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "Temple University",
+            "state": "Pennsylvania",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Dallas",
+            "facility": "Texas Neurology",
+            "state": "Texas",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Salt Lake City",
+            "facility": "University of Utah",
+            "state": "Utah",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Richmond",
+            "facility": "Virginia Commonwealth University",
+            "state": "Virginia",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Seattle",
+            "facility": "University of Washington",
+            "state": "Washington",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis"
+        ],
+        "interventions": [
+          {
+            "name": "Zilucoplan",
+            "type": "DRUG"
+          },
+          {
+            "name": "Verdiperstat",
+            "type": "DRUG"
+          },
+          {
+            "name": "CNM-Au8",
+            "type": "DRUG"
+          },
+          {
+            "name": "Pridopidine",
+            "type": "DRUG"
+          },
+          {
+            "name": "SLS-005 Trehalose",
+            "type": "DRUG"
+          },
+          {
+            "name": "ABBV-CLS-7262",
+            "type": "DRUG"
+          },
+          {
+            "name": "DNL343",
+            "type": "DRUG"
+          },
+          {
+            "name": "NUZ-001",
+            "type": "DRUG"
+          }
+        ],
+        "lead_sponsor": "Merit E. Cudkowicz, MD",
+        "nct_id": "NCT04297683",
+        "overall_status": "ACTIVE_NOT_RECRUITING",
+        "phases": [
+          "PHASE2",
+          "PHASE3"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "HEALEY ALS Platform Trial - Master Protocol",
+        "us_locations": [
+          {
+            "city": "Phoenix",
+            "facility": "Barrow Neurological Institute",
+            "state": "Arizona",
+            "status": null
+          },
+          {
+            "city": "Scottsdale",
+            "facility": "Mayo Clinic Scottsdale",
+            "state": "Arizona",
+            "status": null
+          },
+          {
+            "city": "Little Rock",
+            "facility": "University of Arkansas for Medical Sciences",
+            "state": "Arkansas",
+            "status": null
+          },
+          {
+            "city": "La Jolla",
+            "facility": "UC San Diego",
+            "state": "California",
+            "status": null
+          },
+          {
+            "city": "Loma Linda",
+            "facility": "Loma Linda University Health",
+            "state": "California",
+            "status": null
+          },
+          {
+            "city": "Los Angeles",
+            "facility": "Kaiser Permanente Los Angeles Medical Center",
+            "state": "California",
+            "status": null
+          },
+          {
+            "city": "Los Angeles",
+            "facility": "University of Southern California",
+            "state": "California",
+            "status": null
+          },
+          {
+            "city": "Los Angeles",
+            "facility": "Cedars-Sinai Medical Center",
+            "state": "California",
+            "status": null
+          },
+          {
+            "city": "Orange",
+            "facility": "University of California, Irvine",
+            "state": "California",
+            "status": null
+          },
+          {
+            "city": "San Francisco",
+            "facility": "Forbes Norris MDA/ALS Research Center, California Pacific Medical Center",
+            "state": "California",
+            "status": null
+          },
+          {
+            "city": "San Francisco",
+            "facility": "University of California, San Francisco",
+            "state": "California",
+            "status": null
+          },
+          {
+            "city": "Aurora",
+            "facility": "University of Colorado",
+            "state": "Colorado",
+            "status": null
+          },
+          {
+            "city": "New Britain",
+            "facility": "Hospital for Special Care",
+            "state": "Connecticut",
+            "status": null
+          },
+          {
+            "city": "New Haven",
+            "facility": "Yale University",
+            "state": "Connecticut",
+            "status": null
+          },
+          {
+            "city": "Washington D.C.",
+            "facility": "Georgetown University",
+            "state": "District of Columbia",
+            "status": null
+          },
+          {
+            "city": "Washington D.C.",
+            "facility": "George Washington University",
+            "state": "District of Columbia",
+            "status": null
+          },
+          {
+            "city": "Davie",
+            "facility": "Nova Southeastern University",
+            "state": "Florida",
+            "status": null
+          },
+          {
+            "city": "Gainesville",
+            "facility": "University of Florida",
+            "state": "Florida",
+            "status": null
+          },
+          {
+            "city": "Jacksonville",
+            "facility": "Mayo Clinic Florida",
+            "state": "Florida",
+            "status": null
+          },
+          {
+            "city": "Miami",
+            "facility": "University of Miami",
+            "state": "Florida",
+            "status": null
+          },
+          {
+            "city": "Tampa",
+            "facility": "University of South Florida",
+            "state": "Florida",
+            "status": null
+          },
+          {
+            "city": "Augusta",
+            "facility": "Augusta University",
+            "state": "Georgia",
+            "status": null
+          },
+          {
+            "city": "Boise",
+            "facility": "Saint Alphonsus Regional Medical Center",
+            "state": "Idaho",
+            "status": null
+          },
+          {
+            "city": "Chicago",
+            "facility": "Northwestern University",
+            "state": "Illinois",
+            "status": null
+          },
+          {
+            "city": "Chicago",
+            "facility": "University of Chicago",
+            "state": "Illinois",
+            "status": null
+          },
+          {
+            "city": "Indianapolis",
+            "facility": "Indiana University Health",
+            "state": "Indiana",
+            "status": null
+          },
+          {
+            "city": "Iowa City",
+            "facility": "University of Iowa Hospitals and Clinics",
+            "state": "Iowa",
+            "status": null
+          },
+          {
+            "city": "Fairway",
+            "facility": "University of Kansas Medical Center",
+            "state": "Kansas",
+            "status": null
+          },
+          {
+            "city": "Lexington",
+            "facility": "University of Kentucky",
+            "state": "Kentucky",
+            "status": null
+          },
+          {
+            "city": "New Orleans",
+            "facility": "Ochsner Health System",
+            "state": "Louisiana",
+            "status": null
+          },
+          {
+            "city": "Baltimore",
+            "facility": "Johns Hopkins University",
+            "state": "Maryland",
+            "status": null
+          },
+          {
+            "city": "Boston",
+            "facility": "Massachusetts General Hospital",
+            "state": "Massachusetts",
+            "status": null
+          },
+          {
+            "city": "Boston",
+            "facility": "Beth Israel Deaconess Medical Center",
+            "state": "Massachusetts",
+            "status": null
+          },
+          {
+            "city": "Burlington",
+            "facility": "Lahey Hospital and Medical Center",
+            "state": "Massachusetts",
+            "status": null
+          },
+          {
+            "city": "North Worcester",
+            "facility": "University of Massachusetts Medical School",
+            "state": "Massachusetts",
+            "status": null
+          },
+          {
+            "city": "Ann Arbor",
+            "facility": "University of Michigan",
+            "state": "Michigan",
+            "status": null
+          },
+          {
+            "city": "Detroit",
+            "facility": "Henry Ford Health System",
+            "state": "Michigan",
+            "status": null
+          },
+          {
+            "city": "Grand Rapids",
+            "facility": "Spectrum Health/Corewell Health",
+            "state": "Michigan",
+            "status": null
+          },
+          {
+            "city": "Duluth",
+            "facility": "Essentia Health",
+            "state": "Minnesota",
+            "status": null
+          },
+          {
+            "city": "Minneapolis",
+            "facility": "University of Minnesota Medical School",
+            "state": "Minnesota",
+            "status": null
+          },
+          {
+            "city": "Rochester",
+            "facility": "Mayo Clinic - Rochester",
+            "state": "Minnesota",
+            "status": null
+          },
+          {
+            "city": "Columbia",
+            "facility": "University of Missouri Health Care",
+            "state": "Missouri",
+            "status": null
+          },
+          {
+            "city": "St Louis",
+            "facility": "Saint Louis University",
+            "state": "Missouri",
+            "status": null
+          },
+          {
+            "city": "St Louis",
+            "facility": "Washington University School of Medicine",
+            "state": "Missouri",
+            "status": null
+          },
+          {
+            "city": "Lincoln",
+            "facility": "Neurology Associates, P.C./Somnos Clinical Research",
+            "state": "Nebraska",
+            "status": null
+          },
+          {
+            "city": "Omaha",
+            "facility": "University of Nebraska Medical Center",
+            "state": "Nebraska",
+            "status": null
+          },
+          {
+            "city": "Lebanon",
+            "facility": "Dartmouth-Hitchcock Medical Center",
+            "state": "New Hampshire",
+            "status": null
+          },
+          {
+            "city": "Hackensack",
+            "facility": "Hackensack University Medical Center",
+            "state": "New Jersey",
+            "status": null
+          },
+          {
+            "city": "Amherst",
+            "facility": "Dent Neurologic Institute",
+            "state": "New York",
+            "status": null
+          },
+          {
+            "city": "New York",
+            "facility": "Mount Sinai",
+            "state": "New York",
+            "status": null
+          },
+          {
+            "city": "New York",
+            "facility": "Columbia University",
+            "state": "New York",
+            "status": null
+          },
+          {
+            "city": "Rochester",
+            "facility": "University of Rochester",
+            "state": "New York",
+            "status": null
+          },
+          {
+            "city": "Stony Brook",
+            "facility": "Stony Brook University Hospital",
+            "state": "New York",
+            "status": null
+          },
+          {
+            "city": "Syracuse",
+            "facility": "SUNY Upstate",
+            "state": "New York",
+            "status": null
+          },
+          {
+            "city": "Chapel Hill",
+            "facility": "University of North Carolina",
+            "state": "North Carolina",
+            "status": null
+          },
+          {
+            "city": "Charlotte",
+            "facility": "Atrium Health",
+            "state": "North Carolina",
+            "status": null
+          },
+          {
+            "city": "Durham",
+            "facility": "Duke University",
+            "state": "North Carolina",
+            "status": null
+          },
+          {
+            "city": "Winston-Salem",
+            "facility": "Wake Forest Health Science",
+            "state": "North Carolina",
+            "status": null
+          },
+          {
+            "city": "Cincinnati",
+            "facility": "University of Cincinnati",
+            "state": "Ohio",
+            "status": null
+          },
+          {
+            "city": "Cleveland",
+            "facility": "Cleveland Clinic",
+            "state": "Ohio",
+            "status": null
+          },
+          {
+            "city": "Columbus",
+            "facility": "The Ohio State University",
+            "state": "Ohio",
+            "status": null
+          },
+          {
+            "city": "Westerville",
+            "facility": "OhioHealth Research Institute",
+            "state": "Ohio",
+            "status": null
+          },
+          {
+            "city": "Portland",
+            "facility": "Providence Brain and Spine Institute ALS Center",
+            "state": "Oregon",
+            "status": null
+          },
+          {
+            "city": "Allentown",
+            "facility": "Lehigh Valley Health Network",
+            "state": "Pennsylvania",
+            "status": null
+          },
+          {
+            "city": "Hershey",
+            "facility": "Penn State Hershey",
+            "state": "Pennsylvania",
+            "status": null
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "Jefferson Weinberg ALS Center, Thomas Jefferson University",
+            "state": "Pennsylvania",
+            "status": null
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "University of Pennsylvania",
+            "state": "Pennsylvania",
+            "status": null
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "Lewis Katz School of Medicine at Temple University",
+            "state": "Pennsylvania",
+            "status": null
+          },
+          {
+            "city": "Pittsburgh",
+            "facility": "University of Pittsburg Medical Center",
+            "state": "Pennsylvania",
+            "status": null
+          },
+          {
+            "city": "Nashville",
+            "facility": "Vanderbilt University Medical Center",
+            "state": "Tennessee",
+            "status": null
+          },
+          {
+            "city": "Austin",
+            "facility": "Austin Neuromuscular Clinic",
+            "state": "Texas",
+            "status": null
+          },
+          {
+            "city": "Dallas",
+            "facility": "Texas Neurology",
+            "state": "Texas",
+            "status": null
+          },
+          {
+            "city": "Houston",
+            "facility": "Baylor College of Medicine",
+            "state": "Texas",
+            "status": null
+          },
+          {
+            "city": "Houston",
+            "facility": "Houston Methodist",
+            "state": "Texas",
+            "status": null
+          },
+          {
+            "city": "San Antonio",
+            "facility": "UTHSCSA",
+            "state": "Texas",
+            "status": null
+          },
+          {
+            "city": "Salt Lake City",
+            "facility": "University of Utah",
+            "state": "Utah",
+            "status": null
+          },
+          {
+            "city": "Charlottesville",
+            "facility": "University of Virginia",
+            "state": "Virginia",
+            "status": null
+          },
+          {
+            "city": "Henrico",
+            "facility": "Virginia Commonwealth University",
+            "state": "Virginia",
+            "status": null
+          },
+          {
+            "city": "Seattle",
+            "facility": "Swedish Medical Center",
+            "state": "Washington",
+            "status": null
+          },
+          {
+            "city": "Seattle",
+            "facility": "University of Washington",
+            "state": "Washington",
+            "status": null
+          },
+          {
+            "city": "Milwaukee",
+            "facility": "Medical College of Wisconsin",
+            "state": "Wisconsin",
+            "status": null
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis"
+        ],
+        "interventions": [],
+        "lead_sponsor": "St. Joseph's Hospital and Medical Center, Phoenix",
+        "nct_id": "NCT06578195",
+        "overall_status": "RECRUITING",
+        "phases": [],
+        "study_type": "OBSERVATIONAL",
+        "title": "ASSESS ALL ALS Study",
+        "us_locations": [
+          {
+            "city": "Birmingham",
+            "facility": "University of Alabama Birmingham",
+            "state": "Alabama",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Phoenix",
+            "facility": "Barrow Neurological Institute",
+            "state": "Arizona",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Irvine",
+            "facility": "University of California, Irvine",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "La Jolla",
+            "facility": "University of California San Diego",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Los Angeles",
+            "facility": "University of California, Los Angeles",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "San Francisco",
+            "facility": "University of California, San Francisco",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Aurora",
+            "facility": "University of Colorado Anschutz Medical Campus",
+            "state": "Colorado",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "New Britain",
+            "facility": "Hospital For Special Care",
+            "state": "Connecticut",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Washington D.C.",
+            "facility": "Georgetown University",
+            "state": "District of Columbia",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Davie",
+            "facility": "Nova Southeastern University",
+            "state": "Florida",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Jacksonville",
+            "facility": "Mayo Clinic",
+            "state": "Florida",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Boise",
+            "facility": "Saint Alphonsus Regional Medical Center",
+            "state": "Idaho",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Chicago",
+            "facility": "Northwestern University",
+            "state": "Illinois",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Chicago",
+            "facility": "Synapticure (Remote Participation Only)",
+            "state": "Illinois",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Indianapolis",
+            "facility": "Indiana University",
+            "state": "Indiana",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Baltimore",
+            "facility": "John Hopkins University",
+            "state": "Maryland",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Bethseda",
+            "facility": "Nih/Ninds",
+            "state": "Maryland",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Boston",
+            "facility": "Massachusetts General Brigham",
+            "state": "Massachusetts",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Ann Arbor",
+            "facility": "University of Michigan",
+            "state": "Michigan",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Detroit",
+            "facility": "Henry Ford Health",
+            "state": "Michigan",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Minneapolis",
+            "facility": "University of Minnesota",
+            "state": "Minnesota",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "St Louis",
+            "facility": "Washington University",
+            "state": "Missouri",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Omaha",
+            "facility": "University of Nebraska Medical Center",
+            "state": "Nebraska",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Lebanon",
+            "facility": "Dartmouth Hitchcock Medical Center",
+            "state": "New Hampshire",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "New York",
+            "facility": "Columbia University",
+            "state": "New York",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Durham",
+            "facility": "Duke University",
+            "state": "North Carolina",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Colombus",
+            "facility": "Ohio State University",
+            "state": "Ohio",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Portland",
+            "facility": "Providence ALS Center",
+            "state": "Oregon",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Hershey",
+            "facility": "Penn State Health",
+            "state": "Pennsylvania",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "University of Pennsylvania",
+            "state": "Pennsylvania",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "Temple University",
+            "state": "Pennsylvania",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Nashville",
+            "facility": "Vanderbilt University Medical Center",
+            "state": "Tennessee",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Dallas",
+            "facility": "Texas Neurology",
+            "state": "Texas",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Salt Lake City",
+            "facility": "University of Utah",
+            "state": "Utah",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Richmond",
+            "facility": "Virginia Commonwealth University",
+            "state": "Virginia",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Seattle",
+            "facility": "University of Washington",
+            "state": "Washington",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis (ALS)",
+          "Emotional Distress"
+        ],
+        "interventions": [
+          {
+            "name": "Resilient Together ALS",
+            "type": "BEHAVIORAL"
+          }
+        ],
+        "lead_sponsor": "Massachusetts General Hospital",
+        "nct_id": "NCT06968468",
+        "overall_status": "NOT_YET_RECRUITING",
+        "phases": [
+          "NA"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "Resiliency Intervention for Patients With ALS and Their Care-Partners",
+        "us_locations": [
+          {
+            "city": "Boston",
+            "facility": "Massachusetts General Hospital",
+            "state": "Massachusetts",
+            "status": null
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis"
+        ],
+        "interventions": [
+          {
+            "name": "INS1202",
+            "type": "GENETIC"
+          }
+        ],
+        "lead_sponsor": "Insmed Gene Therapy LLC",
+        "nct_id": "NCT07290062",
+        "overall_status": "RECRUITING",
+        "phases": [
+          "PHASE1"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "A Study to Investigate the Safety and Pharmacodynamics of a Single Intrathecal Injection (IT) of INS1202 in Participants With Amyotrophic Lateral Sclerosis (ALS)",
+        "us_locations": [
+          {
+            "city": "La Jolla",
+            "facility": "USA004",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Palo Alto",
+            "facility": "USA002",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Columbia",
+            "facility": "USA001",
+            "state": "Missouri",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Columbus",
+            "facility": "USA007",
+            "state": "Ohio",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "USA006",
+            "state": "Pennsylvania",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Anarthria",
+          "Dysarthria",
+          "Tetraplegia",
+          "Spinal Cord Injuries",
+          "Amyotrophic Lateral Sclerosis",
+          "Brain Stem Infarctions",
+          "Locked-in Syndrome",
+          "Muscular Dystrophies"
+        ],
+        "interventions": [
+          {
+            "name": "BrainGate Neural Interface System",
+            "type": "DEVICE"
+          }
+        ],
+        "lead_sponsor": "Leigh R. Hochberg, MD, PhD.",
+        "nct_id": "NCT06094205",
+        "overall_status": "RECRUITING",
+        "phases": [
+          "NA"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "Feasibility of the BrainGate2 Neural Interface System in Persons With Tetraplegia (BG-Speech-02)",
+        "us_locations": [
+          {
+            "city": "Sacramento",
+            "facility": "University of California, Davis",
+            "state": "California",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "ALS (Amyotrophic Lateral Sclerosis)",
+          "TBI Traumatic Brain Injury",
+          "SCI - Spinal Cord Injury",
+          "Stroke"
+        ],
+        "interventions": [
+          {
+            "name": "Cognixion + Apple Vision Pro",
+            "type": "DEVICE"
+          }
+        ],
+        "lead_sponsor": "Cognixion",
+        "nct_id": "NCT07209943",
+        "overall_status": "NOT_YET_RECRUITING",
+        "phases": [
+          "NA"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "Augmented Reality BCI Longitudinal Study for Persons With ALS, Stroke, TBI and SCI Utilizing Cognixion + Apple Vision Pro",
+        "us_locations": [
+          {
+            "city": "Santa Barbara",
+            "facility": "Cognixion HQ",
+            "state": "California",
+            "status": null
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis (ALS)",
+          "Motor Neuron Disease (MND)",
+          "Primary Lateral Sclerosis (PLS)"
+        ],
+        "interventions": [
+          {
+            "name": "Education about treatment options",
+            "type": "OTHER"
+          },
+          {
+            "name": "Dietary Supplements: Vitamins, Minerals, Herbs, etc.",
+            "type": "DIETARY_SUPPLEMENT"
+          },
+          {
+            "name": "Meditation, Prayer, Talk Therapy, Affirmations, Journaling, etc.",
+            "type": "BEHAVIORAL"
+          },
+          {
+            "name": "Diet, various diets will be observed",
+            "type": "OTHER"
+          },
+          {
+            "name": "Exercise, physical therapy, occupational therapy, speech therapy, sauna, EMS, massage and other therapies",
+            "type": "OTHER"
+          },
+          {
+            "name": "ALS medications and other medications",
+            "type": "DRUG"
+          },
+          {
+            "name": "Physical and emotional support",
+            "type": "OTHER"
+          }
+        ],
+        "lead_sponsor": "Healing Advocates Registry and Ministry",
+        "nct_id": "NCT07233148",
+        "overall_status": "RECRUITING",
+        "phases": [],
+        "study_type": "OBSERVATIONAL",
+        "title": "Healing ALS Registry Observational Study (HAROS)",
+        "us_locations": [
+          {
+            "city": "Park City",
+            "facility": "Virtual",
+            "state": "Utah",
+            "status": "RECRUITING"
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis"
+        ],
+        "interventions": [
+          {
+            "name": "CK0803",
+            "type": "BIOLOGICAL"
+          },
+          {
+            "name": "Excipient",
+            "type": "OTHER"
+          }
+        ],
+        "lead_sponsor": "Cellenkos, Inc.",
+        "nct_id": "NCT05695521",
+        "overall_status": "ACTIVE_NOT_RECRUITING",
+        "phases": [
+          "PHASE1"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "Regulatory T Cells for Amyotrophic Lateral Sclerosis",
+        "us_locations": [
+          {
+            "city": "New York",
+            "facility": "Columbia University Irving Medical Center",
+            "state": "New York",
+            "status": null
+          },
+          {
+            "city": "Houston",
+            "facility": "Baylor College of Medicine",
+            "state": "Texas",
+            "status": null
+          },
+          {
+            "city": "Houston",
+            "facility": "Michael E. DeBakey Veterans Affairs Medical Center",
+            "state": "Texas",
+            "status": null
+          }
+        ]
+      },
+      {
+        "conditions": [
+          "Amyotrophic Lateral Sclerosis"
+        ],
+        "interventions": [
+          {
+            "name": "Pridopidine",
+            "type": "DRUG"
+          },
+          {
+            "name": "Placebo",
+            "type": "DRUG"
+          }
+        ],
+        "lead_sponsor": "Prilenia",
+        "nct_id": "NCT07322003",
+        "overall_status": "RECRUITING",
+        "phases": [
+          "PHASE3"
+        ],
+        "study_type": "INTERVENTIONAL",
+        "title": "Pridopidine Phase 3 Study to Evaluate Efficacy and Safety in ALS",
+        "us_locations": [
+          {
+            "city": "Phoenix",
+            "facility": "Barrow Neurological Institute",
+            "state": "Arizona",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "San Francisco",
+            "facility": "California Pacific Medical Center",
+            "state": "California",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Aurora",
+            "facility": "University of Colorado CU Anschutz Neurology",
+            "state": "Colorado",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Jacksonville",
+            "facility": "Mayo Clinic",
+            "state": "Florida",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Tampa",
+            "facility": "University of South Florida",
+            "state": "Florida",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Atlanta",
+            "facility": "Emory University",
+            "state": "Georgia",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Chicago",
+            "facility": "Northwestern University",
+            "state": "Illinois",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Fairway",
+            "facility": "University of Kansas",
+            "state": "Kansas",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Baltimore",
+            "facility": "Johns Hopkins University",
+            "state": "Maryland",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Boston",
+            "facility": "Sean M. Healey & AMG Center for ALS",
+            "state": "Massachusetts",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "St Louis",
+            "facility": "Washington University",
+            "state": "Missouri",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Lincoln",
+            "facility": "Somnos Clinical Research",
+            "state": "Nebraska",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "New York",
+            "facility": "Eleanor and Lou Gehrig ALS Center at Columbia University",
+            "state": "New York",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Philadelphia",
+            "facility": "Neuroscience Department at LKSM at Temple University",
+            "state": "Pennsylvania",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Dallas",
+            "facility": "Texas Neurology",
+            "state": "Texas",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Houston",
+            "facility": "Baylor College of Medicine; McNair Medical Campus",
+            "state": "Texas",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Seattle",
+            "facility": "Swedish Medical Center",
+            "state": "Washington",
+            "status": "RECRUITING"
+          },
+          {
+            "city": "Seattle",
+            "facility": "University of Washington",
+            "state": "Washington",
+            "status": "RECRUITING"
+          }
+        ]
+      }
+    ],
+    "top_location_states": [
+      [
+        "California",
+        21
+      ],
+      [
+        "Pennsylvania",
+        16
+      ],
+      [
+        "Texas",
+        14
+      ],
+      [
+        "Florida",
+        13
+      ],
+      [
+        "New York",
+        11
+      ],
+      [
+        "Massachusetts",
+        9
+      ],
+      [
+        "Missouri",
+        8
+      ],
+      [
+        "Maryland",
+        7
+      ],
+      [
+        "Illinois",
+        7
+      ],
+      [
+        "Washington",
+        7
+      ]
+    ]
+  },
+  "tool_contracts": [
+    {
+      "endpoint": "https://clinicaltrials.gov/api/v2/studies",
+      "name": "VSDReviewedClinicalTrialsSearch",
+      "operation_sha256": "79852cdcc0dc7695b4e430313b1574721303fb78b0dff1cd3eadcbcd66c9be1c"
+    },
+    {
+      "endpoint": "https://clinicaltrials.gov/api/v2/studies/{nctId}",
+      "name": "VSDReviewedClinicalTrialDetails",
+      "operation_sha256": "3b4dd7f5717bd0f2dcf1d50c85a09a71c1b00ba44c7bccbfcf339bf0a53dbfa6"
+    }
+  ]
+}

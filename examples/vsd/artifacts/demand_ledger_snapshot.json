@@ -1,0 +1,359 @@
+{
+  "answer": "Yes. Three hash-bound ALS plans and two retinal-calibration observations produced a deterministic unmet-demand ranking; one exact FDA capability was retained locally but excluded, and only two reviewed proposals were written to a non-transmitting export.",
+  "audit_sha256": "ca1cdf0f5ff2f6c1018f39251323edd8e6789bdf0bff066cafdea012aa5aa346",
+  "end_to_end_assertions": {
+    "agent_synthesis_is_not_recorded": true,
+    "already_satisfied_demand_is_not_ranked": true,
+    "batch_plan_identity_is_verified": true,
+    "duplicate_run_is_deduplicated": true,
+    "event_ids_are_not_persisted": true,
+    "export_contains_only_selected_demands": true,
+    "export_is_hash_bound": true,
+    "export_is_local_only": true,
+    "ledger_has_expected_population": true,
+    "ledger_is_hash_bound": true,
+    "local_paths_are_not_exposed": true,
+    "raw_descriptions_are_not_persisted": true,
+    "repeated_missing_demand_ranks_first": true
+  },
+  "observation_summary": {
+    "duplicate_step_observations_rejected": 5,
+    "plan_runs_recorded": 3,
+    "plan_step_observations_recorded": 15,
+    "retinal_observations_recorded": 2,
+    "satisfied_observations_recorded": 1
+  },
+  "plan": {
+    "plan_id": "f41c063db82dc5db",
+    "plan_sha256": "f41c063db82dc5db288d4e8cc0989c8624bc49a445748acff65d39b2bdddabf7",
+    "registry_sha256": "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752",
+    "steps": [
+      {
+        "classification": "existing_partial",
+        "fulfillment": "tool",
+        "step_id": "genes"
+      },
+      {
+        "classification": "existing_partial",
+        "fulfillment": "tool",
+        "step_id": "phenotypes"
+      },
+      {
+        "classification": "existing_partial",
+        "fulfillment": "tool",
+        "step_id": "literature"
+      },
+      {
+        "classification": "existing_partial",
+        "fulfillment": "tool",
+        "step_id": "trials"
+      },
+      {
+        "classification": "existing_exact",
+        "fulfillment": "tool",
+        "step_id": "drug_label"
+      },
+      {
+        "classification": "missing",
+        "fulfillment": "tool",
+        "step_id": "microscopy_calibration"
+      },
+      {
+        "classification": "agent_native",
+        "fulfillment": "agent",
+        "step_id": "synthesis"
+      }
+    ]
+  },
+  "privacy_boundary": "The ledger is private and local; raw descriptions and event IDs are not stored. Export is an explicit reviewed file write and performs no network transmission, candidate creation, tool registration, or execution.",
+  "proposal_export": {
+    "created_at": "2026-08-07T12:00:00+00:00",
+    "export_sha256": "fcec4c64b6522d01a6919133c98f8a347eb6b3eb23d4781ee1a3e593502aaec8",
+    "proposals": [
+      {
+        "capability": {
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [
+            "calibration_report"
+          ],
+          "provider": "",
+          "required_inputs": [
+            "instrument_id"
+          ]
+        },
+        "observation_counts": {
+          "exact": 0,
+          "missing": 3,
+          "partial": 0
+        },
+        "priority_score": 15,
+        "proposal_id": "332f9444843c672c",
+        "public_summary": "Quantitative microscopy calibration for ALS research workflows",
+        "recommended_next_step": "review_external_api_candidates",
+        "total_observations": 3,
+        "unmet_rate": 1.0
+      },
+      {
+        "capability": {
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [
+            "calibration_report"
+          ],
+          "provider": "",
+          "required_inputs": [
+            "instrument_id"
+          ]
+        },
+        "observation_counts": {
+          "exact": 0,
+          "missing": 2,
+          "partial": 0
+        },
+        "priority_score": 10,
+        "proposal_id": "2540259f913360b4",
+        "public_summary": "Traceable adaptive-optics retinal imaging calibration for research workflows",
+        "recommended_next_step": "review_external_api_candidates",
+        "total_observations": 2,
+        "unmet_rate": 1.0
+      }
+    ],
+    "review": {
+      "decision_note": "Selected the two highest repeated unmet capabilities after local review.",
+      "reviewed_by": "VSD Case Study Maintainer"
+    },
+    "transmission": "none; this file was written locally for explicit human review",
+    "version": 1
+  },
+  "question": "Can repeated workflow gaps be counted and prioritized locally without silently reporting queries or exporting satisfied capabilities?",
+  "ranking": {
+    "ledger_sha256": "240d1ceb612d5408b6a1ebb4c0232f5eaeadb6be4a88c2fd6a4797de266b33d6",
+    "matching_demand_count": 6,
+    "privacy": "The demand ledger is local and explicit. Raw query descriptions and event IDs are not stored, and nothing is transmitted automatically.",
+    "ranked_demands": [
+      {
+        "capability": {
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [
+            "calibration_report"
+          ],
+          "provider": "",
+          "required_inputs": [
+            "instrument_id"
+          ]
+        },
+        "demand_id": "eec597e027a35585",
+        "first_observed_at": "2026-08-01T12:00:00+00:00",
+        "last_matches": [],
+        "last_observed_at": "2026-08-03T12:00:00+00:00",
+        "observation_counts": {
+          "exact": 0,
+          "missing": 3,
+          "partial": 0
+        },
+        "priority_score": 15,
+        "public_summary": "Quantitative microscopy calibration for ALS research workflows",
+        "registry_snapshots": [
+          "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752"
+        ],
+        "source_counts": {
+          "scheduled_scan": 3
+        },
+        "total_observations": 3,
+        "unmet_rate": 1.0
+      },
+      {
+        "capability": {
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [
+            "calibration_report"
+          ],
+          "provider": "",
+          "required_inputs": [
+            "instrument_id"
+          ]
+        },
+        "demand_id": "96cde8a6de35e15e",
+        "first_observed_at": "2026-08-04T12:00:00+00:00",
+        "last_matches": [],
+        "last_observed_at": "2026-08-05T12:00:00+00:00",
+        "observation_counts": {
+          "exact": 0,
+          "missing": 2,
+          "partial": 0
+        },
+        "priority_score": 10,
+        "public_summary": "Traceable adaptive-optics retinal imaging calibration for research workflows",
+        "registry_snapshots": [
+          "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752"
+        ],
+        "source_counts": {
+          "scheduled_scan": 2
+        },
+        "total_observations": 2,
+        "unmet_rate": 1.0
+      },
+      {
+        "capability": {
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "query"
+          ]
+        },
+        "demand_id": "7ac48399f2fb1293",
+        "first_observed_at": "2026-08-01T12:00:00+00:00",
+        "last_matches": [
+          "PubTator3_GetEntityRelations",
+          "PubMed_search_articles",
+          "PubTator3_get_annotations",
+          "BioPortal_search_ontology_terms",
+          "biostudies_search"
+        ],
+        "last_observed_at": "2026-08-03T12:00:00+00:00",
+        "observation_counts": {
+          "exact": 0,
+          "missing": 0,
+          "partial": 3
+        },
+        "priority_score": 6,
+        "public_summary": "ALS biomedical literature retrieval for evidence workflows",
+        "registry_snapshots": [
+          "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752"
+        ],
+        "source_counts": {
+          "scheduled_scan": 3
+        },
+        "total_observations": 3,
+        "unmet_rate": 1.0
+      },
+      {
+        "capability": {
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "condition"
+          ]
+        },
+        "demand_id": "bba147addff7536b",
+        "first_observed_at": "2026-08-01T12:00:00+00:00",
+        "last_matches": [
+          "ClinicalTrials_get_field_values",
+          "ClinicalTrials_search_by_intervention",
+          "ClinicalTrials_search_by_sponsor",
+          "ClinicalTrials_search_studies",
+          "ImmPort_search_studies"
+        ],
+        "last_observed_at": "2026-08-03T12:00:00+00:00",
+        "observation_counts": {
+          "exact": 0,
+          "missing": 0,
+          "partial": 3
+        },
+        "priority_score": 6,
+        "public_summary": "ALS clinical-trial retrieval for evidence workflows",
+        "registry_snapshots": [
+          "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752"
+        ],
+        "source_counts": {
+          "scheduled_scan": 3
+        },
+        "total_observations": 3,
+        "unmet_rate": 1.0
+      },
+      {
+        "capability": {
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "disease"
+          ]
+        },
+        "demand_id": "6410ec941a19937e",
+        "first_observed_at": "2026-08-01T12:00:00+00:00",
+        "last_matches": [
+          "Orphanet_get_genes",
+          "Alliance_get_disease_genes",
+          "CELLxGENE_get_expression_data",
+          "DisGeNET_get_disease_genes",
+          "DisGeNET_search_disease"
+        ],
+        "last_observed_at": "2026-08-03T12:00:00+00:00",
+        "observation_counts": {
+          "exact": 0,
+          "missing": 0,
+          "partial": 3
+        },
+        "priority_score": 6,
+        "public_summary": "ALS rare-disease gene retrieval for evidence workflows",
+        "registry_snapshots": [
+          "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752"
+        ],
+        "source_counts": {
+          "scheduled_scan": 3
+        },
+        "total_observations": 3,
+        "unmet_rate": 1.0
+      },
+      {
+        "capability": {
+          "endpoint_host": "",
+          "endpoint_path": "",
+          "method": "GET",
+          "operation_id": "",
+          "output_fields": [],
+          "provider": "",
+          "required_inputs": [
+            "disease"
+          ]
+        },
+        "demand_id": "fd9d57398a2074de",
+        "first_observed_at": "2026-08-01T12:00:00+00:00",
+        "last_matches": [
+          "Orphanet_get_phenotypes",
+          "Alliance_get_disease_genes",
+          "BioPortal_search_ontology_terms",
+          "ensembl_vep_region",
+          "FinnGen_list_phenotypes"
+        ],
+        "last_observed_at": "2026-08-03T12:00:00+00:00",
+        "observation_counts": {
+          "exact": 0,
+          "missing": 0,
+          "partial": 3
+        },
+        "priority_score": 6,
+        "public_summary": "ALS rare-disease phenotype retrieval for evidence workflows",
+        "registry_snapshots": [
+          "ddc1d4e903cc80b554813a8aebf12c1481b736a7b7dfbf25420dfcab683c3752"
+        ],
+        "source_counts": {
+          "scheduled_scan": 3
+        },
+        "total_observations": 3,
+        "unmet_rate": 1.0
+      }
+    ],
+    "total_demand_count": 7
+  },
+  "title": "Private ALS Capability-Demand Ledger Case Study"
+}

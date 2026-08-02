@@ -1,0 +1,510 @@
+{
+  "adversarial_binding_cases": [
+    {
+      "case_id": "graphql_cross_provider",
+      "reason": "Reviewed runtime endpoint does not match the contract candidate",
+      "result": "rejected",
+      "source_format": "graphql"
+    },
+    {
+      "case_id": "postman_missing_parameter_map",
+      "reason": "Postman contract parameters must resolve every endpoint variable exactly",
+      "result": "rejected",
+      "source_format": "postman"
+    },
+    {
+      "case_id": "soap_action_substitution",
+      "reason": "Reviewed SOAPAction does not match the WSDL operation",
+      "result": "rejected",
+      "source_format": "wsdl"
+    },
+    {
+      "case_id": "soap_body_substitution",
+      "reason": "Reviewed SOAP body operation does not match the WSDL operation",
+      "result": "rejected",
+      "source_format": "wsdl"
+    },
+    {
+      "case_id": "grpc_rpc_substitution",
+      "reason": "gRPC method must occur exactly once in the reviewed descriptor set",
+      "result": "rejected",
+      "source_format": "protobuf"
+    },
+    {
+      "case_id": "mcp_undeclared_tool",
+      "reason": "Reviewed MCP tool is not declared by the contract candidate",
+      "result": "rejected",
+      "source_format": "mcp"
+    },
+    {
+      "case_id": "asyncapi_channel_substitution",
+      "reason": "Reviewed event channel or schema does not match the AsyncAPI candidate",
+      "result": "rejected",
+      "source_format": "asyncapi"
+    },
+    {
+      "case_id": "asyncapi_source_omission",
+      "reason": "Reviewed runtime endpoint does not match the contract candidate",
+      "result": "rejected",
+      "source_format": "asyncapi"
+    }
+  ],
+  "answer": "Yes. The case kept the already-covered NIH RePORTER interface out of promotion, selected six DANDI gap contracts, bound each to its exact provider and operation, passed eighteen verification executions, rejected eight substitution attempts, loaded six published tools into a fresh ToolUniverse instance, and executed a final ALS evidence request through each format.",
+  "audit_sha256": "0223d236556c284746e7acf5985f7fc2195f74de8ffcbe796d3dd4092e32c10b",
+  "end_to_end_assertions": {
+    "all_eight_substitution_attacks_were_rejected": true,
+    "all_prior_case_artifacts_or_ci_evidence_pass": true,
+    "all_six_publications_loaded_in_fresh_runtime": true,
+    "all_six_published_tools_executed": true,
+    "catalog_contains_50_review_only_sources": true,
+    "every_binding_names_its_contract_candidate": true,
+    "every_format_passed_three_verification_cases": true,
+    "every_promotion_has_exact_binding_hash": true,
+    "existing_reporter_source_was_not_promoted": true,
+    "grpc_binding_names_exact_descriptor_method": true,
+    "handoff_remained_local_and_unsubmitted": true,
+    "only_dandi_gap_candidates_were_promoted": true,
+    "portfolio_covers_every_prior_vsd_phase_pr": true,
+    "portfolio_includes_independent_docker_boundary": true,
+    "postman_template_has_explicit_parameter_map": true,
+    "seven_content_addressed_snapshots_exist": true,
+    "seven_formats_were_discovered": true,
+    "six_contract_formats_reached_promotion": true,
+    "source_intelligence_assertions_pass": true,
+    "two_tamper_detecting_cron_scans_exist": true,
+    "workflow_demand_credential_and_lifecycle_studies_are_present": true
+  },
+  "format": "vsd_cross_format_total_proof_v1",
+  "portfolio_case_count": 16,
+  "prior_case_studies": [
+    {
+      "all_checks_passed": true,
+      "artifact": "snapshot.json",
+      "artifact_sha256": "150cb5bf5a47f256cb316f4d774b982698270a1fe4b789a96fdc3edbf348a5ff",
+      "assertion_count": 6,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "public_health_foundation",
+      "phase": "reviewed source foundation",
+      "pull_request": 416,
+      "question": "Which Autauga County tracts warrant CHD evidence review without ranking people or making clinical claims?",
+      "result": "Six ToolUniverse calls combined reviewed CDC, WHO, FDA, PubMed, and trial evidence with explicit interpretation limits."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "dynamic_rest_als_snapshot.json",
+      "artifact_sha256": "36d2b2564777cb84fcec45c775ef19f7a6a8b7778647bf39df72e8d6338bd2c5",
+      "assertion_count": 3,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "dynamic_rest_als",
+      "phase": "reviewed dynamic REST",
+      "pull_request": 417,
+      "question": "Can a bounded generated ClinicalTrials.gov tool find active US ALS studies and retrieve one exact follow-up record?",
+      "result": "Two reviewed operations returned 20 search records and a consistent exact study detail."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "api_discovery_snapshot.json",
+      "artifact_sha256": "40e7a40e7a8b646eed21575409dd14ebc95c2e21494b6898928efa6f0c3ccccd",
+      "assertion_count": 4,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "api_discovery",
+      "phase": "catalog discovery",
+      "pull_request": 418,
+      "question": "Can demand for active cancer-trial fields identify one API-ready public dataset without executing it?",
+      "result": "One official NY dataset matched all six demanded capabilities and remained inert review material."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "tool_promotion_snapshot.json",
+      "artifact_sha256": "314447660d50e6731f9efb809cb80ef4036d1395335b5057a547a9cfe8bd72c3",
+      "assertion_count": 6,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "tool_promotion",
+      "phase": "verification and promotion",
+      "pull_request": 419,
+      "question": "Can one reviewed cancer dataset become two narrow tools only after representative verification?",
+      "result": "Two tools passed three cases each, were approved, published, freshly loaded, and executed."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": null,
+      "artifact_sha256": null,
+      "assertion_count": 30,
+      "evidence_boundary": "independent_real_container_ci",
+      "id": "docker_boundary",
+      "phase": "administrator-only Docker lifecycle",
+      "pull_request": 420,
+      "question": "Can a local inference service be provisioned without exposing Docker lifecycle control to an agent?",
+      "result": "Independent Linux CI proved a non-root, loopback-only, read-only, resource-bounded container lifecycle and exact payload hash."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "capability_coverage_snapshot.json",
+      "artifact_sha256": "6a609df6cc1b358e4d7b8492d86a08e7f86c28bc3c136c730a22583fd911ff3a",
+      "assertion_count": 4,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "capability_coverage",
+      "phase": "registry and workflow reuse",
+      "pull_request": 421,
+      "question": "Does ToolUniverse reuse an existing FDA tool or workflow before declaring a capability gap?",
+      "result": "Exact tools and a workflow were reused; only the intentional calibration request remained a discovery gap."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "openapi_als_snapshot.json",
+      "artifact_sha256": "5bcaf459ee431dc85e73bc0a679b315ac0dea1c4db217072154080fa5d89c7fb",
+      "assertion_count": 12,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "openapi_ingestion",
+      "phase": "OpenAPI inspection and promotion",
+      "pull_request": 423,
+      "question": "Can an ALS OpenAPI contract yield one selected read operation with exact provenance and fresh-runtime execution?",
+      "result": "Inspection, three-case verification, approval, publication, execution, and hash-chain validation passed."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "workflow_planning_snapshot.json",
+      "artifact_sha256": "9029051dc83ad4468945aa8c7f5d38fbc415a3906e75bf7ab013cd265edfd789",
+      "assertion_count": 12,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "workflow_planning",
+      "phase": "workflow-aware planning",
+      "pull_request": 424,
+      "question": "Can a multi-step ALS workflow distinguish reusable tools from the one missing step without executing during planning?",
+      "result": "Planning reused exact capabilities, isolated the gap, and changed only after explicit loading."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "demand_ledger_snapshot.json",
+      "artifact_sha256": "4595d89df2deebdc9efc08adcd71bede842768eb6439046d9969fc3acdd156eb",
+      "assertion_count": 13,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "demand_ledger",
+      "phase": "private unmet-demand ledger",
+      "pull_request": 425,
+      "question": "Can repeated missing needs be ranked locally and exported only as reviewed, sanitized proposals?",
+      "result": "Private observations were deduplicated, ranked, and explicitly exported without raw prompts."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "credential_reference_snapshot.json",
+      "artifact_sha256": "fb507eab0140918944fd2146ce8b40d48d59d768383a9c0effa91fec6d92b44c",
+      "assertion_count": 14,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "credential_reference",
+      "phase": "environment-backed credentials",
+      "pull_request": 426,
+      "question": "Can credentials rotate without changing the reviewed tool identity or leaking into artifacts?",
+      "result": "Initial and rotated credentials executed while configs, promotion records, results, and artifacts stayed secret-free."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "lifecycle_drift_snapshot.json",
+      "artifact_sha256": "be32d031a51f0292bc220c8e02b4c0b6c1a27640c76b7c07f959012585d8d5ee",
+      "assertion_count": 19,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "lifecycle_drift",
+      "phase": "suspension, drift, and recovery",
+      "pull_request": 427,
+      "question": "Can a published tool fail closed on contract drift and return only after reviewed recovery?",
+      "result": "Drift suspended loading, changed-schema evidence was reviewed, and recovery restored the exact tool."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "total_system_snapshot.json",
+      "artifact_sha256": "96ddf520f3ba584f263384dede4e310e5c3272061e49c7cd27e025c18588fdcc",
+      "assertion_count": 26,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "total_system",
+      "phase": "demand-to-runtime total system",
+      "pull_request": 428,
+      "question": "Can ALS demand move through discovery, review, promotion, use, resolution, suspension, and recovery as one system?",
+      "result": "The full demand-to-reviewed-tool loop passed with Docker preserved as an independent administrator boundary."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "multiformat_contract_snapshot.json",
+      "artifact_sha256": "bafe99b7be22d37ab0434fe752478becbd341d1ae5f8a2045c792e33cccb4a35",
+      "assertion_count": 27,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "multiformat_contracts",
+      "phase": "heterogeneous contract inspection",
+      "pull_request": 429,
+      "question": "Can six incompatible contract formats become an inert, content-addressed operation inventory?",
+      "result": "GraphQL, AsyncAPI, Postman, WSDL, protobuf, and MCP produced ten identified operations without execution."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "reviewed_runtime_snapshot.json",
+      "artifact_sha256": "73ab102b6f708ccdadc71d40916575fbf93f8af2f6e5d08de24af654ca9bc9d1",
+      "assertion_count": 33,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "reviewed_runtime",
+      "phase": "multi-protocol execution",
+      "pull_request": 430,
+      "question": "Can one rare-disease study execute reviewed GraphQL, REST, SOAP, gRPC, MCP, event, pagination, and response formats?",
+      "result": "Ten runtime cases and one full WSDL promotion case passed 33 assertions."
+    },
+    {
+      "all_checks_passed": true,
+      "artifact": "source_intelligence_snapshot.json",
+      "artifact_sha256": "cf1603032953a9b27a5891cd3c6c8866f547e54250885e4c47af074c93cb7ef8",
+      "assertion_count": 28,
+      "evidence_boundary": "checked_repository_artifact",
+      "id": "source_intelligence",
+      "phase": "organic source discovery and handoff",
+      "pull_request": 431,
+      "question": "Can official-source scanning find ALS interface gaps without duplicates, installation, or silent telemetry?",
+      "result": "Fifty sources, seven formats, two cron scans, seven snapshots, and one consent-bound local handoff passed 28 assertions."
+    }
+  ],
+  "promotion_stage": {
+    "loaded_tools": [
+      "VSDDandiAlsGraphQL",
+      "VSDDandiAlsGRPC",
+      "VSDDandiChangeEvent",
+      "VSDDandiDandisetREST",
+      "VSDDandiMetadataMCP",
+      "VSDDandiPreservationSOAP"
+    ],
+    "promoted_format_count": 6,
+    "records": [
+      {
+        "approval_sha256": "b55d713e00a6aedd3d7ebf54b68bf871ce6336bfcfc9de2e385c70de0fbce280",
+        "blockers_resolved": [],
+        "contract_binding": {
+          "binding_sha256": "10479bad6184df88fb51c030b2adb2ba9138b965031fd64965de4ec2e870d0e1",
+          "candidate_id": "5258ffea532f99e5",
+          "identity": {
+            "argument_variables": {
+              "diseaseTerm": "diseaseTerm",
+              "limit": "limit",
+              "recordingModality": "recordingModality",
+              "species": "species"
+            },
+            "endpoint": "https://api.dandiarchive.org/graphql",
+            "operation": "searchAlsElectrophysiology",
+            "root_field": "searchAlsElectrophysiology"
+          },
+          "parameter_map": {},
+          "source_format": "graphql",
+          "version": 1
+        },
+        "contract_candidate_id": "5258ffea532f99e5",
+        "draft_sha256": "e7c934bf3d484342a5725663f0e8f539e89a6baba0d56df1f8882251be03d6d5",
+        "final_result": {
+          "data": {
+            "searchAlsElectrophysiology": [
+              {
+                "id": "DANDI-ALS",
+                "name": "ALS motor-neuron electrophysiology",
+                "species": [
+                  "human"
+                ]
+              }
+            ]
+          }
+        },
+        "final_result_sha256": "0bede811bbd337cec362867215b00bc59d3acad19eafa2f4b701ba1744c21169",
+        "publication_sha256": "0d265773d29bc1483d2df3efa74434508d4aa0d897d7e2b08172223251f98c20",
+        "source_candidate_id": "8b0a9dd92107d112",
+        "source_document_sha256": "eaa8cb16c26b7af45b604bcc55c76bd16cbc9000aa234c8f2edd9aba327e9f4f",
+        "source_format": "graphql",
+        "tool_name": "VSDDandiAlsGraphQL",
+        "verification_case_count": 3,
+        "verification_sha256": "17d817c0d1a42da06d6a25abd53ff85e2e7c7dd56073f26dea048cb3631feb99"
+      },
+      {
+        "approval_sha256": "a8ef3f15b5cd15bbe54854f7638b90e9ad6e52c425d88f76bfc42e6ae4e862ce",
+        "blockers_resolved": [
+          "unresolved_postman_variable:dandisetId"
+        ],
+        "contract_binding": {
+          "binding_sha256": "968d53074f7410a265c7405b1413e303a7a2d7ebb6367cd6caa23e0d8afb9a7e",
+          "candidate_id": "77b2b38cfde95817",
+          "identity": {
+            "endpoint": "https://api.dandiarchive.org/api/dandisets/{dandiset_id}",
+            "operation": "Get dandiset"
+          },
+          "parameter_map": {
+            "dandisetId": "dandiset_id"
+          },
+          "source_format": "postman",
+          "version": 1
+        },
+        "contract_candidate_id": "77b2b38cfde95817",
+        "draft_sha256": "7587fffde1bc4a2c1aa867c669c20510dab2e1477ce61e8b650854bfadb1ade9",
+        "final_result": {
+          "dandiset_id": "000001",
+          "name": "ALS motor-neuron electrophysiology",
+          "status": "published"
+        },
+        "final_result_sha256": "bbcda30660be54c8efcd11069cdc20552dc849661a7f01738e2a0725c4fa4a9e",
+        "publication_sha256": "087ee6ddb8e54e0467d0e451fc34e8f32b3c7cd03b9f4755cbcbfc7bf6c0d862",
+        "source_candidate_id": "0bcde98740a1cb68",
+        "source_document_sha256": "431b094e9b7e21d8ffd15b8a8c24d2d7f19cd3d24a527aaafb0acedee0c54b8a",
+        "source_format": "postman",
+        "tool_name": "VSDDandiDandisetREST",
+        "verification_case_count": 3,
+        "verification_sha256": "1cd629ce70814e0ab171cb0b1a5cfe7d1941fc4a6240ac085e77d2b6c9e93a38"
+      },
+      {
+        "approval_sha256": "c4f9a0fe0f101d56a144162147583199d745c6bc50e01f4a5df7883d77bd7301",
+        "blockers_resolved": [
+          "soap_operation_requires_explicit_read_only_review"
+        ],
+        "contract_binding": {
+          "binding_sha256": "8dbf47b9c173647391715e77840d6c630282ad090bd8dfda6309b99bf96b10ea",
+          "candidate_id": "ce59c73b6db2d814",
+          "identity": {
+            "body_operation": "GetPreservationRecord",
+            "endpoint": "https://api.dandiarchive.org/soap",
+            "operation": "ArchivePort.GetPreservationRecord",
+            "soap_action": "urn:GetPreservationRecord"
+          },
+          "parameter_map": {},
+          "source_format": "wsdl",
+          "version": 1
+        },
+        "contract_candidate_id": "ce59c73b6db2d814",
+        "draft_sha256": "5648f86c08b5529527658134f4a5fc74c00afebc2a6396c7e7d2df77914be074",
+        "final_result": {
+          "Envelope": {
+            "Body": {
+              "PreservationRecord": {
+                "dandiset": "000001",
+                "status": "preserved"
+              }
+            }
+          }
+        },
+        "final_result_sha256": "50c785cedb17a54a55f93a56e98c563ef0eec3cfe1493d316f0d64f400ab54a5",
+        "publication_sha256": "b841f0bb73746403392ad2da133e45bc3e948045a3d9fc2a0f17e34e8e4e32dd",
+        "source_candidate_id": "337c09bea9551a8b",
+        "source_document_sha256": "4b06d56daff90719ccf4959deef3343e7ebc32f00287b38beff198e847fe932b",
+        "source_format": "wsdl",
+        "tool_name": "VSDDandiPreservationSOAP",
+        "verification_case_count": 3,
+        "verification_sha256": "ad16a0b4410ffbb01504f5bdccc40cfa2df605a18efa40637d9bb812a381348f"
+      },
+      {
+        "approval_sha256": "acc1471f8f5aa84dc76703968013fd3b48c07f5fc3337373dcbd698e9cdd3c75",
+        "blockers_resolved": [
+          "grpc_operation_requires_reviewed_channel"
+        ],
+        "contract_binding": {
+          "binding_sha256": "1e5ed56beea238bad1b7962c60705627d8cfc77649766ba6d6688b67bd4ed3cd",
+          "candidate_id": "8a78ae84471b57e8",
+          "identity": {
+            "endpoint": "api.dandiarchive.org:443",
+            "method": "/dandi.v1.DandisetService/SearchAlsDandisets",
+            "operation": "dandi.v1.DandisetService.SearchAlsDandisets",
+            "request_type": "dandi.v1.SearchRequest",
+            "response_type": "dandi.v1.DandisetMatch",
+            "streaming": "unary"
+          },
+          "parameter_map": {},
+          "source_format": "protobuf",
+          "version": 1
+        },
+        "contract_candidate_id": "8a78ae84471b57e8",
+        "draft_sha256": "3e1a4d8170b3fa67c96fc44b920d67bf1997d75741219c4595fc587aa35bb78d",
+        "final_result": {
+          "dandiset_id": "DANDI-ALS",
+          "name": "human electrophysiology evidence"
+        },
+        "final_result_sha256": "f6e343a501a986742c3f49143db9325a524cadb01355bf0c1be9bcbe1398f208",
+        "publication_sha256": "9cc7bbbe59b4cd7a8f8cbcd8623f17917e9de3dda11bc6deabdfbc63c9b1cc46",
+        "source_candidate_id": "2b085d7534524eec",
+        "source_document_sha256": "2bbc7a5a41c5b356c4f729ebd884cf8ceeac1408f04bfaef5fd724382b13e5fb",
+        "source_format": "protobuf",
+        "tool_name": "VSDDandiAlsGRPC",
+        "verification_case_count": 3,
+        "verification_sha256": "7b6372d085058844237a7388cc3d6f73ee13c4fde9cd92486d682f5622beb0a7"
+      },
+      {
+        "approval_sha256": "09a5d485f1a93d30816d3fb28a2454459a86c5df085302634c7e341e1a3a99ea",
+        "blockers_resolved": [],
+        "contract_binding": {
+          "binding_sha256": "ac4ae3b56190e92ef0a846be695d578e4a114461146dfd4fdba19f69553ea38f",
+          "candidate_id": "4676bbac08357799",
+          "identity": {
+            "endpoint": "https://api.dandiarchive.org/mcp",
+            "operation": "dandi-readonly",
+            "tool_name": "search_dandisets"
+          },
+          "parameter_map": {},
+          "source_format": "mcp",
+          "version": 1
+        },
+        "contract_candidate_id": "4676bbac08357799",
+        "draft_sha256": "c749c0bf915b4ee71112e59cbee032b1f6e4bf990407760ee45a069e8edb934e",
+        "final_result": {
+          "content": [
+            {
+              "text": "ALS matched human electrophysiology dandisets",
+              "type": "text"
+            }
+          ]
+        },
+        "final_result_sha256": "c10fd43209262d0af7c7fc694abc12128419915e519e4663408f57a9b67fdad5",
+        "publication_sha256": "3b36814862544b35623c6b99a006850f8b09101d99e8def3db6efcd3d63cdea8",
+        "source_candidate_id": "6c8bde3aca1532fe",
+        "source_document_sha256": "39c915c85d0c6a0d4198591dd11849f2356290927317330abb4eb7a7d482adc4",
+        "source_format": "mcp",
+        "tool_name": "VSDDandiMetadataMCP",
+        "verification_case_count": 3,
+        "verification_sha256": "7feb0e04ef08d948b94bad816ba4f50a0bba1134c0c465b5e82e08a58ffb59e0"
+      },
+      {
+        "approval_sha256": "31e10dc76a9251362419fad19852d8e9f633df3a0f6196a1d3c255be796709d0",
+        "blockers_resolved": [
+          "asyncapi_receive_requires_bounded_event_runtime"
+        ],
+        "contract_binding": {
+          "binding_sha256": "5d344f16a5977a2df29d1f25932ffe6604d2416f361646ba677b8c0ad1683b52",
+          "candidate_id": "4f2ca3173d22c668",
+          "identity": {
+            "action": "receive",
+            "channel": "dandisets/{dandisetId}/changes",
+            "endpoint": "https://api.dandiarchive.org",
+            "event_schema_sha256": "44f860514fbe91de1282931b5834fa300d476d2f7acb2d3c7f7289951fbf707a",
+            "operation": "receiveDandisetChange"
+          },
+          "parameter_map": {},
+          "source_format": "asyncapi",
+          "version": 1
+        },
+        "contract_candidate_id": "4f2ca3173d22c668",
+        "draft_sha256": "9b61690ce6af3b8c1e80bd35f5453bb3d8762eeb24f66bf39fb9d88a776a58b8",
+        "final_result": {
+          "changedAt": "2026-08-01T10:00:00Z",
+          "dandisetId": "000001",
+          "version": "0.26.0"
+        },
+        "final_result_sha256": "f52963356a5498c7c4e1f45dfc177230b874919b4acdce26d390135d0dbf52d3",
+        "publication_sha256": "e879154ae24885aec457d969ac62d3e5fc97ce3a04aa8f987548786b19440090",
+        "source_candidate_id": "3749e161339371d5",
+        "source_document_sha256": "579c0a9a5485da13aac72cdb0b35d211b9f1e4463705afd7d077f12e6f23a75f",
+        "source_format": "asyncapi",
+        "tool_name": "VSDDandiChangeEvent",
+        "verification_case_count": 3,
+        "verification_sha256": "9395352db609fddc66530ec7a7f112dd9248d22df0ec05ad17dc5e60c236c2c7"
+      }
+    ],
+    "verification_case_count": 18
+  },
+  "research_question": "Can a real ToolUniverse capability gap move from reviewed source discovery through bounded scanning, content-addressed inspection, exact contract binding, representative verification, approval, publication, fresh-runtime loading, and useful execution across every supported format without duplicating an existing source or widening authority?",
+  "source_stage": {
+    "catalog_source_count": 50,
+    "configured_host_count": 259,
+    "configured_tool_count": 2744,
+    "cron_scan_count": 2,
+    "discovered_format_count": 7,
+    "handoff_submitted": false,
+    "snapshot_count": 7,
+    "source_audit_sha256": "77f1c2387067a7d99252ca5625688cc9634c68f972fa0bb292f960de9962a268"
+  },
+  "title": "ALS source-to-reviewed-runtime cross-format total proof",
+  "version": 1
+}

@@ -14,6 +14,8 @@ dependencies = [
     "numpy>=2.2.0",
     "sympy>=1.12.0", # Symbolic mathematics for Python executor
     "graphql-core>=3.2.0",
+    "grpcio>=1.73.1",
+    "protobuf>=5.29.0",
     "fastapi>=0.116.0",
     "uvicorn>=0.36.0",
     "pydantic>=2.11.0",
@@ -168,6 +170,12 @@ tu-datastore = "tooluniverse.database_setup.cli:main"
 # tooluniverse-wide-research = "tooluniverse.web_tools.literature_search_ui.simple_app:main"
 # Health Check Tool
 tooluniverse-doctor = "tooluniverse.doctor:main"
+tooluniverse-vsd-admin = "tooluniverse.vsd_admin_cli:main"
+tooluniverse-vsd-promote = "tooluniverse.vsd_promotion_cli:main"
+tooluniverse-vsd-demand = "tooluniverse.vsd_demand_cli:main"
+tooluniverse-vsd-lifecycle = "tooluniverse.vsd_lifecycle_cli:main"
+tooluniverse-vsd-contracts = "tooluniverse.vsd_contracts_cli:main"
+tooluniverse-vsd-sources = "tooluniverse.vsd_source_intelligence_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

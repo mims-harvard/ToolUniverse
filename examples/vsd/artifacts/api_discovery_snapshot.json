@@ -1,0 +1,2874 @@
+{
+  "analysis": {
+    "boundary": "Candidates are untrusted catalog metadata. They are not approved, probed, executable, or scientific endorsements.",
+    "candidates": [
+      {
+        "api_endpoint": "https://data.ny.gov/resource/2ig8-yxf8.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "31dcb2ce74f62d7c",
+        "capability_matches": {
+          "cancer site": "primary_site",
+          "opening date": "date_opened",
+          "principal investigator": "principal_investigator",
+          "stable trial identifier": "protocol",
+          "study phase": "study_phase",
+          "study title": "title"
+        },
+        "catalog_domain": "data.ny.gov",
+        "dataset_id": "2ig8-yxf8",
+        "description": "List of active studies submitted by Roswell Park Cancer Institute (RPCI) to National Cancer Institute (NCI) annually as part of the Cancer Center Report Grant reporting. It includes the primary site, protocol, principal investigator, date opened, phase and study name.",
+        "desired_capability_count": 6,
+        "documentation_url": "https://data.ny.gov/d/2ig8-yxf8",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "The official start date (activation) of a trial",
+            "field": "date_opened",
+            "json_type": "string",
+            "label": "Date Opened",
+            "provider_type": "Calendar date"
+          },
+          {
+            "description": "The unique identifier for this study. For both national and externally",
+            "field": "protocol",
+            "json_type": "string",
+            "label": "Protocol",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The primary anatomic cancer site(s) (i.e., breast, ovary) the clinical research study focuses on. Not applicable is used when the research",
+            "field": "primary_site",
+            "json_type": "string",
+            "label": "Primary Site",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Current phase of the study as of last dataset refresh. Phases include: Pilot, Phase I, Phase I/II, Phase II, Phase II/III and Phase III. See the attached Overview document for explanations. Not Applicable is used for epidemiologic, cancer control/behavioral, observational, ancillary, correlative or ",
+            "field": "study_phase",
+            "json_type": "string",
+            "label": "Study Phase",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Name of the protocol provided by the study's principal investigator",
+            "field": "title",
+            "json_type": "string",
+            "label": "Title",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The date the clinical research study closed to accrual. If the study is still open, this field will be blank.",
+            "field": "date_closed",
+            "json_type": "string",
+            "label": "Date Closed",
+            "provider_type": "Calendar date"
+          },
+          {
+            "description": "The name of the Principal Investigator from Center who is responsible for the Clinical Research Study",
+            "field": "principal_investigator",
+            "json_type": "string",
+            "label": "Principal Investigator",
+            "provider_type": "Text"
+          }
+        ],
+        "matched_capability_count": 6,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Current Active Clinical Trials - Roswell Park Cancer Institute",
+        "provenance_label": "official",
+        "recommended_for_contract_review": true,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 1.0,
+          "total": 0.9
+        },
+        "tags": [
+          "cancer study",
+          "nci",
+          "rpci"
+        ],
+        "updated_at": "2026-04-14T21:08:58.000Z"
+      },
+      {
+        "api_endpoint": "https://data.wa.gov/resource/i3e8-j9am.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "d89303e87d4b1139",
+        "capability_matches": {
+          "cancer site": null,
+          "opening date": null,
+          "principal investigator": null,
+          "stable trial identifier": null,
+          "study phase": null,
+          "study title": null
+        },
+        "catalog_domain": "data.wa.gov",
+        "dataset_id": "i3e8-j9am",
+        "description": "The Public Health Activities and Services (PHAS) data measures what public health does in the state and how much of it is done across all 35 local health agencies and the Department of Health in Washington State each year. Activities measured fall under the following broad categories: Access To Care Assessment Communicable Disease Communicable Disease: Immunization Emergency Preparedness Environmental Health Healthy Families Prevention and Wellness More PHAS data is available at https://fortress.wa.gov/doh/phip/PHIP/Home.mvc",
+        "desired_capability_count": 6,
+        "documentation_url": "https://data.wa.gov/d/i3e8-j9am",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "",
+            "field": "environmental_public_health_on_site_sewage_systems_on_site_sewage_system_permits_issued",
+            "json_type": "number",
+            "label": "Environmental Public Health - On-Site Sewage Systems: On-site sewage system permits issued",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_on_site_sewage_systems_on_site_sewage_system_failures_reported",
+            "json_type": "number",
+            "label": "Environmental Public Health - On-Site Sewage Systems: On-site sewage system failures reported",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_on_site_sewage_systems_on_site_sewage_system_failures_with_corrective_action_began_within_2_weeks",
+            "json_type": "number",
+            "label": "Environmental Public Health - On-Site Sewage Systems: On-site sewage system failures with corrective action began within",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_drinking_water_large_public_drinking_water_system_group_a_surveys",
+            "json_type": "number",
+            "label": "Environmental Public Health - Drinking Water: Large public drinking water system (Group A) surveys",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_drinking_water_drinking_water_health_advisories_issued",
+            "json_type": "number",
+            "label": "Environmental Public Health - Drinking Water: Drinking water health advisories issued",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_food_safety_lab_confirmed_foodborne_illness_outbreak_investigations",
+            "json_type": "number",
+            "label": "Environmental Public Health - Food Safety: Lab confirmed foodborne illness outbreak investigations",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_food_safety_food_service_establishment_complaints_investigated",
+            "json_type": "number",
+            "label": "Environmental Public Health - Food Safety: Food service establishment complaints investigated",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_food_safety_food_worker_cards_issued",
+            "json_type": "number",
+            "label": "Environmental Public Health - Food Safety: Food worker cards issued",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_food_safety_temporary_food_service_establishments_inspected",
+            "json_type": "number",
+            "label": "Environmental Public Health - Food Safety: Temporary food service establishments inspected",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_food_safety_routine_permanent_food_service_establishment_inspections",
+            "json_type": "number",
+            "label": "Environmental Public Health - Food Safety: Routine permanent food service establishment inspections",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_food_safety_permanent_food_service_establishments_inspected",
+            "json_type": "number",
+            "label": "Environmental Public Health - Food Safety: Permanent food service establishments inspected",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_food_safety_permanent_food_service_establishments_permitted",
+            "json_type": "number",
+            "label": "Environmental Public Health - Food Safety: Permanent food service establishments permitted",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "prevention_promotion_tobacco_prevention_and_control_reported_cases_of_clean_indoor_air_policy_violations_in_the_community",
+            "json_type": "number",
+            "label": "Prevention & Promotion - Tobacco Prevention and Control: Reported cases of clean indoor air policy violations in the com",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "prevention_promotion_obesity_prevention_school_based_pe_programs",
+            "json_type": "string",
+            "label": "Prevention & Promotion - Obesity Prevention: School-based PE programs",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_drinking_water_people_served_by_large_public_drinking_water_systems_group_a",
+            "json_type": "number",
+            "label": "Environmental Public Health - Drinking Water: People served by large public drinking water systems (Group A)",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_water_recreational_facilities_water_recreational_facilities_permitted",
+            "json_type": "number",
+            "label": "Environmental Public Health - Water Recreational Facilities: Water recreational facilities permitted",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_solid_waste_facilities_solid_waste_facilities_permitted",
+            "json_type": "number",
+            "label": "Environmental Public Health - Solid Waste Facilities: Solid waste facilities permitted",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_solid_waste_facilities_routine_solid_waste_facility_inspections",
+            "json_type": "number",
+            "label": "Environmental Public Health - Solid Waste Facilities: Routine solid waste facility inspections",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_x_ray_machines_routine_x_ray_facility_inspections_to_evaluated_for_safety",
+            "json_type": "number",
+            "label": "Environmental Public Health - X-Ray Machines: Routine X-ray facility inspections to evaluated for safety",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_shellfish_samples_collected_and_analyzed_for_safe_shellfish_consumption_marine_biotoxins",
+            "json_type": "number",
+            "label": "Environmental Public Health - Shellfish: Samples collected and analyzed for safe shellfish consumption - Marine Biotoxin",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_shellfish_samples_collected_and_analyzed_for_safe_shellfish_consumption_total",
+            "json_type": "number",
+            "label": "Environmental Public Health - Shellfish: Samples collected and analyzed for safe shellfish consumption - Total",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_childhood_lead_poisoning_cases_of_elevated_blood_lead_5_mcg_dl_in_children_ages_0_6_years",
+            "json_type": "number",
+            "label": "Environmental Public Health - Childhood Lead Poisoning: Cases of elevated blood lead (?5 mcg/dL) in children ages 0-6 ye",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_pesticides_pesticide_illness_incidents_investigated_both_agricultural_and_non_agricultural",
+            "json_type": "number",
+            "label": "Environmental Public Health - Pesticides: Pesticide illness incidents investigated, both agricultural and non-agricultur",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_pesticides_cases_investigated_for_possible_pesticide_exposure",
+            "json_type": "number",
+            "label": "Environmental Public Health - Pesticides: Cases investigated for possible pesticide exposure",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "environmental_public_health_west_nile_virus_birds_tested_for_west_nile_virus",
+            "json_type": "number",
+            "label": "Environmental Public Health - West Nile Virus: Birds tested for West Nile virus",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "assessment_health_statistics_death_records_registered",
+            "json_type": "number",
+            "label": "Assessment - Health Statistics: Death records registered",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "assessment_brfss_data_adults_interviewed_for_brfss",
+            "json_type": "number",
+            "label": "Assessment - BRFSS Data: Adults interviewed for BRFSS",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "access_to_care_health_care_professionals_licensed_health_care_professionals",
+            "json_type": "number",
+            "label": "Access to Care - Health Care Professionals: Licensed health care professionals",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "access_to_care_trauma_systems_ems_patient_records_collected_and_analyzed_for_quality",
+            "json_type": "number",
+            "label": "Access to Care - Trauma Systems: EMS Patient Records collected and analyzed for quality",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "access_to_care_ambulance_and_aid_services_ambulance_and_aid_services_vehicles_licensed",
+            "json_type": "number",
+            "label": "Access to Care - Ambulance and Aid Services: Ambulance and aid services vehicles licensed",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_tuberculosis_tb_active_tb_treatment_client_visits",
+            "json_type": "number",
+            "label": "Communicable Disease - Tuberculosis (TB): Active TB treatment client visits",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_tuberculosis_tb_tb_infection_treatment_client_visits",
+            "json_type": "number",
+            "label": "Communicable Disease - Tuberculosis (TB): TB infection treatment client visits",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_sexually_transmitted_disease_std_unduplicated_std_clinical_services_clients",
+            "json_type": "number",
+            "label": "Communicable Disease - Sexually Transmitted Disease (STD): Unduplicated STD clinical services clients",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_sexually_transmitted_disease_std_unduplicated_partner_services_clients_chlamydia",
+            "json_type": "number",
+            "label": "Communicable Disease - Sexually Transmitted Disease (STD): Unduplicated partner services clients - Chlamydia",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_sexually_transmitted_disease_std_total_unduplicated_partner_services_clients",
+            "json_type": "number",
+            "label": "Communicable Disease - Sexually Transmitted Disease (STD): Total unduplicated partner services clients",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_sexually_transmitted_disease_std_confirmed_std_cases_gonorrhea",
+            "json_type": "number",
+            "label": "Communicable Disease - Sexually Transmitted Disease (STD): Confirmed STD cases - Gonorrhea",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_sexually_transmitted_disease_std_confirmed_std_cases_chlamydia",
+            "json_type": "number",
+            "label": "Communicable Disease - Sexually Transmitted Disease (STD): Confirmed STD cases - Chlamydia",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_sexually_transmitted_disease_std_confirmed_std_cases_syphilis",
+            "json_type": "number",
+            "label": "Communicable Disease - Sexually Transmitted Disease (STD): Confirmed STD cases - Syphilis",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_sexually_transmitted_disease_std_confirmed_std_cases_hiv",
+            "json_type": "number",
+            "label": "Communicable Disease - Sexually Transmitted Disease (STD): Confirmed STD cases - HIV",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_sexually_transmitted_disease_std_std_cases_investigated_for_disease_surveillance",
+            "json_type": "number",
+            "label": "Communicable Disease - Sexually Transmitted Disease (STD): STD cases investigated for disease surveillance",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_hiv_aids_total_hiv_testing_client_visits",
+            "json_type": "number",
+            "label": "Communicable Disease - HIV/AIDS: Total HIV testing client visits",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_hiv_aids_lhj_directly_provided_hiv_medical_case_management",
+            "json_type": "string",
+            "label": "Communicable Disease - HIV/AIDS: LHJ directly provided HIV medical case management",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_hiv_aids_hiv_tests_specimens_processed_by_the_state_lab_and_other_doh_contracted_labs",
+            "json_type": "number",
+            "label": "Communicable Disease - HIV/AIDS: HIV tests/specimens processed by the state lab and other DOH contracted labs",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_vaccine_preventable_disease_cases_pertussis_unvaccinated_2",
+            "json_type": "number",
+            "label": "Communicable Disease - Vaccine-Preventable Disease Cases: Pertussis - (unvaccinated)",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_vaccine_preventable_disease_cases_mumps_vaccinated",
+            "json_type": "number",
+            "label": "Communicable Disease - Vaccine-Preventable Disease Cases: Mumps - (vaccinated)",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_vaccine_preventable_disease_cases_measles_unknown_vaccine_status",
+            "json_type": "number",
+            "label": "Communicable Disease - Vaccine-Preventable Disease Cases: Measles - (unknown vaccine status)",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "communicable_disease_foodborne_waterborne_disease_reported_cases_of_foodborne_waterborne_disease",
+            "json_type": "number",
+            "label": "Communicable Disease - Foodborne/Waterborne Disease: Reported cases of foodborne/ - waterborne disease",
+            "provider_type": "Number"
+          }
+        ],
+        "matched_capability_count": 0,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Public Health Activities and Services - 2014",
+        "provenance_label": "official",
+        "recommended_for_contract_review": false,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.375,
+          "total": 0.5563
+        },
+        "tags": [
+          "public health",
+          "public health activities",
+          "public health counts",
+          "public health services",
+          "washington state department of health"
+        ],
+        "updated_at": "2015-12-22T17:45:21.000Z"
+      },
+      {
+        "api_endpoint": "https://data.texas.gov/resource/6pm5-am5m.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "2139c3a85291e320",
+        "capability_matches": {
+          "cancer site": null,
+          "opening date": null,
+          "principal investigator": null,
+          "stable trial identifier": null,
+          "study phase": null,
+          "study title": null
+        },
+        "catalog_domain": "data.texas.gov",
+        "dataset_id": "6pm5-am5m",
+        "description": "This dataset includes basic information about the stormwater and wastewater general permits administered by the TCEQ Water Quality Division. The authorizations covered in this dataset are for the following master general permits: TXR040000 - MS4 Phase II (Notice of Intent & Waiver), TXR050000 - Multi-Sector (Notice of Intent & No Exposure Certification, TXG110000 - Concrete Production Facilities, TXG130000 - Aquaculture Production, TXG310000 - TPDES Oil and Gas Extraction, TXG340000 - Petroleum Bulk Stations and Terminals, TXG500000 - Quarries in Certain Water Quality Protection Areas, TXG640000 - Water Treatment Plant, TXG870000 - Pesticides, and TXG920000 - Concentrated Animal Feeding Operation.",
+        "desired_capability_count": 6,
+        "documentation_url": "https://data.texas.gov/d/6pm5-am5m",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "Authorization number (unique ID for the site/project).",
+            "field": "permit_no",
+            "json_type": "string",
+            "label": "Permit Number",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The current status of the authorization/permit number",
+            "field": "permit_status",
+            "json_type": "string",
+            "label": "Authorization Status",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The state where the site is located.",
+            "field": "physaddr_state_name",
+            "json_type": "string",
+            "label": "Site State",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The program code stored in the TCEQ database.",
+            "field": "program_area",
+            "json_type": "string",
+            "label": "Program Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The authorization type of the general permit.",
+            "field": "permit_type",
+            "json_type": "string",
+            "label": "Authorization Type",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Longitude (0 indicates missing or unrecorded in this entry).",
+            "field": "physaddr_long_coord",
+            "json_type": "number",
+            "label": "Longitude",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Customer Number assigned by the TCEQ.",
+            "field": "cn",
+            "json_type": "string",
+            "label": "Customer Number",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The closest state to the described location where the site is located.",
+            "field": "physaddr_near_state",
+            "json_type": "string",
+            "label": "Nearest State",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The city where the site is located.",
+            "field": "physaddr_deliv2_txt",
+            "json_type": "string",
+            "label": "Site Address 2",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The closest city to the described location where the site is located.",
+            "field": "physaddr_near_city_name",
+            "json_type": "string",
+            "label": "Nearest City",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The closest ZIP to the described location where the site is located.",
+            "field": "physaddr_near_zip",
+            "json_type": "string",
+            "label": "Nearest ZIP",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The primary street address where the facility/site is located.",
+            "field": "physaddr_deliv_txt",
+            "json_type": "string",
+            "label": "Site Address",
+            "provider_type": "Text"
+          },
+          {
+            "description": "9-digit ZIP Code corresponding to the address.",
+            "field": "physaddr_zip4",
+            "json_type": "string",
+            "label": "Site Zip 4",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Date of the initial approval of the authorization.",
+            "field": "permit_start_dt",
+            "json_type": "string",
+            "label": "Date Coverage Began",
+            "provider_type": "Calendar date"
+          },
+          {
+            "description": "5-digit ZIP Code corresponding to the address.",
+            "field": "physaddr_zip",
+            "json_type": "string",
+            "label": "Site Zip",
+            "provider_type": "Text"
+          },
+          {
+            "description": "A narrative description of the address or specific location details such as intersections.",
+            "field": "physaddr_loc_desc_txt",
+            "json_type": "string",
+            "label": "Site Location Description",
+            "provider_type": "Text"
+          },
+          {
+            "description": "County in Texas where the site is located.",
+            "field": "county_name",
+            "json_type": "string",
+            "label": "Facility County",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Latitude (0 indicates missing or unrecorded in this entry).",
+            "field": "physaddr_lat_coord",
+            "json_type": "number",
+            "label": "Latitude",
+            "provider_type": "Number"
+          },
+          {
+            "description": "The Owner/Operator of a site who holds the authorization/permit number.",
+            "field": "principal_name",
+            "json_type": "string",
+            "label": "Permittee Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Regulated Entity Number assigned by the TCEQ.",
+            "field": "rn",
+            "json_type": "string",
+            "label": "RN",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The name of the site or project as known by the public in the area where the site is located.",
+            "field": "site_name",
+            "json_type": "string",
+            "label": "Site Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The address where the site is located.",
+            "field": "physaddr_city_name",
+            "json_type": "string",
+            "label": "Site City",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Point(latitude+Longitude).",
+            "field": "lat_long",
+            "json_type": "object",
+            "label": "Lat-Long",
+            "provider_type": "Point"
+          }
+        ],
+        "matched_capability_count": 0,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Texas Commission on Environmental Quality - Water Quality General Permits Active/Pending",
+        "provenance_label": "official",
+        "recommended_for_contract_review": false,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.375,
+          "total": 0.5563
+        },
+        "tags": [
+          "general permit",
+          "ow",
+          "stormwater and wastewater",
+          "sw-ww",
+          "wqd"
+        ],
+        "updated_at": "2026-07-31T14:00:12.000Z"
+      },
+      {
+        "api_endpoint": "https://data.texas.gov/resource/7fq8-wig2.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "997796d9182291ff",
+        "capability_matches": {
+          "cancer site": null,
+          "opening date": null,
+          "principal investigator": null,
+          "stable trial identifier": null,
+          "study phase": null,
+          "study title": null
+        },
+        "catalog_domain": "data.texas.gov",
+        "dataset_id": "7fq8-wig2",
+        "description": "This dataset includes basic information about the stormwater and wastewater individual permits administered by the TCEQ Water Quality Division. The authorizations covered in this dataset are as follows: Concentrated Animal Feeding Operations (CAFO), Conventional Water Treatment, Municipal Separate Storm Sewer System (MS4) Phase I, Industrial Stormwater, Industrial Wastewater, Public Domestic Wastewater, Private Domestic Wastewater, and Reverse Osmosis Water Treatment.",
+        "desired_capability_count": 6,
+        "documentation_url": "https://data.texas.gov/d/7fq8-wig2",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "The closest state to the described location where the site is located.",
+            "field": "nearest_state",
+            "json_type": "string",
+            "label": "Nearest State",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The current status of the authorization/permit number.",
+            "field": "authorization_status",
+            "json_type": "string",
+            "label": "Authorization Status",
+            "provider_type": "Text"
+          },
+          {
+            "description": "County in Texas where the site is located.",
+            "field": "facility_county",
+            "json_type": "string",
+            "label": "Facility County",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The state where the site is located.",
+            "field": "site_state",
+            "json_type": "string",
+            "label": "Site State",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Latitude (0 indicates missing or unrecorded in this entry).",
+            "field": "latitude",
+            "json_type": "number",
+            "label": "Latitude",
+            "provider_type": "Number"
+          },
+          {
+            "description": "The address where the site is located.",
+            "field": "site_address_2",
+            "json_type": "string",
+            "label": "Site Address 2",
+            "provider_type": "Text"
+          },
+          {
+            "description": "9-digit ZIP Code corresponding to the address.",
+            "field": "site_zip_4",
+            "json_type": "string",
+            "label": "Site ZIP + 4",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Customer Number assigned by the TCEQ.",
+            "field": "cn",
+            "json_type": "string",
+            "label": "Customer Number",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The primary street address where the facility/site is located.",
+            "field": "site_address",
+            "json_type": "string",
+            "label": "Site Address",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The closest city to the described location where the site is located.",
+            "field": "nearest_city",
+            "json_type": "string",
+            "label": "Nearest city",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Date of the initial approval of the authorization.",
+            "field": "date_coverage_began",
+            "json_type": "string",
+            "label": "Date Coverage Began",
+            "provider_type": "Calendar date"
+          },
+          {
+            "description": "The Owner/Operator of a site who holds the authorization/permit number.",
+            "field": "permittee_name",
+            "json_type": "string",
+            "label": "Permittee Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The name of the site or project as known by the public in the area where the site is located.",
+            "field": "ai_site_name",
+            "json_type": "string",
+            "label": "Site Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "point of lat/long for maps.",
+            "field": "lat_long",
+            "json_type": "object",
+            "label": "Lat/Long",
+            "provider_type": "Point"
+          },
+          {
+            "description": "Authorization Type of the individual Permit.",
+            "field": "authorization_type",
+            "json_type": "string",
+            "label": "Authorization Type",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Longitude (0 indicates missing or unrecorded in this entry.",
+            "field": "longitude",
+            "json_type": "number",
+            "label": "Longitude",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Authorization number (unique ID for the site/project).",
+            "field": "permit_number",
+            "json_type": "string",
+            "label": "Permit Number",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The city where the site is located.",
+            "field": "site_city",
+            "json_type": "string",
+            "label": "Site City",
+            "provider_type": "Text"
+          },
+          {
+            "description": "5-digit ZIP Code corresponding to the address.",
+            "field": "site_zip",
+            "json_type": "string",
+            "label": "Site ZIP",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Regulated Entity Number assigned by the TCEQ.",
+            "field": "rn",
+            "json_type": "string",
+            "label": "Regulated Entity Number",
+            "provider_type": "Text"
+          },
+          {
+            "description": "A narrative description of the address or specific location details such as intersections.",
+            "field": "site_location_description",
+            "json_type": "string",
+            "label": "Site Location Description",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The closest ZIP to the described location where the site is located.",
+            "field": "nearest_zip",
+            "json_type": "string",
+            "label": "Nearest ZIP",
+            "provider_type": "Text"
+          }
+        ],
+        "matched_capability_count": 0,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Texas Commission on Environmental Quality - Water Quality Individual Permits Active/Pending",
+        "provenance_label": "official",
+        "recommended_for_contract_review": false,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.375,
+          "total": 0.5563
+        },
+        "tags": [
+          "individual permit",
+          "ow",
+          "stormwater and wastewater",
+          "sw-ww",
+          "wqd"
+        ],
+        "updated_at": "2026-07-31T14:00:11.000Z"
+      },
+      {
+        "api_endpoint": "https://data.pa.gov/resource/e7ip-7qrs.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "6794128cb5ecab13",
+        "capability_matches": {
+          "cancer site": null,
+          "opening date": null,
+          "principal investigator": null,
+          "stable trial identifier": null,
+          "study phase": null,
+          "study title": null
+        },
+        "catalog_domain": "data.pa.gov",
+        "dataset_id": "e7ip-7qrs",
+        "description": "EPA's Emissions Inventory System (EIS) contains information about sources that emit criteria air pollutants (CAPs) and hazardous air pollutants (HAPs). This data contains the facility information for Pennsylvania counties. EPA collects information about emission sources and releases an updated version of the NEI database every three years. The data made available in the NEI are used for air dispersion modeling, regional strategy development, setting regulations, air toxins risk assessment, and tracking trends in emissions over time. The data derived in the State of Pennsylvania is published and searchable online on the www.pa.gov website. This data will be updated annually for the prior calendar year in the first Quarter of the following year.",
+        "desired_capability_count": 6,
+        "documentation_url": "https://data.pa.gov/d/e7ip-7qrs",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "The alphabetic codes that represent the name of the principal administrative subdivision of the United States, Canada, or Mexico. Standard 2 char state codes",
+            "field": "locationaddressstatecode",
+            "json_type": "string",
+            "label": "Location Address State Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The code that represents a U.S. ZIP code or International postal code. 5 or 9 digit postal codes.",
+            "field": "locationaddresspostalcode",
+            "json_type": "string",
+            "label": "Location Address Postal Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The measure of the angular distance on a meridian north or south of the equator for the Facility site.",
+            "field": "latitudemeasure",
+            "json_type": "number",
+            "label": "Latitude Measure",
+            "provider_type": "Number"
+          },
+          {
+            "description": "The measure of the angular distance on a meridian east or west of the prime meridian for the Facility site.",
+            "field": "longitudemeasure",
+            "json_type": "number",
+            "label": "Longitude Measure",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Date that the Air Quality primary facility was created in eFACTS.",
+            "field": "effectivedate",
+            "json_type": "string",
+            "label": "Effective Date",
+            "provider_type": "Calendar date"
+          },
+          {
+            "description": "The physical location of a facility site or organization.",
+            "field": "locationaddresstext",
+            "json_type": "string",
+            "label": "Location Address",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Date that the eFACTS client record was created.",
+            "field": "affl_effectivedate",
+            "json_type": "string",
+            "label": "Affiliated Effective Date",
+            "provider_type": "Calendar date"
+          },
+          {
+            "description": "Name of the organization.",
+            "field": "organizationformalname",
+            "json_type": "string",
+            "label": "Organizational Formal Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The code that identifies the method used to collect the vertical measure (i.e., the altitude) of a reference point. 001 = A method used to determine vertical components based on altimetry 002 = Geographic coordinate determination based on classical surveying techniques 003 = Geographic coordinate de",
+            "field": "verticalcollectionmethodcode",
+            "json_type": "string",
+            "label": "Vertical Collection Method Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Represents the place for which geographic coordinates were established. See Geographic Reference Point Code column to view all possible values.",
+            "field": "geographicreferencepoint",
+            "json_type": "string",
+            "label": "Geographic Reference Point",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Identifies the method used to determine the latitude and longitude coordinates for a point on the earth. See code column above to view all possible values.",
+            "field": "horizontalcollectionmethod",
+            "json_type": "string",
+            "label": "Horizontal Collection Method",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The code that identifies the method used to determine the latitude and longitude coordinates for a point on the earth.",
+            "field": "horizontalcollectionmethodcode",
+            "json_type": "string",
+            "label": "Horizontal Collection Method Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The horizontal measure, in meters, of the relative accuracy of the latitude and longitude coordinates.",
+            "field": "horizontalaccuracymeasure",
+            "json_type": "string",
+            "label": "Horizontal Accuracy Measure",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The text that provides additional information about a place, including a building name with its secondary unit and number, an industrial park name, an installation name, or descriptive text where no formal address is available.",
+            "field": "supplementallocationtext",
+            "json_type": "string",
+            "label": "Supplemental Location Text",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The name assigned to the facility site by the reporter, i.e., name for the Facility Site Identifier.",
+            "field": "facilitysitename",
+            "json_type": "string",
+            "label": "Facility Site Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The code that represents a subdivision of an industry that accommodates user needs in the United States. NAICS is a mnuemonic for North American Industry Classification System. (over 1000 codes; codes are in NAICS Code and descriptions are in NAICS Industry)",
+            "field": "naicscode",
+            "json_type": "string",
+            "label": "NAICS Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The facility's industry description. NAICS is a mnuemonic for North American Industry Classification System. (over 1000 codes; codes are in NAICSCODE and descriptions are in NAICSINDUSTRY)",
+            "field": "naicsindustry",
+            "json_type": "string",
+            "label": "NAICS Industry",
+            "provider_type": "Text"
+          },
+          {
+            "description": "A state's designated identifier by which the facility site is referred to by a system. The name of the facility is in the Facility Site Name column.",
+            "field": "facilitysiteidentifier",
+            "json_type": "string",
+            "label": "Facility Site Identifier",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The list is from FIPS Counties codes used for the identification of the Counties and County equivalents of the United States. The FIPS county code is a five-digit Federal Information Processing Standard (FIPS) code which uniquely identifies counties and county equivalents in the United States, certa",
+            "field": "stateandcountyfipscode",
+            "json_type": "string",
+            "label": "State and County FIPS Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The name of the city, town, village, or other locality.",
+            "field": "localityname",
+            "json_type": "string",
+            "label": "Locality Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "State's county code. For PA this is a number from 1 to 67.",
+            "field": "locationcountycode",
+            "json_type": "string",
+            "label": "Location County Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Pennsylvania County name.",
+            "field": "locationcountyname",
+            "json_type": "string",
+            "label": "Location County Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Identifiers by which the emissions release point is known or has been known.",
+            "field": "rpi_identifier",
+            "json_type": "string",
+            "label": "Release Point Identifier",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Primary Key used to help group columns.",
+            "field": "rel_pt_iden_id",
+            "json_type": "string",
+            "label": "Release Point Key",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Any comments regarding the release point.",
+            "field": "rp_comment",
+            "json_type": "string",
+            "label": "Release Point Comment",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The temperature of an exit gas stream (measured in degrees Fahrenheit).",
+            "field": "rp_exitgastemperaturemeasure",
+            "json_type": "number",
+            "label": "Release Point Exit Gas Temperature Measure",
+            "provider_type": "Number"
+          },
+          {
+            "description": "The unit of measure for the stack gas flow rate value. Measurements in ACFS (Actual Cubic Feet per Second)",
+            "field": "rp_exitgasflowratemeasure",
+            "json_type": "number",
+            "label": "Release Point Exit Gas Flow Rate Measure",
+            "provider_type": "Number"
+          },
+          {
+            "description": "The unit of measure for the velocity of an exit gas stream value. Values as as follows: FPS = Feet per second Null = no measurement",
+            "field": "rp_exitgasvelocityunitofmeascd",
+            "json_type": "string",
+            "label": "Release Point Exit Gas Velocity Unit of Measure",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The velocity of an exit gas stream.",
+            "field": "rp_exitgasvelocitymeasure",
+            "json_type": "number",
+            "label": "Release Point Exit Gas Velocity Measure",
+            "provider_type": "Number"
+          },
+          {
+            "description": "The internal diameter of the stack at the release height.",
+            "field": "rp_stackdiametermeasure",
+            "json_type": "number",
+            "label": "Release Point Stack Diameter Measure",
+            "provider_type": "Number"
+          },
+          {
+            "description": "The height of the stack from the ground.",
+            "field": "rp_stackheightmeasure",
+            "json_type": "number",
+            "label": "Release Point Stack Height Measure",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Additional text description of the release point.",
+            "field": "rp_description",
+            "json_type": "string",
+            "label": "Release Point Description",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Identifies the type of release point. 1 = fugitive emissions 2 = vertical emissions, unobstructed opening 3 = horizontal or nearly horizontal emissions 5 = vertical with weather cap or similar obstruction 6 = downward or nearly downward emissions.",
+            "field": "rp_type",
+            "json_type": "string",
+            "label": "Release Point Type",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Primary Key used to help group Release Point columns.",
+            "field": "rp_id",
+            "json_type": "string",
+            "label": "Release Point Primary Key",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The code that represents a U.S. ZIP code or International postal code.",
+            "field": "affl_locationaddresspostalcode",
+            "json_type": "string",
+            "label": "Affiliated Organization Postal Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The alphabetic codes that represent the name of the principal administrative subdivision of the United States, Canada, or Mexico.",
+            "field": "affl_locationaddressstatecode",
+            "json_type": "string",
+            "label": "Affiliated Organization State Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The name of the city, town, village, or other locality.",
+            "field": "affl_localityname",
+            "json_type": "string",
+            "label": "Affiliated Organization Locality",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The text that provides additional information about a place, including a building name with its secondary unit and number, an industrial park name, an installation name, or descriptive text where no formal address is available.",
+            "field": "affl_supplementallocationtext",
+            "json_type": "string",
+            "label": "Affiliated Organization Additional Information",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The physical location of a facility site or organization.",
+            "field": "affl_locationaddresstext",
+            "json_type": "string",
+            "label": "Affiliated Organization Physical Location",
+            "provider_type": "Text"
+          },
+          {
+            "description": "A unique identifier for each affiliation address consisting of the 5 address columns.",
+            "field": "affl_org_addr_id",
+            "json_type": "string",
+            "label": "Affiliated Organization Address Identifier",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The affiliated organization which directs, is responsible for, or has authority over the activities and operations of the facility site. Derived from the client id from eFACTS.",
+            "field": "affl_org_iden",
+            "json_type": "string",
+            "label": "Affiliated Organization Identifier",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Date the emissions release point or stack was installed at a facility.",
+            "field": "rpi_effectivedate",
+            "json_type": "string",
+            "label": "Release Point Effective Date",
+            "provider_type": "Calendar date"
+          },
+          {
+            "description": "The code that represents the reference datum used in determining latitude and longitude coordinates. 1 = North American Datum of 1927 2 = North American Datum of 1983 3 = World Geodetic System of 1984 (Previously GEO84) 21 = Unknown",
+            "field": "horizontalreferencedatumcode",
+            "json_type": "string",
+            "label": "Horizontal Reference Datum Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Represents the reference datum used in determining latitude and longitude coordinates. See Horizontal Reference Datum Code column to view all possible values.",
+            "field": "horizontalreferencedatum",
+            "json_type": "string",
+            "label": "Horizontal Reference Datum",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The code that represents the place for which geographic coordinates were established. 022 = depricated 101 = Any point on a Facility/System or associated with the substance or monitor 102 = The center of a Facility/System defined as the Geographic Centroid of the Facility 106 = Point where substance",
+            "field": "geographicreferencepointcode",
+            "json_type": "string",
+            "label": "Geographic Reference Point Code",
+            "provider_type": "Text"
+          }
+        ],
+        "matched_capability_count": 0,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Emissions Inventory System (EIS) Facilities 2017 - Current County Environmental Protection",
+        "provenance_label": "official",
+        "recommended_for_contract_review": false,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.25,
+          "total": 0.4875
+        },
+        "tags": [
+          "air",
+          "dep",
+          "eis",
+          "emission",
+          "environment",
+          "facility",
+          "hazard",
+          "nei",
+          "pollutant",
+          "regulation",
+          "toxin"
+        ],
+        "updated_at": "2026-05-15T17:31:11.000Z"
+      },
+      {
+        "api_endpoint": "https://data.wa.gov/resource/28ar-n972.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "25a7b2d9febac1fb",
+        "capability_matches": {
+          "cancer site": null,
+          "opening date": null,
+          "principal investigator": null,
+          "stable trial identifier": null,
+          "study phase": null,
+          "study title": null
+        },
+        "catalog_domain": "data.wa.gov",
+        "dataset_id": "28ar-n972",
+        "description": "The Public Health Activities and Services (PHAS) data measures what public health does in the state and how much of it is done across all 35 local health agencies and the Department of Health in Washington State each year. Activities measured fall under the following broad categories: Access To Care Assessment Communicable Disease Communicable Disease: Immunization Emergency Preparedness Environmental Health Healthy Families Prevention and Wellness More PHAS data is available at https://fortress.wa.gov/doh/phip/PHIP/Home.mvc",
+        "desired_capability_count": 6,
+        "documentation_url": "https://data.wa.gov/d/28ar-n972",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "",
+            "field": "low_cost_recreational_opportunities_initiative_implemented_change",
+            "json_type": "number",
+            "label": "Low-cost Recreational Opportunities Initiative: Implemented change",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_solid_waste_facility_inspections",
+            "json_type": "number",
+            "label": "Number of solid waste facility inspections",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_drinking_water_health_advisories_issued",
+            "json_type": "number",
+            "label": "Number of drinking water health advisories issued",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_drinking_water_samples_from_public_water_systems_submitted_and_evaluated_for_public_health_protection",
+            "json_type": "number",
+            "label": "Number of drinking water samples from public water systems submitted and evaluated for public health protection",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_onsite_sewage_system_failures_began_fix_within_2_weeks",
+            "json_type": "number",
+            "label": "Number of onsite sewage system failures began fix within 2 weeks",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_onsite_sewage_system_permits_issued",
+            "json_type": "number",
+            "label": "Number of onsite sewage system permits issued",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "prevention_and_wellness_projects_land_and_transport",
+            "json_type": "number",
+            "label": "Prevention and Wellness Projects: Land and Transport",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "prevention_and_wellness_projects_other_topics",
+            "json_type": "number",
+            "label": "Prevention and Wellness Projects: Other topics",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_complaint_investigations_about_health_care_professionals",
+            "json_type": "number",
+            "label": "Number of complaint investigations about health care professionals",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_clinical_labs_regulated_by_doh",
+            "json_type": "number",
+            "label": "Number of clinical labs regulated by DOH",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_adults_interviewed_for_behavioral_risk_factor_surveillance_system",
+            "json_type": "number",
+            "label": "Number of adults interviewed for Behavioral Risk Factor Surveillance System",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_birth_certificates_issued",
+            "json_type": "number",
+            "label": "Number of birth certificates issued",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "agency_provided_direct_administration_of_flu_vaccine",
+            "json_type": "string",
+            "label": "Agency provided direct administration of flu vaccine",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "number_of_providers_registered_with_doh_to_order_vaccine",
+            "json_type": "number",
+            "label": "Number of providers registered with DOH to order vaccine",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_latent_tb_treatment_clients_unduplicated",
+            "json_type": "number",
+            "label": "Number of latent TB treatment clients (unduplicated)",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_new_tb_cases_investigated_and_reported_in_calendar_year",
+            "json_type": "number",
+            "label": "Number of new TB cases investigated and reported in calendar year",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_active_tb_case_contacts",
+            "json_type": "number",
+            "label": "Number of active TB case contacts",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_hiv_aids_case_management_visits",
+            "json_type": "number",
+            "label": "Number of HIV/AIDS case management visits",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "agency_utilized_public_response_system",
+            "json_type": "string",
+            "label": "Agency utilized Public Response System",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "number_of_medium_and_high_level_alerts_both_test_and_actual_via_secures",
+            "json_type": "number",
+            "label": "Number of medium and high-level alerts (both test and actual via SECURES)",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_permanent_food_service_routine_inspections",
+            "json_type": "number",
+            "label": "Number of permanent food service routine inspections",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_inspections_with_35_or_more_critical_points",
+            "json_type": "number",
+            "label": "Number of inspections with 35 or more critical points",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_onsite_sewage_system_failures_reported",
+            "json_type": "number",
+            "label": "Number of onsite sewage system failures reported",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "agency_provided_early_family_support_services",
+            "json_type": "string",
+            "label": "Agency provided Early Family Support Services",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "number_of_early_family_support_services_visits",
+            "json_type": "number",
+            "label": "Number of Early Family Support Services visits",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_total_clients_provided_wic_services_by_the_agency_or_through_contracted_providers",
+            "json_type": "number",
+            "label": "Number of total clients provided WIC Services by the agency (or through contracted providers)",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_children_under_age_five_provided_wic_services_by_the_agency_or_through_contracted_providers",
+            "json_type": "number",
+            "label": "Number of children under age five provided WIC Services by the agency (or through contracted providers)",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_agency_referrals_to_wic_families_for_prevention_or_other_social_services",
+            "json_type": "number",
+            "label": "Number of agency referrals to WIC families for prevention or other social services",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "agency_wic_peer_counseling_individual_breastfeeding_sessions",
+            "json_type": "number",
+            "label": "Agency WIC peer counseling individual breastfeeding sessions",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_children_with_special_health_care_needs",
+            "json_type": "number",
+            "label": "Number of children with special health care needs",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_newborn_infants_referred_by_doh_for_missed_hearing_screenings_or_follow_up_with_abnormal_results",
+            "json_type": "number",
+            "label": "Number of newborn infants referred by DOH for missed hearing screenings or follow-up with abnormal results",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "healthy_foods_initiative_agency_fte_s",
+            "json_type": "number",
+            "label": "Healthy Foods Initiative: Agency FTE(s)",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "entity",
+            "json_type": "string",
+            "label": "Entity",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "number_of_oral_health_visits",
+            "json_type": "number",
+            "label": "Number of Oral Health visits",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_oral_health_patients",
+            "json_type": "number",
+            "label": "Number of Oral Health patients",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_cases_investigated_as_part_of_the_foodborne_outbreaks",
+            "json_type": "number",
+            "label": "Number of cases investigated as part of the foodborne outbreaks",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_food_worker_cards_issued",
+            "json_type": "number",
+            "label": "Number of Food Worker Cards issued",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_temporary_food_service_permits_issued",
+            "json_type": "number",
+            "label": "Number of temporary food service permits issued",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_times_agency_activated_incident_command_system_for_public_health",
+            "json_type": "number",
+            "label": "Number of times agency activated Incident Command System for public health",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "agency_had_an_alerting_system_for_health_care_providers",
+            "json_type": "string",
+            "label": "Agency had an alerting system for health care providers",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "number_of_human_west_nile_virus_cases",
+            "json_type": "number",
+            "label": "Number of human West Nile Virus cases",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_salmonellosis_cases",
+            "json_type": "number",
+            "label": "Number of Salmonellosis cases",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_pertussis_cases",
+            "json_type": "number",
+            "label": "Number of Pertussis cases",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "agency_provided_needle_exchange",
+            "json_type": "string",
+            "label": "Agency provided needle exchange",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "number_of_twinrix_hepatitis_a_and_b_doses_administered",
+            "json_type": "number",
+            "label": "Number of Twinrix Hepatitis A and B doses administered",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_new_chronic_hepatitis_c_cases_requiring_agency_investigation",
+            "json_type": "number",
+            "label": "Number of new chronic hepatitis C cases requiring agency investigation",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_hiv_tests_specimens_processed_by_the_state_lab",
+            "json_type": "number",
+            "label": "Number of HIV tests/specimens processed by the state lab",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "number_of_hiv_counseling_and_testing_visits",
+            "json_type": "number",
+            "label": "Number of HIV counseling and testing visits",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "agency_provided_hiv_aids_counseling_and_testing",
+            "json_type": "string",
+            "label": "Agency provided HIV/AIDS counseling and testing",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "agency_provided_treatment_for_active_tb_cases",
+            "json_type": "string",
+            "label": "Agency provided treatment for active TB cases",
+            "provider_type": "Text"
+          }
+        ],
+        "matched_capability_count": 0,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Public Health Activities and Services - 2013",
+        "provenance_label": "official",
+        "recommended_for_contract_review": false,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.25,
+          "total": 0.4875
+        },
+        "tags": [
+          "public health",
+          "public health activities",
+          "public health counts",
+          "public health services",
+          "washington state department of health"
+        ],
+        "updated_at": "2015-12-21T23:28:06.000Z"
+      },
+      {
+        "api_endpoint": "https://cos-data.seattle.gov/resource/fg6z-cn3y.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "76614a72b918e8da",
+        "capability_matches": {
+          "cancer site": null,
+          "opening date": null,
+          "principal investigator": null,
+          "stable trial identifier": null,
+          "study phase": null,
+          "study title": null
+        },
+        "catalog_domain": "cos-data.seattle.gov",
+        "dataset_id": "fg6z-cn3y",
+        "description": "Provides details on the sites selected for each study, including various attributes to allow for comparison across sites. ------------------------------------------ The City of Seattle Department of Transportation (SDOT) is providing data from the public life studies it has conducted since 2017. These studies consist of measuring the number of people using public space and the types of activities present on select sidewalks across the city, as well as several parks and plazas. The data set is continually updated as SDOT and other parties conduct public life studies using Gehl Institute\u2019s Public Life Data Protocol. This dataset consists of four component spreadsheets and a GeoJSON file, which provide public life data as well as information about the study design and study locations: 1 Publi",
+        "desired_capability_count": 6,
+        "documentation_url": "https://cos-data.seattle.gov/d/fg6z-cn3y",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "Unique identifier to link tables to indicate where data was collected.",
+            "field": "location_id",
+            "json_type": "string",
+            "label": "location_id",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Secondary or specifying name of the survey location",
+            "field": "location_name_secondary",
+            "json_type": "string",
+            "label": "location_name_secondary",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Unique SDOT identifier for sidewalk segment where survey location is located, join with \u201ccompkey\u201d in Sidewalks dataset.",
+            "field": "location_sidewalk_compkey",
+            "json_type": "string",
+            "label": "location_sidewalk_compkey",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Further information for location (ie. side of the street, specific area for counts)",
+            "field": "location_detail",
+            "json_type": "string",
+            "label": "location_detail",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Name of the city that the survey location is based within.",
+            "field": "location_city",
+            "json_type": "string",
+            "label": "location_city",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Country that the survey location is based within",
+            "field": "location_country",
+            "json_type": "string",
+            "label": "location_country",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Any additional information",
+            "field": "location_notes",
+            "json_type": "string",
+            "label": "location_notes",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Further specifying typology of space",
+            "field": "location_area_typology_1",
+            "json_type": "string",
+            "label": "location_area_typology_subcategory",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Indication of whether there is a transit stop located in the survey location",
+            "field": "location_transit_stop_present",
+            "json_type": "string",
+            "label": "location_transit_stop_present",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Urban Village designation at the survey location",
+            "field": "location_neighborhood_type",
+            "json_type": "string",
+            "label": "location_neighborhood_type",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Neighborhood of survey location",
+            "field": "location_neighborhood",
+            "json_type": "string",
+            "label": "location_neighborhood",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Typology of the space assigned for vehicles that the line geometry intersects, as defined by Streets Illustrated.",
+            "field": "location_line_typology",
+            "json_type": "string",
+            "label": "location_line_typology_vehicular",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Average number of commercial seats present at study location during observation periods",
+            "field": "location_average_number",
+            "json_type": "number",
+            "label": "location_average_number_commercial_seats",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Unique SDOT identifier for the city street segment where the survey location is located, join with \u201celmntkey\u201d in Blockface dataset.",
+            "field": "location_blockface_elmntkey",
+            "json_type": "number",
+            "label": "location_blockface_elmntkey",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Total square feet of location",
+            "field": "location_total_sqft",
+            "json_type": "number",
+            "label": "location_total_sqft",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Primary character of the survey location\u2019s immediate surroundings",
+            "field": "location_character",
+            "json_type": "string",
+            "label": "location_character",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Typology of the space defined within the area geometry",
+            "field": "location_area_typology",
+            "json_type": "string",
+            "label": "location_area_typology",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Average number of public seats present at study location during observation periods",
+            "field": "location_average_number_public",
+            "json_type": "number",
+            "label": "location_average_number_public_seats",
+            "provider_type": "Number"
+          },
+          {
+            "description": "State, county, or municipal boundary of the location",
+            "field": "location_region",
+            "json_type": "string",
+            "label": "location_region",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Official name of the survey location",
+            "field": "location_name_primary",
+            "json_type": "string",
+            "label": "location_name_primary",
+            "provider_type": "Text"
+          }
+        ],
+        "matched_capability_count": 0,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Public Life Data - Locations",
+        "provenance_label": "official",
+        "recommended_for_contract_review": false,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.25,
+          "total": 0.4875
+        },
+        "tags": [
+          "people moving",
+          "people staying",
+          "public life",
+          "public space",
+          "sdot",
+          "sidewalks",
+          "streets",
+          "survey",
+          "transportation"
+        ],
+        "updated_at": "2025-01-29T07:10:58.000Z"
+      },
+      {
+        "api_endpoint": "https://data.cityofchicago.org/resource/6q3z-9maq.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "63d28a35d1881a25",
+        "capability_matches": {
+          "cancer site": null,
+          "opening date": null,
+          "principal investigator": null,
+          "stable trial identifier": null,
+          "study phase": null,
+          "study title": null
+        },
+        "catalog_domain": "data.cityofchicago.org",
+        "dataset_id": "6q3z-9maq",
+        "description": "NOTE: This dataset has been retired and marked as historical-only. Select locations offering COVID-19 vaccination in Chicago. This is not an exhaustive list of all providers currently offering COVID-19 vaccine. Many providers are not listed on the map because they will start by providing vaccine to their current patients before expanding to others. Your first contact should be your health care provider, including your primary care provider, health clinic, or hospital where you have gotten medical care in the past. Check your provider\u2019s website, electronic application (e.g., MyChart), or office recorded message for details on vaccine availability. Providers are also reaching out directly to schedule appointments with their existing patients, prioritizing those who are older with more underl",
+        "desired_capability_count": 6,
+        "documentation_url": "https://data.cityofchicago.org/d/6q3z-9maq",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "",
+            "field": "phone",
+            "json_type": "string",
+            "label": "Phone",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Is the facility operated by the City of Chicago?",
+            "field": "city_operated",
+            "json_type": "boolean",
+            "label": "City Operated",
+            "provider_type": "Checkbox"
+          },
+          {
+            "description": "",
+            "field": "url",
+            "json_type": "string",
+            "label": "URL",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "notes",
+            "json_type": "string",
+            "label": "Notes",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Last date the facility will be offering vaccinations.",
+            "field": "end_date",
+            "json_type": "string",
+            "label": "End Date",
+            "provider_type": "Calendar date"
+          },
+          {
+            "description": "First date the facility will be offering vaccinations.",
+            "field": "begin_date",
+            "json_type": "string",
+            "label": "Begin Date",
+            "provider_type": "Calendar date"
+          },
+          {
+            "description": "The street address of the facility.",
+            "field": "address_1",
+            "json_type": "string",
+            "label": "Address 1",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "facility_name",
+            "json_type": "string",
+            "label": "Facility Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "The room number, floor number, or other address information secondary to the street address.",
+            "field": "address_2",
+            "json_type": "string",
+            "label": "Address 2",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "state",
+            "json_type": "string",
+            "label": "State",
+            "provider_type": "Text"
+          },
+          {
+            "description": "A unique ID for the facility.",
+            "field": "facility_id",
+            "json_type": "number",
+            "label": "Facility ID",
+            "provider_type": "Number"
+          },
+          {
+            "description": "The location of the facility in a format that allows for creation of maps and other geographic operations on this data portal.",
+            "field": "location",
+            "json_type": "object",
+            "label": "Location",
+            "provider_type": "Point"
+          },
+          {
+            "description": "",
+            "field": "country",
+            "json_type": "string",
+            "label": "Country",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "postal_code",
+            "json_type": "string",
+            "label": "Postal Code",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "city",
+            "json_type": "string",
+            "label": "City",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Is the facility currently offering COVID-19 vaccinations?",
+            "field": "active",
+            "json_type": "boolean",
+            "label": "Active",
+            "provider_type": "Checkbox"
+          }
+        ],
+        "matched_capability_count": 0,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "COVID-19 Vaccination Locations - Historical",
+        "provenance_label": "official",
+        "recommended_for_contract_review": false,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 0.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.25,
+          "total": 0.4375
+        },
+        "tags": [
+          "covid-19",
+          "health",
+          "historical",
+          "immunization",
+          "public health",
+          "vaccination"
+        ],
+        "updated_at": "2025-01-31T19:01:49.000Z"
+      },
+      {
+        "api_endpoint": "https://data.cityofnewyork.us/resource/7x5e-2fxh.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "e011e60455228196",
+        "capability_matches": {
+          "cancer site": null,
+          "opening date": null,
+          "principal investigator": null,
+          "stable trial identifier": null,
+          "study phase": null,
+          "study title": null
+        },
+        "catalog_domain": "data.cityofnewyork.us",
+        "dataset_id": "7x5e-2fxh",
+        "description": "This data is collected annually via EPA Portfolio Manager. The data collection requires building owners to measure their energy and water consumption and compare it against that of similar buildings in the city and country. The data is useful for policy analysts as it provides transparency into energy and water consumption for the city's largest buildings. Please visit https://www1.nyc.gov/site/buildings/codes/benchmarking.page for additional information.",
+        "desired_capability_count": 6,
+        "documentation_url": "https://data.cityofnewyork.us/d/7x5e-2fxh",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "",
+            "field": "parking_partially_enclosed",
+            "json_type": "string",
+            "label": "Parking - Partially Enclosed Parking Garage Size (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "property_id",
+            "json_type": "number",
+            "label": "Property Id",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "property_name",
+            "json_type": "string",
+            "label": "Property Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "financial_office_number_of",
+            "json_type": "string",
+            "label": "Financial Office - Number of Computers",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "default_values",
+            "json_type": "string",
+            "label": "Default Values",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "number_of_active_it_meters",
+            "json_type": "number",
+            "label": "Number of Active IT Meters",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "estimated_data_flag_1",
+            "json_type": "string",
+            "label": "Estimated Data Flag - Municipally Supplied Potable Water: Mixed Indoor/Outdoor Use",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "annual_maximum_demand_mm",
+            "json_type": "string",
+            "label": "Annual Maximum Demand (MM/YYYY)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "data_center_national_median",
+            "json_type": "string",
+            "label": "Data Center - National Median PUE",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "barracks_gross_floor_area",
+            "json_type": "string",
+            "label": "Barracks- Gross Floor Area (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "ambulatory_surgical_center",
+            "json_type": "string",
+            "label": "Ambulatory Surgical Center - Gross Floor Area (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "bank_branch_gross_floor_area",
+            "json_type": "string",
+            "label": "Bank Branch - Gross Floor Area (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "financial_office_gross_floor",
+            "json_type": "string",
+            "label": "Financial Office - Gross Floor Area (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "food_sales_gross_floor_area",
+            "json_type": "string",
+            "label": "Food Sales - Gross Floor Area (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "food_service_gross_floor",
+            "json_type": "string",
+            "label": "Food Service - Gross Floor Area (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "hospital_general_medical",
+            "json_type": "string",
+            "label": "Hospital (General Medical & Surgical) - Full -Time Equivalent (FTE) Workers",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "hospital_general_medical_1",
+            "json_type": "string",
+            "label": "Hospital (General Medical & Surgical) - Gross Floor Area (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "estimated_data_flag_fuel_3",
+            "json_type": "string",
+            "label": "Estimated Data Flag - Fuel Oil (No. 5 and No. 6)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "hospital_general_medical_6",
+            "json_type": "string",
+            "label": "Hospital (General Medical & Surgical) - Number of Staffed Beds",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "medical_office_number_of_1",
+            "json_type": "string",
+            "label": "Medical Office - Number of MRI Machines",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "multifamily_housing_resident",
+            "json_type": "string",
+            "label": "Multifamily Housing - Resident Population Type",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "medical_office_percent_that_1",
+            "json_type": "string",
+            "label": "Medical Office - Percent That Can Be Heated",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "multifamily_housing_number",
+            "json_type": "string",
+            "label": "Multifamily Housing - Number of Bedrooms",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "multifamily_housing_number_2",
+            "json_type": "string",
+            "label": "Multifamily Housing - Number of Laundry Hookups in All Units",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "multifamily_housing_percent",
+            "json_type": "string",
+            "label": "Multifamily Housing - Percent That Can Be Cooled",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "estimated_data_flag_fuel",
+            "json_type": "string",
+            "label": "Estimated Data Flag - Fuel Oil (No. 1)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "retail_store_number_of_walk",
+            "json_type": "string",
+            "label": "Retail Store - Number of Walk-in Refrigeration/Freezer Units",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "supermarket_grocery_number_1",
+            "json_type": "string",
+            "label": "Supermarket/Grocery - Number of Walk-in Refrigeration/Freezer Units",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "estimated_data_flag",
+            "json_type": "string",
+            "label": "Estimated Data Flag - Electricity (Grid Purchase)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "number_of_active_energy_meters_2",
+            "json_type": "number",
+            "label": "Number of Active Energy Meters - Not Used to Compute Metrics",
+            "provider_type": "Number"
+          },
+          {
+            "description": "",
+            "field": "estimated_values_water",
+            "json_type": "string",
+            "label": "Estimated Values - Water",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "alert_energy_meter_has_less",
+            "json_type": "string",
+            "label": "Alert - Energy Meter has less than 12 full calendar months of data",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "alert_energy_no_meters",
+            "json_type": "string",
+            "label": "Alert - Energy - No meters selected for metrics",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "property_gfa_calculated",
+            "json_type": "string",
+            "label": "Property GFA - Calculated (Buildings and Parking) (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "outdoor_water_use_all_water",
+            "json_type": "string",
+            "label": "Outdoor Water Use (All Water Sources) (kgal)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "third_party_certification_1",
+            "json_type": "string",
+            "label": "Third Party Certification Date Anticipated",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "third_party_certification_2",
+            "json_type": "string",
+            "label": "Third Party Certification Date Achieved",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "borough",
+            "json_type": "string",
+            "label": "Borough",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "hospital_general_medical_8",
+            "json_type": "string",
+            "label": "Hospital (General Medical & Surgical) - Percent That Can Be Cooled",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "hospital_general_medical_3",
+            "json_type": "string",
+            "label": "Hospital (General Medical & Surgical) - Licensed Bed Capacity",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "hospital_general_medical_7",
+            "json_type": "string",
+            "label": "Hospital (General Medical & Surgical) - Staffed Bed Density (Number per 1,000 sq ft)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "hospital_general_medical_2",
+            "json_type": "string",
+            "label": "Hospital (General Medical & Surgical) - Laboratory",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "medical_office_gross_floor",
+            "json_type": "string",
+            "label": "Medical Office - Gross Floor Area (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "medical_office_number_of",
+            "json_type": "string",
+            "label": "Medical Office - Number of Computers",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "fitness_center_health_club",
+            "json_type": "string",
+            "label": "Fitness Center/Health Club/Gym - Gross Floor Area (ft\u00b2)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "financial_office_number_of_1",
+            "json_type": "string",
+            "label": "Financial Office - Number of Workers on Main Shift",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "hospital_general_medical_5",
+            "json_type": "string",
+            "label": "Hospital (General Medical & Surgical) - MRI Density (Number per 1,000 sq ft)",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "financial_office_weekly",
+            "json_type": "string",
+            "label": "Financial Office - Weekly Operating Hours",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "parent_property_name",
+            "json_type": "string",
+            "label": "Parent Property Name",
+            "provider_type": "Text"
+          },
+          {
+            "description": "",
+            "field": "medical_office_number_of_2",
+            "json_type": "string",
+            "label": "Medical Office - Number of Workers on Main Shift",
+            "provider_type": "Text"
+          }
+        ],
+        "matched_capability_count": 0,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Energy and Water Data Disclosure for Local Law 84 2022 (Data for Calendar Year 2021)",
+        "provenance_label": "official",
+        "recommended_for_contract_review": false,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 0.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.25,
+          "total": 0.4375
+        },
+        "tags": [
+          "buildings",
+          "climate",
+          "electricity",
+          "emissions",
+          "energy benchmarking",
+          "fuel oil",
+          "ggbp",
+          "ghg",
+          "greener greater buildings plan",
+          "heating oil",
+          "local law 84",
+          "local law 97",
+          "natural gas",
+          "steam",
+          "water"
+        ],
+        "updated_at": "2026-04-21T13:12:05.000Z"
+      },
+      {
+        "api_endpoint": "https://data.princegeorgescountymd.gov/resource/qzrv-2tnv.json",
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "5a7c28ed3d4c3f59",
+        "capability_matches": {
+          "cancer site": null,
+          "opening date": null,
+          "principal investigator": null,
+          "stable trial identifier": null,
+          "study phase": null,
+          "study title": null
+        },
+        "catalog_domain": "data.princegeorgescountymd.gov",
+        "dataset_id": "qzrv-2tnv",
+        "description": "This dataset contains information about properties located within Prince George's County, including ownership, assessment, location, land use, valuation, and related property characteristics. It supports analysis of property values, taxation, development trends, land use planning, and real estate activity throughout the county.",
+        "desired_capability_count": 6,
+        "documentation_url": "https://data.princegeorgescountymd.gov/d/qzrv-2tnv",
+        "execution_allowed": false,
+        "fields": [
+          {
+            "description": "Unit number or identifier associated with the property address.",
+            "field": "unit",
+            "json_type": "string",
+            "label": "UNIT",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Date the subdivision plat was officially recorded in the land records system.",
+            "field": "subdivision_plat_date",
+            "json_type": "string",
+            "label": "SUBDIVISION_PLAT_DATE",
+            "provider_type": "Date"
+          },
+          {
+            "description": "Tax map grid number used to identify the property's location on tax maps.",
+            "field": "taxmapgrid",
+            "json_type": "string",
+            "label": "TAXMAPGRID",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Grid number used by the water and sewer utility system to identify the property's service area.",
+            "field": "wsscgrid",
+            "json_type": "string",
+            "label": "WSSCGRID",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Name of the property owner recorded in the land records system.",
+            "field": "owner_name",
+            "json_type": "string",
+            "label": "OWNER_NAME",
+            "provider_type": "Text"
+          },
+          {
+            "description": "\u2014 Street address used for mailing correspondence to the property owner.",
+            "field": "mail_street",
+            "json_type": "string",
+            "label": "MAIL_STREET",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Four-digit ZIP code extension for the mailing address.",
+            "field": "mail_zip4",
+            "json_type": "string",
+            "label": "MAIL_ZIP4",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Type of street, such as Road, Avenue, Street, or Lane.",
+            "field": "street_type",
+            "json_type": "string",
+            "label": "STREET_TYPE",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Assessment zone code used to identify the property's assessment area.",
+            "field": "azc",
+            "json_type": "string",
+            "label": "AZC",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Type of residential dwelling, such as single-family, townhouse, or condominium.",
+            "field": "dwelling_type",
+            "json_type": "string",
+            "label": "DWELLING_TYPE",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Code indicating the number of stories in the dwelling.",
+            "field": "dwelling_story_code",
+            "json_type": "string",
+            "label": "DWELLING_STORY_CODE",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Current assessed value of the property for tax purposes.",
+            "field": "curr_assess",
+            "json_type": "number",
+            "label": "CURR_ASSESS",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Number of dwelling units associated with the property.",
+            "field": "dwelling_units",
+            "json_type": "string",
+            "label": "DWELLING_UNITS",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Property use code identifying the property's classification or land use type.",
+            "field": "bpruc",
+            "json_type": "string",
+            "label": "BPRUC",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Five-digit ZIP code where the property is located.",
+            "field": "zip5",
+            "json_type": "string",
+            "label": "ZIP5",
+            "provider_type": "Text"
+          },
+          {
+            "description": "City where the property is located.",
+            "field": "city",
+            "json_type": "string",
+            "label": "CITY",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Name of the street where the property is located.",
+            "field": "street_name",
+            "json_type": "string",
+            "label": "STREET_NAME",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Five-digit ZIP code used for mailing correspondence to the property owner.",
+            "field": "mail_zip5",
+            "json_type": "string",
+            "label": "MAIL_ZIP5",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Name of the contact receiving correspondence for the property owner.",
+            "field": "ico_name",
+            "json_type": "string",
+            "label": "ICO_NAME",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Grid number used to identify the property's location within the county tax map system.",
+            "field": "taxgrid",
+            "json_type": "string",
+            "label": "TAXGRID",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Indicates whether the property is an out lot.",
+            "field": "out_lot",
+            "json_type": "string",
+            "label": "OUT_LOT",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Section number identifying a specific area within a subdivision or development.",
+            "field": "section",
+            "json_type": "string",
+            "label": "SECTION",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Indicates whether the property has been divided into smaller lots or parcels.",
+            "field": "subdivided",
+            "json_type": "string",
+            "label": "SUBDIVIDED",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Indicates whether the property is designated as a historic resource.",
+            "field": "historic_resource",
+            "json_type": "string",
+            "label": "HISTORIC_RESOURCE",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Date the property was designated as a historic site.",
+            "field": "historic_site_date",
+            "json_type": "string",
+            "label": "HISTORIC_SITE_DATE",
+            "provider_type": "Date"
+          },
+          {
+            "description": "Date the property was designated as part of a historic district.",
+            "field": "historic_district_date",
+            "json_type": "string",
+            "label": "HISTORIC_DISTRICT_DATE",
+            "provider_type": "Date"
+          },
+          {
+            "description": "Census tract number identifying the property's geographic area for statistical purposes.",
+            "field": "census_tract",
+            "json_type": "string",
+            "label": "CENSUS_TRACT",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Raw land area value recorded for the property.",
+            "field": "land_area_raw",
+            "json_type": "number",
+            "label": "LAND_AREA_RAW",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Planning area designation assigned to the property.",
+            "field": "planarea",
+            "json_type": "string",
+            "label": "PLANAREA",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Secondary zoning code assigned to the property, if applicable.",
+            "field": "zone_code2",
+            "json_type": "string",
+            "label": "ZONE_CODE2",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Primary zoning code assigned to the property.",
+            "field": "zone_code1",
+            "json_type": "string",
+            "label": "ZONE_CODE1",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Classification code identifying the property's tax exemption status.",
+            "field": "exempt_class",
+            "json_type": "string",
+            "label": "EXEMPT_CLASS",
+            "provider_type": "Text"
+          },
+          {
+            "description": "ode identifying the municipality or town where the property is located.",
+            "field": "town_code",
+            "json_type": "string",
+            "label": "TOWN_CODE",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Census block number identifying the property's geographic area for statistical purposes.",
+            "field": "census_block",
+            "json_type": "string",
+            "label": "CENSUS_BLOCK",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Previous census tract associated with the property.",
+            "field": "prior_census_tract",
+            "json_type": "string",
+            "label": "PRIOR_CENSUS_TRACT",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Previous census block associated with the property.",
+            "field": "prior_census_block",
+            "json_type": "string",
+            "label": "PRIOR_CENSUS_BLOCK",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Name of the subdivision or development in which the property is located.",
+            "field": "sub_name",
+            "json_type": "string",
+            "label": "SUB_NAME",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Unique parcel identifier used to track and manage a property within the land records system.",
+            "field": "parcel",
+            "json_type": "string",
+            "label": "PARCEL",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Description of the property, including its type, use, or classification.",
+            "field": "property_desc",
+            "json_type": "string",
+            "label": "PROPERTY_DESC",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Account number assigned by the Department of Assessments and Taxation.",
+            "field": "dos_account",
+            "json_type": "string",
+            "label": "DOS_ACCOUNT",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Block number assigned to the property within a recorded subdivision or plat.",
+            "field": "block",
+            "json_type": "string",
+            "label": "BLOCK",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Lot number assigned to the property within a recorded subdivision or plat.",
+            "field": "lot",
+            "json_type": "string",
+            "label": "LOT",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Unique account number assigned to a property for assessment and tax purposes.",
+            "field": "account",
+            "json_type": "string",
+            "label": "ACCOUNT",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Unique identifier assigned to each record in the dataset.",
+            "field": "objectid",
+            "json_type": "number",
+            "label": "OBJECTID",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Unique code assigned to identify the subdivision in which the property is located.",
+            "field": "sub_code",
+            "json_type": "string",
+            "label": "SUB_CODE",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Tax map number used to identify the property's location on county tax maps.",
+            "field": "taxmap",
+            "json_type": "string",
+            "label": "TAXMAP",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Recorded sale price of the property at the time of transfer or transaction.",
+            "field": "sales_price",
+            "json_type": "number",
+            "label": "SALES_PRICE",
+            "provider_type": "Number"
+          },
+          {
+            "description": "Code identifying a special assessment preference, exemption, or tax program applied to the property.",
+            "field": "pref_code",
+            "json_type": "string",
+            "label": "PREF_CODE",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Parcel identifier assigned within a recorded plat or subdivision.",
+            "field": "plat_parcel",
+            "json_type": "string",
+            "label": "PLAT_PARCEL",
+            "provider_type": "Text"
+          },
+          {
+            "description": "Parent account number associated with a related property or parcel.",
+            "field": "parent_account",
+            "json_type": "string",
+            "label": "PARENT_ACCOUNT",
+            "provider_type": "Text"
+          }
+        ],
+        "matched_capability_count": 0,
+        "metadata_trust": "untrusted_catalog_metadata",
+        "name": "Property",
+        "provenance_label": "official",
+        "recommended_for_contract_review": false,
+        "score": {
+          "api_ready": 1.0,
+          "exact_phrase": 0.0,
+          "government_domain": 1.0,
+          "official_catalog_label": 1.0,
+          "query_coverage": 0.125,
+          "total": 0.4188
+        },
+        "tags": [
+          "property"
+        ],
+        "updated_at": "2026-07-27T15:00:25.000Z"
+      }
+    ],
+    "catalog_result_count": 13,
+    "normalized_candidate_count": 10,
+    "provenance": {
+      "content_type": "application/json;charset=utf-8",
+      "endpoint": "https://api.us.socrata.com/api/catalog/v1",
+      "http_status": 200,
+      "payload_sha256": "5f6e0ccff73a84da93b8d5c1c0780445f48b6946c015b048d70f371436d9657a",
+      "provider": "Socrata Open Data API Catalog",
+      "query_params": {
+        "limit": 30,
+        "only": "datasets",
+        "q": "active cancer clinical trials primary site phase protocol"
+      },
+      "redirects": 0,
+      "response_bytes": 586399,
+      "retrieved_at": "2026-08-01T01:21:26.815204+00:00"
+    },
+    "query": "active cancer clinical trials primary site phase protocol",
+    "recommended_candidate_count": 1,
+    "selected_candidate": {
+      "api_endpoint": "https://data.ny.gov/resource/2ig8-yxf8.json",
+      "approval_state": "unreviewed_candidate",
+      "candidate_id": "31dcb2ce74f62d7c",
+      "capability_matches": {
+        "cancer site": "primary_site",
+        "opening date": "date_opened",
+        "principal investigator": "principal_investigator",
+        "stable trial identifier": "protocol",
+        "study phase": "study_phase",
+        "study title": "title"
+      },
+      "catalog_domain": "data.ny.gov",
+      "dataset_id": "2ig8-yxf8",
+      "description": "List of active studies submitted by Roswell Park Cancer Institute (RPCI) to National Cancer Institute (NCI) annually as part of the Cancer Center Report Grant reporting. It includes the primary site, protocol, principal investigator, date opened, phase and study name.",
+      "desired_capability_count": 6,
+      "documentation_url": "https://data.ny.gov/d/2ig8-yxf8",
+      "execution_allowed": false,
+      "fields": [
+        {
+          "description": "The official start date (activation) of a trial",
+          "field": "date_opened",
+          "json_type": "string",
+          "label": "Date Opened",
+          "provider_type": "Calendar date"
+        },
+        {
+          "description": "The unique identifier for this study. For both national and externally",
+          "field": "protocol",
+          "json_type": "string",
+          "label": "Protocol",
+          "provider_type": "Text"
+        },
+        {
+          "description": "The primary anatomic cancer site(s) (i.e., breast, ovary) the clinical research study focuses on. Not applicable is used when the research",
+          "field": "primary_site",
+          "json_type": "string",
+          "label": "Primary Site",
+          "provider_type": "Text"
+        },
+        {
+          "description": "Current phase of the study as of last dataset refresh. Phases include: Pilot, Phase I, Phase I/II, Phase II, Phase II/III and Phase III. See the attached Overview document for explanations. Not Applicable is used for epidemiologic, cancer control/behavioral, observational, ancillary, correlative or ",
+          "field": "study_phase",
+          "json_type": "string",
+          "label": "Study Phase",
+          "provider_type": "Text"
+        },
+        {
+          "description": "Name of the protocol provided by the study's principal investigator",
+          "field": "title",
+          "json_type": "string",
+          "label": "Title",
+          "provider_type": "Text"
+        },
+        {
+          "description": "The date the clinical research study closed to accrual. If the study is still open, this field will be blank.",
+          "field": "date_closed",
+          "json_type": "string",
+          "label": "Date Closed",
+          "provider_type": "Calendar date"
+        },
+        {
+          "description": "The name of the Principal Investigator from Center who is responsible for the Clinical Research Study",
+          "field": "principal_investigator",
+          "json_type": "string",
+          "label": "Principal Investigator",
+          "provider_type": "Text"
+        }
+      ],
+      "matched_capability_count": 6,
+      "metadata_trust": "untrusted_catalog_metadata",
+      "name": "Current Active Clinical Trials - Roswell Park Cancer Institute",
+      "provenance_label": "official",
+      "recommended_for_contract_review": true,
+      "score": {
+        "api_ready": 1.0,
+        "exact_phrase": 0.0,
+        "government_domain": 1.0,
+        "official_catalog_label": 1.0,
+        "query_coverage": 1.0,
+        "total": 0.9
+      },
+      "tags": [
+        "cancer study",
+        "nci",
+        "rpci"
+      ],
+      "updated_at": "2026-04-14T21:08:58.000Z"
+    },
+    "selection_rule": "Official catalog label, government API domain, API-ready schema, and at least five of six demanded capabilities; then most capabilities, highest discovery score, and stable candidate ID."
+  },
+  "case": {
+    "demand_query": "active cancer clinical trials primary site phase protocol",
+    "desired_capabilities": [
+      "stable trial identifier",
+      "cancer site",
+      "study phase",
+      "study title",
+      "opening date",
+      "principal investigator"
+    ],
+    "interpretation_boundary": "Selection means suitable for human contract review only. It does not approve the source, validate its scientific content, or execute it.",
+    "question": "Can ToolUniverse discover an API-ready public dataset for analyzing active cancer trials by protocol, site, phase, title, opening date, and investigator without executing an unreviewed endpoint?"
+  }
+}

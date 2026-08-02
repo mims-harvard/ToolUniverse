@@ -385,6 +385,7 @@ class ToolUniverse:
         self.all_tools: List[Dict[str, Any]] = []
         self.all_tool_dict: Dict[str, Dict[str, Any]] = {}
         self.tool_category_dicts: Dict[str, List[Dict[str, Any]]] = {}
+        self._runtime_custom_tool_configs: Dict[str, Dict[str, Any]] = {}
         # Maps tool name → missing required API key names (for better "not found" errors)
         self._excluded_api_key_tools: Dict[str, List[str]] = {}
         self.tool_finder = None
@@ -642,6 +643,7 @@ class ToolUniverse:
             add_annotations_to_tool_config(tool_config)
 
             tool_name_in_config = tool_config.get("name", name)
+            self._runtime_custom_tool_configs[tool_name_in_config] = tool_config
             # Deduplicate: if a tool with this name already exists, replace it in-place
             # rather than appending a duplicate entry
             existing_idx = next(
@@ -961,9 +963,11 @@ class ToolUniverse:
                 categories = tool_type
         self.logger.debug(f"Number of tools before load tools: {len(self.all_tools)}")
 
+        full_reload = include_tools is None and tools_file is None
+
         # Full reload (no include_tools): clear existing tools so repeated calls
         # don't accumulate duplicates before deduplication runs.
-        if include_tools is None and tools_file is None:
+        if full_reload:
             self.all_tools = []
             self.all_tool_dict = {}
             self.tool_category_dicts = {}
@@ -1141,6 +1145,12 @@ class ToolUniverse:
 
         if json_files:
             self._load_user_json_configs(json_files)
+
+        # Runtime registrations are part of this ToolUniverse instance, not the
+        # static files being reloaded. Append them last so their existing
+        # last-registration-wins behavior survives a full registry refresh.
+        if full_reload:
+            self.all_tools.extend(self._runtime_custom_tool_configs.values())
 
         # Filter and deduplicate tools
         self._filter_and_deduplicate_tools(
@@ -3622,6 +3632,8 @@ class ToolUniverse:
                     "GrepTools",
                     "GetToolInfo",
                     "ExecuteTool",
+                    "VSDResolveCapability",
+                    "VSDPlanWorkflow",
                 ]:
                     # Tool discovery tools need tooluniverse parameter
                     new_tool = tool_class(tool_config=tool, tooluniverse=self)
@@ -4064,6 +4076,7 @@ class ToolUniverse:
         self.all_tools = []
         self.all_tool_dict = {}
         self.tool_category_dicts = {}
+        self._runtime_custom_tool_configs = {}
 
         # Clear instantiated tool instances
         self.callable_functions = {}
@@ -4575,6 +4588,7 @@ class ToolUniverse:
             self.all_tools = []
             self.all_tool_dict = {}
             self.tool_category_dicts = {}
+            self._runtime_custom_tool_configs = {}
 
         # Use the enhanced load_tools method
         original_count = len(self.all_tools)

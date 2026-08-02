@@ -1,0 +1,3907 @@
+{
+  "case_study": {
+    "decision_question": "Which Autauga County census tracts show concurrent modeled CHD and heart-health context signals that merit local data review, and what literature, trial-registry, and safety records should analysts inspect next?",
+    "generated_at": "2026-08-01T00:11:13Z",
+    "id": "autauga_county_chd_prevention_evidence_dossier",
+    "intended_use": "Reproducible population-health screening and evidence triage for human review.",
+    "interpretation_limits": [
+      "CDC PLACES values are modeled aggregate estimates, not individual observations.",
+      "CDC advises against using PLACES estimates to rank the overall health of geographic areas; this dossier applies a transparent screening rule and does not produce a rank or composite score.",
+      "Means and medians are unweighted across retrieved census tracts and are not county population estimates.",
+      "Measure populations differ: insurance covers adults aged 18-64 and high cholesterol covers adults who have ever been screened.",
+      "Within-county correlations use point estimates only and do not adjust for confidence intervals, shared model inputs, demographics, or spatial dependence.",
+      "A screening flag is not a statistically significant difference, causal finding, diagnosis, or resource-allocation recommendation.",
+      "The conservative interval-vs-median signal is a sensitivity heuristic, not a hypothesis test or an interval for the county tract median.",
+      "The literature and trial searches are bounded discovery scans, not systematic reviews or endorsements of returned studies.",
+      "An Alabama registry match does not establish an Autauga County site, eligibility, availability, efficacy, or safety.",
+      "WHO metadata, CDC estimates, PubMed records, trial records, and the openFDA label are independent and are not joined at person level.",
+      "The aspirin label is safety context, not evidence of treatment efficacy or advice.",
+      "A reviewed VSD adapter establishes a constrained technical contract, not scientific endorsement."
+    ],
+    "screening_rule": "Flag, without ranking, tracts whose CHD point estimate is above the county tract median and whose point estimates trigger at least four of seven direction-aware context signals.",
+    "title": "Autauga County coronary heart disease prevention evidence dossier"
+  },
+  "cdc_places_estimates": [
+    {
+      "countyname": "Autauga",
+      "data_value": "9.7",
+      "high_confidence_limit": "12.3",
+      "locationname": "01001020100",
+      "low_confidence_limit": "7.4",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "41.4",
+      "high_confidence_limit": "45.7",
+      "locationname": "01001020100",
+      "low_confidence_limit": "37.1",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.2",
+      "high_confidence_limit": "8.1",
+      "locationname": "01001020100",
+      "low_confidence_limit": "6.2",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.1",
+      "high_confidence_limit": "83.3",
+      "locationname": "01001020100",
+      "low_confidence_limit": "76.6",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "15.6",
+      "high_confidence_limit": "18.9",
+      "locationname": "01001020100",
+      "low_confidence_limit": "12.6",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "41.9",
+      "high_confidence_limit": "46.2",
+      "locationname": "01001020100",
+      "low_confidence_limit": "37.4",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "27.8",
+      "high_confidence_limit": "32.9",
+      "locationname": "01001020100",
+      "low_confidence_limit": "22.7",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "39.4",
+      "high_confidence_limit": "47.2",
+      "locationname": "01001020100",
+      "low_confidence_limit": "31.9",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "10.6",
+      "high_confidence_limit": "13.0",
+      "locationname": "01001020200",
+      "low_confidence_limit": "8.5",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "45.9",
+      "high_confidence_limit": "50.1",
+      "locationname": "01001020200",
+      "low_confidence_limit": "41.5",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.5",
+      "high_confidence_limit": "7.3",
+      "locationname": "01001020200",
+      "low_confidence_limit": "5.8",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "81.8",
+      "high_confidence_limit": "84.7",
+      "locationname": "01001020200",
+      "low_confidence_limit": "78.5",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "16.7",
+      "high_confidence_limit": "19.5",
+      "locationname": "01001020200",
+      "low_confidence_limit": "13.9",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "39.7",
+      "high_confidence_limit": "44.1",
+      "locationname": "01001020200",
+      "low_confidence_limit": "35.4",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "32.0",
+      "high_confidence_limit": "37.3",
+      "locationname": "01001020200",
+      "low_confidence_limit": "26.9",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "44.7",
+      "high_confidence_limit": "52.3",
+      "locationname": "01001020200",
+      "low_confidence_limit": "36.6",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "10.6",
+      "high_confidence_limit": "13.1",
+      "locationname": "01001020300",
+      "low_confidence_limit": "8.4",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "42.9",
+      "high_confidence_limit": "47.0",
+      "locationname": "01001020300",
+      "low_confidence_limit": "38.7",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.3",
+      "high_confidence_limit": "8.2",
+      "locationname": "01001020300",
+      "low_confidence_limit": "6.3",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.6",
+      "high_confidence_limit": "83.7",
+      "locationname": "01001020300",
+      "low_confidence_limit": "77.0",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "16.1",
+      "high_confidence_limit": "18.8",
+      "locationname": "01001020300",
+      "low_confidence_limit": "13.5",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "41.8",
+      "high_confidence_limit": "46.1",
+      "locationname": "01001020300",
+      "low_confidence_limit": "37.6",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "29.9",
+      "high_confidence_limit": "34.8",
+      "locationname": "01001020300",
+      "low_confidence_limit": "24.9",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "40.3",
+      "high_confidence_limit": "47.7",
+      "locationname": "01001020300",
+      "low_confidence_limit": "32.7",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.9",
+      "high_confidence_limit": "10.1",
+      "locationname": "01001020400",
+      "low_confidence_limit": "6.1",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "42.4",
+      "high_confidence_limit": "46.8",
+      "locationname": "01001020400",
+      "low_confidence_limit": "38.2",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.5",
+      "high_confidence_limit": "8.5",
+      "locationname": "01001020400",
+      "low_confidence_limit": "6.5",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "81.7",
+      "high_confidence_limit": "84.7",
+      "locationname": "01001020400",
+      "low_confidence_limit": "78.3",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "12.9",
+      "high_confidence_limit": "15.6",
+      "locationname": "01001020400",
+      "low_confidence_limit": "10.3",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "43.4",
+      "high_confidence_limit": "47.9",
+      "locationname": "01001020400",
+      "low_confidence_limit": "39.0",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "25.5",
+      "high_confidence_limit": "30.5",
+      "locationname": "01001020400",
+      "low_confidence_limit": "20.6",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "36.9",
+      "high_confidence_limit": "44.5",
+      "locationname": "01001020400",
+      "low_confidence_limit": "29.6",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.2",
+      "high_confidence_limit": "7.8",
+      "locationname": "01001020501",
+      "low_confidence_limit": "4.7",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "37.2",
+      "high_confidence_limit": "41.4",
+      "locationname": "01001020501",
+      "low_confidence_limit": "33.1",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "5.4",
+      "high_confidence_limit": "6.2",
+      "locationname": "01001020501",
+      "low_confidence_limit": "4.7",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "81.3",
+      "high_confidence_limit": "84.2",
+      "locationname": "01001020501",
+      "low_confidence_limit": "77.9",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "10.0",
+      "high_confidence_limit": "12.4",
+      "locationname": "01001020501",
+      "low_confidence_limit": "7.8",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "40.5",
+      "high_confidence_limit": "44.9",
+      "locationname": "01001020501",
+      "low_confidence_limit": "36.2",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "20.3",
+      "high_confidence_limit": "24.7",
+      "locationname": "01001020501",
+      "low_confidence_limit": "16.3",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "34.7",
+      "high_confidence_limit": "42.0",
+      "locationname": "01001020501",
+      "low_confidence_limit": "27.7",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.5",
+      "high_confidence_limit": "9.2",
+      "locationname": "01001020502",
+      "low_confidence_limit": "5.9",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "34.9",
+      "high_confidence_limit": "38.9",
+      "locationname": "01001020502",
+      "low_confidence_limit": "30.9",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "4.4",
+      "high_confidence_limit": "4.9",
+      "locationname": "01001020502",
+      "low_confidence_limit": "3.8",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "79.7",
+      "high_confidence_limit": "83.0",
+      "locationname": "01001020502",
+      "low_confidence_limit": "76.2",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "11.7",
+      "high_confidence_limit": "14.1",
+      "locationname": "01001020502",
+      "low_confidence_limit": "9.4",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "35.6",
+      "high_confidence_limit": "39.7",
+      "locationname": "01001020502",
+      "low_confidence_limit": "31.5",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "22.3",
+      "high_confidence_limit": "26.6",
+      "locationname": "01001020502",
+      "low_confidence_limit": "18.1",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "38.2",
+      "high_confidence_limit": "45.5",
+      "locationname": "01001020502",
+      "low_confidence_limit": "30.9",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "8.1",
+      "high_confidence_limit": "10.0",
+      "locationname": "01001020503",
+      "low_confidence_limit": "6.3",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "39.3",
+      "high_confidence_limit": "43.4",
+      "locationname": "01001020503",
+      "low_confidence_limit": "35.1",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.1",
+      "high_confidence_limit": "6.9",
+      "locationname": "01001020503",
+      "low_confidence_limit": "5.3",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.8",
+      "high_confidence_limit": "83.8",
+      "locationname": "01001020503",
+      "low_confidence_limit": "77.2",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "12.7",
+      "high_confidence_limit": "15.6",
+      "locationname": "01001020503",
+      "low_confidence_limit": "10.0",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "39.6",
+      "high_confidence_limit": "43.9",
+      "locationname": "01001020503",
+      "low_confidence_limit": "35.4",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "25.3",
+      "high_confidence_limit": "30.2",
+      "locationname": "01001020503",
+      "low_confidence_limit": "21.0",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "38.1",
+      "high_confidence_limit": "45.4",
+      "locationname": "01001020503",
+      "low_confidence_limit": "30.7",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "10.3",
+      "high_confidence_limit": "12.4",
+      "locationname": "01001020600",
+      "low_confidence_limit": "8.3",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "41.8",
+      "high_confidence_limit": "45.9",
+      "locationname": "01001020600",
+      "low_confidence_limit": "37.4",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.8",
+      "high_confidence_limit": "7.7",
+      "locationname": "01001020600",
+      "low_confidence_limit": "6.0",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.5",
+      "high_confidence_limit": "83.6",
+      "locationname": "01001020600",
+      "low_confidence_limit": "77.1",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "15.7",
+      "high_confidence_limit": "18.7",
+      "locationname": "01001020600",
+      "low_confidence_limit": "12.9",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "41.2",
+      "high_confidence_limit": "45.5",
+      "locationname": "01001020600",
+      "low_confidence_limit": "36.7",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "28.2",
+      "high_confidence_limit": "33.4",
+      "locationname": "01001020600",
+      "low_confidence_limit": "23.4",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "40.7",
+      "high_confidence_limit": "48.1",
+      "locationname": "01001020600",
+      "low_confidence_limit": "33.0",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "10.2",
+      "high_confidence_limit": "12.5",
+      "locationname": "01001020700",
+      "low_confidence_limit": "8.1",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "42.3",
+      "high_confidence_limit": "46.4",
+      "locationname": "01001020700",
+      "low_confidence_limit": "38.1",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.1",
+      "high_confidence_limit": "7.9",
+      "locationname": "01001020700",
+      "low_confidence_limit": "6.3",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.1",
+      "high_confidence_limit": "83.2",
+      "locationname": "01001020700",
+      "low_confidence_limit": "76.5",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "17.2",
+      "high_confidence_limit": "20.0",
+      "locationname": "01001020700",
+      "low_confidence_limit": "14.2",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "40.3",
+      "high_confidence_limit": "44.7",
+      "locationname": "01001020700",
+      "low_confidence_limit": "36.0",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "30.3",
+      "high_confidence_limit": "35.4",
+      "locationname": "01001020700",
+      "low_confidence_limit": "25.2",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "42.6",
+      "high_confidence_limit": "50.3",
+      "locationname": "01001020700",
+      "low_confidence_limit": "34.8",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.4",
+      "high_confidence_limit": "9.2",
+      "locationname": "01001020801",
+      "low_confidence_limit": "5.9",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "41.4",
+      "high_confidence_limit": "45.6",
+      "locationname": "01001020801",
+      "low_confidence_limit": "37.1",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.8",
+      "high_confidence_limit": "7.6",
+      "locationname": "01001020801",
+      "low_confidence_limit": "6.0",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "81.2",
+      "high_confidence_limit": "84.3",
+      "locationname": "01001020801",
+      "low_confidence_limit": "77.8",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "13.8",
+      "high_confidence_limit": "16.5",
+      "locationname": "01001020801",
+      "low_confidence_limit": "11.2",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "42.7",
+      "high_confidence_limit": "47.1",
+      "locationname": "01001020801",
+      "low_confidence_limit": "38.3",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "24.5",
+      "high_confidence_limit": "29.0",
+      "locationname": "01001020801",
+      "low_confidence_limit": "20.1",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "38.4",
+      "high_confidence_limit": "45.9",
+      "locationname": "01001020801",
+      "low_confidence_limit": "31.1",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "11.4",
+      "high_confidence_limit": "13.6",
+      "locationname": "01001020803",
+      "low_confidence_limit": "9.3",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "45.7",
+      "high_confidence_limit": "50.0",
+      "locationname": "01001020803",
+      "low_confidence_limit": "41.2",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "8.3",
+      "high_confidence_limit": "9.4",
+      "locationname": "01001020803",
+      "low_confidence_limit": "7.4",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.2",
+      "high_confidence_limit": "83.4",
+      "locationname": "01001020803",
+      "low_confidence_limit": "76.7",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "20.3",
+      "high_confidence_limit": "23.7",
+      "locationname": "01001020803",
+      "low_confidence_limit": "17.2",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "42.9",
+      "high_confidence_limit": "47.2",
+      "locationname": "01001020803",
+      "low_confidence_limit": "38.4",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "33.6",
+      "high_confidence_limit": "39.0",
+      "locationname": "01001020803",
+      "low_confidence_limit": "28.3",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "44.2",
+      "high_confidence_limit": "52.1",
+      "locationname": "01001020803",
+      "low_confidence_limit": "36.3",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "5.7",
+      "high_confidence_limit": "6.9",
+      "locationname": "01001020804",
+      "low_confidence_limit": "4.6",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "33.6",
+      "high_confidence_limit": "37.6",
+      "locationname": "01001020804",
+      "low_confidence_limit": "29.6",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "4.0",
+      "high_confidence_limit": "4.5",
+      "locationname": "01001020804",
+      "low_confidence_limit": "3.6",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.4",
+      "high_confidence_limit": "83.5",
+      "locationname": "01001020804",
+      "low_confidence_limit": "76.9",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "9.3",
+      "high_confidence_limit": "11.1",
+      "locationname": "01001020804",
+      "low_confidence_limit": "7.6",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "37.1",
+      "high_confidence_limit": "41.4",
+      "locationname": "01001020804",
+      "low_confidence_limit": "32.8",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "18.0",
+      "high_confidence_limit": "21.6",
+      "locationname": "01001020804",
+      "low_confidence_limit": "14.7",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "34.6",
+      "high_confidence_limit": "42.0",
+      "locationname": "01001020804",
+      "low_confidence_limit": "27.7",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "7.1",
+      "high_confidence_limit": "8.4",
+      "locationname": "01001020805",
+      "low_confidence_limit": "5.9",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "39.0",
+      "high_confidence_limit": "43.2",
+      "locationname": "01001020805",
+      "low_confidence_limit": "34.8",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.1",
+      "high_confidence_limit": "6.8",
+      "locationname": "01001020805",
+      "low_confidence_limit": "5.4",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.5",
+      "high_confidence_limit": "83.5",
+      "locationname": "01001020805",
+      "low_confidence_limit": "77.1",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "12.9",
+      "high_confidence_limit": "15.1",
+      "locationname": "01001020805",
+      "low_confidence_limit": "10.8",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "41.2",
+      "high_confidence_limit": "45.5",
+      "locationname": "01001020805",
+      "low_confidence_limit": "36.7",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "23.4",
+      "high_confidence_limit": "27.8",
+      "locationname": "01001020805",
+      "low_confidence_limit": "19.3",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "36.9",
+      "high_confidence_limit": "44.3",
+      "locationname": "01001020805",
+      "low_confidence_limit": "29.6",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "9.0",
+      "high_confidence_limit": "10.9",
+      "locationname": "01001020901",
+      "low_confidence_limit": "7.4",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "38.9",
+      "high_confidence_limit": "43.2",
+      "locationname": "01001020901",
+      "low_confidence_limit": "34.7",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.2",
+      "high_confidence_limit": "6.9",
+      "locationname": "01001020901",
+      "low_confidence_limit": "5.5",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "78.9",
+      "high_confidence_limit": "82.2",
+      "locationname": "01001020901",
+      "low_confidence_limit": "75.3",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "16.0",
+      "high_confidence_limit": "18.7",
+      "locationname": "01001020901",
+      "low_confidence_limit": "13.5",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "40.6",
+      "high_confidence_limit": "45.0",
+      "locationname": "01001020901",
+      "low_confidence_limit": "36.2",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "26.3",
+      "high_confidence_limit": "31.1",
+      "locationname": "01001020901",
+      "low_confidence_limit": "21.9",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "38.9",
+      "high_confidence_limit": "46.5",
+      "locationname": "01001020901",
+      "low_confidence_limit": "31.4",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "8.6",
+      "high_confidence_limit": "10.1",
+      "locationname": "01001020902",
+      "low_confidence_limit": "7.1",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "41.9",
+      "high_confidence_limit": "46.2",
+      "locationname": "01001020902",
+      "low_confidence_limit": "37.8",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "6.6",
+      "high_confidence_limit": "7.3",
+      "locationname": "01001020902",
+      "low_confidence_limit": "5.9",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.6",
+      "high_confidence_limit": "83.7",
+      "locationname": "01001020902",
+      "low_confidence_limit": "77.2",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "14.6",
+      "high_confidence_limit": "17.0",
+      "locationname": "01001020902",
+      "low_confidence_limit": "12.6",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "41.8",
+      "high_confidence_limit": "46.3",
+      "locationname": "01001020902",
+      "low_confidence_limit": "37.4",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "26.3",
+      "high_confidence_limit": "30.9",
+      "locationname": "01001020902",
+      "low_confidence_limit": "22.1",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "39.4",
+      "high_confidence_limit": "47.0",
+      "locationname": "01001020902",
+      "low_confidence_limit": "32.1",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "11.2",
+      "high_confidence_limit": "13.3",
+      "locationname": "01001021000",
+      "low_confidence_limit": "9.3",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "46.3",
+      "high_confidence_limit": "50.6",
+      "locationname": "01001021000",
+      "low_confidence_limit": "42.0",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "8.4",
+      "high_confidence_limit": "9.3",
+      "locationname": "01001021000",
+      "low_confidence_limit": "7.5",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "80.5",
+      "high_confidence_limit": "83.6",
+      "locationname": "01001021000",
+      "low_confidence_limit": "77.1",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "20.0",
+      "high_confidence_limit": "23.0",
+      "locationname": "01001021000",
+      "low_confidence_limit": "17.2",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "43.7",
+      "high_confidence_limit": "48.2",
+      "locationname": "01001021000",
+      "low_confidence_limit": "39.2",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "32.9",
+      "high_confidence_limit": "37.9",
+      "locationname": "01001021000",
+      "low_confidence_limit": "28.1",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "43.7",
+      "high_confidence_limit": "51.5",
+      "locationname": "01001021000",
+      "low_confidence_limit": "36.0",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "12.2",
+      "high_confidence_limit": "14.3",
+      "locationname": "01001021100",
+      "low_confidence_limit": "10.4",
+      "measure": "Current lack of health insurance among adults aged 18-64 years",
+      "measureid": "ACCESS2",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "54.3",
+      "high_confidence_limit": "58.4",
+      "locationname": "01001021100",
+      "low_confidence_limit": "49.9",
+      "measure": "High blood pressure among adults",
+      "measureid": "BPHIGH",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "10.0",
+      "high_confidence_limit": "11.0",
+      "locationname": "01001021100",
+      "low_confidence_limit": "9.0",
+      "measure": "Coronary heart disease among adults",
+      "measureid": "CHD",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "83.5",
+      "high_confidence_limit": "86.2",
+      "locationname": "01001021100",
+      "low_confidence_limit": "80.5",
+      "measure": "Visits to doctor for routine checkup within the past year among adults",
+      "measureid": "CHECKUP",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "21.3",
+      "high_confidence_limit": "24.2",
+      "locationname": "01001021100",
+      "low_confidence_limit": "18.6",
+      "measure": "Current cigarette smoking among adults",
+      "measureid": "CSMOKING",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "45.0",
+      "high_confidence_limit": "49.3",
+      "locationname": "01001021100",
+      "low_confidence_limit": "40.5",
+      "measure": "High cholesterol among adults who have ever been screened",
+      "measureid": "HIGHCHOL",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "39.5",
+      "high_confidence_limit": "44.7",
+      "locationname": "01001021100",
+      "low_confidence_limit": "34.3",
+      "measure": "No leisure-time physical activity among adults",
+      "measureid": "LPA",
+      "stateabbr": "AL",
+      "year": "2023"
+    },
+    {
+      "countyname": "Autauga",
+      "data_value": "49.1",
+      "high_confidence_limit": "56.8",
+      "locationname": "01001021100",
+      "low_confidence_limit": "41.1",
+      "measure": "Obesity among adults",
+      "measureid": "OBESITY",
+      "stateabbr": "AL",
+      "year": "2023"
+    }
+  ],
+  "executive_summary": {
+    "chd_maximum_pct": 10.0,
+    "chd_median_pct": 6.8,
+    "chd_minimum_pct": 4.0,
+    "chd_unweighted_mean_pct": 6.75,
+    "estimate_count": 136,
+    "measure_count": 8,
+    "pubmed_article_count": 8,
+    "screening_candidate_count": 6,
+    "strict_screening_candidate_count": 3,
+    "tract_count": 17,
+    "trial_records_returned": 10,
+    "trial_records_total_match": 29,
+    "years": [
+      "2023"
+    ]
+  },
+  "findings": {
+    "evidence_scan": {
+      "clinical_trials": {
+        "query_scope": "Active or upcoming records with an Alabama location match",
+        "returned_count": 10,
+        "studies": [
+          {
+            "brief_title": "Firehawk Rapamycin Target Eluting Coronary Stent North American Trial",
+            "completion_date": "2027-06-30",
+            "conditions": [
+              "Coronary Artery Disease"
+            ],
+            "enrollment": 1720,
+            "interventions": [
+              "Microport Firehawk stent",
+              "2nd generation DES (XIENCE family, Promus family, Resolute/Onyx family/Endeavor, and Orsiro stent)"
+            ],
+            "nct_id": "NCT04562532",
+            "phases": [
+              "NA"
+            ],
+            "sponsor": "Shanghai MicroPort Medical (Group) Co., Ltd.",
+            "start_date": "2021-02-17",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT04562532"
+          },
+          {
+            "brief_title": "Inclisiran Versus Placebo for the Prevention of Major Adverse Cardiovascular and Limb Events in Patients Undergoing Percutaneous Coronary Intervention or Peripheral Endovascular Intervention",
+            "completion_date": "2029-12",
+            "conditions": [
+              "Percutaneous Coronary Intervention",
+              "Peripheral Endovascular Intervention"
+            ],
+            "enrollment": 6000,
+            "interventions": [
+              "Inclisiran sodium 300 mg (equivalent to 284 mg inclisiran) in 1.5 mL",
+              "Normal Saline (Placebo)"
+            ],
+            "nct_id": "NCT06909565",
+            "phases": [
+              "PHASE4"
+            ],
+            "sponsor": "Duke University",
+            "start_date": "2025-07-23",
+            "status": "RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT06909565"
+          },
+          {
+            "brief_title": "An Open Label Extension (OLE) Study (Following Completion of CTQJ230A12301) to Evaluate Long-term Safety and Tolerability of Pelacarsen (TQJ230)",
+            "completion_date": "2030-01-09",
+            "conditions": [
+              "Cardiovascular Disease and Lipoprotein(a)"
+            ],
+            "enrollment": 5700,
+            "interventions": [
+              "Pelacarsen (TQJ230)"
+            ],
+            "nct_id": "NCT07517263",
+            "phases": [
+              "PHASE3"
+            ],
+            "sponsor": "Novartis Pharmaceuticals",
+            "start_date": "2026-05-11",
+            "status": "RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT07517263"
+          },
+          {
+            "brief_title": "Neuroinflammation After Myocardial Infarction - Imaging Substudy",
+            "completion_date": "2028-10",
+            "conditions": [
+              "Myocardial Infarction"
+            ],
+            "enrollment": 6,
+            "interventions": [
+              "[18F]DPA-714-PET/MRI"
+            ],
+            "nct_id": "NCT03968445",
+            "phases": [
+              "PHASE1"
+            ],
+            "sponsor": "University of Alabama at Birmingham",
+            "start_date": "2019-10-17",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT03968445"
+          },
+          {
+            "brief_title": "PRE-EMPT: Prospective RandomizEd Evaluation and Management of Premature aTherosclerosis",
+            "completion_date": "2031-07",
+            "conditions": [
+              "Coronary Artery Disease Risk Factors Multiple",
+              "Coronary Artery Disease Progression",
+              "Prevention & Control",
+              "Premature Atherosclerosis"
+            ],
+            "enrollment": 1500,
+            "interventions": [
+              "Rosuvastatin 20 Mg Oral Tablet",
+              "Colchicine 0.5 MG Oral Tablet Once Daily",
+              "Placebo"
+            ],
+            "nct_id": "NCT07232069",
+            "phases": [
+              "PHASE3"
+            ],
+            "sponsor": "Duke University",
+            "start_date": "2026-07",
+            "status": "RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT07232069"
+          },
+          {
+            "brief_title": "A Study of VERVE-102 in Patients With Familial Hypercholesterolemia or Premature Coronary Artery Disease",
+            "completion_date": "2027-08",
+            "conditions": [
+              "Heterozygous Familial Hypercholesterolemia",
+              "Premature Coronary Heart Disease"
+            ],
+            "enrollment": 85,
+            "interventions": [
+              "VERVE-102"
+            ],
+            "nct_id": "NCT06164730",
+            "phases": [
+              "PHASE1"
+            ],
+            "sponsor": "Verve Therapeutics, Inc.",
+            "start_date": "2024-04-30",
+            "status": "RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT06164730"
+          },
+          {
+            "brief_title": "Primary Unloading and Delayed Reperfusion in ST-Elevation Myocardial Infarction: The STEMI-DTU Trial",
+            "completion_date": "2030-10",
+            "conditions": [
+              "ST Elevation (STEMI) Myocardial Infarction of Anterior Wall"
+            ],
+            "enrollment": 527,
+            "interventions": [
+              "Impella CP\u00ae placement prior to reperfusion with Primary PCI"
+            ],
+            "nct_id": "NCT03947619",
+            "phases": [
+              "NA"
+            ],
+            "sponsor": "Abiomed Inc.",
+            "start_date": "2019-12-12",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT03947619"
+          },
+          {
+            "brief_title": "Abbott Vascular Medical Device Registry",
+            "completion_date": "2031-11",
+            "conditions": [
+              "Acute Myocardial Infarction",
+              "Restenoses, Coronary",
+              "Coronary Artery Lesions",
+              "Venous Embolism",
+              "Arterial Embolism"
+            ],
+            "enrollment": 3784,
+            "interventions": [
+              "Coronary and peripheral stents",
+              "Pacing catheters",
+              "Vascular plugs",
+              "Measurement and imaging (FFR and OCT)",
+              "Peripheral dilatation catheters"
+            ],
+            "nct_id": "NCT04573660",
+            "phases": [],
+            "sponsor": "Abbott Medical Devices",
+            "start_date": "2020-10-25",
+            "status": "RECRUITING",
+            "study_type": "OBSERVATIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT04573660"
+          },
+          {
+            "brief_title": "Staged Complete Revascularization for Coronary Artery Disease vs Medical Management Alone in Patients With AS Undergoing Transcatheter Aortic Valve Replacement",
+            "completion_date": "2026-04-01",
+            "conditions": [
+              "Aortic Stenosis",
+              "Coronary Artery Disease",
+              "Coronary Stenosis"
+            ],
+            "enrollment": 4000,
+            "interventions": [
+              "Percutaneous Coronary Intervention (PCI)"
+            ],
+            "nct_id": "NCT04634240",
+            "phases": [
+              "NA"
+            ],
+            "sponsor": "University of British Columbia",
+            "start_date": "2020-12-19",
+            "status": "RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT04634240"
+          },
+          {
+            "brief_title": "A Phase 2b Clinical Trial of YN001 in Adults With Coronary Atherosclerosis",
+            "completion_date": "2029-03-31",
+            "conditions": [
+              "Atherosclerosis",
+              "Coronary Artery Disease"
+            ],
+            "enrollment": 456,
+            "interventions": [
+              "YN001/Placebo 40mg",
+              "YN001/Placebo 20mg",
+              "YN001/Placebo 0mg"
+            ],
+            "nct_id": "NCT07521007",
+            "phases": [
+              "PHASE2"
+            ],
+            "sponsor": "Beijing Inno Medicine Co., Ltd.",
+            "start_date": "2026-07-30",
+            "status": "NOT_YET_RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "url": "https://clinicaltrials.gov/study/NCT07521007"
+          }
+        ],
+        "total_count": 29
+      },
+      "pubmed": {
+        "articles": [
+          {
+            "article_type": "Journal Article",
+            "authors": [
+              "Vieira de Oliveira Salerno PR",
+              "Lewis PGT",
+              "Chen Z",
+              "Dazard JE",
+              "Ganatra S"
+            ],
+            "doi": "10.1161/JAHA.124.038251",
+            "journal": "Journal of the American Heart Association",
+            "pmid": "40417800",
+            "pub_year": "2025",
+            "title": "Climate Vulnerability and Cardiovascular-Kidney-Metabolic Disease in the United States.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/40417800/"
+          },
+          {
+            "article_type": "Journal Article, Review",
+            "authors": [
+              "Bevan G",
+              "Pandey A",
+              "Griggs S",
+              "Dalton JE",
+              "Zidar D"
+            ],
+            "doi": "10.1016/j.cpcardiol.2022.101182",
+            "journal": "Current problems in cardiology",
+            "pmid": "35354074",
+            "pub_year": "2023",
+            "title": "Neighborhood-level Social Vulnerability and Prevalence of Cardiovascular Risk Factors and Coronary Heart Disease.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/35354074/"
+          },
+          {
+            "article_type": "Journal Article",
+            "authors": [
+              "Lawrence WR",
+              "Hong HG",
+              "Williams F",
+              "Dyer Z",
+              "Bergeron NQ"
+            ],
+            "doi": "10.1001/jamahealthforum.2025.3864",
+            "journal": "JAMA health forum",
+            "pmid": "41171261",
+            "pub_year": "2025",
+            "title": "Manifestations of Structural Racism and Inequities in Cardiovascular Health Across US Neighborhoods.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/41171261/"
+          },
+          {
+            "article_type": "Journal Article",
+            "authors": [
+              "Andrews MR",
+              "Sandler D",
+              "Lopez De Leon SJ",
+              "Regan SD",
+              "Lawrence WR"
+            ],
+            "doi": "10.1016/j.amepre.2025.108087",
+            "journal": "American journal of preventive medicine",
+            "pmid": "40925453",
+            "pub_year": "2026",
+            "title": "Mediating Pathways Between Neighborhood Structural Investment and Cardiometabolic Health Across U.S. Cities.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/40925453/"
+          },
+          {
+            "article_type": "Journal Article, Research Support, N.I.H., Extramural",
+            "authors": [
+              "Nguyen TT",
+              "Nguyen QC",
+              "Rubinsky AD",
+              "Tasdizen T",
+              "Deligani AHN"
+            ],
+            "doi": "10.3390/ijerph181910428",
+            "journal": "International journal of environmental research and public health",
+            "pmid": "34639726",
+            "pub_year": "2021",
+            "title": "Google Street View-Derived Neighborhood Characteristics in California Associated with Coronary Heart Disease, Hypertension, Diabetes.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/34639726/"
+          },
+          {
+            "article_type": "Journal Article, Research Support, Non-U.S. Gov't",
+            "authors": [
+              "Roca-Barcel\u00f3 A",
+              "Nardocci A",
+              "de Aguiar BS",
+              "Ribeiro AG",
+              "Failla MA"
+            ],
+            "doi": "10.1186/s12940-021-00746-7",
+            "journal": "Environmental health : a global access science source",
+            "pmid": "33985498",
+            "pub_year": "2021",
+            "title": "Risk of cardiovascular mortality, stroke and coronary heart mortality associated with aircraft noise around Congonhas airport, S\u00e3o Paulo, Brazil: a small-area study.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/33985498/"
+          },
+          {
+            "article_type": "Journal Article",
+            "authors": [
+              "Jones EJ",
+              "Natale BN",
+              "Blatt LR",
+              "Votruba-Drzal E",
+              "Miller P"
+            ],
+            "doi": "10.1007/s11524-024-00884-6",
+            "journal": "Journal of urban health : bulletin of the New York Academy of Medicine",
+            "pmid": "38858276",
+            "pub_year": "2024",
+            "title": "Historical Structural Racism in the Built Environment and Physical Health among Residents of Allegheny County, Pennsylvania.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/38858276/"
+          },
+          {
+            "article_type": "Journal Article",
+            "authors": [
+              "Akinboyewa T",
+              "Li Z",
+              "Ning H",
+              "Lessani MN",
+              "Holmes LM"
+            ],
+            "doi": "10.1371/journal.pone.0329455",
+            "journal": "PloS one",
+            "pmid": "40811585",
+            "pub_year": "2025",
+            "title": "Exploring the association between smartphone-based place visitation data and neighborhood-level coronary heart disease in the United States.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/40811585/"
+          }
+        ],
+        "query": "census tract[Title/Abstract] AND coronary heart disease[Title/Abstract] AND (smoking[Title/Abstract] OR hypertension[Title/Abstract] OR obesity[Title/Abstract] OR physical activity[Title/Abstract])",
+        "sort": "relevance"
+      }
+    },
+    "exploratory_co_variation": {
+      "correlations_with_chd": [
+        {
+          "measure_id": "ACCESS2",
+          "measure_name": "Current lack of health insurance among adults aged 18-64 years",
+          "pearson_r": 0.825
+        },
+        {
+          "measure_id": "BPHIGH",
+          "measure_name": "High blood pressure among adults",
+          "pearson_r": 0.943
+        },
+        {
+          "measure_id": "CHECKUP",
+          "measure_name": "Visits to doctor for routine checkup within the past year among adults",
+          "pearson_r": 0.494
+        },
+        {
+          "measure_id": "CSMOKING",
+          "measure_name": "Current cigarette smoking among adults",
+          "pearson_r": 0.878
+        },
+        {
+          "measure_id": "HIGHCHOL",
+          "measure_name": "High cholesterol among adults who have ever been screened",
+          "pearson_r": 0.902
+        },
+        {
+          "measure_id": "LPA",
+          "measure_name": "No leisure-time physical activity among adults",
+          "pearson_r": 0.901
+        },
+        {
+          "measure_id": "OBESITY",
+          "measure_name": "Obesity among adults",
+          "pearson_r": 0.797
+        }
+      ],
+      "interpretation": "Exploratory co-variation only; shared modeling inputs, population differences, and spatial dependence are not adjusted.",
+      "method": "Pearson correlation of tract point estimates",
+      "tract_count": 17,
+      "uses_confidence_intervals": false
+    },
+    "measure_summaries": {
+      "ACCESS2": {
+        "direction": "higher_is_worse",
+        "domain": "access",
+        "interquartile_range_pct": [
+          7.5,
+          10.6
+        ],
+        "maximum": {
+          "census_tract": "01001021100",
+          "confidence_interval_pct": [
+            10.4,
+            14.3
+          ],
+          "estimate_pct": 12.2
+        },
+        "mean_estimate_pct": 9.04,
+        "measure_id": "ACCESS2",
+        "median_estimate_pct": 9.0,
+        "minimum": {
+          "census_tract": "01001020804",
+          "confidence_interval_pct": [
+            4.6,
+            6.9
+          ],
+          "estimate_pct": 5.7
+        },
+        "name": "Current lack of health insurance among adults aged 18-64 years",
+        "observed_range_percentage_points": 6.5,
+        "population": "Adults aged 18-64 years",
+        "tract_count": 17,
+        "years": [
+          "2023"
+        ]
+      },
+      "BPHIGH": {
+        "direction": "higher_is_worse",
+        "domain": "clinical_risk",
+        "interquartile_range_pct": [
+          39.0,
+          42.9
+        ],
+        "maximum": {
+          "census_tract": "01001021100",
+          "confidence_interval_pct": [
+            49.9,
+            58.4
+          ],
+          "estimate_pct": 54.3
+        },
+        "mean_estimate_pct": 41.72,
+        "measure_id": "BPHIGH",
+        "median_estimate_pct": 41.8,
+        "minimum": {
+          "census_tract": "01001020804",
+          "confidence_interval_pct": [
+            29.6,
+            37.6
+          ],
+          "estimate_pct": 33.6
+        },
+        "name": "High blood pressure among adults",
+        "observed_range_percentage_points": 20.7,
+        "population": "Adults",
+        "tract_count": 17,
+        "years": [
+          "2023"
+        ]
+      },
+      "CHD": {
+        "direction": "higher_is_worse",
+        "domain": "health_outcome",
+        "interquartile_range_pct": [
+          6.1,
+          7.3
+        ],
+        "maximum": {
+          "census_tract": "01001021100",
+          "confidence_interval_pct": [
+            9.0,
+            11.0
+          ],
+          "estimate_pct": 10.0
+        },
+        "mean_estimate_pct": 6.75,
+        "measure_id": "CHD",
+        "median_estimate_pct": 6.8,
+        "minimum": {
+          "census_tract": "01001020804",
+          "confidence_interval_pct": [
+            3.6,
+            4.5
+          ],
+          "estimate_pct": 4.0
+        },
+        "name": "Coronary heart disease among adults",
+        "observed_range_percentage_points": 6.0,
+        "population": "Adults",
+        "tract_count": 17,
+        "years": [
+          "2023"
+        ]
+      },
+      "CHECKUP": {
+        "direction": "higher_is_better",
+        "domain": "prevention",
+        "interquartile_range_pct": [
+          80.2,
+          81.2
+        ],
+        "maximum": {
+          "census_tract": "01001021100",
+          "confidence_interval_pct": [
+            80.5,
+            86.2
+          ],
+          "estimate_pct": 83.5
+        },
+        "mean_estimate_pct": 80.73,
+        "measure_id": "CHECKUP",
+        "median_estimate_pct": 80.5,
+        "minimum": {
+          "census_tract": "01001020901",
+          "confidence_interval_pct": [
+            75.3,
+            82.2
+          ],
+          "estimate_pct": 78.9
+        },
+        "name": "Visits to doctor for routine checkup within the past year among adults",
+        "observed_range_percentage_points": 4.6,
+        "population": "Adults",
+        "tract_count": 17,
+        "years": [
+          "2023"
+        ]
+      },
+      "CSMOKING": {
+        "direction": "higher_is_worse",
+        "domain": "health_behavior",
+        "interquartile_range_pct": [
+          12.9,
+          16.7
+        ],
+        "maximum": {
+          "census_tract": "01001021100",
+          "confidence_interval_pct": [
+            18.6,
+            24.2
+          ],
+          "estimate_pct": 21.3
+        },
+        "mean_estimate_pct": 15.11,
+        "measure_id": "CSMOKING",
+        "median_estimate_pct": 15.6,
+        "minimum": {
+          "census_tract": "01001020804",
+          "confidence_interval_pct": [
+            7.6,
+            11.1
+          ],
+          "estimate_pct": 9.3
+        },
+        "name": "Current cigarette smoking among adults",
+        "observed_range_percentage_points": 12.0,
+        "population": "Adults",
+        "tract_count": 17,
+        "years": [
+          "2023"
+        ]
+      },
+      "HIGHCHOL": {
+        "direction": "higher_is_worse",
+        "domain": "clinical_risk",
+        "interquartile_range_pct": [
+          40.3,
+          42.7
+        ],
+        "maximum": {
+          "census_tract": "01001021100",
+          "confidence_interval_pct": [
+            40.5,
+            49.3
+          ],
+          "estimate_pct": 45.0
+        },
+        "mean_estimate_pct": 41.12,
+        "measure_id": "HIGHCHOL",
+        "median_estimate_pct": 41.2,
+        "minimum": {
+          "census_tract": "01001020502",
+          "confidence_interval_pct": [
+            31.5,
+            39.7
+          ],
+          "estimate_pct": 35.6
+        },
+        "name": "High cholesterol among adults who have ever been screened",
+        "observed_range_percentage_points": 9.4,
+        "population": "Adults who have ever been screened",
+        "tract_count": 17,
+        "years": [
+          "2023"
+        ]
+      },
+      "LPA": {
+        "direction": "higher_is_worse",
+        "domain": "health_behavior",
+        "interquartile_range_pct": [
+          24.5,
+          30.3
+        ],
+        "maximum": {
+          "census_tract": "01001021100",
+          "confidence_interval_pct": [
+            34.3,
+            44.7
+          ],
+          "estimate_pct": 39.5
+        },
+        "mean_estimate_pct": 27.42,
+        "measure_id": "LPA",
+        "median_estimate_pct": 26.3,
+        "minimum": {
+          "census_tract": "01001020804",
+          "confidence_interval_pct": [
+            14.7,
+            21.6
+          ],
+          "estimate_pct": 18.0
+        },
+        "name": "No leisure-time physical activity among adults",
+        "observed_range_percentage_points": 21.5,
+        "population": "Adults",
+        "tract_count": 17,
+        "years": [
+          "2023"
+        ]
+      },
+      "OBESITY": {
+        "direction": "higher_is_worse",
+        "domain": "clinical_risk",
+        "interquartile_range_pct": [
+          38.1,
+          42.6
+        ],
+        "maximum": {
+          "census_tract": "01001021100",
+          "confidence_interval_pct": [
+            41.1,
+            56.8
+          ],
+          "estimate_pct": 49.1
+        },
+        "mean_estimate_pct": 40.05,
+        "measure_id": "OBESITY",
+        "median_estimate_pct": 39.4,
+        "minimum": {
+          "census_tract": "01001020804",
+          "confidence_interval_pct": [
+            27.7,
+            42.0
+          ],
+          "estimate_pct": 34.6
+        },
+        "name": "Obesity among adults",
+        "observed_range_percentage_points": 14.5,
+        "population": "Adults",
+        "tract_count": 17,
+        "years": [
+          "2023"
+        ]
+      }
+    },
+    "openfda_context": {
+      "brand_name": "Low Dose Aspirin",
+      "effective_time": "20240416",
+      "generic_name": "ASPIRIN",
+      "route": "ORAL",
+      "set_id": "0058175f-3474-40c3-a046-6cfaec86d84b",
+      "warning_terms_found": [
+        "blood thinning",
+        "heart disease",
+        "high blood pressure"
+      ]
+    },
+    "screening": {
+      "candidate_count": 6,
+      "candidates": [
+        {
+          "census_tract": "01001020100",
+          "chd_confidence_interval_pct": [
+            6.2,
+            8.1
+          ],
+          "chd_estimate_pct": 7.2,
+          "conservative_signal_count": 0,
+          "conservative_signal_measure_ids": [],
+          "context_signal_count": 4,
+          "context_signal_measure_ids": [
+            "ACCESS2",
+            "CHECKUP",
+            "HIGHCHOL",
+            "LPA"
+          ]
+        },
+        {
+          "census_tract": "01001020300",
+          "chd_confidence_interval_pct": [
+            6.3,
+            8.2
+          ],
+          "chd_estimate_pct": 7.3,
+          "conservative_signal_count": 0,
+          "conservative_signal_measure_ids": [],
+          "context_signal_count": 6,
+          "context_signal_measure_ids": [
+            "ACCESS2",
+            "BPHIGH",
+            "CSMOKING",
+            "HIGHCHOL",
+            "LPA",
+            "OBESITY"
+          ]
+        },
+        {
+          "census_tract": "01001020700",
+          "chd_confidence_interval_pct": [
+            6.3,
+            7.9
+          ],
+          "chd_estimate_pct": 7.1,
+          "conservative_signal_count": 0,
+          "conservative_signal_measure_ids": [],
+          "context_signal_count": 6,
+          "context_signal_measure_ids": [
+            "ACCESS2",
+            "BPHIGH",
+            "CHECKUP",
+            "CSMOKING",
+            "LPA",
+            "OBESITY"
+          ]
+        },
+        {
+          "census_tract": "01001020803",
+          "chd_confidence_interval_pct": [
+            7.4,
+            9.4
+          ],
+          "chd_estimate_pct": 8.3,
+          "conservative_signal_count": 3,
+          "conservative_signal_measure_ids": [
+            "ACCESS2",
+            "CSMOKING",
+            "LPA"
+          ],
+          "context_signal_count": 7,
+          "context_signal_measure_ids": [
+            "ACCESS2",
+            "BPHIGH",
+            "CHECKUP",
+            "CSMOKING",
+            "HIGHCHOL",
+            "LPA",
+            "OBESITY"
+          ]
+        },
+        {
+          "census_tract": "01001021000",
+          "chd_confidence_interval_pct": [
+            7.5,
+            9.3
+          ],
+          "chd_estimate_pct": 8.4,
+          "conservative_signal_count": 4,
+          "conservative_signal_measure_ids": [
+            "ACCESS2",
+            "BPHIGH",
+            "CSMOKING",
+            "LPA"
+          ],
+          "context_signal_count": 6,
+          "context_signal_measure_ids": [
+            "ACCESS2",
+            "BPHIGH",
+            "CSMOKING",
+            "HIGHCHOL",
+            "LPA",
+            "OBESITY"
+          ]
+        },
+        {
+          "census_tract": "01001021100",
+          "chd_confidence_interval_pct": [
+            9.0,
+            11.0
+          ],
+          "chd_estimate_pct": 10.0,
+          "conservative_signal_count": 5,
+          "conservative_signal_measure_ids": [
+            "ACCESS2",
+            "BPHIGH",
+            "CSMOKING",
+            "LPA",
+            "OBESITY"
+          ],
+          "context_signal_count": 6,
+          "context_signal_measure_ids": [
+            "ACCESS2",
+            "BPHIGH",
+            "CSMOKING",
+            "HIGHCHOL",
+            "LPA",
+            "OBESITY"
+          ]
+        }
+      ],
+      "context_measure_count": 7,
+      "is_ranking": false,
+      "minimum_context_signals": 4,
+      "sensitivity_by_threshold": [
+        {
+          "candidate_count": 6,
+          "census_tracts": [
+            "01001020100",
+            "01001020300",
+            "01001020700",
+            "01001020803",
+            "01001021000",
+            "01001021100"
+          ],
+          "minimum_context_signals": 3
+        },
+        {
+          "candidate_count": 6,
+          "census_tracts": [
+            "01001020100",
+            "01001020300",
+            "01001020700",
+            "01001020803",
+            "01001021000",
+            "01001021100"
+          ],
+          "minimum_context_signals": 4
+        },
+        {
+          "candidate_count": 5,
+          "census_tracts": [
+            "01001020300",
+            "01001020700",
+            "01001020803",
+            "01001021000",
+            "01001021100"
+          ],
+          "minimum_context_signals": 5
+        },
+        {
+          "candidate_count": 5,
+          "census_tracts": [
+            "01001020300",
+            "01001020700",
+            "01001020803",
+            "01001021000",
+            "01001021100"
+          ],
+          "minimum_context_signals": 6
+        },
+        {
+          "candidate_count": 1,
+          "census_tracts": [
+            "01001020803"
+          ],
+          "minimum_context_signals": 7
+        }
+      ],
+      "strict_candidate_census_tracts": [
+        "01001020803",
+        "01001021000",
+        "01001021100"
+      ],
+      "strict_candidate_count": 3,
+      "strict_rule": "CHD confidence interval entirely above the county tract median and at least three context confidence intervals entirely on the attention side of their respective medians."
+    },
+    "who_context": {
+      "indicator_code": "NCD_HYP_DIAGNOSIS_C",
+      "indicator_name": "Hypertension: diagnosis coverage among adults aged 30-79 with hypertension, crude (%)",
+      "language": "EN"
+    }
+  },
+  "official_references": [
+    {
+      "title": "ToolUniverse Python API guide",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/getting_started.html"
+    },
+    {
+      "title": "CDC PLACES methodology",
+      "url": "https://www.cdc.gov/places/methodology/index.html"
+    },
+    {
+      "title": "CDC PLACES measure definitions",
+      "url": "https://www.cdc.gov/places/measure-definitions/index.html"
+    },
+    {
+      "title": "CDC PLACES frequently asked questions",
+      "url": "https://www.cdc.gov/places/faqs/index.html"
+    },
+    {
+      "title": "ClinicalTrials.gov API",
+      "url": "https://clinicaltrials.gov/data-about-studies/learn-about-api"
+    },
+    {
+      "title": "openFDA drug-label API",
+      "url": "https://open.fda.gov/apis/drug/label/how-to-use-the-endpoint/"
+    }
+  ],
+  "reviewed_integrations": [
+    {
+      "default_params": {
+        "$limit": 5
+      },
+      "description": "CDC local chronic-disease and preventive-service estimates.",
+      "endpoint": "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json",
+      "name": "CDC PLACES",
+      "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
+      "source_id": "cdc_places",
+      "tool_name": "VSDCDCPlacesHeartHealthProfile"
+    },
+    {
+      "default_params": {
+        "$top": 5
+      },
+      "description": "WHO global-health indicators exposed as JSON/OData.",
+      "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
+      "name": "WHO Global Health Observatory",
+      "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
+      "source_id": "who_gho",
+      "tool_name": "VSDWHOHypertensionIndicator"
+    },
+    {
+      "default_params": {
+        "limit": 5
+      },
+      "description": "FDA drug labeling records, warnings, and indications.",
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "name": "openFDA Drug Labels",
+      "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
+      "source_id": "openfda_labels",
+      "tool_name": "VSDOpenFDALabelBySetId"
+    }
+  ],
+  "schema_version": 3,
+  "supporting_integrations": [
+    {
+      "contract_boundary": "Candidate records for human review, not a systematic review",
+      "role": "Bounded discovery of tract-level CHD literature",
+      "tool_name": "PubMed_search_articles"
+    },
+    {
+      "contract_boundary": "Registry candidates, not local availability or treatment recommendations",
+      "role": "Bounded scan of active or upcoming Alabama-matched registry records",
+      "tool_name": "ClinicalTrials_search_studies"
+    }
+  ],
+  "tooluniverse_execution": {
+    "api": "ToolUniverse.load_tools + ToolUniverse.run_one_function",
+    "cache_requested": false,
+    "call_count": 6,
+    "calls": [
+      {
+        "arguments": {
+          "query": ""
+        },
+        "result_summary": {
+          "reviewed_source_count": 4
+        },
+        "sequence": 1,
+        "status": "success",
+        "tool_name": "VSDDiscoverSources"
+      },
+      {
+        "arguments": {
+          "county_name": "Autauga",
+          "limit": 500,
+          "state_abbr": "AL"
+        },
+        "result_summary": {
+          "estimate_count": 136,
+          "measure_count": 8,
+          "possibly_truncated": false,
+          "tract_count": 17
+        },
+        "sequence": 2,
+        "status": "success",
+        "tool_name": "VSDCDCPlacesHeartHealthProfile"
+      },
+      {
+        "arguments": {},
+        "result_summary": {
+          "indicator_code": "NCD_HYP_DIAGNOSIS_C"
+        },
+        "sequence": 3,
+        "status": "success",
+        "tool_name": "VSDWHOHypertensionIndicator"
+      },
+      {
+        "arguments": {
+          "set_id": "0058175f-3474-40c3-a046-6cfaec86d84b"
+        },
+        "result_summary": {
+          "set_id": "0058175f-3474-40c3-a046-6cfaec86d84b"
+        },
+        "sequence": 4,
+        "status": "success",
+        "tool_name": "VSDOpenFDALabelBySetId"
+      },
+      {
+        "arguments": {
+          "limit": 8,
+          "query": "census tract[Title/Abstract] AND coronary heart disease[Title/Abstract] AND (smoking[Title/Abstract] OR hypertension[Title/Abstract] OR obesity[Title/Abstract] OR physical activity[Title/Abstract])",
+          "sort": "relevance"
+        },
+        "result_summary": {
+          "article_count": 8
+        },
+        "sequence": 5,
+        "source_metadata": {
+          "count": 8,
+          "query": "census tract[Title/Abstract] AND coronary heart disease[Title/Abstract] AND (smoking[Title/Abstract] OR hypertension[Title/Abstract] OR obesity[Title/Abstract] OR physical activity[Title/Abstract])",
+          "source": "PubMed",
+          "total": 9
+        },
+        "status": "success",
+        "tool_name": "PubMed_search_articles"
+      },
+      {
+        "arguments": {
+          "filter_status": "RECRUITING,NOT_YET_RECRUITING,ACTIVE_NOT_RECRUITING,ENROLLING_BY_INVITATION",
+          "page_size": 10,
+          "query_cond": "Coronary Heart Disease",
+          "query_term": "AREA[LocationState]Alabama"
+        },
+        "result_summary": {
+          "returned_count": 10,
+          "total_count": 29
+        },
+        "sequence": 6,
+        "source_metadata": {
+          "operation": "search",
+          "source": "ClinicalTrials.gov API v2"
+        },
+        "status": "success",
+        "tool_name": "ClinicalTrials_search_studies"
+      }
+    ],
+    "loaded_tools": [
+      "VSDDiscoverSources",
+      "VSDCDCPlacesHeartHealthProfile",
+      "VSDWHOHypertensionIndicator",
+      "VSDOpenFDALabelBySetId",
+      "PubMed_search_articles",
+      "ClinicalTrials_search_studies"
+    ]
+  },
+  "tract_profiles": [
+    {
+      "census_tract": "01001020100",
+      "chd_above_county_tract_median": true,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 4,
+      "context_signal_measure_ids": [
+        "ACCESS2",
+        "CHECKUP",
+        "HIGHCHOL",
+        "LPA"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            7.4,
+            12.3
+          ],
+          "estimate_pct": 9.7
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            37.1,
+            45.7
+          ],
+          "estimate_pct": 41.4
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            6.2,
+            8.1
+          ],
+          "estimate_pct": 7.2
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            76.6,
+            83.3
+          ],
+          "estimate_pct": 80.1
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            12.6,
+            18.9
+          ],
+          "estimate_pct": 15.6
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            37.4,
+            46.2
+          ],
+          "estimate_pct": 41.9
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            22.7,
+            32.9
+          ],
+          "estimate_pct": 27.8
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            31.9,
+            47.2
+          ],
+          "estimate_pct": 39.4
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020200",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 1,
+      "conservative_signal_measure_ids": [
+        "LPA"
+      ],
+      "context_signal_count": 5,
+      "context_signal_measure_ids": [
+        "ACCESS2",
+        "BPHIGH",
+        "CSMOKING",
+        "LPA",
+        "OBESITY"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            8.5,
+            13.0
+          ],
+          "estimate_pct": 10.6
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            41.5,
+            50.1
+          ],
+          "estimate_pct": 45.9
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            5.8,
+            7.3
+          ],
+          "estimate_pct": 6.5
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            78.5,
+            84.7
+          ],
+          "estimate_pct": 81.8
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            13.9,
+            19.5
+          ],
+          "estimate_pct": 16.7
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            35.4,
+            44.1
+          ],
+          "estimate_pct": 39.7
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            26.9,
+            37.3
+          ],
+          "estimate_pct": 32.0
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            36.6,
+            52.3
+          ],
+          "estimate_pct": 44.7
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020300",
+      "chd_above_county_tract_median": true,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 6,
+      "context_signal_measure_ids": [
+        "ACCESS2",
+        "BPHIGH",
+        "CSMOKING",
+        "HIGHCHOL",
+        "LPA",
+        "OBESITY"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            8.4,
+            13.1
+          ],
+          "estimate_pct": 10.6
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            38.7,
+            47.0
+          ],
+          "estimate_pct": 42.9
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            6.3,
+            8.2
+          ],
+          "estimate_pct": 7.3
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            77.0,
+            83.7
+          ],
+          "estimate_pct": 80.6
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            13.5,
+            18.8
+          ],
+          "estimate_pct": 16.1
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            37.6,
+            46.1
+          ],
+          "estimate_pct": 41.8
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            24.9,
+            34.8
+          ],
+          "estimate_pct": 29.9
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            32.7,
+            47.7
+          ],
+          "estimate_pct": 40.3
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020400",
+      "chd_above_county_tract_median": true,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 2,
+      "context_signal_measure_ids": [
+        "BPHIGH",
+        "HIGHCHOL"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            6.1,
+            10.1
+          ],
+          "estimate_pct": 7.9
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            38.2,
+            46.8
+          ],
+          "estimate_pct": 42.4
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            6.5,
+            8.5
+          ],
+          "estimate_pct": 7.5
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            78.3,
+            84.7
+          ],
+          "estimate_pct": 81.7
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            10.3,
+            15.6
+          ],
+          "estimate_pct": 12.9
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            39.0,
+            47.9
+          ],
+          "estimate_pct": 43.4
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            20.6,
+            30.5
+          ],
+          "estimate_pct": 25.5
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            29.6,
+            44.5
+          ],
+          "estimate_pct": 36.9
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020501",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 0,
+      "context_signal_measure_ids": [],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            4.7,
+            7.8
+          ],
+          "estimate_pct": 6.2
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            33.1,
+            41.4
+          ],
+          "estimate_pct": 37.2
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            4.7,
+            6.2
+          ],
+          "estimate_pct": 5.4
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            77.9,
+            84.2
+          ],
+          "estimate_pct": 81.3
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            7.8,
+            12.4
+          ],
+          "estimate_pct": 10.0
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            36.2,
+            44.9
+          ],
+          "estimate_pct": 40.5
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            16.3,
+            24.7
+          ],
+          "estimate_pct": 20.3
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            27.7,
+            42.0
+          ],
+          "estimate_pct": 34.7
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020502",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 1,
+      "context_signal_measure_ids": [
+        "CHECKUP"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            5.9,
+            9.2
+          ],
+          "estimate_pct": 7.5
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            30.9,
+            38.9
+          ],
+          "estimate_pct": 34.9
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            3.8,
+            4.9
+          ],
+          "estimate_pct": 4.4
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            76.2,
+            83.0
+          ],
+          "estimate_pct": 79.7
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            9.4,
+            14.1
+          ],
+          "estimate_pct": 11.7
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            31.5,
+            39.7
+          ],
+          "estimate_pct": 35.6
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            18.1,
+            26.6
+          ],
+          "estimate_pct": 22.3
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            30.9,
+            45.5
+          ],
+          "estimate_pct": 38.2
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020503",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 0,
+      "context_signal_measure_ids": [],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            6.3,
+            10.0
+          ],
+          "estimate_pct": 8.1
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            35.1,
+            43.4
+          ],
+          "estimate_pct": 39.3
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            5.3,
+            6.9
+          ],
+          "estimate_pct": 6.1
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            77.2,
+            83.8
+          ],
+          "estimate_pct": 80.8
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            10.0,
+            15.6
+          ],
+          "estimate_pct": 12.7
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            35.4,
+            43.9
+          ],
+          "estimate_pct": 39.6
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            21.0,
+            30.2
+          ],
+          "estimate_pct": 25.3
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            30.7,
+            45.4
+          ],
+          "estimate_pct": 38.1
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020600",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 4,
+      "context_signal_measure_ids": [
+        "ACCESS2",
+        "CSMOKING",
+        "LPA",
+        "OBESITY"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            8.3,
+            12.4
+          ],
+          "estimate_pct": 10.3
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            37.4,
+            45.9
+          ],
+          "estimate_pct": 41.8
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            6.0,
+            7.7
+          ],
+          "estimate_pct": 6.8
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            77.1,
+            83.6
+          ],
+          "estimate_pct": 80.5
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            12.9,
+            18.7
+          ],
+          "estimate_pct": 15.7
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            36.7,
+            45.5
+          ],
+          "estimate_pct": 41.2
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            23.4,
+            33.4
+          ],
+          "estimate_pct": 28.2
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            33.0,
+            48.1
+          ],
+          "estimate_pct": 40.7
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020700",
+      "chd_above_county_tract_median": true,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 6,
+      "context_signal_measure_ids": [
+        "ACCESS2",
+        "BPHIGH",
+        "CHECKUP",
+        "CSMOKING",
+        "LPA",
+        "OBESITY"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            8.1,
+            12.5
+          ],
+          "estimate_pct": 10.2
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            38.1,
+            46.4
+          ],
+          "estimate_pct": 42.3
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            6.3,
+            7.9
+          ],
+          "estimate_pct": 7.1
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            76.5,
+            83.2
+          ],
+          "estimate_pct": 80.1
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            14.2,
+            20.0
+          ],
+          "estimate_pct": 17.2
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            36.0,
+            44.7
+          ],
+          "estimate_pct": 40.3
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            25.2,
+            35.4
+          ],
+          "estimate_pct": 30.3
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            34.8,
+            50.3
+          ],
+          "estimate_pct": 42.6
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020801",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 1,
+      "context_signal_measure_ids": [
+        "HIGHCHOL"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            5.9,
+            9.2
+          ],
+          "estimate_pct": 7.4
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            37.1,
+            45.6
+          ],
+          "estimate_pct": 41.4
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            6.0,
+            7.6
+          ],
+          "estimate_pct": 6.8
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            77.8,
+            84.3
+          ],
+          "estimate_pct": 81.2
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            11.2,
+            16.5
+          ],
+          "estimate_pct": 13.8
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            38.3,
+            47.1
+          ],
+          "estimate_pct": 42.7
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            20.1,
+            29.0
+          ],
+          "estimate_pct": 24.5
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            31.1,
+            45.9
+          ],
+          "estimate_pct": 38.4
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020803",
+      "chd_above_county_tract_median": true,
+      "chd_interval_entirely_above_median": true,
+      "conservative_signal_count": 3,
+      "conservative_signal_measure_ids": [
+        "ACCESS2",
+        "CSMOKING",
+        "LPA"
+      ],
+      "context_signal_count": 7,
+      "context_signal_measure_ids": [
+        "ACCESS2",
+        "BPHIGH",
+        "CHECKUP",
+        "CSMOKING",
+        "HIGHCHOL",
+        "LPA",
+        "OBESITY"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            9.3,
+            13.6
+          ],
+          "estimate_pct": 11.4
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            41.2,
+            50.0
+          ],
+          "estimate_pct": 45.7
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            7.4,
+            9.4
+          ],
+          "estimate_pct": 8.3
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            76.7,
+            83.4
+          ],
+          "estimate_pct": 80.2
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            17.2,
+            23.7
+          ],
+          "estimate_pct": 20.3
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            38.4,
+            47.2
+          ],
+          "estimate_pct": 42.9
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            28.3,
+            39.0
+          ],
+          "estimate_pct": 33.6
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            36.3,
+            52.1
+          ],
+          "estimate_pct": 44.2
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020804",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 1,
+      "context_signal_measure_ids": [
+        "CHECKUP"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            4.6,
+            6.9
+          ],
+          "estimate_pct": 5.7
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            29.6,
+            37.6
+          ],
+          "estimate_pct": 33.6
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            3.6,
+            4.5
+          ],
+          "estimate_pct": 4.0
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            76.9,
+            83.5
+          ],
+          "estimate_pct": 80.4
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            7.6,
+            11.1
+          ],
+          "estimate_pct": 9.3
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            32.8,
+            41.4
+          ],
+          "estimate_pct": 37.1
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            14.7,
+            21.6
+          ],
+          "estimate_pct": 18.0
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            27.7,
+            42.0
+          ],
+          "estimate_pct": 34.6
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020805",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 0,
+      "context_signal_measure_ids": [],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            5.9,
+            8.4
+          ],
+          "estimate_pct": 7.1
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            34.8,
+            43.2
+          ],
+          "estimate_pct": 39.0
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            5.4,
+            6.8
+          ],
+          "estimate_pct": 6.1
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            77.1,
+            83.5
+          ],
+          "estimate_pct": 80.5
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            10.8,
+            15.1
+          ],
+          "estimate_pct": 12.9
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            36.7,
+            45.5
+          ],
+          "estimate_pct": 41.2
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            19.3,
+            27.8
+          ],
+          "estimate_pct": 23.4
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            29.6,
+            44.3
+          ],
+          "estimate_pct": 36.9
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020901",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 2,
+      "context_signal_measure_ids": [
+        "CHECKUP",
+        "CSMOKING"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            7.4,
+            10.9
+          ],
+          "estimate_pct": 9.0
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            34.7,
+            43.2
+          ],
+          "estimate_pct": 38.9
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            5.5,
+            6.9
+          ],
+          "estimate_pct": 6.2
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            75.3,
+            82.2
+          ],
+          "estimate_pct": 78.9
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            13.5,
+            18.7
+          ],
+          "estimate_pct": 16.0
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            36.2,
+            45.0
+          ],
+          "estimate_pct": 40.6
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            21.9,
+            31.1
+          ],
+          "estimate_pct": 26.3
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            31.4,
+            46.5
+          ],
+          "estimate_pct": 38.9
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001020902",
+      "chd_above_county_tract_median": false,
+      "chd_interval_entirely_above_median": false,
+      "conservative_signal_count": 0,
+      "conservative_signal_measure_ids": [],
+      "context_signal_count": 2,
+      "context_signal_measure_ids": [
+        "BPHIGH",
+        "HIGHCHOL"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            7.1,
+            10.1
+          ],
+          "estimate_pct": 8.6
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            37.8,
+            46.2
+          ],
+          "estimate_pct": 41.9
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            5.9,
+            7.3
+          ],
+          "estimate_pct": 6.6
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            77.2,
+            83.7
+          ],
+          "estimate_pct": 80.6
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            12.6,
+            17.0
+          ],
+          "estimate_pct": 14.6
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            37.4,
+            46.3
+          ],
+          "estimate_pct": 41.8
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            22.1,
+            30.9
+          ],
+          "estimate_pct": 26.3
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            32.1,
+            47.0
+          ],
+          "estimate_pct": 39.4
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001021000",
+      "chd_above_county_tract_median": true,
+      "chd_interval_entirely_above_median": true,
+      "conservative_signal_count": 4,
+      "conservative_signal_measure_ids": [
+        "ACCESS2",
+        "BPHIGH",
+        "CSMOKING",
+        "LPA"
+      ],
+      "context_signal_count": 6,
+      "context_signal_measure_ids": [
+        "ACCESS2",
+        "BPHIGH",
+        "CSMOKING",
+        "HIGHCHOL",
+        "LPA",
+        "OBESITY"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            9.3,
+            13.3
+          ],
+          "estimate_pct": 11.2
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            42.0,
+            50.6
+          ],
+          "estimate_pct": 46.3
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            7.5,
+            9.3
+          ],
+          "estimate_pct": 8.4
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            77.1,
+            83.6
+          ],
+          "estimate_pct": 80.5
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            17.2,
+            23.0
+          ],
+          "estimate_pct": 20.0
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            39.2,
+            48.2
+          ],
+          "estimate_pct": 43.7
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            28.1,
+            37.9
+          ],
+          "estimate_pct": 32.9
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            36.0,
+            51.5
+          ],
+          "estimate_pct": 43.7
+        }
+      },
+      "year": "2023"
+    },
+    {
+      "census_tract": "01001021100",
+      "chd_above_county_tract_median": true,
+      "chd_interval_entirely_above_median": true,
+      "conservative_signal_count": 5,
+      "conservative_signal_measure_ids": [
+        "ACCESS2",
+        "BPHIGH",
+        "CSMOKING",
+        "LPA",
+        "OBESITY"
+      ],
+      "context_signal_count": 6,
+      "context_signal_measure_ids": [
+        "ACCESS2",
+        "BPHIGH",
+        "CSMOKING",
+        "HIGHCHOL",
+        "LPA",
+        "OBESITY"
+      ],
+      "estimates": {
+        "ACCESS2": {
+          "confidence_interval_pct": [
+            10.4,
+            14.3
+          ],
+          "estimate_pct": 12.2
+        },
+        "BPHIGH": {
+          "confidence_interval_pct": [
+            49.9,
+            58.4
+          ],
+          "estimate_pct": 54.3
+        },
+        "CHD": {
+          "confidence_interval_pct": [
+            9.0,
+            11.0
+          ],
+          "estimate_pct": 10.0
+        },
+        "CHECKUP": {
+          "confidence_interval_pct": [
+            80.5,
+            86.2
+          ],
+          "estimate_pct": 83.5
+        },
+        "CSMOKING": {
+          "confidence_interval_pct": [
+            18.6,
+            24.2
+          ],
+          "estimate_pct": 21.3
+        },
+        "HIGHCHOL": {
+          "confidence_interval_pct": [
+            40.5,
+            49.3
+          ],
+          "estimate_pct": 45.0
+        },
+        "LPA": {
+          "confidence_interval_pct": [
+            34.3,
+            44.7
+          ],
+          "estimate_pct": 39.5
+        },
+        "OBESITY": {
+          "confidence_interval_pct": [
+            41.1,
+            56.8
+          ],
+          "estimate_pct": 49.1
+        }
+      },
+      "year": "2023"
+    }
+  ],
+  "vsd_contribution": [
+    "Discovery maps packaged reviewed integrations to concrete ToolUniverse tool names.",
+    "The CDC adapter exposes one fixed eight-measure heart-health contract rather than an arbitrary measure proxy.",
+    "CDC responses are checked for reviewed measure IDs and names, county containment, unique tract-measure pairs, percentage bounds, and confidence-interval ordering.",
+    "The shared transport pins a vetted public address, validates TLS hostname and peer, rejects redirects and encoded bodies, and caps responses at 1 MB.",
+    "Each VSD result carries endpoint, exact query, retrieval time, media type, size, redirect count, and payload hash.",
+    "Mutable registration and generic JSON querying remain in the explicit administration CLI, outside the agent tool surface."
+  ],
+  "vsd_provenance": [
+    {
+      "content_type": "application/json;charset=utf-8",
+      "endpoint": "https://chronicdata.cdc.gov/resource/cwsq-ngmh.json",
+      "http_status": 200,
+      "payload_sha256": "f09485a58f25e14b3cf40c9fec10dd942c26247a6d252aceaae4d4e97d43122a",
+      "provider": "CDC PLACES",
+      "query_params": {
+        "$limit": 500,
+        "$order": "locationname ASC,measureid ASC",
+        "$select": "year,stateabbr,countyname,locationname,measure,measureid,data_value,low_confidence_limit,high_confidence_limit",
+        "$where": "stateabbr='AL' AND countyname='Autauga' AND measureid in('ACCESS2','BPHIGH','CHD','CHECKUP','CSMOKING','HIGHCHOL','LPA','OBESITY')"
+      },
+      "redirects": 0,
+      "response_bytes": 33390,
+      "retrieved_at": "2026-08-01T00:11:12.290490+00:00"
+    },
+    {
+      "content_type": "application/json; charset=utf-8",
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "http_status": 200,
+      "payload_sha256": "aa3a391272c7b9be4ef6bd8714395cfbf14cef480fd65a0858f9046cd728ef00",
+      "provider": "openFDA Drug Labels",
+      "query_params": {
+        "limit": 1,
+        "search": "set_id:\"0058175f-3474-40c3-a046-6cfaec86d84b\""
+      },
+      "redirects": 0,
+      "response_bytes": 8944,
+      "retrieved_at": "2026-08-01T00:11:12.758912+00:00"
+    },
+    {
+      "content_type": "application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8",
+      "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
+      "http_status": 200,
+      "payload_sha256": "49136dfd464ecaad2c2a530d0524316f19a62201e2c35c772da9a959b5e61d3c",
+      "provider": "WHO Global Health Observatory",
+      "query_params": {
+        "$filter": "IndicatorCode eq 'NCD_HYP_DIAGNOSIS_C'",
+        "$select": "IndicatorCode,IndicatorName,Language",
+        "$top": 1
+      },
+      "redirects": 0,
+      "response_bytes": 281,
+      "retrieved_at": "2026-08-01T00:11:12.426602+00:00"
+    }
+  ]
+}

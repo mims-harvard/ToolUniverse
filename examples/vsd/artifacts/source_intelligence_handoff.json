@@ -1,0 +1,89 @@
+{
+  "candidates": [
+    {
+      "candidate_id": "3749e161339371d5",
+      "coverage": "candidate_gap",
+      "evidence": "contract_path_marker",
+      "execution_allowed": false,
+      "existing_tools": [],
+      "format_hint": "asyncapi",
+      "quality_score": 70,
+      "snapshot_content_sha256": "579c0a9a5485da13aac72cdb0b35d211b9f1e4463705afd7d077f12e6f23a75f",
+      "trusted_source_id": "dandi_archive",
+      "url": "https://api.dandiarchive.org/events/asyncapi.yaml"
+    },
+    {
+      "candidate_id": "8b0a9dd92107d112",
+      "coverage": "candidate_gap",
+      "evidence": "contract_suffix",
+      "execution_allowed": false,
+      "existing_tools": [],
+      "format_hint": "graphql",
+      "quality_score": 70,
+      "snapshot_content_sha256": "eaa8cb16c26b7af45b604bcc55c76bd16cbc9000aa234c8f2edd9aba327e9f4f",
+      "trusted_source_id": "dandi_archive",
+      "url": "https://api.dandiarchive.org/graphql/schema.graphql"
+    },
+    {
+      "candidate_id": "4e2d86e79f94e047",
+      "coverage": "existing_host",
+      "evidence": "contract_path_marker",
+      "execution_allowed": false,
+      "existing_tools": [
+        "NIHReporterExistingSearch"
+      ],
+      "format_hint": "openapi",
+      "quality_score": 50,
+      "snapshot_content_sha256": "874344ec88a00e80e6b302f8735293630d6dd2c9b3fdc3a904551868718cf72d",
+      "trusted_source_id": "nih_reporter",
+      "url": "https://api.reporter.nih.gov/openapi.json"
+    }
+  ],
+  "created_at": "2026-08-01T14:00:00+00:00",
+  "demand_export_sha256": "efe13eee4861211f8ff2383478b32e5b0de456a4237562fef770715fdc1e45fc",
+  "demand_proposals": [
+    {
+      "capability": {
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [
+          "dandiset_id",
+          "asset_id",
+          "project_id"
+        ],
+        "provider": "api.dandiarchive.org",
+        "required_inputs": [
+          "disease_term",
+          "species",
+          "recording_modality"
+        ]
+      },
+      "observation_counts": {
+        "exact": 0,
+        "missing": 1,
+        "partial": 0
+      },
+      "priority_score": 5,
+      "proposal_id": "724259ac7d2d2c9a",
+      "public_summary": "Connect ALS neurophysiology datasets to relevant funded research projects",
+      "recommended_next_step": "review_external_api_candidates",
+      "total_observations": 1,
+      "unmet_rate": 1.0
+    }
+  ],
+  "execution_allowed": false,
+  "format": "vsd_core_handoff_v1",
+  "handoff_id": "2312428011d08e04",
+  "handoff_sha256": "2312428011d08e040d1812e11de155dbdf99d8e1bd1d09513f09ac8c0d567d58",
+  "review": {
+    "consent": true,
+    "decision_note": "Reviewed trusted-source evidence, duplicate coverage, snapshots, and unmet demand.",
+    "reviewed_by": "VSD Case Study Maintainer"
+  },
+  "scan_ids": [
+    "25ba684cf3544994",
+    "4d9e31584292849c"
+  ],
+  "transmission": "none; this sanitized bundle is local until submit_core_handoff is called with confirm=True",
+  "version": 1
+}

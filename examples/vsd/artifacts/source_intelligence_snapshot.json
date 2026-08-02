@@ -1,0 +1,453 @@
+{
+  "answer": "Yes. The bounded scan separated an already configured RePORTER host from a DANDI capability gap, found seven contract formats, preserved robots and host boundaries, inspected content-addressed snapshots locally, and prepared a consent-bound core-team handoff linked to sanitized unmet demand.",
+  "audit_sha256": "77f1c2387067a7d99252ca5625688cc9634c68f972fa0bb292f960de9962a268",
+  "case_results": [
+    {
+      "case_id": "catalog_boundary",
+      "proof": "50 authoritative entries permit discovery but never execution or registration",
+      "result": "passed"
+    },
+    {
+      "case_id": "real_registry_audit",
+      "proof": "2744 configured tools and 259 configured hosts plus 586 source-code hosts were inventoried",
+      "result": "passed"
+    },
+    {
+      "case_id": "existing_source_detection",
+      "proof": "the controlled RePORTER host is marked existing with its exact tool name",
+      "result": "passed"
+    },
+    {
+      "case_id": "candidate_gap_detection",
+      "proof": "the DANDI host remains a candidate gap instead of being treated as covered",
+      "result": "passed"
+    },
+    {
+      "case_id": "bounded_multihost_crawl",
+      "proof": "two explicit hosts yielded seven unique contract leads within page/depth/byte limits",
+      "result": "passed"
+    },
+    {
+      "case_id": "robots_and_ssrf_boundary",
+      "proof": "one private path was excluded and cross-host/query traps were never fetched",
+      "result": "passed"
+    },
+    {
+      "case_id": "multiformat_discovery",
+      "proof": "OpenAPI, GraphQL, AsyncAPI, Postman, WSDL, protobuf, and MCP were detected",
+      "result": "passed"
+    },
+    {
+      "case_id": "content_addressed_snapshot",
+      "proof": "all seven selected documents were saved under verified SHA-256 filenames",
+      "result": "passed"
+    },
+    {
+      "case_id": "local_contract_inspection",
+      "proof": "every snapshot produced inert operation candidates through the contract boundary",
+      "result": "passed"
+    },
+    {
+      "case_id": "cron_history",
+      "proof": "two timestamped scans produced separate tamper-detecting local history records",
+      "result": "passed"
+    },
+    {
+      "case_id": "explicit_core_handoff",
+      "proof": "three reviewed leads and one sanitized demand proposal were rendered without submission",
+      "result": "passed"
+    }
+  ],
+  "case_study": "ALS trusted-source intelligence and review handoff",
+  "controlled_duplicate_demo": {
+    "added_tool": "NIHReporterExistingSearch",
+    "candidate_gap": {
+      "coverage": "candidate_gap",
+      "domain": "api.dandiarchive.org",
+      "existing_tools": [],
+      "source_id": "dandi_archive"
+    },
+    "existing_source": {
+      "coverage": "existing_host",
+      "domain": "api.reporter.nih.gov",
+      "existing_tools": [
+        "NIHReporterExistingSearch"
+      ],
+      "source_id": "nih_reporter"
+    }
+  },
+  "cron_history": {
+    "content_candidates_stable": true,
+    "report_files": [
+      "source-scan-4d9e31584292849c.json",
+      "source-scan-25ba684cf3544994.json"
+    ],
+    "scan_ids": [
+      "4d9e31584292849c",
+      "25ba684cf3544994"
+    ]
+  },
+  "demand_handoff": {
+    "candidate_ids": [
+      "3749e161339371d5",
+      "8b0a9dd92107d112",
+      "4e2d86e79f94e047"
+    ],
+    "handoff_file": "core-handoff.json",
+    "handoff_id": "2312428011d08e04",
+    "issue_title": "VSD source candidates: 3 reviewed leads (2312428011d08e04)",
+    "priority_score": 5,
+    "proposal_id": "724259ac7d2d2c9a",
+    "public_summary": "Connect ALS neurophysiology datasets to relevant funded research projects",
+    "submitted": false
+  },
+  "end_to_end_assertions": {
+    "all_cases_pass": true,
+    "all_formats_found": true,
+    "baseline_catalog_domains_are_current_gaps": true,
+    "catalog_has_exactly_50_sources": true,
+    "catalog_has_no_literal_source_host_collision": true,
+    "catalog_never_executes": true,
+    "dandi_baseline_is_not_configured": true,
+    "dandi_candidates_are_gaps": true,
+    "external_trap_not_visited": true,
+    "handoff_has_demand_provenance": true,
+    "handoff_never_executes": true,
+    "handoff_remains_local": true,
+    "handoff_selects_three_candidates": true,
+    "history_contains_two_scans": true,
+    "inspection_never_executes": true,
+    "issue_preview_not_submitted": true,
+    "one_robots_path_blocked": true,
+    "query_trap_not_visited": true,
+    "reporter_baseline_is_not_configured": true,
+    "reporter_candidate_is_existing": true,
+    "review_inventory_detects_reporter": true,
+    "review_inventory_keeps_dandi_gap": true,
+    "review_inventory_names_existing_tool": true,
+    "sanitized_demand_exported": true,
+    "seven_contract_leads_found": true,
+    "seven_inspections_completed": true,
+    "seven_snapshots_created": true,
+    "snapshot_digests_are_unique": true
+  },
+  "inspection_summary": [
+    {
+      "blocked_operation_count": 0,
+      "execution_allowed": false,
+      "inspection_format": "vsd_contract_inspection_v1",
+      "operation_candidate_count": 1,
+      "source_candidate_id": "6c8bde3aca1532fe",
+      "source_document_sha256": "39c915c85d0c6a0d4198591dd11849f2356290927317330abb4eb7a7d482adc4",
+      "source_format": "mcp"
+    },
+    {
+      "blocked_operation_count": 1,
+      "execution_allowed": false,
+      "inspection_format": "vsd_contract_inspection_v1",
+      "operation_candidate_count": 1,
+      "source_candidate_id": "0bcde98740a1cb68",
+      "source_document_sha256": "431b094e9b7e21d8ffd15b8a8c24d2d7f19cd3d24a527aaafb0acedee0c54b8a",
+      "source_format": "postman"
+    },
+    {
+      "blocked_operation_count": 1,
+      "execution_allowed": false,
+      "inspection_format": "vsd_contract_inspection_v1",
+      "operation_candidate_count": 1,
+      "source_candidate_id": "3749e161339371d5",
+      "source_document_sha256": "579c0a9a5485da13aac72cdb0b35d211b9f1e4463705afd7d077f12e6f23a75f",
+      "source_format": "asyncapi"
+    },
+    {
+      "blocked_operation_count": 0,
+      "execution_allowed": false,
+      "inspection_format": "vsd_contract_inspection_v1",
+      "operation_candidate_count": 2,
+      "source_candidate_id": "8b0a9dd92107d112",
+      "source_document_sha256": "eaa8cb16c26b7af45b604bcc55c76bd16cbc9000aa234c8f2edd9aba327e9f4f",
+      "source_format": "graphql"
+    },
+    {
+      "blocked_operation_count": 2,
+      "execution_allowed": false,
+      "inspection_format": "vsd_contract_inspection_v1",
+      "operation_candidate_count": 2,
+      "source_candidate_id": "2b085d7534524eec",
+      "source_document_sha256": "2bbc7a5a41c5b356c4f729ebd884cf8ceeac1408f04bfaef5fd724382b13e5fb",
+      "source_format": "protobuf"
+    },
+    {
+      "blocked_operation_count": 1,
+      "execution_allowed": false,
+      "inspection_format": "vsd_contract_inspection_v1",
+      "operation_candidate_count": 1,
+      "source_candidate_id": "337c09bea9551a8b",
+      "source_document_sha256": "4b06d56daff90719ccf4959deef3343e7ebc32f00287b38beff198e847fe932b",
+      "source_format": "wsdl"
+    },
+    {
+      "blocked_operation_count": 0,
+      "execution_allowed": false,
+      "inspection_format": "vsd_openapi_inspection_v1",
+      "operation_candidate_count": 1,
+      "source_candidate_id": "4e2d86e79f94e047",
+      "source_document_sha256": "874344ec88a00e80e6b302f8735293630d6dd2c9b3fdc3a904551868718cf72d",
+      "source_format": "openapi"
+    }
+  ],
+  "real_registry_baseline": {
+    "catalog_existing_host_count": 0,
+    "catalog_gap_count": 50,
+    "host_count": 259,
+    "literal_catalog_collisions": [],
+    "literal_https_host_count": 586,
+    "registry_sha256": "160e86e787c5ac7555965b707b0bd094edadf00fec67cab5a2a649826181b63f",
+    "tool_count": 2744
+  },
+  "research_question": "Can ToolUniverse identify interfaces needed to connect ALS funding evidence with neurophysiology datasets without duplicating existing sources or silently installing discovered operations?",
+  "scan_summary": {
+    "allowed_hosts": [
+      "api.dandiarchive.org",
+      "api.reporter.nih.gov"
+    ],
+    "blocked_count": 1,
+    "blocked_urls": [
+      "https://api.dandiarchive.org/private/internal.openapi.json"
+    ],
+    "candidate_count": 7,
+    "candidate_gap_count": 6,
+    "candidates": [
+      {
+        "approval_state": "unreviewed_source_candidate",
+        "candidate_id": "6c8bde3aca1532fe",
+        "candidate_sha256": "6c8bde3aca1532fef68c979cc081ac241a97eb1d7cbe38b2d7011d03cb5ec749",
+        "coverage": "candidate_gap",
+        "discovered_from": "https://api.dandiarchive.org/portal",
+        "evidence": "contract_suffix",
+        "execution_allowed": false,
+        "existing_tools": [],
+        "format_hint": "mcp",
+        "host": "api.dandiarchive.org",
+        "quality_score": 70,
+        "trusted_source_id": "dandi_archive",
+        "url": "https://api.dandiarchive.org/.well-known/dandi.mcp.json"
+      },
+      {
+        "approval_state": "unreviewed_source_candidate",
+        "candidate_id": "0bcde98740a1cb68",
+        "candidate_sha256": "0bcde98740a1cb6839ec7c3c024ca483bfe7297526ebb4bda9f733e3db849211",
+        "coverage": "candidate_gap",
+        "discovered_from": "https://api.dandiarchive.org/portal",
+        "evidence": "contract_suffix",
+        "execution_allowed": false,
+        "existing_tools": [],
+        "format_hint": "postman",
+        "host": "api.dandiarchive.org",
+        "quality_score": 70,
+        "trusted_source_id": "dandi_archive",
+        "url": "https://api.dandiarchive.org/collections/als.postman_collection.json"
+      },
+      {
+        "approval_state": "unreviewed_source_candidate",
+        "candidate_id": "3749e161339371d5",
+        "candidate_sha256": "3749e161339371d50922a4653b6c55c6bb352b0002095c928a702ae2c1749200",
+        "coverage": "candidate_gap",
+        "discovered_from": "https://api.dandiarchive.org/portal",
+        "evidence": "contract_path_marker",
+        "execution_allowed": false,
+        "existing_tools": [],
+        "format_hint": "asyncapi",
+        "host": "api.dandiarchive.org",
+        "quality_score": 70,
+        "trusted_source_id": "dandi_archive",
+        "url": "https://api.dandiarchive.org/events/asyncapi.yaml"
+      },
+      {
+        "approval_state": "unreviewed_source_candidate",
+        "candidate_id": "8b0a9dd92107d112",
+        "candidate_sha256": "8b0a9dd92107d11229d8137ab52c889a8cd19150aa2c7630294b864fb95f7e2b",
+        "coverage": "candidate_gap",
+        "discovered_from": "https://api.dandiarchive.org/portal",
+        "evidence": "contract_suffix",
+        "execution_allowed": false,
+        "existing_tools": [],
+        "format_hint": "graphql",
+        "host": "api.dandiarchive.org",
+        "quality_score": 70,
+        "trusted_source_id": "dandi_archive",
+        "url": "https://api.dandiarchive.org/graphql/schema.graphql"
+      },
+      {
+        "approval_state": "unreviewed_source_candidate",
+        "candidate_id": "2b085d7534524eec",
+        "candidate_sha256": "2b085d7534524eeca02b2aa6dd01f90994b822855e6c76a825416dcd9d1dfb53",
+        "coverage": "candidate_gap",
+        "discovered_from": "https://api.dandiarchive.org/portal",
+        "evidence": "contract_suffix",
+        "execution_allowed": false,
+        "existing_tools": [],
+        "format_hint": "protobuf",
+        "host": "api.dandiarchive.org",
+        "quality_score": 70,
+        "trusted_source_id": "dandi_archive",
+        "url": "https://api.dandiarchive.org/grpc/dandisets.proto"
+      },
+      {
+        "approval_state": "unreviewed_source_candidate",
+        "candidate_id": "337c09bea9551a8b",
+        "candidate_sha256": "337c09bea9551a8b936888a77bf29cc71fc3767230feaaff3dab96b122bde9b4",
+        "coverage": "candidate_gap",
+        "discovered_from": "https://api.dandiarchive.org/portal",
+        "evidence": "contract_suffix",
+        "execution_allowed": false,
+        "existing_tools": [],
+        "format_hint": "wsdl",
+        "host": "api.dandiarchive.org",
+        "quality_score": 70,
+        "trusted_source_id": "dandi_archive",
+        "url": "https://api.dandiarchive.org/soap/archive.wsdl"
+      },
+      {
+        "approval_state": "unreviewed_source_candidate",
+        "candidate_id": "4e2d86e79f94e047",
+        "candidate_sha256": "4e2d86e79f94e047d0c94e252cfa74ecc9f35aca4c6ff692a75add58213cb210",
+        "coverage": "existing_host",
+        "discovered_from": "https://api.reporter.nih.gov/developer",
+        "evidence": "contract_path_marker",
+        "execution_allowed": false,
+        "existing_tools": [
+          "NIHReporterExistingSearch"
+        ],
+        "format_hint": "openapi",
+        "host": "api.reporter.nih.gov",
+        "quality_score": 50,
+        "trusted_source_id": "nih_reporter",
+        "url": "https://api.reporter.nih.gov/openapi.json"
+      }
+    ],
+    "execution_allowed": false,
+    "existing_host_count": 1,
+    "limits": {
+      "max_depth": 2,
+      "max_page_bytes": 500000,
+      "max_pages": 20,
+      "max_total_bytes": 4000000,
+      "timeout_seconds": 15
+    },
+    "pages_fetched": 9,
+    "pages_visited": 9,
+    "response_bytes": 4322,
+    "robots_status": {
+      "api.dandiarchive.org": "loaded",
+      "api.reporter.nih.gov": "loaded"
+    },
+    "scan_id": "4d9e31584292849c",
+    "scan_sha256": "4d9e31584292849cda2348c587c5b664a2f0862897c32fe3f3e18e690b97c813",
+    "seeds": [
+      "https://api.dandiarchive.org/portal",
+      "https://api.reporter.nih.gov/developer"
+    ],
+    "transmission": "none; scan is local until an administrator prepares and explicitly submits a reviewed handoff"
+  },
+  "snapshot_manifests": [
+    {
+      "approval_state": "local_unreviewed_snapshot",
+      "candidate_id": "6c8bde3aca1532fe",
+      "content_sha256": "39c915c85d0c6a0d4198591dd11849f2356290927317330abb4eb7a7d482adc4",
+      "execution_allowed": false,
+      "format": "vsd_source_snapshot_v1",
+      "format_hint": "mcp",
+      "response_bytes": 176,
+      "scan_id": "4d9e31584292849c",
+      "snapshot_file": "39c915c85d0c6a0d4198591dd11849f2356290927317330abb4eb7a7d482adc4.mcp.json",
+      "snapshot_sha256": "7b51722f8880e9b358104f868dca15cabd37e8db212b21538eac159973b09737",
+      "source_url": "https://api.dandiarchive.org/.well-known/dandi.mcp.json",
+      "version": 1
+    },
+    {
+      "approval_state": "local_unreviewed_snapshot",
+      "candidate_id": "0bcde98740a1cb68",
+      "content_sha256": "431b094e9b7e21d8ffd15b8a8c24d2d7f19cd3d24a527aaafb0acedee0c54b8a",
+      "execution_allowed": false,
+      "format": "vsd_source_snapshot_v1",
+      "format_hint": "postman",
+      "response_bytes": 387,
+      "scan_id": "4d9e31584292849c",
+      "snapshot_file": "431b094e9b7e21d8ffd15b8a8c24d2d7f19cd3d24a527aaafb0acedee0c54b8a.postman_collection.json",
+      "snapshot_sha256": "98f90ccfba73f07593b66a8dc724af3b777b053477cfc280a4737c76378df060",
+      "source_url": "https://api.dandiarchive.org/collections/als.postman_collection.json",
+      "version": 1
+    },
+    {
+      "approval_state": "local_unreviewed_snapshot",
+      "candidate_id": "3749e161339371d5",
+      "content_sha256": "579c0a9a5485da13aac72cdb0b35d211b9f1e4463705afd7d077f12e6f23a75f",
+      "execution_allowed": false,
+      "format": "vsd_source_snapshot_v1",
+      "format_hint": "asyncapi",
+      "response_bytes": 662,
+      "scan_id": "4d9e31584292849c",
+      "snapshot_file": "579c0a9a5485da13aac72cdb0b35d211b9f1e4463705afd7d077f12e6f23a75f.asyncapi.yaml",
+      "snapshot_sha256": "c023748686d128b7e5006a5b438f91b183cf7bcf7e8d148eb080d531ee8a8082",
+      "source_url": "https://api.dandiarchive.org/events/asyncapi.yaml",
+      "version": 1
+    },
+    {
+      "approval_state": "local_unreviewed_snapshot",
+      "candidate_id": "8b0a9dd92107d112",
+      "content_sha256": "eaa8cb16c26b7af45b604bcc55c76bd16cbc9000aa234c8f2edd9aba327e9f4f",
+      "execution_allowed": false,
+      "format": "vsd_source_snapshot_v1",
+      "format_hint": "graphql",
+      "response_bytes": 460,
+      "scan_id": "4d9e31584292849c",
+      "snapshot_file": "eaa8cb16c26b7af45b604bcc55c76bd16cbc9000aa234c8f2edd9aba327e9f4f.graphql",
+      "snapshot_sha256": "260eb9ae5183031da2cab30f1afb0a2a6aa223e9fe0e4a5cca5b74310ca22fe7",
+      "source_url": "https://api.dandiarchive.org/graphql/schema.graphql",
+      "version": 1
+    },
+    {
+      "approval_state": "local_unreviewed_snapshot",
+      "candidate_id": "2b085d7534524eec",
+      "content_sha256": "2bbc7a5a41c5b356c4f729ebd884cf8ceeac1408f04bfaef5fd724382b13e5fb",
+      "execution_allowed": false,
+      "format": "vsd_source_snapshot_v1",
+      "format_hint": "protobuf",
+      "response_bytes": 377,
+      "scan_id": "4d9e31584292849c",
+      "snapshot_file": "2bbc7a5a41c5b356c4f729ebd884cf8ceeac1408f04bfaef5fd724382b13e5fb.proto",
+      "snapshot_sha256": "5a71a08f43b150594123b0c714e3f87673e96ad37867b3f35a0bed4aec177eb9",
+      "source_url": "https://api.dandiarchive.org/grpc/dandisets.proto",
+      "version": 1
+    },
+    {
+      "approval_state": "local_unreviewed_snapshot",
+      "candidate_id": "337c09bea9551a8b",
+      "content_sha256": "4b06d56daff90719ccf4959deef3343e7ebc32f00287b38beff198e847fe932b",
+      "execution_allowed": false,
+      "format": "vsd_source_snapshot_v1",
+      "format_hint": "wsdl",
+      "response_bytes": 775,
+      "scan_id": "4d9e31584292849c",
+      "snapshot_file": "4b06d56daff90719ccf4959deef3343e7ebc32f00287b38beff198e847fe932b.wsdl",
+      "snapshot_sha256": "354432c420558fd173965423b3100d3e1960a9302b3aab3d3e04677d91e31fb1",
+      "source_url": "https://api.dandiarchive.org/soap/archive.wsdl",
+      "version": 1
+    },
+    {
+      "approval_state": "local_unreviewed_snapshot",
+      "candidate_id": "4e2d86e79f94e047",
+      "content_sha256": "874344ec88a00e80e6b302f8735293630d6dd2c9b3fdc3a904551868718cf72d",
+      "execution_allowed": false,
+      "format": "vsd_source_snapshot_v1",
+      "format_hint": "openapi",
+      "response_bytes": 717,
+      "scan_id": "4d9e31584292849c",
+      "snapshot_file": "874344ec88a00e80e6b302f8735293630d6dd2c9b3fdc3a904551868718cf72d.openapi.json",
+      "snapshot_sha256": "26e65e31e0753fb6ff97faee3bc63d7c2cef05039462a3a58721b3739f777841",
+      "source_url": "https://api.reporter.nih.gov/openapi.json",
+      "version": 1
+    }
+  ]
+}

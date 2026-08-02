@@ -239,6 +239,35 @@
             "type": "string"
           },
           "description": "Optional list of tool categories to filter by"
+        },
+        "include_capability_coverage": {
+          "type": "boolean",
+          "default": false,
+          "description": "Return local VSD exact, partial, or missing coverage with the keyword results."
+        },
+        "capability_request": {
+          "type": "object",
+          "description": "Optional structured VSD capability fields; description defaults to the finder query.",
+          "properties": {
+            "description": {"type": "string", "minLength": 3, "maxLength": 500},
+            "provider": {"type": "string", "minLength": 3, "maxLength": 500},
+            "method": {"type": "string", "enum": ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"]},
+            "endpoint": {"type": "string"},
+            "operation_id": {"type": "string"},
+            "required_inputs": {
+              "type": "array",
+              "maxItems": 20,
+              "uniqueItems": true,
+              "items": {"type": "string"}
+            },
+            "output_fields": {
+              "type": "array",
+              "maxItems": 20,
+              "uniqueItems": true,
+              "items": {"type": "string"}
+            }
+          },
+          "additionalProperties": false
         }
       },
       "required": [
@@ -267,11 +296,21 @@
       }
     ],
     "return_schema": {
-      "type": "array",
-      "description": "List of matching tools (name, description, parameter schema), ranked by keyword relevance.",
-      "items": {
-        "type": "object"
-      }
+      "description": "Matching tools, or structured keyword results with VSD capability coverage when requested.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"type": "object"}
+        },
+        {
+          "type": "object",
+          "properties": {
+            "tools": {"type": "array", "items": {"type": "object"}},
+            "capability_coverage": {"type": "object"}
+          },
+          "required": ["tools", "capability_coverage"]
+        }
+      ]
     }
   }
 ]

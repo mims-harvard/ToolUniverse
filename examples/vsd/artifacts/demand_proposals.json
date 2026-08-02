@@ -1,0 +1,60 @@
+{
+  "created_at": "2026-08-07T12:00:00+00:00",
+  "export_sha256": "fcec4c64b6522d01a6919133c98f8a347eb6b3eb23d4781ee1a3e593502aaec8",
+  "proposals": [
+    {
+      "capability": {
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [
+          "calibration_report"
+        ],
+        "provider": "",
+        "required_inputs": [
+          "instrument_id"
+        ]
+      },
+      "observation_counts": {
+        "exact": 0,
+        "missing": 3,
+        "partial": 0
+      },
+      "priority_score": 15,
+      "proposal_id": "332f9444843c672c",
+      "public_summary": "Quantitative microscopy calibration for ALS research workflows",
+      "recommended_next_step": "review_external_api_candidates",
+      "total_observations": 3,
+      "unmet_rate": 1.0
+    },
+    {
+      "capability": {
+        "method": "GET",
+        "operation_id": "",
+        "output_fields": [
+          "calibration_report"
+        ],
+        "provider": "",
+        "required_inputs": [
+          "instrument_id"
+        ]
+      },
+      "observation_counts": {
+        "exact": 0,
+        "missing": 2,
+        "partial": 0
+      },
+      "priority_score": 10,
+      "proposal_id": "2540259f913360b4",
+      "public_summary": "Traceable adaptive-optics retinal imaging calibration for research workflows",
+      "recommended_next_step": "review_external_api_candidates",
+      "total_observations": 2,
+      "unmet_rate": 1.0
+    }
+  ],
+  "review": {
+    "decision_note": "Selected the two highest repeated unmet capabilities after local review.",
+    "reviewed_by": "VSD Case Study Maintainer"
+  },
+  "transmission": "none; this file was written locally for explicit human review",
+  "version": 1
+}

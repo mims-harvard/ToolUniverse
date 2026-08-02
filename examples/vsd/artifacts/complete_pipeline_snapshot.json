@@ -1,0 +1,1071 @@
+{
+  "administrative_source_lifecycle": {
+    "boundary": "Registration and generic querying occurred only through the administrator CLI. They did not publish an agent-facing tool.",
+    "catalog_restored": true,
+    "endpoint": "https://api.fda.gov/drug/label.json",
+    "final_source_ids": [],
+    "initial_source_ids": [],
+    "listed_source_ids": [
+      "openfda_tamoxifen_review"
+    ],
+    "preexisting_source_removed": false,
+    "query": {
+      "content_type": "application/json; charset=utf-8",
+      "default_params": {
+        "limit": 1,
+        "search": "openfda.generic_name:\"tamoxifen\""
+      },
+      "http_status": 200,
+      "normalized_payload_sha256": "2c0606a1fceec256c19de248ff4eae11fe3b677487e6792542feec89dc34c018",
+      "provider_total_records": 14,
+      "redirects": 0,
+      "response_bytes": 171971,
+      "returned_records": 1,
+      "selected_set_id": "1e6ff055-590c-41e6-9530-1fdf04cdbd02"
+    },
+    "registered": true,
+    "registration_probe": {
+      "content_type": "application/json; charset=utf-8",
+      "peer_ip": "2600:1f12:18a:7d00:e3f9:f180:329:aeba",
+      "redirects": 0,
+      "response_bytes": 171971,
+      "result_type": "dict",
+      "status_code": 200,
+      "url": "https://api.fda.gov/drug/label.json"
+    },
+    "removed": true,
+    "source_id": "openfda_tamoxifen_review"
+  },
+  "audit_chain": {
+    "inputs": {
+      "admin_query_payload": "2c0606a1fceec256c19de248ff4eae11fe3b677487e6792542feec89dc34c018",
+      "discovery_payload": "4cdc9fcc7d7c494b259af4af4209b7d6a70b46fb3830e3c96b92eedafbea2ed7",
+      "dynamic_contracts": [
+        "6f4f8cba84e65c6432da167929386a18d4b137a89065678fbdad274c72f8880c",
+        "77c4c98fd5977836777fb792767a331995a69b39b024a9424f0e48e4bed9ef1d"
+      ],
+      "dynamic_payloads": [
+        "8344bbd862b6d367d93adc81145b249bb84bfe875dfd84b6cde35ca10bdeb161",
+        "9301d45041fa287bc00dd47ae55320bc0f8a0a064f63f441ab7230b21b799afe"
+      ],
+      "promotion_chains": [
+        {
+          "approval_sha256": "f54da18517d7960ed1308531bd5cea0b93e708dcaffbefead9e1e46c021f44c0",
+          "draft_sha256": "28bfd3429e704ebaeb16038f199491536822fe1098ac6b1619013c81934cd770",
+          "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+          "publication_sha256": "74ca9fe294424567af57f5da4e6cb3c6e325bd4b8caa0c01440140735e4e03bc",
+          "verification_sha256": "318d81ea17d38bcf3094d92855d87785533ebfeb8fec74d639e841a3a8221d05"
+        },
+        {
+          "approval_sha256": "8b917cb80250323d0cb704024c4cfe9a357a141e2dd6437fe0a27aabf31860d6",
+          "draft_sha256": "1118f91aaa25b923cebbb0e4de34954570409faf0d45bdb3410ce26d30aae86f",
+          "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+          "publication_sha256": "0a78f46737d17fd414645d13287e46a9241a311af177cb091091a32556b494aa",
+          "verification_sha256": "2ce8b64fbf79cc1ad747ecbf28dd222dd8a6399a4d2b51f85374f1b04475d790"
+        }
+      ],
+      "reviewed_label_payload": "adfd73ae9a40c8fae86c31cc30bed62c88a7d232cae237f9c0aba2fa6541d6d9",
+      "runtime_payloads": [
+        "5562338d7fdf189fa5ec3eecbfedadcb579778970ac266b82400116b84adb90f",
+        "322b0476c5a33b91b7eae1117283468bac557db1ac748bbf8645b4d2d8a7795d"
+      ],
+      "selected_candidate": "31dcb2ce74f62d7c"
+    },
+    "sha256": "0530702a8466da09286370a3303fbf68361074ea6543f8d86ef57d2aa7a6ebc6"
+  },
+  "case": "complete_vsd_oncology_source_governance",
+  "decision_question": "Can ToolUniverse start from an oncology evidence need, keep generic source administration outside the agent boundary, execute reviewed contracts, discover an unknown API without executing it, and promote only verified narrow tools with a complete audit chain?",
+  "demand_discovery": {
+    "boundary": "Candidates are untrusted catalog metadata. They are not approved, probed, executable, or scientific endorsements.",
+    "candidates": [
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "31dcb2ce74f62d7c",
+        "catalog_domain": "data.ny.gov",
+        "dataset_id": "2ig8-yxf8",
+        "execution_allowed": false,
+        "field_count": 7,
+        "matched_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "missing_required_fields": [],
+        "name": "Current Active Clinical Trials - Roswell Park Cancer Institute",
+        "score": 0.9,
+        "selected_for_contract_review": true
+      },
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "2139c3a85291e320",
+        "catalog_domain": "data.texas.gov",
+        "dataset_id": "6pm5-am5m",
+        "execution_allowed": false,
+        "field_count": 23,
+        "matched_required_fields": [],
+        "missing_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "name": "Texas Commission on Environmental Quality - Water Quality General Permits Active/Pending",
+        "score": 0.5563,
+        "selected_for_contract_review": false
+      },
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "997796d9182291ff",
+        "catalog_domain": "data.texas.gov",
+        "dataset_id": "7fq8-wig2",
+        "execution_allowed": false,
+        "field_count": 22,
+        "matched_required_fields": [],
+        "missing_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "name": "Texas Commission on Environmental Quality - Water Quality Individual Permits Active/Pending",
+        "score": 0.5563,
+        "selected_for_contract_review": false
+      },
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "6794128cb5ecab13",
+        "catalog_domain": "data.pa.gov",
+        "dataset_id": "e7ip-7qrs",
+        "execution_allowed": false,
+        "field_count": 45,
+        "matched_required_fields": [],
+        "missing_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "name": "Emissions Inventory System (EIS) Facilities 2017 - Current County Environmental Protection",
+        "score": 0.4875,
+        "selected_for_contract_review": false
+      },
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "d89303e87d4b1139",
+        "catalog_domain": "data.wa.gov",
+        "dataset_id": "i3e8-j9am",
+        "execution_allowed": false,
+        "field_count": 45,
+        "matched_required_fields": [],
+        "missing_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "name": "Public Health Activities and Services - 2014",
+        "score": 0.4875,
+        "selected_for_contract_review": false
+      },
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "76614a72b918e8da",
+        "catalog_domain": "cos-data.seattle.gov",
+        "dataset_id": "fg6z-cn3y",
+        "execution_allowed": false,
+        "field_count": 20,
+        "matched_required_fields": [],
+        "missing_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "name": "Public Life Data - Locations",
+        "score": 0.4875,
+        "selected_for_contract_review": false
+      },
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "63d28a35d1881a25",
+        "catalog_domain": "data.cityofchicago.org",
+        "dataset_id": "6q3z-9maq",
+        "execution_allowed": false,
+        "field_count": 16,
+        "matched_required_fields": [],
+        "missing_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "name": "COVID-19 Vaccination Locations - Historical",
+        "score": 0.4375,
+        "selected_for_contract_review": false
+      },
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "3c8b7b124fd86ee8",
+        "catalog_domain": "data.cityofnewyork.us",
+        "dataset_id": "usc3-8zwd",
+        "execution_allowed": false,
+        "field_count": 50,
+        "matched_required_fields": [],
+        "missing_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "name": "Energy and Water Data Disclosure for Local Law 84 2021 (Data for Calendar Year 2020)",
+        "score": 0.4375,
+        "selected_for_contract_review": false
+      },
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "e011e60455228196",
+        "catalog_domain": "data.cityofnewyork.us",
+        "dataset_id": "7x5e-2fxh",
+        "execution_allowed": false,
+        "field_count": 50,
+        "matched_required_fields": [],
+        "missing_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "name": "Energy and Water Data Disclosure for Local Law 84 2022 (Data for Calendar Year 2021)",
+        "score": 0.4375,
+        "selected_for_contract_review": false
+      },
+      {
+        "approval_state": "unreviewed_candidate",
+        "candidate_id": "5a7c28ed3d4c3f59",
+        "catalog_domain": "data.princegeorgescountymd.gov",
+        "dataset_id": "qzrv-2tnv",
+        "execution_allowed": false,
+        "field_count": 50,
+        "matched_required_fields": [],
+        "missing_required_fields": [
+          "date_opened",
+          "primary_site",
+          "principal_investigator",
+          "protocol",
+          "study_phase",
+          "title"
+        ],
+        "name": "Property",
+        "score": 0.4188,
+        "selected_for_contract_review": false
+      }
+    ],
+    "catalog_result_count": 13,
+    "loaded_agent_tools_after_dynamic_registration": [
+      "VSDDiscoverAPICandidates",
+      "VSDDiscoverSources",
+      "VSDOpenFDALabelBySetId",
+      "VSDTotalClinicalTrialDetails",
+      "VSDTotalClinicalTrialsSearch"
+    ],
+    "provenance": {
+      "content_type": "application/json;charset=utf-8",
+      "endpoint": "https://api.us.socrata.com/api/catalog/v1",
+      "http_status": 200,
+      "payload_sha256": "4cdc9fcc7d7c494b259af4af4209b7d6a70b46fb3830e3c96b92eedafbea2ed7",
+      "provider": "Socrata Open Data API Catalog",
+      "query_params": {
+        "limit": 30,
+        "only": "datasets",
+        "q": "active cancer clinical trials primary site phase protocol"
+      },
+      "redirects": 0,
+      "response_bytes": 586386,
+      "retrieved_at": "2026-08-01T04:31:32.923536+00:00"
+    },
+    "query": "active cancer clinical trials primary site phase protocol",
+    "returned_candidate_count": 10,
+    "selected_candidate": {
+      "api_endpoint": "https://data.ny.gov/resource/2ig8-yxf8.json",
+      "approval_state": "unreviewed_candidate",
+      "candidate_id": "31dcb2ce74f62d7c",
+      "catalog_domain": "data.ny.gov",
+      "dataset_id": "2ig8-yxf8",
+      "description": "List of active studies submitted by Roswell Park Cancer Institute (RPCI) to National Cancer Institute (NCI) annually as part of the Cancer Center Report Grant reporting. It includes the primary site, protocol, principal investigator, date opened, phase and study name.",
+      "documentation_url": "https://data.ny.gov/d/2ig8-yxf8",
+      "execution_allowed": false,
+      "fields": [
+        {
+          "description": "The unique identifier for this study. For both national and externally",
+          "field": "protocol",
+          "json_type": "string",
+          "label": "Protocol",
+          "provider_type": "Text"
+        },
+        {
+          "description": "Current phase of the study as of last dataset refresh. Phases include: Pilot, Phase I, Phase I/II, Phase II, Phase II/III and Phase III. See the attached Overview document for explanations. Not Applicable is used for epidemiologic, cancer control/behavioral, observational, ancillary, correlative or ",
+          "field": "study_phase",
+          "json_type": "string",
+          "label": "Study Phase",
+          "provider_type": "Text"
+        },
+        {
+          "description": "The primary anatomic cancer site(s) (i.e., breast, ovary) the clinical research study focuses on. Not applicable is used when the research",
+          "field": "primary_site",
+          "json_type": "string",
+          "label": "Primary Site",
+          "provider_type": "Text"
+        },
+        {
+          "description": "The name of the Principal Investigator from Center who is responsible for the Clinical Research Study",
+          "field": "principal_investigator",
+          "json_type": "string",
+          "label": "Principal Investigator",
+          "provider_type": "Text"
+        },
+        {
+          "description": "The official start date (activation) of a trial",
+          "field": "date_opened",
+          "json_type": "string",
+          "label": "Date Opened",
+          "provider_type": "Calendar date"
+        },
+        {
+          "description": "The date the clinical research study closed to accrual. If the study is still open, this field will be blank.",
+          "field": "date_closed",
+          "json_type": "string",
+          "label": "Date Closed",
+          "provider_type": "Calendar date"
+        },
+        {
+          "description": "Name of the protocol provided by the study's principal investigator",
+          "field": "title",
+          "json_type": "string",
+          "label": "Title",
+          "provider_type": "Text"
+        }
+      ],
+      "metadata_trust": "untrusted_catalog_metadata",
+      "name": "Current Active Clinical Trials - Roswell Park Cancer Institute",
+      "provenance_label": "official",
+      "score": {
+        "api_ready": 1.0,
+        "exact_phrase": 0.0,
+        "government_domain": 1.0,
+        "official_catalog_label": 1.0,
+        "query_coverage": 1.0,
+        "total": 0.9
+      },
+      "tags": [
+        "cancer study",
+        "nci",
+        "rpci"
+      ],
+      "updated_at": "2026-04-14T21:08:58.000Z"
+    },
+    "selection_rule": "Require non-executable unreviewed state, an official government API-ready catalog record, and all six demanded fields; then choose the highest score with candidate ID as the stable tie-breaker."
+  },
+  "end_to_end_assertions": {
+    "administrative_catalog_restored": true,
+    "administrative_tools_not_agent_facing": true,
+    "discovery_candidate_has_required_fields": true,
+    "discovery_candidate_remained_non_executable": true,
+    "dynamic_search_detail_identifier_match": true,
+    "fixed_adapter_matches_admin_record": true,
+    "promoted_tools_absent_before_explicit_load": true,
+    "promotion_hash_chain_complete": true,
+    "published_runtime_filters_exact": true,
+    "published_tools_loaded_explicitly": true,
+    "reviewed_source_discovered_offline": true,
+    "six_live_promotion_cases_passed": true
+  },
+  "generated_at": "2026-08-01T04:31:36.578274+00:00",
+  "interpretation_boundary": "This is a software-governance and public-record retrieval demonstration. It does not match patients to trials, establish eligibility, compare treatments, or provide medical advice. The state and national registries are independent and are not joined at record level.",
+  "reviewed_dynamic_rest": {
+    "detail_follow_up": {
+      "identifier_matches_search": true,
+      "provenance": {
+        "content_type": "application/json",
+        "endpoint": "https://clinicaltrials.gov/api/v2/studies/NCT01766297",
+        "http_status": 200,
+        "method": "GET",
+        "operation_sha256": "77c4c98fd5977836777fb792767a331995a69b39b024a9424f0e48e4bed9ef1d",
+        "payload_sha256": "9301d45041fa287bc00dd47ae55320bc0f8a0a064f63f441ab7230b21b799afe",
+        "provider": "clinicaltrials.gov",
+        "query_params": {
+          "format": "json"
+        },
+        "redirects": 0,
+        "response_bytes": 13339,
+        "retrieved_at": "2026-08-01T04:31:32.069853+00:00"
+      },
+      "selected_nct_id": "NCT01766297",
+      "selection_rule": "Lexicographically smallest valid returned NCT ID",
+      "study": {
+        "conditions": [
+          "Breast Cancer",
+          "Breast Neoplasm",
+          "Breast Tumor",
+          "Cancer of the Breast"
+        ],
+        "nct_id": "NCT01766297",
+        "new_york_locations": [
+          {
+            "city": "New York",
+            "facility": "New York Proton Center",
+            "status": "RECRUITING"
+          }
+        ],
+        "overall_status": "RECRUITING",
+        "phases": [
+          "PHASE2"
+        ],
+        "title": "Phase II Protocol of Proton Therapy for Partial Breast Irradiation in Early Stage Breast Cancer"
+      }
+    },
+    "search": {
+      "arguments": {
+        "condition": "Breast Cancer",
+        "location_query": "AREA[LocationState]New York",
+        "page_size": 20
+      },
+      "phase_counts": {
+        "NA": 2,
+        "NOT_APPLICABLE": 1,
+        "PHASE1": 2,
+        "PHASE2": 11,
+        "PHASE3": 5
+      },
+      "provenance": {
+        "content_type": "application/json",
+        "endpoint": "https://clinicaltrials.gov/api/v2/studies",
+        "http_status": 200,
+        "method": "GET",
+        "operation_sha256": "6f4f8cba84e65c6432da167929386a18d4b137a89065678fbdad274c72f8880c",
+        "payload_sha256": "8344bbd862b6d367d93adc81145b249bb84bfe875dfd84b6cde35ca10bdeb161",
+        "provider": "clinicaltrials.gov",
+        "query_params": {
+          "countTotal": "true",
+          "fields": "NCTId,BriefTitle,OverallStatus,Phase,Condition,LocationFacility,LocationCity,LocationState,LocationCountry,LocationStatus",
+          "filter.overallStatus": "RECRUITING|NOT_YET_RECRUITING|ACTIVE_NOT_RECRUITING|ENROLLING_BY_INVITATION",
+          "format": "json",
+          "pageSize": 20,
+          "query.cond": "Breast Cancer",
+          "query.locn": "AREA[LocationState]New York"
+        },
+        "redirects": 0,
+        "response_bytes": 371748,
+        "retrieved_at": "2026-08-01T04:31:31.869941+00:00"
+      },
+      "provider_total_count": 546,
+      "returned_nct_ids": [
+        "NCT05059444",
+        "NCT03384914",
+        "NCT06682793",
+        "NCT01766297",
+        "NCT04683679",
+        "NCT05104866",
+        "NCT06954337",
+        "NCT05238922",
+        "NCT04379570",
+        "NCT05382286",
+        "NCT02513394",
+        "NCT07007559",
+        "NCT03414970",
+        "NCT06840483",
+        "NCT02750358",
+        "NCT04589468",
+        "NCT05374915",
+        "NCT07483307",
+        "NCT04001829",
+        "NCT03344965"
+      ],
+      "returned_records": 20,
+      "sample_studies": [
+        {
+          "conditions": [
+            "Bladder Carcinoma",
+            "Ureter Carcinoma",
+            "Renal Pelvis Carcinoma",
+            "Non-small Cell Lung Cancer",
+            "Invasive Breast Carcinoma",
+            "Cutaneous Melanoma",
+            "Esophageal Carcinoma",
+            "Gastroesophageal Junction Carcinoma",
+            "Gastric Adenocarcinoma",
+            "Pancreatic Adenocarcinoma",
+            "Squamous Cell Carcinoma of the Head and Neck",
+            "Epithelial Ovarian Carcinoma",
+            "Fallopian Tube Carcinoma",
+            "Endometrial Carcinoma",
+            "Renal Cell Carcinoma",
+            "Rectal Adenocarcinoma"
+          ],
+          "nct_id": "NCT05059444",
+          "new_york_locations": [
+            {
+              "city": "New York",
+              "facility": "Icahn School of Medicine at Mount Sinai",
+              "status": "TERMINATED"
+            }
+          ],
+          "overall_status": "RECRUITING",
+          "phases": [],
+          "title": "ORACLE: Observation of ResiduAl Cancer With Liquid Biopsy Evaluation"
+        },
+        {
+          "conditions": [
+            "Breast Cancer Female",
+            "Breast Cancer, Male",
+            "Breast Cancer Stage I",
+            "Breast Cancer Stage II",
+            "Breast Cancer Stage III",
+            "Residual Disease",
+            "HER2-positive Breast Cancer",
+            "HER2 Positive Breast Carcinoma"
+          ],
+          "nct_id": "NCT03384914",
+          "new_york_locations": [
+            {
+              "city": "Buffalo",
+              "facility": "Roswell Park Comprehensive Cancer Center",
+              "status": null
+            }
+          ],
+          "overall_status": "ACTIVE_NOT_RECRUITING",
+          "phases": [
+            "PHASE2"
+          ],
+          "title": "Vaccine to Prevent Recurrence in Patients With HER-2 Positive Breast Cancer"
+        },
+        {
+          "conditions": [
+            "Solid Tumor, Adult",
+            "Colorectal Cancer",
+            "Non-Small Cell Lung",
+            "NSCLC (Non-small Cell Lung Cancer)",
+            "Cancer",
+            "Colon Cancer",
+            "Rectal Cancer",
+            "Lung Cancer",
+            "CRC",
+            "Head and Neck Squamous Cell Cancer",
+            "HNSCC",
+            "Renal Cell Carcinoma",
+            "RCC",
+            "Kidney Cancer",
+            "Triple Negative Breast Cancer",
+            "TNBC",
+            "Colorectal Adenocarcinoma"
+          ],
+          "nct_id": "NCT06682793",
+          "new_york_locations": [
+            {
+              "city": "New York",
+              "facility": "NYU Langone Health",
+              "status": "RECRUITING"
+            }
+          ],
+          "overall_status": "RECRUITING",
+          "phases": [
+            "PHASE1",
+            "PHASE2"
+          ],
+          "title": "A Study to Evaluate the Safety and Efficacy of A2B395, an Allogeneic Logic-gated CAR T, in Participants With Solid Tumors That Express EGFR and Have Lost HLA-A*02 Expression"
+        },
+        {
+          "conditions": [
+            "Breast Cancer",
+            "Breast Neoplasm",
+            "Breast Tumor",
+            "Cancer of the Breast"
+          ],
+          "nct_id": "NCT01766297",
+          "new_york_locations": [
+            {
+              "city": "New York",
+              "facility": "New York Proton Center",
+              "status": "RECRUITING"
+            }
+          ],
+          "overall_status": "RECRUITING",
+          "phases": [
+            "PHASE2"
+          ],
+          "title": "Phase II Protocol of Proton Therapy for Partial Breast Irradiation in Early Stage Breast Cancer"
+        },
+        {
+          "conditions": [
+            "Triple Negative Breast Cancer",
+            "TNBC - Triple-Negative Breast Cancer",
+            "Breast Cancer",
+            "Metastatic Breast Cancer"
+          ],
+          "nct_id": "NCT04683679",
+          "new_york_locations": [
+            {
+              "city": "Commack",
+              "facility": "Memorial Sloan Kettering Commack (Limited Protocol Activities)",
+              "status": "RECRUITING"
+            },
+            {
+              "city": "Harrison",
+              "facility": "Memorial Sloan Kettering Westchester (Limited Protocol Activities)",
+              "status": "RECRUITING"
+            },
+            {
+              "city": "New York",
+              "facility": "Memorial Sloan Kettering Cancer Center (All Protocol Activities)",
+              "status": "RECRUITING"
+            },
+            {
+              "city": "Uniondale",
+              "facility": "Memorial Sloan Kettering Nassau (All Protocol Activities)",
+              "status": "RECRUITING"
+            }
+          ],
+          "overall_status": "RECRUITING",
+          "phases": [
+            "PHASE2"
+          ],
+          "title": "A Study of Radiation Therapy With Pembrolizumab and Olaparib or Other Radiosensitizers in Women Who Have Triple-Negative or Hormone-Receptor Positive/Her2 Negative Breast Cancer"
+        }
+      ],
+      "status_counts": {
+        "ACTIVE_NOT_RECRUITING": 13,
+        "RECRUITING": 7
+      }
+    },
+    "tool_contracts": [
+      {
+        "endpoint": "https://clinicaltrials.gov/api/v2/studies",
+        "name": "VSDTotalClinicalTrialsSearch",
+        "operation_sha256": "6f4f8cba84e65c6432da167929386a18d4b137a89065678fbdad274c72f8880c"
+      },
+      {
+        "endpoint": "https://clinicaltrials.gov/api/v2/studies/{nctId}",
+        "name": "VSDTotalClinicalTrialDetails",
+        "operation_sha256": "77c4c98fd5977836777fb792767a331995a69b39b024a9424f0e48e4bed9ef1d"
+      }
+    ]
+  },
+  "reviewed_promotion": {
+    "loaded_tools": [
+      "VSDTotalCancerTrialsByPhase",
+      "VSDTotalCancerTrialsBySite"
+    ],
+    "promoted_tools_present_before_explicit_load": [],
+    "promotion_state": {
+      "approvals": [
+        "vsdtotalcancertrialsbyphase_df24873e96db",
+        "vsdtotalcancertrialsbysite_86a7b6f8e4f5"
+      ],
+      "approved": [
+        "VSDTotalCancerTrialsByPhase",
+        "VSDTotalCancerTrialsBySite"
+      ],
+      "drafts": [
+        "vsdtotalcancertrialsbyphase_df24873e96db",
+        "vsdtotalcancertrialsbysite_86a7b6f8e4f5"
+      ],
+      "evidence": [
+        "vsdtotalcancertrialsbyphase_df24873e96db",
+        "vsdtotalcancertrialsbysite_86a7b6f8e4f5"
+      ]
+    },
+    "promotions": [
+      {
+        "all_cases_passed": true,
+        "approval_sha256": "f54da18517d7960ed1308531bd5cea0b93e708dcaffbefead9e1e46c021f44c0",
+        "case_count": 3,
+        "cases": [
+          {
+            "arguments": {
+              "primary_site": "Brain and Nervous System"
+            },
+            "case_index": 0,
+            "expect": {
+              "equals": {
+                "primary_site": "Brain and Nervous System"
+              },
+              "max_items": 25,
+              "min_items": 1,
+              "required_fields": [
+                "protocol",
+                "title",
+                "primary_site"
+              ]
+            },
+            "http_status": 200,
+            "observed_fields": [
+              "date_closed",
+              "date_opened",
+              "primary_site",
+              "principal_investigator",
+              "protocol",
+              "study_phase",
+              "title"
+            ],
+            "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+            "payload_sha256": "177c396cab0849392b328bfb23a9cd648df0f4435c3d22920260f2c98a7454be",
+            "redirects": 0,
+            "retrieved_at": "2026-08-01T04:31:33.467679+00:00",
+            "row_count": 19
+          },
+          {
+            "arguments": {
+              "primary_site": "Breast"
+            },
+            "case_index": 1,
+            "expect": {
+              "equals": {
+                "primary_site": "Breast"
+              },
+              "max_items": 25,
+              "min_items": 1,
+              "required_fields": [
+                "protocol",
+                "title",
+                "primary_site"
+              ]
+            },
+            "http_status": 200,
+            "observed_fields": [
+              "date_closed",
+              "date_opened",
+              "primary_site",
+              "principal_investigator",
+              "protocol",
+              "study_phase",
+              "title"
+            ],
+            "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+            "payload_sha256": "5562338d7fdf189fa5ec3eecbfedadcb579778970ac266b82400116b84adb90f",
+            "redirects": 0,
+            "retrieved_at": "2026-08-01T04:31:33.887712+00:00",
+            "row_count": 23
+          },
+          {
+            "arguments": {
+              "primary_site": "Prostate"
+            },
+            "case_index": 2,
+            "expect": {
+              "equals": {
+                "primary_site": "Prostate"
+              },
+              "max_items": 25,
+              "min_items": 1,
+              "required_fields": [
+                "protocol",
+                "title",
+                "primary_site"
+              ]
+            },
+            "http_status": 200,
+            "observed_fields": [
+              "date_closed",
+              "date_opened",
+              "primary_site",
+              "principal_investigator",
+              "protocol",
+              "study_phase",
+              "title"
+            ],
+            "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+            "payload_sha256": "1dec38172ecdc0658609492f56125b67f2d0010c74509268a3019da6663af842",
+            "redirects": 0,
+            "retrieved_at": "2026-08-01T04:31:34.315035+00:00",
+            "row_count": 20
+          }
+        ],
+        "draft_id": "vsdtotalcancertrialsbysite_86a7b6f8e4f5",
+        "draft_sha256": "28bfd3429e704ebaeb16038f199491536822fe1098ac6b1619013c81934cd770",
+        "filter_field": "primary_site",
+        "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+        "publication_sha256": "74ca9fe294424567af57f5da4e6cb3c6e325bd4b8caa0c01440140735e4e03bc",
+        "tool_name": "VSDTotalCancerTrialsBySite",
+        "verification_sha256": "318d81ea17d38bcf3094d92855d87785533ebfeb8fec74d639e841a3a8221d05"
+      },
+      {
+        "all_cases_passed": true,
+        "approval_sha256": "8b917cb80250323d0cb704024c4cfe9a357a141e2dd6437fe0a27aabf31860d6",
+        "case_count": 3,
+        "cases": [
+          {
+            "arguments": {
+              "study_phase": "I"
+            },
+            "case_index": 0,
+            "expect": {
+              "equals": {
+                "study_phase": "I"
+              },
+              "max_items": 25,
+              "min_items": 1,
+              "required_fields": [
+                "protocol",
+                "title",
+                "study_phase"
+              ]
+            },
+            "http_status": 200,
+            "observed_fields": [
+              "date_closed",
+              "date_opened",
+              "primary_site",
+              "principal_investigator",
+              "protocol",
+              "study_phase",
+              "title"
+            ],
+            "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+            "payload_sha256": "7de1c8fb37ce5a26b9a25de4e6d12fc6b639735d8a221bdf3ecdc2912501893a",
+            "redirects": 0,
+            "retrieved_at": "2026-08-01T04:31:34.786244+00:00",
+            "row_count": 25
+          },
+          {
+            "arguments": {
+              "study_phase": "II"
+            },
+            "case_index": 1,
+            "expect": {
+              "equals": {
+                "study_phase": "II"
+              },
+              "max_items": 25,
+              "min_items": 1,
+              "required_fields": [
+                "protocol",
+                "title",
+                "study_phase"
+              ]
+            },
+            "http_status": 200,
+            "observed_fields": [
+              "date_closed",
+              "date_opened",
+              "primary_site",
+              "principal_investigator",
+              "protocol",
+              "study_phase",
+              "title"
+            ],
+            "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+            "payload_sha256": "7898177fe582799b118a98de9de2bd4603d9d60589e46d488af43a342812026a",
+            "redirects": 0,
+            "retrieved_at": "2026-08-01T04:31:35.235030+00:00",
+            "row_count": 25
+          },
+          {
+            "arguments": {
+              "study_phase": "III"
+            },
+            "case_index": 2,
+            "expect": {
+              "equals": {
+                "study_phase": "III"
+              },
+              "max_items": 25,
+              "min_items": 1,
+              "required_fields": [
+                "protocol",
+                "title",
+                "study_phase"
+              ]
+            },
+            "http_status": 200,
+            "observed_fields": [
+              "date_closed",
+              "date_opened",
+              "primary_site",
+              "principal_investigator",
+              "protocol",
+              "study_phase",
+              "title"
+            ],
+            "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+            "payload_sha256": "322b0476c5a33b91b7eae1117283468bac557db1ac748bbf8645b4d2d8a7795d",
+            "redirects": 0,
+            "retrieved_at": "2026-08-01T04:31:35.639377+00:00",
+            "row_count": 25
+          }
+        ],
+        "draft_id": "vsdtotalcancertrialsbyphase_df24873e96db",
+        "draft_sha256": "1118f91aaa25b923cebbb0e4de34954570409faf0d45bdb3410ce26d30aae86f",
+        "filter_field": "study_phase",
+        "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+        "publication_sha256": "0a78f46737d17fd414645d13287e46a9241a311af177cb091091a32556b494aa",
+        "tool_name": "VSDTotalCancerTrialsByPhase",
+        "verification_sha256": "2ce8b64fbf79cc1ad747ecbf28dd222dd8a6399a4d2b51f85374f1b04475d790"
+      }
+    ],
+    "runtime_checks": [
+      {
+        "arguments": {
+          "primary_site": "Breast"
+        },
+        "provenance": {
+          "content_type": "application/json;charset=utf-8",
+          "endpoint": "https://data.ny.gov/resource/2ig8-yxf8.json",
+          "http_status": 200,
+          "method": "GET",
+          "operation_sha256": "86a7b6f8e4f59427e81c4cd526aa1c91e9edea60c1058e0e80b416fb6777a089",
+          "payload_sha256": "5562338d7fdf189fa5ec3eecbfedadcb579778970ac266b82400116b84adb90f",
+          "provider": "data.ny.gov",
+          "query_params": {
+            "$limit": 25,
+            "$select": "date_opened,protocol,primary_site,study_phase,title,date_closed,principal_investigator",
+            "primary_site": "Breast"
+          },
+          "redirects": 0,
+          "response_bytes": 7415,
+          "retrieved_at": "2026-08-01T04:31:36.149413+00:00"
+        },
+        "row_count": 23,
+        "sample_rows": [
+          {
+            "date_opened": "2020-08-05T00:00:00.000",
+            "primary_site": "Breast",
+            "principal_investigator": "Ambrosone, C",
+            "protocol": "I-724220",
+            "study_phase": "N/A",
+            "title": "The North-South Breast Cancer Study (NSBCS)"
+          },
+          {
+            "date_opened": "2018-10-18T00:00:00.000",
+            "primary_site": "Breast",
+            "principal_investigator": "Bonaccio, E",
+            "protocol": "I-60217",
+            "study_phase": "N/A",
+            "title": "Photoacoustic Imaging of Human Breast"
+          },
+          {
+            "date_closed": "2025-03-20T00:00:00.000",
+            "date_opened": "2021-09-16T00:00:00.000",
+            "primary_site": "Breast",
+            "principal_investigator": "Fung-Kee-Fung, S",
+            "protocol": "N-1764921",
+            "study_phase": "III",
+            "title": "NRG-BR007: A PHASE III CLINICAL TRIAL EVALUATING DE-ESCALATION OF BREAST RADIATION FOR CONSERVATIVE TREATMENT OF STAGE I, HORMONE SENSITIVE, HER2-NEGATIVE, ONCOTYPE RECURRENCE SCORE &#8804; 18 BREAST CANCER"
+          }
+        ],
+        "tool_name": "VSDTotalCancerTrialsBySite"
+      },
+      {
+        "arguments": {
+          "study_phase": "III"
+        },
+        "provenance": {
+          "content_type": "application/json;charset=utf-8",
+          "endpoint": "https://data.ny.gov/resource/2ig8-yxf8.json",
+          "http_status": 200,
+          "method": "GET",
+          "operation_sha256": "df24873e96db4ffe65f8805bff4aa7bf3570d779ec5c1d5813aea805ca9dc5b8",
+          "payload_sha256": "322b0476c5a33b91b7eae1117283468bac557db1ac748bbf8645b4d2d8a7795d",
+          "provider": "data.ny.gov",
+          "query_params": {
+            "$limit": 25,
+            "$select": "date_opened,protocol,primary_site,study_phase,title,date_closed,principal_investigator",
+            "study_phase": "III"
+          },
+          "redirects": 0,
+          "response_bytes": 10230,
+          "retrieved_at": "2026-08-01T04:31:36.576671+00:00"
+        },
+        "row_count": 25,
+        "sample_rows": [
+          {
+            "date_opened": "2021-07-19T00:00:00.000",
+            "primary_site": "Brain and Nervous System",
+            "principal_investigator": "Barth, M",
+            "protocol": "N-1385821",
+            "study_phase": "III",
+            "title": "(ACNS1931) A Phase 3 Study of Selumetinib (NSC# 748727, IND# 77782) or Selumetinib in Combination with Vinblastine for non-NF1, non-TSC Patients with Recurrent or Progressive Low-Grade Gliomas (LGGs) Lacking BRAFV600E or IDH1 Mutations"
+          },
+          {
+            "date_opened": "2020-01-06T00:00:00.000",
+            "primary_site": "Brain and Nervous System",
+            "principal_investigator": "Barth, M",
+            "protocol": "N-564119",
+            "study_phase": "III",
+            "title": "(ACNS1831) A Phase 3 Randomized Study of Selumetinib (IND # 77782) Versus Carboplatin/Vincristine in Newly Diagnosed or Previously Untreated Neurofibromatosis Type 1 (NF1) Associated Low-Grade Glioma (LGG)"
+          },
+          {
+            "date_opened": "2020-02-26T00:00:00.000",
+            "primary_site": "Brain and Nervous System",
+            "principal_investigator": "Barth, M",
+            "protocol": "N-632820",
+            "study_phase": "III",
+            "title": "(ACNS1833) A Phase 3 Randomized Non-Inferiority Study of Carboplatin and Vincristine versus Selumetinib (NSC# 748727, IND# 77782) in Newly Diagnosed or Previously Untreated Low-Grade Glioma (LGG) not associated with BRAFV600E Mutations or Systemic Neurofibromatosis Type 1 (NF1)"
+          }
+        ],
+        "tool_name": "VSDTotalCancerTrialsByPhase"
+      }
+    ],
+    "verification_case_count": 6
+  },
+  "reviewed_source_adapter": {
+    "administrative_tools_loaded": [],
+    "label": {
+      "brand_name": "SOLTAMOX",
+      "effective_time": "20211129",
+      "generic_name": "TAMOXIFEN CITRATE",
+      "route": "ORAL",
+      "set_id": "1e6ff055-590c-41e6-9530-1fdf04cdbd02",
+      "warning_section_count": 0,
+      "warning_sections_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "loaded_agent_tools_before_dynamic_registration": [
+      "VSDDiscoverAPICandidates",
+      "VSDDiscoverSources",
+      "VSDOpenFDALabelBySetId"
+    ],
+    "matched_source": {
+      "default_params": {
+        "limit": 5
+      },
+      "description": "FDA drug labeling records, warnings, and indications.",
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "name": "openFDA Drug Labels",
+      "review_scope": "Transport and response adapter reviewed; not scientific endorsement.",
+      "source_id": "openfda_labels",
+      "tool_name": "VSDOpenFDALabelBySetId"
+    },
+    "offline_query": "drug label",
+    "provenance": {
+      "content_type": "application/json; charset=utf-8",
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "http_status": 200,
+      "payload_sha256": "adfd73ae9a40c8fae86c31cc30bed62c88a7d232cae237f9c0aba2fa6541d6d9",
+      "provider": "openFDA Drug Labels",
+      "query_params": {
+        "limit": 1,
+        "search": "set_id:\"1e6ff055-590c-41e6-9530-1fdf04cdbd02\""
+      },
+      "redirects": 0,
+      "response_bytes": 171970,
+      "retrieved_at": "2026-08-01T04:31:31.451512+00:00"
+    }
+  }
+}

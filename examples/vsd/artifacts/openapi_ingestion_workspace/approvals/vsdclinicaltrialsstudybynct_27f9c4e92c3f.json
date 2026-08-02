@@ -1,0 +1,13 @@
+{
+  "approval_sha256": "a8a7689c9dceb80d7682dcbf663d7f14bd4db281c597c4d5db8dc52d37958a46",
+  "approved_at": "2026-08-01T18:52:48.166914+00:00",
+  "decision": "approved",
+  "decision_note": "Approved after schema review and three distinct ALS registry records passed exact nested-identifier verification.",
+  "draft_id": "vsdclinicaltrialsstudybynct_27f9c4e92c3f",
+  "draft_sha256": "2d97d81a7723e51789beedc77210be958ea438368c472b3533ca738729f4d3cd",
+  "operation_sha256": "27f9c4e92c3ff99ea44fe05456c6f34a90fb6cf0ac29a21163a41398e7992be0",
+  "reviewed_by": "ToolUniverse VSD case-study reviewer",
+  "tool_name": "VSDClinicalTrialsStudyByNCT",
+  "verification_sha256": "55d799070ea17713f2b0355eff968acf031d69bd04973d5d0bc62c0f8b7a67f0",
+  "version": 1
+}

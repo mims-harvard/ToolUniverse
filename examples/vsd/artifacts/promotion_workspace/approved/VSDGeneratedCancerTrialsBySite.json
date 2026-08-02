@@ -1,0 +1,136 @@
+{
+  "approval_sha256": "f78987b36e730fbe88b12f46b37f84c365a18196fe1a006d6c6614263ae92a46",
+  "config": {
+    "cacheable": false,
+    "category": "special_tools",
+    "description": "Query the reviewed Roswell Park active cancer-trial dataset by exact primary cancer site.",
+    "mcp_annotations": {
+      "destructiveHint": false,
+      "readOnlyHint": true
+    },
+    "name": "VSDGeneratedCancerTrialsBySite",
+    "parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "primary_site": {
+          "description": "The primary anatomic cancer site(s) (i.e., breast, ovary) the clinical research study focuses on. Not applicable is used when the research",
+          "maxLength": 500,
+          "type": "string"
+        }
+      },
+      "required": [
+        "primary_site"
+      ],
+      "type": "object"
+    },
+    "return_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "provenance": {
+          "type": "object"
+        },
+        "result": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "result",
+        "provenance"
+      ],
+      "type": "object"
+    },
+    "type": "VSDDynamicRESTTool",
+    "vsd_operation": {
+      "auth": {
+        "type": "none"
+      },
+      "endpoint": "https://data.ny.gov/resource/2ig8-yxf8.json",
+      "fixed_query": {
+        "$limit": 25,
+        "$select": "date_opened,protocol,primary_site,study_phase,title,date_closed,principal_investigator"
+      },
+      "method": "GET",
+      "path_arguments": {},
+      "query_arguments": {
+        "primary_site": "primary_site"
+      },
+      "response_schema": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "date_closed": {
+              "description": "The date the clinical research study closed to accrual. If the study is still open, this field will be blank.",
+              "maxLength": 500,
+              "type": "string"
+            },
+            "date_opened": {
+              "description": "The official start date (activation) of a trial",
+              "maxLength": 500,
+              "type": "string"
+            },
+            "primary_site": {
+              "description": "The primary anatomic cancer site(s) (i.e., breast, ovary) the clinical research study focuses on. Not applicable is used when the research",
+              "maxLength": 500,
+              "type": "string"
+            },
+            "principal_investigator": {
+              "description": "The name of the Principal Investigator from Center who is responsible for the Clinical Research Study",
+              "maxLength": 500,
+              "type": "string"
+            },
+            "protocol": {
+              "description": "The unique identifier for this study. For both national and externally",
+              "maxLength": 500,
+              "type": "string"
+            },
+            "study_phase": {
+              "description": "Current phase of the study as of last dataset refresh. Phases include: Pilot, Phase I, Phase I/II, Phase II, Phase II/III and Phase III. See the attached Overview document for explanations. Not Applicable is used for epidemiologic, cancer control/behavioral, observational, ancillary, correlative or",
+              "maxLength": 500,
+              "type": "string"
+            },
+            "title": {
+              "description": "Name of the protocol provided by the study's principal investigator",
+              "maxLength": 500,
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "maxItems": 25,
+        "type": "array"
+      },
+      "timeout_seconds": 20,
+      "version": 1
+    },
+    "vsd_promotion": {
+      "candidate_id": "31dcb2ce74f62d7c",
+      "catalog_domain": "data.ny.gov",
+      "dataset_id": "2ig8-yxf8",
+      "dataset_updated_at": "2026-04-14T21:08:58.000Z",
+      "filter_fields": [
+        "primary_site"
+      ],
+      "generator_version": 1,
+      "max_records": 25,
+      "return_fields": [
+        "date_opened",
+        "protocol",
+        "primary_site",
+        "study_phase",
+        "title",
+        "date_closed",
+        "principal_investigator"
+      ]
+    }
+  },
+  "decision_note": "Technical approval after contract review and three live provider cases; this is not a scientific or clinical endorsement.",
+  "draft_id": "vsdgeneratedcancertrialsbysite_1b11bb8efdd7",
+  "draft_sha256": "50d1df7d7ac94e23c2bae37aff9a03e972261c985fed3b15690ec76a89817c6d",
+  "operation_sha256": "1b11bb8efdd7de752ae3e00eade850728d236bbbd83e35543d1b68b61e660b12",
+  "publication_sha256": "fd7eb7288659acc38cb78dbef5dc9a6e54fece807c9913539059daf4ed6a8d7b",
+  "published_at": "2026-08-01T01:36:33.890179+00:00",
+  "reviewed_by": "SufianTA",
+  "tool_name": "VSDGeneratedCancerTrialsBySite",
+  "verification_sha256": "7f63aeb2b7e77c1ddd1d1e74aabf89cd1b475cfd947bf53c6bc63cd6bba327b3",
+  "version": 1
+}
