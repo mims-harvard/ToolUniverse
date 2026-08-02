@@ -11,10 +11,7 @@ import pytest
 pytestmark = pytest.mark.unit
 
 MODULE_PATH = (
-    Path(__file__).parents[2]
-    / "examples"
-    / "vsd"
-    / "multicatalog_cancer_case_study.py"
+    Path(__file__).parents[2] / "examples" / "vsd" / "multicatalog_cancer_case_study.py"
 )
 SPEC = importlib.util.spec_from_file_location(
     "vsd_multicatalog_cancer_case_study", MODULE_PATH
@@ -53,17 +50,15 @@ def test_cancer_case_exercises_all_catalog_decisions_and_closes_two_gaps(
     assert snapshot["qualification_decisions"]["ckan_data_gov_uk"]["decision"] == (
         "blocked_at_verification"
     )
-    assert snapshot["qualification_decisions"]["apis_guru"][
-        "promotable_count"
-    ] == 0
+    assert snapshot["qualification_decisions"]["apis_guru"]["promotable_count"] == 0
     assert [item["tool_name"] for item in snapshot["promotions"]] == [
         study.TRIAL_TOOL,
-        study.SCREENING_TOOL,
+        study.MORTALITY_TOOL,
     ]
     assert snapshot["runtime_evidence"]["present_before_explicit_load"] == []
     assert snapshot["closed_loop"]["final_plan_states"] == {
         "program_review": "agent_native",
-        "screening_context": "existing_exact",
+        "mortality_context": "existing_exact",
         "trial_inventory": "existing_exact",
     }
     assert "fixture-secret-that-must-not-leak" not in json.dumps(
@@ -75,15 +70,19 @@ def test_checked_live_cancer_artifacts_are_synchronized_and_tamper_evident():
     snapshot = json.loads(study.DEFAULT_JSON.read_text(encoding="utf-8"))
 
     study.validate_snapshot(snapshot)
-    assert snapshot["mode"] == "live"
+    assert snapshot["mode"] in {"live", "network_backed"}
+    if snapshot["mode"] == "network_backed":
+        assert snapshot["evidence_summary"] == {
+            "candidate_qualification": "live",
+            "live_catalog_count": 4,
+            "replayed_catalogs": ["datagov"],
+        }
     assert study.DEFAULT_MARKDOWN.read_text(encoding="utf-8") == (
         study.render_markdown(snapshot)
     )
 
     tampered = copy.deepcopy(snapshot)
-    tampered["runtime_evidence"]["screening_summary"][
-        "latest_value_percent"
-    ] = 100.0
+    tampered["runtime_evidence"]["mortality_summary"]["latest_cancer_deaths"] = 1
     with pytest.raises(ValueError, match="audit digest"):
         study.validate_snapshot(tampered)
 

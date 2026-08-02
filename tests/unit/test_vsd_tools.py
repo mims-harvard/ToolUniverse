@@ -138,6 +138,7 @@ def test_safe_get_rejects_redirect_to_private_address():
         status_code=302,
         headers={"Location": "https://127.0.0.1/latest/meta-data"},
     )
+    response.raw._connection = None
     session = _FakeSession([response])
 
     with pytest.raises(vsd_tool.VSDPolicyError, match="IP-literal"):

@@ -50,9 +50,8 @@ DATAGOV_ENDPOINT = (
     "c-cancer-deaths-column-chart.csv"
 )
 EUROPE_ENDPOINT = (
-    "https://data.yorkopendata.org/dataset/8d4e5d21-a6e1-4ae1-9915-"
-    "b09ef2a147c6/resource/cfba6e3c-08f3-452d-adb7-d65b075ac896/"
-    "download/kpi-phof29.csv"
+    "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/"
+    "KTA31/JSON-stat/1.0/en"
 )
 CKAN_ENDPOINT = (
     "https://www.health-ni.gov.uk/sites/default/files/publications/health/"
@@ -63,7 +62,7 @@ GENOMICS_SPEC = (
 )
 
 TRIAL_TOOL = "VSDCancerTrialsByPrimarySite"
-SCREENING_TOOL = "VSDYorkBreastScreeningCoverage"
+MORTALITY_TOOL = "VSDIrishCancerMortalityContext"
 
 CATALOG_CASES = {
     "socrata": {
@@ -79,8 +78,8 @@ CATALOG_CASES = {
         "fixture": "datagov.json",
     },
     "data_europa": {
-        "query": "breast cancer screening",
-        "role": "screening coverage trend",
+        "query": "cause of death cancer Ireland csv",
+        "role": "current age-stratified cancer mortality",
         "identity": EUROPE_ENDPOINT,
         "fixture": "data_europa.json",
     },
@@ -116,18 +115,18 @@ WORKFLOW = [
         ],
     },
     {
-        "step_id": "screening_context",
-        "description": "retrieve the reviewed York breast-screening coverage series",
-        "provider": "data.yorkopendata.org",
+        "step_id": "mortality_context",
+        "description": "retrieve reviewed Irish cancer mortality context by age group",
+        "provider": "ws.cso.ie",
         "method": "GET",
         "endpoint": EUROPE_ENDPOINT,
-        "output_fields": ["KpiName", "Value", "Period", "StartDate", "EndDate"],
+        "output_fields": ["dataset"],
     },
     {
         "step_id": "program_review",
-        "description": "compare trial inventory and population screening context",
+        "description": "compare trial inventory and population mortality context",
         "fulfillment": "agent",
-        "depends_on": ["trial_inventory", "screening_context"],
+        "depends_on": ["trial_inventory", "mortality_context"],
     },
 ]
 
@@ -136,7 +135,7 @@ EXPECTED_ASSERTIONS = {
     "all_selected_candidates_are_hash_bound_and_inert",
     "catalog_credentials_were_not_persisted",
     "ckan_mime_mismatch_blocked_verification",
-    "datagov_stale_sparse_resource_was_not_approved",
+    "datagov_unfit_resource_was_not_approved",
     "demand_was_observed_three_times_before_growth",
     "early_publication_was_rejected",
     "genomics_contract_operations_were_blocked_before_drafting",
@@ -144,9 +143,9 @@ EXPECTED_ASSERTIONS = {
     "post_publication_discovery_suppressed_both_resources",
     "post_publication_plan_resolved_both_exact_capabilities",
     "published_tools_were_absent_until_explicit_load",
-    "screening_resource_completed_three_verification_cases",
-    "screening_runtime_returned_a_current_sixteen_period_series",
-    "screening_trend_was_computed_from_provider_rows",
+    "mortality_resource_completed_three_verification_cases",
+    "mortality_runtime_returned_current_age_stratified_data",
+    "mortality_totals_were_computed_from_provider_values",
     "trial_registry_completed_three_distinct_verification_cases",
     "trial_runtime_returned_exact_site_rows",
     "two_hash_chains_reached_publication",
@@ -238,13 +237,23 @@ def _agent_discovery(
     return _successful_data(result, "VSDDiscoverAPICandidates")
 
 
+def _network_backed_discovery(
+    tooluniverse: ToolUniverse,
+    provider: str,
+    query: str,
+    exclude_registered: bool,
+) -> dict[str, Any]:
+    if provider == "datagov":
+        return _fixture_discovery(tooluniverse, provider, query, exclude_registered)
+    return _agent_discovery(tooluniverse, provider, query, exclude_registered)
+
+
 def _select_candidate(result: dict[str, Any], identity: str) -> dict[str, Any]:
     selected = next(
         (
             candidate
             for candidate in result["candidates"]
-            if (candidate["specification_url"] or candidate["api_endpoint"])
-            == identity
+            if (candidate["specification_url"] or candidate["api_endpoint"]) == identity
         ),
         None,
     )
@@ -357,27 +366,37 @@ def _csv_schema(fields: list[str], *, maximum: int) -> dict[str, Any]:
     }
 
 
-def _screening_config(candidate: dict[str, Any]) -> dict[str, Any]:
+def _mortality_config(candidate: dict[str, Any]) -> dict[str, Any]:
     return _resource_config(
         candidate,
-        name=SCREENING_TOOL,
+        name=MORTALITY_TOOL,
         description=(
-            "Return the exact reviewed City of York breast-screening coverage series."
+            "Return the exact reviewed Irish principal-cause-of-death JSON-stat cube."
         ),
-        schema=_csv_schema(
-            [
-                "KpiId",
-                "KpiName",
-                "Value",
-                "DataType",
-                "Period",
-                "StartDate",
-                "EndDate",
-                "CollectionFrequency",
-            ],
-            maximum=40,
-        ),
-        max_bytes=20_000,
+        schema={
+            "type": "object",
+            "properties": {
+                "dataset": {
+                    "type": "object",
+                    "properties": {
+                        "dimension": {"type": "object", "maxProperties": 10},
+                        "label": {"type": "string", "maxLength": 500},
+                        "source": {"type": "string", "maxLength": 500},
+                        "updated": {"type": "string", "maxLength": 100},
+                        "value": {
+                            "type": "array",
+                            "maxItems": 2500,
+                            "items": {"type": ["number", "null"]},
+                        },
+                    },
+                    "required": ["dimension", "label", "source", "updated", "value"],
+                    "additionalProperties": False,
+                }
+            },
+            "required": ["dataset"],
+            "additionalProperties": False,
+        },
+        max_bytes=100_000,
     )
 
 
@@ -413,20 +432,26 @@ def _verification_cases(
     maximum: int,
     fields: list[str],
     equals: dict[str, Any] | None = None,
+    required_paths: list[str] | None = None,
+    result_type: str = "array",
 ) -> list[dict[str, Any]]:
-    return [
-        {
-            "arguments": values,
-            "expect": {
-                "result_type": "array",
-                "min_items": minimum,
-                "max_items": maximum,
-                "required_fields": fields,
-                "equals": equals or {},
-            },
+    cases = []
+    for values in arguments:
+        expect = {
+            "result_type": result_type,
+            "required_fields": fields,
+            "equals": equals or {},
+            "required_paths": required_paths or [],
         }
-        for values in arguments
-    ]
+        if result_type == "array":
+            expect.update({"min_items": minimum, "max_items": maximum})
+        cases.append(
+            {
+                "arguments": values,
+                "expect": expect,
+            }
+        )
+    return cases
 
 
 def _promote_trial_registry(
@@ -498,14 +523,14 @@ def _promote_trial_registry(
     )
 
 
-def _promote_screening_resource(
+def _promote_mortality_resource(
     candidate: dict[str, Any], workspace: Path
 ) -> dict[str, Any]:
     draft = create_catalog_resource_draft(
         candidate,
-        _screening_config(candidate),
+        _mortality_config(candidate),
         review_note=(
-            "Reviewed the exact catalog identity, HTTPS resource, CSV columns, "
+            "Reviewed the exact catalog identity, HTTPS resource, JSON-stat shape, "
             "response ceiling, and input-free request."
         ),
         workspace=workspace,
@@ -514,9 +539,18 @@ def _promote_screening_resource(
         draft["draft_id"],
         _verification_cases(
             arguments=[{}, {}, {}],
-            minimum=10,
-            maximum=40,
-            fields=["KpiId", "KpiName", "Value", "Period", "StartDate", "EndDate"],
+            minimum=0,
+            maximum=0,
+            fields=["dataset"],
+            required_paths=[
+                "/dataset/dimension/id",
+                "/dataset/dimension/size",
+                "/dataset/dimension/TLIST(A1)/category/index/2024",
+                "/dataset/dimension/C04653V05438/category/index/C00C97",
+                "/dataset/value",
+                "/dataset/updated",
+            ],
+            result_type="object",
         ),
         workspace=workspace,
     )
@@ -525,13 +559,13 @@ def _promote_screening_resource(
         reviewed_by="Multicatalog cancer program reviewer",
         decision_note=(
             "Approved as population context after three bounded calls returned the "
-            "reviewed sixteen-period screening series."
+            "reviewed age-stratified mortality cube through 2024."
         ),
         workspace=workspace,
     )
     publication = publish_draft(draft["draft_id"], workspace=workspace)
     return {
-        "tool_name": SCREENING_TOOL,
+        "tool_name": MORTALITY_TOOL,
         "candidate_sha256": candidate["candidate_sha256"],
         "draft_id": draft["draft_id"],
         "draft_sha256": draft["draft_sha256"],
@@ -545,10 +579,6 @@ def _promote_screening_resource(
 
 def _qualify_datagov(candidate: dict[str, Any], workspace: Path) -> dict[str, Any]:
     config = _datagov_config(candidate)
-    data = _successful_data(VSDReviewedOperationTool(config).run({}), config["name"])
-    rows = data["result"]
-    years = [int(row["Years"]) for row in rows]
-    usable_history = sum(float(row["Historical Data"]) > 0 for row in rows)
     draft = create_catalog_resource_draft(
         candidate,
         config,
@@ -558,6 +588,40 @@ def _qualify_datagov(candidate: dict[str, Any], workspace: Path) -> dict[str, An
         ),
         workspace=workspace,
     )
+    try:
+        evidence = verify_draft(
+            draft["draft_id"],
+            _verification_cases(
+                arguments=[{}, {}, {}],
+                minimum=1,
+                maximum=30,
+                fields=[],
+                required_paths=["/Years", "/Historical Data", "/Target"],
+            ),
+            workspace=workspace,
+        )
+    except VSDPromotionError as exc:
+        verification_error = str(exc)
+        reason = (
+            "The catalog URL redirects to a signed object-store URL; the reviewed "
+            "runtime rejected the redirect and query-bearing target before reading data."
+            if "query strings" in verification_error
+            else "The candidate failed bounded runtime verification before data review."
+        )
+        return {
+            "decision": "blocked_at_verification",
+            "reason": reason,
+            "verification_error": verification_error,
+            "draft_id": draft["draft_id"],
+            "quality_review_completed": False,
+            "approved": False,
+            "published": False,
+        }
+
+    data = _successful_data(VSDReviewedOperationTool(config).run({}), config["name"])
+    rows = data["result"]
+    years = [int(row["Years"]) for row in rows]
+    usable_history = sum(float(row["Historical Data"]) > 0 for row in rows)
     return {
         "decision": "withheld_after_quality_review",
         "reason": (
@@ -565,6 +629,8 @@ def _qualify_datagov(candidate: dict[str, Any], workspace: Path) -> dict[str, An
             "non-zero, so this cannot support the current program decision."
         ),
         "draft_id": draft["draft_id"],
+        "verification_sha256": evidence["verification_sha256"],
+        "quality_review_completed": True,
         "row_count": len(rows),
         "latest_year": max(years),
         "nonzero_historical_rows": usable_history,
@@ -592,10 +658,11 @@ def _qualify_ckan(candidate: dict[str, Any], workspace: Path) -> dict[str, Any]:
                 arguments=[{}, {}, {}],
                 minimum=1,
                 maximum=100,
-                fields=[
-                    "Treatment Month",
-                    "Tumour Site",
-                    "% treated within 62 days",
+                fields=[],
+                required_paths=[
+                    "/Treatment Month",
+                    "/Tumour Site",
+                    "/% treated within 62 days",
                 ],
             ),
             workspace=workspace,
@@ -604,9 +671,15 @@ def _qualify_ckan(candidate: dict[str, Any], workspace: Path) -> dict[str, Any]:
         error = str(exc)
     else:
         raise AssertionError("MIME-mismatched CKAN resource passed verification")
+    if "application/octet-stream" not in error or "does not match csv" not in error:
+        raise RuntimeError(f"CKAN failed for an unexpected reason: {error}")
     return {
         "decision": "blocked_at_verification",
-        "reason": error,
+        "reason": (
+            "The provider returned application/octet-stream for a catalog-declared "
+            "CSV, so the reviewed runtime refused the response."
+        ),
+        "verification_error": error,
         "draft_id": draft["draft_id"],
         "expected_format": "csv",
         "observed_content_type": "application/octet-stream",
@@ -644,17 +717,58 @@ def _inspect_genomics(
     }
 
 
-def _screening_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
-    values = [float(row["Value"].replace("%", "").strip()) for row in rows]
+def _mortality_summary(payload: dict[str, Any]) -> dict[str, Any]:
+    dataset = payload["dataset"]
+    dimension = dataset["dimension"]
+    dimension_ids = dimension["id"]
+    sizes = dimension["size"]
+    if len(dimension_ids) != len(sizes):
+        raise RuntimeError("JSON-stat dimension identity and size lengths differ")
+
+    def cube_value(codes: dict[str, str]) -> float:
+        offset = 0
+        for dimension_id, size in zip(dimension_ids, sizes):
+            index = dimension[dimension_id]["category"]["index"][codes[dimension_id]]
+            offset = offset * size + index
+        value = dataset["value"][offset]
+        if not isinstance(value, (int, float)):
+            raise RuntimeError("Expected JSON-stat mortality cell is missing")
+        return float(value)
+
+    year_index = dimension["TLIST(A1)"]["category"]["index"]
+    years = sorted(year_index, key=lambda value: year_index[value])
+    first_year, latest_year = years[0], years[-1]
+
+    def cancer_deaths(year: str, age_code: str) -> float:
+        return cube_value(
+            {
+                "STATISTIC": "KTA31C01",
+                "TLIST(A1)": year,
+                "C02076V03371": age_code,
+                "C04653V05438": "C00C97",
+            }
+        )
+
+    first_under = cancer_deaths(first_year, "5642")
+    first_over = cancer_deaths(first_year, "5641")
+    latest_under = cancer_deaths(latest_year, "5642")
+    latest_over = cancer_deaths(latest_year, "5641")
+    first_total = first_under + first_over
+    latest_total = latest_under + latest_over
     return {
-        "period_count": len(rows),
-        "first_period": rows[0]["Period"],
-        "first_value_percent": values[0],
-        "minimum_period": rows[values.index(min(values))]["Period"],
-        "minimum_value_percent": min(values),
-        "latest_period": rows[-1]["Period"],
-        "latest_value_percent": values[-1],
-        "change_from_first_points": round(values[-1] - values[0], 2),
+        "source": dataset["source"],
+        "provider_updated_at": dataset["updated"],
+        "period_count": len(years),
+        "first_year": int(first_year),
+        "latest_year": int(latest_year),
+        "first_cancer_deaths": int(first_total),
+        "latest_cancer_deaths": int(latest_total),
+        "latest_age_65_and_under_deaths": int(latest_under),
+        "latest_age_65_and_over_deaths": int(latest_over),
+        "change_from_first": int(latest_total - first_total),
+        "change_from_first_percent": round(
+            ((latest_total - first_total) / first_total) * 100, 2
+        ),
     }
 
 
@@ -744,8 +858,8 @@ def _allowed_hosts() -> Iterator[None]:
     previous = os.environ.get(key)
     requested = {
         "data.ok.gov",
-        "data.yorkopendata.org",
         "www.health-ni.gov.uk",
+        "ws.cso.ie",
     }
     if previous:
         requested.update(item.strip() for item in previous.split(",") if item.strip())
@@ -768,7 +882,7 @@ def _replay_transport() -> Iterator[None]:
         url = kwargs["url"]
         fixture, content_type = {
             DATAGOV_ENDPOINT: ("cancer_deaths.csv", "text/csv"),
-            EUROPE_ENDPOINT: ("breast_screening.csv", "text/csv"),
+            EUROPE_ENDPOINT: ("irish_cancer_mortality.json", "application/json"),
             CKAN_ENDPOINT: ("cancer_waiting.csv", "application/octet-stream"),
         }[url]
         raw = (FIXTURES / fixture).read_bytes()
@@ -782,7 +896,9 @@ def _replay_transport() -> Iterator[None]:
             (value for key, value in values.items() if not key.startswith("$")),
             "Breast",
         )
-        rows = json.loads((FIXTURES / "roswell_trials.json").read_text(encoding="utf-8"))
+        rows = json.loads(
+            (FIXTURES / "roswell_trials.json").read_text(encoding="utf-8")
+        )
         selected = [{**row, "primary_site": site} for row in rows]
         return selected, _request(url, selected, content_type="application/json")
 
@@ -800,7 +916,7 @@ def _plan(tooluniverse: ToolUniverse) -> dict[str, Any]:
         tooluniverse,
         goal=(
             "Build an auditable breast-cancer program evidence view from trials and "
-            "population screening context"
+            "population mortality context"
         ),
         capabilities=WORKFLOW,
         limit=5,
@@ -831,13 +947,16 @@ def run_case(
     contract_fetch_json: JSONFetcher | None = None,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
-    if mode not in {"live", "replay"}:
-        raise ValueError("mode must be live or replay")
-    runner = discovery_runner or (
-        _agent_discovery if mode == "live" else _fixture_discovery
-    )
+    if mode not in {"live", "network_backed", "replay"}:
+        raise ValueError("mode must be live, network_backed, or replay")
+    default_runners = {
+        "live": _agent_discovery,
+        "network_backed": _network_backed_discovery,
+        "replay": _fixture_discovery,
+    }
+    runner = discovery_runner or default_runners[mode]
     contract_fetch = contract_fetch_json or (
-        vsd_tool._safe_get_json if mode == "live" else _fixture_contract_fetch
+        _fixture_contract_fetch if mode == "replay" else vsd_tool._safe_get_json
     )
     timestamp = generated_at or datetime.now(timezone.utc).isoformat()
     demand_workspace = workspace / "demand"
@@ -846,9 +965,7 @@ def run_case(
     catalog_searches = []
     selected: dict[str, dict[str, Any]] = {}
     initial_universe = ToolUniverse()
-    initial_universe.load_tools(
-        include_tools=["VSDDiscoverAPICandidates"], quiet=True
-    )
+    initial_universe.load_tools(include_tools=["VSDDiscoverAPICandidates"], quiet=True)
     try:
         initial_plan = _plan(initial_universe)
         for index in range(3):
@@ -856,7 +973,7 @@ def run_case(
                 initial_plan,
                 {
                     "trial_inventory": "Breast-cancer trial inventory by primary site",
-                    "screening_context": "Breast-cancer screening coverage trend",
+                    "mortality_context": "Age-stratified cancer mortality context",
                 },
                 workspace=demand_workspace,
                 run_id=f"multicatalog-cancer-{index + 1}",
@@ -873,6 +990,12 @@ def run_case(
                     "provider": provider,
                     "role": case["role"],
                     "query": case["query"],
+                    "evidence_mode": (
+                        "replay"
+                        if mode == "replay"
+                        or (mode == "network_backed" and provider == "datagov")
+                        else "live"
+                    ),
                     "catalog_result_count": result["catalog_result_count"],
                     "candidate_count": result["candidate_count"],
                     "successful_provider_count": result["successful_provider_count"],
@@ -891,14 +1014,14 @@ def run_case(
         trial_promotion, early_error = _promote_trial_registry(
             selected["socrata"], promotion_workspace
         )
-        screening_promotion = _promote_screening_resource(
+        mortality_promotion = _promote_mortality_resource(
             selected["data_europa"], promotion_workspace
         )
 
         runtime = ToolUniverse()
         runtime.load_tools(include_tools=["VSDDiscoverAPICandidates"], quiet=True)
         try:
-            published_names = [TRIAL_TOOL, SCREENING_TOOL]
+            published_names = [TRIAL_TOOL, MORTALITY_TOOL]
             present_before = [
                 name for name in published_names if name in runtime.all_tool_dict
             ]
@@ -910,11 +1033,11 @@ def run_case(
                 ),
                 TRIAL_TOOL,
             )
-            screening_data = _successful_data(
+            mortality_data = _successful_data(
                 runtime.run_one_function(
-                    {"name": SCREENING_TOOL, "arguments": {}}, use_cache=False
+                    {"name": MORTALITY_TOOL, "arguments": {}}, use_cache=False
                 ),
-                SCREENING_TOOL,
+                MORTALITY_TOOL,
             )
             final_plan = _plan(runtime)
             post_discovery = {}
@@ -927,21 +1050,19 @@ def run_case(
             runtime.close()
 
     trial_rows = trial_data["result"]
-    screening_rows = screening_data["result"]
-    screening_summary = _screening_summary(screening_rows)
+    mortality_payload = mortality_data["result"]
+    mortality_summary = _mortality_summary(mortality_payload)
     initial_states = _plan_states(initial_plan)
     final_states = _plan_states(final_plan)
     serialized_searches = json.dumps(catalog_searches, sort_keys=True)
     datagov_credential = os.environ.get("TOOLUNIVERSE_DATAGOV_API_KEY")
     credentials_not_persisted = all(
         "headers" not in item["provenance"]
-        and set(item["provenance"].get("request_header_names", []))
-        <= {"X-Api-Key"}
+        and set(item["provenance"].get("request_header_names", [])) <= {"X-Api-Key"}
         for item in catalog_searches
     ) and (not datagov_credential or datagov_credential not in serialized_searches)
     repeated_demand = sorted(
-        record["observation_counts"]["missing"]
-        for record in demand["ranked_demands"]
+        record["observation_counts"]["missing"] for record in demand["ranked_demands"]
     )
     assertions = {
         "all_five_catalogs_returned_live_or_replayed_results": (
@@ -959,10 +1080,10 @@ def run_case(
             ckan["decision"] == "blocked_at_verification"
             and ckan["observed_content_type"] == "application/octet-stream"
         ),
-        "datagov_stale_sparse_resource_was_not_approved": (
-            datagov["latest_year"] == 2019
-            and datagov["nonzero_historical_rows"] == 3
-            and datagov["approved"] is False
+        "datagov_unfit_resource_was_not_approved": (
+            datagov["approved"] is False
+            and datagov["decision"]
+            in {"blocked_at_verification", "withheld_after_quality_review"}
         ),
         "demand_was_observed_three_times_before_growth": repeated_demand == [3, 3],
         "early_publication_was_rejected": bool(early_error),
@@ -973,7 +1094,7 @@ def run_case(
         ),
         "initial_plan_identified_both_exact_capability_gaps": (
             initial_states["trial_inventory"] != "existing_exact"
-            and initial_states["screening_context"] != "existing_exact"
+            and initial_states["mortality_context"] != "existing_exact"
         ),
         "post_publication_discovery_suppressed_both_resources": all(
             post_discovery[provider]["registered_duplicate_count"] == 1
@@ -981,22 +1102,24 @@ def run_case(
         ),
         "post_publication_plan_resolved_both_exact_capabilities": (
             final_states["trial_inventory"] == "existing_exact"
-            and final_states["screening_context"] == "existing_exact"
+            and final_states["mortality_context"] == "existing_exact"
         ),
         "published_tools_were_absent_until_explicit_load": (
-            present_before == [] and sorted(loaded) == sorted([TRIAL_TOOL, SCREENING_TOOL])
+            present_before == []
+            and sorted(loaded) == sorted([TRIAL_TOOL, MORTALITY_TOOL])
         ),
-        "screening_resource_completed_three_verification_cases": (
-            screening_promotion["verification_case_count"] == 3
+        "mortality_resource_completed_three_verification_cases": (
+            mortality_promotion["verification_case_count"] == 3
         ),
-        "screening_runtime_returned_a_current_sixteen_period_series": (
-            screening_summary["period_count"] == 16
-            and screening_summary["latest_period"] == "2025/2026"
+        "mortality_runtime_returned_current_age_stratified_data": (
+            mortality_summary["latest_year"] == 2024
+            and mortality_summary["latest_age_65_and_under_deaths"] == 2266
+            and mortality_summary["latest_age_65_and_over_deaths"] == 8041
         ),
-        "screening_trend_was_computed_from_provider_rows": (
-            screening_summary["first_value_percent"] == 82.72
-            and screening_summary["latest_value_percent"] == 78.92
-            and screening_summary["change_from_first_points"] == -3.8
+        "mortality_totals_were_computed_from_provider_values": (
+            mortality_summary["first_cancer_deaths"] == 9022
+            and mortality_summary["latest_cancer_deaths"] == 10307
+            and mortality_summary["change_from_first"] == 1285
         ),
         "trial_registry_completed_three_distinct_verification_cases": (
             trial_promotion["verification_case_count"] == 3
@@ -1014,12 +1137,23 @@ def run_case(
         ),
         "two_hash_chains_reached_publication": (
             _promotion_chain_complete(trial_promotion)
-            and _promotion_chain_complete(screening_promotion)
+            and _promotion_chain_complete(mortality_promotion)
         ),
     }
     snapshot: dict[str, Any] = {
         "case": "multicatalog_breast_cancer_program_growth",
         "mode": mode,
+        "evidence_summary": {
+            "live_catalog_count": sum(
+                item["evidence_mode"] == "live" for item in catalog_searches
+            ),
+            "replayed_catalogs": [
+                item["provider"]
+                for item in catalog_searches
+                if item["evidence_mode"] == "replay"
+            ],
+            "candidate_qualification": ("replay" if mode == "replay" else "live"),
+        },
         "generated_at": timestamp,
         "decision_question": (
             "Can ToolUniverse turn a complex breast-cancer program need into a "
@@ -1029,7 +1163,7 @@ def run_case(
         "research_need": {
             "molecular": "Locate a usable genomics workflow contract.",
             "trials": "Find registry studies by primary cancer site.",
-            "screening": "Measure the long-run breast-screening coverage trend.",
+            "mortality": "Measure current malignant-neoplasm deaths by age group.",
             "access": "Find treatment waiting-time evidence.",
             "outcomes": "Find a current cancer outcome benchmark.",
         },
@@ -1048,27 +1182,33 @@ def run_case(
             "socrata": {
                 "decision": "approved_and_published",
                 "reason": "Three distinct exact-site calls passed verification.",
+                "verification_case_count": 3,
+                "approved": True,
+                "published": True,
             },
             "datagov": datagov,
             "data_europa": {
                 "decision": "approved_and_published",
                 "reason": (
-                    "The bounded resource supplied a current, parseable sixteen-period "
-                    "population screening series."
+                    "The bounded resource supplied a current, parseable JSON-stat "
+                    "mortality cube through 2024."
                 ),
+                "verification_case_count": 3,
+                "approved": True,
+                "published": True,
             },
             "ckan_data_gov_uk": ckan,
             "apis_guru": genomics,
         },
-        "promotions": [trial_promotion, screening_promotion],
+        "promotions": [trial_promotion, mortality_promotion],
         "early_publication_error": early_error,
         "runtime_evidence": {
             "loaded_tools": loaded,
             "present_before_explicit_load": present_before,
             "trial_rows": trial_rows,
             "trial_provenance": trial_data["provenance"],
-            "screening_summary": screening_summary,
-            "screening_provenance": screening_data["provenance"],
+            "mortality_summary": mortality_summary,
+            "mortality_provenance": mortality_data["provenance"],
         },
         "closed_loop": {
             "final_plan_states": final_states,
@@ -1091,7 +1231,7 @@ def run_case(
             {
                 "task": "Decide whether a result is usable",
                 "without_vsd": "A relevant title can be mistaken for a safe, current API.",
-                "with_vsd": "Bounded verification exposed stale values, a MIME mismatch, and blocked genomics operations.",
+                "with_vsd": "Bounded verification exposed a redirect boundary, a MIME mismatch, blocked genomics operations, and stale replayed values.",
             },
             {
                 "task": "Create reusable tools",
@@ -1125,8 +1265,19 @@ def validate_snapshot(snapshot: dict[str, Any]) -> None:
         or set(assertions) != EXPECTED_ASSERTIONS
         or not all(value is True for value in assertions.values())
     ):
-        raise ValueError("One or more cancer end-to-end assertions did not pass")
-    expected = _digest({key: value for key, value in snapshot.items() if key != "audit_sha256"})
+        failed = (
+            sorted(
+                key
+                for key, value in assertions.items()
+                if key not in EXPECTED_ASSERTIONS or value is not True
+            )
+            if isinstance(assertions, dict)
+            else ["invalid_assertion_envelope"]
+        )
+        raise ValueError(f"Cancer end-to-end assertions did not pass: {failed!r}")
+    expected = _digest(
+        {key: value for key, value in snapshot.items() if key != "audit_sha256"}
+    )
     if snapshot.get("audit_sha256") != expected:
         raise ValueError("Cancer case audit digest does not match")
 
@@ -1136,18 +1287,41 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
     searches = snapshot["catalog_searches"]
     decisions = snapshot["qualification_decisions"]
     runtime = snapshot["runtime_evidence"]
-    screening = runtime["screening_summary"]
+    mortality = runtime["mortality_summary"]
     lines = [
-        "# Live Multi-Catalog Breast-Cancer Program Study",
+        "# Multi-Catalog Breast-Cancer Program Study",
         "",
         "## Decision Question",
         "",
         snapshot["decision_question"],
         "",
+        "## Evidence Mode",
+        "",
+        f"- Study mode: `{snapshot['mode']}`",
+        (
+            f"- Live catalog searches: **{snapshot['evidence_summary']['live_catalog_count']}**"
+        ),
+        (
+            "- Replayed catalog searches: "
+            f"`{json.dumps(snapshot['evidence_summary']['replayed_catalogs'])}`"
+        ),
+        (
+            "- Candidate resource and contract qualification: "
+            f"`{snapshot['evidence_summary']['candidate_qualification']}`"
+        ),
+        "",
+        (
+            "`network_backed` means only the Data.gov catalog response is a captured "
+            "real replay because its shared `DEMO_KEY` quota returned HTTP 429. The "
+            "other four catalogs and all five selected resources/contracts are live."
+            if snapshot["mode"] == "network_backed"
+            else "The mode above applies to both catalog search and candidate qualification."
+        ),
+        "",
         "## Why This Is Hard",
         "",
         (
-            "The program needs molecular, trial, screening, access, and outcome evidence. "
+            "The program needs molecular, trial, mortality, access, and outcome evidence. "
             "Those leads live in five catalogs with different APIs and metadata shapes, "
             "and a relevant catalog title does not prove that the underlying resource is "
             "current, safely executable, correctly typed, or contract-compatible."
@@ -1161,14 +1335,14 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
         "",
         "## Five Real Catalog Searches",
         "",
-        "| Catalog | Research role | Query | Catalog matches | Candidates | Selected lead |",
-        "| --- | --- | --- | ---: | ---: | --- |",
+        "| Catalog | Evidence | Research role | Query | Catalog matches | Candidates | Selected lead |",
+        "| --- | --- | --- | --- | ---: | ---: | --- |",
     ]
     for item in searches:
         selected = item["selected_candidate"]
         selected_name = selected["name"].replace("|", "\\|")
         lines.append(
-            f"| `{item['provider']}` | {item['role']} | `{item['query']}` | "
+            f"| `{item['provider']}` | `{item['evidence_mode']}` | {item['role']} | `{item['query']}` | "
             f"{item['catalog_result_count']} | {item['candidate_count']} | "
             f"{selected_name} |"
         )
@@ -1186,7 +1360,7 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
             "| Catalog | Decision | Concrete reason |",
             "| --- | --- | --- |",
             f"| Socrata | Published | {decisions['socrata']['reason']} |",
-            f"| Data.gov | Withheld | {decisions['datagov']['reason']} |",
+            f"| Data.gov | Not published | {decisions['datagov']['reason']} |",
             f"| Data Europa | Published | {decisions['data_europa']['reason']} |",
             f"| Data.gov.uk CKAN | Blocked | Provider returned `{decisions['ckan_data_gov_uk']['observed_content_type']}` for catalog-declared CSV; the reviewed runtime refused the mismatch. |",
             f"| APIs.guru | Blocked | All {decisions['apis_guru']['blocked_count']} Google Genomics operations had authentication, write-method, request-body, or unsupported-parameter blockers. |",
@@ -1194,8 +1368,18 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
             "## Evidence Actually Retrieved",
             "",
             f"- **Trials:** `{TRIAL_TOOL}` returned **{len(runtime['trial_rows'])}** exact `Breast` rows in the checked execution. The dataset is a registry snapshot; a populated `date_closed` must not be presented as currently recruiting.",
-            f"- **Screening:** `{SCREENING_TOOL}` returned **{screening['period_count']}** annual periods, from **{screening['first_value_percent']}%** in `{screening['first_period']}` to **{screening['latest_value_percent']}%** in `{screening['latest_period']}` (**{screening['change_from_first_points']} percentage points**).",
-            f"- **Outcome candidate rejected:** the Data.gov resource ended in **{decisions['datagov']['latest_year']}** and had only **{decisions['datagov']['nonzero_historical_rows']}** non-zero historical rows.",
+            f"- **Mortality context:** `{MORTALITY_TOOL}` returned malignant-neoplasm counts through **{mortality['latest_year']}**: **{mortality['latest_age_65_and_under_deaths']}** deaths at age 65 or under and **{mortality['latest_age_65_and_over_deaths']}** over age 65, or **{mortality['latest_cancer_deaths']}** combined.",
+            (
+                "- **Outcome candidate rejected:** "
+                + (
+                    f"the Data.gov resource ended in **{decisions['datagov']['latest_year']}** "
+                    f"and had only **{decisions['datagov']['nonzero_historical_rows']}** "
+                    "non-zero historical rows."
+                    if decisions["datagov"]["quality_review_completed"]
+                    else "the live endpoint failed bounded verification before its "
+                    "contents could be accepted for quality review."
+                )
+            ),
             "",
             "These are source observations, not clinical conclusions and not cross-population comparisons.",
             "",
@@ -1225,9 +1409,7 @@ def render_markdown(snapshot: dict[str, Any]) -> str:
         ]
     )
     for item in snapshot["with_without_vsd"]:
-        lines.append(
-            f"| {item['task']} | {item['without_vsd']} | {item['with_vsd']} |"
-        )
+        lines.append(f"| {item['task']} | {item['without_vsd']} | {item['with_vsd']} |")
     lines.extend(
         [
             "",
@@ -1270,7 +1452,9 @@ def write_artifacts(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode", choices=("live", "replay"), default="replay")
+    parser.add_argument(
+        "--mode", choices=("live", "network_backed", "replay"), default="replay"
+    )
     parser.add_argument("--workspace", type=Path, default=DEFAULT_WORKSPACE)
     parser.add_argument("--json", type=Path, default=DEFAULT_JSON)
     parser.add_argument("--markdown", type=Path, default=DEFAULT_MARKDOWN)
@@ -1279,7 +1463,7 @@ def main(argv: list[str] | None = None) -> int:
         with _replay_transport():
             snapshot = run_case(workspace=arguments.workspace, mode="replay")
     else:
-        snapshot = run_case(workspace=arguments.workspace, mode="live")
+        snapshot = run_case(workspace=arguments.workspace, mode=arguments.mode)
     write_artifacts(snapshot, arguments.json, arguments.markdown)
     print(
         json.dumps(

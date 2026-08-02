@@ -202,6 +202,53 @@ def test_registry_exact_endpoint_is_removed_with_auditable_reason():
     assert "ExistingRareDiseaseCohort" in duplicates[0]["matches"]
 
 
+def test_registry_semantic_match_at_different_path_is_retained():
+    tooluniverse = ToolUniverse()
+    tooluniverse.all_tools.append(
+        {
+            "name": "ExistingIrishMortalityContext",
+            "type": "VSDReviewedOperationTool",
+            "description": "Principal Cause of Death",
+            "parameter": {"type": "object", "properties": {}},
+            "return_schema": {"type": "object"},
+            "vsd_operation": {
+                "method": "GET",
+                "endpoint": (
+                    "https://ws.cso.ie/public/api.restful/"
+                    "PxStat.Data.Cube_API.ReadDataset/KTA31/JSON-stat/1.0/en"
+                ),
+            },
+        }
+    )
+    exact = {
+        "candidate_id": "exact",
+        "name": "Principal Cause of Death",
+        "description": "Principal Cause of Death",
+        "api_endpoint": (
+            "https://ws.cso.ie/public/api.restful/"
+            "PxStat.Data.Cube_API.ReadDataset/KTA31/JSON-stat/1.0/en"
+        ),
+        "fields": [],
+    }
+    distinct = {
+        **exact,
+        "candidate_id": "distinct",
+        "api_endpoint": (
+            "https://ws.cso.ie/public/api.restful/"
+            "PxStat.Data.Cube_API.ReadDataset/VSD17/JSON-stat/1.0/en"
+        ),
+    }
+
+    kept, duplicates, _ = catalogs._registry_deduplicate(
+        [exact, distinct], tooluniverse
+    )
+
+    assert [item["candidate_id"] for item in duplicates] == ["exact"]
+    assert [item["candidate_id"] for item in kept] == ["distinct"]
+    assert kept[0]["registry_coverage"]["classification"] == "existing_partial"
+    assert kept[0]["registry_coverage"]["semantic_classification"] == ("existing_exact")
+
+
 def test_agent_facing_tool_runs_explicit_multicatalog_search(monkeypatch):
     endpoint_to_provider = {value: key for key, value in catalogs._ENDPOINTS.items()}
 

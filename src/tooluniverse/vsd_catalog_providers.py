@@ -784,18 +784,25 @@ def _registry_deduplicate(
             },
             key=str.casefold,
         )
+        semantic_classification = coverage["classification"]
         classification = (
-            "existing_exact" if exact_operation_names else coverage["classification"]
+            "existing_exact"
+            if exact_operation_names
+            else (
+                "existing_partial"
+                if semantic_classification == "existing_exact"
+                else semantic_classification
+            )
         )
         summary = {
             "classification": classification,
             "matches": exact_operation_names
             or [match["name"] for match in coverage["matches"]],
-            "semantic_classification": coverage["classification"],
+            "semantic_classification": semantic_classification,
             "registry_sha256": coverage["registry_sha256"],
         }
         candidate["registry_coverage"] = summary
-        if classification == "existing_exact":
+        if exact_operation_names:
             duplicates.append(
                 {
                     "candidate_id": candidate["candidate_id"],
@@ -962,11 +969,15 @@ def validate_catalog_candidate(candidate: Any) -> dict[str, Any]:
     if kind == "data_endpoint" and (not endpoint or specification):
         raise VSDCatalogProviderError("data candidate must contain one endpoint")
     if kind == "openapi_specification" and (not specification or endpoint):
-        raise VSDCatalogProviderError("specification candidate must contain one contract")
+        raise VSDCatalogProviderError(
+            "specification candidate must contain one contract"
+        )
     identity = specification or endpoint
     expected_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
     if reviewed.get("candidate_id") != expected_id:
-        raise VSDCatalogProviderError("catalog candidate ID does not match its identity")
+        raise VSDCatalogProviderError(
+            "catalog candidate ID does not match its identity"
+        )
     response_format = reviewed.get("response_format")
     interface_type = reviewed.get("interface_type")
     if response_format not in {"json", "csv", "xml"} or interface_type not in {
@@ -1013,11 +1024,15 @@ def validate_catalog_candidate(candidate: Any) -> dict[str, Any]:
         raise VSDCatalogProviderError("catalog candidate sources are invalid")
     digest = reviewed.get("candidate_sha256")
     if not isinstance(digest, str) or digest != _candidate_digest(reviewed):
-        raise VSDCatalogProviderError("catalog candidate digest does not match its content")
+        raise VSDCatalogProviderError(
+            "catalog candidate digest does not match its content"
+        )
     return reviewed
 
 
-def select_catalog_candidate(report: Any, candidate_id: str | None = None) -> dict[str, Any]:
+def select_catalog_candidate(
+    report: Any, candidate_id: str | None = None
+) -> dict[str, Any]:
     """Select one validated candidate from a discovery result or tool envelope."""
     if isinstance(report, dict) and report.get("status") == "success":
         report = report.get("data")
@@ -1031,7 +1046,9 @@ def select_catalog_candidate(report: Any, candidate_id: str | None = None) -> di
         raise VSDCatalogProviderError("catalog discovery report contains no candidates")
     if candidate_id is None:
         if len(candidates) != 1:
-            raise VSDCatalogProviderError("candidate_id is required for multiple candidates")
+            raise VSDCatalogProviderError(
+                "candidate_id is required for multiple candidates"
+            )
         return validate_catalog_candidate(candidates[0])
     matches = [item for item in candidates if item.get("candidate_id") == candidate_id]
     if len(matches) != 1:

@@ -595,19 +595,19 @@ def _safe_get_json(
         try:
             if time.monotonic() >= deadline:
                 raise VSDPolicyError("Source request exceeded its total timeout")
-            peer_ip = _peer_address(response)
-            _require_global_ip(peer_ip, context="Connected peer")
-            if ipaddress.ip_address(peer_ip) != ipaddress.ip_address(pinned_address):
-                raise VSDPolicyError(
-                    "Connected peer did not match the vetted DNS address"
-                )
-
             if response.status_code in {301, 302, 303, 307, 308}:
                 location = response.headers.get("Location")
                 if location:
                     # Preserve the more specific policy error for an unsafe target.
                     validate_source_url(urljoin(normalized_url, location))
                 raise VSDPolicyError("Source redirects are not allowed")
+
+            peer_ip = _peer_address(response)
+            _require_global_ip(peer_ip, context="Connected peer")
+            if ipaddress.ip_address(peer_ip) != ipaddress.ip_address(pinned_address):
+                raise VSDPolicyError(
+                    "Connected peer did not match the vetted DNS address"
+                )
 
             response.raise_for_status()
             content_encoding = response.headers.get("Content-Encoding", "")

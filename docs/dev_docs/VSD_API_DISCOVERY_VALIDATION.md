@@ -126,17 +126,20 @@ parameterized API from catalog metadata.
 ## Live Cancer Portfolio Proof
 
 `examples/vsd/multicatalog_cancer_case_study.py` starts with repeated unmet
-demand for exact breast-cancer trial and screening capabilities. It then runs
+demand for exact breast-cancer trial and mortality capabilities. It then runs
 five focused cancer searches through Socrata, US Data.gov, the European Data
-Portal, data.gov.uk, and APIs.guru to cover trial, screening, outcome, access,
+Portal, data.gov.uk, and APIs.guru to cover trial, mortality, outcome, access,
 and molecular evidence roles. Each selected lead remains inert while its real
 resource or OpenAPI contract is qualified.
 
 Only two leads cross the lifecycle: the Roswell Park SODA endpoint by exact
-primary-site query and the fixed City of York screening CSV. Three other leads
-prove the rejection boundaries: stale and sparse Oklahoma outcome data is
-withheld after retrieval, a Northern Ireland resource fails its declared CSV
-media contract, and five Google Genomics operations fail contract inspection.
+primary-site query and Ireland's fixed principal-cause-of-death JSON-stat cube,
+which supplies malignant-neoplasm counts through 2024 by age group. Three other
+leads prove the rejection boundaries: the live Oklahoma outcome URL redirects
+to a signed object-store URL and is blocked before retrieval, its captured
+direct response is stale and sparse, a Northern Ireland resource fails its
+declared CSV media contract, and five Google Genomics operations fail contract
+inspection.
 The accepted tools pass six verification executions, cannot publish early, are
 absent from a fresh registry until explicitly loaded, execute through the
 normal ToolUniverse API, close both exact planning gaps, and suppress their own
@@ -146,13 +149,17 @@ endpoints during repeat discovery.
 PYTHONPATH=src python examples/vsd/multicatalog_cancer_case_study.py --mode replay
 TOOLUNIVERSE_DATAGOV_API_KEY=... PYTHONPATH=src \
   python examples/vsd/multicatalog_cancer_case_study.py --mode live
+PYTHONPATH=src python examples/vsd/multicatalog_cancer_case_study.py \
+  --mode network_backed
 ```
 
-The checked live report and audit snapshot are
+The checked network-backed report and audit snapshot are
 `examples/vsd/artifacts/multicatalog_cancer_snapshot.md` and
-`examples/vsd/artifacts/multicatalog_cancer_snapshot.json`. The replay uses
-small excerpts captured from the same real catalog and resource responses, and
-the opt-in integration test performs the complete live run.
+`examples/vsd/artifacts/multicatalog_cancer_snapshot.json`. This mode labels the
+captured Data.gov catalog response explicitly while keeping the other four
+catalogs and all five selected candidate resources/contracts live. The replay
+uses small excerpts captured from the same real responses, and the opt-in
+integration test performs the complete live run with a personal Data.gov key.
 
 ## Rare-Disease Deduplication Proof
 

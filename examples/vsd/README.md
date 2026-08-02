@@ -4,23 +4,25 @@
 
 `multicatalog_cancer_case_study.py` tests the new catalog sources as a real
 growth system, not just as search adapters. A breast-cancer program needs five
-different evidence roles: local trial inventory, population screening trends,
+different evidence roles: local trial inventory, population mortality context,
 treatment-access delays, outcome benchmarks, and a genomics workflow. Five
 focused searches run through Socrata, US Data.gov, the European Data Portal,
 data.gov.uk, and APIs.guru, and one exact lead from each catalog is then tested
 against its underlying live resource or contract.
 
 The case deliberately does not publish every relevant-looking result. The
-Roswell Park trial endpoint and City of York screening series each pass three
-bounded verification calls, approval, publication, fresh loading, execution,
-workflow replanning, and duplicate suppression. An Oklahoma outcome resource
-is withheld because it ends in 2019 and has only three non-zero historical
-values; a Northern Ireland CSV is blocked because the server returns
-`application/octet-stream`; and all five operations in the discovered Google
-Genomics contract remain blocked by authentication, write, body, or parameter
-constraints. This makes the central VSD advantage measurable: it finds useful
-new sources while preventing catalog relevance from being mistaken for runtime
-or evidence fitness.
+Roswell Park trial endpoint and Ireland's principal-cause-of-death JSON-stat
+cube each pass three bounded verification calls, approval, publication, fresh
+loading, execution, workflow replanning, and duplicate suppression. The live
+Oklahoma outcome URL is blocked because it redirects to a signed object-store
+URL; its captured direct response also ends in 2019 and has only three non-zero
+historical values. The Irish resource is direct, current through 2024, and
+supplies malignant-neoplasm counts split at age 65. A Northern Ireland CSV is
+blocked because the server returns `application/octet-stream`, and all five
+operations in the discovered Google Genomics contract remain blocked by
+authentication, write, body, or parameter constraints. This makes the central
+VSD advantage measurable: it finds useful new sources while preventing catalog
+relevance from being mistaken for runtime or evidence fitness.
 
 Run the deterministic replay from the repository root:
 
@@ -36,12 +38,18 @@ TOOLUNIVERSE_DATAGOV_API_KEY=... PYTHONPATH=src \
   python examples/vsd/multicatalog_cancer_case_study.py --mode live
 ```
 
+When that shared quota is unavailable, `--mode network_backed` replays only the
+captured real Data.gov catalog response while keeping the other four catalog
+searches and all five candidate resource/contract qualifications live. The
+artifact labels this distinction in both JSON and Markdown.
+
 Review `artifacts/multicatalog_cancer_snapshot.md` and its machine-verifiable
-JSON counterpart. The checked live proof records five catalog searches, five
-qualification outcomes, two complete promotion hash chains, six verification
-executions, two final executions, two closed workflow gaps, duplicate
-suppression, credential-value exclusion, and 18 end-to-end assertions. The
-fixture replay and the opt-in network test run the same orchestration code.
+JSON counterpart. The checked network-backed proof records five catalog
+searches, five qualification outcomes, two complete promotion hash chains, six
+verification executions, two final executions, two closed workflow gaps,
+duplicate suppression, credential-value exclusion, and 18 end-to-end
+assertions. The fixture replay and the opt-in full-live network test run the
+same orchestration code.
 
 ## Multi-Catalog Rare-Disease Capability Growth
 
