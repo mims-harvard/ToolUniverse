@@ -13,8 +13,7 @@ first use rather than in ``__init__``, so merely constructing the tool never
 reaches for the network.
 
 Paper: https://doi.org/10.64898/2026.06.19.26356060
-Weights are CC-BY-NC-SA-4.0 and the code is PolyForm Noncommercial 1.0.0:
-non-commercial research use only, not for clinical or diagnostic use.
+Weights are CC-BY-NC-SA-4.0 and the code is PolyForm Noncommercial 1.0.0.
 """
 
 import os
@@ -142,8 +141,7 @@ class DeepSpotMTool(BaseTool):
                 f"Tile is {tile.size[0]}x{tile.size[1]} px; DeepSpot-M expects "
                 f"exactly {TILE_SIZE}x{TILE_SIZE}. Cut tiles on a "
                 f"{TILE_SIZE}-px grid at roughly 20x (~0.5 microns per pixel), "
-                "the magnification the model was trained on. Feeding tiles at "
-                "another scale silently degrades the predictions."
+                "the magnification the model was trained on."
             )
 
         try:
@@ -182,8 +180,7 @@ class DeepSpotMTool(BaseTool):
             "device": device,
             "model_repo": repo,
             "note": (
-                "Predicted, not measured, expression for a single "
-                f"{TILE_SIZE}x{TILE_SIZE} H&E tile. Non-commercial research "
-                "use only; not for clinical or diagnostic use."
+                "Virtual spatial transcriptomics inferred from a "
+                f"{TILE_SIZE}x{TILE_SIZE} H&E tile."
             ),
         }

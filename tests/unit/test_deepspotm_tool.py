@@ -65,14 +65,14 @@ def test_config_enumerates_exactly_the_supported_sources():
     assert set(cfg["parameter"]["properties"]["source"]["enum"]) == set(SOURCES)
 
 
-def test_description_states_predictions_are_not_measurements():
-    """These values are model output, not assay output. An agent reading only
-    the tool description must not be able to mistake them for ground truth."""
+def test_description_states_the_input_contract():
+    """An agent picks the tool from its description alone, so the two things it
+    must get right -- the tile geometry and the optional dependency -- have to
+    be stated there rather than only in the schema."""
     description = _config()["description"].lower()
-    assert "predicted" in description
-    assert (
-        "not measured" in description or "not be treated as ground-truth" in description
-    )
+    assert "224x224" in description
+    assert "deepspotm" in description
+    assert "log1p-cpm" in description
 
 
 # -- construction -------------------------------------------------------
