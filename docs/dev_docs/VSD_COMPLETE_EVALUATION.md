@@ -2,11 +2,40 @@
 
 The `vsd-complete-evaluation-suite` branch is a reviewer-facing test assembly.
 It starts from current `main`, merges the complete stacked VSD implementation
-from PRs #416-#419, #421, and #423-#432, and merges the independent
+from PRs #416-#419, #421, #423-#434, and #436, and merges the independent
 administrator-only Docker implementation from #420.
 
 The branch is not a replacement for the isolated review order. It exists so a
 reviewer can install, run, and inspect every pending VSD capability in one tree.
+
+## Continuous Catalog Qualification
+
+The continuous scanner in #436 turns changing API-directory records into inert,
+content-addressed operation candidates for the existing VSD review pipeline. A
+checked exhaustive run covered APIs.guru and SmartAPI until all compatible
+records had been attempted:
+
+- 2,799 catalog records and 1,748 compatible OpenAPI 3 records
+- 1,626 unique contract contents and 37,570 unique operation candidates
+- 3,097 unique draft-ready configuration hashes across 203 provider hosts
+- 36,362 operations retained as blocked with structured reasons
+- 2,744 existing ToolUniverse tools across 259 source hosts audited first
+
+Scanning never invoked a provider operation and did not publish any candidate.
+A separate data-driven qualification selected eight exact missing operations
+from that inventory. Four passed 20 bounded live verification calls, received
+explicit approval, were published, loaded into a fresh ToolUniverse, and passed
+20 post-publication workflow calls; four failed schema conformance and remained
+blocked. The five workflows cover breast/ESR1, lung/EGFR, colorectal/TP53,
+melanoma/BRAF, and prostate/PTEN questions without encoding those cases or their
+provider records in production scanner logic.
+
+Reviewer-readable reports and tamper-evident ledgers are checked in at:
+
+- `examples/vsd/artifacts/continuous_catalog_expansion_study.md`
+- `examples/vsd/artifacts/continuous_catalog_expansion_study.json`
+- `examples/vsd/artifacts/scanner_cancer_qualification_study.md`
+- `examples/vsd/artifacts/scanner_cancer_qualification_study.json`
 
 ## Five New Value Studies
 
@@ -81,8 +110,19 @@ loopback-only binding, a read-only root filesystem, dropped capabilities, no
 new privileges, no bind mounts, CPU/memory/PID limits, a ToolUniverse request,
 and complete cleanup.
 
+The latest component validation covers 397 unique automated checks: 379 tests
+on the final stacked VSD scanner branch, 4 combined-only growth portfolio tests,
+and 14 Docker tests. The 8 scanner catalog-concurrency tests included in the VSD
+total were also rerun on this combined tree alongside the Docker tests.
+
 ## Evidence Totals
 
+- 2,799 catalog records scanned across 2 live directories
+- 37,570 unique catalog operation candidates inventoried
+- 3,097 unique inert draft-ready configurations retained for review
+- 5 live scanner-derived cancer workflows
+- 20 live verification and 20 fresh-runtime post-publication calls
+- 4 scanner-derived operations accepted and 4 rejected before publication
 - 5 new scientific domains
 - 110 new end-to-end study assertions
 - 15 representative verification executions
