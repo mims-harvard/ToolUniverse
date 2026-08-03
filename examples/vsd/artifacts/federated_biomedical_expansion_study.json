@@ -1,0 +1,2672 @@
+{
+  "assertions": {
+    "all_manifest_sources_scanned_without_failure": true,
+    "all_published_tools_executed_in_every_scenario": true,
+    "all_selected_candidates_were_registry_gaps": true,
+    "all_source_operations_remained_inert_during_scan": true,
+    "cross_portfolio_deduplication_is_consistent": true,
+    "published_tools_required_explicit_local_loading": true,
+    "seven_tools_passed_three_live_cases": true,
+    "three_drifted_candidates_failed_closed": true,
+    "unverified_publication_was_blocked": true
+  },
+  "boundary": "This study demonstrates technical retrieval and provenance across public research APIs. It does not establish clinical validity, causal inference, diagnostic utility, or treatment recommendations.",
+  "candidate_source_evidence": {
+    "alphafold_models": {
+      "candidate_id": "0e537a341dce8a24",
+      "candidate_sha256": "0e537a341dce8a24515fb2c8bc64c4a25b8ee6c143d1ce0de762ed84771eb7d1",
+      "content_sha256": "714607265fd8edc581baf28df038ea804d96d871baa6034ff60d22d0cf893163",
+      "content_type": "application/json",
+      "existing_tools": [],
+      "preview_config_sha256": "c32ce1745721eb3fda4f41850217e92a486c4cd043f997a3be2df11f75f48baf",
+      "raw_representation_matches_scan": true,
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 39543,
+      "runtime_base_url": "https://alphafold.ebi.ac.uk/api",
+      "semantic_sha256": "46289999f0db34fa998c1ffcc2c3ae32e05ab1017497bc0fba64fb248f04ddcb",
+      "specification_url": "https://alphafold.ebi.ac.uk/api/openapi.json",
+      "status_code": 200
+    },
+    "cbio_gene_panel": {
+      "candidate_id": "309d74b70f2bbeb9",
+      "candidate_sha256": "309d74b70f2bbeb99329cde28caa86d3052066b296c6b5c2a77d3e1fe0a20389",
+      "content_sha256": "17b878394247746012076c48ec01011894f056ec845fd830d03d722387b787ac",
+      "content_type": "application/json",
+      "existing_tools": [],
+      "preview_config_sha256": "bc613f48d4abd7d0bbba9bf930c11c4eba50b34d07fb933ea4e20632bd87e8a6",
+      "raw_representation_matches_scan": false,
+      "redirects": 0,
+      "registry_coverage": "existing_host_gap",
+      "response_bytes": 231095,
+      "runtime_base_url": "https://www.cbioportal.org/",
+      "semantic_sha256": "c2a710edf1a0940950d7c1acc514a55e73bd85e5e3aa95292d6d9c1dd56dea66",
+      "specification_url": "https://www.cbioportal.org/api/v3/api-docs",
+      "status_code": 200
+    },
+    "cbio_gene_schema_drift": {
+      "candidate_id": "10916ffaafb21c40",
+      "candidate_sha256": "10916ffaafb21c40ef2894c6fe4d722717ecc5d6a9ebdbffa63f4267f9b7ad10",
+      "content_sha256": "17b878394247746012076c48ec01011894f056ec845fd830d03d722387b787ac",
+      "content_type": "application/json",
+      "existing_tools": [],
+      "preview_config_sha256": "4ccc788d5c192d22bd0cf3c49e00e240ac9b2d0eab98ea25b9f18992782738f8",
+      "raw_representation_matches_scan": false,
+      "redirects": 0,
+      "registry_coverage": "existing_host_gap",
+      "response_bytes": 231095,
+      "runtime_base_url": "https://www.cbioportal.org/",
+      "semantic_sha256": "c2a710edf1a0940950d7c1acc514a55e73bd85e5e3aa95292d6d9c1dd56dea66",
+      "specification_url": "https://www.cbioportal.org/api/v3/api-docs",
+      "status_code": 200
+    },
+    "cellosaurus_model": {
+      "candidate_id": "d8b9d38c835672d9",
+      "candidate_sha256": "d8b9d38c835672d9effd8dee09a6a8eb20d66483a51ad50d592ffb9d781280f0",
+      "content_sha256": "31225a8e23478934287304b95041dcc0daa425448ff70389d5ca64de313d5274",
+      "content_type": "application/json",
+      "existing_tools": [],
+      "preview_config_sha256": "ca04eff17dc49ae61c073ff6c7affa973b2784b41fa28356ef997a3a87af07ca",
+      "raw_representation_matches_scan": true,
+      "redirects": 0,
+      "registry_coverage": "existing_host_gap",
+      "response_bytes": 13133,
+      "runtime_base_url": "https://api.cellosaurus.org/",
+      "semantic_sha256": "d8147652521e5fc361e918cffbd00e168fc5cc69989ef689b0036ce6c4ee52f7",
+      "specification_url": "https://api.cellosaurus.org/openapi.json",
+      "status_code": 200
+    },
+    "eqtl_associations": {
+      "candidate_id": "873a6143000b3ec5",
+      "candidate_sha256": "873a6143000b3ec56ae8f95620d287953b48e546dac71bcba3fb6242a6ac412d",
+      "content_sha256": "532f9072f26a5ebcd01102664c3446c981dc54fa27c46d689e36a3c672093998",
+      "content_type": "application/json",
+      "existing_tools": [],
+      "preview_config_sha256": "72e9f565f654781c9f4785b29757da722fea691a289b02bac03edebc0358593a",
+      "raw_representation_matches_scan": true,
+      "redirects": 0,
+      "registry_coverage": "existing_host_gap",
+      "response_bytes": 50486,
+      "runtime_base_url": "https://www.ebi.ac.uk/",
+      "semantic_sha256": "6c609202b01670c0662c970014d80c634e9d3c82c5cd2ae41bd02ede9630646d",
+      "specification_url": "https://www.ebi.ac.uk/eqtl/api/openapi.json",
+      "status_code": 200
+    },
+    "gtex_gene_reference": {
+      "candidate_id": "20f2ebc13d6500d8",
+      "candidate_sha256": "20f2ebc13d6500d8c1aeb81e1553b5a063e89a9c71519d099f65270a49733a5e",
+      "content_sha256": "5cc28ae92cc01c2fcf6c553b3faf3b5b8700bf85b659505538397311a2667dbd",
+      "content_type": "application/json",
+      "existing_tools": [],
+      "preview_config_sha256": "f20331b0438fdea15be1815f231eb391f72fcabc2763fd0425c713f74cf5ca5f",
+      "raw_representation_matches_scan": true,
+      "redirects": 0,
+      "registry_coverage": "existing_host_gap",
+      "response_bytes": 179723,
+      "runtime_base_url": "https://gtexportal.org/",
+      "semantic_sha256": "dc6aa2044a8ae830640ef0e9332c4dca939a595ba84c48d1e5117711a2e31c8f",
+      "specification_url": "https://gtexportal.org/api/v2/openapi.json",
+      "status_code": 200
+    },
+    "monarch_gene": {
+      "candidate_id": "757b29414b72b961",
+      "candidate_sha256": "757b29414b72b961052e7d4b72e944c038c9434a55ca913ad10119ab4ae05d60",
+      "content_sha256": "1dd6862950fcc92eeb6df54020d2908ded2245e1e01a31bd8554d21427f0d869",
+      "content_type": "application/json",
+      "existing_tools": [],
+      "preview_config_sha256": "2d685505a15aff7a0bbb793385dba83258b40f0d6d15f590ec95126b35bec7ee",
+      "raw_representation_matches_scan": true,
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 115617,
+      "runtime_base_url": "https://api-v3.monarchinitiative.org/",
+      "semantic_sha256": "f9a17431d2d85a718c9a7eaf4d0bb4338d5651cd4804eb993362a93c7b04e7a5",
+      "specification_url": "https://api-v3.monarchinitiative.org/openapi.json",
+      "status_code": 200
+    },
+    "omicsdi_database_schema_drift": {
+      "candidate_id": "0e4f8351f8524f6e",
+      "candidate_sha256": "0e4f8351f8524f6e769ea0ca78ef231d64c2b333995af8e95f9ec6de5737a0f8",
+      "content_sha256": "5c691c4776a951f15441132a1f8ba8f461b0c81e11c4e1af2ab30e59af0c9242",
+      "content_type": "application/json",
+      "existing_tools": [],
+      "preview_config_sha256": "a2b9a0c556e1660b8324903866bc38ae882f7a7ba364cbf507ecbaa4548f04db",
+      "raw_representation_matches_scan": false,
+      "redirects": 0,
+      "registry_coverage": "existing_host_gap",
+      "response_bytes": 49785,
+      "runtime_base_url": "https://www.omicsdi.org/ws",
+      "semantic_sha256": "b9fce63ea600eb14c6125b359d69d2bf18325607cf2ca37f25d375694854027a",
+      "specification_url": "https://www.omicsdi.org/ws/api-docs",
+      "status_code": 200
+    },
+    "pdbe_entity_schema_drift": {
+      "candidate_id": "dcc8e068fd217df9",
+      "candidate_sha256": "dcc8e068fd217df9b0b48e89ab0e81f0a45605563cabc187aa88176a602fc3a7",
+      "content_sha256": "ebe0a42f8c5a78ed89d09cf08172b6cdeb187a8f51445cb5e1a4f8461e839a2f",
+      "content_type": "application/json",
+      "existing_tools": [],
+      "preview_config_sha256": "fe6048b46f1c86f1fe46846d455e22747f094837f9ece542ff8f33f1a3a16a36",
+      "raw_representation_matches_scan": true,
+      "redirects": 0,
+      "registry_coverage": "existing_host_gap",
+      "response_bytes": 555832,
+      "runtime_base_url": "https://www.ebi.ac.uk/pdbe/api/v2",
+      "semantic_sha256": "a27c7332000714e37b0d8205cacf6cf0c0929759904b5088a8981d77c2c2f350",
+      "specification_url": "https://www.ebi.ac.uk/pdbe/api/v2/openapi.json",
+      "status_code": 200
+    },
+    "reactome_pathway": {
+      "candidate_id": "8f0ce09315069ee9",
+      "candidate_sha256": "8f0ce09315069ee98c0fcb0d657eb61047ff5ad8a860d7782a87d99c311f0d06",
+      "content_sha256": "fce0763c2b0a6c88c7d2ca8928dcb22838423913919627a08266dbac75649dd6",
+      "content_type": "application/json;charset=utf-8",
+      "existing_tools": [],
+      "preview_config_sha256": "d87b09599a230ba5d9f4737f3caf2bc8d82559692a090fe86ca1455d802a754b",
+      "raw_representation_matches_scan": true,
+      "redirects": 0,
+      "registry_coverage": "candidate_gap",
+      "response_bytes": 156194,
+      "runtime_base_url": "https://reactome.org/ContentService",
+      "semantic_sha256": "3e5f756494459d295ec8a7f8d0c8e1fdaea5d4c62a900c76215bbc7ad7aead0c",
+      "specification_url": "https://reactome.org/ContentService/v3/api-docs",
+      "status_code": 200
+    }
+  },
+  "comparison": {
+    "after_vsd_review": {
+      "accepted_live_execution_count": 42,
+      "built_in_registry_modified": false,
+      "candidates_rejected_at_live_verification": 3,
+      "tools_loaded_into_one_local_runtime": 7,
+      "tools_verified_approved_and_published": 7
+    },
+    "before_explicit_load": {
+      "built_in_registry_modified": false,
+      "reviewed_vsd_exact_operation_matches": 0,
+      "selected_generated_tool_names_present": false
+    }
+  },
+  "evaluation_mode": "live_network",
+  "format": "vsd_federated_biomedical_expansion_study_v1",
+  "interpretation": "The federated manifest converted reviewed contract sources into a bounded candidate portfolio and added 518 operation identities beyond the previous catalog scan. Seven selected gaps became locally loadable tools only after live verification and explicit review. Three schema-drifted candidates were rejected, demonstrating that source trust does not bypass operation-level evidence.",
+  "loaded_tools": [
+    "VSDFederatedAlphaFoldCancerProteins",
+    "VSDFederatedCBioCancerGenePanels",
+    "VSDFederatedCellosaurusCancerModels",
+    "VSDFederatedEQTLGeneAssociations",
+    "VSDFederatedGTExCancerGeneReferences",
+    "VSDFederatedMonarchCancerGenes",
+    "VSDFederatedReactomeCancerPathways"
+  ],
+  "promotions": [
+    {
+      "approval_sha256": "849547814575f7333698d96f33c4eaeb2536ecf12f5ad2876552d1226c06aada",
+      "contribution": "Retrieves the current AlphaFold model inventory for the scenario protein.",
+      "draft_id": "vsdfederatedalphafoldcancerproteins_32eb5861f40c",
+      "draft_sha256": "a3c716b304631b773643e4f4456151c66241557ea3bfcaa11d966e5c8a178620",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdfederatedalphafoldcancerproteins_32eb5861f40c.json' does not exist",
+      "key": "alphafold_models",
+      "operation_sha256": "32eb5861f40cea6fbc6b30453e850b783d2241459a0ab3bfb53b668a70c926f4",
+      "publication_sha256": "43ec782a6d85547e079fe7aa6e1cf93b3071da665939612ab07b609f906fae4c",
+      "source_id": "alphafold",
+      "tool_name": "VSDFederatedAlphaFoldCancerProteins",
+      "verification_case_count": 3,
+      "verification_cases": [
+        {
+          "arguments": {
+            "qualifier": "P04637"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {
+              "gene": "TP53"
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": 20,
+            "min_items": 1,
+            "required_fields": [
+              "uniprotAccession",
+              "modelEntityId",
+              "gene"
+            ],
+            "required_paths": [],
+            "result_type": "array"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "allVersions",
+            "amAnnotationsHg19Url",
+            "amAnnotationsHg38Url",
+            "amAnnotationsUrl",
+            "bcifUrl",
+            "chainId",
+            "cifUrl",
+            "entityType",
+            "entryId",
+            "fractionPlddtConfident",
+            "fractionPlddtLow",
+            "fractionPlddtVeryHigh",
+            "fractionPlddtVeryLow",
+            "gene",
+            "globalMetricValue",
+            "isComplex",
+            "isReferenceProteome",
+            "isReviewed",
+            "isUniProt",
+            "isUniProtReferenceProteome",
+            "isUniProtReviewed",
+            "latestVersion",
+            "modelCreatedDate",
+            "modelEntityId",
+            "msaUrl",
+            "organismScientificName",
+            "paeDocUrl",
+            "paeImageUrl",
+            "pdbUrl",
+            "plddtDocUrl",
+            "providerId",
+            "sequence",
+            "sequenceChecksum",
+            "sequenceEnd",
+            "sequenceStart",
+            "sequenceVersionDate",
+            "taxId",
+            "toolUsed",
+            "uniprotAccession",
+            "uniprotDescription",
+            "uniprotEnd",
+            "uniprotId",
+            "uniprotSequence",
+            "uniprotStart"
+          ],
+          "operation_sha256": "32eb5861f40cea6fbc6b30453e850b783d2241459a0ab3bfb53b668a70c926f4",
+          "payload_sha256": "a87643758dc6c1a0ed23ab6bcb012588b0402a14773a5c2fca6d981a21308555",
+          "redirects": 0,
+          "result_type": "array",
+          "retrieved_at": "2026-08-03T05:38:42.596234+00:00",
+          "row_count": 9
+        },
+        {
+          "arguments": {
+            "qualifier": "P38398"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {
+              "gene": "BRCA1"
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": 20,
+            "min_items": 1,
+            "required_fields": [
+              "uniprotAccession",
+              "modelEntityId",
+              "gene"
+            ],
+            "required_paths": [],
+            "result_type": "array"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "allVersions",
+            "amAnnotationsHg19Url",
+            "amAnnotationsHg38Url",
+            "amAnnotationsUrl",
+            "bcifUrl",
+            "chainId",
+            "cifUrl",
+            "entityType",
+            "entryId",
+            "fractionPlddtConfident",
+            "fractionPlddtLow",
+            "fractionPlddtVeryHigh",
+            "fractionPlddtVeryLow",
+            "gene",
+            "globalMetricValue",
+            "isComplex",
+            "isReferenceProteome",
+            "isReviewed",
+            "isUniProt",
+            "isUniProtReferenceProteome",
+            "isUniProtReviewed",
+            "latestVersion",
+            "modelCreatedDate",
+            "modelEntityId",
+            "msaUrl",
+            "organismScientificName",
+            "paeDocUrl",
+            "paeImageUrl",
+            "pdbUrl",
+            "plddtDocUrl",
+            "providerId",
+            "sequence",
+            "sequenceChecksum",
+            "sequenceEnd",
+            "sequenceStart",
+            "sequenceVersionDate",
+            "taxId",
+            "toolUsed",
+            "uniprotAccession",
+            "uniprotDescription",
+            "uniprotEnd",
+            "uniprotId",
+            "uniprotSequence",
+            "uniprotStart"
+          ],
+          "operation_sha256": "32eb5861f40cea6fbc6b30453e850b783d2241459a0ab3bfb53b668a70c926f4",
+          "payload_sha256": "6e89492b55e0e8052b3130f39bbf0cec1727439e144cb2a51cea4b41803ff549",
+          "redirects": 0,
+          "result_type": "array",
+          "retrieved_at": "2026-08-03T05:38:42.799338+00:00",
+          "row_count": 8
+        },
+        {
+          "arguments": {
+            "qualifier": "P00533"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {
+              "gene": "EGFR"
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": 20,
+            "min_items": 1,
+            "required_fields": [
+              "uniprotAccession",
+              "modelEntityId",
+              "gene"
+            ],
+            "required_paths": [],
+            "result_type": "array"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "allVersions",
+            "amAnnotationsHg19Url",
+            "amAnnotationsHg38Url",
+            "amAnnotationsUrl",
+            "bcifUrl",
+            "chainId",
+            "cifUrl",
+            "entityType",
+            "entryId",
+            "fractionPlddtConfident",
+            "fractionPlddtLow",
+            "fractionPlddtVeryHigh",
+            "fractionPlddtVeryLow",
+            "gene",
+            "globalMetricValue",
+            "isComplex",
+            "isReferenceProteome",
+            "isReviewed",
+            "isUniProt",
+            "isUniProtReferenceProteome",
+            "isUniProtReviewed",
+            "latestVersion",
+            "modelCreatedDate",
+            "modelEntityId",
+            "msaUrl",
+            "organismScientificName",
+            "paeDocUrl",
+            "paeImageUrl",
+            "pdbUrl",
+            "plddtDocUrl",
+            "providerId",
+            "sequence",
+            "sequenceChecksum",
+            "sequenceEnd",
+            "sequenceStart",
+            "sequenceVersionDate",
+            "taxId",
+            "toolUsed",
+            "uniprotAccession",
+            "uniprotDescription",
+            "uniprotEnd",
+            "uniprotId",
+            "uniprotSequence",
+            "uniprotStart"
+          ],
+          "operation_sha256": "32eb5861f40cea6fbc6b30453e850b783d2241459a0ab3bfb53b668a70c926f4",
+          "payload_sha256": "6da4cc6b642cc5492d9912a46de9c38531075224faeb747e23f15d59c2c4c1a2",
+          "redirects": 0,
+          "result_type": "array",
+          "retrieved_at": "2026-08-03T05:38:42.968988+00:00",
+          "row_count": 4
+        }
+      ],
+      "verification_sha256": "178ee4315e9e72177e8dca9149d308e0a566e34153d9d5fb2215de42d174b3c9"
+    },
+    {
+      "approval_sha256": "45550fc4850c6bb89cbd090516fd2bb07644317d4d6d36c6453c1701293c9a76",
+      "contribution": "Normalizes each cancer gene to a Monarch entity with symbol and cross-resource identity.",
+      "draft_id": "vsdfederatedmonarchcancergenes_1685c51ed63a",
+      "draft_sha256": "278645b483336eddef2dcdd11b29b3fea947bdd180a3d6e81bfcb10cfc0b6528",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdfederatedmonarchcancergenes_1685c51ed63a.json' does not exist",
+      "key": "monarch_gene",
+      "operation_sha256": "1685c51ed63aa44f2c89c76c7da1b00b2181af435365dcd4431fa381380908f0",
+      "publication_sha256": "b753898eedf33588c159778305f934475645df6e66e21519af85b3a016cf795c",
+      "source_id": "monarch",
+      "tool_name": "VSDFederatedMonarchCancerGenes",
+      "verification_case_count": 3,
+      "verification_cases": [
+        {
+          "arguments": {
+            "id": "HGNC:11998"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/id": "HGNC:11998",
+              "/symbol": "TP53"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/category",
+              "/name"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "association_counts",
+            "broad_synonym",
+            "category",
+            "causal_gene",
+            "causes_disease",
+            "cross_species_term_clique",
+            "deprecated",
+            "description",
+            "exact_synonym",
+            "external_links",
+            "file_source",
+            "full_name",
+            "has_attribute",
+            "has_biological_sex",
+            "has_descendant",
+            "has_descendant_count",
+            "has_descendant_label",
+            "has_gene",
+            "has_phenotype",
+            "has_phenotype_closure",
+            "has_phenotype_closure_label",
+            "has_phenotype_count",
+            "has_phenotype_label",
+            "id",
+            "in_taxon",
+            "in_taxon_label",
+            "inheritance",
+            "iri",
+            "mappings",
+            "name",
+            "namespace",
+            "narrow_synonym",
+            "node_hierarchy",
+            "node_relationships",
+            "provided_by",
+            "provided_by_link",
+            "related_synonym",
+            "same_as",
+            "subsets",
+            "symbol",
+            "synonym",
+            "synonyms",
+            "type",
+            "uri",
+            "xref"
+          ],
+          "operation_sha256": "1685c51ed63aa44f2c89c76c7da1b00b2181af435365dcd4431fa381380908f0",
+          "payload_sha256": "a629d0eb1ac37026f2df39bd8ffa664100db5c1f4bb6b48ff3d457b55a2f84e9",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:44.941380+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "id": "HGNC:1100"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/id": "HGNC:1100",
+              "/symbol": "BRCA1"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/category",
+              "/name"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "association_counts",
+            "broad_synonym",
+            "category",
+            "causal_gene",
+            "causes_disease",
+            "cross_species_term_clique",
+            "deprecated",
+            "description",
+            "exact_synonym",
+            "external_links",
+            "file_source",
+            "full_name",
+            "has_attribute",
+            "has_biological_sex",
+            "has_descendant",
+            "has_descendant_count",
+            "has_descendant_label",
+            "has_gene",
+            "has_phenotype",
+            "has_phenotype_closure",
+            "has_phenotype_closure_label",
+            "has_phenotype_count",
+            "has_phenotype_label",
+            "id",
+            "in_taxon",
+            "in_taxon_label",
+            "inheritance",
+            "iri",
+            "mappings",
+            "name",
+            "namespace",
+            "narrow_synonym",
+            "node_hierarchy",
+            "node_relationships",
+            "provided_by",
+            "provided_by_link",
+            "related_synonym",
+            "same_as",
+            "subsets",
+            "symbol",
+            "synonym",
+            "synonyms",
+            "type",
+            "uri",
+            "xref"
+          ],
+          "operation_sha256": "1685c51ed63aa44f2c89c76c7da1b00b2181af435365dcd4431fa381380908f0",
+          "payload_sha256": "8790ffbb1a818894269a1201e2d4223bc7f26b4e6964d719183d8db2ae7a8012",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:45.453679+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "id": "HGNC:3236"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/id": "HGNC:3236",
+              "/symbol": "EGFR"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/category",
+              "/name"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "association_counts",
+            "broad_synonym",
+            "category",
+            "causal_gene",
+            "causes_disease",
+            "cross_species_term_clique",
+            "deprecated",
+            "description",
+            "exact_synonym",
+            "external_links",
+            "file_source",
+            "full_name",
+            "has_attribute",
+            "has_biological_sex",
+            "has_descendant",
+            "has_descendant_count",
+            "has_descendant_label",
+            "has_gene",
+            "has_phenotype",
+            "has_phenotype_closure",
+            "has_phenotype_closure_label",
+            "has_phenotype_count",
+            "has_phenotype_label",
+            "id",
+            "in_taxon",
+            "in_taxon_label",
+            "inheritance",
+            "iri",
+            "mappings",
+            "name",
+            "namespace",
+            "narrow_synonym",
+            "node_hierarchy",
+            "node_relationships",
+            "provided_by",
+            "provided_by_link",
+            "related_synonym",
+            "same_as",
+            "subsets",
+            "symbol",
+            "synonym",
+            "synonyms",
+            "type",
+            "uri",
+            "xref"
+          ],
+          "operation_sha256": "1685c51ed63aa44f2c89c76c7da1b00b2181af435365dcd4431fa381380908f0",
+          "payload_sha256": "a57d02674a5e41bd5880770110383ff959ad580fecdff8f7e93237a93b0e4100",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:45.941603+00:00",
+          "row_count": null
+        }
+      ],
+      "verification_sha256": "40f5ac9eb192b7d88d197b25bdaaea250185a568bfd525ce8ce235a4c0e5261b"
+    },
+    {
+      "approval_sha256": "28569980ad0f8acebe4ab5f24185f58750202f84abe2672029da1ff8a30621d6",
+      "contribution": "Adds the reviewed human pathway most directly connected to each scenario mechanism.",
+      "draft_id": "vsdfederatedreactomecancerpathways_496d27620428",
+      "draft_sha256": "cb4ba6e62ed07d734631a4cff9bb5a0bbe95aa366d8218a93ea952c09a73e5c3",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdfederatedreactomecancerpathways_496d27620428.json' does not exist",
+      "key": "reactome_pathway",
+      "operation_sha256": "496d27620428e988b461d7e088141ee0b420f810d8c4ea6fa40772a2e3595800",
+      "publication_sha256": "46866d7eb400b7cde4716496fa9f74f1567e2efe943c4767cf8a32b9725827e9",
+      "source_id": "reactome",
+      "tool_name": "VSDFederatedReactomeCancerPathways",
+      "verification_case_count": 3,
+      "verification_cases": [
+        {
+          "arguments": {
+            "id": "R-HSA-69563"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/stId": "R-HSA-69563"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/displayName",
+              "/speciesName"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "className",
+            "created",
+            "crossReference",
+            "dbId",
+            "displayName",
+            "eventOf",
+            "goBiologicalProcess",
+            "hasDiagram",
+            "hasEHLD",
+            "hasEvent",
+            "isInDisease",
+            "isInferred",
+            "lastUpdatedDate",
+            "literatureReference",
+            "maxDepth",
+            "modified",
+            "name",
+            "orthologousEvent",
+            "releaseDate",
+            "reviewStatus",
+            "reviewed",
+            "schemaClass",
+            "species",
+            "speciesName",
+            "stId",
+            "stIdVersion",
+            "summation"
+          ],
+          "operation_sha256": "496d27620428e988b461d7e088141ee0b420f810d8c4ea6fa40772a2e3595800",
+          "payload_sha256": "fc3ec3dfc18bd5a7b23cd40d947e21456580d1dc9bf966fff5bfbff3b95f7231",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:46.882401+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "id": "R-HSA-5693532"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/stId": "R-HSA-5693532"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/displayName",
+              "/speciesName"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "authored",
+            "className",
+            "compartment",
+            "created",
+            "dbId",
+            "deleted",
+            "displayName",
+            "doi",
+            "edited",
+            "eventOf",
+            "figure",
+            "goBiologicalProcess",
+            "hasDiagram",
+            "hasEHLD",
+            "hasEvent",
+            "isInDisease",
+            "isInferred",
+            "lastUpdatedDate",
+            "literatureReference",
+            "maxDepth",
+            "modified",
+            "name",
+            "orthologousEvent",
+            "releaseDate",
+            "releaseStatus",
+            "reviewStatus",
+            "reviewed",
+            "revised",
+            "schemaClass",
+            "species",
+            "speciesName",
+            "stId",
+            "stIdVersion",
+            "summation"
+          ],
+          "operation_sha256": "496d27620428e988b461d7e088141ee0b420f810d8c4ea6fa40772a2e3595800",
+          "payload_sha256": "6491e804ff031f7cd35822f2a11d6e8b24faf03adfd50ae9d459390d32a88da3",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:47.249042+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "id": "R-HSA-177929"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/stId": "R-HSA-177929"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/displayName",
+              "/speciesName"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "authored",
+            "className",
+            "created",
+            "crossReference",
+            "dbId",
+            "diseasePathways",
+            "displayName",
+            "doi",
+            "edited",
+            "eventOf",
+            "figure",
+            "goBiologicalProcess",
+            "hasDiagram",
+            "hasEHLD",
+            "hasEvent",
+            "isInDisease",
+            "isInferred",
+            "lastUpdatedDate",
+            "literatureReference",
+            "maxDepth",
+            "modified",
+            "name",
+            "orthologousEvent",
+            "previousReviewStatus",
+            "releaseDate",
+            "reviewStatus",
+            "reviewed",
+            "schemaClass",
+            "species",
+            "speciesName",
+            "stId",
+            "stIdVersion",
+            "summation"
+          ],
+          "operation_sha256": "496d27620428e988b461d7e088141ee0b420f810d8c4ea6fa40772a2e3595800",
+          "payload_sha256": "88f74c2e8768f5aa004dc9dbc73152b87238952772352ad6412108dc364b96fe",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:48.020118+00:00",
+          "row_count": null
+        }
+      ],
+      "verification_sha256": "b87cae9e0227c91178ece4a059557896d967df20eea7738a2ed5a68d6534a5ce"
+    },
+    {
+      "approval_sha256": "51b95f034ce6b4f4c1cf0c4288199fc819197c03232304f16ddf73d1db711b84",
+      "contribution": "Resolves the symbol to its GTEx GENCODE identifier and genomic coordinates before expression analysis.",
+      "draft_id": "vsdfederatedgtexcancergenereferences_ce750bc074a0",
+      "draft_sha256": "4ed570ed81859d068c113410ba3e909f0712bbeb996d8909f700285176c7d154",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdfederatedgtexcancergenereferences_ce750bc074a0.json' does not exist",
+      "key": "gtex_gene_reference",
+      "operation_sha256": "ce750bc074a0ad90f0d7f20e27e4e16b4a4ead615ba492d854d27beee7bd883e",
+      "publication_sha256": "0b110cd445c786a3689043cba0956561269c5ee144419ffe34f31d7c9a57026b",
+      "source_id": "gtex",
+      "tool_name": "VSDFederatedGTExCancerGeneReferences",
+      "verification_case_count": 3,
+      "verification_cases": [
+        {
+          "arguments": {
+            "geneId": [
+              "TP53"
+            ]
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/data/0/gencodeId": "ENSG00000141510.16",
+              "/data/0/geneSymbol": "TP53"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/data/0/chromosome",
+              "/paging_info/totalNumberOfItems"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "data",
+            "paging_info"
+          ],
+          "operation_sha256": "ce750bc074a0ad90f0d7f20e27e4e16b4a4ead615ba492d854d27beee7bd883e",
+          "payload_sha256": "2a220afa85b72752ec89125e5c167e939155a40cf67c475f4aaee4aa0383f13c",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:48.361259+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "geneId": [
+              "BRCA1"
+            ]
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/data/0/gencodeId": "ENSG00000012048.20",
+              "/data/0/geneSymbol": "BRCA1"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/data/0/chromosome",
+              "/paging_info/totalNumberOfItems"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "data",
+            "paging_info"
+          ],
+          "operation_sha256": "ce750bc074a0ad90f0d7f20e27e4e16b4a4ead615ba492d854d27beee7bd883e",
+          "payload_sha256": "938922d354be32b9cfbdd1559d1bb3b1b1b91d65d5efd1dcbe07a09f15486297",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:48.778896+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "geneId": [
+              "EGFR"
+            ]
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/data/0/gencodeId": "ENSG00000146648.17",
+              "/data/0/geneSymbol": "EGFR"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/data/0/chromosome",
+              "/paging_info/totalNumberOfItems"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "data",
+            "paging_info"
+          ],
+          "operation_sha256": "ce750bc074a0ad90f0d7f20e27e4e16b4a4ead615ba492d854d27beee7bd883e",
+          "payload_sha256": "0c546c836f0b67f23c2e0dff1b23883fc85d349d47c43ff61e5d9f42229f45cf",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:48.967769+00:00",
+          "row_count": null
+        }
+      ],
+      "verification_sha256": "04e5b3300da0294258db32560812a575054bdfcdb2754cad7fba3b3064285816"
+    },
+    {
+      "approval_sha256": "71dce866be2aba700ae5850d21cd04884b835a5fbcfe8f585f07253cd7b2bd7f",
+      "contribution": "Connects each experimental model to a stable Cellosaurus accession and a controlled cancer diagnosis.",
+      "draft_id": "vsdfederatedcellosauruscancermodels_86505949b408",
+      "draft_sha256": "84c54cf99dc73f39b9f576c4de4b2ae05415013ddfd0519c7b364033b596935f",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdfederatedcellosauruscancermodels_86505949b408.json' does not exist",
+      "key": "cellosaurus_model",
+      "operation_sha256": "86505949b408fc398da03115bb5df6f1f8c46ff11e75769fbfc0af4f6e8f78dc",
+      "publication_sha256": "fa0962a5d8c6484b3ff5828cf5a31425800de25a1c96bc8054ff4985cadf7749",
+      "source_id": "cellosaurus",
+      "tool_name": "VSDFederatedCellosaurusCancerModels",
+      "verification_case_count": 3,
+      "verification_cases": [
+        {
+          "arguments": {
+            "q": "id:HeLa"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/Cellosaurus/cell-line-list/0/accession-list/0/value": "CVCL_0030"
+            },
+            "equals_paths_casefold": {
+              "/Cellosaurus/cell-line-list/0/disease-list/0/label": "Human papillomavirus-related endocervical adenocarcinoma"
+            },
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/Cellosaurus/cell-line-list/0/disease-list/0/label"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "Cellosaurus"
+          ],
+          "operation_sha256": "86505949b408fc398da03115bb5df6f1f8c46ff11e75769fbfc0af4f6e8f78dc",
+          "payload_sha256": "6619e0096f8ec525ba3c7c12181cfebabfc5a83a61e4066ebcf7be66f638c2fe",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:49.858681+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "q": "id:MCF-7"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/Cellosaurus/cell-line-list/0/accession-list/0/value": "CVCL_0031"
+            },
+            "equals_paths_casefold": {
+              "/Cellosaurus/cell-line-list/0/disease-list/0/label": "Invasive breast carcinoma of no special type"
+            },
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/Cellosaurus/cell-line-list/0/disease-list/0/label"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "Cellosaurus"
+          ],
+          "operation_sha256": "86505949b408fc398da03115bb5df6f1f8c46ff11e75769fbfc0af4f6e8f78dc",
+          "payload_sha256": "4c12f88d07a487c8b76be0d7762974232c98e2d1aaefc9e1fa9100fc73919c2f",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:50.376614+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "q": "id:A-549"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/Cellosaurus/cell-line-list/0/accession-list/0/value": "CVCL_0023"
+            },
+            "equals_paths_casefold": {
+              "/Cellosaurus/cell-line-list/0/disease-list/0/label": "Lung adenocarcinoma"
+            },
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/Cellosaurus/cell-line-list/0/disease-list/0/label"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "Cellosaurus"
+          ],
+          "operation_sha256": "86505949b408fc398da03115bb5df6f1f8c46ff11e75769fbfc0af4f6e8f78dc",
+          "payload_sha256": "f48a4c3db21898d4296c5f13cfa4ca981ad3c64c1ea614c2ce9c14b69bf18a3c",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:38:50.901155+00:00",
+          "row_count": null
+        }
+      ],
+      "verification_sha256": "cf9627d96ee46b7c526119623a6706139ade0d033845310c9a3c95eb1ec70078"
+    },
+    {
+      "approval_sha256": "8257e7a2f92ad8f7b8dae9d28ba86f356112cbe110d81a14a06659e3b9e5d675",
+      "contribution": "Adds measured regulatory variants, effect estimates, and p-values for the same cancer gene.",
+      "draft_id": "vsdfederatedeqtlgeneassociations_6830a5250664",
+      "draft_sha256": "582da6665f795ef49c77bbf5b758cec36be71a9eabae0ccf6eccdd1872c297aa",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdfederatedeqtlgeneassociations_6830a5250664.json' does not exist",
+      "key": "eqtl_associations",
+      "operation_sha256": "6830a5250664fddafc0e2a9094e6df5b3a990dfaf9ca06c68847168463e58f44",
+      "publication_sha256": "e40cd4436737c4de90bbd00d97be5be8b0e34d33e5d89a3b8f753ea1b062e01a",
+      "source_id": "ebi_eqtl",
+      "tool_name": "VSDFederatedEQTLGeneAssociations",
+      "verification_case_count": 3,
+      "verification_cases": [
+        {
+          "arguments": {
+            "gene_id": "ENSG00000141510"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {
+              "gene_id": "ENSG00000141510"
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": 5,
+            "min_items": 1,
+            "required_fields": [
+              "gene_id",
+              "rsid",
+              "variant",
+              "beta",
+              "pvalue"
+            ],
+            "required_paths": [],
+            "result_type": "array"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "alt",
+            "beta",
+            "chromosome",
+            "dataset_id",
+            "gene_id",
+            "molecular_trait_id",
+            "position",
+            "pvalue",
+            "ref",
+            "rsid",
+            "se",
+            "study_id",
+            "variant"
+          ],
+          "operation_sha256": "6830a5250664fddafc0e2a9094e6df5b3a990dfaf9ca06c68847168463e58f44",
+          "payload_sha256": "ef2fe31277d452843cc985276c7f1c3bac95a6b378097ff7e3528ae75e1e1eea",
+          "redirects": 0,
+          "result_type": "array",
+          "retrieved_at": "2026-08-03T05:39:22.408888+00:00",
+          "row_count": 5
+        },
+        {
+          "arguments": {
+            "gene_id": "ENSG00000012048"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {
+              "gene_id": "ENSG00000012048"
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": 5,
+            "min_items": 1,
+            "required_fields": [
+              "gene_id",
+              "rsid",
+              "variant",
+              "beta",
+              "pvalue"
+            ],
+            "required_paths": [],
+            "result_type": "array"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "alt",
+            "beta",
+            "chromosome",
+            "dataset_id",
+            "gene_id",
+            "molecular_trait_id",
+            "position",
+            "pvalue",
+            "ref",
+            "rsid",
+            "se",
+            "study_id",
+            "variant"
+          ],
+          "operation_sha256": "6830a5250664fddafc0e2a9094e6df5b3a990dfaf9ca06c68847168463e58f44",
+          "payload_sha256": "d627a982f5f9897997299c4d35af619a2fdcc1edc259efea238309e1f39a407f",
+          "redirects": 0,
+          "result_type": "array",
+          "retrieved_at": "2026-08-03T05:39:31.200765+00:00",
+          "row_count": 5
+        },
+        {
+          "arguments": {
+            "gene_id": "ENSG00000146648"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {
+              "gene_id": "ENSG00000146648"
+            },
+            "equals_paths": {},
+            "equals_paths_casefold": {},
+            "max_items": 5,
+            "min_items": 1,
+            "required_fields": [
+              "gene_id",
+              "rsid",
+              "variant",
+              "beta",
+              "pvalue"
+            ],
+            "required_paths": [],
+            "result_type": "array"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "alt",
+            "beta",
+            "chromosome",
+            "dataset_id",
+            "gene_id",
+            "molecular_trait_id",
+            "position",
+            "pvalue",
+            "ref",
+            "rsid",
+            "se",
+            "study_id",
+            "variant"
+          ],
+          "operation_sha256": "6830a5250664fddafc0e2a9094e6df5b3a990dfaf9ca06c68847168463e58f44",
+          "payload_sha256": "34971ed302ab4f04b664aa73df72e50de484284b3acf1c8fd4c1c5cf69d0466b",
+          "redirects": 0,
+          "result_type": "array",
+          "retrieved_at": "2026-08-03T05:39:33.439023+00:00",
+          "row_count": 5
+        }
+      ],
+      "verification_sha256": "b16761f1e8efe67d3a0c9fc061d859754c74a277356067c040233b06123cc479"
+    },
+    {
+      "approval_sha256": "7915a399926f92bd73ae157fcacd9658d8c2f87c81ba8422d92d421c8a5a9079",
+      "contribution": "Retrieves a defined cBioPortal sequencing panel and its gene inventory for workflow-level membership assessment.",
+      "draft_id": "vsdfederatedcbiocancergenepanels_ca5c0f9a3b15",
+      "draft_sha256": "696c3db0744d2bfd5542b208d930db800630f3c1053a7cd91b63172c868e8c72",
+      "early_publication_blocked": true,
+      "early_publication_error": "Required artifact 'vsdfederatedcbiocancergenepanels_ca5c0f9a3b15.json' does not exist",
+      "key": "cbio_gene_panel",
+      "operation_sha256": "ca5c0f9a3b159f32200a89cab4abe240028a8d5d0f63bc79e5ba63e323293128",
+      "publication_sha256": "02bdcbf5aff586228f70c635c0303000b4f9c1532f6690a3d70f96a6f1125776",
+      "source_id": "cbioportal",
+      "tool_name": "VSDFederatedCBioCancerGenePanels",
+      "verification_case_count": 3,
+      "verification_cases": [
+        {
+          "arguments": {
+            "genePanelId": "IMPACT341"
+          },
+          "case_index": 0,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/genePanelId": "IMPACT341"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/description",
+              "/genes"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "description",
+            "genePanelId",
+            "genes"
+          ],
+          "operation_sha256": "ca5c0f9a3b159f32200a89cab4abe240028a8d5d0f63bc79e5ba63e323293128",
+          "payload_sha256": "701bd7870b6cb16c47e9df62de9f812a61d90a67ea9e323e1a5ac90c20f4bb83",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:39:34.146426+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "genePanelId": "FoundationOne"
+          },
+          "case_index": 1,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/genePanelId": "FoundationOne"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/description",
+              "/genes"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "description",
+            "genePanelId",
+            "genes"
+          ],
+          "operation_sha256": "ca5c0f9a3b159f32200a89cab4abe240028a8d5d0f63bc79e5ba63e323293128",
+          "payload_sha256": "4bc0c0c78f3b31fc5a9d0be0b6df8df72ddfa57da51ed3ff35ef6842db7a1d45",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:39:34.596063+00:00",
+          "row_count": null
+        },
+        {
+          "arguments": {
+            "genePanelId": "DFCI-ONCOPANEL-3"
+          },
+          "case_index": 2,
+          "expect": {
+            "equals": {},
+            "equals_paths": {
+              "/genePanelId": "DFCI-ONCOPANEL-3"
+            },
+            "equals_paths_casefold": {},
+            "max_items": null,
+            "min_items": null,
+            "required_fields": [],
+            "required_paths": [
+              "/description",
+              "/genes"
+            ],
+            "result_type": "object"
+          },
+          "http_status": 200,
+          "observed_fields": [
+            "description",
+            "genePanelId",
+            "genes"
+          ],
+          "operation_sha256": "ca5c0f9a3b159f32200a89cab4abe240028a8d5d0f63bc79e5ba63e323293128",
+          "payload_sha256": "52ee1c01730623a12e4da11c27a2ae71c4c067fc44a2df23b92c9fed6f75567e",
+          "redirects": 0,
+          "result_type": "object",
+          "retrieved_at": "2026-08-03T05:39:35.136741+00:00",
+          "row_count": null
+        }
+      ],
+      "verification_sha256": "11203a80d5dfe681dffd103e8cde0f522524e4365e18e4f18c1c7a113b07c96d"
+    }
+  ],
+  "rejections": [
+    {
+      "approval_blocked": true,
+      "approval_error": "Required artifact 'vsdfederatedrejectedcbiogene_9a190446a46e.json' does not exist",
+      "candidate_sha256": "10916ffaafb21c40ef2894c6fe4d722717ecc5d6a9ebdbffa63f4267f9b7ad10",
+      "decision": "rejected_at_live_verification",
+      "draft_sha256": "4a0210d6562bec28da46e7a246a0af2f5dfcc79018b4a8c6e0c1d801d6e0b2de",
+      "key": "cbio_gene_schema_drift",
+      "publication_blocked": true,
+      "publication_error": "Required artifact 'vsdfederatedrejectedcbiogene_9a190446a46e.json' does not exist",
+      "source_id": "cbioportal",
+      "tool_name": "VSDFederatedRejectedCBioGene",
+      "verification_error": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider response failed the reviewed schema: 'geneticEntityId' is a required property\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider response failed the reviewed schema: 'geneticEntityId' is a required property\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}"
+    },
+    {
+      "approval_blocked": true,
+      "approval_error": "Required artifact 'vsdfederatedrejectedpdbeentities_64fcf585f82d.json' does not exist",
+      "candidate_sha256": "dcc8e068fd217df9b0b48e89ab0e81f0a45605563cabc187aa88176a602fc3a7",
+      "decision": "rejected_at_live_verification",
+      "draft_sha256": "01a9eb4f2c6486212715b4902279979265c02eb17b03b5a961572ecb7e04d02d",
+      "key": "pdbe_entity_schema_drift",
+      "publication_blocked": true,
+      "publication_error": "Required artifact 'vsdfederatedrejectedpdbeentities_64fcf585f82d.json' does not exist",
+      "source_id": "pdbe_graph",
+      "tool_name": "VSDFederatedRejectedPDBeEntities",
+      "verification_error": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider response failed the reviewed schema: None is not of type 'string'\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider response failed the reviewed schema: None is not of type 'string'\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}"
+    },
+    {
+      "approval_blocked": true,
+      "approval_error": "Required artifact 'vsdfederatedrejectedomicsdidatabases_61fe41f99645.json' does not exist",
+      "candidate_sha256": "0e4f8351f8524f6e769ea0ca78ef231d64c2b333995af8e95f9ec6de5737a0f8",
+      "decision": "rejected_at_live_verification",
+      "draft_sha256": "5f0a804715fb19f77d4dc97f6f6aeb0f7b6d49cf22c035ba7b057cb7164be40c",
+      "key": "omicsdi_database_schema_drift",
+      "publication_blocked": true,
+      "publication_error": "Required artifact 'vsdfederatedrejectedomicsdidatabases_61fe41f99645.json' does not exist",
+      "source_id": "omicsdi",
+      "tool_name": "VSDFederatedRejectedOmicsDIDatabases",
+      "verification_error": "Verification case 0 did not execute successfully: {'status': 'error', 'error': \"Validation error: Provider response failed the reviewed schema: None is not of type 'array'\", 'error_details': {'type': 'ToolValidationError', 'message': \"Validation error: Provider response failed the reviewed schema: None is not of type 'array'\", 'retriable': False, 'next_steps': ['Check parameter types and values', 'Review tool documentation', 'Verify required parameters are provided'], 'details': {}}}"
+    }
+  ],
+  "scenario_results": [
+    {
+      "disease_context": "human papillomavirus-related endocervical adenocarcinoma",
+      "gene_symbol": "TP53",
+      "scenario_id": "tp53_cervical_model",
+      "tool_results": [
+        {
+          "arguments": {
+            "qualifier": "P04637"
+          },
+          "key": "alphafold_models",
+          "observations": [
+            {
+              "full_count": 9,
+              "label": "Representative predicted structure",
+              "pointer": "",
+              "value": [
+                {
+                  "globalMetricValue": 75.06,
+                  "latestVersion": 6,
+                  "modelEntityId": "AF-P04637-F1",
+                  "uniprotAccession": "P04637"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://alphafold.ebi.ac.uk/api/prediction/P04637",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "32eb5861f40cea6fbc6b30453e850b783d2241459a0ab3bfb53b668a70c926f4",
+            "payload_sha256": "a87643758dc6c1a0ed23ab6bcb012588b0402a14773a5c2fca6d981a21308555",
+            "provider": "alphafold.ebi.ac.uk",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 18911,
+            "retrieved_at": "2026-08-03T05:39:40.648946+00:00"
+          },
+          "tool_name": "VSDFederatedAlphaFoldCancerProteins"
+        },
+        {
+          "arguments": {
+            "id": "HGNC:11998"
+          },
+          "key": "monarch_gene",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Normalized gene entity",
+              "pointer": "",
+              "value": {
+                "category": "biolink:Gene",
+                "id": "HGNC:11998",
+                "name": "TP53",
+                "symbol": "TP53"
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://api-v3.monarchinitiative.org/v3/api/entity/HGNC%3A11998",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "1685c51ed63aa44f2c89c76c7da1b00b2181af435365dcd4431fa381380908f0",
+            "payload_sha256": "a629d0eb1ac37026f2df39bd8ffa664100db5c1f4bb6b48ff3d457b55a2f84e9",
+            "provider": "api-v3.monarchinitiative.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 56563,
+            "retrieved_at": "2026-08-03T05:39:41.225624+00:00"
+          },
+          "tool_name": "VSDFederatedMonarchCancerGenes"
+        },
+        {
+          "arguments": {
+            "id": "R-HSA-69563"
+          },
+          "key": "reactome_pathway",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Mechanistic pathway",
+              "pointer": "",
+              "value": {
+                "displayName": "p53-Dependent G1 DNA Damage Response",
+                "isInDisease": false,
+                "speciesName": "Homo sapiens",
+                "stId": "R-HSA-69563"
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://reactome.org/ContentService/data/query/enhanced/v2/R-HSA-69563",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "496d27620428e988b461d7e088141ee0b420f810d8c4ea6fa40772a2e3595800",
+            "payload_sha256": "fc3ec3dfc18bd5a7b23cd40d947e21456580d1dc9bf966fff5bfbff3b95f7231",
+            "provider": "reactome.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 35861,
+            "retrieved_at": "2026-08-03T05:39:41.653776+00:00"
+          },
+          "tool_name": "VSDFederatedReactomeCancerPathways"
+        },
+        {
+          "arguments": {
+            "geneId": [
+              "TP53"
+            ]
+          },
+          "key": "gtex_gene_reference",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "GTEx reference gene",
+              "pointer": "/data/0",
+              "value": {
+                "chromosome": "chr17",
+                "end": 7687550,
+                "entrezGeneId": 7157,
+                "gencodeId": "ENSG00000141510.16",
+                "geneSymbol": "TP53",
+                "start": 7661779
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://gtexportal.org/api/v2/reference/gene",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "ce750bc074a0ad90f0d7f20e27e4e16b4a4ead615ba492d854d27beee7bd883e",
+            "payload_sha256": "2a220afa85b72752ec89125e5c167e939155a40cf67c475f4aaee4aa0383f13c",
+            "provider": "gtexportal.org",
+            "query_params": {
+              "geneId": [
+                "TP53"
+              ]
+            },
+            "redirects": 0,
+            "response_bytes": 463,
+            "retrieved_at": "2026-08-03T05:39:42.039071+00:00"
+          },
+          "tool_name": "VSDFederatedGTExCancerGeneReferences"
+        },
+        {
+          "arguments": {
+            "q": "id:HeLa"
+          },
+          "key": "cellosaurus_model",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Cell-line accession",
+              "pointer": "/Cellosaurus/cell-line-list/0/accession-list/0",
+              "value": {
+                "type": "primary",
+                "value": "CVCL_0030"
+              }
+            },
+            {
+              "full_count": null,
+              "label": "Cell-line disease annotation",
+              "pointer": "/Cellosaurus/cell-line-list/0/disease-list/0",
+              "value": {
+                "accession": "C27677",
+                "database": "NCIt",
+                "iri": "http://purl.obolibrary.org/obo/NCIT_C27677",
+                "label": "Human papillomavirus-related endocervical adenocarcinoma"
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://api.cellosaurus.org/search/cell-line",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "86505949b408fc398da03115bb5df6f1f8c46ff11e75769fbfc0af4f6e8f78dc",
+            "payload_sha256": "6619e0096f8ec525ba3c7c12181cfebabfc5a83a61e4066ebcf7be66f638c2fe",
+            "provider": "api.cellosaurus.org",
+            "query_params": {
+              "fields": "id,ac,sy,di",
+              "format": "json",
+              "q": "id:HeLa",
+              "rows": 1
+            },
+            "redirects": 0,
+            "response_bytes": 1355,
+            "retrieved_at": "2026-08-03T05:39:42.796541+00:00"
+          },
+          "tool_name": "VSDFederatedCellosaurusCancerModels"
+        },
+        {
+          "arguments": {
+            "gene_id": "ENSG00000141510"
+          },
+          "key": "eqtl_associations",
+          "observations": [
+            {
+              "full_count": 5,
+              "label": "Representative regulatory associations",
+              "pointer": "",
+              "value": [
+                {
+                  "beta": -0.031020600348711014,
+                  "dataset_id": "QTD000605",
+                  "gene_id": "ENSG00000141510",
+                  "pvalue": 0.8880540132522583,
+                  "rsid": "rs57684686",
+                  "se": 0.22005000710487366,
+                  "study_id": "QTS000037",
+                  "variant": "chr17_6690403_G_A"
+                },
+                {
+                  "beta": 0.5499770045280457,
+                  "dataset_id": "QTD000605",
+                  "gene_id": "ENSG00000141510",
+                  "pvalue": 0.11778099834918976,
+                  "rsid": "rs77795940",
+                  "se": 0.3498910069465637,
+                  "study_id": "QTS000037",
+                  "variant": "chr17_6695969_C_T"
+                },
+                {
+                  "beta": 0.033539898693561554,
+                  "dataset_id": "QTD000605",
+                  "gene_id": "ENSG00000141510",
+                  "pvalue": 0.8037199974060059,
+                  "rsid": "rs7220915",
+                  "se": 0.1347460001707077,
+                  "study_id": "QTS000037",
+                  "variant": "chr17_6696046_T_C"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://www.ebi.ac.uk/eqtl/api/v3/associations",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "6830a5250664fddafc0e2a9094e6df5b3a990dfaf9ca06c68847168463e58f44",
+            "payload_sha256": "ce872f6ac6e8b4938d1b2037e53276fa3b76449b2d030779448040053181e37c",
+            "provider": "www.ebi.ac.uk",
+            "query_params": {
+              "gene_id": "ENSG00000141510",
+              "size": 5
+            },
+            "redirects": 0,
+            "response_bytes": 1521,
+            "retrieved_at": "2026-08-03T05:39:49.955145+00:00"
+          },
+          "tool_name": "VSDFederatedEQTLGeneAssociations"
+        },
+        {
+          "arguments": {
+            "genePanelId": "IMPACT341"
+          },
+          "key": "cbio_gene_panel",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Cancer sequencing panel",
+              "pointer": "",
+              "value": {
+                "description": "Targeted (341 cancer genes) sequencing of various tumor types via MSK-IMPACT on Illumina HiSeq sequencers.",
+                "genePanelId": "IMPACT341"
+              }
+            },
+            {
+              "full_count": 341,
+              "label": "Scenario gene in panel",
+              "pointer": "/genes",
+              "value": [
+                {
+                  "entrezGeneId": 7157,
+                  "hugoGeneSymbol": "TP53"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://www.cbioportal.org/api/gene-panels/IMPACT341",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "ca5c0f9a3b159f32200a89cab4abe240028a8d5d0f63bc79e5ba63e323293128",
+            "payload_sha256": "701bd7870b6cb16c47e9df62de9f812a61d90a67ea9e323e1a5ac90c20f4bb83",
+            "provider": "www.cbioportal.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 16134,
+            "retrieved_at": "2026-08-03T05:39:50.420690+00:00"
+          },
+          "tool_name": "VSDFederatedCBioCancerGenePanels"
+        }
+      ]
+    },
+    {
+      "disease_context": "invasive breast carcinoma",
+      "gene_symbol": "BRCA1",
+      "scenario_id": "brca1_breast_model",
+      "tool_results": [
+        {
+          "arguments": {
+            "qualifier": "P38398"
+          },
+          "key": "alphafold_models",
+          "observations": [
+            {
+              "full_count": 8,
+              "label": "Representative predicted structure",
+              "pointer": "",
+              "value": [
+                {
+                  "globalMetricValue": 41.59,
+                  "latestVersion": 6,
+                  "modelEntityId": "AF-P38398-F1",
+                  "uniprotAccession": "P38398"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://alphafold.ebi.ac.uk/api/prediction/P38398",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "32eb5861f40cea6fbc6b30453e850b783d2241459a0ab3bfb53b668a70c926f4",
+            "payload_sha256": "6e89492b55e0e8052b3130f39bbf0cec1727439e144cb2a51cea4b41803ff549",
+            "provider": "alphafold.ebi.ac.uk",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 31457,
+            "retrieved_at": "2026-08-03T05:39:50.631506+00:00"
+          },
+          "tool_name": "VSDFederatedAlphaFoldCancerProteins"
+        },
+        {
+          "arguments": {
+            "id": "HGNC:1100"
+          },
+          "key": "monarch_gene",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Normalized gene entity",
+              "pointer": "",
+              "value": {
+                "category": "biolink:Gene",
+                "id": "HGNC:1100",
+                "name": "BRCA1",
+                "symbol": "BRCA1"
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://api-v3.monarchinitiative.org/v3/api/entity/HGNC%3A1100",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "1685c51ed63aa44f2c89c76c7da1b00b2181af435365dcd4431fa381380908f0",
+            "payload_sha256": "8790ffbb1a818894269a1201e2d4223bc7f26b4e6964d719183d8db2ae7a8012",
+            "provider": "api-v3.monarchinitiative.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 50503,
+            "retrieved_at": "2026-08-03T05:39:51.204612+00:00"
+          },
+          "tool_name": "VSDFederatedMonarchCancerGenes"
+        },
+        {
+          "arguments": {
+            "id": "R-HSA-5693532"
+          },
+          "key": "reactome_pathway",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Mechanistic pathway",
+              "pointer": "",
+              "value": {
+                "displayName": "DNA Double-Strand Break Repair",
+                "isInDisease": false,
+                "speciesName": "Homo sapiens",
+                "stId": "R-HSA-5693532"
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://reactome.org/ContentService/data/query/enhanced/v2/R-HSA-5693532",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "496d27620428e988b461d7e088141ee0b420f810d8c4ea6fa40772a2e3595800",
+            "payload_sha256": "6491e804ff031f7cd35822f2a11d6e8b24faf03adfd50ae9d459390d32a88da3",
+            "provider": "reactome.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 76725,
+            "retrieved_at": "2026-08-03T05:39:51.710022+00:00"
+          },
+          "tool_name": "VSDFederatedReactomeCancerPathways"
+        },
+        {
+          "arguments": {
+            "geneId": [
+              "BRCA1"
+            ]
+          },
+          "key": "gtex_gene_reference",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "GTEx reference gene",
+              "pointer": "/data/0",
+              "value": {
+                "chromosome": "chr17",
+                "end": 43170245,
+                "entrezGeneId": 672,
+                "gencodeId": "ENSG00000012048.20",
+                "geneSymbol": "BRCA1",
+                "start": 43044295
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://gtexportal.org/api/v2/reference/gene",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "ce750bc074a0ad90f0d7f20e27e4e16b4a4ead615ba492d854d27beee7bd883e",
+            "payload_sha256": "938922d354be32b9cfbdd1559d1bb3b1b1b91d65d5efd1dcbe07a09f15486297",
+            "provider": "gtexportal.org",
+            "query_params": {
+              "geneId": [
+                "BRCA1"
+              ]
+            },
+            "redirects": 0,
+            "response_bytes": 477,
+            "retrieved_at": "2026-08-03T05:39:51.893878+00:00"
+          },
+          "tool_name": "VSDFederatedGTExCancerGeneReferences"
+        },
+        {
+          "arguments": {
+            "q": "id:MCF-7"
+          },
+          "key": "cellosaurus_model",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Cell-line accession",
+              "pointer": "/Cellosaurus/cell-line-list/0/accession-list/0",
+              "value": {
+                "type": "primary",
+                "value": "CVCL_0031"
+              }
+            },
+            {
+              "full_count": null,
+              "label": "Cell-line disease annotation",
+              "pointer": "/Cellosaurus/cell-line-list/0/disease-list/0",
+              "value": {
+                "accession": "C4194",
+                "database": "NCIt",
+                "iri": "http://purl.obolibrary.org/obo/NCIT_C4194",
+                "label": "Invasive breast carcinoma of no special type"
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://api.cellosaurus.org/search/cell-line",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "86505949b408fc398da03115bb5df6f1f8c46ff11e75769fbfc0af4f6e8f78dc",
+            "payload_sha256": "4c12f88d07a487c8b76be0d7762974232c98e2d1aaefc9e1fa9100fc73919c2f",
+            "provider": "api.cellosaurus.org",
+            "query_params": {
+              "fields": "id,ac,sy,di",
+              "format": "json",
+              "q": "id:MCF-7",
+              "rows": 1
+            },
+            "redirects": 0,
+            "response_bytes": 1512,
+            "retrieved_at": "2026-08-03T05:39:52.763198+00:00"
+          },
+          "tool_name": "VSDFederatedCellosaurusCancerModels"
+        },
+        {
+          "arguments": {
+            "gene_id": "ENSG00000012048"
+          },
+          "key": "eqtl_associations",
+          "observations": [
+            {
+              "full_count": 5,
+              "label": "Representative regulatory associations",
+              "pointer": "",
+              "value": [
+                {
+                  "beta": -0.0027977300342172384,
+                  "dataset_id": "QTD000394",
+                  "gene_id": "ENSG00000012048",
+                  "pvalue": 0.9909949898719788,
+                  "rsid": "rs57173345",
+                  "se": 0.24741299450397491,
+                  "study_id": "QTS000022",
+                  "variant": "chr17_42174076_T_G"
+                },
+                {
+                  "beta": 0.07570499926805496,
+                  "dataset_id": "QTD000394",
+                  "gene_id": "ENSG00000012048",
+                  "pvalue": 0.7689549922943115,
+                  "rsid": "rs9913130",
+                  "se": 0.25720301270484924,
+                  "study_id": "QTS000022",
+                  "variant": "chr17_42174190_A_C"
+                },
+                {
+                  "beta": 0.15932700037956238,
+                  "dataset_id": "QTD000394",
+                  "gene_id": "ENSG00000012048",
+                  "pvalue": 0.4358460009098053,
+                  "rsid": "rs12953110",
+                  "se": 0.2038549929857254,
+                  "study_id": "QTS000022",
+                  "variant": "chr17_42186979_C_T"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://www.ebi.ac.uk/eqtl/api/v3/associations",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "6830a5250664fddafc0e2a9094e6df5b3a990dfaf9ca06c68847168463e58f44",
+            "payload_sha256": "55de015d2ad5ccbf4f4334f78d272c93b28ea0598c6e33c5a22969479833aeba",
+            "provider": "www.ebi.ac.uk",
+            "query_params": {
+              "gene_id": "ENSG00000012048",
+              "size": 5
+            },
+            "redirects": 0,
+            "response_bytes": 1533,
+            "retrieved_at": "2026-08-03T05:39:54.265189+00:00"
+          },
+          "tool_name": "VSDFederatedEQTLGeneAssociations"
+        },
+        {
+          "arguments": {
+            "genePanelId": "FoundationOne"
+          },
+          "key": "cbio_gene_panel",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Cancer sequencing panel",
+              "pointer": "",
+              "value": {
+                "description": "FoundationOne gene panel (317 genes)",
+                "genePanelId": "FoundationOne"
+              }
+            },
+            {
+              "full_count": 317,
+              "label": "Scenario gene in panel",
+              "pointer": "/genes",
+              "value": [
+                {
+                  "entrezGeneId": 672,
+                  "hugoGeneSymbol": "BRCA1"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://www.cbioportal.org/api/gene-panels/FoundationOne",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "ca5c0f9a3b159f32200a89cab4abe240028a8d5d0f63bc79e5ba63e323293128",
+            "payload_sha256": "4bc0c0c78f3b31fc5a9d0be0b6df8df72ddfa57da51ed3ff35ef6842db7a1d45",
+            "provider": "www.cbioportal.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 14908,
+            "retrieved_at": "2026-08-03T05:39:54.617810+00:00"
+          },
+          "tool_name": "VSDFederatedCBioCancerGenePanels"
+        }
+      ]
+    },
+    {
+      "disease_context": "lung adenocarcinoma",
+      "gene_symbol": "EGFR",
+      "scenario_id": "egfr_lung_model",
+      "tool_results": [
+        {
+          "arguments": {
+            "qualifier": "P00533"
+          },
+          "key": "alphafold_models",
+          "observations": [
+            {
+              "full_count": 4,
+              "label": "Representative predicted structure",
+              "pointer": "",
+              "value": [
+                {
+                  "globalMetricValue": 75.94,
+                  "latestVersion": 6,
+                  "modelEntityId": "AF-P00533-F1",
+                  "uniprotAccession": "P00533"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://alphafold.ebi.ac.uk/api/prediction/P00533",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "32eb5861f40cea6fbc6b30453e850b783d2241459a0ab3bfb53b668a70c926f4",
+            "payload_sha256": "6da4cc6b642cc5492d9912a46de9c38531075224faeb747e23f15d59c2c4c1a2",
+            "provider": "alphafold.ebi.ac.uk",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 12049,
+            "retrieved_at": "2026-08-03T05:39:54.933946+00:00"
+          },
+          "tool_name": "VSDFederatedAlphaFoldCancerProteins"
+        },
+        {
+          "arguments": {
+            "id": "HGNC:3236"
+          },
+          "key": "monarch_gene",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Normalized gene entity",
+              "pointer": "",
+              "value": {
+                "category": "biolink:Gene",
+                "id": "HGNC:3236",
+                "name": "EGFR",
+                "symbol": "EGFR"
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://api-v3.monarchinitiative.org/v3/api/entity/HGNC%3A3236",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "1685c51ed63aa44f2c89c76c7da1b00b2181af435365dcd4431fa381380908f0",
+            "payload_sha256": "a57d02674a5e41bd5880770110383ff959ad580fecdff8f7e93237a93b0e4100",
+            "provider": "api-v3.monarchinitiative.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 31731,
+            "retrieved_at": "2026-08-03T05:39:55.418051+00:00"
+          },
+          "tool_name": "VSDFederatedMonarchCancerGenes"
+        },
+        {
+          "arguments": {
+            "id": "R-HSA-177929"
+          },
+          "key": "reactome_pathway",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Mechanistic pathway",
+              "pointer": "",
+              "value": {
+                "displayName": "Signaling by EGFR",
+                "isInDisease": false,
+                "speciesName": "Homo sapiens",
+                "stId": "R-HSA-177929"
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://reactome.org/ContentService/data/query/enhanced/v2/R-HSA-177929",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "496d27620428e988b461d7e088141ee0b420f810d8c4ea6fa40772a2e3595800",
+            "payload_sha256": "88f74c2e8768f5aa004dc9dbc73152b87238952772352ad6412108dc364b96fe",
+            "provider": "reactome.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 77108,
+            "retrieved_at": "2026-08-03T05:39:56.094930+00:00"
+          },
+          "tool_name": "VSDFederatedReactomeCancerPathways"
+        },
+        {
+          "arguments": {
+            "geneId": [
+              "EGFR"
+            ]
+          },
+          "key": "gtex_gene_reference",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "GTEx reference gene",
+              "pointer": "/data/0",
+              "value": {
+                "chromosome": "chr7",
+                "end": 55211628,
+                "entrezGeneId": 1956,
+                "gencodeId": "ENSG00000146648.17",
+                "geneSymbol": "EGFR",
+                "start": 55019021
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://gtexportal.org/api/v2/reference/gene",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "ce750bc074a0ad90f0d7f20e27e4e16b4a4ead615ba492d854d27beee7bd883e",
+            "payload_sha256": "0c546c836f0b67f23c2e0dff1b23883fc85d349d47c43ff61e5d9f42229f45cf",
+            "provider": "gtexportal.org",
+            "query_params": {
+              "geneId": [
+                "EGFR"
+              ]
+            },
+            "redirects": 0,
+            "response_bytes": 479,
+            "retrieved_at": "2026-08-03T05:39:56.293275+00:00"
+          },
+          "tool_name": "VSDFederatedGTExCancerGeneReferences"
+        },
+        {
+          "arguments": {
+            "q": "id:A-549"
+          },
+          "key": "cellosaurus_model",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Cell-line accession",
+              "pointer": "/Cellosaurus/cell-line-list/0/accession-list/0",
+              "value": {
+                "type": "primary",
+                "value": "CVCL_0023"
+              }
+            },
+            {
+              "full_count": null,
+              "label": "Cell-line disease annotation",
+              "pointer": "/Cellosaurus/cell-line-list/0/disease-list/0",
+              "value": {
+                "accession": "C3512",
+                "database": "NCIt",
+                "iri": "http://purl.obolibrary.org/obo/NCIT_C3512",
+                "label": "Lung adenocarcinoma"
+              }
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://api.cellosaurus.org/search/cell-line",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "86505949b408fc398da03115bb5df6f1f8c46ff11e75769fbfc0af4f6e8f78dc",
+            "payload_sha256": "f48a4c3db21898d4296c5f13cfa4ca981ad3c64c1ea614c2ce9c14b69bf18a3c",
+            "provider": "api.cellosaurus.org",
+            "query_params": {
+              "fields": "id,ac,sy,di",
+              "format": "json",
+              "q": "id:A-549",
+              "rows": 1
+            },
+            "redirects": 0,
+            "response_bytes": 1298,
+            "retrieved_at": "2026-08-03T05:39:56.830002+00:00"
+          },
+          "tool_name": "VSDFederatedCellosaurusCancerModels"
+        },
+        {
+          "arguments": {
+            "gene_id": "ENSG00000146648"
+          },
+          "key": "eqtl_associations",
+          "observations": [
+            {
+              "full_count": 5,
+              "label": "Representative regulatory associations",
+              "pointer": "",
+              "value": [
+                {
+                  "beta": -0.04925350099802017,
+                  "dataset_id": "QTD000397",
+                  "gene_id": "ENSG00000146648",
+                  "pvalue": 0.8095020055770874,
+                  "rsid": "rs7811334",
+                  "se": 0.20391100645065308,
+                  "study_id": "QTS000022",
+                  "variant": "chr7_54024714_T_C"
+                },
+                {
+                  "beta": -0.10296399891376495,
+                  "dataset_id": "QTD000397",
+                  "gene_id": "ENSG00000146648",
+                  "pvalue": 0.4851979911327362,
+                  "rsid": "rs1526758",
+                  "se": 0.1471100002527237,
+                  "study_id": "QTS000022",
+                  "variant": "chr7_54027058_C_T"
+                },
+                {
+                  "beta": 0.5204539895057678,
+                  "dataset_id": "QTD000397",
+                  "gene_id": "ENSG00000146648",
+                  "pvalue": 0.16708600521087646,
+                  "rsid": "rs80041066",
+                  "se": 0.3746510148048401,
+                  "study_id": "QTS000022",
+                  "variant": "chr7_54027627_C_T"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://www.ebi.ac.uk/eqtl/api/v3/associations",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "6830a5250664fddafc0e2a9094e6df5b3a990dfaf9ca06c68847168463e58f44",
+            "payload_sha256": "b48b27557c2f5adddb4555dd43fc9c206f1caa78741700c1d8f249ebd2dfe093",
+            "provider": "www.ebi.ac.uk",
+            "query_params": {
+              "gene_id": "ENSG00000146648",
+              "size": 5
+            },
+            "redirects": 0,
+            "response_bytes": 1685,
+            "retrieved_at": "2026-08-03T05:39:57.699045+00:00"
+          },
+          "tool_name": "VSDFederatedEQTLGeneAssociations"
+        },
+        {
+          "arguments": {
+            "genePanelId": "DFCI-ONCOPANEL-3"
+          },
+          "key": "cbio_gene_panel",
+          "observations": [
+            {
+              "full_count": null,
+              "label": "Cancer sequencing panel",
+              "pointer": "",
+              "value": {
+                "description": "DFCI-ONCOPANEL-3, Number of Genes - 447",
+                "genePanelId": "DFCI-ONCOPANEL-3"
+              }
+            },
+            {
+              "full_count": 447,
+              "label": "Scenario gene in panel",
+              "pointer": "/genes",
+              "value": [
+                {
+                  "entrezGeneId": 1956,
+                  "hugoGeneSymbol": "EGFR"
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "authentication": {
+              "credential_source": "none",
+              "type": "none"
+            },
+            "endpoint": "https://www.cbioportal.org/api/gene-panels/DFCI-ONCOPANEL-3",
+            "http_status": 200,
+            "method": "GET",
+            "operation_sha256": "ca5c0f9a3b159f32200a89cab4abe240028a8d5d0f63bc79e5ba63e323293128",
+            "payload_sha256": "52ee1c01730623a12e4da11c27a2ae71c4c067fc44a2df23b92c9fed6f75567e",
+            "provider": "www.cbioportal.org",
+            "query_params": {},
+            "redirects": 0,
+            "response_bytes": 21075,
+            "retrieved_at": "2026-08-03T05:39:58.152199+00:00"
+          },
+          "tool_name": "VSDFederatedCBioCancerGenePanels"
+        }
+      ]
+    }
+  ],
+  "scientific_question": "Can a single reviewed-source scan create a locally loadable evidence panel that links cancer genes, protein models, pathways, tissue-reference identifiers, experimental cell lines, regulatory associations, and sequencing panels without editing ToolUniverse's built-in registry?",
+  "source_scan": {
+    "cross_portfolio": {
+      "baseline_candidate_row_count": 3097,
+      "baseline_unique_operation_identity_count": 3041,
+      "combined_unique_operation_identity_count": 3559,
+      "federated_incremental_operation_identity_count": 518,
+      "federated_preview_count": 533,
+      "overlap_unique_operation_identity_count": 15
+    },
+    "manifest_sha256": "3e5dee13a8b340af6541787c748b4beaa60ce7e888af17ddc5bdff2952516243",
+    "metrics": {
+      "blocked_operation_count": 609,
+      "duplicate_source_operation_count": 0,
+      "existing_exact_operation_count": 0,
+      "existing_host_gap_count": 475,
+      "failed_source_count": 0,
+      "manifest_source_count": 20,
+      "net_new_preview_count": 533,
+      "new_host_candidate_count": 58,
+      "operation_candidate_count": 1142,
+      "structurally_draftable_count": 533,
+      "successful_source_count": 20,
+      "unique_operation_identity_count": 1142
+    },
+    "registry": {
+      "host_count": 259,
+      "inventory_sha256": "160e86e787c5ac7555965b707b0bd094edadf00fec67cab5a2a649826181b63f",
+      "reviewed_operation_count": 0,
+      "reviewed_operation_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "tool_count": 2744
+    },
+    "scan_id": "fc986e78d3a5b8cf",
+    "scan_sha256": "fc986e78d3a5b8cf26be0d2d50bee54b01b178d0be092bca71f9e65e2b272a49",
+    "scanned_at": "2026-08-03T04:50:55.747213+00:00",
+    "sources": [
+      {
+        "api_title": "Programmatic access API endpoints",
+        "blocked_count": 0,
+        "candidate_count": 5,
+        "content_sha256": "714607265fd8edc581baf28df038ea804d96d871baa6034ff60d22d0cf893163",
+        "existing_host_gap_count": 0,
+        "new_host_candidate_count": 5,
+        "preview_count": 5,
+        "semantic_sha256": "46289999f0db34fa998c1ffcc2c3ae32e05ab1017497bc0fba64fb248f04ddcb",
+        "source_id": "alphafold"
+      },
+      {
+        "api_title": "bio.tools API",
+        "blocked_count": 55,
+        "candidate_count": 56,
+        "content_sha256": "6a63b00974d33d36eab233eb5c14956d01a9e2fe6b14a462f15aed7ead6b24ab",
+        "existing_host_gap_count": 1,
+        "new_host_candidate_count": 0,
+        "preview_count": 1,
+        "semantic_sha256": "b8cf7cfb9da3f49e335e5f6c854de162024a7eedfe043c1c8749064c3cbca1b7",
+        "source_id": "biotools"
+      },
+      {
+        "api_title": "cBioPortal web Public API [Alpha]",
+        "blocked_count": 95,
+        "candidate_count": 152,
+        "content_sha256": "8b8d759f58c2682b41df69d84bd0040c75842d8d4afad1c769f1ccdaef4003ea",
+        "existing_host_gap_count": 57,
+        "new_host_candidate_count": 0,
+        "preview_count": 57,
+        "semantic_sha256": "c2a710edf1a0940950d7c1acc514a55e73bd85e5e3aa95292d6d9c1dd56dea66",
+        "source_id": "cbioportal"
+      },
+      {
+        "api_title": "Cellosaurus API methods",
+        "blocked_count": 0,
+        "candidate_count": 3,
+        "content_sha256": "31225a8e23478934287304b95041dcc0daa425448ff70389d5ca64de313d5274",
+        "existing_host_gap_count": 3,
+        "new_host_candidate_count": 0,
+        "preview_count": 3,
+        "semantic_sha256": "d8147652521e5fc361e918cffbd00e168fc5cc69989ef689b0036ce6c4ee52f7",
+        "source_id": "cellosaurus"
+      },
+      {
+        "api_title": "eQTL Catalogue Summary Statistics API Documentation",
+        "blocked_count": 23,
+        "candidate_count": 33,
+        "content_sha256": "532f9072f26a5ebcd01102664c3446c981dc54fa27c46d689e36a3c672093998",
+        "existing_host_gap_count": 10,
+        "new_host_candidate_count": 0,
+        "preview_count": 10,
+        "semantic_sha256": "6c609202b01670c0662c970014d80c634e9d3c82c5cd2ae41bd02ede9630646d",
+        "source_id": "ebi_eqtl"
+      },
+      {
+        "api_title": "ENA Browser API",
+        "blocked_count": 29,
+        "candidate_count": 34,
+        "content_sha256": "de6837613dcb432b3cb37791acbb1b0bcd8a2ba7682fa6d3d11aa79a8a4910d6",
+        "existing_host_gap_count": 5,
+        "new_host_candidate_count": 0,
+        "preview_count": 5,
+        "semantic_sha256": "27b9a39c87372b6814c7ebc472b4af00f80ac55bfa404b325c3c6c3ff01629a1",
+        "source_id": "ena_browser"
+      },
+      {
+        "api_title": "GTEx Portal API",
+        "blocked_count": 1,
+        "candidate_count": 57,
+        "content_sha256": "5cc28ae92cc01c2fcf6c553b3faf3b5b8700bf85b659505538397311a2667dbd",
+        "existing_host_gap_count": 56,
+        "new_host_candidate_count": 0,
+        "preview_count": 56,
+        "semantic_sha256": "dc6aa2044a8ae830640ef0e9332c4dca939a595ba84c48d1e5117711a2e31c8f",
+        "source_id": "gtex"
+      },
+      {
+        "api_title": "NinjaAPI",
+        "blocked_count": 6,
+        "candidate_count": 20,
+        "content_sha256": "66eb96071df82d6c5d64a137014baa04e3974c50bc3e0e8c0c0a56eddfb7e8b3",
+        "existing_host_gap_count": 14,
+        "new_host_candidate_count": 0,
+        "preview_count": 14,
+        "semantic_sha256": "5c027eead5dc3bc869cce8cf2eebb1f0ace076c3779fab289314e2027de0f247",
+        "source_id": "hmmer"
+      },
+      {
+        "api_title": "InterPro Matches API",
+        "blocked_count": 1,
+        "candidate_count": 2,
+        "content_sha256": "381c95d6c3350719498ac600dd13d79d2f807504bbd347a6cc480a99b49970b6",
+        "existing_host_gap_count": 1,
+        "new_host_candidate_count": 0,
+        "preview_count": 1,
+        "semantic_sha256": "64d0fc76d9cc8ff61c58869b759d93ba2b2ccdf67e92974dbe0bdb88567976a2",
+        "source_id": "interpro_matches"
+      },
+      {
+        "api_title": "MGnify API",
+        "blocked_count": 19,
+        "candidate_count": 40,
+        "content_sha256": "d06363d7315a5196caef3d34f95edd1bf2eb35cef48e3849cee2540cd9d7daa3",
+        "existing_host_gap_count": 21,
+        "new_host_candidate_count": 0,
+        "preview_count": 21,
+        "semantic_sha256": "c45d449d4fee2a496d7dfc6c8afd0df21c538a22af196dc87abb34aa1d87a127",
+        "source_id": "mgnify"
+      },
+      {
+        "api_title": "FastAPI",
+        "blocked_count": 6,
+        "candidate_count": 31,
+        "content_sha256": "1dd6862950fcc92eeb6df54020d2908ded2245e1e01a31bd8554d21427f0d869",
+        "existing_host_gap_count": 0,
+        "new_host_candidate_count": 25,
+        "preview_count": 25,
+        "semantic_sha256": "f9a17431d2d85a718c9a7eaf4d0bb4338d5651cd4804eb993362a93c7b04e7a5",
+        "source_id": "monarch"
+      },
+      {
+        "api_title": "NCBI Datasets API",
+        "blocked_count": 87,
+        "candidate_count": 107,
+        "content_sha256": "e5d4400c8e5dc6bb525c9925b61d1f83e3ce39b02c47cb40d35a7e29f3260456",
+        "existing_host_gap_count": 0,
+        "new_host_candidate_count": 20,
+        "preview_count": 20,
+        "semantic_sha256": "faa927719500cd62a30c90bf9d155041def9ac6b6439e8cd1d31e2486da05577",
+        "source_id": "ncbi_datasets"
+      },
+      {
+        "api_title": "OLS Service",
+        "blocked_count": 22,
+        "candidate_count": 113,
+        "content_sha256": "0f81f9e4922408c8e1b069695a3edbdf5fbf4b7d65e05eaefedda7a0d7ddfadb",
+        "existing_host_gap_count": 91,
+        "new_host_candidate_count": 0,
+        "preview_count": 91,
+        "semantic_sha256": "6c3e488dbe3d3e8e12368134bb9249c637f66e86180bd1810f48fc5e6f062ab3",
+        "source_id": "ols"
+      },
+      {
+        "api_title": "Data Discovery Index web service API",
+        "blocked_count": 6,
+        "candidate_count": 36,
+        "content_sha256": "2d0a42c86815edc07cb944ab0f0bd9f0bd901ee4b17ef6f6864c36e8744fb942",
+        "existing_host_gap_count": 30,
+        "new_host_candidate_count": 0,
+        "preview_count": 30,
+        "semantic_sha256": "b9fce63ea600eb14c6125b359d69d2bf18325607cf2ca37f25d375694854027a",
+        "source_id": "omicsdi"
+      },
+      {
+        "api_title": "PDBe File Download service",
+        "blocked_count": 14,
+        "candidate_count": 28,
+        "content_sha256": "82f1965479d9fececa0801d2188d2167de614fc46ca059eb61064fb8b289dd68",
+        "existing_host_gap_count": 14,
+        "new_host_candidate_count": 0,
+        "preview_count": 14,
+        "semantic_sha256": "45bad65160409a1d8682148edf7df79992e15b9007376737444cbfdd41e6d364",
+        "source_id": "pdbe_download"
+      },
+      {
+        "api_title": "PDBe API",
+        "blocked_count": 45,
+        "candidate_count": 193,
+        "content_sha256": "ebe0a42f8c5a78ed89d09cf08172b6cdeb187a8f51445cb5e1a4f8461e839a2f",
+        "existing_host_gap_count": 148,
+        "new_host_candidate_count": 0,
+        "preview_count": 148,
+        "semantic_sha256": "a27c7332000714e37b0d8205cacf6cf0c0929759904b5088a8981d77c2c2f350",
+        "source_id": "pdbe_graph"
+      },
+      {
+        "api_title": "PRIDE Archive Restful WS",
+        "blocked_count": 12,
+        "candidate_count": 36,
+        "content_sha256": "f5d4ce4b1168c8a854194fe3da9b459e0a4614a447b05bea26e2f2f253e22cbe",
+        "existing_host_gap_count": 24,
+        "new_host_candidate_count": 0,
+        "preview_count": 24,
+        "semantic_sha256": "35d28a4fe02a8bf83d2cb5e69a62d6569c33a4e4a2a734e2a0933e7a5ac6cd10",
+        "source_id": "pride"
+      },
+      {
+        "api_title": "RCSB Search API",
+        "blocked_count": 7,
+        "candidate_count": 7,
+        "content_sha256": "6834e8439f1390fe66ea464e00ea92c0e9bbd51e771309134c7fc8352e731ab4",
+        "existing_host_gap_count": 0,
+        "new_host_candidate_count": 0,
+        "preview_count": 0,
+        "semantic_sha256": "6091f7bd1c9e0bd822a7184a50ed9639df0cbf44aac6858abc91282d9c8b3c2b",
+        "source_id": "rcsb_search"
+      },
+      {
+        "api_title": "Content Service",
+        "blocked_count": 75,
+        "candidate_count": 83,
+        "content_sha256": "fce0763c2b0a6c88c7d2ca8928dcb22838423913919627a08266dbac75649dd6",
+        "existing_host_gap_count": 0,
+        "new_host_candidate_count": 8,
+        "preview_count": 8,
+        "semantic_sha256": "3e5f756494459d295ec8a7f8d0c8e1fdaea5d4c62a900c76215bbc7ad7aead0c",
+        "source_id": "reactome"
+      },
+      {
+        "api_title": "JSON API to FAIRDOM SEEK",
+        "blocked_count": 106,
+        "candidate_count": 106,
+        "content_sha256": "7da96e5eb1d6b2e60437d8cd2e0ad132f158a6e5633fd347a6924fc058aa9ec4",
+        "existing_host_gap_count": 0,
+        "new_host_candidate_count": 0,
+        "preview_count": 0,
+        "semantic_sha256": "720abe19b08209d64df279bf5be22d1dfef260436e87e2660bdafc4c1fce607b",
+        "source_id": "workflowhub"
+      }
+    ]
+  },
+  "study_design": {
+    "accepted_tool_count": 7,
+    "post_publication_execution_count": 21,
+    "rejected_candidate_count": 3,
+    "scenario_count": 3,
+    "selected_source_count": 9,
+    "verification_execution_count": 21
+  },
+  "study_sha256": "d8487760fe84a3d2a086d592763ffb8326225ea654d2bd305273063605a18924",
+  "version": 1
+}

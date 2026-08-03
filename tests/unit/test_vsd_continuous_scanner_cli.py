@@ -28,14 +28,54 @@ def test_parser_exposes_bounded_run_options(tmp_path: Path):
     )
     assert smartapi.catalog == "smartapi"
 
+    federated = cli.build_parser().parse_args(
+        [
+            "--state-directory",
+            str(tmp_path),
+            "run-federated",
+            "--manifest",
+            str(tmp_path / "sources.json"),
+        ]
+    )
+    assert federated.command == "run-federated"
+    assert federated.manifest == tmp_path / "sources.json"
+
+    status = cli.build_parser().parse_args(
+        ["--state-directory", str(tmp_path), "status", "--kind", "federated"]
+    )
+    assert status.kind == "federated"
+
 
 def test_status_reports_empty_state(monkeypatch, tmp_path: Path):
     monkeypatch.setattr(cli, "load_latest_continuous_scan", lambda _path: None)
-    result = cli._execute(Namespace(command="status", state_directory=tmp_path))
+    result = cli._execute(
+        Namespace(command="status", kind="catalog", state_directory=tmp_path)
+    )
     assert result == {
         "status": "empty",
+        "kind": "catalog",
         "state_directory": str(tmp_path),
         "latest": None,
+    }
+
+
+def test_status_reads_federated_state(monkeypatch, tmp_path: Path):
+    monkeypatch.setattr(
+        cli,
+        "load_latest_federated_scan",
+        lambda _path: {"scan_id": "federated"},
+    )
+    monkeypatch.setattr(cli, "summarize_federated_scan", lambda value: value)
+
+    result = cli._execute(
+        Namespace(command="status", kind="federated", state_directory=tmp_path)
+    )
+
+    assert result == {
+        "status": "success",
+        "kind": "federated",
+        "state_directory": str(tmp_path),
+        "latest": {"scan_id": "federated"},
     }
 
 
@@ -110,3 +150,38 @@ def test_run_dispatches_to_smartapi_adapter(monkeypatch, tmp_path: Path):
     assert closed == [True]
     assert result["catalog"] == "smartapi"
     assert result["summary"] == {"catalog": "smartapi"}
+
+
+def test_run_dispatches_to_federated_manifest(monkeypatch, tmp_path: Path):
+    closed = []
+
+    class FakeToolUniverse:
+        def close(self):
+            closed.append(True)
+
+    monkeypatch.setattr(cli, "ToolUniverse", FakeToolUniverse)
+    monkeypatch.setattr(
+        cli,
+        "run_federated_source_scan",
+        lambda *_args, **_kwargs: {
+            "scan": {"catalog": "federated"},
+            "history_file": "scan.json",
+            "latest_file": "latest.json",
+            "snapshot_directory": "contracts",
+        },
+    )
+    monkeypatch.setattr(cli, "summarize_federated_scan", lambda value: value)
+
+    result = cli._execute(
+        Namespace(
+            command="run-federated",
+            state_directory=tmp_path,
+            manifest=tmp_path / "sources.json",
+            timeout=5,
+            max_contract_bytes=100_000,
+        )
+    )
+
+    assert closed == [True]
+    assert result["catalog"] == "federated"
+    assert result["summary"] == {"catalog": "federated"}

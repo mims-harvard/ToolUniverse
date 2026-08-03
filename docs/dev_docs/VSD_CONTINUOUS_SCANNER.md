@@ -31,6 +31,12 @@ The scheduled scanner has two approved OpenAPI directory adapters:
 - APIs.guru, a general API directory;
 - SmartAPI, a biomedical API registry.
 
+A separate provider-independent path scans a sealed manifest of reviewed
+official biomedical service contracts. It uses the same inert inspection and
+promotion boundaries without adding provider-specific scanner code. See
+`VSD_FEDERATED_BIOMEDICAL_SOURCES.md` for the source admission contract, live
+results, and reproducibility instructions.
+
 SmartAPI is read in pages of 100 records so each response remains below the
 existing 10 MB transport ceiling. Swagger 2 records remain inventoried as
 unsupported rather than being silently converted. A catalog adapter is not a
