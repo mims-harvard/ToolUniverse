@@ -231,6 +231,8 @@ default_tool_files = {
     "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
     # Cellpose deep-learning cell/nucleus segmentation (local, cellpose pkg)
     "cellpose": os.path.join(current_dir, "data", "cellpose_tools.json"),
+    # DeepSpot-M spatial gene expression from an H&E tile (local, deepspotm pkg)
+    "deepspotm": os.path.join(current_dir, "data", "deepspotm_tools.json"),
     # Therapeutics Data Commons benchmark dataset retrieval (PyTDC)
     "tdc_dataset": os.path.join(current_dir, "data", "tdc_dataset_tools.json"),
     # ENCODE SCREEN cCRE registry (candidate cis-regulatory elements, GraphQL)

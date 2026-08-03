@@ -1,0 +1,149 @@
+[
+  {
+    "name": "DeepSpotM_predict_gene_expression",
+    "description": "Predict spatial gene expression for a single H&E histology tile LOCALLY using the DeepSpot-M multimodal foundation model (no API, no key). Given a local path to a 224x224 H&E image and a list of HGNC gene symbols, returns the predicted expression of those genes for that tile in log1p-CPM units. DeepSpot-M represents genes as queryable embeddings drawn from DNA, RNA, protein, single-cell and text foundation models rather than as fixed outputs, so it spans the protein-coding transcriptome and covers genes unseen during training. Requesting specific genes is much cheaper than the full ~19k panel because only the requested gene queries run through the cross-attention decoder, so always pass the genes you actually need. IMPORTANT: values are PREDICTED from morphology, not measured by any assay, and must not be treated as ground-truth transcriptomics. The tile must be exactly 224x224 px cut at roughly 20x (~0.5 microns per pixel), the magnification the model was trained on; tiles at another scale are silently degraded and the tool cannot detect this from the image alone, so it only enforces the pixel dimensions. Requires the optional 'deepspotm' package (pip install deepspotm) and access to its weights, which are GATED on the Hugging Face Hub: request access at https://huggingface.co/ratschlab/DeepSpotM and run 'huggingface-cli login' first. The model is loaded lazily on first call and cached, so the first call is slow. Code is PolyForm Noncommercial 1.0.0 and weights are CC-BY-NC-SA-4.0: non-commercial research use only, not for clinical or diagnostic use. Returns a clean error if the package is missing, the weights are inaccessible, the image cannot be read, the tile is the wrong size, or a requested gene is outside the model's panel.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "image_path": {
+          "type": "string",
+          "description": "Path to a local 224x224 H&E histology tile (.png, .tif, .tiff, .jpg, .jpeg). Must be cut at roughly 20x (~0.5 microns per pixel)."
+        },
+        "genes": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of HGNC gene symbols."
+            },
+            {
+              "type": "string",
+              "description": "A single HGNC gene symbol."
+            }
+          ],
+          "description": "Gene symbol(s) to predict, for example ['EPCAM', 'CD3D', 'PTPRC']. Required: the full ~19k-gene panel is deliberately not returned in one call."
+        },
+        "source": {
+          "type": "string",
+          "description": "Which frozen gene-embedding source to query the decoder with. Default 'scgpt'.",
+          "enum": [
+            "evo2",
+            "orthrus",
+            "prott5",
+            "scgpt",
+            "apertus"
+          ]
+        },
+        "device": {
+          "type": "string",
+          "description": "Torch device, for example 'cuda' or 'cpu'. Default 'auto', which uses CUDA when available."
+        },
+        "model_repo": {
+          "type": "string",
+          "description": "Hugging Face repo or local directory holding the checkpoint. Defaults to 'ratschlab/DeepSpotM'."
+        }
+      },
+      "required": [
+        "image_path",
+        "genes"
+      ]
+    },
+    "type": "DeepSpotMTool",
+    "requires_local_input": true,
+    "required_packages": [
+      "deepspotm"
+    ],
+    "test_examples": [
+      {
+        "image_path": "/path/to/tiles/tile_00042.png",
+        "genes": [
+          "EPCAM",
+          "CD3D",
+          "PTPRC"
+        ]
+      },
+      {
+        "image_path": "/path/to/tiles/melanoma_tile.png",
+        "genes": [
+          "BRAF",
+          "CD37",
+          "COL1A1"
+        ],
+        "source": "scgpt",
+        "device": "cpu"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful prediction.",
+          "properties": {
+            "genes": {
+              "type": "object",
+              "description": "Map of requested gene symbol to predicted expression value.",
+              "additionalProperties": {
+                "type": "number"
+              }
+            },
+            "units": {
+              "type": "string",
+              "description": "Units of the predicted values, 'log1p-CPM'."
+            },
+            "source": {
+              "type": "string",
+              "description": "The gene-embedding source that was queried."
+            },
+            "device": {
+              "type": "string",
+              "description": "The torch device the prediction ran on."
+            },
+            "model_repo": {
+              "type": "string",
+              "description": "The checkpoint the prediction came from."
+            },
+            "note": {
+              "type": "string",
+              "description": "Reminder that values are predicted rather than measured, and that use is restricted to non-commercial research."
+            }
+          },
+          "required": [
+            "genes",
+            "units"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error. Covers a missing 'deepspotm' package, inaccessible gated weights, an unreadable or wrongly sized image, an unknown embedding source, and genes outside the model's panel.",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string",
+              "description": "Human-readable description of what went wrong and how to fix it."
+            },
+            "unknown_genes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Present when the failure was caused by gene symbols outside the model's panel."
+            },
+            "retriable": {
+              "type": "boolean",
+              "description": "False when retrying cannot help, for example when the package is not installed."
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]
