@@ -22,6 +22,15 @@ records had been attempted:
 - 2,744 existing ToolUniverse tools across 259 source hosts audited first
 
 Scanning never invoked a provider operation and did not publish any candidate.
+A provider-independent portfolio review then refreshed all 290 contracts that
+produced drafts and matched all 3,097 candidate hashes to their current
+operations. It retained 1,325 candidates for demand-driven verification and
+held or superseded 1,772. The retained set contains 139 research-facing
+scientific operations and 81 lower-value service utilities. A bounded
+no-input sample selected seven scientific operations; five passed three
+hash-bound calls each and remained unapproved and unpublished, while two timed
+out and remained rejected or deferred.
+
 A separate data-driven qualification selected eight exact missing operations
 from that inventory. Four passed 20 bounded live verification calls, received
 explicit approval, were published, loaded into a fresh ToolUniverse, and passed
@@ -34,6 +43,8 @@ Reviewer-readable reports and tamper-evident ledgers are checked in at:
 
 - `examples/vsd/artifacts/continuous_catalog_expansion_study.md`
 - `examples/vsd/artifacts/continuous_catalog_expansion_study.json`
+- `examples/vsd/artifacts/candidate_portfolio_review_study.md`
+- `examples/vsd/artifacts/candidate_portfolio_review_study.json`
 - `examples/vsd/artifacts/scanner_cancer_qualification_study.md`
 - `examples/vsd/artifacts/scanner_cancer_qualification_study.json`
 
@@ -110,7 +121,7 @@ loopback-only binding, a read-only root filesystem, dropped capabilities, no
 new privileges, no bind mounts, CPU/memory/PID limits, a ToolUniverse request,
 and complete cleanup.
 
-The latest component validation covers 397 unique automated checks: 379 tests
+The latest component validation covers 402 unique automated checks: 384 tests
 on the final stacked VSD scanner branch, 4 combined-only growth portfolio tests,
 and 14 Docker tests. The 8 scanner catalog-concurrency tests included in the VSD
 total were also rerun on this combined tree alongside the Docker tests.
@@ -119,7 +130,14 @@ total were also rerun on this combined tree alongside the Docker tests.
 
 - 2,799 catalog records scanned across 2 live directories
 - 37,570 unique catalog operation candidates inventoried
-- 3,097 unique inert draft-ready configurations retained for review
+- 3,097 unique inert draft-ready configurations reviewed against 290 current
+  contracts
+- 1,325 candidates retained for demand-driven verification and 1,772 held or
+  superseded
+- 139 research-facing scientific candidates retained after contract-aware
+  review
+- 5 of 7 bounded no-input candidates passed live verification and remained
+  unpublished
 - 5 live scanner-derived cancer workflows
 - 20 live verification and 20 fresh-runtime post-publication calls
 - 4 scanner-derived operations accepted and 4 rejected before publication
