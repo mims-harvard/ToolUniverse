@@ -1,0 +1,274 @@
+{
+  "accepted_operations": [
+    {
+      "argument_fields": {"qualifier": "uniprot_accession"},
+      "contribution": "Retrieves the current AlphaFold model inventory for the scenario protein.",
+      "description": "Retrieve reviewed AlphaFold model metadata for one cancer-associated UniProt accession.",
+      "fixed_query": {},
+      "include_parameters": ["qualifier"],
+      "key": "alphafold_models",
+      "observations": [
+        {
+          "fields": ["uniprotAccession", "modelEntityId", "globalMetricValue", "latestVersion"],
+          "label": "Representative predicted structure",
+          "limit": 1,
+          "pointer": ""
+        }
+      ],
+      "operation_id": "get_predictions_api_prediction__qualifier__get",
+      "source_id": "alphafold",
+      "tool_name": "VSDFederatedAlphaFoldCancerProteins",
+      "verification_expect": {
+        "equals_from": {"gene": "gene_symbol"},
+        "max_items": 20,
+        "min_items": 1,
+        "required_fields": ["uniprotAccession", "modelEntityId", "gene"],
+        "result_type": "array"
+      }
+    },
+    {
+      "argument_fields": {"id": "hgnc_id"},
+      "contribution": "Normalizes each cancer gene to a Monarch entity with symbol and cross-resource identity.",
+      "description": "Retrieve a normalized Monarch entity for one cancer-associated HGNC identifier.",
+      "fixed_query": {},
+      "include_parameters": ["id"],
+      "key": "monarch_gene",
+      "observations": [
+        {
+          "fields": ["id", "name", "symbol", "category"],
+          "label": "Normalized gene entity",
+          "pointer": ""
+        }
+      ],
+      "operation_id": "_get_entity_v3_api_entity__id__get",
+      "source_id": "monarch",
+      "tool_name": "VSDFederatedMonarchCancerGenes",
+      "verification_expect": {
+        "equals_paths_from": {"/id": "hgnc_id", "/symbol": "gene_symbol"},
+        "required_paths": ["/category", "/name"],
+        "result_type": "object"
+      }
+    },
+    {
+      "argument_fields": {"id": "reactome_id"},
+      "contribution": "Adds the reviewed human pathway most directly connected to each scenario mechanism.",
+      "description": "Retrieve enhanced Reactome pathway context for one reviewed stable pathway identifier.",
+      "fixed_query": {},
+      "include_parameters": ["id"],
+      "key": "reactome_pathway",
+      "observations": [
+        {
+          "fields": ["stId", "displayName", "speciesName", "isInDisease"],
+          "label": "Mechanistic pathway",
+          "pointer": ""
+        }
+      ],
+      "operation_id": "findEnhancedObjectById",
+      "source_id": "reactome",
+      "tool_name": "VSDFederatedReactomeCancerPathways",
+      "verification_expect": {
+        "equals_paths_from": {"/stId": "reactome_id"},
+        "required_paths": ["/displayName", "/speciesName"],
+        "result_type": "object"
+      }
+    },
+    {
+      "argument_fields": {"geneId": {"list_from": "gene_symbol"}},
+      "contribution": "Resolves the symbol to its GTEx GENCODE identifier and genomic coordinates before expression analysis.",
+      "description": "Resolve one cancer gene symbol to its GTEx reference gene and genomic coordinates.",
+      "fixed_query": {},
+      "include_parameters": ["geneId"],
+      "key": "gtex_gene_reference",
+      "observations": [
+        {
+          "fields": ["geneSymbol", "gencodeId", "chromosome", "start", "end", "entrezGeneId"],
+          "label": "GTEx reference gene",
+          "pointer": "/data/0"
+        }
+      ],
+      "operation_id": "get_genes_api_v2_reference_gene_get",
+      "source_id": "gtex",
+      "tool_name": "VSDFederatedGTExCancerGeneReferences",
+      "verification_expect": {
+        "equals_paths_from": {"/data/0/geneSymbol": "gene_symbol", "/data/0/gencodeId": "gencode_id"},
+        "required_paths": ["/data/0/chromosome", "/paging_info/totalNumberOfItems"],
+        "result_type": "object"
+      }
+    },
+    {
+      "argument_fields": {"q": "cell_line_query"},
+      "contribution": "Connects each experimental model to a stable Cellosaurus accession and a controlled cancer diagnosis.",
+      "description": "Find one cancer cell line and return bounded identity and disease annotations from Cellosaurus.",
+      "fixed_query": {"fields": "id,ac,sy,di", "format": "json", "rows": 1},
+      "include_parameters": ["q"],
+      "key": "cellosaurus_model",
+      "observations": [
+        {
+          "fields": ["type", "value"],
+          "label": "Cell-line accession",
+          "pointer": "/Cellosaurus/cell-line-list/0/accession-list/0"
+        },
+        {
+          "fields": ["label", "accession", "database", "iri"],
+          "label": "Cell-line disease annotation",
+          "pointer": "/Cellosaurus/cell-line-list/0/disease-list/0"
+        }
+      ],
+      "operation_id": "Search_cell_lines_search_cell_line_get",
+      "source_id": "cellosaurus",
+      "tool_name": "VSDFederatedCellosaurusCancerModels",
+      "verification_expect": {
+        "equals_paths_from": {"/Cellosaurus/cell-line-list/0/accession-list/0/value": "cellosaurus_accession"},
+        "equals_paths_casefold_from": {"/Cellosaurus/cell-line-list/0/disease-list/0/label": "disease_label"},
+        "required_paths": ["/Cellosaurus/cell-line-list/0/disease-list/0/label"],
+        "result_type": "object"
+      }
+    },
+    {
+      "argument_fields": {"gene_id": "gencode_unversioned"},
+      "contribution": "Adds measured regulatory variants, effect estimates, and p-values for the same cancer gene.",
+      "description": "Retrieve a bounded cross-study set of eQTL associations for one cancer gene.",
+      "fixed_query": {"size": 5},
+      "include_parameters": ["gene_id"],
+      "key": "eqtl_associations",
+      "observations": [
+        {
+          "fields": ["gene_id", "rsid", "variant", "beta", "se", "pvalue", "dataset_id", "study_id"],
+          "label": "Representative regulatory associations",
+          "limit": 3,
+          "pointer": ""
+        }
+      ],
+      "operation_id": "search_all_studies_route_eqtl_api_v3_associations_get",
+      "source_id": "ebi_eqtl",
+      "tool_name": "VSDFederatedEQTLGeneAssociations",
+      "verification_expect": {
+        "equals_from": {"gene_id": "gencode_unversioned"},
+        "max_items": 5,
+        "min_items": 1,
+        "required_fields": ["gene_id", "rsid", "variant", "beta", "pvalue"],
+        "result_type": "array"
+      }
+    },
+    {
+      "argument_fields": {"genePanelId": "gene_panel_id"},
+      "contribution": "Retrieves a defined cBioPortal sequencing panel and its gene inventory for workflow-level membership assessment.",
+      "description": "Retrieve one cBioPortal cancer sequencing panel and its reviewed gene inventory.",
+      "fixed_query": {},
+      "include_parameters": ["genePanelId"],
+      "key": "cbio_gene_panel",
+      "observations": [
+        {
+          "fields": ["genePanelId", "description"],
+          "label": "Cancer sequencing panel",
+          "pointer": ""
+        },
+        {
+          "fields": ["hugoGeneSymbol", "entrezGeneId"],
+          "filter_field": "hugoGeneSymbol",
+          "filter_value_from": "gene_symbol",
+          "label": "Scenario gene in panel",
+          "limit": 1,
+          "min_items": 1,
+          "pointer": "/genes"
+        }
+      ],
+      "operation_id": "getGenePanelUsingGET",
+      "source_id": "cbioportal",
+      "tool_name": "VSDFederatedCBioCancerGenePanels",
+      "verification_expect": {
+        "equals_paths_from": {"/genePanelId": "gene_panel_id"},
+        "required_paths": ["/description", "/genes"],
+        "result_type": "object"
+      }
+    }
+  ],
+  "format": "vsd_federated_biomedical_scenarios_v1",
+  "rejected_operations": [
+    {
+      "argument_fields": {"geneId": "gene_symbol"},
+      "description": "Response drift qualification for the cBioPortal single-gene operation.",
+      "expected_error_substring": "did not execute successfully",
+      "fixed_query": {},
+      "include_parameters": ["geneId"],
+      "key": "cbio_gene_schema_drift",
+      "operation_id": "getGeneUsingGET",
+      "source_id": "cbioportal",
+      "tool_name": "VSDFederatedRejectedCBioGene",
+      "verification_expect": {"required_fields": ["hugoGeneSymbol"], "result_type": "object"}
+    },
+    {
+      "argument_fields": {"pdb_id": "pdb_id"},
+      "description": "Response drift qualification for the PDBe entry-entities operation.",
+      "expected_error_substring": "did not execute successfully",
+      "fixed_query": {},
+      "include_parameters": ["pdb_id"],
+      "key": "pdbe_entity_schema_drift",
+      "operation_id": "get_molecules_api_pdb_entry_entities__pdb_id__get",
+      "source_id": "pdbe_graph",
+      "tool_name": "VSDFederatedRejectedPDBeEntities",
+      "verification_expect": {"required_paths": ["/4mzr"], "result_type": "object"}
+    },
+    {
+      "argument_fields": {},
+      "description": "Response drift qualification for the OmicsDI database inventory operation.",
+      "expected_error_substring": "did not execute successfully",
+      "fixed_query": {},
+      "include_parameters": [],
+      "key": "omicsdi_database_schema_drift",
+      "operation_id": "getDatabaseList",
+      "source_id": "omicsdi",
+      "tool_name": "VSDFederatedRejectedOmicsDIDatabases",
+      "verification_expect": {"required_paths": ["/databases"], "result_type": "object"}
+    }
+  ],
+  "scenarios": [
+    {
+      "cell_line_query": "id:HeLa",
+      "cellosaurus_accession": "CVCL_0030",
+      "disease_context": "human papillomavirus-related endocervical adenocarcinoma",
+      "disease_label": "Human papillomavirus-related endocervical adenocarcinoma",
+      "gene_symbol": "TP53",
+      "gene_panel_id": "IMPACT341",
+      "gencode_id": "ENSG00000141510.16",
+      "gencode_unversioned": "ENSG00000141510",
+      "hgnc_id": "HGNC:11998",
+      "pdb_id": "4MZR",
+      "reactome_id": "R-HSA-69563",
+      "scenario_id": "tp53_cervical_model",
+      "uniprot_accession": "P04637"
+    },
+    {
+      "cell_line_query": "id:MCF-7",
+      "cellosaurus_accession": "CVCL_0031",
+      "disease_context": "invasive breast carcinoma",
+      "disease_label": "Invasive breast carcinoma of no special type",
+      "gene_symbol": "BRCA1",
+      "gene_panel_id": "FoundationOne",
+      "gencode_id": "ENSG00000012048.20",
+      "gencode_unversioned": "ENSG00000012048",
+      "hgnc_id": "HGNC:1100",
+      "pdb_id": "1JM7",
+      "reactome_id": "R-HSA-5693532",
+      "scenario_id": "brca1_breast_model",
+      "uniprot_accession": "P38398"
+    },
+    {
+      "cell_line_query": "id:A-549",
+      "cellosaurus_accession": "CVCL_0023",
+      "disease_context": "lung adenocarcinoma",
+      "disease_label": "Lung adenocarcinoma",
+      "gene_symbol": "EGFR",
+      "gene_panel_id": "DFCI-ONCOPANEL-3",
+      "gencode_id": "ENSG00000146648.17",
+      "gencode_unversioned": "ENSG00000146648",
+      "hgnc_id": "HGNC:3236",
+      "pdb_id": "2GS6",
+      "reactome_id": "R-HSA-177929",
+      "scenario_id": "egfr_lung_model",
+      "uniprot_accession": "P00533"
+    }
+  ],
+  "scientific_question": "Can a single reviewed-source scan create a locally loadable evidence panel that links cancer genes, protein models, pathways, tissue-reference identifiers, experimental cell lines, regulatory associations, and sequencing panels without editing ToolUniverse's built-in registry?",
+  "version": 1
+}

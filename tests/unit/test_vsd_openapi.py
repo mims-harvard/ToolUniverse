@@ -107,6 +107,41 @@ def _candidate(tmp_path):
     return report["candidates"][0]
 
 
+def test_reviewed_server_override_recovers_contracts_without_absolute_servers(
+    tmp_path,
+):
+    document = _document()
+    document.pop("servers")
+    path = _write_document(tmp_path, document)
+
+    blocked = inspect_openapi_document(path)["candidates"][0]
+    recovered = inspect_openapi_document(
+        path, server_url_override="https://reviewed.example.org/api/"
+    )["candidates"][0]
+
+    assert "server_missing" in blocked["blockers"]
+    assert recovered["server_url"] == "https://reviewed.example.org/api"
+    assert recovered["blockers"] == []
+    assert "server_url_override_applied" in recovered["warnings"]
+    assert validate_openapi_candidate(recovered) == recovered
+
+
+@pytest.mark.parametrize(
+    "override",
+    [
+        "http://reviewed.example.org/api",
+        "https://reviewed.example.org/api?token=secret",
+        "https://user:password@reviewed.example.org/api",
+        "/relative/api",
+    ],
+)
+def test_server_override_requires_a_plain_https_url(tmp_path, override):
+    with pytest.raises(VSDOpenAPIError, match="plain_https"):
+        inspect_openapi_document(
+            _write_document(tmp_path), server_url_override=override
+        )
+
+
 def _authenticated_document(auth_type: str) -> dict:
     document = _document()
     components = document["components"]

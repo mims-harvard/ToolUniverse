@@ -1,0 +1,393 @@
+{
+  "automatic_registration": false,
+  "catalog_id": "biomedical_openapi_services",
+  "catalog_state": "reviewed_for_bounded_contract_discovery",
+  "execution_allowed": false,
+  "format": "vsd_federated_source_manifest_v1",
+  "manifest_sha256": "3e5dee13a8b340af6541787c748b4beaa60ce7e888af17ddc5bdff2952516243",
+  "review_policy": "Source review permits contract retrieval only; every operation remains inert until separate verification, approval, publication, and explicit loading.",
+  "reviewed_at": "2026-08-02T00:00:00+00:00",
+  "sources": [
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://alphafold.ebi.ac.uk/",
+      "execution_allowed": false,
+      "name": "AlphaFold Protein Structure Database API",
+      "organization": "EMBL-EBI and Google DeepMind",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://alphafold.ebi.ac.uk/api",
+      "source_id": "alphafold",
+      "source_sha256": "c4acd5bd1cbf87c3a4f43bf73ad91412eadc38df1f74ddab55bf4d47a87e714c",
+      "specification_url": "https://alphafold.ebi.ac.uk/api/openapi.json",
+      "topics": [
+        "protein_structure",
+        "proteomics",
+        "structural_biology"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://bio.tools/api/",
+      "execution_allowed": false,
+      "name": "bio.tools API",
+      "organization": "ELIXIR",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://bio.tools/api",
+      "source_id": "biotools",
+      "source_sha256": "1c2d78aaac16e5ef36dc780e4edce716ff23cf1431abf236a9152f338fe0decd",
+      "specification_url": "https://bio.tools/api/schema/",
+      "topics": [
+        "bioinformatics",
+        "software_registry",
+        "tool_discovery"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.cbioportal.org/api/swagger-ui/index.html",
+      "execution_allowed": false,
+      "name": "cBioPortal Web API",
+      "organization": "cBioPortal",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.cbioportal.org/",
+      "source_id": "cbioportal",
+      "source_sha256": "a72f5e4d6ea97fdf85662163bfbf34034a696a408066333f81eca71731a6463f",
+      "specification_url": "https://www.cbioportal.org/api/v3/api-docs",
+      "topics": [
+        "cancer_genomics",
+        "clinical_data",
+        "somatic_variation"
+      ],
+      "trust_basis": "official_project"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://api.cellosaurus.org/docs",
+      "execution_allowed": false,
+      "name": "Cellosaurus API",
+      "organization": "SIB Swiss Institute of Bioinformatics",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://api.cellosaurus.org/",
+      "source_id": "cellosaurus",
+      "source_sha256": "3e58eb9206c341d7c1c30562e3fafa529786e1dea519e8ff8d4c1897c7bd60ec",
+      "specification_url": "https://api.cellosaurus.org/openapi.json",
+      "topics": [
+        "cell_lines",
+        "disease_models",
+        "research_resources"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ebi.ac.uk/eqtl/",
+      "execution_allowed": false,
+      "name": "eQTL Catalogue Summary Statistics API",
+      "organization": "EMBL-EBI",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.ebi.ac.uk/",
+      "source_id": "ebi_eqtl",
+      "source_sha256": "5d487d7b87bb567f8a273d48c7eb58c2e21b463ca5837f3c7850718a855b7aac",
+      "specification_url": "https://www.ebi.ac.uk/eqtl/api/openapi.json",
+      "topics": [
+        "gene_expression",
+        "genetics",
+        "quantitative_trait_loci"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ebi.ac.uk/ena/browser/api/swagger-ui/index.html",
+      "execution_allowed": false,
+      "name": "European Nucleotide Archive Browser API",
+      "organization": "EMBL-EBI",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.ebi.ac.uk/ena/browser/api",
+      "source_id": "ena_browser",
+      "source_sha256": "354e1f3886d12341142a9dcf31f3d29a1157a81f082c7b5702fd33d4fc4dc7c5",
+      "specification_url": "https://www.ebi.ac.uk/ena/browser/api/v3/api-docs",
+      "topics": [
+        "genomics",
+        "nucleotide_sequences",
+        "sequence_archive"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://gtexportal.org/home/apiPage",
+      "execution_allowed": false,
+      "name": "GTEx Portal API",
+      "organization": "GTEx Consortium",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://gtexportal.org/",
+      "source_id": "gtex",
+      "source_sha256": "feecac3877ce5d0ca1323bac08a687b6f5f2c1dd8a230eab913c6675d77ff8af",
+      "specification_url": "https://gtexportal.org/api/v2/openapi.json",
+      "topics": [
+        "gene_expression",
+        "human_genetics",
+        "tissue_specificity"
+      ],
+      "trust_basis": "official_project"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ebi.ac.uk/Tools/hmmer/",
+      "execution_allowed": false,
+      "name": "HMMER API",
+      "organization": "EMBL-EBI",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.ebi.ac.uk/",
+      "source_id": "hmmer",
+      "source_sha256": "5d7782da2c9bf2a973db0125f2f215f879dee5109981e2b98d96938edf12f9fb",
+      "specification_url": "https://www.ebi.ac.uk/Tools/hmmer/api/v1/openapi.json",
+      "topics": [
+        "homology_search",
+        "protein_families",
+        "sequence_analysis"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ebi.ac.uk/interpro/matches/api/",
+      "execution_allowed": false,
+      "name": "InterPro Matches API",
+      "organization": "EMBL-EBI",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.ebi.ac.uk/interpro/matches/api",
+      "source_id": "interpro_matches",
+      "source_sha256": "d2dcb1c9a3488ba4e671feb894df62a275cf8b74a963df105440301b116a294d",
+      "specification_url": "https://www.ebi.ac.uk/interpro/matches/api/openapi.json",
+      "topics": [
+        "functional_annotation",
+        "protein_families",
+        "protein_sequences"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ebi.ac.uk/metagenomics/api/v2/",
+      "execution_allowed": false,
+      "name": "MGnify API",
+      "organization": "EMBL-EBI",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.ebi.ac.uk/",
+      "source_id": "mgnify",
+      "source_sha256": "16cf512e2d1aa22835882456e435f90bc6d44b2a0792a069493456499aef800c",
+      "specification_url": "https://www.ebi.ac.uk/metagenomics/api/v2/openapi.json",
+      "topics": [
+        "metagenomics",
+        "microbiome",
+        "sequence_analysis"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://monarchinitiative.org/",
+      "execution_allowed": false,
+      "name": "Monarch Initiative API",
+      "organization": "Monarch Initiative",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://api-v3.monarchinitiative.org/",
+      "source_id": "monarch",
+      "source_sha256": "af8b4ef28630f513c38ddffd7435e45a73e33a6a4ef44a3744464d0dd49b1458",
+      "specification_url": "https://api-v3.monarchinitiative.org/openapi.json",
+      "topics": [
+        "disease",
+        "genotype_phenotype",
+        "phenotype"
+      ],
+      "trust_basis": "official_project"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ncbi.nlm.nih.gov/datasets/docs/v2/reference-docs/rest-api/",
+      "execution_allowed": false,
+      "name": "NCBI Datasets API",
+      "organization": "National Center for Biotechnology Information",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://api.ncbi.nlm.nih.gov/datasets/v2",
+      "source_id": "ncbi_datasets",
+      "source_sha256": "2c690b1b567d5317d215f2282767e16fc7728b6f967ce66f9e8c7a5a07323d44",
+      "specification_url": "https://www.ncbi.nlm.nih.gov/datasets/docs/v2/openapi3/openapi3.docs.yaml",
+      "topics": [
+        "genes",
+        "genomes",
+        "taxonomy"
+      ],
+      "trust_basis": "official_government"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ebi.ac.uk/ols4/",
+      "execution_allowed": false,
+      "name": "Ontology Lookup Service API",
+      "organization": "EMBL-EBI",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.ebi.ac.uk/ols4",
+      "source_id": "ols",
+      "source_sha256": "20d13e8bb678eecd0c61064e09131bb7bae1fcf6e47fb9fb756bcfbd0c08219c",
+      "specification_url": "https://www.ebi.ac.uk/ols4/v3/api-docs",
+      "topics": [
+        "biomedical_ontologies",
+        "controlled_vocabularies",
+        "semantic_search"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.omicsdi.org/ws",
+      "execution_allowed": false,
+      "name": "Omics Discovery Index API",
+      "organization": "OmicsDI Consortium",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.omicsdi.org/ws",
+      "source_id": "omicsdi",
+      "source_sha256": "5e39b4dbc2453651c2e56fca9da037cef714f71574416447ba24d9b68f57ec63",
+      "specification_url": "https://www.omicsdi.org/ws/api-docs",
+      "topics": [
+        "dataset_discovery",
+        "multi_omics",
+        "study_metadata"
+      ],
+      "trust_basis": "official_project"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ebi.ac.uk/pdbe/download/api/",
+      "execution_allowed": false,
+      "name": "PDBe File Download API",
+      "organization": "EMBL-EBI",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.ebi.ac.uk/pdbe/download/api",
+      "source_id": "pdbe_download",
+      "source_sha256": "335e63ff704f0357cd541f86f3c895d524afa0ddba8a670e9fb7806736a96930",
+      "specification_url": "https://www.ebi.ac.uk/pdbe/download/api/openapi.json",
+      "topics": [
+        "macromolecular_structures",
+        "protein_data_bank",
+        "structure_files"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ebi.ac.uk/pdbe/api/doc",
+      "execution_allowed": false,
+      "name": "PDBe Graph and Data API",
+      "organization": "EMBL-EBI",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.ebi.ac.uk/pdbe/api/v2",
+      "source_id": "pdbe_graph",
+      "source_sha256": "24b58d80419c2b1f4fb509191105d9d3e94698d575e4ee046e32dc0118222678",
+      "specification_url": "https://www.ebi.ac.uk/pdbe/api/v2/openapi.json",
+      "topics": [
+        "macromolecular_structures",
+        "protein_data_bank",
+        "structural_biology"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/swagger-ui.html",
+      "execution_allowed": false,
+      "name": "PRIDE Archive API",
+      "organization": "EMBL-EBI",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://www.ebi.ac.uk/pride/ws/archive/v3",
+      "source_id": "pride",
+      "source_sha256": "0328c7b5eba313284780c57880a9adb4bbc983f942374f739319cf8330ce72af",
+      "specification_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/v3/api-docs",
+      "topics": [
+        "mass_spectrometry",
+        "proteomics",
+        "study_metadata"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://search.rcsb.org/",
+      "execution_allowed": false,
+      "name": "RCSB PDB Search API",
+      "organization": "RCSB Protein Data Bank",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://search.rcsb.org/",
+      "source_id": "rcsb_search",
+      "source_sha256": "3b585029e5f23e5bde6bff045437f4402c8fafa1d802f258ff33ca29eaee86c7",
+      "specification_url": "https://search.rcsb.org/openapi.json",
+      "topics": [
+        "macromolecular_structures",
+        "protein_data_bank",
+        "structure_search"
+      ],
+      "trust_basis": "official_repository"
+    },
+    {
+      "access": "public",
+      "contract_format": "openapi",
+      "documentation_url": "https://reactome.org/ContentService/",
+      "execution_allowed": false,
+      "name": "Reactome Content Service API",
+      "organization": "Reactome",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://reactome.org/ContentService",
+      "source_id": "reactome",
+      "source_sha256": "052e7437ad04d349ac8ac6f714aff3bef84bf3e42101c22a48bf8280a8dce2ad",
+      "specification_url": "https://reactome.org/ContentService/v3/api-docs",
+      "topics": [
+        "biological_pathways",
+        "molecular_interactions",
+        "systems_biology"
+      ],
+      "trust_basis": "official_project"
+    },
+    {
+      "access": "mixed",
+      "contract_format": "openapi",
+      "documentation_url": "https://workflowhub.eu/api",
+      "execution_allowed": false,
+      "name": "WorkflowHub API",
+      "organization": "WorkflowHub",
+      "review_state": "reviewed_contract_endpoint",
+      "runtime_base_url": "https://workflowhub.eu/",
+      "source_id": "workflowhub",
+      "source_sha256": "15da00ac82dd188dabe1b50492330f42bb4373c30d12a18c3885e24d7cb5f97a",
+      "specification_url": "https://workflowhub.eu/api/definitions/openapi-v3-resolved.yaml",
+      "topics": [
+        "computational_workflows",
+        "reproducibility",
+        "workflow_registry"
+      ],
+      "trust_basis": "official_repository"
+    }
+  ],
+  "version": 1
+}

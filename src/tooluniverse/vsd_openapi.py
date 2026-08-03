@@ -274,7 +274,10 @@ def _server_url(
     document: dict[str, Any],
     *,
     server_index: int,
+    server_url_override: str | None = None,
 ) -> str:
+    if server_url_override is not None:
+        return _plain_https_server_url(server_url_override)
     servers = operation.get(
         "servers", path_item.get("servers", document.get("servers"))
     )
@@ -297,7 +300,13 @@ def _server_url(
         if not isinstance(default, (str, int, float, bool)):
             raise VSDOpenAPIError("server_variable_default_missing")
         url = url.replace("{" + name + "}", str(default))
-    parsed = urlsplit(url)
+    return _plain_https_server_url(url)
+
+
+def _plain_https_server_url(value: Any) -> str:
+    if not isinstance(value, str):
+        raise VSDOpenAPIError("server_must_be_plain_https")
+    parsed = urlsplit(value)
     if (
         parsed.scheme.casefold() != "https"
         or not parsed.hostname
@@ -307,7 +316,7 @@ def _server_url(
         or parsed.fragment
     ):
         raise VSDOpenAPIError("server_must_be_plain_https")
-    return url.rstrip("/")
+    return value.rstrip("/")
 
 
 def _argument_name(provider_name: str, location: str, used: set[str]) -> str:
@@ -544,9 +553,14 @@ def _candidate_digest(body: dict[str, Any]) -> str:
 
 
 def inspect_openapi_document(
-    path: str | Path, *, server_index: int = 0
+    path: str | Path,
+    *,
+    server_index: int = 0,
+    server_url_override: str | None = None,
 ) -> dict[str, Any]:
     """Inspect a local OpenAPI document and return inert operation candidates."""
+    if server_url_override is not None:
+        server_url_override = _plain_https_server_url(server_url_override)
     document, document_sha256 = load_openapi_document(path)
     version = document.get("openapi")
     if not isinstance(version, str) or not re.fullmatch(
@@ -599,7 +613,11 @@ def inspect_openapi_document(
             blockers.extend(authentication_blockers)
             try:
                 server_url = _server_url(
-                    operation, path_item, document, server_index=server_index
+                    operation,
+                    path_item,
+                    document,
+                    server_index=server_index,
+                    server_url_override=server_url_override,
                 )
             except VSDOpenAPIError as exc:
                 server_url = ""
@@ -621,6 +639,8 @@ def inspect_openapi_document(
                 operation, document
             )
             blockers.extend(response_blockers)
+            if server_url_override is not None:
+                warnings.append("server_url_override_applied")
             operation_id = operation.get("operationId")
             if not isinstance(operation_id, str) or not operation_id.strip():
                 operation_id = f"{method}_{path_name}"
@@ -716,9 +736,7 @@ def validate_openapi_candidate(
         raise VSDOpenAPIError("OpenAPI candidate blockers are invalid")
     missing_json_response = blockers == ["json_response_missing"]
     if blockers and not (permit_missing_json_response and missing_json_response):
-        raise VSDOpenAPIError(
-            f"OpenAPI candidate is not promotable: {blockers!r}"
-        )
+        raise VSDOpenAPIError(f"OpenAPI candidate is not promotable: {blockers!r}")
     parameters = candidate.get("parameters")
     if not isinstance(parameters, list) or len(parameters) > _MAX_PARAMETERS:
         raise VSDOpenAPIError("OpenAPI candidate parameters are invalid")
@@ -790,9 +808,7 @@ def validate_openapi_candidate(
                 or response_media_type.casefold().endswith("+json")
             ):
                 raise KeyError
-            _schema_validator(
-                candidate.get("response_schema"), field="response_schema"
-            )
+            _schema_validator(candidate.get("response_schema"), field="response_schema")
     except (KeyError, TypeError, VSDDynamicRESTError) as exc:
         raise VSDOpenAPIError("OpenAPI candidate operation is invalid") from exc
     return copy.deepcopy(candidate)
