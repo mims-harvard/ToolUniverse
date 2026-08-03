@@ -109,7 +109,7 @@ through 25 bounded, hash-linked cycles:
 | Unique operation candidates inventoried | 37,570 |
 | Unique draft-ready config hashes | 3,097 |
 | Provider hosts represented | 203 |
-| Scientific draft-ready candidates | 309 |
+| Coarse scientific-vocabulary matches | 309 |
 | Blocked operations | 36,362 |
 | Isolated contract failures | 131 |
 
@@ -130,6 +130,51 @@ The 3,097 results are not published tools. They are distinct read operations
 accepted by static inspection and configuration generation. Each still requires
 representative provider execution, explicit approval, publication, loading, and
 lifecycle maintenance.
+
+## Exhaustive candidate review
+
+`candidate_portfolio_review_study.py` applies one versioned, provider-independent
+policy to all 3,097 draft-ready configurations. It refreshes all 290 contracts
+that produced those configurations, reinspects their current operations, and
+matches each saved candidate hash before assigning a final disposition. The
+review completed with all 290 contracts available and all 3,097 candidate hashes
+unchanged.
+
+| Final disposition | Candidates |
+| --- | ---: |
+| Eligible for demand-driven verification | 1,325 |
+| Research-facing scientific candidates within that set | 139 |
+| Lower-value service utility candidates within that set | 81 |
+| Held or superseded | 1,772 |
+
+The original count of 309 used intentionally broad substring vocabulary during
+the scale scan. Exact tokenization and contract-aware review reduced that signal
+to 235 scientific-context matches, of which 139 had a current, usable response
+contract and no higher-priority policy hold. This correction excludes incidental
+matches such as words containing `gene` and does not change the historical scan
+ledger.
+
+The live phase selected seven no-input scientific operations using the same
+generic ranking policy and at most two operations per host. Five passed three
+hash-bound calls each and remained unapproved and unpublished; two remote calls
+timed out and remained rejected or deferred. Parameterized operations are not
+called without a concrete workflow and representative inputs. The cancer
+qualification below provides that stronger demand-driven test.
+
+Run the review against completed scanner history:
+
+```console
+PYTHONPATH=src uv run python examples/vsd/candidate_portfolio_review_study.py \
+  --state-root ./.vsd-continuous-expansion
+PYTHONPATH=src uv run python examples/vsd/candidate_portfolio_review_study.py \
+  --validate-only
+```
+
+The readable report is
+`examples/vsd/artifacts/candidate_portfolio_review_study.md`; the complete
+machine-readable decision ledger is
+`examples/vsd/artifacts/candidate_portfolio_review_study.json`, SHA-256
+`3f1a99d861d851ab43983251987f5664b4ed1262605de6d71ef8aced2d0f29a4`.
 
 ## Scientific workflow relationship
 

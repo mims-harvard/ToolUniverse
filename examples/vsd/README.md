@@ -823,6 +823,29 @@ across 203 provider hosts; 36,362 operations were blocked and 131 contract
 failures were isolated. No provider operation was called during scanning, and
 no scanner candidate was approved, published, loaded, or executed.
 
+`candidate_portfolio_review_study.py` then reviews every one of the 3,097
+configurations under a versioned policy that contains no provider identities or
+study-specific selections. It refreshed all 290 draft-producing contracts and
+matched all 3,097 hashes to their current operations. The final ledger retained
+1,325 candidates for demand-driven verification and held or superseded 1,772;
+139 of the retained candidates were research-facing scientific operations and
+81 were lower-value service utilities. This supersedes the scan's coarse 309
+scientific-vocabulary matches, which included substring false positives: exact
+tokenization found 235 scientific-context candidates before contract and policy
+holds.
+
+The bounded no-input live sample selected seven scientific candidates across
+providers. Five passed three hash-bound calls each and remained unapproved and
+unpublished, while two timed out and remained rejected or deferred. Run or
+validate the complete review ledger with:
+
+```console
+PYTHONPATH=src uv run python examples/vsd/candidate_portfolio_review_study.py \
+  --state-root ./.vsd-continuous-expansion
+PYTHONPATH=src uv run python examples/vsd/candidate_portfolio_review_study.py \
+  --validate-only
+```
+
 `scanner_cancer_qualification_study.py` then selected eight exact operation gaps
 from that inventory. Four passed five representative live cases, explicit
 approval, publication, and fresh ToolUniverse loading; the resulting tools made
@@ -847,7 +870,8 @@ tooluniverse-vsd-scan --state-directory ~/.tooluniverse/vsd/scanner/smartapi \
 ```
 
 See `artifacts/continuous_catalog_expansion_study.md` for the exhaustive scale
-report, `artifacts/scanner_cancer_qualification_study.md` for the five live
-scientific workflows, their JSON counterparts for tamper-evident evidence, and
-`docs/dev_docs/VSD_CONTINUOUS_SCANNER.md` for the operational and trust
+report, `artifacts/candidate_portfolio_review_study.md` for all 3,097 final
+dispositions, `artifacts/scanner_cancer_qualification_study.md` for the five
+live scientific workflows, their JSON counterparts for tamper-evident evidence,
+and `docs/dev_docs/VSD_CONTINUOUS_SCANNER.md` for the operational and trust
 boundaries.
