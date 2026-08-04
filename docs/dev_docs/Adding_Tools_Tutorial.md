@@ -282,8 +282,6 @@ The `config` parameter in the decorator supports all standard ToolUniverse confi
        "custom_field": "value"
    }
 })
-class AdvancedTool:
-   ...
 ```
 
 .. _method-2-manual-registration:
@@ -823,7 +821,7 @@ return {
 1. Ensure file ends with `_tool.py`
 2. Check file is in the correct directory
 3. Verify the import doesn't fail:
-  ```bash
+  ```python
   python -c "from your_tool_module import YourTool"
   ```
 
@@ -858,8 +856,6 @@ return {
 2. Validate all inputs in `run()` method
 3. Return error details:
   ```python
-  try:
-      result = tool.run(arguments)
   except Exception as e:
       return {
           "error": str(e),

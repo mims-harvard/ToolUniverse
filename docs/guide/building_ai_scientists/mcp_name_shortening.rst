@@ -260,7 +260,7 @@ ToolUniverse Constructor
 
     ToolUniverse(
         ...,
-        enable_name_shortening=False
+        enable_name_shortening: bool = False
     )
 
 **Parameters:**
@@ -281,8 +281,7 @@ Execute a tool function. Automatically accepts both shortened and original names
 
 .. code-block:: python
 
-    function_call_json: dict = {"name": "ExampleTool", "arguments": {}}
-    result: dict = tu.run_one_function(function_call_json)
+    tu.run_one_function(function_call_json: dict, ...) -> dict
 
 **Behavior:**
 

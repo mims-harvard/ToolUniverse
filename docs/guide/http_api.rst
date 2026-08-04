@@ -146,11 +146,10 @@ The server uses Python introspection to automatically discover all public method
     import inspect
 
     # Automatically discovers ALL public methods
-for name, method in inspect.getmembers(ToolUniverse, inspect.isfunction):
-    if not name.startswith('_'):
-        # Extract signature, parameters, docstring
-        # Methods are now callable via HTTP!
-        register_http_method(name, method)
+    for name, method in inspect.getmembers(ToolUniverse, inspect.isfunction):
+        if not name.startswith('_'):
+            # Extract signature, parameters, docstring
+            # Methods are now callable via HTTP!
 
 **Result**: 49+ methods including ``load_tools``, ``prepare_tool_prompts``, ``tool_specification``, ``run_one_function``, etc.
 

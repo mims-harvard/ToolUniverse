@@ -63,7 +63,6 @@ result = tu.run({"name": "web_search", "arguments": {
 for item in (result or {}).get('data', []):
    # Parse DOI from URL or text
    # Then use BioRxiv_get_preprint
-   process_preprint_result(item)
 ```
 
 ### Option 3: Use Semantic Scholar
@@ -195,7 +194,7 @@ if search and search.get('status') == 'success':
        if doi and doi.startswith('10.1101/'):
            detailed = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})
            if detailed and detailed.get('status') == 'success':
-               preprints.append(detailed['data'])
+           preprints.append(detailed['data'])
 
 # 3. Access full text if needed
 for preprint in preprints:
