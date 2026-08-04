@@ -174,12 +174,11 @@ Port: 7003 (configured to avoid conflicts with other biomedical tools)
 The server exposes one main tool function:
 
 ```python
-def run_compass_prediction(
+run_compass_prediction(
     gene_expression_data_path: str,
     threshold: float = 0.5,
     root_path: str = None
-):
-    ...
+)
 ```
 
 **Parameters:**

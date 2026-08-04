@@ -270,7 +270,7 @@ Semantic Scholar and ArXiv have rate limits:
 import time
 
 for paper in papers:
-   snippets = tu.run({"name": "ArXiv_get_pdf_snippets", "arguments": {"arxiv_id": paper["arxiv_id"], "terms": terms}})
+   snippets = tu.run({"name": "ArXiv_get_pdf_snippets", "arguments": {"arxiv_id": paper["arxiv_id"], terms=terms}})
    # ArXiv requests 3s between calls
    time.sleep(3.1)
 ```
@@ -318,7 +318,7 @@ pip install 'markitdown[all]>=0.1.0'
 **Debug:**
 
 ```python
-results = tu.run({"name": "EuropePMC_search_articles", "arguments": {"query": "...", "limit": 10}})
+results = tu.run({"name": "EuropePMC_search_articles", "arguments": {"query": "...", limit=10}})
 
 for r in results:
    print(f"Title: {r['title']}")
@@ -339,7 +339,7 @@ for r in results:
 ```python
 # For Semantic Scholar: verify OA status
 if paper.get("open_access") and paper.get("open_access_pdf_url"):
-   process_open_access_pdf(paper["open_access_pdf_url"])
+   # Proceed
 
 # For ArXiv: ensure correct ID format
 arxiv_id = "2301.12345"  # Not "arXiv:2301.12345v1"
