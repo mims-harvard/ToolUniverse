@@ -135,8 +135,10 @@ The system detects your execution context using `asyncio.get_running_loop()`:
 try:
     asyncio.get_running_loop()
     # Async context - use await
+    pass
 except RuntimeError:
     # Sync context - blocking execution
+    pass
 ```
 
 ### Execution Modes
