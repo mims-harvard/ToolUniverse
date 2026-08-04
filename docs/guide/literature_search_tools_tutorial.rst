@@ -168,8 +168,8 @@ All literature search tools follow a similar usage pattern:
     result = tu.run({
         "name": "tool_name",
         "arguments": {
-        "query": "your search terms",
-        "limit": 5  # number of results
+            "query": "your search terms",
+            "limit": 5  # number of results
         }
     })
 
@@ -177,9 +177,9 @@ All literature search tools follow a similar usage pattern:
     if isinstance(result, list) and len(result) > 0:
         print(f"Found {len(result)} results")
         for i, paper in enumerate(result, 1):
-        print(f"{i}. {paper.get('title', 'No title')}")
-        print(f"   Authors: {', '.join(paper.get('authors', [])[:3])}")
-        print(f"   Year: {paper.get('year', 'Unknown')}")
+            print(f"{i}. {paper.get('title', 'No title')}")
+            print(f"   Authors: {', '.join(paper.get('authors', [])[:3])}")
+            print(f"   Year: {paper.get('year', 'Unknown')}")
         
         # Show data quality information
         if 'data_quality' in paper:
@@ -410,22 +410,22 @@ Search across multiple databases for comprehensive results:
         
         # Search different databases
         databases = [
-        ("ArXiv", "ArXiv_search_papers"),
-        ("Crossref", "Crossref_search_works"),
-        ("Semantic Scholar", "SemanticScholar_search_papers"),
-        ("OpenAlex", "openalex_literature_search")
+            ("ArXiv", "ArXiv_search_papers"),
+            ("Crossref", "Crossref_search_works"),
+            ("Semantic Scholar", "SemanticScholar_search_papers"),
+            ("OpenAlex", "openalex_literature_search")
         ]
         
         for db_name, tool_name in databases:
-        try:
-            result = tu.run({
-        "name": tool_name,
-        "arguments": {"query": query, "limit": max_results}
-            })
-            results[db_name] = result if isinstance(result, list) else []
-        except Exception as e:
-            print(f"Error searching {db_name}: {e}")
-            results[db_name] = []
+            try:
+                result = tu.run({
+                    "name": tool_name,
+                    "arguments": {"query": query, "limit": max_results}
+                })
+                results[db_name] = result if isinstance(result, list) else []
+            except Exception as e:
+                print(f"Error searching {db_name}: {e}")
+                results[db_name] = []
         
         return results
 
@@ -484,20 +484,20 @@ Always include proper error handling for robust applications:
     def safe_search(tool_name, arguments):
         """Safely search with error handling."""
         try:
-        result = tu.run({
-            "name": tool_name,
-            "arguments": arguments
-        })
-        
-        if isinstance(result, list):
-            return {"success": True, "data": result, "count": len(result)}
-        elif isinstance(result, dict) and "error" in result:
-            return {"success": False, "error": result["error"]}
-        else:
-            return {"success": False, "error": "Unexpected result format"}
+            result = tu.run({
+                "name": tool_name,
+                "arguments": arguments
+            })
+
+            if isinstance(result, list):
+                return {"success": True, "data": result, "count": len(result)}
+            elif isinstance(result, dict) and "error" in result:
+                return {"success": False, "error": result["error"]}
+            else:
+                return {"success": False, "error": "Unexpected result format"}
             
         except Exception as e:
-        return {"success": False, "error": str(e)}
+            return {"success": False, "error": str(e)}
 
     # Use safe search
     result = safe_search("ArXiv_search_papers", {
@@ -508,7 +508,7 @@ Always include proper error handling for robust applications:
     if result["success"]:
         print(f"Found {result['count']} papers")
         for paper in result["data"]:
-        print(f"- {paper.get('title', 'No title')}")
+            print(f"- {paper.get('title', 'No title')}")
     else:
         print(f"Search failed: {result['error']}")
 
@@ -571,26 +571,26 @@ Here's a complete example that demonstrates searching across multiple literature
         
         # Define tools to search
         search_tools = [
-        {
-            "name": "ArXiv_search_papers",
-            "description": "ArXiv Preprints",
-            "args": {"query": query, "limit": 2, "sort_by": "relevance"}
-        },
-        {
-            "name": "Crossref_search_works",
-            "description": "Crossref Articles", 
-            "args": {"query": query, "limit": 2}
-        },
-        {
-            "name": "SemanticScholar_search_papers",
-            "description": "Semantic Scholar",
-            "args": {"query": query, "limit": 2}
-        },
-        {
-            "name": "openalex_literature_search",
-            "description": "OpenAlex",
-            "args": {"search_keywords": query, "max_results": 2}
-        }
+            {
+                "name": "ArXiv_search_papers",
+                "description": "ArXiv Preprints",
+                "args": {"query": query, "limit": 2, "sort_by": "relevance"}
+            },
+            {
+                "name": "Crossref_search_works",
+                "description": "Crossref Articles",
+                "args": {"query": query, "limit": 2}
+            },
+            {
+                "name": "SemanticScholar_search_papers",
+                "description": "Semantic Scholar",
+                "args": {"query": query, "limit": 2}
+            },
+            {
+                "name": "openalex_literature_search",
+                "description": "OpenAlex",
+                "args": {"search_keywords": query, "max_results": 2}
+            }
         ]
         
         print(f"Searching for: '{query}'")
@@ -599,32 +599,32 @@ Here's a complete example that demonstrates searching across multiple literature
         all_results = []
         
         for tool in search_tools:
-        print(f"\nSearching {tool['description']}...")
-        
-        try:
-            result = tu.run({
-        "name": tool["name"],
-        "arguments": tool["args"]
-            })
+            print(f"\nSearching {tool['description']}...")
             
-            if isinstance(result, list) and len(result) > 0:
-        print(f"✅ Found {len(result)} results")
-        all_results.extend(result)
-        
-        # Show first result
-        first_paper = result[0]
-        print(f"📄 Sample: {first_paper.get('title', 'No title')[:60]}...")
-            else:
-        print(f"❌ No results or error: {result}")
-        
-        except Exception as e:
-            print(f"❌ Exception: {str(e)[:100]}...")
+            try:
+                result = tu.run({
+                    "name": tool["name"],
+                    "arguments": tool["args"]
+                })
+
+                if isinstance(result, list) and len(result) > 0:
+                    print(f"✅ Found {len(result)} results")
+                    all_results.extend(result)
+
+                    # Show first result
+                    first_paper = result[0]
+                    print(f"📄 Sample: {first_paper.get('title', 'No title')[:60]}...")
+                else:
+                    print(f"❌ No results or error: {result}")
+
+            except Exception as e:
+                print(f"❌ Exception: {str(e)[:100]}...")
         
         print(f"\n📊 Total papers found: {len(all_results)}")
         
         # Save results to file
         with open("literature_search_results.json", "w") as f:
-        json.dump(all_results, f, indent=2, ensure_ascii=False)
+            json.dump(all_results, f, indent=2, ensure_ascii=False)
         
         print("💾 Results saved to literature_search_results.json")
 
@@ -1070,34 +1070,34 @@ Here are examples showing the enhanced features of the optimized tools:
     def analyze_data_quality(results):
         """Analyze data quality across multiple tools."""
         if not isinstance(results, list):
-        return
+            return
         
         total_papers = len(results)
         quality_stats = {
-        'has_abstract': 0,
-        'has_authors': 0,
-        'has_doi': 0,
-        'has_citations': 0,
-        'has_keywords': 0
+            'has_abstract': 0,
+            'has_authors': 0,
+            'has_doi': 0,
+            'has_citations': 0,
+            'has_keywords': 0
         }
         
         for paper in results:
-        if 'data_quality' in paper:
-            for field, available in paper['data_quality'].items():
-        if field in quality_stats and available:
-            quality_stats[field] += 1
+            if 'data_quality' in paper:
+                for field, available in paper['data_quality'].items():
+                    if field in quality_stats and available:
+                        quality_stats[field] += 1
         
         print(f"Data Quality Analysis ({total_papers} papers):")
         for field, count in quality_stats.items():
-        percentage = (count / total_papers) * 100
-        print(f"  {field}: {count}/{total_papers} ({percentage:.1f}%)")
+            percentage = (count / total_papers) * 100
+            print(f"  {field}: {count}/{total_papers} ({percentage:.1f}%)")
     
     # Use with any search results
     result = tu.run({
         "name": "openalex_literature_search",
         "arguments": {
-        "search_keywords": "machine learning",
-        "max_results": 5
+            "search_keywords": "machine learning",
+            "max_results": 5
         }
     })
     
