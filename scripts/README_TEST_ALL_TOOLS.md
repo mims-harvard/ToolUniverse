@@ -59,6 +59,9 @@ python scripts/test_all_tools.py --output MY_REPORT.md
 # Save progress and resume an interrupted sweep
 python scripts/test_all_tools.py --json-output TOOL_TEST_RESULTS.json
 python scripts/test_all_tools.py --json-output TOOL_TEST_RESULTS.json --resume
+
+# Run one stable shard with bounded concurrency
+python scripts/test_all_tools.py --parallel --max-workers 6 --shard-count 4 --shard-index 0
 ```
 
 ## Command Line Options
@@ -68,6 +71,9 @@ python scripts/test_all_tools.py --json-output TOOL_TEST_RESULTS.json --resume
 | `-v, --verbose` | Show detailed output for each test |
 | `--fail-fast` | Stop testing after first failure |
 | `--parallel` | Run tests in parallel (experimental) |
+| `--max-workers N` | Limit concurrent pattern subprocesses (default: 10) |
+| `--shard-count N` | Split sorted categories into N stable shards |
+| `--shard-index N` | Run one zero-based shard index |
 | `--output FILE` | Save report to specific file (default: `TOOL_TEST_REPORT.md`) |
 | `--json-output FILE` | Save an atomic machine-readable checkpoint (default: `TOOL_TEST_RESULTS.json`) |
 | `--resume` | Reuse completed categories from the JSON checkpoint |

@@ -15,6 +15,9 @@ Options:
     --verbose       Show detailed output for each test
     --fail-fast     Stop testing after first failure
     --parallel      Run tests in parallel (faster but less readable output)
+    --max-workers   Bound concurrent pattern subprocesses
+    --shard-count   Split sorted categories into stable shards
+    --shard-index   Run one zero-based shard
     --output FILE   Save report to file (default: TOOL_TEST_REPORT.md)
     --json-output   Save atomic JSON progress (default: TOOL_TEST_RESULTS.json)
     --resume        Reuse completed categories from the JSON checkpoint
@@ -93,6 +96,7 @@ def write_checkpoint(
     expected_patterns: List[str],
     started_at: str,
     complete: bool,
+    run_metadata: Optional[Dict[str, Any]] = None,
 ) -> None:
     """Atomically persist machine-readable progress after each category."""
     normalized_results = {
@@ -111,6 +115,7 @@ def write_checkpoint(
         "completed_patterns": len(normalized_results),
         "status_counts": status_counts,
         "results": normalized_results,
+        "run": run_metadata or {},
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_name(f"{output_path.name}.tmp")
@@ -142,6 +147,15 @@ def load_checkpoint(output_path: Path) -> Dict[str, Dict[str, Any]]:
             raise ValueError(f"Checkpoint state mismatch for pattern {pattern!r}")
         validated[pattern] = normalized
     return validated
+
+
+def select_shard(patterns: List[str], shard_index: int, shard_count: int) -> List[str]:
+    """Assign sorted patterns to one stable, non-overlapping shard."""
+    if shard_count < 1:
+        raise ValueError("shard_count must be at least 1")
+    if shard_index < 0 or shard_index >= shard_count:
+        raise ValueError("shard_index must be between 0 and shard_count - 1")
+    return sorted(patterns)[shard_index::shard_count]
 
 
 def find_all_tool_configs(data_dir: Path) -> List[Path]:
@@ -522,6 +536,10 @@ def generate_report(
     # List failures
     issues_found = False
 
+    if not results:
+        lines.append("No tool categories were assigned to this shard.")
+        lines.append("")
+
     patterns_without_tests = [
         pattern
         for pattern, result in normalized_results.items()
@@ -597,7 +615,7 @@ def generate_report(
             lines.append(f"- **{pattern}**: {count} failure(s)")
         lines.append("")
 
-    if not issues_found:
+    if results and not issues_found:
         lines.append("✨ **No issues found!** All tools are working correctly.")
         lines.append("")
 
@@ -629,7 +647,7 @@ def generate_report(
         lines.append("   - Review error messages in detail")
         lines.append("")
 
-    if not issues_found:
+    if results and not issues_found:
         lines.append("✅ All tools validated successfully! No action needed.")
         lines.append("")
 
@@ -663,6 +681,24 @@ def main():
         "--parallel",
         action="store_true",
         help=f"Run tests in parallel across patterns (up to {DEFAULT_PARALLEL_WORKERS} workers)",
+    )
+    parser.add_argument(
+        "--max-workers",
+        type=int,
+        default=DEFAULT_PARALLEL_WORKERS,
+        help="Maximum concurrent pattern subprocesses with --parallel",
+    )
+    parser.add_argument(
+        "--shard-count",
+        type=int,
+        default=1,
+        help="Split the sorted pattern list into this many stable shards",
+    )
+    parser.add_argument(
+        "--shard-index",
+        type=int,
+        default=0,
+        help="Zero-based shard to execute",
     )
     parser.add_argument(
         "--output", default="TOOL_TEST_REPORT.md", help="Output report filename"
@@ -700,6 +736,12 @@ def main():
     )
 
     args = parser.parse_args()
+    if args.max_workers < 1:
+        parser.error("--max-workers must be at least 1")
+    if args.shard_count < 1:
+        parser.error("--shard-count must be at least 1")
+    if args.shard_index < 0 or args.shard_index >= args.shard_count:
+        parser.error("--shard-index must be between 0 and --shard-count - 1")
 
     # Setup paths
     repo_root = Path(__file__).parent.parent
@@ -796,9 +838,21 @@ def main():
         if skipped_count > 0:
             print(f"⏭️  Skipped {skipped_count} tool(s)")
 
-    if not config_patterns:
+    if not config_patterns and args.shard_count == 1:
         print("❌ No tools remaining after filtering")
         sys.exit(1)
+
+    assigned_patterns = select_shard(
+        list(config_patterns), args.shard_index, args.shard_count
+    )
+    config_patterns = {
+        pattern: config_patterns[pattern] for pattern in assigned_patterns
+    }
+    if args.shard_count > 1:
+        print(
+            f"Shard {args.shard_index + 1}/{args.shard_count}: "
+            f"assigned {len(config_patterns)} pattern(s)"
+        )
 
     print(f"✅ Found {len(config_patterns)} unique tool patterns to test")
     print()
@@ -827,12 +881,18 @@ def main():
         }
         print(f"Resuming with {len(resumed_results)} completed pattern(s)")
 
+    run_metadata = {
+        "shard_index": args.shard_index,
+        "shard_count": args.shard_count,
+        "max_workers": args.max_workers,
+    }
     write_checkpoint(
         checkpoint_path,
         resumed_results,
         expected_patterns,
         started_at,
         complete=False,
+        run_metadata=run_metadata,
     )
 
     def save_progress(
@@ -844,6 +904,7 @@ def main():
             expected_patterns,
             started_at,
             complete=False,
+            run_metadata=run_metadata,
         )
 
     results = run_all_patterns(
@@ -852,6 +913,7 @@ def main():
         verbose=args.verbose,
         fail_fast=args.fail_fast,
         parallel=args.parallel,
+        max_workers=args.max_workers,
         initial_results=resumed_results,
         on_result=save_progress,
     )
@@ -864,6 +926,7 @@ def main():
         expected_patterns,
         started_at,
         complete=checkpoint_complete,
+        run_metadata=run_metadata,
     )
 
     print()
@@ -912,7 +975,9 @@ def main():
     ]
     if failed_categories or not checkpoint_complete:
         sys.exit(1)
-    if state_counts["no_tests"]:
+    if not expected_patterns:
+        print("\nThis shard has no assigned patterns.")
+    elif state_counts["no_tests"]:
         print("\nSweep completed with categories that have no executable tests.")
     else:
         print("\n✨ All tests passed!")
