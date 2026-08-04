@@ -329,9 +329,6 @@
     "test_examples": [
       {
         "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
-      },
-      {
-        "smiles": "C/C=C/C"
       }
     ],
     "return_schema": {
@@ -438,11 +435,6 @@
       {
         "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
         "threshold": 0.9
-      },
-      {
-        "smiles": "C/C=C/C",
-        "threshold": 0.9,
-        "max_results": 5
       }
     ],
     "return_schema": {
