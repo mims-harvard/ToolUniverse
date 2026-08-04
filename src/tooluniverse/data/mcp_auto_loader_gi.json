@@ -6,7 +6,16 @@
     "tool_prefix": "gi_",
     "server_url": "${GENOMIC_INTELLIGENCE_MCP_URL}",
     "transport": "http",
-    "timeout": 30,
+    "timeout": 90,
+    "strict_tool_contracts": true,
+    "normalize_mcp_result": true,
+    "require_structured_content": true,
+    "mcp_structured_error_field": "error",
+    "http_headers_from_env": {
+      "X-GI-Key": {
+        "env": "GENOMIC_INTELLIGENCE_API_KEY"
+      }
+    },
     "selected_tools": [
       "list_models",
       "fetch_ensembl_sequence",
@@ -24,8 +33,193 @@
       "get_job",
       "list_jobs"
     ],
+    "tool_contracts": [
+      {
+        "name": "list_models",
+        "title": "List Genomic Intelligence models",
+        "description": "List reviewed model identifiers for promoter, splice, enhancer, chromatin, expression, or annotation tasks before selecting an explicit model for a prediction.",
+        "contract_sha256": "c3eb2b1b9be3a8192678dfbeb8c779a18564a4a2b6eea9792dbf09b2d7cb12dc",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "fetch_ensembl_sequence",
+        "title": "Fetch an Ensembl gene sequence",
+        "description": "Fetch a gene reference sequence from Ensembl into a server-side handle for reuse by prediction tools. Use fetch_gene_for_expression for expression-specific windows.",
+        "contract_sha256": "ed1bf8d5b85881be6fd006b05236e5bfd4792fe60dd887c71ee86d10df4f47d4",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "fetch_region",
+        "title": "Fetch an Ensembl genomic region",
+        "description": "Fetch a genomic coordinate range from Ensembl into a server-side sequence handle for gene finding or prediction. Plus strand is the reviewed annotation default.",
+        "contract_sha256": "781ae336e78ebb2e34e86313486a3a6617663bd7ea2e093c8f9cbb2ef4a525f9",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "fetch_gene_for_expression",
+        "title": "Prepare a gene expression window",
+        "description": "Resolve a gene TSS through Ensembl and create the exact TSS-centred server-side sequence handle required by the reviewed expression model.",
+        "contract_sha256": "19fac5803426ee310184ec38d9165c5d26e7b1b57d0840152811886c0ee6904f",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "load_demo_sequence",
+        "title": "Load a bundled demo sequence",
+        "description": "Load a curated task-specific positive-control sequence into a server-side handle for keyless end-to-end smoke testing without consuming Ensembl quota.",
+        "contract_sha256": "32fc312cf02faf55825d9f09aac3050edf5c279dd1883a5cff6d8199dd12f1b3",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "store_inline_sequence",
+        "title": "Store an inline DNA sequence",
+        "description": "Send a supplied DNA sequence to the configured third-party MCP service and receive a reusable server-side handle. Do not send private or identifiable genomic data to the shared public demo endpoint.",
+        "contract_sha256": "54fa131fff438454071f7cd782cd9ace1c056523a385150a3b1f430c0178bdb9",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "predict_promoter",
+        "title": "Predict promoter regions",
+        "description": "Predict promoter regions with a reviewed Genomic Intelligence model. Prefer a server-side sequence_ref; raw sequence input is sent to the configured third-party MCP service.",
+        "contract_sha256": "d9f5db6952f9f62bf34d9d5504a2b91886a6ea850791a53e7858e03be4f7ef05",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "predict_splice",
+        "title": "Predict splice sites",
+        "description": "Predict splice donor and acceptor sites with a reviewed Genomic Intelligence model. Prefer sequence_ref; raw sequence input is sent to the configured service.",
+        "contract_sha256": "3077a2a04af23489c3fc9166e19f1c28954f3e014eb57c6a21eb959fa5a86f4d",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "predict_enhancer",
+        "title": "Predict enhancer activity",
+        "description": "Predict enhancer activity with a reviewed Genomic Intelligence model. Prefer sequence_ref; raw sequence input is sent to the configured third-party service.",
+        "contract_sha256": "c6feb5fc03d3bae22213125833954256a63c807fcfe71149d68fb5484eb2fce2",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "predict_chromatin",
+        "title": "Predict chromatin features",
+        "description": "Predict chromatin annotations across reviewed features with a Genomic Intelligence model. Prefer sequence_ref; raw sequence input is sent to the configured service.",
+        "contract_sha256": "580cfb99c06b8e1cd67353ac223739d5489badbae800d9822c20982f79409a39",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "predict_expression",
+        "title": "Predict gene expression",
+        "description": "Predict expression from the required TSS-centred window and experimental context. Use fetch_gene_for_expression; raw sequence input is sent to the configured service.",
+        "contract_sha256": "ed6dd0cfb42e2e233baf750a3b4e5d2207329ba9367cefbe57fefc2e38dcfc56",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "find_genes",
+        "title": "Find genes in a DNA sequence",
+        "description": "Find transcript intervals and gene structure in a sequence. Public demo users must keep wait=true; detached jobs require a private key. Raw sequence input is sent to the configured service.",
+        "contract_sha256": "a3c71dbc2873a4af431def60c83f5eacb483ac7a8cbbc0800bf6b0c9acf68777",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "find_genes_and_predict_expression",
+        "title": "Find genes and predict expression",
+        "description": "Find genes and predict per-gene expression in one server-side workflow. Public demo users must keep wait=true; detached jobs require a private key. Experimental context is required.",
+        "contract_sha256": "0546d4ef54ce01e0c9ac5e4568ec884a7effd7452913fb735b414d2bf004147b",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "get_job",
+        "title": "Get a Genomic Intelligence job",
+        "description": "Poll a detached Genomic Intelligence job. This requires a private GI key because the shared public demo disables pollable detached jobs and caller-specific history.",
+        "contract_sha256": "673945815b6c49bdb1b8bf93bbb27924692e95b56cd3881bd88060ced4601c6e",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        }
+      },
+      {
+        "name": "list_jobs",
+        "title": "List recent Genomic Intelligence jobs",
+        "description": "List recent asynchronous jobs for the configured Genomic Intelligence identity. This requires a private GI key; the shared public demo intentionally disables caller job history.",
+        "contract_sha256": "d99827e20992a088a4c659e3329161318feea9240de56a1519b34ec4b6c0394f",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        }
+      }
+    ],
     "required_api_keys": [
       "GENOMIC_INTELLIGENCE_MCP_URL"
+    ],
+    "optional_api_keys": [
+      "GENOMIC_INTELLIGENCE_API_KEY"
     ],
     "api_key_info": {
       "GENOMIC_INTELLIGENCE_MCP_URL": {
@@ -34,6 +228,13 @@
         "register_url": "https://docs.genomicintelligence.ai",
         "purpose": "Endpoint URL for the opt-in Genomic Intelligence MCP service.",
         "without": "Leave blank to keep this third-party MCP service disabled. To use its public demo, set https://mcp.genomicintelligence.ai/mcp."
+      },
+      "GENOMIC_INTELLIGENCE_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "api_key",
+        "register_url": "https://docs.genomicintelligence.ai/mcp",
+        "purpose": "Optional private Genomic Intelligence credential sent as X-GI-Key to the configured MCP endpoint.",
+        "without": "The hosted public demo works without a key but uses a shared, rate-limited evaluation quota and is not suitable for private sequences or production."
       }
     },
     "parameter": {
