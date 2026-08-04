@@ -3200,6 +3200,9 @@ class ToolUniverse:
                         if tool_instance is not None
                         else "unknown"
                     ),
+                    "category": self.all_tool_dict.get(function_name, {}).get(
+                        "category"
+                    ),
                     "execution_time": time.time(),
                     "arguments": tool_arguments,
                 }
@@ -3384,6 +3387,7 @@ class ToolUniverse:
                     if tool_instance is not None
                     else "unknown"
                 ),
+                "category": self.all_tool_dict.get(function_name, {}).get("category"),
                 "execution_time": time.time(),
                 "arguments": tool_arguments,
             }

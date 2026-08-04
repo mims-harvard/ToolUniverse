@@ -6,8 +6,9 @@ hook types beyond summarization. It shows the pattern for creating
 new hook types while maintaining compatibility with the existing system.
 """
 
-import re
 import json
+import re
+from pathlib import Path
 from typing import Dict, Any, List
 from .output_hook import OutputHook
 
@@ -75,23 +76,8 @@ class FilteringHook(OutputHook):
             if not self.compiled_patterns:
                 return result
 
-            output_str = result if isinstance(result, str) else str(result)
-            filtered_output = output_str
-            filtered_count = 0
-
-            # Apply each filter pattern
-            for pattern in self.compiled_patterns:
-                matches = pattern.findall(filtered_output)
-                if matches:
-                    filtered_count += len(matches)
-                    if self.log_filtered_items:
-                        print(
-                            f"🔒 Filtered {len(matches)} items matching pattern: {pattern.pattern}"
-                        )
-
-                    filtered_output = pattern.sub(
-                        self.replacement_text, filtered_output
-                    )
+            value = result if self.preserve_structure else str(result)
+            filtered_output, filtered_count = self._filter_value(value)
 
             if filtered_count > 0:
                 print(
@@ -103,6 +89,49 @@ class FilteringHook(OutputHook):
         except Exception as e:
             print(f"Error in filtering hook: {str(e)}")
             return result
+
+    def _filter_value(self, value: Any) -> tuple[Any, int]:
+        """Filter string values recursively while preserving container types."""
+        if isinstance(value, str):
+            return self._filter_text(value)
+        if isinstance(value, dict):
+            filtered = {}
+            total = 0
+            for key, item in value.items():
+                filtered_item, count = self._filter_value(item)
+                filtered[key] = filtered_item
+                total += count
+            return filtered, total
+        if isinstance(value, list):
+            filtered_items = []
+            total = 0
+            for item in value:
+                filtered_item, count = self._filter_value(item)
+                filtered_items.append(filtered_item)
+                total += count
+            return filtered_items, total
+        if isinstance(value, tuple):
+            filtered_items = []
+            total = 0
+            for item in value:
+                filtered_item, count = self._filter_value(item)
+                filtered_items.append(filtered_item)
+                total += count
+            return tuple(filtered_items), total
+        return value, 0
+
+    def _filter_text(self, text: str) -> tuple[str, int]:
+        """Apply configured regular expressions to one string value."""
+        filtered = text
+        total = 0
+        for pattern in self.compiled_patterns:
+            filtered, count = pattern.subn(self.replacement_text, filtered)
+            total += count
+            if count and self.log_filtered_items:
+                print(
+                    f"Filtered {count} items matching pattern: {pattern.pattern}"
+                )
+        return filtered, total
 
 
 class FormattingHook(OutputHook):
@@ -411,7 +440,9 @@ class LoggingHook(OutputHook):
                     "output_length": len(str(result)),
                     "timestamp": context.get("execution_time", "unknown"),
                     "output_preview": str(result)[: self.max_log_size],
-                }
+                },
+                ensure_ascii=False,
+                default=str,
             )
         else:  # detailed
             return f"""
@@ -428,7 +459,9 @@ Output Preview: {str(result)[: self.max_log_size]}{"..." if len(str(result)) > s
     def _write_log(self, log_entry: str):
         """Write the log entry to the configured destination."""
         if self.log_file:
-            with open(self.log_file, "a", encoding="utf-8") as f:
+            log_path = Path(self.log_file).expanduser()
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            with log_path.open("a", encoding="utf-8") as f:
                 f.write(log_entry + "\n")
         else:
             print(f"📝 Log: {log_entry}")

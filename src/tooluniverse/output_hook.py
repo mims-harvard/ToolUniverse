@@ -15,6 +15,7 @@ The hook system integrates seamlessly with ToolUniverse's existing architecture,
 leveraging AgenticTool and ComposeTool for intelligent output processing.
 """
 
+import copy
 import json
 from dataclasses import dataclass
 from typing import Dict, Any, List, Optional
@@ -464,9 +465,12 @@ class HookManager:
         self._excluded_patterns_cache = None
         self._load_hook_config()
 
-        # Validate LLM API keys before loading hooks
-        if not self._validate_llm_api_keys():
-            _logger.warning("LLM API keys not available. Hooks will be disabled.")
+        # Only summarization hooks require an LLM. Local hooks remain useful in
+        # environments without model credentials.
+        self._allow_unavailable_llm_hooks = False
+        self._llm_hooks_available = self._validate_llm_api_keys()
+        if not self._llm_hooks_available and not self._has_local_hooks():
+            _logger.warning("LLM API keys not available. LLM hooks will be disabled.")
             _logger.info(
                 "To enable hooks, please set LLM API keys environment variable."
             )
@@ -494,10 +498,17 @@ class HookManager:
                 # Non-fatal: we still proceed with disabled hooks
                 _logger.warning("Failed to preload hook tools without API keys: %s", _e)
 
-            # Do not proceed to create hook instances when disabled
+            # Do not proceed to create hook instances when every configured hook
+            # requires an unavailable LLM.
             # Keep hooks list empty and reflect flags
             self.hooks_enabled = self.enabled
             return
+
+        if not self._llm_hooks_available:
+            _logger.warning(
+                "LLM API keys not available. Local hooks will remain enabled; "
+                "summarization hooks will be skipped."
+            )
 
         self._load_hooks()
         self.hooks_enabled = self.enabled
@@ -539,16 +550,23 @@ class HookManager:
         sorted_hooks = sorted(self.hooks, key=lambda h: h.priority)
 
         for hook in sorted_hooks:
-            if not hook.enabled:
-                continue
+            try:
+                if not hook.enabled:
+                    continue
 
-            # Check if hook is applicable to current tool
-            if self._is_hook_applicable(hook, tool_name, context):
-                if hook.should_trigger(result, tool_name, arguments, context):
-                    _logger.debug(
-                        "Applying hook: %s for tool: %s", hook.name, tool_name
-                    )
-                    result = hook.process(result, tool_name, arguments, context)
+                # Check if hook is applicable to current tool
+                if self._is_hook_applicable(hook, tool_name, context):
+                    if hook.should_trigger(result, tool_name, arguments, context):
+                        _logger.debug(
+                            "Applying hook: %s for tool: %s", hook.name, tool_name
+                        )
+                        result = hook.process(result, tool_name, arguments, context)
+            except Exception:
+                _logger.exception(
+                    "Hook %s failed for tool %s; preserving the current result",
+                    hook.name,
+                    tool_name,
+                )
 
         return result
 
@@ -613,9 +631,12 @@ class HookManager:
     def enable_hooks(self):
         """Enable hooks and (re)load configurations and required tools."""
         self.toggle_hooks(True)
-        # Ensure tools and hooks are ready
-        self._ensure_hook_tools_loaded()
+        # This explicit API preserves the historical opt-in behavior: callers
+        # may configure the credential after constructing the manager.
+        self._allow_unavailable_llm_hooks = True
         self._load_hooks()
+        if any(isinstance(hook, SummarizationHook) for hook in self.hooks):
+            self._ensure_hook_tools_loaded()
 
     def disable_hooks(self):
         """Disable hooks and clear in-memory hook instances."""
@@ -715,34 +736,18 @@ class HookManager:
         """
         self.hooks = []
 
-        # Collect all hook configs first to determine required tools
-        all_hook_configs = []
+        # Work on copies because hook metadata and defaults are added while loading.
+        all_hook_configs = self._collect_hook_configs()
 
-        # Load global hooks
-        global_hooks = self.config.get("hooks", [])
-        for hook_config in global_hooks:
-            all_hook_configs.append(hook_config)
-
-        # Load tool-specific hooks
-        tool_specific_hooks = self.config.get("tool_specific_hooks", {})
-        for tool_name, tool_hook_config in tool_specific_hooks.items():
-            if tool_hook_config.get("enabled", True):
-                tool_hooks = tool_hook_config.get("hooks", [])
-                for hook_config in tool_hooks:
-                    hook_config["tool_name"] = tool_name
-                    all_hook_configs.append(hook_config)
-
-        # Load category-specific hooks
-        category_hooks = self.config.get("category_hooks", {})
-        for category_name, category_hook_config in category_hooks.items():
-            if category_hook_config.get("enabled", True):
-                category_hooks_list = category_hook_config.get("hooks", [])
-                for hook_config in category_hooks_list:
-                    hook_config["category"] = category_name
-                    all_hook_configs.append(hook_config)
-
-        # Auto-load required tools for hooks
-        self._auto_load_hook_tools(all_hook_configs)
+        # Do not initialize LLM-backed tools when only local hooks can run.
+        loadable_hook_configs = all_hook_configs
+        if not self._llm_hooks_available and not self._allow_unavailable_llm_hooks:
+            loadable_hook_configs = [
+                config
+                for config in all_hook_configs
+                if config.get("type", "SummarizationHook") != "SummarizationHook"
+            ]
+        self._auto_load_hook_tools(loadable_hook_configs)
 
         # Note: Hook tools will be pre-loaded when ToolUniverse.load_tools() is called
         # This is handled in the _load_pending_tools method
@@ -752,6 +757,38 @@ class HookManager:
             hook = self._create_hook_instance(hook_config)
             if hook:
                 self.hooks.append(hook)
+
+    def _collect_hook_configs(self) -> List[Dict[str, Any]]:
+        """Collect enabled hook definitions without mutating user configuration."""
+        all_hook_configs = copy.deepcopy(self.config.get("hooks", []))
+
+        for tool_name, tool_config in self.config.get(
+            "tool_specific_hooks", {}
+        ).items():
+            if not tool_config.get("enabled", True):
+                continue
+            for hook_config in copy.deepcopy(tool_config.get("hooks", [])):
+                hook_config["tool_name"] = tool_name
+                all_hook_configs.append(hook_config)
+
+        for category_name, category_config in self.config.get(
+            "category_hooks", {}
+        ).items():
+            if not category_config.get("enabled", True):
+                continue
+            for hook_config in copy.deepcopy(category_config.get("hooks", [])):
+                hook_config["category"] = category_name
+                all_hook_configs.append(hook_config)
+
+        return all_hook_configs
+
+    def _has_local_hooks(self) -> bool:
+        """Return whether at least one enabled hook does not require an LLM."""
+        return any(
+            hook.get("enabled", True)
+            and hook.get("type", "SummarizationHook") != "SummarizationHook"
+            for hook in self._collect_hook_configs()
+        )
 
     def _auto_load_hook_tools(self, hook_configs: List[Dict[str, Any]]):
         """
@@ -1001,8 +1038,10 @@ class HookManager:
             except Exception as e:
                 _logger.warning("Could not load pending hook tools: %s", e)
 
-        # Pre-load hook tools if they're available but not instantiated
-        self._ensure_hook_tools_loaded()
+        # Local hooks require no ToolUniverse tools. Avoid loading LLM-backed
+        # summarizers unless one is active.
+        if any(isinstance(hook, SummarizationHook) for hook in self.hooks):
+            self._ensure_hook_tools_loaded()
 
     def _is_hook_tool(self, tool_name: str) -> bool:
         """
@@ -1057,12 +1096,30 @@ class HookManager:
         enhanced_config = self._apply_hook_type_defaults(hook_config)
 
         if hook_type == "SummarizationHook":
+            if not getattr(self, "_llm_hooks_available", True) and not getattr(
+                self, "_allow_unavailable_llm_hooks", False
+            ):
+                _logger.warning(
+                    "Skipping summarization hook %s because no LLM API key is available",
+                    enhanced_config.get("name", "unnamed_hook"),
+                )
+                return None
             return SummarizationHook(enhanced_config, self.tooluniverse)
         elif hook_type == "FileSaveHook":
             # Merge hook_config with the main config for FileSaveHook
             file_save_config = enhanced_config.copy()
             file_save_config.update(enhanced_config.get("hook_config", {}))
             return FileSaveHook(file_save_config)
+        elif hook_type in {
+            "FilteringHook",
+            "FormattingHook",
+            "ValidationHook",
+            "LoggingHook",
+        }:
+            from .extended_hooks import HOOK_TYPE_REGISTRY
+
+            hook_class = HOOK_TYPE_REGISTRY[hook_type]
+            return hook_class(enhanced_config, self.tooluniverse)
         else:
             _logger.error("Unknown hook type: %s", hook_type)
             return None
@@ -1088,7 +1145,7 @@ class HookManager:
         )
 
         # Create enhanced configuration
-        enhanced_config = hook_config.copy()
+        enhanced_config = copy.deepcopy(hook_config)
 
         # Apply defaults to hook_config if not already specified
         if "hook_config" not in enhanced_config:
@@ -1155,9 +1212,7 @@ class HookManager:
 
         # Check category-specific hooks
         if "category" in hook.config:
-            # This would need to be implemented based on actual tool categorization
-            # For now, return True to apply category hooks to all tools
-            return True
+            return hook.config["category"] == context.get("category")
 
         # Global hooks apply to all tools
         return True
