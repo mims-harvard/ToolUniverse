@@ -53,76 +53,65 @@
         "return_schema": {
             "oneOf": [
                 {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "label": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Preferred label/name of the concept"
-                                    },
-                                    "id": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Short concept identifier (e.g., DOID_1909)"
-                                    },
-                                    "full_id": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Full IRI of the concept (e.g., http://purl.obolibrary.org/obo/DOID_1909)"
-                                    },
-                                    "synonyms": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        },
-                                        "description": "Alternative names for this concept"
-                                    },
-                                    "definition": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Definition of the concept"
-                                    },
-                                    "ontology": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Source ontology acronym"
-                                    },
-                                    "obsolete": {
-                                        "type": "boolean",
-                                        "description": "Whether this term is obsolete"
-                                    },
-                                    "match_type": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Type of match (prefLabel, synonym, etc.)"
-                                    }
-                                }
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "label": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Preferred label/name of the concept"
+                            },
+                            "id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Short concept identifier (e.g., DOID_1909)"
+                            },
+                            "full_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Full IRI of the concept (e.g., http://purl.obolibrary.org/obo/DOID_1909)"
+                            },
+                            "synonyms": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Alternative names for this concept"
+                            },
+                            "definition": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Definition of the concept"
+                            },
+                            "ontology": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Source ontology acronym"
+                            },
+                            "obsolete": {
+                                "type": "boolean",
+                                "description": "Whether this term is obsolete"
+                            },
+                            "match_type": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Type of match (prefLabel, synonym, etc.)"
                             }
-                        },
-                        "metadata": {
-                            "type": "object"
                         }
-                    },
-                    "required": [
-                        "data"
-                    ]
+                    }
                 },
                 {
                     "type": "object",
@@ -177,64 +166,53 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "label": {
-                                    "type": [
-                                        "string",
-                                        "null"
-                                    ],
-                                    "description": "Preferred label of the concept"
-                                },
-                                "id": {
-                                    "type": [
-                                        "string",
-                                        "null"
-                                    ],
-                                    "description": "Full IRI of the concept"
-                                },
-                                "synonyms": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "description": "All synonym names"
-                                },
-                                "definitions": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "description": "Definitions from the ontology"
-                                },
-                                "obsolete": {
-                                    "type": "boolean",
-                                    "description": "Whether this term is obsolete"
-                                },
-                                "cui": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "description": "UMLS Concept Unique Identifiers"
-                                },
-                                "semantic_type": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "description": "UMLS semantic types"
-                                }
-                            }
+                        "label": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Preferred label of the concept"
                         },
-                        "metadata": {
-                            "type": "object"
+                        "id": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Full IRI of the concept"
+                        },
+                        "synonyms": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "All synonym names"
+                        },
+                        "definitions": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Definitions from the ontology"
+                        },
+                        "obsolete": {
+                            "type": "boolean",
+                            "description": "Whether this term is obsolete"
+                        },
+                        "cui": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "UMLS Concept Unique Identifiers"
+                        },
+                        "semantic_type": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "UMLS semantic types"
                         }
-                    },
-                    "required": [
-                        "data"
-                    ]
+                    }
                 },
                 {
                     "type": "object",
@@ -297,72 +275,61 @@
         "return_schema": {
             "oneOf": [
                 {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "matched_text": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Text span that was matched"
-                                    },
-                                    "from": {
-                                        "type": [
-                                            "integer",
-                                            "null"
-                                        ],
-                                        "description": "Start position in text (1-indexed)"
-                                    },
-                                    "to": {
-                                        "type": [
-                                            "integer",
-                                            "null"
-                                        ],
-                                        "description": "End position in text (1-indexed)"
-                                    },
-                                    "match_type": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Match type: PREF (preferred label) or SYN (synonym)"
-                                    },
-                                    "concept_label": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Preferred label of matched concept"
-                                    },
-                                    "concept_id": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Short concept identifier"
-                                    },
-                                    "concept_full_id": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Full IRI of matched concept"
-                                    }
-                                }
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "matched_text": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Text span that was matched"
+                            },
+                            "from": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "description": "Start position in text (1-indexed)"
+                            },
+                            "to": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "description": "End position in text (1-indexed)"
+                            },
+                            "match_type": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Match type: PREF (preferred label) or SYN (synonym)"
+                            },
+                            "concept_label": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Preferred label of matched concept"
+                            },
+                            "concept_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Short concept identifier"
+                            },
+                            "concept_full_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Full IRI of matched concept"
                             }
-                        },
-                        "metadata": {
-                            "type": "object"
                         }
-                    },
-                    "required": [
-                        "data"
-                    ]
+                    }
                 },
                 {
                     "type": "object",
@@ -431,62 +398,51 @@
         "return_schema": {
             "oneOf": [
                 {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "label": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Preferred label of the concept"
-                                    },
-                                    "id": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Short concept identifier"
-                                    },
-                                    "full_id": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Full IRI of the concept"
-                                    },
-                                    "synonyms": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        },
-                                        "description": "Alternative names (up to 3)"
-                                    },
-                                    "definition": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Definition of the concept"
-                                    },
-                                    "obsolete": {
-                                        "type": "boolean",
-                                        "description": "Whether this term is obsolete"
-                                    }
-                                }
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "label": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Preferred label of the concept"
+                            },
+                            "id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Short concept identifier"
+                            },
+                            "full_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Full IRI of the concept"
+                            },
+                            "synonyms": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Alternative names (up to 3)"
+                            },
+                            "definition": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Definition of the concept"
+                            },
+                            "obsolete": {
+                                "type": "boolean",
+                                "description": "Whether this term is obsolete"
                             }
-                        },
-                        "metadata": {
-                            "type": "object"
                         }
-                    },
-                    "required": [
-                        "data"
-                    ]
+                    }
                 },
                 {
                     "type": "object",

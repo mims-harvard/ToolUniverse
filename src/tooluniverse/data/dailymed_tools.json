@@ -37,7 +37,10 @@
           "default": 100
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Alias for pagesize."
         },
         "page": {
@@ -76,7 +79,10 @@
               "type": "string"
             },
             "next_page_url": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "total_elements": {
               "type": "integer"
@@ -88,13 +94,24 @@
               "type": "integer"
             },
             "previous_page": {
-              "type": ["string", "integer", "null"]
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
             },
             "previous_page_url": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "next_page": {
-              "type": ["string", "integer", "null"]
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
             }
           }
         }
@@ -395,50 +412,46 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "setid": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "setid": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": ["string", "null"]
-                },
-                "spl_version": {
-                  "type": ["integer", "null"]
-                },
-                "media": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "mime_type": {
-                        "type": "string",
-                        "description": "Image MIME type, e.g., image/jpeg"
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "Media file name"
-                      },
-                      "url": {
-                        "type": "string",
-                        "description": "Direct image URL"
-                      }
-                    }
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "spl_version": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "media": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mime_type": {
+                    "type": "string",
+                    "description": "Image MIME type, e.g., image/jpeg"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Media file name"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Direct image URL"
                   }
                 }
-              },
-              "required": ["setid", "media"]
-            },
-            "metadata": {
-              "type": "object",
-              "additionalProperties": true
+              }
             }
           },
-          "required": ["data"]
+          "required": [
+            "setid",
+            "media"
+          ]
         },
         {
           "type": "object",
@@ -447,7 +460,9 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -482,43 +497,36 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "setid": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "setid": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": ["string", "null"]
-                },
-                "history": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "spl_version": {
-                        "type": "integer",
-                        "description": "SPL version number"
-                      },
-                      "published_date": {
-                        "type": "string",
-                        "description": "Publication date, e.g., 'Jul 22, 2022'"
-                      }
-                    }
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "history": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "spl_version": {
+                    "type": "integer",
+                    "description": "SPL version number"
+                  },
+                  "published_date": {
+                    "type": "string",
+                    "description": "Publication date, e.g., 'Jul 22, 2022'"
                   }
                 }
-              },
-              "required": ["setid", "history"]
-            },
-            "metadata": {
-              "type": "object",
-              "additionalProperties": true
+              }
             }
           },
-          "required": ["data"]
+          "required": [
+            "setid",
+            "history"
+          ]
         },
         {
           "type": "object",
@@ -527,7 +535,9 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

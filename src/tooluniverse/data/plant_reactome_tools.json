@@ -37,64 +37,39 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "stId": {
-                    "type": "string",
-                    "description": "Stable identifier (e.g., R-OSA-1119312)"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "species": {
-                    "type": [
-                      "string",
-                      "array",
-                      "null"
-                    ]
-                  },
-                  "exact_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Entity type (Pathway, Reaction, etc.)"
-                  },
-                  "compartment_names": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                },
-                "total_groups": {
-                  "type": "integer"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stId": {
+                "type": "string",
+                "description": "Stable identifier (e.g., R-OSA-1119312)"
+              },
+              "name": {
+                "type": "string"
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "array",
+                  "null"
+                ]
+              },
+              "exact_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entity type (Pathway, Reaction, etc.)"
+              },
+              "compartment_names": {
+                "type": [
+                  "array",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -142,75 +117,56 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "stId": {
-                  "type": "string"
-                },
-                "displayName": {
-                  "type": "string"
-                },
-                "speciesName": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "isInDisease": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
-                },
-                "isInferred": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
-                },
-                "hasEvent": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
-                  "description": "Sub-events (reactions and sub-pathways)"
-                },
-                "compartment": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                },
-                "goBiologicalProcess": {
-                  "type": [
-                    "object",
-                    "null"
-                  ]
-                },
-                "crossReference": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                }
-              }
+            "stId": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "pathway_id": {
-                  "type": "string"
-                }
-              }
+            "displayName": {
+              "type": "string"
+            },
+            "speciesName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "isInDisease": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "isInferred": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "hasEvent": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Sub-events (reactions and sub-pathways)"
+            },
+            "compartment": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "goBiologicalProcess": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "crossReference": {
+              "type": [
+                "array",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -244,50 +200,31 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "dbId": {
-                    "type": "integer"
-                  },
-                  "displayName": {
-                    "type": "string",
-                    "description": "Species name"
-                  },
-                  "taxId": {
-                    "type": [
-                      "string",
-                      "integer"
-                    ]
-                  },
-                  "abbreviation": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_species": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dbId": {
+                "type": "integer"
+              },
+              "displayName": {
+                "type": "string",
+                "description": "Species name"
+              },
+              "taxId": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "abbreviation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -330,80 +267,69 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "pe_db_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "display_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "schema_class": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "ref_entities": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "identifier": {
-                          "type": [
-                            "string",
-                            "null"
-                          ],
-                          "description": "UniProt accession (e.g. Q10MK5)"
-                        },
-                        "display_name": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "gene_names": {
-                          "type": [
-                            "array",
-                            "null"
-                          ]
-                        },
-                        "schema_class": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "url": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        }
-                      }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pe_db_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "schema_class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ref_entities": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "identifier": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "UniProt accession (e.g. Q10MK5)"
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "gene_names": {
+                      "type": [
+                        "array",
+                        "null"
+                      ]
+                    },
+                    "schema_class": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -449,47 +375,36 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "stId": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "species": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "children": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "children": {
+                "type": [
+                  "array",
+                  "null"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

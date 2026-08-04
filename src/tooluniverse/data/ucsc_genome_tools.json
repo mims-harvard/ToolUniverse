@@ -37,70 +37,48 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "genome": {
-                  "type": "string"
-                },
-                "search_term": {
-                  "type": "string"
-                },
-                "match_count": {
-                  "type": "integer"
-                },
-                "matches": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "track": {
-                        "type": "string"
-                      },
-                      "track_description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "position": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "transcript_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "genome": {
+              "type": "string"
+            },
+            "search_term": {
+              "type": "string"
+            },
+            "match_count": {
+              "type": "integer"
+            },
+            "matches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "track": {
+                    "type": "string"
+                  },
+                  "track_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "position": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "transcript_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -172,117 +150,95 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "genome": {
-                  "type": "string"
-                },
-                "name_filter": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "track_count": {
-                  "type": "integer"
-                },
-                "returned_count": {
-                  "type": "integer"
-                },
-                "tracks": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "track": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "short_label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "long_label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "parent": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "group": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "track": {
-                  "type": "string"
-                },
-                "track_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "column_count": {
-                  "type": "integer"
-                },
-                "columns": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "sqlType": {
-                        "type": "string"
-                      },
-                      "jsonType": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      }
-                    }
+            "genome": {
+              "type": "string"
+            },
+            "name_filter": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "track_count": {
+              "type": "integer"
+            },
+            "returned_count": {
+              "type": "integer"
+            },
+            "tracks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "track": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "short_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "long_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parent": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "group": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
+            "track": {
+              "type": "string"
+            },
+            "track_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "column_count": {
+              "type": "integer"
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "sqlType": {
+                    "type": "string"
+                  },
+                  "jsonType": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -351,47 +307,25 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "genome": {
-                  "type": "string"
-                },
-                "chrom": {
-                  "type": "string"
-                },
-                "start": {
-                  "type": "integer"
-                },
-                "end": {
-                  "type": "integer"
-                },
-                "length": {
-                  "type": "integer"
-                },
-                "dna": {
-                  "type": "string"
-                }
-              }
+            "genome": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "chrom": {
+              "type": "string"
+            },
+            "start": {
+              "type": "integer"
+            },
+            "end": {
+              "type": "integer"
+            },
+            "length": {
+              "type": "integer"
+            },
+            "dna": {
+              "type": "string"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -476,59 +410,37 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "genome": {
-                  "type": "string"
-                },
-                "track": {
-                  "type": "string"
-                },
-                "track_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "chrom": {
-                  "type": "string"
-                },
-                "start": {
-                  "type": "integer"
-                },
-                "end": {
-                  "type": "integer"
-                },
-                "item_count": {
-                  "type": "integer"
-                },
-                "items": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
-              }
+            "genome": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+            "track": {
+              "type": "string"
+            },
+            "track_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "chrom": {
+              "type": "string"
+            },
+            "start": {
+              "type": "integer"
+            },
+            "end": {
+              "type": "integer"
+            },
+            "item_count": {
+              "type": "integer"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

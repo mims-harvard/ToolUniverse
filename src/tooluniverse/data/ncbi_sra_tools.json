@@ -473,47 +473,39 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {"type": "string"},
-                  "file_count": {"type": "integer"},
-                  "files": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {"type": "string"},
-                        "type": {"type": "string"},
-                        "size": {"type": ["integer", "null"]},
-                        "md5": {"type": ["string", "null"]},
-                        "modification_date": {"type": ["string", "null"]},
-                        "locations": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "service": {"type": "string"},
-                              "region": {"type": ["string", "null"]},
-                              "link": {"type": "string"}
-                            }
-                          }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {"type": "string"},
+              "file_count": {"type": "integer"},
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": "string"},
+                    "type": {"type": "string"},
+                    "size": {"type": ["integer", "null"]},
+                    "md5": {"type": ["string", "null"]},
+                    "modification_date": {"type": ["string", "null"]},
+                    "locations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "service": {"type": "string"},
+                          "region": {"type": ["string", "null"]},
+                          "link": {"type": "string"}
                         }
                       }
                     }
-                  },
-                  "error": {"type": "string"}
+                  }
                 }
-              }
-            },
-            "count": {"type": "integer"}
-          },
-          "required": ["data"]
+              },
+              "error": {"type": "string"}
+            }
+          }
         },
         {
           "type": "object",

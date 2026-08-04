@@ -46,58 +46,33 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "descriptor_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "MeSH descriptor ID (e.g., D009369)"
-                  },
-                  "label": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Descriptor label/name"
-                  },
-                  "resource_uri": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Full MeSH URI"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "match_type": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "descriptor_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "MeSH descriptor ID (e.g., D009369)"
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Descriptor label/name"
+              },
+              "resource_uri": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Full MeSH URI"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -145,89 +120,70 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "descriptor_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "MeSH descriptor ID"
-                },
-                "label": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Descriptor name"
-                },
-                "type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Entry type (TopicalDescriptor, etc.)"
-                },
-                "annotation": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Usage annotation/notes"
-                },
-                "tree_numbers": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "MeSH tree numbers for hierarchy"
-                },
-                "consider_also": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Related terms to consider"
-                },
-                "date_introduced": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Year descriptor was introduced"
-                },
-                "last_updated": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Last update date"
-                },
-                "active": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ],
-                  "description": "Whether descriptor is active"
-                }
-              }
+            "descriptor_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MeSH descriptor ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                }
-              }
+            "label": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Descriptor name"
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Entry type (TopicalDescriptor, etc.)"
+            },
+            "annotation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Usage annotation/notes"
+            },
+            "tree_numbers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "MeSH tree numbers for hierarchy"
+            },
+            "consider_also": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Related terms to consider"
+            },
+            "date_introduced": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Year descriptor was introduced"
+            },
+            "last_updated": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Last update date"
+            },
+            "active": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether descriptor is active"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -290,58 +246,33 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "term_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "MeSH term ID (e.g., T027926)"
-                  },
-                  "label": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Term label/name"
-                  },
-                  "resource_uri": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Full MeSH URI"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "match_type": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "MeSH term ID (e.g., T027926)"
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Term label/name"
+              },
+              "resource_uri": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Full MeSH URI"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

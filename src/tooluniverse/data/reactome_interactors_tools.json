@@ -40,68 +40,57 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Query protein UniProt accession"
-                },
-                "total_interactors": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Total number of known interactors"
-                },
-                "interactors": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Interactor UniProt accession"
-                      },
-                      "alias": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Gene name/alias of interactor"
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ],
-                        "description": "Interaction confidence score (0-1, higher = more confident)"
-                      },
-                      "evidences": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "Number of experimental evidences supporting this interaction"
-                      }
-                    }
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Query protein UniProt accession"
+            },
+            "total_interactors": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total number of known interactors"
+            },
+            "interactors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Interactor UniProt accession"
+                  },
+                  "alias": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene name/alias of interactor"
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Interaction confidence score (0-1, higher = more confident)"
+                  },
+                  "evidences": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of experimental evidences supporting this interaction"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -154,52 +143,41 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "stable_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Reactome pathway stable identifier"
-                  },
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Pathway name"
-                  },
-                  "species": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Species name"
-                  },
-                  "is_disease": {
-                    "type": "boolean",
-                    "description": "Whether pathway is disease-associated"
-                  },
-                  "has_diagram": {
-                    "type": "boolean",
-                    "description": "Whether pathway has a diagram available"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stable_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reactome pathway stable identifier"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Pathway name"
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Species name"
+              },
+              "is_disease": {
+                "type": "boolean",
+                "description": "Whether pathway is disease-associated"
+              },
+              "has_diagram": {
+                "type": "boolean",
+                "description": "Whether pathway has a diagram available"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -260,71 +238,60 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "stable_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Reactome stable identifier (e.g., R-HSA-69488)"
-                  },
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Entity name"
-                  },
-                  "type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Entity type: Protein, Complex, Reaction, Pathway, etc."
-                  },
-                  "species": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Species list"
-                  },
-                  "exact_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Exact Reactome entity type"
-                  },
-                  "compartment_names": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Cellular compartment locations"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stable_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reactome stable identifier (e.g., R-HSA-69488)"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entity name"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entity type: Protein, Complex, Reaction, Pathway, etc."
+              },
+              "species": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Species list"
+              },
+              "exact_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Exact Reactome entity type"
+              },
+              "compartment_names": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Cellular compartment locations"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

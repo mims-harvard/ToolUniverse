@@ -23,23 +23,16 @@
         {
           "type": "object",
           "properties": {
-            "status": {"const": "success"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "n_snps": {"type": "integer"},
-                "posteriors": {"type": "object"},
-                "pp4_colocalization": {"type": "number"},
-                "best_causal_snp": {},
-                "interpretation": {"type": "string"}
-              }
-            }
-          },
-          "required": ["data"]
+            "n_snps": {"type": "integer"},
+            "posteriors": {"type": "object"},
+            "pp4_colocalization": {"type": "number"},
+            "best_causal_snp": {},
+            "interpretation": {"type": "string"}
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "properties": {"error": {"type": "string"}},
           "required": ["error"]
         }
       ]

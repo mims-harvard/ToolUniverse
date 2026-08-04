@@ -32,74 +32,52 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "glytoucan_ac": {
-                  "type": "string",
-                  "description": "GlyTouCan accession ID"
-                },
-                "mass": {
-                  "type": "number",
-                  "description": "Molecular mass in Daltons"
-                },
-                "number_monosaccharides": {
-                  "type": "integer",
-                  "description": "Number of monosaccharide residues"
-                },
-                "glycan_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Glycan classification type"
-                },
-                "iupac": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "IUPAC condensed notation"
-                },
-                "wurcs": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "WURCS linear notation"
-                },
-                "species": {
-                  "type": "array",
-                  "description": "Species where glycan is found"
-                },
-                "glycoprotein_count": {
-                  "type": "integer",
-                  "description": "Number of associated glycoproteins"
-                },
-                "publication_count": {
-                  "type": "integer",
-                  "description": "Number of associated publications"
-                }
-              }
+            "glytoucan_ac": {
+              "type": "string",
+              "description": "GlyTouCan accession ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "mass": {
+              "type": "number",
+              "description": "Molecular mass in Daltons"
+            },
+            "number_monosaccharides": {
+              "type": "integer",
+              "description": "Number of monosaccharide residues"
+            },
+            "glycan_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Glycan classification type"
+            },
+            "iupac": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "IUPAC condensed notation"
+            },
+            "wurcs": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "WURCS linear notation"
+            },
+            "species": {
+              "type": "array",
+              "description": "Species where glycan is found"
+            },
+            "glycoprotein_count": {
+              "type": "integer",
+              "description": "Number of associated glycoproteins"
+            },
+            "publication_count": {
+              "type": "integer",
+              "description": "Number of associated publications"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -175,52 +153,30 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "glytoucan_ac": {
-                    "type": "string"
-                  },
-                  "mass": {
-                    "type": "number"
-                  },
-                  "number_proteins": {
-                    "type": "integer"
-                  },
-                  "number_enzymes": {
-                    "type": "integer"
-                  },
-                  "number_species": {
-                    "type": "integer"
-                  },
-                  "hit_score": {
-                    "type": "number"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "list_id": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "object"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "glytoucan_ac": {
+                "type": "string"
+              },
+              "mass": {
+                "type": "number"
+              },
+              "number_proteins": {
+                "type": "integer"
+              },
+              "number_enzymes": {
+                "type": "integer"
+              },
+              "number_species": {
+                "type": "integer"
+              },
+              "hit_score": {
+                "type": "number"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -269,55 +225,33 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "protein_name": {
-                  "type": "string"
-                },
-                "gene_names": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "species": {
-                  "type": "string"
-                },
-                "glycosylation_count": {
-                  "type": "integer",
-                  "description": "Total number of glycosylation annotations"
-                },
-                "glycosylation_sites": {
-                  "type": "array",
-                  "description": "Glycosylation site details with positions, types, and attached glycans"
-                },
-                "disease_count": {
-                  "type": "integer"
-                },
-                "pathway_count": {
-                  "type": "integer"
-                }
+            "protein_name": {
+              "type": "string"
+            },
+            "gene_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "species": {
+              "type": "string"
+            },
+            "glycosylation_count": {
+              "type": "integer",
+              "description": "Total number of glycosylation annotations"
+            },
+            "glycosylation_sites": {
+              "type": "array",
+              "description": "Glycosylation site details with positions, types, and attached glycans"
+            },
+            "disease_count": {
+              "type": "integer"
+            },
+            "pathway_count": {
+              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -388,52 +322,30 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "uniprot_canonical_ac": {
-                    "type": "string"
-                  },
-                  "protein_name": {
-                    "type": "string"
-                  },
-                  "gene_name": {
-                    "type": "string"
-                  },
-                  "organism": {
-                    "type": "string"
-                  },
-                  "glycosylation_count": {
-                    "type": "integer"
-                  },
-                  "hit_score": {
-                    "type": "number"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "list_id": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "object"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uniprot_canonical_ac": {
+                "type": "string"
+              },
+              "protein_name": {
+                "type": "string"
+              },
+              "gene_name": {
+                "type": "string"
+              },
+              "organism": {
+                "type": "string"
+              },
+              "glycosylation_count": {
+                "type": "integer"
+              },
+              "hit_score": {
+                "type": "number"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -482,61 +394,39 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "site_id": {
-                  "type": "string"
-                },
-                "uniprot_ac": {
-                  "type": "string"
-                },
-                "start_pos": {
-                  "type": "integer"
-                },
-                "end_pos": {
-                  "type": "integer"
-                },
-                "site_seq": {
-                  "type": "string",
-                  "description": "Amino acid at the glycosylation site"
-                },
-                "upstream_seq": {
-                  "type": "string",
-                  "description": "Upstream flanking sequence"
-                },
-                "downstream_seq": {
-                  "type": "string",
-                  "description": "Downstream flanking sequence"
-                },
-                "glycosylation": {
-                  "type": "array",
-                  "description": "Glycosylation annotations at this site"
-                },
-                "snv": {
-                  "type": "array",
-                  "description": "SNVs at this position"
-                }
-              }
+            "site_id": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "uniprot_ac": {
+              "type": "string"
+            },
+            "start_pos": {
+              "type": "integer"
+            },
+            "end_pos": {
+              "type": "integer"
+            },
+            "site_seq": {
+              "type": "string",
+              "description": "Amino acid at the glycosylation site"
+            },
+            "upstream_seq": {
+              "type": "string",
+              "description": "Upstream flanking sequence"
+            },
+            "downstream_seq": {
+              "type": "string",
+              "description": "Downstream flanking sequence"
+            },
+            "glycosylation": {
+              "type": "array",
+              "description": "Glycosylation annotations at this site"
+            },
+            "snv": {
+              "type": "array",
+              "description": "SNVs at this position"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

@@ -207,30 +207,19 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "gene_set_name": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_set_name": {
-                  "type": "string"
-                },
-                "gene": {
-                  "type": "string"
-                },
-                "is_member": {
-                  "type": "boolean"
-                },
-                "total_genes_in_set": {
-                  "type": "integer"
-                }
-              }
+            "gene": {
+              "type": "string"
+            },
+            "is_member": {
+              "type": "boolean"
+            },
+            "total_genes_in_set": {
+              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -290,30 +279,19 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "gene_set_name": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_set_name": {
-                  "type": "string"
-                },
-                "num_genes": {
-                  "type": "integer"
-                },
-                "genes": {
-                  "type": "array"
-                },
-                "collection": {
-                  "type": "string"
-                }
-              }
+            "num_genes": {
+              "type": "integer"
+            },
+            "genes": {
+              "type": "array"
+            },
+            "collection": {
+              "type": "string"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

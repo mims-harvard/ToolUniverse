@@ -34,89 +34,67 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "chebi_id": {
-                  "type": "integer"
-                },
-                "chebi_accession": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "definition": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "stars": {
-                  "type": "integer"
-                },
-                "formula": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "mass": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "monoisotopic_mass": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "charge": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "smiles": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "inchikey": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
+            "chebi_id": {
+              "type": "integer"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+            "chebi_accession": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "definition": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "stars": {
+              "type": "integer"
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mass": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "monoisotopic_mass": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "charge": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "inchikey": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -173,67 +151,45 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "query": {
-                  "type": "string"
-                },
-                "result_count": {
-                  "type": "integer"
-                },
-                "compounds": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "chebi_accession": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "formula": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "mass": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "stars": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "query": {
+              "type": "string"
+            },
+            "result_count": {
+              "type": "integer"
+            },
+            "compounds": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chebi_accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "formula": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mass": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "stars": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -284,61 +240,39 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "chebi_id": {
-                  "type": "integer"
-                },
-                "chebi_accession": {
-                  "type": "string"
-                },
-                "relation_count": {
-                  "type": "integer"
-                },
-                "relations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "child_id": {
-                        "type": "integer"
-                      },
-                      "child_name": {
-                        "type": "string"
-                      },
-                      "relation_type": {
-                        "type": "string"
-                      },
-                      "parent_id": {
-                        "type": "integer"
-                      },
-                      "parent_name": {
-                        "type": "string"
-                      }
-                    }
+            "chebi_id": {
+              "type": "integer"
+            },
+            "chebi_accession": {
+              "type": "string"
+            },
+            "relation_count": {
+              "type": "integer"
+            },
+            "relations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "child_id": {
+                    "type": "integer"
+                  },
+                  "child_name": {
+                    "type": "string"
+                  },
+                  "relation_type": {
+                    "type": "string"
+                  },
+                  "parent_id": {
+                    "type": "integer"
+                  },
+                  "parent_name": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -389,55 +323,33 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "chebi_id": {
-                  "type": "integer"
-                },
-                "chebi_accession": {
-                  "type": "string"
-                },
-                "relation_count": {
-                  "type": "integer"
-                },
-                "relations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "relation_type": {
-                        "type": "string"
-                      },
-                      "parent_id": {
-                        "type": "integer"
-                      },
-                      "parent_name": {
-                        "type": "string"
-                      }
-                    }
+            "chebi_id": {
+              "type": "integer"
+            },
+            "chebi_accession": {
+              "type": "string"
+            },
+            "relation_count": {
+              "type": "integer"
+            },
+            "relations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "relation_type": {
+                    "type": "string"
+                  },
+                  "parent_id": {
+                    "type": "integer"
+                  },
+                  "parent_name": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

@@ -29,61 +29,48 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "accession": {"type": "string"},
-                                "protein_name": {"type": ["string", "null"]},
-                                "taxid": {"type": "integer"},
-                                "gene": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "value": {"type": "string"},
-                                            "type": {"type": "string"}
-                                        }
-                                    }
-                                },
-                                "coordinate_mappings": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "ensembl_gene_id": {"type": ["string", "null"]},
-                                            "ensembl_transcript_id": {"type": ["string", "null"]},
-                                            "chromosome": {"type": ["string", "null"]},
-                                            "start": {"type": ["integer", "null"]},
-                                            "end": {"type": ["integer", "null"]},
-                                            "reverse_strand": {"type": ["boolean", "null"]},
-                                            "num_exons": {"type": "integer"},
-                                            "exons": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "exon_id": {"type": ["string", "null"]},
-                                                        "protein_start": {"type": ["integer", "null"]},
-                                                        "protein_end": {"type": ["integer", "null"]},
-                                                        "genome_start": {"type": ["integer", "null"]},
-                                                        "genome_end": {"type": ["integer", "null"]}
-                                                    }
-                                                }
+                        "accession": {"type": "string"},
+                        "protein_name": {"type": ["string", "null"]},
+                        "taxid": {"type": "integer"},
+                        "gene": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "value": {"type": "string"},
+                                    "type": {"type": "string"}
+                                }
+                            }
+                        },
+                        "coordinate_mappings": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "ensembl_gene_id": {"type": ["string", "null"]},
+                                    "ensembl_transcript_id": {"type": ["string", "null"]},
+                                    "chromosome": {"type": ["string", "null"]},
+                                    "start": {"type": ["integer", "null"]},
+                                    "end": {"type": ["integer", "null"]},
+                                    "reverse_strand": {"type": ["boolean", "null"]},
+                                    "num_exons": {"type": "integer"},
+                                    "exons": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "exon_id": {"type": ["string", "null"]},
+                                                "protein_start": {"type": ["integer", "null"]},
+                                                "protein_end": {"type": ["integer", "null"]},
+                                                "genome_start": {"type": ["integer", "null"]},
+                                                "genome_end": {"type": ["integer", "null"]}
                                             }
                                         }
                                     }
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "total_transcript_mappings": {"type": "integer"}
-                            }
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",

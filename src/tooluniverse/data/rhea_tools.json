@@ -44,75 +44,33 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rhea_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Rhea reaction identifier (e.g., RHEA:14293)"
-                  },
-                  "equation": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Chemical equation with compound names"
-                  },
-                  "ec_numbers": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Enzyme Commission numbers (semicolon-separated)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Total number of matching Rhea reactions, independent of `limit`. Null if the count query failed."
-                },
-                "returned": {
-                  "type": "integer",
-                  "description": "Number of reactions in this response (at most `limit`)."
-                },
-                "offset": {
-                  "type": "integer"
-                },
-                "limit": {
-                  "type": "integer"
-                },
-                "has_more": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rhea_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Rhea reaction identifier (e.g., RHEA:14293)"
+              },
+              "equation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chemical equation with compound names"
+              },
+              "ec_numbers": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Enzyme Commission numbers (semicolon-separated)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -173,72 +131,30 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rhea_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "equation": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "ec_numbers": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "ec_number": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Total number of matching Rhea reactions, independent of `limit`. Null if the count query failed."
-                },
-                "returned": {
-                  "type": "integer",
-                  "description": "Number of reactions in this response (at most `limit`)."
-                },
-                "offset": {
-                  "type": "integer"
-                },
-                "limit": {
-                  "type": "integer"
-                },
-                "has_more": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rhea_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "equation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ec_numbers": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -299,78 +215,36 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rhea_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "equation": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "chebi_ids": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "ec_numbers": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "chebi_id": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Total number of matching Rhea reactions, independent of `limit`. Null if the count query failed."
-                },
-                "returned": {
-                  "type": "integer",
-                  "description": "Number of reactions in this response (at most `limit`)."
-                },
-                "offset": {
-                  "type": "integer"
-                },
-                "limit": {
-                  "type": "integer"
-                },
-                "has_more": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rhea_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "equation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "chebi_ids": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ec_numbers": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

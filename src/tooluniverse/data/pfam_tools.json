@@ -15,7 +15,9 @@
                     "default": 20
                 }
             },
-            "required": ["query"]
+            "required": [
+                "query"
+            ]
         },
         "fields": {
             "endpoint": "search_families"
@@ -35,37 +37,58 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "query": {"type": "string", "description": "Search query used"},
-                                "total_results": {"type": "integer", "description": "Total matching Pfam families"},
-                                "returned": {"type": "integer", "description": "Number of results returned"},
-                                "families": {
-                                    "type": "array",
-                                    "description": "Matching Pfam families",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "accession": {"type": "string", "description": "Pfam accession (e.g., PF00069)"},
-                                            "name": {"type": "string", "description": "Full family name"},
-                                            "type": {"type": "string", "description": "Entry type: domain, family, repeat, etc."},
-                                            "integrated_interpro": {"type": ["string", "null"], "description": "Integrated InterPro accession"}
-                                        }
+                        "query": {
+                            "type": "string",
+                            "description": "Search query used"
+                        },
+                        "total_results": {
+                            "type": "integer",
+                            "description": "Total matching Pfam families"
+                        },
+                        "returned": {
+                            "type": "integer",
+                            "description": "Number of results returned"
+                        },
+                        "families": {
+                            "type": "array",
+                            "description": "Matching Pfam families",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "accession": {
+                                        "type": "string",
+                                        "description": "Pfam accession (e.g., PF00069)"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Full family name"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "description": "Entry type: domain, family, repeat, etc."
+                                    },
+                                    "integrated_interpro": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Integrated InterPro accession"
                                     }
                                 }
                             }
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["data"]
+                        }
+                    }
                 },
                 {
                     "type": "object",
                     "properties": {
-                        "error": {"type": "string"}
+                        "error": {
+                            "type": "string"
+                        }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }
@@ -81,7 +104,9 @@
                     "description": "Pfam family accession. Examples: 'PF00001' (7tm_1, GPCR rhodopsin family), 'PF00076' (RRM_1, RNA recognition motif), 'PF00069' (Pkinase), 'PF00096' (zf-C2H2, zinc finger)."
                 }
             },
-            "required": ["pfam_accession"]
+            "required": [
+                "pfam_accession"
+            ]
         },
         "fields": {
             "endpoint": "get_family_detail"
@@ -100,49 +125,108 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
+                        "accession": {
+                            "type": "string",
+                            "description": "Pfam accession"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Full family name"
+                        },
+                        "short_name": {
+                            "type": "string",
+                            "description": "Short name (e.g., 7tm_1)"
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "Entry type: domain, family, repeat, motif, etc."
+                        },
+                        "source_database": {
+                            "type": "string"
+                        },
+                        "integrated_interpro": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "InterPro accession this family is integrated into"
+                        },
+                        "description": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Detailed description of the family"
+                        },
+                        "clan_accession": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Pfam clan/superfamily accession (e.g., CL0221)"
+                        },
+                        "clan_name": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Pfam clan name"
+                        },
+                        "counters": {
                             "type": "object",
+                            "description": "Database statistics",
                             "properties": {
-                                "accession": {"type": "string", "description": "Pfam accession"},
-                                "name": {"type": "string", "description": "Full family name"},
-                                "short_name": {"type": "string", "description": "Short name (e.g., 7tm_1)"},
-                                "type": {"type": "string", "description": "Entry type: domain, family, repeat, motif, etc."},
-                                "source_database": {"type": "string"},
-                                "integrated_interpro": {"type": ["string", "null"], "description": "InterPro accession this family is integrated into"},
-                                "description": {"type": ["string", "null"], "description": "Detailed description of the family"},
-                                "clan_accession": {"type": ["string", "null"], "description": "Pfam clan/superfamily accession (e.g., CL0221)"},
-                                "clan_name": {"type": ["string", "null"], "description": "Pfam clan name"},
-                                "counters": {
-                                    "type": "object",
-                                    "description": "Database statistics",
-                                    "properties": {
-                                        "proteins": {"type": "integer"},
-                                        "structures": {"type": "integer"},
-                                        "taxa": {"type": "integer"},
-                                        "proteomes": {"type": "integer"},
-                                        "domain_architectures": {"type": "integer"},
-                                        "matches": {"type": "integer"}
-                                    }
+                                "proteins": {
+                                    "type": "integer"
                                 },
-                                "representative_structure": {
-                                    "type": ["object", "null"],
-                                    "description": "Representative PDB structure"
+                                "structures": {
+                                    "type": "integer"
                                 },
-                                "wikipedia_title": {"type": ["string", "null"]},
-                                "literature_count": {"type": "integer"},
-                                "go_terms": {"type": "array"}
+                                "taxa": {
+                                    "type": "integer"
+                                },
+                                "proteomes": {
+                                    "type": "integer"
+                                },
+                                "domain_architectures": {
+                                    "type": "integer"
+                                },
+                                "matches": {
+                                    "type": "integer"
+                                }
                             }
                         },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["data"]
+                        "representative_structure": {
+                            "type": [
+                                "object",
+                                "null"
+                            ],
+                            "description": "Representative PDB structure"
+                        },
+                        "wikipedia_title": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "literature_count": {
+                            "type": "integer"
+                        },
+                        "go_terms": {
+                            "type": "array"
+                        }
+                    }
                 },
                 {
                     "type": "object",
                     "properties": {
-                        "error": {"type": "string"}
+                        "error": {
+                            "type": "string"
+                        }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }
@@ -168,11 +252,16 @@
                     "default": true
                 },
                 "tax_id": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "description": "NCBI taxonomy ID to filter by species. Examples: '9606' (human), '10090' (mouse), '7227' (Drosophila), '559292' (S. cerevisiae)."
                 }
             },
-            "required": ["pfam_accession"]
+            "required": [
+                "pfam_accession"
+            ]
         },
         "fields": {
             "endpoint": "get_family_proteins"
@@ -195,51 +284,93 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "pfam_accession": {"type": "string"},
-                                "total_proteins": {"type": "integer", "description": "Total proteins matching the query"},
-                                "returned": {"type": "integer"},
-                                "reviewed_only": {"type": "boolean"},
-                                "tax_id_filter": {"type": ["string", "null"]},
-                                "proteins": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "accession": {"type": "string", "description": "UniProt accession"},
-                                            "name": {"type": "string"},
-                                            "gene": {"type": ["string", "null"]},
-                                            "length": {"type": ["integer", "null"]},
-                                            "organism": {"type": ["string", "null"]},
-                                            "tax_id": {"type": ["string", "null"]},
-                                            "domain_positions": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "start": {"type": "integer"},
-                                                        "end": {"type": "integer"}
-                                                    }
+                        "pfam_accession": {
+                            "type": "string"
+                        },
+                        "total_proteins": {
+                            "type": "integer",
+                            "description": "Total proteins matching the query"
+                        },
+                        "returned": {
+                            "type": "integer"
+                        },
+                        "reviewed_only": {
+                            "type": "boolean"
+                        },
+                        "tax_id_filter": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "proteins": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "accession": {
+                                        "type": "string",
+                                        "description": "UniProt accession"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "gene": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "length": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ]
+                                    },
+                                    "organism": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "tax_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "domain_positions": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "start": {
+                                                    "type": "integer"
+                                                },
+                                                "end": {
+                                                    "type": "integer"
                                                 }
-                                            },
-                                            "in_alphafold": {"type": "boolean"}
+                                            }
                                         }
+                                    },
+                                    "in_alphafold": {
+                                        "type": "boolean"
                                     }
                                 }
                             }
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["data"]
+                        }
+                    }
                 },
                 {
                     "type": "object",
                     "properties": {
-                        "error": {"type": "string"}
+                        "error": {
+                            "type": "string"
+                        }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }
@@ -255,7 +386,9 @@
                     "description": "UniProt protein accession. Examples: 'P04637' (TP53, 4 domains), 'P00533' (EGFR), 'P68431' (Histone H3.1), 'P38398' (BRCA1), 'P01308' (Insulin)."
                 }
             },
-            "required": ["accession"]
+            "required": [
+                "accession"
+            ]
         },
         "fields": {
             "endpoint": "get_protein_pfam"
@@ -274,41 +407,72 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "accession": {"type": "string", "description": "UniProt accession queried"},
-                                "protein_length": {"type": ["integer", "null"], "description": "Total protein length"},
-                                "domain_count": {"type": "integer", "description": "Number of Pfam domains found"},
-                                "domains": {
-                                    "type": "array",
-                                    "description": "Pfam domains with positions, sorted by start position",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "pfam_accession": {"type": "string"},
-                                            "name": {"type": "string"},
-                                            "short_name": {"type": "string"},
-                                            "type": {"type": "string"},
-                                            "integrated_interpro": {"type": ["string", "null"]},
-                                            "start": {"type": "integer"},
-                                            "end": {"type": "integer"},
-                                            "score": {"type": ["number", "null"]}
-                                        }
+                        "accession": {
+                            "type": "string",
+                            "description": "UniProt accession queried"
+                        },
+                        "protein_length": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "description": "Total protein length"
+                        },
+                        "domain_count": {
+                            "type": "integer",
+                            "description": "Number of Pfam domains found"
+                        },
+                        "domains": {
+                            "type": "array",
+                            "description": "Pfam domains with positions, sorted by start position",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "pfam_accession": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "short_name": {
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "integrated_interpro": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "start": {
+                                        "type": "integer"
+                                    },
+                                    "end": {
+                                        "type": "integer"
+                                    },
+                                    "score": {
+                                        "type": [
+                                            "number",
+                                            "null"
+                                        ]
                                     }
                                 }
                             }
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["data"]
+                        }
+                    }
                 },
                 {
                     "type": "object",
                     "properties": {
-                        "error": {"type": "string"}
+                        "error": {
+                            "type": "string"
+                        }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }
@@ -349,35 +513,48 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "query": {"type": "string", "description": "Search query used"},
-                                "total_results": {"type": "integer", "description": "Total matching clans"},
-                                "returned": {"type": "integer"},
-                                "clans": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "accession": {"type": "string", "description": "Clan accession (e.g., CL0016)"},
-                                            "name": {"type": "string", "description": "Clan name"},
-                                            "source_database": {"type": "string"}
-                                        }
+                        "query": {
+                            "type": "string",
+                            "description": "Search query used"
+                        },
+                        "total_results": {
+                            "type": "integer",
+                            "description": "Total matching clans"
+                        },
+                        "returned": {
+                            "type": "integer"
+                        },
+                        "clans": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "accession": {
+                                        "type": "string",
+                                        "description": "Clan accession (e.g., CL0016)"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Clan name"
+                                    },
+                                    "source_database": {
+                                        "type": "string"
                                     }
                                 }
                             }
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["data"]
+                        }
+                    }
                 },
                 {
                     "type": "object",
                     "properties": {
-                        "error": {"type": "string"}
+                        "error": {
+                            "type": "string"
+                        }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }
@@ -398,7 +575,9 @@
                     "default": 20
                 }
             },
-            "required": ["pfam_accession"]
+            "required": [
+                "pfam_accession"
+            ]
         },
         "fields": {
             "endpoint": "get_family_proteomes"
@@ -419,36 +598,52 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "pfam_accession": {"type": "string"},
-                                "total_proteomes": {"type": "integer", "description": "Total number of proteomes containing this domain"},
-                                "returned": {"type": "integer"},
-                                "proteomes": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "proteome_accession": {"type": "string", "description": "UniProt proteome accession"},
-                                            "organism_name": {"type": "string"},
-                                            "taxonomy_id": {"type": ["string", "null"]},
-                                            "is_reference": {"type": "boolean"}
-                                        }
+                        "pfam_accession": {
+                            "type": "string"
+                        },
+                        "total_proteomes": {
+                            "type": "integer",
+                            "description": "Total number of proteomes containing this domain"
+                        },
+                        "returned": {
+                            "type": "integer"
+                        },
+                        "proteomes": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "proteome_accession": {
+                                        "type": "string",
+                                        "description": "UniProt proteome accession"
+                                    },
+                                    "organism_name": {
+                                        "type": "string"
+                                    },
+                                    "taxonomy_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "is_reference": {
+                                        "type": "boolean"
                                     }
                                 }
                             }
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["data"]
+                        }
+                    }
                 },
                 {
                     "type": "object",
                     "properties": {
-                        "error": {"type": "string"}
+                        "error": {
+                            "type": "string"
+                        }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }

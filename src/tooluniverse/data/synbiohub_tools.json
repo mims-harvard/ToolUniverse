@@ -36,72 +36,61 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "display_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Part identifier (e.g., BBa_E0040)"
-                  },
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Human-readable part name"
-                  },
-                  "description": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Part description"
-                  },
-                  "uri": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "SynBioHub URI for the part (use with SynBioHub_get_part)"
-                  },
-                  "version": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Part version number"
-                  },
-                  "sbol_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "SBOL type: ComponentDefinition, Sequence, etc."
-                  },
-                  "role": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Functional role: promoter, CDS, terminator, RBS, etc."
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "display_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Part identifier (e.g., BBa_E0040)"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable part name"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Part description"
+              },
+              "uri": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SynBioHub URI for the part (use with SynBioHub_get_part)"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Part version number"
+              },
+              "sbol_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SBOL type: ComponentDefinition, Sequence, etc."
+              },
+              "role": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Functional role: promoter, CDS, terminator, RBS, etc."
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -133,65 +122,54 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Collection name"
-                  },
-                  "description": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Collection description"
-                  },
-                  "display_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Collection identifier"
-                  },
-                  "uri": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Collection URI"
-                  },
-                  "version": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Collection version"
-                  },
-                  "member_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of parts in collection"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Collection name"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Collection description"
+              },
+              "display_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Collection identifier"
+              },
+              "uri": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Collection URI"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Collection version"
+              },
+              "member_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of parts in collection"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -240,91 +218,80 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "display_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Part display identifier"
-                },
-                "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Human-readable part title"
-                },
-                "description": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Part description"
-                },
-                "type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "SBOL biological type (e.g., DnaRegion)"
-                },
-                "role": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Functional roles (SO terms and iGEM part types)"
-                },
-                "sequence": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "DNA sequence (first 500 characters)"
-                },
-                "sequence_length": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Full sequence length in base pairs"
-                },
-                "created": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Creation date"
-                },
-                "modified": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Last modification date"
-                },
-                "derived_from": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Original source URI (e.g., iGEM registry URL)"
-                }
-              }
+            "display_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Part display identifier"
             },
-            "metadata": {
-              "type": "object"
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Human-readable part title"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Part description"
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SBOL biological type (e.g., DnaRegion)"
+            },
+            "role": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Functional roles (SO terms and iGEM part types)"
+            },
+            "sequence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DNA sequence (first 500 characters)"
+            },
+            "sequence_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Full sequence length in base pairs"
+            },
+            "created": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Creation date"
+            },
+            "modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Last modification date"
+            },
+            "derived_from": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Original source URI (e.g., iGEM registry URL)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

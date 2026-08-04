@@ -30,52 +30,24 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "pathogen": {
-                    "type": "string"
-                  },
-                  "dataset_count": {
-                    "type": "integer"
-                  },
-                  "datasets": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_pathogens": {
-                  "type": "integer"
-                },
-                "total_datasets": {
-                  "type": "integer"
-                },
-                "filter": {
-                  "type": "string"
-                },
-                "endpoint": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pathogen": {
+                "type": "string"
+              },
+              "dataset_count": {
+                "type": "integer"
+              },
+              "datasets": {
+                "type": "array",
+                "items": {
                   "type": "string"
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -123,77 +95,52 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "dataset": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "updated": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "build_url": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "num_sequences": {
-                  "type": "integer"
-                },
-                "data_provenance": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "maintainers": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "root_attributes": {
-                  "type": "object"
-                },
-                "available_colorings": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+            "dataset": {
+              "type": "string"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "updated": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "build_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "num_sequences": {
+              "type": "integer"
+            },
+            "data_provenance": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "version": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+            "maintainers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "root_attributes": {
+              "type": "object"
+            },
+            "available_colorings": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

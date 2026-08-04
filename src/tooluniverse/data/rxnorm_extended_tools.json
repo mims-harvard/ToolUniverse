@@ -11,7 +11,9 @@
           "description": "Drug name to look up (generic, brand, or synonym). Examples: 'metformin', 'Lipitor', 'acetaminophen', 'warfarin sodium'."
         }
       },
-      "required": ["drug_name"]
+      "required": [
+        "drug_name"
+      ]
     },
     "fields": {
       "operation": "find_rxcui",
@@ -20,27 +22,63 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "data": {
           "type": "object",
           "properties": {
-            "drug_name": {"type": "string"},
-            "rxcuis": {"type": "array", "items": {"type": "string"}},
-            "primary_rxcui": {"type": ["string", "null"]},
-            "found": {"type": "boolean"}
+            "drug_name": {
+              "type": "string"
+            },
+            "rxcuis": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "primary_rxcui": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "found": {
+              "type": "boolean"
+            }
           }
         },
-        "metadata": {"type": "object", "additionalProperties": true}
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
       }
     },
     "test_examples": [
-      {"drug_name": "metformin"},
-      {"drug_name": "warfarin"},
-      {"drug_name": "atorvastatin"}
+      {
+        "drug_name": "metformin"
+      },
+      {
+        "drug_name": "warfarin"
+      },
+      {
+        "drug_name": "atorvastatin"
+      }
     ],
-    "label": ["RxNorm", "RXCUI", "drug", "NLM", "standardization"],
+    "label": [
+      "RxNorm",
+      "RXCUI",
+      "drug",
+      "NLM",
+      "standardization"
+    ],
     "metadata": {
-      "tags": ["drug_standardization", "drug_identifier", "NLM", "rxnorm"],
+      "tags": [
+        "drug_standardization",
+        "drug_identifier",
+        "NLM",
+        "rxnorm"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   },
@@ -68,29 +106,78 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "data": {
           "type": "object",
           "properties": {
-            "rxcui": {"type": "string"},
-            "name": {"type": ["string", "null"]},
-            "synonym": {"type": ["string", "null"]},
-            "term_type": {"type": ["string", "null"]},
-            "term_type_label": {"type": ["string", "null"]},
-            "language": {"type": ["string", "null"]}
+            "rxcui": {
+              "type": "string"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "synonym": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "term_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "term_type_label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "language": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           }
         },
-        "metadata": {"type": "object", "additionalProperties": true}
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
       }
     },
     "test_examples": [
-      {"rxcui": "6809"},
-      {"drug_name": "warfarin"},
-      {"rxcui": "860975"}
+      {
+        "rxcui": "6809"
+      },
+      {
+        "drug_name": "warfarin"
+      },
+      {
+        "rxcui": "860975"
+      }
     ],
-    "label": ["RxNorm", "drug", "properties", "NLM", "terminology"],
+    "label": [
+      "RxNorm",
+      "drug",
+      "properties",
+      "NLM",
+      "terminology"
+    ],
     "metadata": {
-      "tags": ["drug_information", "drug_properties", "NLM", "rxnorm"],
+      "tags": [
+        "drug_information",
+        "drug_properties",
+        "NLM",
+        "rxnorm"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   },
@@ -123,11 +210,15 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "data": {
           "type": "object",
           "properties": {
-            "rxcui": {"type": "string"},
+            "rxcui": {
+              "type": "string"
+            },
             "related_drugs": {
               "type": "object",
               "description": "Grouped by term-type label. Keys are human-readable type labels.",
@@ -136,27 +227,67 @@
                 "items": {
                   "type": "object",
                   "properties": {
-                    "rxcui": {"type": ["string", "null"]},
-                    "name": {"type": ["string", "null"]},
-                    "synonym": {"type": ["string", "null"]}
+                    "rxcui": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "synonym": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
                   }
                 }
               }
             },
-            "total_related": {"type": "integer"}
+            "total_related": {
+              "type": "integer"
+            }
           }
         },
-        "metadata": {"type": "object", "additionalProperties": true}
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
       }
     },
     "test_examples": [
-      {"rxcui": "6809"},
-      {"drug_name": "atorvastatin"},
-      {"rxcui": "11289", "tty": "BN+SBD"}
+      {
+        "rxcui": "6809"
+      },
+      {
+        "drug_name": "atorvastatin"
+      },
+      {
+        "rxcui": "11289",
+        "tty": "BN+SBD"
+      }
     ],
-    "label": ["RxNorm", "drug", "brand", "generic", "related", "NLM"],
+    "label": [
+      "RxNorm",
+      "drug",
+      "brand",
+      "generic",
+      "related",
+      "NLM"
+    ],
     "metadata": {
-      "tags": ["drug_products", "brand_generic", "drug_lookup", "NLM", "rxnorm"],
+      "tags": [
+        "drug_products",
+        "brand_generic",
+        "drug_lookup",
+        "NLM",
+        "rxnorm"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   },
@@ -172,7 +303,9 @@
           "description": "National Drug Code, 11-digit. Accepts hyphenated (e.g., '00093-0058-01') or plain digits (e.g., '00093005801')."
         }
       },
-      "required": ["ndc"]
+      "required": [
+        "ndc"
+      ]
     },
     "fields": {
       "operation": "get_ndc_status_history",
@@ -183,52 +316,129 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "ndc": {"type": "string"},
-                "found": {"type": "boolean"},
-                "ndc11": {"type": ["string", "null"]},
-                "status": {"type": ["string", "null"]},
-                "active": {"type": ["string", "null"]},
-                "rxcui": {"type": ["string", "null"]},
-                "concept_name": {"type": ["string", "null"]},
-                "concept_status": {"type": ["string", "null"]},
-                "sources": {"type": "array", "items": {"type": "string"}},
-                "ndc_history": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "active_rxcui": {"type": ["string", "null"]},
-                      "original_rxcui": {"type": ["string", "null"]},
-                      "start_date": {"type": ["string", "null"]},
-                      "end_date": {"type": ["string", "null"]}
-                    }
+            "ndc": {
+              "type": "string"
+            },
+            "found": {
+              "type": "boolean"
+            },
+            "ndc11": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "active": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rxcui": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "concept_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "concept_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ndc_history": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "active_rxcui": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "original_rxcui": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "start_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "end_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": ["ndc", "found"]
-            },
-            "metadata": {"type": "object", "additionalProperties": true}
+              }
+            }
           },
-          "required": ["data"]
+          "required": [
+            "ndc",
+            "found"
+          ]
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"ndc": "00093-0058-01"},
-      {"ndc": "00093005801"}
+      {
+        "ndc": "00093-0058-01"
+      },
+      {
+        "ndc": "00093005801"
+      }
     ],
-    "label": ["RxNorm", "NDC", "status", "history", "drug_safety", "NLM"],
+    "label": [
+      "RxNorm",
+      "NDC",
+      "status",
+      "history",
+      "drug_safety",
+      "NLM"
+    ],
     "metadata": {
-      "tags": ["ndc", "drug_status", "remapping", "NLM", "rxnorm"],
+      "tags": [
+        "ndc",
+        "drug_status",
+        "remapping",
+        "NLM",
+        "rxnorm"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   },
@@ -244,7 +454,9 @@
           "description": "National Drug Code. Accepts hyphenated (e.g., '0781-1506-10') or plain-digit form."
         }
       },
-      "required": ["ndc"]
+      "required": [
+        "ndc"
+      ]
     },
     "fields": {
       "operation": "get_ndc_properties",
@@ -255,54 +467,142 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "ndc": {"type": "string"},
-                "found": {"type": "boolean"},
-                "products": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "ndc_item": {"type": ["string", "null"]},
-                      "ndc10": {"type": ["string", "null"]},
-                      "ndc9": {"type": ["string", "null"]},
-                      "rxcui": {"type": ["string", "null"]},
-                      "spl_set_id": {"type": ["string", "null"]},
-                      "imprint_code": {"type": ["string", "null"]},
-                      "color": {"type": ["string", "null"]},
-                      "shape": {"type": ["string", "null"]},
-                      "labeler": {"type": ["string", "null"]},
-                      "marketing_category": {"type": ["string", "null"]},
-                      "anda": {"type": ["string", "null"]},
-                      "nda": {"type": ["string", "null"]},
-                      "packaging": {"type": "array", "items": {"type": "string"}},
-                      "properties": {"type": "object", "additionalProperties": true}
+            "ndc": {
+              "type": "string"
+            },
+            "found": {
+              "type": "boolean"
+            },
+            "products": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ndc_item": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ndc10": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ndc9": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rxcui": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "spl_set_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "imprint_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "color": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "shape": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "labeler": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "marketing_category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "anda": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "nda": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "packaging": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "properties": {
+                    "type": "object",
+                    "additionalProperties": true
                   }
                 }
-              },
-              "required": ["ndc", "found"]
-            },
-            "metadata": {"type": "object", "additionalProperties": true}
+              }
+            }
           },
-          "required": ["data"]
+          "required": [
+            "ndc",
+            "found"
+          ]
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"ndc": "0781-1506-10"}
+      {
+        "ndc": "0781-1506-10"
+      }
     ],
-    "label": ["RxNorm", "NDC", "pill_id", "imprint", "packaging", "NLM"],
+    "label": [
+      "RxNorm",
+      "NDC",
+      "pill_id",
+      "imprint",
+      "packaging",
+      "NLM"
+    ],
     "metadata": {
-      "tags": ["ndc", "pill_identification", "imprint", "NLM", "rxnorm"],
+      "tags": [
+        "ndc",
+        "pill_identification",
+        "imprint",
+        "NLM",
+        "rxnorm"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   }

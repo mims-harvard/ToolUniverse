@@ -1,306 +1,327 @@
 [
-    {
-        "name": "ReactomeContent_search",
-        "description": "Search Reactome for pathways, reactions, and biological entities by keyword. Performs free-text search across Reactome's knowledge base of biological pathways. Supports filtering by species and entity type. Example: searching 'apoptosis' in Homo sapiens returns pathways like R-HSA-109581 (Apoptosis), R-HSA-169911 (Regulation of Apoptosis), R-HSA-9635465 (Suppression of apoptosis). Use this to discover relevant pathways before querying their details.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search query. Examples: 'apoptosis', 'TP53', 'cell cycle', 'DNA repair', 'insulin signaling'."
-                },
-                "species": {
-                    "type": "string",
-                    "description": "Species name for filtering results. Default: 'Homo sapiens'. Other options: 'Mus musculus', 'Rattus norvegicus', 'Danio rerio', 'Drosophila melanogaster'.",
-                    "default": "Homo sapiens"
-                },
-                "types": {
-                    "type": "string",
-                    "description": "Entity type to search. Options: 'Pathway', 'Reaction', 'Complex', 'Protein', 'SmallMolecule'. Default: 'Pathway'.",
-                    "default": "Pathway"
-                }
-            },
-            "required": [
-                "query"
-            ]
+  {
+    "name": "ReactomeContent_search",
+    "description": "Search Reactome for pathways, reactions, and biological entities by keyword. Performs free-text search across Reactome's knowledge base of biological pathways. Supports filtering by species and entity type. Example: searching 'apoptosis' in Homo sapiens returns pathways like R-HSA-109581 (Apoptosis), R-HSA-169911 (Regulation of Apoptosis), R-HSA-9635465 (Suppression of apoptosis). Use this to discover relevant pathways before querying their details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query. Examples: 'apoptosis', 'TP53', 'cell cycle', 'DNA repair', 'insulin signaling'."
         },
-        "fields": {
-            "endpoint": "search"
+        "species": {
+          "type": "string",
+          "description": "Species name for filtering results. Default: 'Homo sapiens'. Other options: 'Mus musculus', 'Rattus norvegicus', 'Danio rerio', 'Drosophila melanogaster'.",
+          "default": "Homo sapiens"
         },
-        "type": "ReactomeContentTool",
-        "test_examples": [
-            {
-                "query": "apoptosis"
-            },
-            {
-                "query": "DNA repair",
-                "types": "Pathway"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "query": {
-                                    "type": "string",
-                                    "description": "Search query used"
-                                },
-                                "species": {
-                                    "type": "string",
-                                    "description": "Species filter applied"
-                                },
-                                "total_results": {
-                                    "type": "integer",
-                                    "description": "Total number of results"
-                                },
-                                "results": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "type": {
-                                                "type": "string",
-                                                "description": "Entity type (Pathway, Reaction, etc.)"
-                                            },
-                                            "stId": {
-                                                "type": ["string", "null"],
-                                                "description": "Reactome stable identifier"
-                                            },
-                                            "name": {
-                                                "type": ["string", "null"],
-                                                "description": "Entity name"
-                                            },
-                                            "species": {
-                                                "type": "array",
-                                                "description": "Species list"
-                                            },
-                                            "is_disease": {
-                                                "type": "boolean",
-                                                "description": "Whether this is a disease-related pathway"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": ["data"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": ["error"]
-                }
-            ]
+        "types": {
+          "type": "string",
+          "description": "Entity type to search. Options: 'Pathway', 'Reaction', 'Complex', 'Protein', 'SmallMolecule'. Default: 'Pathway'.",
+          "default": "Pathway"
         }
+      },
+      "required": [
+        "query"
+      ]
     },
-    {
-        "name": "ReactomeContent_get_contained_events",
-        "description": "Get all events (sub-pathways and reactions) contained within a Reactome pathway. Decomposes a top-level pathway into its complete hierarchy of sub-pathways and individual biochemical reactions. Returns counts and lists of both pathways and reactions. Example: R-HSA-109581 (Apoptosis) contains 177 events total: 4 major sub-pathways (extrinsic, intrinsic, execution, regulation) plus 173 individual reactions.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "identifier": {
-                    "type": "string",
-                    "description": "Reactome pathway stable identifier. Examples: 'R-HSA-109581' (Apoptosis, 177 events), 'R-HSA-69278' (Cell Cycle), 'R-HSA-73857' (RNA Polymerase II Transcription), 'R-HSA-1640170' (Cell Cycle Checkpoints)."
-                }
-            },
-            "required": [
-                "identifier"
-            ]
-        },
-        "fields": {
-            "endpoint": "contained_events"
-        },
-        "type": "ReactomeContentTool",
-        "test_examples": [
-            {
-                "identifier": "R-HSA-109581"
-            },
-            {
-                "identifier": "R-HSA-6804757"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "identifier": {
-                                    "type": "string",
-                                    "description": "Pathway identifier queried"
-                                },
-                                "total_events": {
-                                    "type": "integer",
-                                    "description": "Total number of contained events"
-                                },
-                                "pathway_count": {
-                                    "type": "integer",
-                                    "description": "Number of sub-pathways"
-                                },
-                                "reaction_count": {
-                                    "type": "integer",
-                                    "description": "Number of individual reactions"
-                                },
-                                "pathways": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "stId": {
-                                                "type": ["string", "null"],
-                                                "description": "Sub-pathway stable ID"
-                                            },
-                                            "name": {
-                                                "type": ["string", "null"],
-                                                "description": "Sub-pathway name"
-                                            },
-                                            "schemaClass": {
-                                                "type": ["string", "null"],
-                                                "description": "Schema class (Pathway)"
-                                            }
-                                        }
-                                    }
-                                },
-                                "reactions": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "stId": {
-                                                "type": ["string", "null"],
-                                                "description": "Reaction stable ID"
-                                            },
-                                            "name": {
-                                                "type": ["string", "null"],
-                                                "description": "Reaction name"
-                                            },
-                                            "schemaClass": {
-                                                "type": ["string", "null"],
-                                                "description": "Schema class (Reaction, BlackBoxEvent, etc.)"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": ["data"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": ["error"]
-                }
-            ]
-        }
+    "fields": {
+      "endpoint": "search"
     },
-    {
-        "name": "ReactomeContent_get_enhanced_pathway",
-        "description": "Get enhanced pathway details from Reactome including description, literature references, GO biological process terms, and direct sub-events. Provides richer information than basic pathway lookup by including curated summaries, PubMed references, and Gene Ontology annotations. Example: R-HSA-109581 (Apoptosis) returns a detailed summation, GO:0006915 annotation, 4 sub-pathways (extrinsic, intrinsic, execution, regulation), and key literature references.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "identifier": {
+    "type": "ReactomeContentTool",
+    "test_examples": [
+      {
+        "query": "apoptosis"
+      },
+      {
+        "query": "DNA repair",
+        "types": "Pathway"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Search query used"
+            },
+            "species": {
+              "type": "string",
+              "description": "Species filter applied"
+            },
+            "total_results": {
+              "type": "integer",
+              "description": "Total number of results"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
                     "type": "string",
-                    "description": "Reactome pathway stable identifier. Examples: 'R-HSA-109581' (Apoptosis), 'R-HSA-6804757' (Regulation of TP53 Degradation), 'R-HSA-69278' (Cell Cycle), 'R-HSA-168256' (Immune System)."
+                    "description": "Entity type (Pathway, Reaction, etc.)"
+                  },
+                  "stId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reactome stable identifier"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Entity name"
+                  },
+                  "species": {
+                    "type": "array",
+                    "description": "Species list"
+                  },
+                  "is_disease": {
+                    "type": "boolean",
+                    "description": "Whether this is a disease-related pathway"
+                  }
                 }
-            },
-            "required": [
-                "identifier"
-            ]
-        },
-        "fields": {
-            "endpoint": "enhanced_pathway"
-        },
-        "type": "ReactomeContentTool",
-        "test_examples": [
-            {
-                "identifier": "R-HSA-109581"
-            },
-            {
-                "identifier": "R-HSA-6804757"
+              }
             }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "identifier": {
-                                    "type": ["string", "null"],
-                                    "description": "Pathway stable ID"
-                                },
-                                "name": {
-                                    "type": ["string", "null"],
-                                    "description": "Pathway display name"
-                                },
-                                "species": {
-                                    "type": ["string", "null"],
-                                    "description": "Species name"
-                                },
-                                "schemaClass": {
-                                    "type": ["string", "null"],
-                                    "description": "Schema class (Pathway)"
-                                },
-                                "summation": {
-                                    "type": ["string", "null"],
-                                    "description": "Curated pathway description/summary"
-                                },
-                                "go_biological_process": {
-                                    "type": ["array", "null"],
-                                    "description": "Associated GO biological process terms"
-                                },
-                                "sub_events": {
-                                    "type": "array",
-                                    "description": "Direct sub-pathways and reactions"
-                                },
-                                "literature": {
-                                    "type": "array",
-                                    "description": "Key literature references with PubMed IDs"
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object"
-                        }
-                    },
-                    "required": ["data"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": ["error"]
-                }
-            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
     }
+  },
+  {
+    "name": "ReactomeContent_get_contained_events",
+    "description": "Get all events (sub-pathways and reactions) contained within a Reactome pathway. Decomposes a top-level pathway into its complete hierarchy of sub-pathways and individual biochemical reactions. Returns counts and lists of both pathways and reactions. Example: R-HSA-109581 (Apoptosis) contains 177 events total: 4 major sub-pathways (extrinsic, intrinsic, execution, regulation) plus 173 individual reactions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "Reactome pathway stable identifier. Examples: 'R-HSA-109581' (Apoptosis, 177 events), 'R-HSA-69278' (Cell Cycle), 'R-HSA-73857' (RNA Polymerase II Transcription), 'R-HSA-1640170' (Cell Cycle Checkpoints)."
+        }
+      },
+      "required": [
+        "identifier"
+      ]
+    },
+    "fields": {
+      "endpoint": "contained_events"
+    },
+    "type": "ReactomeContentTool",
+    "test_examples": [
+      {
+        "identifier": "R-HSA-109581"
+      },
+      {
+        "identifier": "R-HSA-6804757"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "identifier": {
+              "type": "string",
+              "description": "Pathway identifier queried"
+            },
+            "total_events": {
+              "type": "integer",
+              "description": "Total number of contained events"
+            },
+            "pathway_count": {
+              "type": "integer",
+              "description": "Number of sub-pathways"
+            },
+            "reaction_count": {
+              "type": "integer",
+              "description": "Number of individual reactions"
+            },
+            "pathways": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Sub-pathway stable ID"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Sub-pathway name"
+                  },
+                  "schemaClass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Schema class (Pathway)"
+                  }
+                }
+              }
+            },
+            "reactions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reaction stable ID"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reaction name"
+                  },
+                  "schemaClass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Schema class (Reaction, BlackBoxEvent, etc.)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ReactomeContent_get_enhanced_pathway",
+    "description": "Get enhanced pathway details from Reactome including description, literature references, GO biological process terms, and direct sub-events. Provides richer information than basic pathway lookup by including curated summaries, PubMed references, and Gene Ontology annotations. Example: R-HSA-109581 (Apoptosis) returns a detailed summation, GO:0006915 annotation, 4 sub-pathways (extrinsic, intrinsic, execution, regulation), and key literature references.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "Reactome pathway stable identifier. Examples: 'R-HSA-109581' (Apoptosis), 'R-HSA-6804757' (Regulation of TP53 Degradation), 'R-HSA-69278' (Cell Cycle), 'R-HSA-168256' (Immune System)."
+        }
+      },
+      "required": [
+        "identifier"
+      ]
+    },
+    "fields": {
+      "endpoint": "enhanced_pathway"
+    },
+    "type": "ReactomeContentTool",
+    "test_examples": [
+      {
+        "identifier": "R-HSA-109581"
+      },
+      {
+        "identifier": "R-HSA-6804757"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "identifier": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Pathway stable ID"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Pathway display name"
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species name"
+            },
+            "schemaClass": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Schema class (Pathway)"
+            },
+            "summation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Curated pathway description/summary"
+            },
+            "go_biological_process": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Associated GO biological process terms"
+            },
+            "sub_events": {
+              "type": "array",
+              "description": "Direct sub-pathways and reactions"
+            },
+            "literature": {
+              "type": "array",
+              "description": "Key literature references with PubMed IDs"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
 ]

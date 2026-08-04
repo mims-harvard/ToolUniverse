@@ -10,82 +10,111 @@
           "description": "SMILES string of the molecule. Examples: 'CC(=O)Oc1ccccc1C(=O)O' (aspirin), 'c1ccc(cc1)C(=N)N' (benzamidine, has PosIonizable + HBD)."
         },
         "include_features": {
-          "type": ["array", "null"],
-          "items": {"type": "string"},
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
           "description": "List of feature types to extract (default: all). Options: 'HBD', 'HBA', 'Aromatic', 'Hydrophobic', 'PosIonizable', 'NegIonizable'."
         }
       },
-      "required": ["smiles"]
+      "required": [
+        "smiles"
+      ]
     },
     "fields": {
       "endpoint": "pharmacophore_features"
     },
     "type": "RDKitCheminfoTool",
     "test_examples": [
-      {"smiles": "CC(=O)Oc1ccccc1C(=O)O"},
-      {"smiles": "c1ccc(cc1)C(=N)N"},
-      {"smiles": "CC(=O)Oc1ccccc1C(=O)O", "include_features": ["HBD", "HBA", "Aromatic"]}
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      {
+        "smiles": "c1ccc(cc1)C(=N)N"
+      },
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+        "include_features": [
+          "HBD",
+          "HBA",
+          "Aromatic"
+        ]
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "data": {
+            "smiles": {
+              "type": "string"
+            },
+            "pharmacophore_features": {
+              "type": "object",
+              "description": "Feature name \u2192 {count, atom_indices} mapping"
+            },
+            "feature_counts": {
+              "type": "object",
+              "description": "Feature name \u2192 integer count"
+            },
+            "feature_centers_3d": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Feature name \u2192 [x, y, z] center coordinates (from MMFF conformer)"
+            },
+            "interpretation": {
               "type": "object",
               "properties": {
-                "smiles": {"type": "string"},
-                "pharmacophore_features": {
-                  "type": "object",
-                  "description": "Feature name → {count, atom_indices} mapping"
+                "HBD_count": {
+                  "type": "integer"
                 },
-                "feature_counts": {
-                  "type": "object",
-                  "description": "Feature name → integer count"
+                "HBA_count": {
+                  "type": "integer"
                 },
-                "feature_centers_3d": {
-                  "type": ["object", "null"],
-                  "description": "Feature name → [x, y, z] center coordinates (from MMFF conformer)"
+                "aromatic_atom_count": {
+                  "type": "integer"
                 },
-                "interpretation": {
-                  "type": "object",
-                  "properties": {
-                    "HBD_count": {"type": "integer"},
-                    "HBA_count": {"type": "integer"},
-                    "aromatic_atom_count": {"type": "integer"},
-                    "hydrophobic_atom_count": {"type": "integer"},
-                    "hbd_hba_ratio": {"type": ["number", "null"]},
-                    "3d_available": {"type": "boolean"},
-                    "note": {"type": "string"}
-                  }
+                "hydrophobic_atom_count": {
+                  "type": "integer"
+                },
+                "hbd_hba_ratio": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "3d_available": {
+                  "type": "boolean"
+                },
+                "note": {
+                  "type": "string"
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "method": {"type": "string"},
-                "3d_method": {"type": ["string", "null"]},
-                "reference": {"type": "string"}
-              }
             }
-          },
-          "required": ["data"]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
   },
   {
     "name": "RDKit_matched_molecular_pair",
-    "description": "Find the Matched Molecular Pair (MMP) transformation between two SMILES compounds using the Hussain-Rea single-cut fragmentation algorithm (rdMMPA). Identifies the maximal common core scaffold and the side-chain substituents that differ between compound A and compound B. Returns: common core SMILES, side-chain A, side-chain B, transformation string (sidechain_A → sidechain_B), Tanimoto similarity (Morgan r=2), and property deltas (ΔMW, ΔcLogP, ΔHBD, ΔHBA, ΔTPSA). Essential for SAR analysis: understand what structural change caused a property improvement or potency shift.",
+    "description": "Find the Matched Molecular Pair (MMP) transformation between two SMILES compounds using the Hussain-Rea single-cut fragmentation algorithm (rdMMPA). Identifies the maximal common core scaffold and the side-chain substituents that differ between compound A and compound B. Returns: common core SMILES, side-chain A, side-chain B, transformation string (sidechain_A \u2192 sidechain_B), Tanimoto similarity (Morgan r=2), and property deltas (\u0394MW, \u0394cLogP, \u0394HBD, \u0394HBA, \u0394TPSA). Essential for SAR analysis: understand what structural change caused a property improvement or potency shift.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -98,7 +127,10 @@
           "description": "SMILES of compound B (analog/modified compound). Example: 'CC(=O)Nc1ccc(F)cc1' (fluorine analog of paracetamol)."
         }
       },
-      "required": ["smiles_a", "smiles_b"]
+      "required": [
+        "smiles_a",
+        "smiles_b"
+      ]
     },
     "fields": {
       "endpoint": "matched_molecular_pair"
@@ -123,59 +155,110 @@
         {
           "type": "object",
           "properties": {
-            "data": {
+            "smiles_a": {
+              "type": "string",
+              "description": "Canonical SMILES of compound A"
+            },
+            "smiles_b": {
+              "type": "string",
+              "description": "Canonical SMILES of compound B"
+            },
+            "tanimoto_similarity": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "similarity_label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mmp_analysis": {
               "type": "object",
               "properties": {
-                "smiles_a": {"type": "string", "description": "Canonical SMILES of compound A"},
-                "smiles_b": {"type": "string", "description": "Canonical SMILES of compound B"},
-                "tanimoto_similarity": {"type": ["number", "null"]},
-                "similarity_label": {"type": ["string", "null"]},
-                "mmp_analysis": {
-                  "type": "object",
-                  "properties": {
-                    "is_mmp": {"type": ["boolean", "null"]},
-                    "common_core_smiles": {"type": ["string", "null"]},
-                    "side_chain_a": {"type": ["string", "null"]},
-                    "side_chain_b": {"type": ["string", "null"]},
-                    "transformation": {"type": ["string", "null"]},
-                    "n_common_cores_found": {"type": ["integer", "null"]},
-                    "note": {"type": ["string", "null"]}
-                  }
+                "is_mmp": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 },
-                "property_deltas": {
-                  "type": "object",
-                  "properties": {
-                    "description": {"type": "string"},
-                    "deltas": {"type": "object"},
-                    "formatted": {"type": "object"}
-                  }
+                "common_core_smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "descriptors": {
-                  "type": "object",
-                  "properties": {
-                    "compound_a": {"type": "object"},
-                    "compound_b": {"type": "object"}
-                  }
+                "side_chain_a": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "side_chain_b": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "transformation": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "n_common_cores_found": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               }
             },
-            "metadata": {
+            "property_deltas": {
               "type": "object",
               "properties": {
-                "source": {"type": "string"},
-                "method": {"type": "string"},
-                "reference": {"type": "string"}
+                "description": {
+                  "type": "string"
+                },
+                "deltas": {
+                  "type": "object"
+                },
+                "formatted": {
+                  "type": "object"
+                }
+              }
+            },
+            "descriptors": {
+              "type": "object",
+              "properties": {
+                "compound_a": {
+                  "type": "object"
+                },
+                "compound_b": {
+                  "type": "object"
+                }
               }
             }
-          },
-          "required": ["data"]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

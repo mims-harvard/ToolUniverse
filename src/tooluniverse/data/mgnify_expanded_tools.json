@@ -32,61 +32,39 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "genome_id": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string",
-                  "description": "Isolate or MAG"
-                },
-                "taxonomy": {
-                  "type": "string",
-                  "description": "Full taxonomic lineage"
-                },
-                "completeness": {
-                  "type": "number"
-                },
-                "contamination": {
-                  "type": "number"
-                },
-                "length": {
-                  "type": "integer"
-                },
-                "num_proteins": {
-                  "type": "integer"
-                },
-                "gc_content": {
-                  "type": "number"
-                },
-                "n50": {
-                  "type": "integer"
-                },
-                "geographic_origin": {
-                  "type": "string"
-                }
-              }
+            "genome_id": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "type": {
+              "type": "string",
+              "description": "Isolate or MAG"
+            },
+            "taxonomy": {
+              "type": "string",
+              "description": "Full taxonomic lineage"
+            },
+            "completeness": {
+              "type": "number"
+            },
+            "contamination": {
+              "type": "number"
+            },
+            "length": {
+              "type": "integer"
+            },
+            "num_proteins": {
+              "type": "integer"
+            },
+            "gc_content": {
+              "type": "number"
+            },
+            "n50": {
+              "type": "integer"
+            },
+            "geographic_origin": {
+              "type": "string"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -140,55 +118,33 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "genome_id": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "string"
-                  },
-                  "taxonomy": {
-                    "type": "string"
-                  },
-                  "completeness": {
-                    "type": "number"
-                  },
-                  "contamination": {
-                    "type": "number"
-                  },
-                  "length": {
-                    "type": "integer"
-                  },
-                  "num_proteins": {
-                    "type": "integer"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "page": {
-                  "type": "integer"
-                },
-                "pages": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "genome_id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "taxonomy": {
+                "type": "string"
+              },
+              "completeness": {
+                "type": "number"
+              },
+              "contamination": {
+                "type": "number"
+              },
+              "length": {
+                "type": "integer"
+              },
+              "num_proteins": {
+                "type": "integer"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -241,43 +197,21 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "biome_id": {
-                    "type": "string"
-                  },
-                  "biome_name": {
-                    "type": "string"
-                  },
-                  "samples_count": {
-                    "type": "integer"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "page": {
-                  "type": "integer"
-                },
-                "pages": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "biome_id": {
+                "type": "string"
+              },
+              "biome_name": {
+                "type": "string"
+              },
+              "samples_count": {
+                "type": "integer"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -326,56 +260,34 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "study_id": {
-                  "type": "string"
-                },
-                "study_name": {
-                  "type": "string"
-                },
-                "study_abstract": {
-                  "type": "string"
-                },
-                "bioproject": {
-                  "type": "string"
-                },
-                "centre_name": {
-                  "type": "string"
-                },
-                "biomes": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "analyses_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                }
+            "study_id": {
+              "type": "string"
+            },
+            "study_name": {
+              "type": "string"
+            },
+            "study_abstract": {
+              "type": "string"
+            },
+            "bioproject": {
+              "type": "string"
+            },
+            "centre_name": {
+              "type": "string"
+            },
+            "biomes": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "analyses_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -412,7 +324,9 @@
           "default": 25
         }
       },
-      "required": ["analysis_id"]
+      "required": [
+        "analysis_id"
+      ]
     },
     "fields": {
       "endpoint_type": "analysis",
@@ -435,18 +349,44 @@
       "items": {
         "type": "object",
         "properties": {
-          "organism_id": {"type": "string"},
-          "name": {"type": "string"},
-          "rank": {"type": "string"},
-          "domain": {"type": ["string", "null"]},
-          "count": {"type": "integer"},
-          "lineage": {"type": "string"}
+          "organism_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "string"
+          },
+          "domain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "count": {
+            "type": "integer"
+          },
+          "lineage": {
+            "type": "string"
+          }
         }
       }
     },
-    "label": ["MGnify", "Microbiome", "Taxonomy", "Metagenomics"],
+    "label": [
+      "MGnify",
+      "Microbiome",
+      "Taxonomy",
+      "Metagenomics"
+    ],
     "metadata": {
-      "tags": ["taxonomy", "microbiome", "16S", "metagenomics", "community_composition"],
+      "tags": [
+        "taxonomy",
+        "microbiome",
+        "16S",
+        "metagenomics",
+        "community_composition"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -466,7 +406,9 @@
           "default": 25
         }
       },
-      "required": ["analysis_id"]
+      "required": [
+        "analysis_id"
+      ]
     },
     "fields": {
       "endpoint_type": "analysis",
@@ -488,16 +430,34 @@
       "items": {
         "type": "object",
         "properties": {
-          "go_id": {"type": "string"},
-          "description": {"type": "string"},
-          "count": {"type": "integer"},
-          "category": {"type": "string"}
+          "go_id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "category": {
+            "type": "string"
+          }
         }
       }
     },
-    "label": ["MGnify", "Microbiome", "GO Terms", "Functional Annotation"],
+    "label": [
+      "MGnify",
+      "Microbiome",
+      "GO Terms",
+      "Functional Annotation"
+    ],
     "metadata": {
-      "tags": ["go_terms", "functional_annotation", "microbiome", "metagenomics"],
+      "tags": [
+        "go_terms",
+        "functional_annotation",
+        "microbiome",
+        "metagenomics"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -517,7 +477,9 @@
           "default": 25
         }
       },
-      "required": ["analysis_id"]
+      "required": [
+        "analysis_id"
+      ]
     },
     "fields": {
       "endpoint_type": "analysis",
@@ -539,15 +501,32 @@
       "items": {
         "type": "object",
         "properties": {
-          "interpro_id": {"type": "string"},
-          "description": {"type": "string"},
-          "count": {"type": "integer"}
+          "interpro_id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          }
         }
       }
     },
-    "label": ["MGnify", "Microbiome", "InterPro", "Protein Domains"],
+    "label": [
+      "MGnify",
+      "Microbiome",
+      "InterPro",
+      "Protein Domains"
+    ],
     "metadata": {
-      "tags": ["interpro", "protein_domains", "functional_annotation", "microbiome", "metagenomics"],
+      "tags": [
+        "interpro",
+        "protein_domains",
+        "functional_annotation",
+        "microbiome",
+        "metagenomics"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -558,23 +537,38 @@
       "type": "object",
       "properties": {
         "sample_accession": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Fetch a single sample by its MGnify/ENA accession (e.g., 'SRS10016989'). If provided, study_accession/biome/page are ignored."
         },
         "study_accession": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter samples belonging to a study (e.g., 'MGYS00002008')."
         },
         "biome": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter by biome name lineage (e.g., 'root:Host-associated:Human:Digestive system')."
         },
         "page": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Page number (default 1)."
         },
         "page_size": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Samples per page (default 25, max 100)."
         }
       },
@@ -676,9 +670,22 @@
         }
       ]
     },
-    "label": ["MGnify", "Microbiome", "Samples", "Metadata"],
+    "label": [
+      "MGnify",
+      "Microbiome",
+      "Samples",
+      "Metadata"
+    ],
     "metadata": {
-      "tags": ["samples", "sample_metadata", "geography", "host", "environment", "microbiome", "metagenomics"],
+      "tags": [
+        "samples",
+        "sample_metadata",
+        "geography",
+        "host",
+        "environment",
+        "microbiome",
+        "metagenomics"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -693,11 +700,16 @@
           "description": "MGnify analysis accession (e.g., 'MGYA00585482'). Find IDs via MGnify_list_analyses."
         },
         "page_size": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Number of download entries to return (default 100, max 100)."
         }
       },
-      "required": ["analysis_id"]
+      "required": [
+        "analysis_id"
+      ]
     },
     "fields": {
       "endpoint_type": "analysis",
@@ -776,9 +788,23 @@
         }
       ]
     },
-    "label": ["MGnify", "Microbiome", "Downloads", "Files"],
+    "label": [
+      "MGnify",
+      "Microbiome",
+      "Downloads",
+      "Files"
+    ],
     "metadata": {
-      "tags": ["downloads", "files", "predicted_cds", "eggnog", "interpro", "diamond", "microbiome", "metagenomics"],
+      "tags": [
+        "downloads",
+        "files",
+        "predicted_cds",
+        "eggnog",
+        "interpro",
+        "diamond",
+        "microbiome",
+        "metagenomics"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   }

@@ -31,62 +31,46 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprot_accession": {
-                  "type": "string",
-                  "description": "UniProt accession queried"
-                },
-                "pdbs": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of PDB structures available"
-                },
-                "ligands": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of unique ligands bound"
-                },
-                "interaction_partners": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of protein interaction partners with structural evidence"
-                },
-                "annotations": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of functional annotations"
-                },
-                "similar_proteins": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of similar proteins in PDB"
-                }
-              }
+            "uniprot_accession": {
+              "type": "string",
+              "description": "UniProt accession queried"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                }
-              }
+            "pdbs": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of PDB structures available"
+            },
+            "ligands": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of unique ligands bound"
+            },
+            "interaction_partners": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of protein interaction partners with structural evidence"
+            },
+            "annotations": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of functional annotations"
+            },
+            "similar_proteins": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of similar proteins in PDB"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -134,119 +118,103 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprot_accession": {
-                  "type": "string",
-                  "description": "UniProt accession queried"
-                },
-                "protein_length": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Protein sequence length"
-                },
-                "ligands": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Ligand full name"
-                      },
-                      "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Ligand chemical component ID (e.g. ATP, NAD, ZN)"
-                      },
-                      "binding_residues": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "start": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ],
-                              "description": "Start residue position (UniProt numbering)"
-                            },
-                            "end": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ],
-                              "description": "End residue position"
-                            },
-                            "pdb_entries": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              },
-                              "description": "PDB IDs where this binding observed"
-                            }
-                          }
-                        },
-                        "description": "Residues involved in ligand binding"
-                      },
-                      "is_cofactor": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ],
-                        "description": "Whether ligand is a cofactor"
-                      },
-                      "is_solvent": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ],
-                        "description": "Whether ligand is a solvent molecule"
-                      },
-                      "chembl_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "ChEMBL compound ID if drug-like"
-                      },
-                      "drugbank_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "DrugBank ID if applicable"
-                      }
-                    }
-                  },
-                  "description": "Ligands with binding site details"
-                },
-                "total_ligands": {
-                  "type": "integer",
-                  "description": "Total number of unique ligands"
-                }
-              }
+            "uniprot_accession": {
+              "type": "string",
+              "description": "UniProt accession queried"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
+            "protein_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Protein sequence length"
+            },
+            "ligands": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ligand full name"
+                  },
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ligand chemical component ID (e.g. ATP, NAD, ZN)"
+                  },
+                  "binding_residues": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Start residue position (UniProt numbering)"
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "End residue position"
+                        },
+                        "pdb_entries": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "PDB IDs where this binding observed"
+                        }
+                      }
+                    },
+                    "description": "Residues involved in ligand binding"
+                  },
+                  "is_cofactor": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether ligand is a cofactor"
+                  },
+                  "is_solvent": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether ligand is a solvent molecule"
+                  },
+                  "chembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEMBL compound ID if drug-like"
+                  },
+                  "drugbank_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DrugBank ID if applicable"
+                  }
                 }
-              }
+              },
+              "description": "Ligands with binding site details"
+            },
+            "total_ligands": {
+              "type": "integer",
+              "description": "Total number of unique ligands"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -294,91 +262,75 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprot_accession": {
-                  "type": "string",
-                  "description": "UniProt accession queried"
-                },
-                "protein_length": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Protein sequence length"
-                },
-                "interaction_partners": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "partner_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Name of the interaction partner protein"
-                      },
-                      "partner_accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "UniProt accession of interaction partner"
-                      },
-                      "interface_residues": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "start": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ],
-                              "description": "Start residue position (UniProt numbering)"
-                            },
-                            "end": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ],
-                              "description": "End residue position"
-                            },
-                            "pdb_entries": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              },
-                              "description": "PDB IDs with this interface"
-                            }
-                          }
-                        },
-                        "description": "Residues at the interaction interface"
-                      }
-                    }
-                  },
-                  "description": "Interaction partners with interface details"
-                },
-                "total_partners": {
-                  "type": "integer",
-                  "description": "Total number of interaction partners"
-                }
-              }
+            "uniprot_accession": {
+              "type": "string",
+              "description": "UniProt accession queried"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
+            "protein_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Protein sequence length"
+            },
+            "interaction_partners": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "partner_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name of the interaction partner protein"
+                  },
+                  "partner_accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt accession of interaction partner"
+                  },
+                  "interface_residues": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Start residue position (UniProt numbering)"
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "End residue position"
+                        },
+                        "pdb_entries": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "PDB IDs with this interface"
+                        }
+                      }
+                    },
+                    "description": "Residues at the interaction interface"
+                  }
                 }
-              }
+              },
+              "description": "Interaction partners with interface details"
+            },
+            "total_partners": {
+              "type": "integer",
+              "description": "Total number of interaction partners"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -426,73 +378,68 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprot_accession": {
-                  "type": "string"
-                },
-                "segments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "segment_start": {
-                        "type": "integer",
-                        "description": "Start residue position (UniProt numbering)"
-                      },
-                      "segment_end": {
-                        "type": "integer",
-                        "description": "End residue position"
-                      },
-                      "num_clusters": {
-                        "type": "integer",
-                        "description": "Number of structural clusters"
-                      },
-                      "clusters": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
+            "uniprot_accession": {
+              "type": "string"
+            },
+            "segments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "segment_start": {
+                    "type": "integer",
+                    "description": "Start residue position (UniProt numbering)"
+                  },
+                  "segment_end": {
+                    "type": "integer",
+                    "description": "End residue position"
+                  },
+                  "num_clusters": {
+                    "type": "integer",
+                    "description": "Number of structural clusters"
+                  },
+                  "clusters": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "representative": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
                           "properties": {
-                            "representative": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
-                              "properties": {
-                                "pdb_id": {
-                                  "type": "string"
-                                },
-                                "auth_asym_id": {
-                                  "type": "string"
-                                },
-                                "is_representative": {
-                                  "type": "boolean"
-                                }
+                            "pdb_id": {
+                              "type": "string"
+                            },
+                            "auth_asym_id": {
+                              "type": "string"
+                            },
+                            "is_representative": {
+                              "type": "boolean"
+                            }
+                          },
+                          "description": "Representative structure for this cluster"
+                        },
+                        "total_members": {
+                          "type": "integer"
+                        },
+                        "members": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "pdb_id": {
+                                "type": "string"
                               },
-                              "description": "Representative structure for this cluster"
-                            },
-                            "total_members": {
-                              "type": "integer"
-                            },
-                            "members": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "pdb_id": {
-                                    "type": "string"
-                                  },
-                                  "auth_asym_id": {
-                                    "type": "string"
-                                  },
-                                  "entity_id": {
-                                    "type": "integer"
-                                  },
-                                  "is_representative": {
-                                    "type": "boolean"
-                                  }
-                                }
+                              "auth_asym_id": {
+                                "type": "string"
+                              },
+                              "entity_id": {
+                                "type": "integer"
+                              },
+                              "is_representative": {
+                                "type": "boolean"
                               }
                             }
                           }
@@ -500,24 +447,13 @@
                       }
                     }
                   }
-                },
-                "total_segments": {
-                  "type": "integer"
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                }
-              }
+            "total_segments": {
+              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

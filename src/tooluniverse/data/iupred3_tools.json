@@ -27,121 +27,109 @@
       ]
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
           "type": "object",
+          "description": "Successful disorder prediction (content of the data field).",
           "properties": {
-            "status": {
-              "const": "success"
+            "accession": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "description": "Successful disorder prediction (content of the data field).",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "iupred_type": {
-                  "type": "string"
-                },
-                "sequence_length": {
-                  "type": "integer"
-                },
-                "mean_disorder_score": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "description": "Mean per-residue disorder score (0-1)"
-                },
-                "disordered_residues": {
-                  "type": "integer",
-                  "description": "Count of residues with disorder score >= 0.5"
-                },
-                "disordered_fraction": {
-                  "type": "number",
-                  "description": "Fraction of the sequence predicted disordered"
-                },
-                "disordered_regions": {
-                  "type": "array",
-                  "description": "Contiguous disordered segments (score >= 0.5), 1-based inclusive positions.",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "start": {
-                        "type": "integer"
-                      },
-                      "end": {
-                        "type": "integer"
-                      },
-                      "length": {
-                        "type": "integer"
-                      }
-                    }
+            "iupred_type": {
+              "type": "string"
+            },
+            "sequence_length": {
+              "type": "integer"
+            },
+            "mean_disorder_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Mean per-residue disorder score (0-1)"
+            },
+            "disordered_residues": {
+              "type": "integer",
+              "description": "Count of residues with disorder score >= 0.5"
+            },
+            "disordered_fraction": {
+              "type": "number",
+              "description": "Fraction of the sequence predicted disordered"
+            },
+            "disordered_regions": {
+              "type": "array",
+              "description": "Contiguous disordered segments (score >= 0.5), 1-based inclusive positions.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "start": {
+                    "type": "integer"
+                  },
+                  "end": {
+                    "type": "integer"
+                  },
+                  "length": {
+                    "type": "integer"
                   }
-                },
-                "anchor_binding_regions": {
-                  "type": "array",
-                  "description": "ANCHOR2 protein-binding regions (only present when iupred_type='anchor').",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "start": {
-                        "type": "integer"
-                      },
-                      "end": {
-                        "type": "integer"
-                      },
-                      "length": {
-                        "type": "integer"
-                      }
-                    }
-                  }
-                },
-                "redox_sensitive_regions": {
-                  "type": "array",
-                  "description": "Redox-sensitive regions (only present when iupred_type='redox')."
-                },
-                "per_residue": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "position": {
-                        "type": "integer"
-                      },
-                      "residue": {
-                        "type": "string"
-                      },
-                      "disorder_score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "anchor_score": {
-                        "type": "number"
-                      }
-                    }
-                  }
-                },
-                "sequence": {
-                  "type": "string",
-                  "description": "The amino acid sequence used for prediction"
                 }
-              },
-              "required": [
-                "accession",
-                "iupred_type",
-                "sequence_length",
-                "disordered_regions",
-                "per_residue"
-              ]
+              }
+            },
+            "anchor_binding_regions": {
+              "type": "array",
+              "description": "ANCHOR2 protein-binding regions (only present when iupred_type='anchor').",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "start": {
+                    "type": "integer"
+                  },
+                  "end": {
+                    "type": "integer"
+                  },
+                  "length": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "redox_sensitive_regions": {
+              "type": "array",
+              "description": "Redox-sensitive regions (only present when iupred_type='redox')."
+            },
+            "per_residue": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "position": {
+                    "type": "integer"
+                  },
+                  "residue": {
+                    "type": "string"
+                  },
+                  "disorder_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "anchor_score": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "sequence": {
+              "type": "string",
+              "description": "The amino acid sequence used for prediction"
             }
           },
           "required": [
-            "data"
+            "accession",
+            "iupred_type",
+            "sequence_length",
+            "disordered_regions",
+            "per_residue"
           ]
         },
         {

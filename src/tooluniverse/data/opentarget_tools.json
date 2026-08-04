@@ -3679,60 +3679,51 @@
             "oneOf": [
                 {
                     "type": "object",
-                    "description": "GraphQL response with drug pharmacogenomics data",
                     "properties": {
-                        "data": {
+                        "drug": {
                             "type": "object",
                             "properties": {
-                                "drug": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "string"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "pharmacogenomics": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "datasourceId": {
-                                                        "type": "string"
-                                                    },
-                                                    "evidenceLevel": {
-                                                        "type": "string"
-                                                    },
-                                                    "genotype": {
-                                                        "type": "string"
-                                                    },
-                                                    "genotypeAnnotationText": {
-                                                        "type": "string"
-                                                    },
-                                                    "pgxCategory": {
-                                                        "type": "string"
-                                                    },
-                                                    "phenotypeText": {
-                                                        "type": "string"
-                                                    },
-                                                    "variantRsId": {
-                                                        "type": "string"
-                                                    },
-                                                    "isDirectTarget": {
-                                                        "type": "boolean"
-                                                    }
-                                                }
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "pharmacogenomics": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "datasourceId": {
+                                                "type": "string"
+                                            },
+                                            "evidenceLevel": {
+                                                "type": "string"
+                                            },
+                                            "genotype": {
+                                                "type": "string"
+                                            },
+                                            "genotypeAnnotationText": {
+                                                "type": "string"
+                                            },
+                                            "pgxCategory": {
+                                                "type": "string"
+                                            },
+                                            "phenotypeText": {
+                                                "type": "string"
+                                            },
+                                            "variantRsId": {
+                                                "type": "string"
+                                            },
+                                            "isDirectTarget": {
+                                                "type": "boolean"
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    },
-                    "required": [
-                        "data"
-                    ]
+                    }
                 },
                 {
                     "type": "null",
@@ -5075,96 +5066,88 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
+                        "target": {
+                            "type": [
+                                "object",
+                                "null"
+                            ],
                             "properties": {
-                                "target": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "approvedName": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "biotype": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "functionDescriptions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "proteinIds": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "source": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "genomicLocation": {
                                     "type": [
                                         "object",
                                         "null"
                                     ],
                                     "properties": {
-                                        "id": {
-                                            "type": "string"
-                                        },
-                                        "approvedSymbol": {
+                                        "chromosome": {
                                             "type": [
                                                 "string",
                                                 "null"
                                             ]
                                         },
-                                        "approvedName": {
+                                        "start": {
                                             "type": [
-                                                "string",
+                                                "integer",
                                                 "null"
                                             ]
                                         },
-                                        "biotype": {
+                                        "end": {
                                             "type": [
-                                                "string",
+                                                "integer",
                                                 "null"
                                             ]
                                         },
-                                        "functionDescriptions": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "proteinIds": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "string"
-                                                    },
-                                                    "source": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        "genomicLocation": {
+                                        "strand": {
                                             "type": [
-                                                "object",
+                                                "integer",
                                                 "null"
-                                            ],
-                                            "properties": {
-                                                "chromosome": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "start": {
-                                                    "type": [
-                                                        "integer",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "end": {
-                                                    "type": [
-                                                        "integer",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "strand": {
-                                                    "type": [
-                                                        "integer",
-                                                        "null"
-                                                    ]
-                                                }
-                                            }
+                                            ]
                                         }
                                     }
                                 }
                             }
                         }
-                    },
-                    "required": [
-                        "data"
-                    ]
+                    }
                 },
                 {
                     "type": "object",
@@ -5211,96 +5194,96 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "baselineExpression": {
-                      "type": "object",
-                      "properties": {
-                        "count": {
-                          "type": "integer"
-                        },
-                        "rows": {
-                          "type": "array",
-                          "items": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
                             "type": "object",
                             "properties": {
-                              "datasourceId": {
-                                "type": "string"
-                              },
-                              "datatypeId": {
-                                "type": "string"
-                              },
-                              "unit": {
-                                "type": "string"
-                              },
-                              "min": {
-                                "type": "number"
-                              },
-                              "q1": {
-                                "type": "number"
-                              },
-                              "median": {
-                                "type": "number"
-                              },
-                              "q3": {
-                                "type": "number"
-                              },
-                              "max": {
-                                "type": "number"
-                              },
-                              "specificity_score": {
-                                "type": "number"
-                              },
-                              "distribution_score": {
-                                "type": "number"
-                              },
-                              "tissueBiosample": {
-                                "type": [
-                                  "object",
-                                  "null"
-                                ]
-                              },
-                              "celltypeBiosample": {
-                                "type": [
-                                  "object",
-                                  "null"
-                                ]
-                              }
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "baselineExpression": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "datasourceId": {
+                                                        "type": "string"
+                                                    },
+                                                    "datatypeId": {
+                                                        "type": "string"
+                                                    },
+                                                    "unit": {
+                                                        "type": "string"
+                                                    },
+                                                    "min": {
+                                                        "type": "number"
+                                                    },
+                                                    "q1": {
+                                                        "type": "number"
+                                                    },
+                                                    "median": {
+                                                        "type": "number"
+                                                    },
+                                                    "q3": {
+                                                        "type": "number"
+                                                    },
+                                                    "max": {
+                                                        "type": "number"
+                                                    },
+                                                    "specificity_score": {
+                                                        "type": "number"
+                                                    },
+                                                    "distribution_score": {
+                                                        "type": "number"
+                                                    },
+                                                    "tissueBiosample": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "celltypeBiosample": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                          }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -5333,55 +5316,55 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "pathways": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "pathwayId": {
-                            "type": "string"
-                          },
-                          "pathway": {
-                            "type": "string"
-                          },
-                          "topLevelTerm": {
-                            "type": "string"
-                          }
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "pathways": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pathwayId": {
+                                                "type": "string"
+                                            },
+                                            "pathway": {
+                                                "type": "string"
+                                            },
+                                            "topLevelTerm": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -5415,58 +5398,58 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "isEssential": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
-                    },
-                    "depMapEssentiality": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "tissueName": {
-                            "type": "string"
-                          },
-                          "screens": {
-                            "type": "array"
-                          }
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "isEssential": {
+                                    "type": [
+                                        "boolean",
+                                        "null"
+                                    ]
+                                },
+                                "depMapEssentiality": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "tissueName": {
+                                                "type": "string"
+                                            },
+                                            "screens": {
+                                                "type": "array"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -5499,60 +5482,60 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "prioritisation": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
-                      "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
                             "type": "object",
                             "properties": {
-                              "key": {
-                                "type": "string"
-                              },
-                              "value": {
-                                "type": "string"
-                              }
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "prioritisation": {
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "key": {
+                                                        "type": "string"
+                                                    },
+                                                    "value": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                          }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -5585,52 +5568,52 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "hallmarks": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
-                      "properties": {
-                        "cancerHallmarks": {
-                          "type": "array"
-                        },
-                        "attributes": {
-                          "type": "array"
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "hallmarks": {
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "properties": {
+                                        "cancerHallmarks": {
+                                            "type": "array"
+                                        },
+                                        "attributes": {
+                                            "type": "array"
+                                        }
+                                    }
+                                }
+                            }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     }
 ]

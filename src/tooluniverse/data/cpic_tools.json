@@ -1011,66 +1011,35 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "description": "Alleles in this page of results",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Star allele name (e.g. '*4')"
-                  },
-                  "functionalstatus": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "activityvalue": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "clinicalfunctionalstatus": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  }
-                }
+          "type": "array",
+          "description": "Alleles in this page of results",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Star allele name (e.g. '*4')"
+              },
+              "functionalstatus": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "activityvalue": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "clinicalfunctionalstatus": {
+                "type": [
+                  "null",
+                  "string"
+                ]
               }
-            },
-            "url": {
-              "type": "string",
-              "description": "Resolved CPIC API request URL"
-            },
-            "count": {
-              "type": "integer",
-              "description": "Number of alleles in this page"
-            },
-            "total_count": {
-              "type": "integer",
-              "description": "Total alleles CPIC curates for this gene"
-            },
-            "offset": {
-              "type": "integer",
-              "description": "Zero-based index of the first allele returned"
-            },
-            "note": {
-              "type": "string",
-              "description": "Present when more alleles remain; explains how to page to them"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
