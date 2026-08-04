@@ -16,10 +16,6 @@
 
 ✅ **Schema Validation**: Reports schema mismatches
 
-✅ **Explicit Result States**: Distinguishes passes, failures, schema errors, empty test categories, timeouts, and execution errors
-
-✅ **Resumable Checkpoints**: Atomically records each completed category in a machine-readable JSON file
-
 ✅ **Actionable Insights**: Provides next steps for fixing issues
 
 ## Quick Start
@@ -55,10 +51,6 @@ python scripts/test_all_tools.py --pattern ncbi
 ```bash
 # Save report to custom file
 python scripts/test_all_tools.py --output MY_REPORT.md
-
-# Save progress and resume an interrupted sweep
-python scripts/test_all_tools.py --json-output TOOL_TEST_RESULTS.json
-python scripts/test_all_tools.py --json-output TOOL_TEST_RESULTS.json --resume
 ```
 
 ## Command Line Options
@@ -69,8 +61,6 @@ python scripts/test_all_tools.py --json-output TOOL_TEST_RESULTS.json --resume
 | `--fail-fast` | Stop testing after first failure |
 | `--parallel` | Run tests in parallel (experimental) |
 | `--output FILE` | Save report to specific file (default: `TOOL_TEST_REPORT.md`) |
-| `--json-output FILE` | Save an atomic machine-readable checkpoint (default: `TOOL_TEST_RESULTS.json`) |
-| `--resume` | Reuse completed categories from the JSON checkpoint |
 | `--pattern PATTERN` | Test only patterns matching substring |
 
 ## Output
