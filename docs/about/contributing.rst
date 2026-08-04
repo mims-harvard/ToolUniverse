@@ -28,7 +28,7 @@ Development Setup
 
 .. code-block:: bash
 
-   python -m pip install -e ".[dev]"
+   python -m pip install -e ".[dev,docs]"
 
 5. Install pre-commit hooks:
 
@@ -73,10 +73,10 @@ We use Ruff for code formatting and linting:
 .. code-block:: bash
 
    # Format code
-   ruff format src/tooluniverse/ tests/
+   python -m ruff format src/tooluniverse tests
 
    # Check formatting
-   ruff format --check src/tooluniverse/ tests/
+   python -m ruff format --check src/tooluniverse tests
 
 Linting
 ~~~~~~~
@@ -85,7 +85,7 @@ Use Ruff for linting:
 
 .. code-block:: bash
 
-   ruff check src/tooluniverse/ tests/
+   python -m ruff check src/tooluniverse tests
 
 Type Hints
 ~~~~~~~~~~
@@ -114,16 +114,16 @@ Run the test suite:
 .. code-block:: bash
 
    # Run the default fast test suite
-   pytest
+   python -m pytest
 
    # Run with coverage
-   pytest --cov=tooluniverse
+   python -m pytest --cov=tooluniverse
 
    # Run specific test file
-   pytest tests/unit/test_tooluniverse_core_methods.py
+   python -m pytest tests/unit/test_tooluniverse_core_methods.py --no-cov
 
    # Run integration tests when needed
-   pytest tests/integration
+   python -m pytest tests/integration
 
 Writing Tests
 ~~~~~~~~~~~~~
@@ -166,11 +166,14 @@ Write tests for all new functionality:
 Test Coverage
 ~~~~~~~~~~~~~
 
-Aim for >90% test coverage:
+Review coverage for the behavior affected by your change and add tests for
+success, failure, and regression paths. The project does not enforce one
+repository-wide percentage because many providers and optional integrations
+cannot run in every environment.
 
 .. code-block:: bash
 
-   pytest --cov=tooluniverse --cov-report=html
+   python -m pytest --cov=tooluniverse --cov-report=html
    open htmlcov/index.html
 
 Documentation
@@ -424,7 +427,7 @@ Test against multiple data sources:
 
    # Test against staging API
    export OPENTARGETS_BASE_URL=https://staging-api.opentargets.org
-   pytest tests/integration
+   python -m pytest tests/integration
 
 Performance Testing
 ~~~~~~~~~~~~~~~~~~~
