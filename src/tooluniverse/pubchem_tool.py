@@ -3,6 +3,7 @@
 import base64
 import requests
 import re
+from urllib.parse import quote
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -71,7 +72,15 @@ class PubChemRESTTool(BaseTool):
         → "/compound/cid/2244/property/MolecularWeight,IUPACName/JSON"
         Finally returns "https://pubchem.ncbi.nlm.nih.gov/rest/pug" + concatenated path.
         """
+        arguments = dict(arguments)
         url_path = self.endpoint_template
+
+        # PubChem requires SMILES containing URL separators in a form-encoded
+        # POST body. Even percent-encoded slashes are decoded by the routing
+        # layer before the structure parser sees them.
+        if self._requires_smiles_post(arguments):
+            url_path = url_path.replace("/{smiles}", "")
+            arguments.pop("smiles")
 
         # Replace {property_list}. Prefer a caller-supplied `properties`
         # argument over the fixed config default so the caller can choose
@@ -89,8 +98,9 @@ class PubChemRESTTool(BaseTool):
             else:
                 prop_list = self.property_list or []
             if prop_list:
+                encoded_properties = [quote(str(prop), safe="") for prop in prop_list]
                 url_path = url_path.replace(
-                    "{property_list}", ",".join(map(str, prop_list))
+                    "{property_list}", ",".join(encoded_properties)
                 )
 
         # Find all placeholders {xxx} in template
@@ -118,11 +128,14 @@ class PubChemRESTTool(BaseTool):
                         f"Missing required parameter '{ph}' to replace placeholder in URL."
                     )
             val = arguments[ph]
-            # If input value is a list, join with commas
-            if isinstance(val, list):
-                val_str = ",".join(map(str, val))
+            if ph == "xref_types" and isinstance(val, str):
+                val = [item.strip() for item in val.split(",") if item.strip()]
+            # Encode each path/query placeholder component. Valid SMILES can
+            # contain '/', '#', and '?', which otherwise alter the URL route.
+            if isinstance(val, (list, tuple)):
+                val_str = ",".join(quote(str(item), safe="") for item in val)
             else:
-                val_str = str(val)
+                val_str = quote(str(val), safe="")
             url_path = url_path.replace(f"{{{ph}}}", val_str)
 
         # Handle xref_types parameter. Validate against PubChem's fixed
@@ -162,6 +175,15 @@ class PubChemRESTTool(BaseTool):
                 full_url += f"?Threshold={threshold}"
 
         return full_url
+
+    def _requires_smiles_post(self, arguments: dict) -> bool:
+        """Return whether a SMILES input must move from the path to POST data."""
+        smiles = arguments.get("smiles")
+        return (
+            "{smiles}" in self.endpoint_template
+            and isinstance(smiles, str)
+            and any(separator in smiles for separator in "/?#")
+        )
 
     @staticmethod
     def _parse_substance_payload(payload: dict) -> dict:
@@ -325,6 +347,7 @@ class PubChemRESTTool(BaseTool):
         return None
 
     def run(self, arguments: dict):
+        arguments = dict(arguments)
         # Substance (SID, depositor-level) record lookup is handled separately:
         # it parses the raw PC_Substances payload and merges linked CIDs.
         if self.substance_record:
@@ -345,6 +368,7 @@ class PubChemRESTTool(BaseTool):
                 return {"status": "error", "error": f"Parameter '{key}' is required."}
 
         # 2. Build URL
+        use_smiles_post = self._requires_smiles_post(arguments)
         try:
             url = self._build_url(arguments)
         except ValueError as e:
@@ -360,7 +384,14 @@ class PubChemRESTTool(BaseTool):
                 else:
                     url += f"?MaxRecords={max_records}"
 
-            resp = requests.get(url, timeout=30)
+            if use_smiles_post:
+                resp = requests.post(
+                    url,
+                    data={"smiles": arguments["smiles"]},
+                    timeout=30,
+                )
+            else:
+                resp = requests.get(url, timeout=30)
         except requests.Timeout:
             return {
                 "status": "error",
