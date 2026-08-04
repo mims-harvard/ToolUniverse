@@ -1537,6 +1537,7 @@ class SMCP(FastMCP):
             self.logger.info("\n🛑 Server stopped by user")
         except Exception as e:
             self.logger.error(f"❌ Server error: {e}")
+            raise
         finally:
             # Cleanup
             asyncio.run(self.close())
