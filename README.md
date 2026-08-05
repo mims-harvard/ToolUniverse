@@ -1,5 +1,7 @@
 # <img src="docs/_static/logo.png" alt="ToolUniverse Logo" height="28" style="vertical-align: middle; margin-right: 8px;" /> ToolUniverse: Democratizing AI scientists
 
+[![MCP Toplist](https://mcptoplist.com/badge/io.github.mims-harvard%2Ftooluniverse.svg)](https://mcptoplist.com/server/io.github.mims-harvard%2Ftooluniverse)
+
 [![Documentation](https://img.shields.io/badge/Documentation-Available-green)](https://zitniklab.hms.harvard.edu/ToolUniverse/)
 [![Paper](https://img.shields.io/badge/Paper-Arxiv-blue)](https://arxiv.org/abs/2509.23426)
 [![PyPI version](https://badge.fury.io/py/tooluniverse.svg)](https://badge.fury.io/py/tooluniverse)
