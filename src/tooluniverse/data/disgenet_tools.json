@@ -69,7 +69,7 @@
   },
   {
     "name": "DisGeNET_search_disease",
-    "description": "Search DisGeNET for genes associated with a disease. Query by disease name or UMLS CUI (e.g., C0006142 for breast cancer). Returns associated genes with scores and evidence. Requires DISGENET_API_KEY.",
+    "description": "Search DisGeNET for genes associated with a disease. Requires a UMLS CUI, NOT a free-text disease name (e.g. 'C0006142' for breast cancer, not 'breast cancer') -- resolve a disease name to its CUI first via umls_search_concepts. Returns associated genes with scores and evidence. Requires DISGENET_API_KEY.",
     "type": "DisGeNETTool",
     "parameter": {
       "type": "object",
@@ -81,7 +81,7 @@
         },
         "disease": {
           "type": "string",
-          "description": "Disease name or UMLS CUI (e.g., C0006142, breast cancer)"
+          "description": "UMLS CUI for the disease, e.g. 'C0006142' (breast cancer). Free-text disease names are NOT accepted -- resolve one via umls_search_concepts first."
         },
         "limit": {
           "type": "integer",
