@@ -144,11 +144,15 @@ class FDADrugAdverseEventTool(BaseTool):
                     if term and term.upper() != reaction_filter.upper():
                         continue
 
-                # Apply mapping if available
+                # Apply mapping if available. Fall back to the raw code as a
+                # string (not the original int/etc) so an FDA code absent
+                # from our mapping (e.g. an undocumented drugcharacterization
+                # value) still satisfies the documented "term is a string"
+                # contract instead of leaking a raw int through.
                 if self.return_fields_mapping:
                     mapped_term = self.return_fields_mapping.get(
                         self.count_field, {}
-                    ).get(str(term), term)
+                    ).get(str(term), str(term))
                     mapped_results.append({"term": mapped_term, "count": count})
                 else:
                     mapped_results.append({"term": term, "count": count})
