@@ -71,16 +71,16 @@
               "type": "object",
               "properties": {
                 "HBD_count": {
-                  "type": "integer"
+                  "type": ["integer", "null"]
                 },
                 "HBA_count": {
-                  "type": "integer"
+                  "type": ["integer", "null"]
                 },
                 "aromatic_atom_count": {
-                  "type": "integer"
+                  "type": ["integer", "null"]
                 },
                 "hydrophobic_atom_count": {
-                  "type": "integer"
+                  "type": ["integer", "null"]
                 },
                 "hbd_hba_ratio": {
                   "type": [
