@@ -468,109 +468,136 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "Paginated list of source-publication records",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "article_id": {
-                    "type": "string",
-                    "description": "NeuroMorpho internal article ID (use with NeuroMorpho_get_literature)"
-                  },
-                  "doi": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "pmid": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "journal": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "title": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "authors": {
-                    "type": [
-                      "array",
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "species": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  },
-                  "brainRegion": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  },
-                  "cellType": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  },
-                  "tracingSystem": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
+      "type": "array",
+      "description": "List of matching source-publication records",
+      "items": {
+        "type": "object",
+        "properties": {
+          "article_id": {
+            "type": "string",
+            "description": "NeuroMorpho internal article ID (use with NeuroMorpho_get_literature)"
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pmid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "journal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "authors": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ]
+          },
+          "species": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "brainRegion": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "cellType": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "tracingSystem": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "evaluatedDate": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Evaluation timestamp (epoch milliseconds)"
+          },
+          "publishedDate": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Publication timestamp (epoch milliseconds)"
+          },
+          "dataUsage": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "sharedReconstructions": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
               "type": "object",
               "properties": {
-                "total_results": {
-                  "type": "integer"
+                "specificDetails": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "total_pages": {
-                  "type": "integer"
+                "nReconstructions": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "_links": {
+                  "type": "object"
                 }
               }
             }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "error": {
-              "type": "string"
-            }
           },
-          "required": [
-            "error"
-          ]
+          "globalStatus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "collection": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
-      ]
+      }
     }
   },
   {
@@ -599,95 +626,130 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "A single source-publication record",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "article_id": {
-                  "type": "string"
-                },
-                "doi": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "pmid": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "journal": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "species": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                },
-                "brainRegion": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                },
-                "cellType": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                },
-                "tracingSystem": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                }
+      "type": "object",
+      "description": "A single source-publication record",
+      "properties": {
+        "article_id": {
+          "type": "string"
+        },
+        "doi": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pmid": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "journal": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "authors": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "species": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "brainRegion": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "cellType": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tracingSystem": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "evaluatedDate": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "publishedDate": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "dataUsage": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sharedReconstructions": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "status": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "specificDetails": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nReconstructions": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "_links": {
+                "type": "object"
               }
             }
           }
         },
-        {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
+        "globalStatus": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "collection": {
+          "type": [
+            "string",
+            "null"
           ]
         }
-      ]
+      }
     }
   },
   {
@@ -716,70 +778,33 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "Persistence vector (TMD shape signature) for the neuron",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "neuron_id": {
-                  "type": "integer"
-                },
-                "scaling_factor": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "description": "Scaling factor applied to the persistence diagram"
-                },
-                "distance": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "coefficients": {
-                  "type": "array",
-                  "description": "100-element persistence vector (TMD shape signature)",
-                  "items": {
-                    "type": "number"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "num_coefficients": {
-                  "type": "integer"
-                }
-              }
-            }
-          }
+      "type": "object",
+      "description": "Persistence vector (TMD shape signature) for the neuron",
+      "properties": {
+        "neuron_id": {
+          "type": "integer"
         },
-        {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
+        "scaling_factor": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Scaling factor applied to the persistence diagram"
+        },
+        "distance": {
+          "type": [
+            "number",
+            "null"
           ]
+        },
+        "coefficients": {
+          "type": "array",
+          "description": "100-element persistence vector (TMD shape signature)",
+          "items": {
+            "type": "number"
+          }
         }
-      ]
+      }
     }
   }
 ]

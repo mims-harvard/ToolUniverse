@@ -61,58 +61,23 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "array"
-        },
-        "metadata": {
-          "type": "object",
-          "properties": {
-            "db_published_date": {
-              "type": "string"
-            },
-            "elements_per_page": {
-              "type": "integer"
-            },
-            "current_url": {
-              "type": "string"
-            },
-            "next_page_url": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "total_elements": {
-              "type": "integer"
-            },
-            "total_pages": {
-              "type": "integer"
-            },
-            "current_page": {
-              "type": "integer"
-            },
-            "previous_page": {
-              "type": [
-                "string",
-                "integer",
-                "null"
-              ]
-            },
-            "previous_page_url": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "next_page": {
-              "type": [
-                "string",
-                "integer",
-                "null"
-              ]
-            }
+      "type": "array",
+      "description": "List of matching Structured Product Labeling (SPL) documents.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "spl_version": {
+            "type": "integer"
+          },
+          "published_date": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "setid": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       }

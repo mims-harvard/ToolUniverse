@@ -32,78 +32,53 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "description": "List of matching drugs with DrugCentral data",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "inchikey": {
-                    "type": ["string", "null"],
-                    "description": "InChIKey identifier"
-                  },
-                  "name": {
-                    "type": ["string", "null"],
-                    "description": "International Nonproprietary Name (INN)"
-                  },
-                  "cas_rn": {
-                    "type": ["string", "null"],
-                    "description": "CAS Registry Number"
-                  },
-                  "smiles": {
-                    "type": ["string", "null"],
-                    "description": "SMILES chemical structure"
-                  },
-                  "approval": {
-                    "type": ["array", "null"],
-                    "description": "Regulatory approval records",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "agency": {"type": ["string", "null"]},
-                        "company": {"type": ["string", "null"]},
-                        "date": {"type": ["string", "null"]}
-                      }
-                    }
-                  },
-                  "drugbank_id": {
-                    "type": ["string", "null"],
-                    "description": "DrugBank identifier"
-                  },
-                  "chembl_id": {
-                    "type": ["string", "array", "null"],
-                    "description": "ChEMBL identifier(s)"
-                  },
-                  "pubchem_cid": {
-                    "type": ["string", "integer", "null"],
-                    "description": "PubChem Compound ID"
-                  }
-                }
-              }
-            },
-            "metadata": {
+      "type": "array",
+      "description": "List of matching drugs with DrugCentral data",
+      "items": {
+        "type": "object",
+        "properties": {
+          "inchikey": {
+            "type": ["string", "null"],
+            "description": "InChIKey identifier"
+          },
+          "name": {
+            "type": ["string", "null"],
+            "description": "International Nonproprietary Name (INN)"
+          },
+          "cas_rn": {
+            "type": ["string", "null"],
+            "description": "CAS Registry Number"
+          },
+          "smiles": {
+            "type": ["string", "null"],
+            "description": "SMILES chemical structure"
+          },
+          "approval": {
+            "type": ["array", "null"],
+            "description": "Regulatory approval records",
+            "items": {
               "type": "object",
               "properties": {
-                "total_hits": {"type": "integer"},
-                "returned": {"type": "integer"},
-                "query": {"type": "string"},
-                "source": {"type": "string"}
+                "agency": {"type": ["string", "null"]},
+                "company": {"type": ["string", "null"]},
+                "date": {"type": ["string", "null"]}
               }
             }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {"type": "string"}
           },
-          "required": ["error"]
+          "drugbank_id": {
+            "type": ["string", "null"],
+            "description": "DrugBank identifier"
+          },
+          "chembl_id": {
+            "type": ["string", "array", "null"],
+            "description": "ChEMBL identifier(s)"
+          },
+          "pubchem_cid": {
+            "type": ["string", "integer", "null"],
+            "description": "PubChem Compound ID"
+          }
         }
-      ]
+      }
     }
   },
   {

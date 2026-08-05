@@ -53,23 +53,52 @@
       "return_format": "TSV"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "array",
-          "description": "Array of interaction records parsed from TSV"
-        },
-        "header": {
-          "type": "array",
-          "items": {
+      "type": "array",
+      "description": "Array of interaction records parsed from the STRING TSV network response.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stringId_A": {
             "type": "string"
           },
-          "description": "Column headers from the TSV response"
+          "stringId_B": {
+            "type": "string"
+          },
+          "preferredName_A": {
+            "type": "string"
+          },
+          "preferredName_B": {
+            "type": "string"
+          },
+          "ncbiTaxonId": {
+            "type": "string"
+          },
+          "score": {
+            "type": "string"
+          },
+          "nscore": {
+            "type": "string"
+          },
+          "fscore": {
+            "type": "string"
+          },
+          "pscore": {
+            "type": "string"
+          },
+          "ascore": {
+            "type": "string"
+          },
+          "escore": {
+            "type": "string"
+          },
+          "dscore": {
+            "type": "string"
+          },
+          "tscore": {
+            "type": "string"
+          }
         },
-        "error": {
-          "type": "string",
-          "description": "Error message if request failed"
-        }
+        "additionalProperties": true
       }
     },
     "implementation": {

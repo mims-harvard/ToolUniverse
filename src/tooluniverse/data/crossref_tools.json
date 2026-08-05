@@ -394,19 +394,38 @@
       "method": "GET"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "error": {
-          "type": "string"
+      "type": "array",
+      "description": "List of Crossref member (publisher) records matching the search query, each with DOI-coverage analytics.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "primary-name": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "counts": {
+            "type": "object",
+            "description": "current-dois, backfile-dois, total-dois"
+          },
+          "breakdowns": {
+            "type": "object",
+            "description": "dois-by-issued-year"
+          },
+          "prefixes": {
+            "type": "array"
+          },
+          "flags": {
+            "type": "object"
+          },
+          "coverage": {
+            "type": "object"
+          }
         }
       }
     },
