@@ -88,9 +88,14 @@ class PDBeSearchTool(BaseTool):
 
         limit = min(arguments.get("limit", 10), 50)
 
+        # PDBe's Solr index is entity-level, not deduplicated by PDB entry --
+        # a single structure with multiple matching chains/entities can
+        # appear as several docs sharing one pdb_id. Over-fetch so dedup
+        # below can still usually fill the caller's requested `limit` with
+        # unique entries, rather than silently returning fewer.
         params = {
             "q": query,
-            "rows": limit,
+            "rows": min(limit * 3, 150),
             "fl": "pdb_id,title,resolution,experimental_method,deposition_date,number_of_entities,organism_scientific_name",
             "wt": "json",
             "sort": "resolution asc",
@@ -104,9 +109,14 @@ class PDBeSearchTool(BaseTool):
         total = solr_response.get("numFound", 0)
 
         structures = []
+        seen_pdb_ids = set()
         for doc in solr_response.get("docs", []):
+            pdb_id = doc.get("pdb_id", "")
+            if pdb_id and pdb_id in seen_pdb_ids:
+                continue
+            seen_pdb_ids.add(pdb_id)
             entry = {
-                "pdb_id": doc.get("pdb_id", ""),
+                "pdb_id": pdb_id,
                 "title": doc.get("title", ""),
                 "resolution": doc.get("resolution"),
                 "experimental_method": doc.get("experimental_method", []),
@@ -115,6 +125,8 @@ class PDBeSearchTool(BaseTool):
                 "organism": doc.get("organism_scientific_name", []),
             }
             structures.append(entry)
+            if len(structures) >= limit:
+                break
 
         return {
             "status": "success",
