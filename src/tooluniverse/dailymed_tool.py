@@ -205,7 +205,7 @@ class GetSPLBySetIDTool(BaseTool):
                 "detail": resp.text,
             }
 
-        return {"status": "success", "xml": resp.text}
+        return {"status": "success", "xml": resp.text, "data": {"xml": resp.text}}
 
 
 def _dedupe_items(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
