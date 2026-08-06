@@ -1,5 +1,5 @@
 import requests
-from typing import Any, Dict
+from typing import Any, Callable, Dict, Optional
 from urllib.parse import quote
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -42,21 +42,47 @@ class CBioPortalRESTTool(BaseTool):
 
         return entrez_ids
 
-    def _get_mutation_profile_id(self, study_id: str) -> str:
-        """Get the mutation molecular profile ID for a study"""
+    def _resolve_molecular_profile_id(
+        self,
+        study_id: str,
+        matches: Callable[[Dict[str, Any]], bool],
+        guess_suffix: str,
+    ) -> Optional[str]:
+        """Look up a study's molecular-profile ID for a given alteration type.
+
+        Fix-Round3-003: previously any non-200 response (including a 404
+        for a study_id that simply doesn't exist, e.g. a plausible-looking
+        guess like 'luad_tcga_pan_can_atlas' instead of the real
+        'luad_tcga_pan_can_atlas_2018') fell through to a guessed profile
+        id, deferring the real problem to a confusing raw 404 several
+        steps later at the actual data-fetch call. A confirmed-nonexistent
+        study now returns None so the caller can give an actionable error
+        immediately. Any other outcome (study exists but lacks this
+        profile type, or a transient non-404 error) keeps the previous
+        best-effort naming-convention guess. Shared by
+        _get_mutation_profile_id and _get_cna_profile_id, which only differ
+        in which profile counts as a match and what suffix to guess.
+        """
         response = self.session.get(
             f"{self.base_url}/studies/{study_id}/molecular-profiles",
             timeout=self.timeout,
         )
+        if response.status_code == 404:
+            return None
         if response.status_code == 200:
-            profiles = response.json()
-            for profile in profiles:
-                alt_type = profile.get("molecularAlterationType")
-                if alt_type == "MUTATION_EXTENDED":
+            for profile in response.json():
+                if matches(profile):
                     return profile.get("molecularProfileId")
+        return f"{study_id}_{guess_suffix}"
 
-        # Fallback to common naming pattern
-        return f"{study_id}_mutations"
+    def _get_mutation_profile_id(self, study_id: str) -> Optional[str]:
+        """Get the mutation molecular profile ID for a study."""
+        return self._resolve_molecular_profile_id(
+            study_id,
+            lambda profile: profile.get("molecularAlterationType")
+            == "MUTATION_EXTENDED",
+            "mutations",
+        )
 
     _ALTERATION_LABELS = {
         -2: "deep_deletion",
@@ -66,21 +92,16 @@ class CBioPortalRESTTool(BaseTool):
         2: "amplification",
     }
 
-    def _get_cna_profile_id(self, study_id: str) -> str:
+    def _get_cna_profile_id(self, study_id: str) -> Optional[str]:
         """Get the discrete (GISTIC) copy-number molecular profile ID for a study."""
-        response = self.session.get(
-            f"{self.base_url}/studies/{study_id}/molecular-profiles",
-            timeout=self.timeout,
+        return self._resolve_molecular_profile_id(
+            study_id,
+            lambda profile: (
+                profile.get("molecularAlterationType") == "COPY_NUMBER_ALTERATION"
+                and profile.get("datatype") == "DISCRETE"
+            ),
+            "gistic",
         )
-        if response.status_code == 200:
-            for profile in response.json():
-                if (
-                    profile.get("molecularAlterationType") == "COPY_NUMBER_ALTERATION"
-                    and profile.get("datatype") == "DISCRETE"
-                ):
-                    return profile.get("molecularProfileId")
-        # Fallback to the common GISTIC naming pattern.
-        return f"{study_id}_gistic"
 
     def _fetch_discrete_cna(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Fetch discrete copy-number alteration (CNA) calls for a gene in a study.
@@ -106,6 +127,15 @@ class CBioPortalRESTTool(BaseTool):
         profile_id = arguments.get("molecular_profile_id") or self._get_cna_profile_id(
             study_id
         )
+        if profile_id is None:
+            return {
+                "status": "error",
+                "error": (
+                    f"Unknown cBioPortal study_id '{study_id}'. "
+                    "Use cBioPortal_get_cancer_studies to look up valid "
+                    "study IDs — study naming conventions vary."
+                ),
+            }
 
         # Resolve gene symbols -> Entrez IDs.
         entrez_ids = self._get_gene_entrez_ids(gene_list)
@@ -194,6 +224,18 @@ class CBioPortalRESTTool(BaseTool):
 
                 # Get molecular profile ID
                 profile_id = self._get_mutation_profile_id(study_id)
+                if profile_id is None:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"Unknown cBioPortal study_id '{study_id}'. "
+                            "Use cBioPortal_get_cancer_studies to look up "
+                            "valid study IDs — study naming conventions vary "
+                            "(e.g. the LUAD Pan-Cancer Atlas study is "
+                            "'luad_tcga_pan_can_atlas_2018', not "
+                            "'luad_tcga_pan_can_atlas')."
+                        ),
+                    }
 
                 # Get gene Entrez IDs
                 entrez_ids = self._get_gene_entrez_ids(gene_list)
