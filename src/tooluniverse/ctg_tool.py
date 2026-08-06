@@ -535,17 +535,16 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
             endpoint_url=formatted_endpoint_url, variables=api_params
         )
 
-        # Simplify the output if the response is valid
-        if (
-            response is not None
-            and response
-            and "studies" in response.keys()
-            and len(response["studies"]) > 0
-        ):
-            response = self._simplify_output(response)
+        # Fix-Round3-002: a well-formed query that legitimately matches zero
+        # trials (empty `studies` list) is a success, not the error below --
+        # `execute_RESTful_query` already returns False for genuine failures
+        # (HTTP error, JSON decode error, API error field), so only that (or
+        # a response missing "studies" entirely) is a real error.
+        # _simplify_output handles an empty list fine on its own.
+        if response is not None and response and "studies" in response.keys():
             return {
                 "status": "success",
-                "data": response,
+                "data": self._simplify_output(response),
                 "metadata": {"source": "ClinicalTrials.gov API v2"},
             }
 
@@ -807,7 +806,17 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                 for response in responses
             ]
 
-        if sum([len(response) > 1 for response in responses]) == 0:
+        # Fix-Round3-005: same conflation as Fix-Round3-002 (search), just in
+        # this tool's detail-lookup path -- checking whether every
+        # *simplified* response still had more than the bare NCT ID field
+        # meant "fetched fine but this field (e.g. adverse events) is
+        # legitimately empty for every trial" was indistinguishable from
+        # "none of the NCT IDs could be fetched at all". `responses` here
+        # is a 1:1 map over whatever was actually fetched (the list
+        # comprehensions above never filter), so its emptiness is the real
+        # failure signal; a request that fetched real trials but simply
+        # found no matching field data for them is a legitimate success.
+        if not responses:
             return {
                 "status": "error",
                 "error": "No relevant information found for the given NCT IDs.",
