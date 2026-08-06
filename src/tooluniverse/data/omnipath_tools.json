@@ -1024,9 +1024,13 @@
               },
               "dorothea_level": {
                 "type": [
-                  "string",
+                  "array",
                   "null"
-                ]
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Confidence-level codes (A-E) this interaction is curated at; an interaction can carry more than one level."
               }
             }
           }
@@ -1046,7 +1050,6 @@
     },
     "test_examples": [
       {
-        "operation": "get_dorothea_regulon",
         "tf_gene": "TP53"
       }
     ]

@@ -649,18 +649,20 @@
   {
     "type": "GWASStudyByID",
     "name": "gwas_get_study_by_id",
-    "description": "Get a specific GWAS study by its unique identifier.",
+    "description": "Get a specific GWAS study by its unique identifier. Accepts either 'study_id' or 'accession_id' (the same GCST identifier field name used by GWASAssociationsForStudy and returned on every association record) so IDs can be chained directly between gwas_* tools without renaming.",
     "parameter": {
       "type": "object",
       "properties": {
         "study_id": {
           "type": "string",
-          "description": "GWAS study identifier"
+          "description": "GWAS study identifier (GCST accession, e.g. 'GCST000392')"
+        },
+        "accession_id": {
+          "type": "string",
+          "description": "Alias for study_id -- the same GCST accession identifier, accepted so results from other gwas_* tools (which use the field name 'accession_id') can be passed straight in."
         }
       },
-      "required": [
-        "study_id"
-      ]
+      "required": []
     },
     "label": [
       "GWAS",

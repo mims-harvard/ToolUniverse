@@ -182,12 +182,12 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "description": "Complete interaction details"
+      "type": "object",
+      "description": "Details of the single matching interaction record"
     },
     "test_examples": [
       {
-        "interaction_id": "EBI-10000001"
+        "interaction_id": "EBI-714308-EBI-366083"
       }
     ]
   },
