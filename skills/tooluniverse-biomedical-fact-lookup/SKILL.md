@@ -37,8 +37,37 @@ Most of these questions are MCQ with an "Insufficient information to answer the 
 | **drug / compound** target, MoA, approval | `ChEMBL_*`, `OpenFDA_*`, `GtoPdb_*`, `PubChem_*` | resolve drug, query the relation |
 | **which drug for this patient** (clinical vignette naming a modifier) | `FDA_*_by_drug_name` — pick the section by modifier | see "Drug choice for a described patient" below |
 | **protein** function / domain / sequence | `UniProt_*` | resolve accession, read annotation |
+| **protein localization / expression** "according to the Human Protein Atlas" | `HPA_get_subcellular_location`, `HPA_get_rna_expression_by_source`, `HPA_get_comprehensive_gene_details_by_ensembl_id` | pass the gene symbol — an **antibody ID such as `HPA073143` also works** and resolves to its target gene. **Report main *and* additional locations** — see below |
 
 When unsure which tool wraps a database, search the catalog by the *relation* (e.g. "gene disease association", "gene set members"), not the brand name — ToolUniverse usually already has it.
+
+### Human Protein Atlas — report both location fields
+
+`HPA_get_subcellular_location` splits its answer in two, and the split is not
+significance ranking:
+
+```
+main_locations       : ['Nucleoplasm']
+additional_locations : ['Primary cilium', ..., 'Cytosol']
+```
+
+A question asking "what localization does this antibody show" wants the
+locations HPA reports, which is **both lists** — answering from `main_locations`
+alone drops real localizations and is a common way to be half-right (e.g.
+answering "Nucleoplasm" where HPA reports "Nucleoplasm, Cytosol"). Use
+`location_summary`, which already joins them, or read both fields.
+
+Two further cautions:
+
+- **Locations aggregate over cell lines.** HPA pools immunofluorescence across
+  every line an antibody was tested in. If the question names one line (HEK293,
+  U-2 OS), treat the list as the candidate set and say which line you are
+  reporting for, rather than implying the aggregate is line-specific.
+- **Per-cell-type RNA values are only published for enriched cell types.** HPA's
+  machine-readable fields give specificity plus nTPM/nCPM for the cell types a
+  gene is enriched in; a value for an arbitrary cell type is not exposed. If a
+  question asks for one that is absent, say so instead of substituting the
+  nearest available number — those differ by an order of magnitude.
 
 ## MSigDB set-name conventions (the most common LAB-Bench pattern)
 
