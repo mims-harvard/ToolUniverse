@@ -260,5 +260,19 @@ Interpretation: report the **exact value the code returns** (ORF count; fragment
 ## Limitations (honest)
 
 - **Key-gated sources**: `DisGeNET_*` and OMIM tools need `DISGENET_API_KEY` / OMIM key. Without a key, fall back to `OpenTargets_*` / `MyDisease_*` (keyless) and state the source used. If no keyless source can answer and the question is database-specific, this is a genuine "Insufficient information" case — say so.
-- **Release mismatch**: a tool's snapshot of a database may differ slightly from the exact release a question cites; report the source and version when it matters.
+- **Release mismatch**: a tool's snapshot of a database may differ from the exact
+  release a question cites — and for some quantities the difference is not
+  slight. Derived scores get recomputed between releases, so the *same gene* can
+  differ by an order of magnitude. gnomAD pLI, via `gnomad_get_constraint`:
+
+  | gene | gnomAD r4 | gnomAD r2.1 |
+  |---|---|---|
+  | APOC2 | 0.046875 | 0.401638 |
+  | APOC1 | 0.086323 | 0.216848 |
+
+  Where a tool exposes a `dataset`/release parameter, set it to the release the
+  question names and **say which release you used**. If the question names one
+  the tool cannot serve, report the release you did use rather than presenting
+  the number as if it were release-independent — a bare pLI value is ambiguous
+  by a factor of eight here.
 - This skill grounds *factual* lookups. For computing over user data files, use the data-analysis router skills instead.
