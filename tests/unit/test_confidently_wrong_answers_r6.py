@@ -502,9 +502,11 @@ def test_metabolite_dead_ctd_backend_is_an_error_not_zero_diseases():
         }
     )
 
+    # _ctd_diseases now queries mydisease.info via requests.get (the RENCI
+    # Automat mirror it used to POST to has been fully decommissioned).
     response = MagicMock()
     response.raise_for_status.side_effect = _requests.HTTPError("404 Client Error")
-    with patch("tooluniverse.metabolite_tool.requests.post", return_value=response):
+    with patch("tooluniverse.metabolite_tool.requests.get", return_value=response):
         with pytest.raises(CTDBackendUnavailable):
             tool._ctd_diseases("cholesterol")
 
@@ -524,8 +526,10 @@ def test_metabolite_unknown_term_still_returns_empty_not_an_error():
     )
     response = MagicMock()
     response.raise_for_status.return_value = None
-    response.json.return_value = {"results": [{"data": []}]}
-    with patch("tooluniverse.metabolite_tool.requests.post", return_value=response):
+    # mydisease.info's own response shape: {"hits": [...]}, not RENCI's
+    # {"results": [{"data": [...]}]}.
+    response.json.return_value = {"hits": []}
+    with patch("tooluniverse.metabolite_tool.requests.get", return_value=response):
         assert tool._ctd_diseases("zzzz") == []
 
 
