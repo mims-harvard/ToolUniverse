@@ -130,7 +130,7 @@
         },
         "year": {
           "type": "string",
-          "description": "Optional NHANES cycle to filter (e.g., '2017-2018')"
+          "description": "Optional NHANES cycle to filter (e.g., '2017-2018'). If omitted, searches the two most recent cycles (matching nhanes_get_dataset_info's default) rather than a single fixed cycle -- a dataset renamed or dropped in one cycle can still be found via the other."
         },
         "limit": {
           "type": "integer",
@@ -152,10 +152,10 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {
+              "file_name": {
                 "type": "string"
               },
-              "year": {
+              "cycle": {
                 "type": "string"
               },
               "download_url": {
@@ -163,6 +163,13 @@
               }
             }
           }
+        },
+        "cycles_searched": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Which NHANES cycles were actually searched"
         }
       }
     },
