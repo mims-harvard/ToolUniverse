@@ -39,7 +39,25 @@ Most of these questions are MCQ with an "Insufficient information to answer the 
 | **protein** function / domain / sequence | `UniProt_*` | resolve accession, read annotation |
 | **protein localization / expression** "according to the Human Protein Atlas" | `HPA_get_subcellular_location`, `HPA_get_rna_expression_by_source`, `HPA_get_comprehensive_gene_details_by_ensembl_id` | pass the gene symbol — an **antibody ID such as `HPA073143` also works** and resolves to its target gene. **Report main *and* additional locations** — see below |
 
+| **brain region** in the Allen Mouse/Human Brain Atlas | `AllenBrain_search_structures` (`name` or `acronym`), `AllenBrain_get_structure` | reference-atlas regions are **colour-coded**: the result carries `color_hex_triplet`, so "the region shown in red" is answerable — see below |
+| **regulatory element / cCRE** near a gene (ENCODE SCREEN) | `SCREEN_search_cCREs_by_region` | filter on `element_type` (**PLS** and **pELS** are TSS-proximal, **dELS** distal) and read `dnase_zscore` |
+
 When unsure which tool wraps a database, search the catalog by the *relation* (e.g. "gene disease association", "gene set members"), not the brand name — ToolUniverse usually already has it.
+
+### Allen Brain Atlas — answer with the specific structure, not its parent
+
+The reference atlas colours every structure, and `AllenBrain_search_structures`
+returns `color_hex_triplet`. A question naming a colour ("which region is
+annotated in red at coronal position 181") is asking which **leaf structure**
+carries that colour, e.g. `Lateral preoptic area` = `#F2483B`.
+
+Answering with the enclosing region ("Hypothalamus") is wrong even though it
+contains the right area: the atlas colours the specific structure, and the
+parent has its own different colour. Search by name or acronym, compare
+`color_hex_triplet`, and give the structure whose colour matches. Note the same
+acronym can return several rows (hemisphere-specific and ontology-version
+entries) with different colours — prefer the row whose `name` matches the
+question's wording.
 
 ### Human Protein Atlas — report both location fields
 
