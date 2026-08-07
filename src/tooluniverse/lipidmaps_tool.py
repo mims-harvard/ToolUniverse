@@ -203,9 +203,37 @@ class LipidMapsTool(BaseTool):
                 + ", ".join(sorted(self._XREF_INPUT_ITEMS)),
             }
 
-        return self._make_request(
+        result = self._make_request(
             f"compound/{input_item}/{input_value}/{output_item}/json"
         )
+
+        # LMSD's `abbrev` field only stores sum-composition shorthand (e.g.
+        # 'PC 34:1'), never the acyl-chain-specific form real lipidomics
+        # workflows use ('PC 16:0/18:1') -- that regiospecific form only
+        # matches the separate `abbrev_chains` field, and even there only as
+        # 'PC 16:0_18:1' (underscore, not slash -- confirmed live that a
+        # literal or percent-encoded '/' in this path segment 404s against
+        # LIPID MAPS' router, so the substitution below is required, not
+        # cosmetic). Retry automatically so a name copy-pasted straight out
+        # of a lipidomics results table (slash form) still resolves instead
+        # of silently returning zero hits.
+        if (
+            input_item == "abbrev"
+            and not result.get("data")
+            and "/" in input_value
+        ):
+            chains_value = input_value.replace("/", "_")
+            retry = self._make_request(
+                f"compound/abbrev_chains/{chains_value}/{output_item}/json"
+            )
+            if retry.get("data"):
+                retry.setdefault("metadata", {})["resolved_via"] = (
+                    f"abbrev_chains='{chains_value}' (retried after 'abbrev' "
+                    f"lookup of the acyl-chain form '{input_value}' found nothing)"
+                )
+                return retry
+
+        return result
 
     def _query_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Query lipid-related gene information from LMPD."""
