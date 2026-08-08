@@ -72,8 +72,25 @@ additional_locations : ['Primary cilium', ..., 'Cytosol']
 A question asking "what localization does this antibody show" wants the
 locations HPA reports, which is **both lists** — answering from `main_locations`
 alone drops real localizations and is a common way to be half-right (e.g.
-answering "Nucleoplasm" where HPA reports "Nucleoplasm, Cytosol"). Use
-`location_summary`, which already joins them, or read both fields.
+answering "Nucleoplasm" where HPA reports "Nucleoplasm, Cytosol").
+
+**But do not dump the whole aggregate either.** The list pools every cell line
+the antibody was tested in, so it can contain locations that belong to a
+different line — e.g. CDKN2A returns `Nucleoplasm, Primary cilium, Primary
+cilium tip, Primary cilium transition zone, Cytosol`, where a question about
+HEK293 wants only `Nucleoplasm, Cytosol`. Reciting all five is as wrong as
+reciting one.
+
+When the question names a cell line:
+
+1. take `main_locations` + `additional_locations` as the **candidate set**;
+2. drop candidates that are organelle-specific to another line — a cilium-family
+   annotation on a non-ciliated line such as HEK293 is a strong tell;
+3. name the line you are reporting for, and say the tool returns a
+   cross-cell-line aggregate rather than implying it is line-specific.
+
+With no cell line named, `location_summary` (which joins both fields) is the
+right answer.
 
 Two further cautions:
 
