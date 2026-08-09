@@ -84,7 +84,7 @@ def _get_tu():
     except Exception:
         pass
 
-    from tooluniverse import ToolUniverse
+    from tooluniverse.execute_function import ToolUniverse
 
     tu = ToolUniverse()
     if not tu.all_tool_dict:
@@ -1754,9 +1754,9 @@ def _start_remote_tool_server(args: argparse.Namespace) -> None:
 
     local_host = "127.0.0.1" if args.host in {"0.0.0.0", "::"} else args.host
     local_url = f"http://{local_host}:{args.port}/mcp"
-    print(f"Remote tool server: {server_name}")
-    print(f"Tools: {', '.join(item['name'] for item in selected)}")
-    print(f"Local MCP: {local_url}")
+    print(f"Remote tool server: {server_name}", flush=True)
+    print(f"Tools: {', '.join(item['name'] for item in selected)}", flush=True)
+    print(f"Local MCP: {local_url}", flush=True)
 
     if not args.share:
         _start_server_for_port(args.port)

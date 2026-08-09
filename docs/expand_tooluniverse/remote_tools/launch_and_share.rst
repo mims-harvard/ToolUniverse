@@ -63,11 +63,18 @@ name, never the secret itself:
 Share Without a Public IP
 -------------------------
 
-Install the maintained platform relay once:
+For a provider-only environment, use Python 3.11 or 3.12 and install the small
+runtime instead of ToolUniverse's complete scientific dependency collection:
 
 .. code-block:: bash
 
-   pip install "tuplatform-connect @ git+https://github.com/tooluniverse/tuplatform.git@afbc47ff91504273cd18d11ccdae121847d1724f#subdirectory=sdk/tuplatform-connect"
+   python -m pip install fastmcp pyyaml "tuplatform-connect @ git+https://github.com/tooluniverse/tuplatform.git@afbc47ff91504273cd18d11ccdae121847d1724f#subdirectory=sdk/tuplatform-connect"
+   python -m pip install --no-deps tooluniverse
+
+Until this feature reaches a PyPI release, use the reviewed ToolUniverse source
+command shown in ToolUniverse Connect instead of the second command above. If
+the full ToolUniverse SDK is already installed, only the relay package is
+needed.
 
 Then run:
 

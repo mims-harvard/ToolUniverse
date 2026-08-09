@@ -4,12 +4,15 @@ import os
 import sys
 from typing import Any, Optional, List
 
+_TRUTHY_VALUES = {"true", "1", "yes"}
+_LIGHT_IMPORT = (
+    os.getenv("TOOLUNIVERSE_LIGHT_IMPORT", "false").lower() in _TRUTHY_VALUES
+)
+
 # Force CPU before torch is imported anywhere — prevents MPS (Metal) segfaults
 # in forked subprocesses (uvx MCP server, tu CLI, Claude Code plugin).
 os.environ.setdefault("PYTORCH_MPS_HIGH_WATERMARK_RATIO", "0.0")
 os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
-
-
 def configure_torch_cpu():
     """Pin torch to CPU, if and only if torch is already imported.
 
@@ -37,7 +40,6 @@ def configure_torch_cpu():
 
 configure_torch_cpu()  # no-op unless something upstream already imported torch
 
-
 # Allow installed sub-packages (e.g. tooluniverse-circuit) to contribute
 # modules into the tooluniverse namespace even when the main package is
 # installed in editable mode (pip install -e).
@@ -45,17 +47,18 @@ from pkgutil import extend_path
 
 __path__ = extend_path(__path__, __name__)
 
-from .execute_function import ToolUniverse
-from .base_tool import BaseTool
-from .default_config import default_tool_files
-from .profile import (
-    ProfileLoader,
-    validate_profile_config,
-    validate_with_schema,
-    validate_yaml_file_with_schema,
-    validate_yaml_format_by_template,
-    PROFILE_SCHEMA,
-)
+if not _LIGHT_IMPORT:
+    from .execute_function import ToolUniverse
+    from .base_tool import BaseTool
+    from .default_config import default_tool_files
+    from .profile import (
+        ProfileLoader,
+        validate_profile_config,
+        validate_with_schema,
+        validate_yaml_file_with_schema,
+        validate_yaml_format_by_template,
+        PROFILE_SCHEMA,
+    )
 
 from .tool_registry import (
     register_tool,
@@ -64,12 +67,6 @@ from .tool_registry import (
     auto_discover_tools,
 )
 from .mcp_tool_registry import remote_tool, register_remote_tool
-
-_TRUTHY_VALUES = {"true", "1", "yes"}
-
-_LIGHT_IMPORT = (
-    os.getenv("TOOLUNIVERSE_LIGHT_IMPORT", "false").lower() in _TRUTHY_VALUES
-)
 
 # Version information. The MCPB bundle installs as "tooluniverse-mcpb-native"
 # (Pattern 2: bundled source, no PyPI dep), and running straight from source
@@ -176,6 +173,18 @@ def __getattr__(name: str) -> Any:
     Dynamic dispatch for tool classes.
     This replaces the manual _LazyImportProxy list.
     """
+    # Provider-only CLI startup intentionally skips the full SDK imports above.
+    # Resolve the two core classes directly instead of treating their names as
+    # scientific tools, which would trigger a noisy full-package scan.
+    if _LIGHT_IMPORT and name == "ToolUniverse":
+        from .execute_function import ToolUniverse as lazy_tool_universe
+
+        return lazy_tool_universe
+    if _LIGHT_IMPORT and name == "SMCP":
+        from .smcp import SMCP as lazy_smcp
+
+        return lazy_smcp
+
     # 1. Try to get it from the tool registry (lazy or eager)
     # The registry knows about all tools via AST discovery or manual registration
     tool_class = get_tool_class_lazy(name)

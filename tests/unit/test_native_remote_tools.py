@@ -1,6 +1,9 @@
 import json
+import os
 from pathlib import Path
-from unittest.mock import patch
+import subprocess
+import sys
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -32,6 +35,51 @@ def clean_remote_registry():
     registry._mcp_server_configs.clear()
     registry._mcp_server_configs.update(saved_servers)
     registry._unported_tools[:] = saved_unported
+
+
+def test_light_cli_entry_imports_remote_decorator_without_full_sdk():
+    script = """
+import sys
+import tooluniverse_cli_entry
+assert 'tooluniverse' not in sys.modules
+os = __import__('os')
+os.environ['TOOLUNIVERSE_LIGHT_IMPORT'] = '1'
+from tooluniverse import remote_tool
+assert callable(remote_tool)
+assert 'torch' not in sys.modules
+assert 'huggingface_hub' not in sys.modules
+assert 'tooluniverse.profile' not in sys.modules
+"""
+    env = {
+        "PATH": os.environ.get("PATH", ""),
+        "PYTHONPATH": str(Path(__file__).parents[2] / "src"),
+        "TOOLUNIVERSE_LIGHT_IMPORT": "1",
+    }
+    subprocess.run([sys.executable, "-c", script], env=env, check=True)
+
+
+def test_smcp_does_not_reload_a_preconfigured_remote_tool_universe():
+    from tooluniverse.smcp import SMCP
+
+    server = SMCP.__new__(SMCP)
+    server.tooluniverse = type("ConfiguredTU", (), {"all_tools": [{"name": "one"}]})()
+    server.profile = None
+    server.tool_categories = None
+    server.auto_expose_tools = True
+    server.compact_mode = False
+    server.search_enabled = False
+    server.logger = MagicMock()
+    server._load_tools_with_filters = MagicMock()
+    server._ensure_compact_mode_categories = MagicMock()
+    server._expose_tooluniverse_tools = MagicMock()
+    server._add_search_tools = MagicMock()
+    server._add_utility_tools = MagicMock()
+
+    server._setup_smcp_tools()
+
+    server._load_tools_with_filters.assert_not_called()
+    server._expose_tooluniverse_tools.assert_called_once_with()
+    server._add_utility_tools.assert_called_once_with()
 
 
 def test_remote_tool_infers_schema_and_remains_callable():

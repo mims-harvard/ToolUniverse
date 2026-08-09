@@ -1024,7 +1024,11 @@ class SMCP(FastMCP):
             self._ensure_compact_mode_categories()
         elif preloaded_count == 0 and self.tool_categories:
             self._load_by_categories()
-        elif (self.auto_expose_tools or self.compact_mode) and not profile_loaded:
+        elif (
+            preloaded_count == 0
+            and (self.auto_expose_tools or self.compact_mode)
+            and not profile_loaded
+        ):
             # Load all tools by default (unless Profile already handled it)
             self._load_tools_with_filters()
             self._ensure_compact_mode_categories()

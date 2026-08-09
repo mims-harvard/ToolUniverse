@@ -59,14 +59,14 @@ from .tool_registry import register_tool
 # Import SMCP and ToolUniverse dynamically to avoid circular imports
 def _get_smcp():
     """Get SMCP class with delayed import to avoid circular import"""
-    from tooluniverse import SMCP
+    from tooluniverse.smcp import SMCP
 
     return SMCP
 
 
 def _get_tooluniverse():
     """Get ToolUniverse class with delayed import to avoid circular import"""
-    from tooluniverse import ToolUniverse
+    from tooluniverse.execute_function import ToolUniverse
 
     return ToolUniverse
 
