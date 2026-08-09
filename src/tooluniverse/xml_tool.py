@@ -4,6 +4,14 @@ from typing import List, Dict, Any, Optional, Set
 from .base_tool import BaseTool
 from .utils import download_from_hf
 from .tool_registry import register_tool
+from .logging_config import get_logger
+
+# Fix-R13B-4: dataset-load status was reported via print(), which writes
+# straight to stdout. Any caller piping a tool's raw stdout as JSON (e.g.
+# `tu run ... --raw` or a script parsing captured output) got this line
+# prepended ahead of the JSON payload and failed to parse it. Routing
+# through the logging module keeps it on stderr instead.
+logger = get_logger(__name__)
 
 
 @register_tool("XMLTool")
@@ -47,12 +55,14 @@ class XMLDatasetTool(BaseTool):
                 self.record_xpath, namespaces=self.namespaces
             )
 
-            print(
-                f"Loaded XML dataset: {len(self.records)} records from root '{self.xml_root.tag}'"
+            logger.info(
+                "Loaded XML dataset: %d records from root '%s'",
+                len(self.records),
+                self.xml_root.tag,
             )
 
         except Exception as e:
-            print(f"Error loading XML dataset: {e}")
+            logger.error("Error loading XML dataset: %s", e)
             self.records = []
 
     def _get_dataset_path(self) -> Optional[str]:
@@ -61,14 +71,28 @@ class XMLDatasetTool(BaseTool):
             result = download_from_hf(self.tool_config["settings"])
             if result.get("success"):
                 return result["local_path"]
-            print(f"Failed to download dataset: {result.get('error')}")
+            logger.error("Failed to download dataset: %s", result.get("error"))
             return None
 
         if "local_dataset_path" in self.tool_config["settings"]:
             return self.tool_config["settings"]["local_dataset_path"]
 
-        print("No dataset path provided in tool configuration")
+        logger.warning("No dataset path provided in tool configuration")
         return None
+
+    # Fix-R13B-4: a record's nested list field (e.g. DrugBank's
+    # interacting_drugs) has no size bound of its own -- the tool's `limit`
+    # parameter only caps how many *top-level matched records* come back,
+    # not the length of a list field inside one record. A well-connected
+    # drug like azathioprine has ~1286 documented interactions, so a
+    # single matched record (limit=5 had no effect, since only 1 record
+    # matched "azathioprine") produced an 80k+ token payload with the
+    # clinically critical interaction undifferentiated among hundreds of
+    # others. Capping nested list fields for display (while still using
+    # the untruncated list to build searchable text, so search matching
+    # is unaffected) keeps responses usable; the true count is preserved
+    # in a sibling `<field>_total_count` key so callers know more exist.
+    _NESTED_LIST_DISPLAY_CAP = 25
 
     def _extract_record_data(self, record_element: ET.Element) -> Dict[str, Any]:
         """Extract data from a record element with caching."""
@@ -95,9 +119,8 @@ class XMLDatasetTool(BaseTool):
                     if any(entry.values()):  # Only add entries with non-empty values
                         structured_list.append(entry)
 
-                data[field_name] = structured_list
-
-                # Flatten for search
+                # Flatten for search using the full, untruncated list so
+                # matching behavior doesn't change based on the display cap.
                 for sf_name, _ in subfields.items():
                     flat_key = f"{field_name}_{sf_name}"
 
@@ -107,6 +130,13 @@ class XMLDatasetTool(BaseTool):
                     )
 
                     self.temporary_record_fields.add(flat_key)
+
+                total_count = len(structured_list)
+                max_items = xpath_expr.get("max_items", self._NESTED_LIST_DISPLAY_CAP)
+                if max_items and total_count > max_items:
+                    data[f"{field_name}_total_count"] = total_count
+                    structured_list = structured_list[:max_items]
+                data[field_name] = structured_list
             else:
                 # Regular flat field extraction
                 data[field_name] = self._extract_field_value(record_element, xpath_expr)
@@ -363,16 +393,17 @@ class XMLDatasetTool(BaseTool):
         """Get the appropriate filter function for the condition."""
         filter_functions = {
             "contains": lambda data, field: value.lower() in str(data[field]).lower(),
-            "starts_with": lambda data, field: str(data[field])
-            .lower()
-            .startswith(value.lower()),
-            "ends_with": lambda data, field: str(data[field])
-            .lower()
-            .endswith(value.lower()),
+            "starts_with": lambda data, field: (
+                str(data[field]).lower().startswith(value.lower())
+            ),
+            "ends_with": lambda data, field: (
+                str(data[field]).lower().endswith(value.lower())
+            ),
             "exact": lambda data, field: str(data[field]).lower() == value.lower(),
             "not_empty": lambda data, field: str(data[field]).strip() != "",
-            "has_attribute": lambda data, field: field == "_attributes"
-            and value in data["_attributes"],
+            "has_attribute": lambda data, field: (
+                field == "_attributes" and value in data["_attributes"]
+            ),
         }
         return filter_functions.get(condition)
 

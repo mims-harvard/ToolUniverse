@@ -152,11 +152,33 @@ class GWASRESTTool(BaseTool):
         # them was GWAS_search_associations_by_gene/gwas_get_snps_for_gene
         # (gene-based lookup), not a reworded trait string. Point to that
         # real fallback instead of a generic, non-adaptive example.
+        #
+        # Fix-R13C-1: GWAS Catalog's own trait-label search (used to
+        # resolve a plain-text disease_trait) isn't restricted to EFO --
+        # it also returns HPO/Orphanet/MONDO terms, and does no synonym
+        # expansion, so the exact current clinical term for a disease can
+        # resolve to a real-but-disconnected ontology term with zero
+        # tagged associations while an older/alternate synonym resolves
+        # to a term with real data. Confirmed live: "premature ovarian
+        # insufficiency" resolves to HP_0008209 (0 associations), but the
+        # older synonym "premature ovarian failure" resolves to
+        # MONDO_0005387 (9 real associations, e.g. PMID 21989058).
+        non_efo = not efo_id.upper().startswith("EFO")
+        ontology_hint = (
+            f" '{efo_id}' is not an EFO term (GWAS Catalog's trait search "
+            "also returns HPO/Orphanet/MONDO terms), and this ontology "
+            "does no synonym expansion, so it may resolve a current "
+            "clinical term to a real-but-disconnected entry."
+            if non_efo
+            else ""
+        )
         return (
-            f"No associations found for EFO ID '{efo_id}'. "
+            f"No associations found for EFO ID '{efo_id}'.{ontology_hint} "
             "GWAS Catalog may tag related associations under a different "
             "EFO/MONDO term, or under pleiotropic traits rather than this "
-            "specific one. If you know the gene of interest, try "
+            "specific one -- try an older/alternate clinical synonym of "
+            "the trait (e.g. an outdated but still-indexed name) if one "
+            "exists. If you know the gene of interest, try "
             "GWAS_search_associations_by_gene or gwas_get_snps_for_gene "
             "instead, which search by gene rather than by trait term."
         )

@@ -24,6 +24,28 @@ def _phrase_quote_if_plain(value: str) -> str:
     return value
 
 
+def _restrict_to_area(value: str, area: str) -> str:
+    """Fix-R13B-1: CTG API v2's Essie search engine treats a bare
+    query.intr/query.spons value as a match against the whole study
+    record (brief summaries, arm descriptions, eligibility text, etc.)
+    rather than restricting to the actual intervention-name or
+    lead-sponsor-name field, so a specific query like 'vedolizumab' or
+    'Takeda' surfaces completely unrelated trials -- confirmed live: an
+    oncology trial with no vedolizumab intervention ranked in the
+    query.intr top 5 (215 unrestricted hits vs. 134 once restricted, all
+    correctly containing the drug), and a Neurocrine/Shire-sponsored
+    trial ranked in the query.spons top 5 for 'Takeda' (1977 unrestricted
+    hits vs. 1022 once restricted, all correctly Takeda-sponsored).
+    Wrapping the value in Essie's AREA[<area>] operator (and
+    phrase-quoting multi-word values, same as _phrase_quote_if_plain)
+    fixes this -- but only for a plain value with no existing Essie
+    syntax, since advanced users may already supply their own
+    AREA/boolean operators."""
+    if _ESSIE_OPERATOR_RE.search(value):
+        return value
+    return f"AREA[{area}]{_phrase_quote_if_plain(value)}"
+
+
 @register_tool("ClinicalTrialsTool")
 class ClinicalTrialsTool(RESTfulTool):
     _BASE_URL = "https://clinicaltrials.gov/api/v2"
@@ -160,6 +182,13 @@ class ClinicalTrialsTool(RESTfulTool):
             return {"status": "success", **result}
         return result
 
+    # Essie fields that get restricted via AREA[<name>] rather than a plain
+    # value match (see _restrict_to_area). Keyed by the mapped API param name.
+    _AREA_RESTRICTED_FIELDS = {
+        "query.intr": "InterventionName",
+        "query.spons": "LeadSponsorName",
+    }
+
     def _run_search(self, arguments):
         """Handle search operations (search_studies, search_by_intervention, search_by_sponsor)."""
         import requests
@@ -211,10 +240,14 @@ class ClinicalTrialsTool(RESTfulTool):
                 advanced_clauses.append(study_type_clause)
             elif key in _SEARCH_PARAM_MAP:
                 mapped_key = _SEARCH_PARAM_MAP[key]
-                if mapped_key in ("query.cond", "query.intr") and isinstance(
+                if mapped_key == "query.cond" and isinstance(value, str):
+                    value = _phrase_quote_if_plain(value)
+                elif mapped_key in self._AREA_RESTRICTED_FIELDS and isinstance(
                     value, str
                 ):
-                    value = _phrase_quote_if_plain(value)
+                    value = _restrict_to_area(
+                        value, self._AREA_RESTRICTED_FIELDS[mapped_key]
+                    )
                 params[mapped_key] = value
 
         if advanced_clauses:
