@@ -176,6 +176,36 @@ class XMLDatasetTool(BaseTool):
             .get("default", fallback)
         )
 
+    # Fix Round 17: every _search-mode tool built on this shared class takes
+    # a single param named 'query', regardless of what its own tool NAME
+    # promises (e.g. drugbank_get_pharmacology_by_drug_name_or_drugbank_id,
+    # mesh_get_subjects_by_subject_name). Confirmed live: calling that tool
+    # with 'drug_name' (the exact term in its own name) errored with
+    # "'query' is a required property" -- a natural first guess from reading
+    # the tool name fails. Accept the terms these tool names actually use as
+    # synonyms for 'query' instead of renaming the parameter across every
+    # config entry (a much larger, more disruptive change).
+    _QUERY_ALIASES = ("drug_name", "drugbank_id", "subject_name", "subject_id")
+
+    def _resolve_query_alias(self, arguments: Dict[str, Any]) -> None:
+        """Mutate arguments in place, filling in 'query' from a known alias.
+
+        Must run before schema validation (not just inside run()): jsonschema
+        rejects a missing required 'query' before run() is ever reached, so an
+        alias resolved only in run() would be dead code for every normal
+        (validated) call path.
+        """
+        if "query" in arguments or "condition" in arguments:
+            return
+        for alias in self._QUERY_ALIASES:
+            if arguments.get(alias):
+                arguments["query"] = arguments[alias]
+                break
+
+    def validate_parameters(self, arguments: Dict[str, Any]) -> Optional[Any]:
+        self._resolve_query_alias(arguments)
+        return super().validate_parameters(arguments)
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Main entry point for the tool."""
         if not self.records:
@@ -183,6 +213,10 @@ class XMLDatasetTool(BaseTool):
                 "status": "error",
                 "error": "XML dataset not loaded or contains no records",
             }
+
+        # Also resolve here so direct run() calls that skip validate_parameters
+        # (e.g. validate=False, or calling the tool class directly) still work.
+        self._resolve_query_alias(arguments)
 
         # Route to appropriate function based on arguments
         if "query" in arguments:

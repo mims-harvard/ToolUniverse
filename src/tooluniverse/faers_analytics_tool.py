@@ -1,9 +1,11 @@
 # faers_analytics_tool.py
 
+import os
 import requests
 import math
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, Optional
 from .base_tool import BaseTool
+from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
 FDA_BASE_URL = "https://api.fda.gov/drug/event.json"
@@ -27,6 +29,7 @@ class FAERSAnalyticsTool(BaseTool):
         super().__init__(tool_config)
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
+        self.api_key = os.getenv("FDA_API_KEY")
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to analytics operation."""
@@ -74,6 +77,15 @@ class FAERSAnalyticsTool(BaseTool):
 
         return self._with_data_payload(operation_result)
 
+    def _with_api_key(self, url: str) -> str:
+        """Append FDA_API_KEY (if set) to an openFDA request URL -- reduces
+        how often the anonymous tier's low rate limit is hit (see
+        _get_faers_count)."""
+        if self.api_key:
+            separator = "&" if "?" in url else "?"
+            return f"{url}{separator}api_key={self.api_key}"
+        return url
+
     def _with_data_payload(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Ensure successful operation responses include a standardized data wrapper."""
         if not isinstance(result, dict):
@@ -111,18 +123,33 @@ class FAERSAnalyticsTool(BaseTool):
                     "error": "Must provide drug_name and adverse_event",
                 }
 
-            # Get counts for 2x2 table
-            # a = drug + event
+            # Get counts for 2x2 table. Each call is Optional[int]: None means
+            # the openFDA request itself failed (e.g. rate limited), which
+            # must not be treated as a genuine zero count -- see
+            # _get_faers_count.
             a = self._get_faers_count(drug_name, adverse_event)
+            drug_total = self._get_faers_count(drug_name, None)
+            event_total = self._get_faers_count(None, adverse_event)
+            total = self._get_faers_total_count()
+
+            if None in (a, drug_total, event_total, total):
+                return {
+                    "status": "error",
+                    "error": (
+                        "One or more openFDA FAERS count queries failed "
+                        "(commonly HTTP 429 rate limiting on the anonymous "
+                        "tier), so a disproportionality analysis cannot be "
+                        "computed right now. Retry in a moment, or set the "
+                        "FDA_API_KEY environment variable to raise the rate "
+                        "limit (https://open.fda.gov/apis/authentication/)."
+                    ),
+                }
 
             # b = drug + no event (all drug reports - drug+event)
-            b = self._get_faers_count(drug_name, None) - a
-
+            b = drug_total - a
             # c = no drug + event (all event reports - drug+event)
-            c = self._get_faers_count(None, adverse_event) - a
-
+            c = event_total - a
             # d = no drug + no event (total - a - b - c)
-            total = self._get_faers_total_count()
             d = total - a - b - c
 
             # Check for valid counts
@@ -237,9 +264,9 @@ class FAERSAnalyticsTool(BaseTool):
             else:
                 base_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
 
-            url = f"{FDA_BASE_URL}?search={base_query}&count={count_field}"
+            url = self._with_api_key(f"{FDA_BASE_URL}?search={base_query}&count={count_field}")
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
 
             data = response.json()
@@ -330,17 +357,19 @@ class FAERSAnalyticsTool(BaseTool):
             search_query = base_query + seriousness_map[seriousness_type]
 
             # Get top reactions for serious events
-            url = f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            )
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
 
             data = response.json()
             results = data.get("results", [])
 
             # Get total serious event count
-            total_url = f"{FDA_BASE_URL}?search={search_query}&limit=1"
-            total_response = requests.get(total_url, timeout=30)
+            total_url = self._with_api_key(f"{FDA_BASE_URL}?search={search_query}&limit=1")
+            total_response = request_with_retry(requests, "GET", total_url, timeout=30)
             total_data = total_response.json()
             total_serious = (
                 total_data.get("meta", {}).get("results", {}).get("total", 0)
@@ -460,9 +489,9 @@ class FAERSAnalyticsTool(BaseTool):
                 search_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
 
             # Get counts by receive date (year)
-            url = f"{FDA_BASE_URL}?search={search_query}&count=receivedate"
+            url = self._with_api_key(f"{FDA_BASE_URL}?search={search_query}&count=receivedate")
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
 
             data = response.json()
@@ -530,9 +559,11 @@ class FAERSAnalyticsTool(BaseTool):
 
             # Get preferred term (PT) level reactions
             search_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
-            url = f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            )
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
 
             data = response.json()
@@ -567,8 +598,15 @@ class FAERSAnalyticsTool(BaseTool):
 
     # Helper methods for statistical calculations
 
-    def _get_faers_count(self, drug_name: str = None, adverse_event: str = None) -> int:
-        """Get count of FAERS reports matching criteria."""
+    def _get_faers_count(
+        self, drug_name: str = None, adverse_event: str = None
+    ) -> Optional[int]:
+        """Get count of FAERS reports matching criteria.
+
+        Returns None (not 0) if the request fails (e.g. rate limited or a
+        network error), so a failure isn't mistaken for a genuine zero
+        count. Callers must check for None before doing arithmetic.
+        """
         try:
             query_parts = []
             if drug_name:
@@ -585,16 +623,21 @@ class FAERSAnalyticsTool(BaseTool):
                 search_query = "+AND+".join(query_parts)
                 url = f"{FDA_BASE_URL}?search={search_query}&limit=1"
 
-            response = requests.get(url, timeout=30)
+            url = self._with_api_key(url)
+
+            response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code == 404:
+                # openFDA returns 404 (not an empty 200) for a query with no matches.
+                return 0
             response.raise_for_status()
 
             data = response.json()
             return data.get("meta", {}).get("results", {}).get("total", 0)
 
         except Exception:
-            return 0
+            return None
 
-    def _get_faers_total_count(self) -> int:
+    def _get_faers_total_count(self) -> Optional[int]:
         """Get total number of reports in FAERS database."""
         return self._get_faers_count(None, None)
 

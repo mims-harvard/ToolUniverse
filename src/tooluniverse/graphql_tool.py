@@ -131,7 +131,25 @@ class GraphQLTool(BaseTool):
         # ({"search": {}}) and is therefore not caught here.
         if not data:
             return {"status": "error", "error": self._empty_result_error(arguments)}
-        return {"status": "success", "data": data}
+        result = {"status": "success", "data": data}
+        # Fix Round 17: for a search(...)-shaped query, the same stripping
+        # collapses a genuine 0-hit result down to an opaque empty container
+        # ({"search": {}}) once its "hits": [] list is removed -- indistinguishable
+        # from a malformed/broken response without reading this source file.
+        # Confirmed live: OpenTargets_get_disease_ids_by_name with
+        # "high-risk prostate cancer" returns status=success, data={"search": {}},
+        # with no indication that this means zero matches. Only fires for queries
+        # that actually declare a "hits" field, so entity-lookup tools (which
+        # legitimately return smaller nested objects) are unaffected.
+        if "hits" in self.query_schema:
+            empty_key = next((k for k, v in data.items() if v == {}), None)
+            if empty_key:
+                result.setdefault("metadata", {})["note"] = (
+                    f"0 matches found (empty '{empty_key}' result). This is a "
+                    "genuine zero-hit search, not an error -- try a shorter or "
+                    "simpler phrasing of the search term."
+                )
+        return result
 
 
 _OT_SEARCH_QUERY = """
