@@ -62,6 +62,42 @@ class TestBasicSearch:
         assert result["metadata"]["total_matched"] == 0
 
 
+class TestRelevanceFiltering:
+    """Regression guard for Fix Round 12 / Feature-12A-1: a query where only
+    one low-signal word (e.g. "biomarker", present in ~85% of the registry,
+    or "study", present in most full_names) happened to match used to
+    return nearly the entire registry -- indistinguishable from "everything
+    is relevant." Matching must actually require the query's meaningful
+    terms, not just any single common word.
+    """
+
+    def test_nonsense_query_with_common_word_returns_nothing(self, tool):
+        # Every word here is either gibberish or a near-universal term
+        # ("biomarker", "study"); none of it describes a real cohort topic.
+        result = tool.run(
+            {"query": "zzzqqxx nonexistent biomarker unicorn study"}
+        )
+        assert result["status"] == "success"
+        assert result["data"] == []
+        assert result["metadata"]["total_matched"] == 0
+
+    def test_multi_word_query_does_not_match_near_whole_registry(self, tool):
+        # A real 3-term query should surface a focused subset, not ~all
+        # cohorts (the old bug: "biomarker"/"study" alone matched 29/30).
+        result = tool.run({"query": "iron intake longitudinal"})
+        assert result["status"] == "success"
+        assert 0 < result["metadata"]["total_matched"] < len(_COHORTS) - 5
+        names = {c["name"] for c in result["data"]}
+        assert "InCHIANTI" in names  # known iron/longitudinal cohort
+
+    def test_single_meaningful_word_still_matches(self, tool):
+        # A genuine single-topic query must still work once low-signal
+        # words are excluded from the meaningful-token set.
+        result = tool.run({"query": "sarcopenia"})
+        assert result["status"] == "success"
+        assert result["metadata"]["total_matched"] >= 1
+
+
 # ---------------------------------------------------------------------------
 # Filter: country
 # ---------------------------------------------------------------------------

@@ -149,9 +149,11 @@ class CTDTool(BaseTool):
                     "direction)."
                 ),
                 "suggestion": (
-                    "Use OpenTargets_get_associated_diseases (live, more "
-                    "sources) or DGIdb_search_interactions for gene-disease "
-                    "associations."
+                    "Use gather_gene_disease_associations (queries DisGeNET, "
+                    "OMIM, OpenTargets, GenCC, and ClinVar in one call and "
+                    "cross-references them) or "
+                    "OpenTargets_get_diseases_phenotypes_by_target_ensembl "
+                    "for gene-disease associations."
                 ),
                 "metadata": metadata,
             }

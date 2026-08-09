@@ -94,13 +94,20 @@ def test_ctd_chemical_diseases_returns_normalised_edges(mock_get):
 
 @pytest.mark.unit
 def test_ctd_gene_disease_returns_redirect_error():
-    """Gene->disease has no live curated CTD source; must redirect callers."""
+    """Gene->disease has no live curated CTD source; must redirect callers.
+
+    Fix Round 12 / Feature-12A-3: the redirect previously pointed to
+    "OpenTargets_get_associated_diseases", which doesn't exist as a tool
+    name (confirmed via `tu run`) -- a dead end for anyone following the
+    suggestion. It now points to gather_gene_disease_associations, a real,
+    live aggregator tool (DisGeNET/OMIM/OpenTargets/GenCC/ClinVar).
+    """
 
     tool = make_ctd_tool(input_type="gene", report_type="diseases_curated")
     result = tool.run({"input_terms": "BRCA1"})
 
     assert result["status"] == "error"
-    assert "OpenTargets_get_associated_diseases" in result["suggestion"]
+    assert "gather_gene_disease_associations" in result["suggestion"]
 
 
 @pytest.mark.unit
