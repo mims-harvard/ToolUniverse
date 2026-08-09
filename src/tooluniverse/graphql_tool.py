@@ -3,10 +3,13 @@ from graphql.language import parse
 from graphql.validation import validate
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+import logging
 import re
 import requests
 import copy
 import time
+
+logger = logging.getLogger(__name__)
 
 # Upper bound on how long DiseaseTargetScoreTool will paginate through
 # OpenTargets associatedTargets before returning what it has so far. A
@@ -73,18 +76,29 @@ def execute_query(endpoint_url, query, variables=None):
         result = remove_none_and_empty_values(result)
         # Check if the response contains errors
         if "errors" in result:
-            print("Invalid Query: ", result["errors"])
+            # Log only the human-readable `message` of each GraphQL error, not
+            # the raw error objects: some APIs (e.g. OpenNeuro) include an
+            # `extensions.stacktrace` with internal server file paths, which
+            # was previously printed to stdout verbatim -- visible in every
+            # caller's output (CLI, MCP client) as an internal-implementation
+            # leak, not a useful diagnostic. `logger.debug` also keeps this out
+            # of default-level output entirely.
+            messages = [
+                e.get("message", str(e)) if isinstance(e, dict) else str(e)
+                for e in result["errors"]
+            ]
+            logger.debug("GraphQL query returned errors: %s", "; ".join(messages))
             return None
         # Feature-94A-002: always return result when data key is present,
         # even if all values are empty/null (e.g. disease not found = {"data": {}}).
         # Callers distinguish empty results from errors via status envelope.
         elif "data" not in result:
-            print("No data returned")
+            logger.debug("GraphQL response had no 'data' key")
             return None
         else:
             return result
     except requests.exceptions.JSONDecodeError:
-        print("JSONDecodeError: Could not decode the response as JSON")
+        logger.debug("Could not decode GraphQL response as JSON")
         return None
 
 

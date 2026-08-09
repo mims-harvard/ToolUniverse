@@ -1032,8 +1032,12 @@ class KEGGExtTool(BaseTool):
             "diseases": [],
             "drugs": [],
             "elements": [],
+            "genes": [],
+            "pathways": [],
         }
 
+        gene_lines: list = []
+        pathway_lines: list = []
         current_field = None
         for line in text.split("\n"):
             if line.startswith("NAME"):
@@ -1066,6 +1070,18 @@ class KEGGExtTool(BaseTool):
                 # they're merged into the one "elements" output field.
                 current_field = "ELEMENT"
                 result["elements"].append(line[12:].strip())
+            elif line.startswith("GENE"):
+                # N#####-style perturbed-network records (e.g. N00151) list
+                # the genes driving the network here as "<entrez_id>  <SYMBOL>;
+                # <description>" -- previously unhandled entirely, so the tool
+                # returned an empty gene list for exactly the records where a
+                # caller needs it most, forcing manual decoding of the numeric
+                # Entrez IDs embedded in "expanded" instead.
+                current_field = "GENE"
+                gene_lines.append(line[12:].strip())
+            elif line.startswith("PATHWAY"):
+                current_field = "PATHWAY"
+                pathway_lines.append(line[12:].strip())
             elif line.startswith("///"):
                 break
             elif line.startswith("            "):
@@ -1078,10 +1094,32 @@ class KEGGExtTool(BaseTool):
                     result["drugs"].append(content)
                 elif current_field == "ELEMENT":
                     result["elements"].append(content)
+                elif current_field == "GENE":
+                    gene_lines.append(content)
+                elif current_field == "PATHWAY":
+                    pathway_lines.append(content)
                 elif current_field == "DEFINITION":
                     result["definition"] = (result["definition"] or "") + " " + content
             else:
                 current_field = None
+
+        for gene_line in gene_lines:
+            entrez_id, _, rest = gene_line.partition("  ")
+            entrez_id = entrez_id.strip()
+            symbol, _, description = rest.strip().partition(";")
+            if entrez_id:
+                result["genes"].append(
+                    {
+                        "entrez_id": entrez_id,
+                        "symbol": symbol.strip(),
+                        "description": description.strip(),
+                    }
+                )
+
+        result["pathways"] = [
+            {"pathway_id": pid, "name": name}
+            for pid, name in self._parse_id_map(pathway_lines).items()
+        ]
 
         return {
             "status": "success",

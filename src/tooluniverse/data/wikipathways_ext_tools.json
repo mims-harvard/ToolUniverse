@@ -6,8 +6,18 @@
       "type": "object",
       "properties": {
         "pathway_id": {
-          "type": "string",
-          "description": "WikiPathways pathway identifier. Examples: 'WP254' (Apoptosis, 87 gene products), 'WP179' (Cell cycle), 'WP4216' (Chromosomal and microsatellite instability), 'WP1584' (Type II diabetes mellitus)."
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "WikiPathways pathway identifier. Examples: 'WP254' (Apoptosis, 87 gene products), 'WP179' (Cell cycle), 'WP4216' (Chromosomal and microsatellite instability), 'WP1584' (Type II diabetes mellitus). Required unless `wpid` is given instead."
+        },
+        "wpid": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for `pathway_id`, matching the parameter name used by the sibling WikiPathways_get_pathway tool. Provide either `pathway_id` or `wpid`."
         },
         "code": {
           "type": [
@@ -16,10 +26,7 @@
           ],
           "description": "Optional filter restricting results to gene products annotated from one identifier system: 'H' (HGNC), 'En' (Ensembl), 'S' (UniProt), 'L' (Entrez Gene), 'Ce' (ChEBI, metabolites). Omit to return every gene product in the pathway. Most pathways are annotated from Entrez Gene or Ensembl and carry no HGNC-sourced entries, so filtering can legitimately return 0."
         }
-      },
-      "required": [
-        "pathway_id"
-      ]
+      }
     },
     "fields": {
       "endpoint": "get_pathway_genes"
@@ -189,13 +196,20 @@
       "type": "object",
       "properties": {
         "pathway_id": {
-          "type": "string",
-          "description": "WikiPathways pathway identifier. Examples: 'WP534' (Glycolysis & Gluconeogenesis), 'WP78' (TCA cycle), 'WP143' (Fatty acid beta-oxidation), 'WP550' (Biogenic amine synthesis)."
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "WikiPathways pathway identifier. Examples: 'WP534' (Glycolysis & Gluconeogenesis), 'WP78' (TCA cycle), 'WP143' (Fatty acid beta-oxidation), 'WP550' (Biogenic amine synthesis). Required unless `wpid` is given instead."
+        },
+        "wpid": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for `pathway_id`, matching the parameter name used by the sibling WikiPathways_get_pathway tool. Provide either `pathway_id` or `wpid`."
         }
-      },
-      "required": [
-        "pathway_id"
-      ]
+      }
     },
     "fields": {
       "endpoint": "get_pathway_metabolites"

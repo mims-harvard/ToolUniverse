@@ -986,55 +986,56 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "enzyme": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "enzyme": {
-                  "type": "string"
-                },
-                "product_length": {
-                  "type": "integer",
-                  "description": "Length of the assembled circular product in bp."
-                },
-                "num_fragments_assembled": {
-                  "type": "integer"
-                },
-                "assembly_order": {
-                  "type": "array",
-                  "description": "Fragments in assembly order, each with source, length and its two overhangs."
-                },
-                "unused_fragments": {
-                  "type": "array",
-                  "description": "Site-free fragments that did not enter the circular product."
-                },
-                "product_sequence": {
-                  "type": "string"
-                }
-              }
+            "product_length": {
+              "type": "integer",
+              "description": "Length of the assembled circular product in bp."
+            },
+            "num_fragments_assembled": {
+              "type": "integer"
+            },
+            "assembly_order": {
+              "type": "array",
+              "description": "Fragments in assembly order, each with source, length and its two overhangs."
+            },
+            "unused_fragments": {
+              "type": "array",
+              "description": "Site-free fragments that did not enter the circular product."
+            },
+            "product_sequence": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "enzyme",
+            "product_length",
+            "num_fragments_assembled",
+            "assembly_order",
+            "product_sequence"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
       {
         "fragments": [
-          "GGTCTCAAGGTGGGGCCCCGGGGCCCCAAAACATCAGAGACCACGTACGTACGTACGTACGTACGTAC",
-          "GGTCTCACATCCCCCGGGGCCCCGGGGTTTTAGGTAGAGACCTGCATGCATGCATGCATGCATGCATG"
+          "GGTCTCAAAACATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCCTTTTGAGACC",
+          "GGTCTCAAAAGGGATCCAAGCTTACGTACGTATGGAGGAGCCGCAGTCAGATATTTTGAGACC",
+          "GGTCTCAAAATCCTAGCGTTGAATTCGGATCCAAGCTTACGTACGTATGGAGCGTTTGAGACC",
+          "GGTCTCAAACGATCGATCGATCGATCGATCGGTTTTGAGACC"
         ],
         "enzyme": "BsaI",
         "circular": true

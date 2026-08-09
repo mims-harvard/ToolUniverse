@@ -1879,10 +1879,31 @@ class DNATool(BaseTool):
                 "error": f"Target region ({target_end - target_start} bp) is smaller than product_size_min ({product_size_min} bp)",
             }
 
-        fwd_search_start = max(0, target_start - 50)
-        fwd_search_end = min(seq_len - 18, target_start + 50)
+        # Whole-sequence amplification (no target_start/target_end given) has no
+        # real edge to anchor to -- both primers are free to land anywhere near
+        # the ends, so the coverage constraint below is skipped for this case.
+        is_full_sequence = target_start == 0 and target_end == seq_len
 
-        rev_search_start = max(18, target_end - 50)
+        # The forward primer must *start* at or before target_start (else the
+        # product misses the left edge of the target), and the reverse primer
+        # must *end* at or after target_end (else it misses the right edge) --
+        # both are enforced by the coverage check below. Searching past those
+        # boundaries wastes effort on candidates that can never pass that check,
+        # and worse, can make one of them win the Tm-closeness scoring, causing
+        # a spurious "does not cover the target" failure even though a slightly
+        # worse-scoring, actually-covering primer was available in-window.
+        # Whole-sequence amplification has no such boundary to respect, so it
+        # keeps the original symmetric ±50 bp search window on both ends.
+        fwd_search_start = max(0, target_start - 50)
+        fwd_search_end = (
+            min(seq_len - 18, target_start + 50)
+            if is_full_sequence
+            else min(seq_len - 18, target_start)
+        )
+
+        rev_search_start = (
+            max(18, target_end - 50) if is_full_sequence else max(18, target_end)
+        )
         rev_search_end = min(seq_len, target_end + 50)
 
         complement_map = str.maketrans("ATGCNatgcn", "TACGNtacgn")
@@ -2011,11 +2032,11 @@ class DNATool(BaseTool):
                 ),
             }
 
-        # Verify the product actually spans the requested target region.
-        # Primer search windows are centered ±50 bp around target_start/target_end, so
-        # when the target falls near a sequence boundary the best primers may sit
-        # entirely before (or after) the target, producing a valid product that misses
-        # the declared target. Detect and report instead of silently returning wrong coords.
+        # Verify the product actually spans the requested target region. This is
+        # now mostly a formality since the search windows above already exclude
+        # non-covering candidates for a real target region -- but it stays as a
+        # defensive check (e.g. a target so close to a sequence boundary that no
+        # covering primer exists at all within the ±50 bp search radius).
         #
         # Skip the coverage check when the user requested full-sequence
         # amplification (target_start == 0 and target_end == seq_len).  In that case
@@ -2023,7 +2044,6 @@ class DNATool(BaseTool):
         # be satisfied simultaneously — no primer can start before position 0 or end
         # after the last base.  Any valid primer pair covering the majority of the
         # sequence is acceptable for full-sequence amplification.
-        is_full_sequence = target_start == 0 and target_end == seq_len
         if not is_full_sequence and (
             best_fwd["start"] > target_start or best_rev["end"] < target_end
         ):
@@ -2155,7 +2175,7 @@ class DNATool(BaseTool):
                 "status": "error",
                 "error": f"Unknown enzyme: {enzyme_name}. Golden Gate uses a Type IIS enzyme (BsaI, BbsI, Esp3I/BsmBI, SapI).",
             }
-        canonical, site, _off = resolved
+        canonical, site, cut_off = resolved
 
         # Overhang length: from Biopython when available, else the curated table.
         # The previous -4 default was silently wrong for SapI (3 nt).
@@ -2191,9 +2211,37 @@ class DNATool(BaseTool):
         labels = arguments.get("labels") or []
 
         rc_site = _reverse_complement(site)
+        site_len = len(site)
 
         def _has_site(seq: str) -> bool:
             return site in seq or rc_site in seq
+
+        def _overhang_at(seq2: str, pos: int) -> str:
+            """The ov_len-bp overhang belonging to the fragment on the cut's
+            downstream side, in standard (top-strand-of-the-assembled-insert)
+            notation.
+
+            `pos` is always a top-strand bond index (see `_enzyme_cut_positions`),
+            regardless of which strand actually carried the recognition site that
+            produced it. For a forward-oriented site, the cut leaves a genuine 5'
+            overhang on the top strand immediately downstream, so the literal
+            top-strand bases at `pos` already are the overhang. For a
+            reverse-oriented site (recognition sequence on the bottom strand,
+            e.g. BsaI's GAGACC), the top-strand bond instead lands *before* the
+            overhang region, whose bases on the top strand are only the
+            complement strand's remnant — the real 5' overhang is on the bottom
+            strand at that position, so recovering it requires reverse-
+            complementing the literal read. Distinguish the two cases by checking
+            whether the forward pattern actually starts `cut_off` bases upstream
+            of `pos` (how every forward-type cut was produced); if not, this cut
+            came from the reverse-oriented match instead.
+            """
+            raw = seq2[pos : pos + ov_len]
+            fwd_start = pos - cut_off
+            is_forward_cut = (
+                fwd_start >= 0 and seq2[fwd_start : fwd_start + site_len] == site
+            )
+            return raw if is_forward_cut else _reverse_complement(raw)
 
         pieces = []
         per_input = []
@@ -2223,6 +2271,7 @@ class DNATool(BaseTool):
                 continue
 
             released = 0
+            seq2 = seq + seq
             for i, start in enumerate(cuts):
                 end = cuts[(i + 1) % len(cuts)]
                 if end > start:
@@ -2231,9 +2280,11 @@ class DNATool(BaseTool):
                     span = seq[start:] + seq[:end]
                 else:
                     continue
-                # The overhang at a cut is the ov_len bases starting at the cut.
-                left_ov = (seq + seq)[start : start + ov_len]
-                right_ov = (seq + seq)[end : end + ov_len]
+                # The overhang at a cut is the ov_len bases starting at the cut,
+                # corrected to standard notation if the cut came from a
+                # reverse-oriented site match (see `_overhang_at`).
+                left_ov = _overhang_at(seq2, start)
+                right_ov = _overhang_at(seq2, end)
                 if _has_site(span):
                     continue  # re-cut in the reaction; cannot persist
                 pieces.append(

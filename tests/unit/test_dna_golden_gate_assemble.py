@@ -26,13 +26,28 @@ ASSEMBLE = {
 }
 
 
+_COMPLEMENT = str.maketrans("ACGT", "TGCA")
+
+
+def _rc(seq):
+    return seq.translate(_COMPLEMENT)[::-1]
+
+
 def _donor(ov_left, ov_right, body, backbone):
     """A circular donor with inward-facing BsaI sites flanking `body`.
 
     Cutting releases `body` (site-free, so it survives the reaction) and leaves
     the recognition sites on the backbone piece.
+
+    `ov_left`/`ov_right` are the overhang identities in the standard
+    Golden-Gate/MoClo notation used by `DNA_golden_gate_design` -- the same
+    4-letter code is shared by both mating ends of a junction. The right-hand
+    site is inward-facing (reverse-oriented, GAGACC on this strand), so BsaI
+    reads it on the bottom strand; the literal top-strand text immediately
+    before that site is therefore the *reverse complement* of `ov_right`, not
+    `ov_right` itself (mirrors `DNA_golden_gate_design`'s own construction).
     """
-    return "GGTCTC" "A" + ov_left + body + ov_right + "A" "GAGACC" + backbone
+    return "GGTCTC" "A" + ov_left + body + _rc(ov_right) + "A" "GAGACC" + backbone
 
 
 DONOR_A = _donor("AGGT", "CATC", "GGGGCCCCGGGGCCCCAAAA", "ACGTACGTACGTACGTACGTACGTAC")
