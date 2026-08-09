@@ -24,6 +24,9 @@
       },
       {
         "term_id": "HP:0001263"
+      },
+      {
+        "term_id": "HP:0006887"
       }
     ],
     "return_schema": {

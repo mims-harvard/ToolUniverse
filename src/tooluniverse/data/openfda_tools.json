@@ -22,7 +22,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/label.json"
+            "endpoint": "https://api.fda.gov/drug/label.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -252,7 +256,11 @@
             "required": []
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/event.json"
+            "endpoint": "https://api.fda.gov/drug/event.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "OpenFDADrugEventsTool",
         "test_examples": [
@@ -389,7 +397,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/ndc.json"
+            "endpoint": "https://api.fda.gov/drug/ndc.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -532,7 +544,11 @@
             "required": []
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/enforcement.json"
+            "endpoint": "https://api.fda.gov/drug/enforcement.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -667,7 +683,11 @@
             "required": []
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/device/enforcement.json"
+            "endpoint": "https://api.fda.gov/device/enforcement.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -769,7 +789,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/device/510k.json"
+            "endpoint": "https://api.fda.gov/device/510k.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -885,7 +909,11 @@
             "required": []
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/food/enforcement.json"
+            "endpoint": "https://api.fda.gov/food/enforcement.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1005,7 +1033,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/shortages.json"
+            "endpoint": "https://api.fda.gov/drug/shortages.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1128,7 +1160,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/device/event.json"
+            "endpoint": "https://api.fda.gov/device/event.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1239,7 +1275,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/device/recall.json"
+            "endpoint": "https://api.fda.gov/device/recall.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1358,7 +1398,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/food/event.json"
+            "endpoint": "https://api.fda.gov/food/event.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1472,7 +1516,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/animalandveterinary/event.json"
+            "endpoint": "https://api.fda.gov/animalandveterinary/event.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [

@@ -141,6 +141,7 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
             if (key != "HPO_ID_list") and (key in arguments):
                 query_schema_runtime[key] = arguments[key]
         all_diseases = []
+        uninformative_ids = []
         for HPOID in arguments["HPO_ID_list"]:
             each_query_schema_runtime = copy.deepcopy(query_schema_runtime)
             each_query_schema_runtime["object"] = HPOID
@@ -150,7 +151,24 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
             )
             each_output = each_output["items"]
             each_output_names = [disease["subject_label"] for disease in each_output]
-            all_diseases.append(each_output_names)
+            # Fix-R8B-9: A single unrecognized/obsolete HPO ID (typo, stale ID)
+            # returns zero diseases from Monarch. Previously that empty set
+            # was ANDed into the running intersection, silently collapsing
+            # the WHOLE result to [] with no signal that one input ID was
+            # the culprit -- a real clinician entering a mostly-correct HPO
+            # panel would see "no candidate diseases" instead of a partial,
+            # still-useful differential. Track zero-hit IDs separately and
+            # exclude them from the intersection instead of letting them
+            # veto every other (valid) phenotype in the panel.
+            if each_output_names:
+                all_diseases.append(each_output_names)
+            else:
+                uninformative_ids.append(HPOID)
+
+        if not all_diseases:
+            # Every HPO ID returned zero diseases -- genuinely no data,
+            # not a single bad ID nuking a good intersection.
+            return []
 
         intersection = set(all_diseases[0])
         for element in all_diseases[1:]:
@@ -158,4 +176,16 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
         intersection = list(intersection)
         if query_schema_runtime["limit"] < len(intersection):
             intersection = intersection[: query_schema_runtime["limit"]]
+        if uninformative_ids:
+            return {
+                "diseases": intersection,
+                "warning": (
+                    f"No disease associations found for HPO ID(s) "
+                    f"{uninformative_ids} (invalid/obsolete ID or a phenotype "
+                    "with no known disease association) -- excluded from the "
+                    "intersection below, which is based only on the "
+                    f"remaining {len(all_diseases)} of "
+                    f"{len(arguments['HPO_ID_list'])} input HPO ID(s)."
+                ),
+            }
         return intersection

@@ -291,13 +291,34 @@ class HPOTool(BaseTool):
                 if t and t.get("name")
             ]
 
+        metadata = {
+            "source": "HPO (JAX Ontology)",
+            "term_id": term_id,
+        }
+        # The JAX ontology API silently resolves an obsolete/merged HPO ID to
+        # its replacement term's record -- with no obsolescence flag anywhere
+        # in the payload -- rather than 404ing or marking the response as a
+        # redirect. Detect the ID mismatch ourselves and surface it, so a
+        # caller doesn't mistake the replacement term's data for the term
+        # they actually asked about (confirmed live: querying an obsolete ID
+        # like HP:0006887 silently returns HP:0001249's full record).
+        resolved_id = result["id"]
+        if resolved_id and resolved_id != term_id:
+            metadata["requested_id"] = term_id
+            metadata["resolved_id"] = resolved_id
+            metadata["note"] = (
+                f"The requested term ID ({term_id}) differs from the "
+                f"returned term's ID ({resolved_id}). This usually means "
+                f"{term_id} is obsolete or was merged into {resolved_id} "
+                "upstream. Use get_phenotype_by_HPO_ID for an explicit "
+                "'deprecated' flag, or HPO_search_terms to find the "
+                "current preferred term."
+            )
+
         return {
             "status": "success",
             "data": result,
-            "metadata": {
-                "source": "HPO (JAX Ontology)",
-                "term_id": term_id,
-            },
+            "metadata": metadata,
         }
 
     def _search_terms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
