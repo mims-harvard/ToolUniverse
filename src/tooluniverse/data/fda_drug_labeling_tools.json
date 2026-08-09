@@ -8702,7 +8702,7 @@
       "properties": {
         "mechanism_info": {
           "type": "string",
-          "description": "Information related to the desired mechanism of action."
+          "description": "Free-text mechanism-of-action keyword to search for in the drug label's 'Mechanism of Action' section (e.g., 'angiotensin', 'beta blocker', 'IL-4 receptor'). Not a diagnosis/ICD code -- this searches the label's mechanism text, not indication codes."
         },
         "indication": {
           "type": "string",
@@ -8744,8 +8744,8 @@
     ],
     "test_examples": [
       {
-        "mechanism_info": "E11.9",
-        "indication": "Hypertension",
+        "mechanism_info": "angiotensin",
+        "indication": "hypertension",
         "limit": 5,
         "skip": 0
       }

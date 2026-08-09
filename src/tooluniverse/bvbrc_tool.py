@@ -405,7 +405,17 @@ class BVBRCTool(BaseTool):
 
         limit = min(arguments.get("limit") or 25, 100)
 
+        # Fix-11C-1: BV-BRC's surveillance collection commonly holds multiple
+        # distinct records (e.g. separate lab submissions/panels) that share
+        # identical sample_identifier/collection_date/subtype values. Without
+        # a unique identifier in the response, these genuinely distinct
+        # records looked like a duplication bug (same visible fields
+        # repeated). Including sample_accession (human-readable submission
+        # accession) and id (the record's unique key) lets callers tell
+        # distinct records apart instead of appearing to be verbatim dupes.
         select_fields = [
+            "sample_accession",
+            "id",
             "sample_identifier",
             "collection_date",
             "geographic_group",

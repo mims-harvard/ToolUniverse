@@ -927,6 +927,14 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search"
+          ],
+          "description": "Operation (optional; defaults to 'search' for this tool).",
+          "default": "search"
+        },
         "query_cond": {
           "type": [
             "string",

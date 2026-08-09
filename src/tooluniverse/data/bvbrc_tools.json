@@ -213,7 +213,7 @@
   },
   {
     "name": "BVBRC_search_amr",
-    "description": "Search for antimicrobial resistance (AMR) phenotype data in BV-BRC. Returns resistance/susceptibility data for pathogens against specific antibiotics, including MIC values, testing methods, and evidence. Essential for AMR surveillance research. Filter by 'antibiotic' (e.g. 'methicillin'), 'resistant_phenotype', and/or a specific BV-BRC 'genome_id'. There is no organism/species parameter: to scope results to one organism, first obtain its genome_id(s) (e.g. via BVBRC_search_genome_features / BVBRC_search_specialty_genes with taxon_id) and pass genome_id here.",
+    "description": "Search for ANTIBACTERIAL resistance (AMR) phenotype data in BV-BRC -- bacteria tested against antibiotics (e.g. 'methicillin', 'ciprofloxacin'), NOT antiviral drug-resistance mutations (for influenza/viral antiviral resistance, use Pathoplexus_get_mutations or literature search instead). Returns resistance/susceptibility data for pathogens against specific antibiotics, including MIC values, testing methods, and evidence. Essential for bacterial AMR surveillance research. Filter by 'antibiotic' (e.g. 'methicillin'), 'resistant_phenotype', and/or a specific BV-BRC 'genome_id'. There is no organism/species parameter: to scope results to one organism, first obtain its genome_id(s) (e.g. via BVBRC_search_genome_features / BVBRC_search_specialty_genes with taxon_id) and pass genome_id here.",
     "parameter": {
       "type": "object",
       "properties": {

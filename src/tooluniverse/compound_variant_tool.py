@@ -308,7 +308,34 @@ class CompoundVariantAnnotationTool(BaseTool):
                 if error:
                     sources_failed.append(f"UniProt: {error[:100]}")
                 else:
-                    annotations["uniprot"] = self._parse_uniprot(r, gene_for_gnomad)
+                    parsed = self._parse_uniprot(r, gene_for_gnomad)
+                    # Fix-11B-1: UniProt_search's entries never carry a
+                    # "function" field (confirmed live -- only accession,
+                    # id, protein_name, gene_names, organism, length), so
+                    # _parse_uniprot's function lookup silently always
+                    # returned "". Look up the real function comment with a
+                    # follow-up call keyed on the accession we just picked.
+                    accession = parsed.get("accession")
+                    if accession:
+                        try:
+                            fr = tu.run_one_function(
+                                {
+                                    "name": "UniProt_get_function_by_accession",
+                                    "arguments": {"accession": accession},
+                                }
+                            )
+                            fn_error = self._sub_call_error(fr)
+                            # run_one_function returns this tool's raw
+                            # result -- a bare list of function-comment
+                            # strings -- not wrapped in a dict.
+                            fn_list = fr if isinstance(fr, list) else None
+                            if fn_list is None and isinstance(fr, dict):
+                                fn_list = fr.get("result")
+                            if not fn_error and fn_list:
+                                parsed["function"] = str(fn_list[0])[:300]
+                        except Exception:
+                            pass  # keep parsed["function"] == "" (no data)
+                    annotations["uniprot"] = parsed
             except Exception as e:
                 sources_failed.append(f"UniProt: {str(e)[:100]}")
 
