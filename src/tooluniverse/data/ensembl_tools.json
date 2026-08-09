@@ -179,10 +179,11 @@
             "genomic",
             "cds",
             "cdna",
+            "protein",
             "peptide"
           ],
           "default": "genomic",
-          "description": "Sequence type: 'genomic' (genomic DNA), 'cds' (coding sequence), 'cdna' (cDNA), 'peptide' (protein sequence)"
+          "description": "Sequence type: 'genomic' (genomic DNA), 'cds' (coding sequence), 'cdna' (cDNA), 'protein' (protein/peptide sequence -- 'peptide' is also accepted and mapped to 'protein', the name Ensembl's own REST API actually expects)"
         },
         "species": {
           "type": "string",

@@ -259,6 +259,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
                 gene_hyphen_variant = gene.replace("-", "")
             query_parts.append(f"{gene}[gene]")
 
+        condition_dis_index = None
         if "condition" in arguments:
             # Feature-70B-005: [disease/phenotype] is not a valid ClinVar eSearch field.
             # Use [dis] (disease/phenotype) field tag for condition searches.
@@ -266,6 +267,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             condition = arguments["condition"].strip()
             if " " in condition and not condition.startswith('"'):
                 condition = f'"{condition}"'
+            condition_dis_index = len(query_parts)
             query_parts.append(f"{condition}[dis]")
 
         if arguments.get("rsid"):
@@ -478,6 +480,36 @@ class ClinVarSearchVariants(ClinVarRESTTool):
                     result = resolved_result
                     data = result["data"]
 
+        # Fix-R9B-1: the [dis] field only matches ClinVar's own indexed
+        # disease/phenotype name for a record, which frequently differs from
+        # the name clinicians actually use -- confirmed live that
+        # "MECP2 duplication syndrome"[dis] (arguably the most natural way to
+        # refer to this exact condition) returns 0 even though ClinVar has
+        # 101+ MECP2 records that reference that phrase in free text (under
+        # its indexed name "Xq28 duplication syndrome" instead). Retry once
+        # with the condition term unrestricted to any field ([All Fields])
+        # when the [dis]-restricted search comes back empty -- this can only
+        # add matches the strict query missed, never drop ones it found.
+        if (
+            condition_dis_index is not None
+            and int(data["esearchresult"].get("count", 0)) == 0
+        ):
+            freetext_query_parts = list(query_parts)
+            # The stored term is "<condition>[dis]" -- drop the field tag to
+            # search it unrestricted instead.
+            freetext_query_parts[condition_dis_index] = query_parts[
+                condition_dis_index
+            ][: -len("[dis]")]
+            freetext_params = dict(params, term=" AND ".join(freetext_query_parts))
+            freetext_result = self._make_request(self.endpoint, freetext_params)
+            if (
+                freetext_result.get("status") == "success"
+                and "esearchresult" in freetext_result.get("data", {})
+                and int(freetext_result["data"]["esearchresult"].get("count", 0)) > 0
+            ):
+                result = freetext_result
+                data = result["data"]
+
         esearch = data["esearchresult"]
         ids = esearch.get("idlist", [])
         count = int(esearch.get("count", 0))
@@ -516,6 +548,28 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         }
         if unrecognized:
             response_data["ignored_parameters"] = unrecognized
+        if count == 0 and "gene" in arguments:
+            # Fix-R9B-2: a 0-count response for a `gene` filter is
+            # indistinguishable from "this gene truly has no ClinVar
+            # entries" whether the symbol was a typo (e.g. "MEPC2"), a
+            # protein/full name instead of the HGNC gene symbol (e.g.
+            # "dystrophin" instead of "DMD"), or a species mismatch --
+            # confirmed live that ClinVar's [gene] index only matches an
+            # exact current HGNC symbol and has no fuzzy/synonym fallback of
+            # its own. Automatically retrying with an unrestricted free-text
+            # search was tried and rejected: "dystrophin[All Fields]"
+            # matches 12,000+ unrelated ClinVar records that merely mention
+            # the word, which would silently swap a false-empty for a
+            # false-positive result set -- worse than reporting nothing.
+            # Surface the ambiguity instead of guessing.
+            response_data["zero_result_hint"] = (
+                f"No ClinVar records matched gene '{arguments['gene']}'. "
+                "ClinVar's gene index only recognizes the current official "
+                "HGNC symbol (e.g. 'DMD', not the protein name 'dystrophin' "
+                "or an outdated/misspelled symbol) -- verify the symbol "
+                "(e.g. via HGNC_search_genes or NCBIDatasets_get_gene) "
+                "before concluding this gene has no reported variants."
+            )
         if compound_clnsig:
             response_data["clinical_significance_note"] = (
                 "The '/' in the requested clinical_significance was treated as OR: "

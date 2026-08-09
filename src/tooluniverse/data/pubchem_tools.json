@@ -212,11 +212,11 @@
       "endpoint": "/compound/cid/{cid}/property/{property_list}/JSON",
       "use_pugview": false,
       "input_description": "Input is a PubChem compound ID (integer).",
-      "output_description": "Returns a JSON object with structure example:\n{\n  \"PropertyTable\": {\n    \"Properties\": [\n      {\n        \"CID\": 2244,\n        \"MolecularWeight\": 180.157,\n        \"IUPACName\": \"2-acetyloxybenzoic acid\",\n        \"CanonicalSMILES\": \"CC(=O)OC1=CC=CC=C1C(=O)O\",\n        ...\n      }\n    ]\n  }\n}\n\nWhere:\n- PropertyTable.Properties list: each element contains properties for that CID;\n- Property names determined by {property_list}, example here is [\"MolecularWeight\",\"IUPACName\",\"CanonicalSMILES\"].\nAfter calling, LLM can directly access these important molecular properties for subsequent chemical/pharmacological reasoning.",
+      "output_description": "Returns a JSON object with structure example:\n{\n  \"PropertyTable\": {\n    \"Properties\": [\n      {\n        \"CID\": 2244,\n        \"MolecularWeight\": 180.157,\n        \"IUPACName\": \"2-acetyloxybenzoic acid\",\n        \"ConnectivitySMILES\": \"CC(=O)OC1=CC=CC=C1C(=O)O\",\n        ...\n      }\n    ]\n  }\n}\n\nWhere:\n- PropertyTable.Properties list: each element contains properties for that CID;\n- Property names determined by {property_list}, example here is [\"MolecularWeight\",\"IUPACName\",\"ConnectivitySMILES\"]. Note: PubChem's PUG-REST API renamed the legacy \"CanonicalSMILES\" property to \"ConnectivitySMILES\" (and \"IsomericSMILES\" to \"SMILES\") — requesting the old names either returns data under the new key or drops the field entirely, so use the current names shown here.\nAfter calling, LLM can directly access these important molecular properties for subsequent chemical/pharmacological reasoning.",
       "property_list": [
         "MolecularWeight",
         "IUPACName",
-        "CanonicalSMILES"
+        "ConnectivitySMILES"
       ]
     },
     "type": "PubChemRESTTool",
