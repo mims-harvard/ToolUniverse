@@ -1300,7 +1300,7 @@
   {
     "type": "FDACountAdditiveReactionsTool",
     "name": "FAERS_count_additive_adverse_reactions",
-    "description": "Aggregate adverse reaction counts across specified medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry, serious, seriousnessdeath) are optional. Use filters sparingly to avoid overly restrictive searches that return no results. Data source: FDA Adverse Event Reporting System (FAERS).",
+    "description": "Aggregate adverse reaction counts across specified medicinal products. Note: 'medicinalproducts' is combined with OR (union) -- counts are reports mentioning ANY listed product, not reports where all of them co-occur, so results for a multi-drug list can look nearly identical to the single most-reported drug's own counts. For co-occurrence/combination-risk analysis (e.g. checking two specific drugs taken together), use FAERS_search_reports_by_drug_combination (AND) or FAERS_calculate_disproportionality instead. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry, serious, seriousnessdeath) are optional. Use filters sparingly to avoid overly restrictive searches that return no results. Data source: FDA Adverse Event Reporting System (FAERS).",
     "parameter": {
       "type": "object",
       "properties": {

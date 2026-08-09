@@ -50,6 +50,18 @@ class EnsemblRESTTool(BaseTool):
     def run(self, arguments: dict):
         # 0. Apply schema defaults and parameter aliases for path params
         schema_props = self.tool_config.get("parameter", {}).get("properties", {})
+        # Fix-R15C-4: remember which params the caller actually supplied
+        # (before default-injection below) so the stable-ID branch can tell
+        # "user explicitly asked for homo_sapiens" apart from "species was
+        # silently defaulted to homo_sapiens because it's a path placeholder
+        # for the /lookup/symbol/{species}/{gene_id} route". Ensembl stable
+        # IDs (ENSG.../ENSBTAG.../etc.) are already species-specific, so
+        # /lookup/id/{gene_id} needs no species filter -- but forwarding an
+        # auto-defaulted species=homo_sapiens there makes Ensembl reject any
+        # non-human stable ID with a misleading "ID not found" (confirmed
+        # live for bovine ENSBTAG00000026356: works with no species param or
+        # species=cow, HTTP 400 "not found" with species=homo_sapiens).
+        explicitly_provided = set(arguments.keys())
         arguments = dict(arguments)
         # Inject schema defaults for any missing path parameters
         for path_key in re.findall(r"\{([^{}]+)\}", self.endpoint_template):
@@ -97,7 +109,10 @@ class EnsemblRESTTool(BaseTool):
                     url = f"{ENSEMBL_BASE_URL}/lookup/id/{gene_id}"
                     # Don't use expand=1 by default to avoid timeouts
                     query_params = {}
-                    if "species" in arguments:
+                    # Only forward species if the caller explicitly passed
+                    # it -- not when it was auto-defaulted for the (unused,
+                    # for stable IDs) /lookup/symbol/{species}/... route.
+                    if "species" in arguments and "species" in explicitly_provided:
                         query_params["species"] = arguments["species"]
                     if "expand" in arguments:
                         query_params["expand"] = arguments["expand"]

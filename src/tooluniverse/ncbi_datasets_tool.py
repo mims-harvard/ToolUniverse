@@ -288,15 +288,41 @@ class NCBIDatasetsTool(BaseTool):
 
         reports = result.get("reports", [])
         if not reports:
+            metadata = {
+                "total_results": 0,
+                "query_symbol": symbol,
+                "query_taxon": taxon,
+                "source": "NCBI Datasets API v2",
+            }
+            # Fix-R15C-1: NCBI returns HTTP 200 (not an error) for some
+            # unresolvable taxon tokens, but includes a "messages" warning
+            # explaining why -- e.g. taxon="cattle" gets
+            # gene_warning_code=ABOVE_SPECIES_TAXON ("belongs to a taxonomy
+            # level above species") instead of the "reports" the caller
+            # expects. Previously this warning was discarded, so a plain
+            # empty-success response was indistinguishable from "this gene
+            # genuinely has no match for this taxon" (confirmed: taxon="cow"
+            # succeeds with data, taxon="bovine" errors outright, and
+            # taxon="cattle" -- silently -- returns neither). Surface the
+            # warning so the caller can tell "bad taxon token" from "real
+            # zero-match".
+            api_messages = result.get("messages") or []
+            warnings = [
+                m["warning"]["message"]
+                for m in api_messages
+                if isinstance(m, dict) and m.get("warning", {}).get("message")
+            ]
+            if warnings:
+                metadata["warning"] = (
+                    " ".join(warnings)
+                    + " Try a more specific taxon (e.g. a species common name "
+                    "like 'cow' or 'pig' rather than a broader group name, "
+                    "or an NCBI Taxonomy ID)."
+                )
             return {
                 "status": "success",
                 "data": [],
-                "metadata": {
-                    "total_results": 0,
-                    "query_symbol": symbol,
-                    "query_taxon": taxon,
-                    "source": "NCBI Datasets API v2",
-                },
+                "metadata": metadata,
             }
 
         genes = []

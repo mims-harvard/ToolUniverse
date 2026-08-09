@@ -112,21 +112,33 @@ class FAERSAnalyticsTool(BaseTool):
                 }
 
             # Get counts for 2x2 table
+            fetch_errors: list = []
             # a = drug + event
-            a = self._get_faers_count(drug_name, adverse_event)
+            a = self._get_faers_count(drug_name, adverse_event, errors=fetch_errors)
 
             # b = drug + no event (all drug reports - drug+event)
-            b = self._get_faers_count(drug_name, None) - a
+            b = self._get_faers_count(drug_name, None, errors=fetch_errors) - a
 
             # c = no drug + event (all event reports - drug+event)
-            c = self._get_faers_count(None, adverse_event) - a
+            c = self._get_faers_count(None, adverse_event, errors=fetch_errors) - a
 
             # d = no drug + no event (total - a - b - c)
-            total = self._get_faers_total_count()
+            total = self._get_faers_total_count(errors=fetch_errors)
             d = total - a - b - c
 
             # Check for valid counts
             if a <= 0 or b <= 0 or c <= 0 or d <= 0:
+                if fetch_errors:
+                    return {
+                        "status": "error",
+                        "error": (
+                            "Could not compute disproportionality: one or more openFDA "
+                            "requests failed, so counts default to 0 rather than "
+                            "reflecting real data. Underlying error(s): "
+                            + "; ".join(dict.fromkeys(fetch_errors))
+                        ),
+                        "contingency_table": {"a": a, "b": b, "c": c, "d": d},
+                    }
                 return {
                     "status": "error",
                     "error": f"Insufficient data: a={a}, b={b}, c={c}, d={d}. Need all counts > 0 for analysis.",
@@ -567,8 +579,26 @@ class FAERSAnalyticsTool(BaseTool):
 
     # Helper methods for statistical calculations
 
-    def _get_faers_count(self, drug_name: str = None, adverse_event: str = None) -> int:
-        """Get count of FAERS reports matching criteria."""
+    def _get_faers_count(
+        self,
+        drug_name: str = None,
+        adverse_event: str = None,
+        errors: list = None,
+    ) -> int:
+        """Get count of FAERS reports matching criteria.
+
+        Fix-R15B-5: a failed fetch (e.g. openFDA's HTTP 429 rate limit) was
+        silently treated the same as a genuine zero-count result, so
+        `_calculate_disproportionality` reported "Insufficient data: a=0,
+        b=0, c=0, d=0" for well-known drug/event pairs during a rate-limit
+        window -- indistinguishable from "this combination truly has no
+        FAERS reports". Confirmed live: retrying the exact same query after
+        the rate limit cleared returned correct nonzero counts and a real
+        ROR/PRR/IC signal. `errors` (when passed) collects the failure
+        reason so the caller can surface "API request failed" instead of a
+        misleading data-availability conclusion; existing callers that don't
+        pass it keep the prior silent-zero behavior unchanged.
+        """
         try:
             query_parts = []
             if drug_name:
@@ -591,12 +621,14 @@ class FAERSAnalyticsTool(BaseTool):
             data = response.json()
             return data.get("meta", {}).get("results", {}).get("total", 0)
 
-        except Exception:
+        except Exception as e:
+            if errors is not None:
+                errors.append(str(e))
             return 0
 
-    def _get_faers_total_count(self) -> int:
+    def _get_faers_total_count(self, errors: list = None) -> int:
         """Get total number of reports in FAERS database."""
-        return self._get_faers_count(None, None)
+        return self._get_faers_count(None, None, errors=errors)
 
     def _calculate_ror_ci(self, a: int, b: int, c: int, d: int) -> Dict[str, float]:
         """Calculate 95% confidence interval for ROR."""

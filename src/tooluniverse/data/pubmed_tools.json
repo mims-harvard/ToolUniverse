@@ -11,7 +11,7 @@
       "properties": {
         "query": {
           "type": "string",
-          "description": "Search query for PubMed articles. Use keywords, author names, journal names, or MeSH terms. Examples: 'cancer immunotherapy', 'Smith J[Author]', 'Nature[Journal]', 'diabetes[MeSH]'. Use AND/OR/NOT for complex queries."
+          "description": "Search query for PubMed articles. Use keywords, author names, journal names, or MeSH terms. Examples: 'cancer immunotherapy', 'Smith J[Author]', 'Nature[Journal]', 'diabetes[MeSH]'. Use AND/OR/NOT for complex queries. Note: PubMed ANDs every space-separated keyword by default, so a long, highly specific free-text query (5+ concepts) often returns 0 results even when relevant literature exists. Prefer 2-4 key concepts, add explicit OR for synonyms, or try EuropePMC_search_articles for broader relevance-ranked full-text search if this returns 0 results."
         },
         "limit": {
           "type": "integer",

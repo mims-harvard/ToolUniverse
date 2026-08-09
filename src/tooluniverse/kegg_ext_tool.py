@@ -219,6 +219,32 @@ class KEGGExtTool(BaseTool):
                     "error": f"Could not resolve gene symbol '{gene_id}' to a KEGG gene ID for organism '{organism}'. Use KEGG format 'hsa:7157' directly, or verify the gene symbol.",
                 }
             gene_id = resolved
+        else:
+            # Fix-R15C-2: a caller can plausibly pass "org:SYMBOL" (e.g.
+            # "bta:DGAT1") by analogy with the documented "hsa:7157" format,
+            # assuming the part after the colon is a gene identifier of any
+            # kind. KEGG's numeric gene IDs are org-specific and don't match
+            # symbols, so link/pathway silently returns zero rows for a
+            # symbol -- confirmed live: "bta:DGAT1" -> pathway_count 0, while
+            # the equivalent gene_symbol="DGAT1", organism="bta" resolves to
+            # "bta:282609" and returns 4 real pathways. Detect this shape
+            # (non-numeric ID part) and resolve it the same way as the
+            # bare-symbol branch above, instead of returning a silently
+            # empty "no pathways" result that looks like a real negative.
+            org_prefix, _, id_part = gene_id.partition(":")
+            if id_part and not id_part.isdigit():
+                resolved = self._resolve_gene_symbol(id_part, org_prefix)
+                if not resolved:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"'{gene_id}' looks like 'organism:SYMBOL' rather than a KEGG "
+                            f"numeric gene ID, and '{id_part}' could not be resolved to one "
+                            f"for organism '{org_prefix}'. Use KEGG format '{org_prefix}:7157' "
+                            f"directly, or pass gene_symbol='{id_part}', organism='{org_prefix}'."
+                        ),
+                    }
+                gene_id = resolved
 
         # Get pathway links for this gene
         url = f"{KEGG_BASE_URL}/link/pathway/{gene_id}"
