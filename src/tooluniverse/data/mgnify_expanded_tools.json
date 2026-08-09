@@ -229,7 +229,7 @@
   },
   {
     "name": "MGnify_get_study_detail",
-    "description": "Get detailed information about a specific MGnify metagenomics study. Returns study name, abstract, associated BioProject, centre, biomes, and counts of analyses/downloads. Complementary to MGnify_search_studies which lists studies. Example: MGYS00002008 is a Tara Oceans marine metagenomics study.",
+    "description": "Get detailed information about a specific MGnify metagenomics study. Returns study name, abstract, associated BioProject, centre, public/private status, sample count, and biomes. Complementary to MGnify_search_studies which lists studies; use MGnify_list_analyses / MGnify_list_analysis_downloads for exact analyses/downloads counts (this endpoint does not provide them). Example: MGYS00002008 is a Tara Oceans marine metagenomics study.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -281,7 +281,13 @@
                 "type": "string"
               }
             },
-            "analyses_count": {
+            "is_public": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "samples_count": {
               "type": [
                 "integer",
                 "null"
