@@ -40,9 +40,20 @@ class OpenAlexTool(BaseTool):
                 "status": "error",
                 "error": "`search_keywords` (or `query`) parameter is required and must be non-empty.",
             }
-        max_results = arguments.get("max_results", arguments.get("limit", 10))
-        year_from = arguments.get("year_from", None)
-        year_to = arguments.get("year_to", None)
+        # Fix Round 16: the schema has no `additionalProperties: false`, so a
+        # plausible-but-wrong param name (confirmed live: `num_results` and
+        # `start_year`, both natural guesses given other ToolUniverse
+        # literature tools use those exact names) was silently dropped by
+        # jsonschema and the call fell back to defaults/unfiltered results
+        # with no error -- a caller asking for "papers since 2023" got
+        # 2011/2018 papers back with no indication the year filter never
+        # applied. Accept the same common variants already covered for
+        # search_keywords/max_results above.
+        max_results = arguments.get(
+            "max_results", arguments.get("limit", arguments.get("num_results", 10))
+        )
+        year_from = arguments.get("year_from", arguments.get("start_year", None))
+        year_to = arguments.get("year_to", arguments.get("end_year", None))
         open_access = arguments.get("open_access", None)
         require_has_fulltext = bool(arguments.get("require_has_fulltext", False))
         fulltext_terms = arguments.get("fulltext_terms")

@@ -94,7 +94,21 @@ class DisGeNETTool(BaseTool):
         response.raise_for_status()
         body = response.json()
         payload = body.get("payload") or []
-        warnings = body.get("warnings") or []
+        # Fix Round 16: DisGeNET's API echoes one boilerplate "is empty /
+        # unspecified" warning for every *optional* filter param the caller
+        # didn't set -- confirmed live a plain gene lookup with no filters
+        # returned 30+ such lines (one per unset param), drowning out the
+        # one warning that's actually actionable (e.g. the academic-role
+        # source restriction). These add no signal since they just restate
+        # "you didn't set this optional filter", so drop them and keep only
+        # warnings that don't match that boilerplate shape.
+        raw_warnings = body.get("warnings") or []
+        warnings = [
+            w
+            for w in raw_warnings
+            if "is empty / unspecified" not in w
+            and "is unspecified or not a" not in w
+        ]
         return payload, warnings
 
     @staticmethod
