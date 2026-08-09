@@ -27,7 +27,14 @@ class BaseMCPClient:
     Provides session management, request handling, and async cleanup patterns.
     """
 
-    def __init__(self, server_url: str, transport: str = "http", timeout: int = 30):
+    def __init__(
+        self,
+        server_url: str,
+        transport: str = "http",
+        timeout: int = 30,
+        headers: Optional[Dict[str, str]] = None,
+        auth_env: str = "",
+    ):
         self.server_url = os.path.expandvars(server_url)
         # Normalize transport for backward compatibility: treat 'stdio' as HTTP
         normalized_transport = (
@@ -38,6 +45,21 @@ class BaseMCPClient:
         self.transport = normalized_transport
         self.timeout = timeout
         self.session = None
+        self.header_templates = dict(headers or {})
+        self.auth_env = auth_env
+        self.headers = {}
+        for name, value in self.header_templates.items():
+            expanded_name = str(name).strip()
+            expanded_value = os.path.expandvars(str(value)).strip()
+            if not expanded_name or "\r" in expanded_name or "\n" in expanded_name:
+                raise ValueError("Invalid MCP header name")
+            if "\r" in expanded_value or "\n" in expanded_value:
+                raise ValueError("Invalid MCP header value")
+            self.headers[expanded_name] = expanded_value
+        if auth_env:
+            token = os.getenv(auth_env, "").strip()
+            if token:
+                self.headers["Authorization"] = f"Bearer {token}"
 
         # Validate transport (accept 'stdio' via normalization above)
         supported_transports = ["http", "websocket"]
@@ -68,7 +90,9 @@ class BaseMCPClient:
         """Make an MCP JSON-RPC request"""
         if self.transport == "http":
             endpoint = self._get_mcp_endpoint("")
-            async with streamablehttp_client(endpoint, timeout=self.timeout) as (
+            async with streamablehttp_client(
+                endpoint, headers=self.headers or None, timeout=self.timeout
+            ) as (
                 read_stream,
                 write_stream,
                 _,
@@ -157,6 +181,8 @@ class MCPClientTool(BaseTool, BaseMCPClient):
             server_url=tool_config.get("server_url", "http://localhost:8000"),
             transport=tool_config.get("transport", "http"),
             timeout=tool_config.get("timeout", 600),
+            headers=tool_config.get("headers"),
+            auth_env=tool_config.get("auth_env", ""),
         )
 
         # Debug logging for transport configuration
@@ -492,6 +518,8 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             server_url=tool_config.get("server_url", "http://localhost:8000"),
             transport=tool_config.get("transport", "http"),
             timeout=tool_config.get("timeout", 5),
+            headers=tool_config.get("headers"),
+            auth_env=tool_config.get("auth_env", ""),
         )
 
         self.auto_register = tool_config.get("auto_register", True)
@@ -566,6 +594,11 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                     "inputSchema", {"type": "object", "properties": {}, "required": []}
                 ),
             }
+
+            if self.header_templates:
+                config["headers"] = dict(self.header_templates)
+            if self.auth_env:
+                config["auth_env"] = self.auth_env
 
             configs.append(config)
 

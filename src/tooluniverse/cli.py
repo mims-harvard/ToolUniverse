@@ -56,6 +56,21 @@ def _non_neg_int(value: str) -> int:
     return n
 
 
+def _bounded_int(minimum: int, maximum: int):
+    def parse(value: str) -> int:
+        try:
+            number = int(value)
+        except (TypeError, ValueError) as exc:
+            raise argparse.ArgumentTypeError(f"invalid int value: '{value}'") from exc
+        if not minimum <= number <= maximum:
+            raise argparse.ArgumentTypeError(
+                f"value must be between {minimum} and {maximum}, got {number}"
+            )
+        return number
+
+    return parse
+
+
 def _get_tu():
     """Lazy-initialize a ToolUniverse instance."""
     # Reconfigure logger to stderr and suppress INFO messages in CLI mode.
@@ -1668,11 +1683,311 @@ def cmd_build(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
-def cmd_serve(_args: argparse.Namespace) -> None:
-    """Start the MCP stdio server — identical to running `tooluniverse`."""
-    from tooluniverse.smcp_server import run_default_stdio_server
+def _remote_tool_install_hint() -> str:
+    return (
+        'pip install "tuplatform-connect @ '
+        "git+https://github.com/tooluniverse/tuplatform.git"
+        "@afbc47ff91504273cd18d11ccdae121847d1724f"
+        '#subdirectory=sdk/tuplatform-connect"'
+    )
 
-    run_default_stdio_server()
+
+def _resolve_private_connection_key() -> str:
+    import getpass
+
+    key = os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip()
+    if key:
+        return key
+    if not sys.stdin.isatty():
+        return ""
+    try:
+        return getpass.getpass("Private connection key: ").strip()
+    except (EOFError, KeyboardInterrupt):
+        return ""
+
+
+def _start_remote_tool_server(args: argparse.Namespace) -> None:
+    import hashlib
+    import importlib.util
+    import socket
+    import threading
+    import time
+    from pathlib import Path
+
+    from tooluniverse.mcp_tool_registry import (
+        _mcp_tool_registry,
+        _start_server_for_port,
+        collect_tools_for_serve,
+    )
+
+    for raw_path in args.files:
+        path = Path(raw_path).expanduser().resolve()
+        if not path.is_file() or path.suffix != ".py":
+            raise ValueError(f"remote tool file not found or not Python: {raw_path}")
+        module_name = (
+            "_tooluniverse_remote_"
+            + hashlib.sha256(str(path).encode("utf-8")).hexdigest()[:16]
+        )
+        spec = importlib.util.spec_from_file_location(module_name, path)
+        if spec is None or spec.loader is None:
+            raise ValueError(f"could not import remote tool file: {raw_path}")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        try:
+            spec.loader.exec_module(module)
+        except Exception:
+            sys.modules.pop(module_name, None)
+            raise
+
+    server_name = args.name or Path(args.files[0]).stem.replace("_", " ").title()
+    selected = collect_tools_for_serve(
+        args.port,
+        host=args.host,
+        server_name=server_name,
+        max_workers=args.workers,
+    )
+    if not selected or not _mcp_tool_registry:
+        raise ValueError(
+            "no remote tools found; decorate a function with @remote_tool or "
+            "a class with @register_remote_tool"
+        )
+
+    local_host = "127.0.0.1" if args.host in {"0.0.0.0", "::"} else args.host
+    local_url = f"http://{local_host}:{args.port}/mcp"
+    print(f"Remote tool server: {server_name}")
+    print(f"Tools: {', '.join(item['name'] for item in selected)}")
+    print(f"Local MCP: {local_url}")
+
+    if not args.share:
+        _start_server_for_port(args.port)
+        return
+
+    try:
+        from tuplatform_connect.relay import RelayAgent, RelayError
+    except ImportError as exc:
+        raise RuntimeError(
+            "--share requires the maintained tuplatform-connect relay. Install it once with:\n  "
+            + _remote_tool_install_hint()
+        ) from exc
+
+    api_key = _resolve_private_connection_key()
+    if not api_key:
+        raise RuntimeError(
+            "--share requires a full-access private connection key. Set "
+            "TOOLUNIVERSE_SERVICE_KEY or run interactively to enter it securely."
+        )
+
+    server_errors = []
+
+    def run_server():
+        try:
+            _start_server_for_port(args.port)
+        except BaseException as exc:  # surface failures from the daemon thread
+            server_errors.append(exc)
+
+    thread = threading.Thread(
+        target=run_server, name="tooluniverse-remote-mcp", daemon=True
+    )
+    thread.start()
+    deadline = time.monotonic() + 20
+    while time.monotonic() < deadline:
+        if server_errors:
+            raise RuntimeError(f"local MCP server failed: {server_errors[0]}")
+        try:
+            with socket.create_connection((local_host, args.port), timeout=0.5):
+                break
+        except OSError:
+            time.sleep(0.1)
+    else:
+        raise RuntimeError("local MCP server did not start within 20 seconds")
+
+    print("Sharing through ToolUniverse Platform; press Ctrl-C to stop.")
+    print(
+        "Manage the computer and publish one selected tool at: "
+        "https://connect.aiscientist.tools/remote-servers"
+    )
+    try:
+        RelayAgent(
+            args.service,
+            api_key,
+            local_url,
+            server_name,
+            workers=args.workers,
+        ).run_forever()
+    except RelayError as exc:
+        raise RuntimeError(str(exc)) from exc
+
+
+def _forward_remote_tool_server(args: argparse.Namespace) -> None:
+    try:
+        from tuplatform_connect.relay import RelayAgent, RelayError
+    except ImportError as exc:
+        raise RuntimeError(
+            "--forward requires tuplatform-connect. Install it once with:\n  "
+            + _remote_tool_install_hint()
+        ) from exc
+    key = _resolve_private_connection_key()
+    if not key:
+        raise RuntimeError("a full-access private connection key is required")
+    try:
+        RelayAgent(
+            args.service,
+            key,
+            args.forward,
+            args.name or "Remote MCP Server",
+            workers=args.workers,
+        ).run_forever()
+    except RelayError as exc:
+        raise RuntimeError(str(exc)) from exc
+
+
+def cmd_serve(args: argparse.Namespace) -> None:
+    """Start the normal MCP server or expose provider-owned remote tools."""
+    try:
+        forward = getattr(args, "forward", None)
+        files = getattr(args, "files", [])
+        share = getattr(args, "share", False)
+        if forward and files:
+            raise ValueError("use either TOOL.py files or --forward, not both")
+        if share and not files and not forward:
+            raise ValueError("--share requires TOOL.py files or --forward URL")
+        if forward:
+            _forward_remote_tool_server(args)
+        elif files:
+            _start_remote_tool_server(args)
+        else:
+            from tooluniverse.smcp_server import run_default_stdio_server
+
+            run_default_stdio_server()
+    except (OSError, RuntimeError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+
+
+def _platform_request(
+    base_url: str,
+    path: str,
+    *,
+    api_key: str = "",
+    payload: dict | None = None,
+) -> dict:
+    import urllib.error
+    import urllib.request
+
+    from tooluniverse.platform_remote_tool import _NoRedirect, _validated_base_url
+
+    body = None
+    headers = {"Accept": "application/json", "User-Agent": "tooluniverse-cli/1"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+    if payload is not None:
+        body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    request = urllib.request.Request(
+        _validated_base_url(base_url) + path,
+        data=body,
+        method="POST" if payload is not None else "GET",
+        headers=headers,
+    )
+    try:
+        with urllib.request.build_opener(_NoRedirect).open(
+            request, timeout=15
+        ) as response:
+            raw = response.read((16 << 20) + 1)
+        if len(raw) > 16 << 20:
+            raise ValueError("platform response exceeded 16 MiB")
+        result = json.loads(raw.decode("utf-8"))
+        if not isinstance(result, dict):
+            raise ValueError("platform returned an unexpected response")
+        return result
+    except urllib.error.HTTPError as exc:
+        detail = f"platform returned HTTP {exc.code}"
+        try:
+            parsed = json.loads(exc.read(1 << 20).decode("utf-8"))
+            detail = str(parsed.get("detail") or detail)
+        except Exception:
+            pass
+        raise RuntimeError(detail) from exc
+
+
+def cmd_connect(args: argparse.Namespace) -> None:
+    """Persist one explicit MCP server, shared server, or marketplace tool."""
+    from tooluniverse.remote_connections import (
+        extract_resource_id,
+        mcp_connection,
+        platform_connection,
+        save_connection,
+    )
+
+    target = args.target.strip()
+    base_url = args.service.rstrip("/")
+    try:
+        if target.upper().startswith("TU-SHARE-"):
+            env_name = (
+                "TU_API_KEY" if os.getenv("TU_API_KEY") else "TOOLUNIVERSE_SERVICE_KEY"
+            )
+            api_key = os.getenv(env_name, "").strip()
+            if not api_key:
+                raise RuntimeError(
+                    "joining a share code requires TU_API_KEY or TOOLUNIVERSE_SERVICE_KEY"
+                )
+            joined = _platform_request(
+                base_url,
+                "/remote-servers/join",
+                api_key=api_key,
+                payload={"share_code": target},
+            )
+            server_id = joined.get("server_id")
+            if not server_id:
+                raise RuntimeError("platform did not return the joined server")
+            server = _platform_request(
+                base_url, f"/remote-servers/{server_id}", api_key=api_key
+            )
+            connection = mcp_connection(
+                server["relay_url"], args.name or server.get("name", "remote"), env_name
+            )
+        else:
+            resource_id = extract_resource_id(target)
+            looks_like_marketplace = args.platform or resource_id == target.lower()
+            if resource_id and (
+                looks_like_marketplace
+                or "connect.aiscientist.tools" in target
+                or "/discover/" in target
+            ):
+                metadata = _platform_request(
+                    base_url, f"/expert-sessions/public/{resource_id}"
+                )
+                if metadata.get("tool_type") not in {"remote-mcp", "hosted-sdk"}:
+                    raise ValueError("only automated published tools can be connected")
+                raw_schema = metadata.get("input_schema") or "{}"
+                schema = (
+                    json.loads(raw_schema)
+                    if isinstance(raw_schema, str)
+                    else raw_schema
+                )
+                if not isinstance(schema, dict):
+                    schema = {"type": "object"}
+                connection = platform_connection(
+                    resource_id,
+                    name=args.name or metadata.get("name", "Remote tool"),
+                    description=metadata.get("description", ""),
+                    input_schema=schema,
+                    base_url=base_url,
+                )
+            else:
+                connection = mcp_connection(target, args.name, args.auth_env)
+        changed = save_connection(connection)
+    except (KeyError, OSError, RuntimeError, ValueError, json.JSONDecodeError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+
+    tool_hint = (
+        connection.get("tool_name") or connection.get("prefix", "remote_") + "<tool>"
+    )
+    action = "Connected" if changed else "Already connected"
+    print(f"{action}: {connection['name']}")
+    print(f"Tool name: {tool_hint}")
+    print("It will load on the next ToolUniverse.load_tools() or `tu serve` start.")
 
 
 # ── argument parser ────────────────────────────────────────────────────────────
@@ -2003,9 +2318,77 @@ def main() -> None:
     # ── serve ─────────────────────────────────────────────────────────────────
     p = sub.add_parser(
         "serve",
-        help="Start the MCP stdio server (identical to `tooluniverse`)",
+        help="Start ToolUniverse MCP or launch/share provider-owned remote tools",
+    )
+    p.add_argument(
+        "files",
+        nargs="*",
+        metavar="TOOL.py",
+        help="Python files containing @remote_tool or @register_remote_tool",
+    )
+    p.add_argument(
+        "--share",
+        action="store_true",
+        help="share the remote tool server through ToolUniverse Platform",
+    )
+    p.add_argument(
+        "--forward",
+        metavar="URL",
+        help="share an already-running Streamable HTTP MCP server",
+    )
+    p.add_argument("--name", help="server name shown to users")
+    p.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="local bind host for file mode (default: 127.0.0.1)",
+    )
+    p.add_argument(
+        "--port",
+        type=_bounded_int(1, 65535),
+        default=8080,
+        help="local MCP port for file mode (default: 8080)",
+    )
+    p.add_argument(
+        "--workers",
+        type=_bounded_int(1, 32),
+        default=8,
+        help="maximum concurrent local requests (default: 8)",
+    )
+    p.add_argument(
+        "--service",
+        default=os.getenv(
+            "TOOLUNIVERSE_SERVICE_URL",
+            os.getenv("TU_BASE_URL", "https://tooluniverse-backend.onrender.com"),
+        ),
+        help="ToolUniverse Platform API base URL",
     )
     p.set_defaults(func=cmd_serve)
+
+    # ── connect ───────────────────────────────────────────────────────────────
+    p = sub.add_parser(
+        "connect",
+        help="connect one explicit MCP server, shared server, or published tool",
+    )
+    p.add_argument(
+        "target", help="MCP URL, TU-SHARE code, marketplace URL, or tool UUID"
+    )
+    p.add_argument("--name", help="local display name and tool prefix")
+    p.add_argument(
+        "--auth-env",
+        default="",
+        help="environment variable containing a direct MCP server bearer token",
+    )
+    p.add_argument(
+        "--platform",
+        action="store_true",
+        help="treat a UUID-containing target as a published platform tool",
+    )
+    p.add_argument(
+        "--service",
+        default=os.getenv("TU_BASE_URL", "https://tooluniverse-backend.onrender.com"),
+        help="ToolUniverse Platform API base URL",
+    )
+    p.set_defaults(func=cmd_connect)
 
     # Quiet is now the default. --verbose/-v opts back in to warnings.
     # We check argv directly because argparse hasn't run yet.

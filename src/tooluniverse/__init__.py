@@ -63,6 +63,7 @@ from .tool_registry import (
     get_tool_class_lazy,
     auto_discover_tools,
 )
+from .mcp_tool_registry import remote_tool, register_remote_tool
 
 _TRUTHY_VALUES = {"true", "1", "yes"}
 
@@ -206,6 +207,8 @@ __all__ = [
     "ToolUniverse",
     "BaseTool",
     "register_tool",
+    "remote_tool",
+    "register_remote_tool",
     "get_tool_registry",
     "SMCP",
     "create_smcp_server",

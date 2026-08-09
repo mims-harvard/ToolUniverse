@@ -432,6 +432,7 @@ STATIC_LAZY_REGISTRY = {
     "ListToolsTool": "tool_discovery_tools",
     "MCPAutoLoaderTool": "mcp_client_tool",
     "MCPClientTool": "mcp_client_tool",
+    "PlatformRemoteTool": "platform_remote_tool",
     "MCPProxyTool": "mcp_client_tool",
     "MCPServerDiscovery": "mcp_client_tool",
     "MEMETool": "meme_tool",

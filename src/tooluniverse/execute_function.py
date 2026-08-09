@@ -1142,6 +1142,11 @@ class ToolUniverse:
         if json_files:
             self._load_user_json_configs(json_files)
 
+        # Connections are explicit, local, and secret-free. Load them after
+        # user configs so their generated proxy names are deterministic and
+        # can be filtered by the normal include/exclude options below.
+        self._load_connected_remote_tools()
+
         # Filter and deduplicate tools
         self._filter_and_deduplicate_tools(
             exclude_tools_set,
@@ -1155,6 +1160,27 @@ class ToolUniverse:
         # Process MCP Auto Loader tools
         self.logger.debug("Checking for MCP Auto Loader tools...")
         self._process_mcp_auto_loaders()
+
+    def _load_connected_remote_tools(self):
+        """Load tools selected with ``tu connect`` without contacting a registry."""
+        try:
+            from .remote_connections import connection_configs
+
+            configs = connection_configs()
+        except Exception as exc:
+            self.logger.warning(f"Could not read remote tool connections: {exc}")
+            return
+
+        existing = {
+            item.get("name")
+            for item in self.all_tools
+            if isinstance(item, dict) and item.get("name")
+        }
+        for config in configs:
+            if config.get("name") in existing:
+                continue
+            self.all_tools.append(config)
+            existing.add(config.get("name"))
 
     def _load_tool_names_from_file(self, file_path):
         """
