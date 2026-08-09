@@ -80,6 +80,22 @@ class DisGeNETTool(BaseTool):
             return d
         return None
 
+    @staticmethod
+    def _cui_format_error(disease: str) -> Dict[str, Any]:
+        """Feature-14C-01: shared by every '{disease}' is not a UMLS CUI'
+        error path. 'C0006142' is a fixed format example (breast cancer),
+        never a resolution of the caller's own input -- state that
+        explicitly so it can't be mistaken for a dynamically-resolved CUI."""
+        return {
+            "status": "error",
+            "error": (
+                f"'{disease}' is not a UMLS CUI. Resolve '{disease}' to its "
+                f"own CUI via umls_search_concepts -- 'C0006142' (breast "
+                f"cancer) is only a format example and unrelated to "
+                f"'{disease}'."
+            ),
+        }
+
     def _query_summary(self, kind: str, query: Dict[str, Any]):
         """Call /{gda,vda}/summary with query params. Returns (payload, warnings).
         Raises requests exceptions on HTTP error (handled by callers)."""
@@ -204,10 +220,7 @@ class DisGeNETTool(BaseTool):
         if disease:
             code = self._normalize_disease(disease)
             if code is None:
-                return {
-                    "status": "error",
-                    "error": f"'{disease}' is not a UMLS CUI. Resolve the disease name to a CUI first (e.g. umls_search_concepts), then pass disease='C0152200'.",
-                }
+                return self._cui_format_error(disease)
             query["disease"] = code
         if arguments.get("source"):
             query["source"] = arguments["source"]
@@ -243,13 +256,13 @@ class DisGeNETTool(BaseTool):
         if not disease:
             return {
                 "status": "error",
-                "error": "Missing required parameter: disease (UMLS CUI, e.g. C0152200).",
+                "error": "Missing required parameter: disease (UMLS CUI, e.g. 'C0006142' for breast cancer -- an example format, not a default value).",
             }
         code = self._normalize_disease(disease)
         if code is None:
             return {
                 "status": "error",
-                "error": f"'{disease}' is not a UMLS CUI. Resolve the disease name to a CUI first (e.g. umls_search_concepts), then pass disease='C0152200'.",
+                "error": f"'{disease}' is not a UMLS CUI. Resolve '{disease}' to its own CUI via umls_search_concepts -- 'C0006142' (breast cancer) is only a format example and unrelated to '{disease}'.",
             }
 
         query: Dict[str, Any] = {"disease": code}

@@ -461,7 +461,7 @@
                 "chemblId"
             ]
         },
-        "query_schema": "\n  query drugMechanismsOfAction($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      mechanismsOfAction {\n        rows {\n          mechanismOfAction\n          actionType\n         targetName\n          targets {\n            id\n            approvedSymbol\n          }\n        }\n      }\n    }\n  }\n  ",
+        "query_schema": "\n  query drugMechanismsOfAction($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      mechanismsOfAction {\n        rows {\n          mechanismOfAction\n          actionType\n         targetName\n          targets {\n            id\n            approvedSymbol\n          }\n          references {\n            source\n            urls\n          }\n        }\n      }\n    }\n  }\n  ",
         "label": [
             "Drug",
             "MechanismsOfAction",
@@ -519,6 +519,23 @@
                                                                 },
                                                                 "approvedSymbol": {
                                                                     "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "references": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "source": {
+                                                                    "type": "string"
+                                                                },
+                                                                "urls": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
                                                                 }
                                                             }
                                                         }

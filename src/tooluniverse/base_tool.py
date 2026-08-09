@@ -233,6 +233,34 @@ class BaseTool:
         )
         return norm_to_key[match[0]] if match else None
 
+    @classmethod
+    def _best_property_match(
+        cls, supplied_key: str, unset_props: list
+    ) -> Optional[str]:
+        """The inverse of ``_find_misspelled_key``: given one supplied key
+        that isn't a schema property, find which *unset* property it was
+        probably meant to be. Used when there are few unknown keys but many
+        optional schema properties (a filter-heavy search endpoint), so the
+        fuzzy match runs once per supplied key instead of once per schema
+        property."""
+        if not unset_props:
+            return None
+        target = supplied_key.lower()
+        for prop in unset_props:
+            if prop.lower() == target:
+                return prop
+        target_norm = cls._normalize_key(supplied_key)
+        for prop in unset_props:
+            if cls._normalize_key(prop) == target_norm:
+                return prop
+        import difflib
+
+        norm_to_prop = {cls._normalize_key(p): p for p in unset_props}
+        match = difflib.get_close_matches(
+            target_norm, list(norm_to_prop), n=1, cutoff=0.8
+        )
+        return norm_to_prop[match[0]] if match else None
+
     def validate_parameters(self, arguments: Dict[str, Any]) -> Optional[ToolError]:
         """
         Validate parameters against tool schema.
@@ -268,6 +296,71 @@ class BaseTool:
             }
 
             jsonschema.validate(filtered_arguments, schema)
+
+            # Feature-14A-01 / Feature-14B-01: jsonschema only rejects an
+            # unknown key when it causes a *required* property to end up
+            # missing. A tool whose schema has no required properties (a
+            # common "all filters optional" search endpoint) silently drops
+            # a misnamed parameter and falls back to its unfiltered default
+            # result -- which still looks like a relevant "success"
+            # response. Confirmed live two ways:
+            #  - ChEMBL_search_drugs({"drug_name": "baricitinib"}) returned
+            #    status=success with 20 unrelated drugs (its default page)
+            #    because the schema's only search parameter is "query", not
+            #    "drug_name" -- every supplied key was unrecognized.
+            #  - OpenTargets_get_evidence_by_datasource({"efoId": ...,
+            #    "ensemblId": ..., "datasourceId": "bogus"}) silently
+            #    ignored the singular "datasourceId" (real param is plural
+            #    "datasourceIds") and returned unfiltered evidence rows,
+            #    even though efoId/ensemblId were valid and recognized.
+            # Two checks, in order of confidence:
+            #  1. A near-miss of an *unset* schema property (same fuzzy
+            #     logic as the required-property "did you mean?" hint below)
+            #     is flagged regardless of what else was supplied -- it's a
+            #     typo, not intentional extra context.
+            #  2. If nothing was recognized at all, the whole parameter set
+            #     is almost certainly wrong even without a fuzzy near-miss.
+            # A caller mixing one valid key with an unrelated extra key
+            # (no near-miss, not a total mismatch) is left alone -- lower
+            # risk of being a genuine mistake, and flagging it risks
+            # rejecting legitimate pass-through/forward-compatible callers.
+            properties = schema.get("properties", {})
+            if properties and filtered_arguments:
+                unknown = self._unknown_keys(filtered_arguments, properties)
+                if unknown:
+                    unset_props = [p for p in properties if p not in filtered_arguments]
+                    # Match each *unknown supplied key* (typically 1-2) against
+                    # the unset schema properties (can be 30+ for a
+                    # filter-heavy endpoint), rather than the reverse -- same
+                    # result, but O(unknown) fuzzy-match calls instead of
+                    # O(unset schema properties).
+                    hints = [
+                        (key, match)
+                        for key in unknown
+                        if (match := self._best_property_match(key, unset_props))
+                        is not None
+                    ]
+                    if hints:
+                        hint_text = "; ".join(
+                            f"'{k}' — did you mean '{p}'?" for k, p in hints
+                        )
+                        return ToolValidationError(
+                            f"Unrecognized parameter(s): {hint_text}",
+                            details={
+                                "unknown_parameters": unknown,
+                                "valid_parameters": sorted(properties),
+                            },
+                        )
+                    if len(unknown) == len(filtered_arguments):
+                        return ToolValidationError(
+                            f"Unrecognized parameter(s): "
+                            f"{', '.join(repr(k) for k in unknown)}. "
+                            f"This tool accepts: {', '.join(sorted(properties))}.",
+                            details={
+                                "unknown_parameters": unknown,
+                                "valid_parameters": sorted(properties),
+                            },
+                        )
             return None
         except jsonschema.ValidationError as e:
             # Create a more agent-friendly error message
@@ -320,6 +413,49 @@ class BaseTool:
                                 f" (unrecognized parameter(s): "
                                 f"{', '.join(repr(k) for k in unknown)})"
                             )
+
+            # Feature-14B-02: a "oneOf: [{required: [a]}, {required: [b]}, ...]"
+            # schema (pick exactly one of several alternative search
+            # parameters) produces a bare, unhelpful "is not valid under any
+            # of the given schemas" when none of the alternatives are
+            # present -- unlike a plain "required" failure, e.path is empty
+            # and e.message names no specific property, so the typo-hint
+            # logic above never runs. Confirmed live:
+            # gwas_get_associations_for_trait({"trait": "narcolepsy"}) (the
+            # schema's alternatives are disease_trait/efo_uri/efo_id/
+            # efo_trait, not "trait") gave only "{'trait': 'narcolepsy'} is
+            # not valid under any of the given schemas" with no hint that
+            # "trait" isn't even a real parameter, let alone which
+            # alternative it was probably meant to be. Collect the
+            # alternative-required property names from the oneOf branches
+            # and reuse the same fuzzy "did you mean?" match.
+            if e.validator == "oneOf" and isinstance(filtered_arguments, dict):
+                alt_props = []
+                for branch in e.validator_value or []:
+                    alt_props.extend(branch.get("required", []))
+                for alt_prop in dict.fromkeys(alt_props):  # de-dup, keep order
+                    if alt_prop in filtered_arguments:
+                        continue
+                    wrong_key = self._find_misspelled_key(
+                        alt_prop,
+                        filtered_arguments,
+                        properties=schema.get("properties", {}),
+                    )
+                    if wrong_key is not None:
+                        error_msg += (
+                            f" (you passed '{wrong_key}' — did you mean '{alt_prop}'?)"
+                        )
+                        break
+                else:
+                    unknown = self._unknown_keys(
+                        filtered_arguments, schema.get("properties", {})
+                    )
+                    if unknown:
+                        error_msg += (
+                            f" (unrecognized parameter(s): "
+                            f"{', '.join(repr(k) for k in unknown)}; "
+                            f"provide one of: {', '.join(alt_props)})"
+                        )
 
             return ToolValidationError(
                 error_msg,

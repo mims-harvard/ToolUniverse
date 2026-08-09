@@ -67,6 +67,39 @@ class MonarchTool(RESTfulTool):
         for key in query_schema_runtime:
             if key in arguments:
                 query_schema_runtime[key] = arguments[key]
+
+        # Feature-14C-03: the /association endpoint's "subject"/"object"
+        # filters are CURIEs (e.g. "HGNC:11998"), never free-text gene/
+        # disease names -- but Monarch's API doesn't reject a bare symbol
+        # like "IRF6", it just matches nothing and returns an empty,
+        # status:success "total": 0 page that looks identical to a real
+        # "no associations for this gene" result. Confirmed live:
+        # Monarch_get_gene_diseases({"subject": "IRF6"}) silently returned
+        # total=0, while the correct CURIE HGNC:6121 returns 2 real
+        # associations. Only checked for params whose own schema
+        # description says "CURIE" (e.g. Monarch_get_gene_diseases,
+        # Monarch_get_gene_phenotypes) so tools where subject/object mean
+        # something else (e.g. free-text search) are unaffected.
+        properties = self.tool_config.get("parameter", {}).get("properties", {})
+        for curie_param in ("subject", "object"):
+            value = query_schema_runtime.get(curie_param)
+            if not isinstance(value, str) or not value.strip():
+                continue
+            description = properties.get(curie_param, {}).get("description", "")
+            if "CURIE" not in description:
+                continue
+            if ":" not in _normalize_curie(value):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"'{value}' is not a CURIE for the '{curie_param}' "
+                        f"parameter. This tool requires a prefixed identifier "
+                        f"like 'HGNC:11998', not a plain gene/disease name. "
+                        f"Use Monarch_search_gene (or the relevant lookup "
+                        f"tool) to resolve '{value}' to its CURIE first."
+                    ),
+                }
+
         if "url_key" in query_schema_runtime:
             url_key_name = query_schema_runtime["url_key"]
             # Normalize an underscore ontology CURIE (HP_0000639) to the colon
