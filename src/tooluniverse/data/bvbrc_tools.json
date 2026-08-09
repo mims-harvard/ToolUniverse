@@ -688,6 +688,20 @@
           "items": {
             "type": "object",
             "properties": {
+              "sample_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable submission accession (e.g. 'IRD_ROC000000507'). Multiple records can share the same sample_accession/sample_identifier when a sample was tested/submitted more than once -- use 'id' to distinguish them."
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unique BV-BRC record identifier for this surveillance entry."
+              },
               "sample_identifier": {
                 "type": [
                   "string",
