@@ -90,7 +90,7 @@
   },
   {
     "name": "GxA_get_experiment_expression",
-    "description": "Get gene expression data from a specific Expression Atlas experiment. Returns expression levels across tissues or conditions, with optional filtering by gene ID. Experiment E-MTAB-2836 contains RNA-seq of 122 human tissues, E-MTAB-2706 covers 675 cancer cell lines. For each gene, expression values are provided across all assayed conditions (tissues, cell types, developmental stages, etc.).",
+    "description": "Get gene expression data from a specific Expression Atlas experiment. Returns expression levels across tissues or conditions. IMPORTANT limitation (verified live): the upstream /experiments/{accession} endpoint always returns only a small, arbitrary default SAMPLE of the experiment's genes (e.g. ~29 of 9,570 for E-MTAB-2836) and silently ignores every gene-filter parameter we can send it -- so the optional `gene_id` filter can only ever match within that tiny sample, never the full gene set. The response discloses `profiles_returned_by_upstream` and `profiles_available_upstream` so callers can see the sample size vs. the true total; when a `gene_id` filter matches nothing, `coverage_warning` explains that this is NOT evidence the gene is unexpressed -- it may simply have fallen outside the sample. For a reliable per-gene answer, use GTEx_get_expression_summary (human tissues) or HPA_get_rna_expression_in_specific_tissues instead. Experiment E-MTAB-2836 contains RNA-seq of 122 human tissues, E-MTAB-2706 covers 675 cancer cell lines.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -100,7 +100,7 @@
         },
         "gene_id": {
           "type": "string",
-          "description": "Optional Ensembl gene ID to filter expression data for a specific gene (e.g., 'ENSG00000141510' for TP53). Leave empty for all genes in the experiment."
+          "description": "Optional Ensembl gene ID to look for within the small default SAMPLE of genes the upstream API returns for this experiment (e.g. 'ENSG00000141510' for TP53). This is NOT a true server-side or full-experiment filter -- the upstream endpoint ignores gene-filter parameters and only ever returns a default sample (commonly ~20-30 genes) of the experiment's full gene set (which can be thousands). A miss does not mean the gene is absent or unexpressed; check `coverage_warning` in the response. Leave empty to see the same default sample unfiltered."
         }
       },
       "required": [
@@ -189,6 +189,21 @@
                   }
                 }
               }
+            },
+            "profiles_returned_by_upstream": {
+              "type": "integer",
+              "description": "Number of gene-profile rows the upstream Expression Atlas endpoint actually returned (its default sample size), before any client-side gene_id filtering."
+            },
+            "profiles_available_upstream": {
+              "type": "integer",
+              "description": "The true total number of genes with profiles available for this experiment upstream (searchResultTotal), which is almost always much larger than profiles_returned_by_upstream and total_gene_profiles."
+            },
+            "coverage_warning": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present (non-null) only when a gene_id filter was supplied and matched nothing in the upstream sample. Explains that the upstream API returns only a partial sample and ignores gene filters, so an empty match is not evidence the gene is unexpressed or absent from the experiment."
             }
           }
         },
