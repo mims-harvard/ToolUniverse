@@ -12,7 +12,7 @@
         },
         "intervention": {
           "type": "string",
-          "description": "Query for intervention/treatment using Essie expression syntax (e.g., 'chemotherapy', 'immunotherapy', 'olaparib', 'combination therapy')."
+          "description": "Query for intervention/treatment using Essie expression syntax (e.g., 'chemotherapy', 'immunotherapy', 'olaparib', 'combination therapy'). Matched against each study's registered intervention names and synonyms (InterventionName/InterventionOtherName), not free text in study summaries, so prefer the generic/INN name: a brand name that no registrant recorded in either field can return zero results. Values that already contain Essie syntax (AREA[...]/AND/OR/NOT/quotes) are passed through unchanged."
         },
         "query_term": {
           "type": "string",
