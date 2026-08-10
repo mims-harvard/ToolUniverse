@@ -17,6 +17,12 @@ logger = logging.getLogger(__name__)
 # issues hundreds of sequential requests and can run for many minutes.
 _DISEASE_TARGET_SCORE_TIME_BUDGET_S = 25.0
 
+# OpenTargets rejects a baselineExpression page size above 3000 with a
+# "pagination error" (probed live against the v4 API: size=3000 succeeds,
+# size=5000 returns "the size must be between 0 and 3000"). Clamp rather than
+# let a caller's optimistic size turn into an opaque API failure.
+_OT_EXPRESSION_MAX_PAGE_SIZE = 3000
+
 
 def validate_query(query_str, schema_str):
     try:
@@ -362,7 +368,57 @@ class OpentargetTool(GraphQLTool):
                     "Try passing efoId directly (e.g. MONDO_0005011 for Crohn disease).",
                 }
 
+        # OpenTargets_get_target_expression_by_ensemblID paginates
+        # baselineExpression. Pin the effective page here (clamped to what the
+        # API accepts) so the post-processing below can report "N of COUNT"
+        # instead of leaving the caller to compare `count` against len(rows).
+        _is_expression_tool = (
+            self.tool_config.get("name")
+            == "OpenTargets_get_target_expression_by_ensemblID"
+        )
+        if _is_expression_tool:
+            _size = arguments.get("size")
+            if not isinstance(_size, int) or isinstance(_size, bool) or _size < 1:
+                _size = self.parameters.get("size", {}).get("default", 250)
+            arguments["size"] = min(int(_size), _OT_EXPRESSION_MAX_PAGE_SIZE)
+            _index = arguments.get("index")
+            if not isinstance(_index, int) or isinstance(_index, bool) or _index < 0:
+                _index = 0
+            arguments["index"] = int(_index)
+
         result = super().run(arguments)
+
+        # Make baselineExpression truncation explicit. The API's default page
+        # size is 25 and the query previously passed no `page` argument at all,
+        # so a target with 1409 rows returned 25 of them with `count: 1409` as
+        # the only (easily missed) hint -- e.g. for NLRP7 (ENSG00000167634) the
+        # 25 delivered rows held exactly one GTEx tissue and omitted testis,
+        # its highest-expressing GTEx tissue. Report returned/truncated/page
+        # so a caller can tell "250 of 1409" from "1409 of 1409" directly.
+        if _is_expression_tool and result.get("status") == "success":
+            _target = result.get("data", {}).get("target") or {}
+            _expr = _target.get("baselineExpression")
+            if isinstance(_expr, dict):
+                _rows = _expr.get("rows")
+                _returned = len(_rows) if isinstance(_rows, list) else 0
+                _count = _expr.get("count")
+                _index = arguments.get("index", 0)
+                _size = arguments.get("size", 250)
+                _expr["returned"] = _returned
+                _expr["page"] = {"index": _index, "size": _size}
+                _fetched_through = _index * _size + _returned
+                _truncated = isinstance(_count, int) and _fetched_through < _count
+                _expr["truncated"] = _truncated
+                if _truncated:
+                    result.setdefault("metadata", {})["note"] = (
+                        f"PARTIAL RESULT: {_returned} of {_count} baseline "
+                        f"expression rows returned (page index={_index}, "
+                        f"size={_size}). Rows from any one datasource (e.g. "
+                        "gtex) are interleaved across the full result, so this "
+                        "page is not a complete view of any single source. "
+                        f"Re-query with size={_OT_EXPRESSION_MAX_PAGE_SIZE} to "
+                        "get every row, or advance `index` to page through."
+                    )
 
         # Add note when IntOGen evidence count is 0 (Feature-122B-002).
         # Fix-R31D-3: this note is IntOGen-specific but was applied to every

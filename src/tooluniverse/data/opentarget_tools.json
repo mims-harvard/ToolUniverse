@@ -5182,20 +5182,33 @@
     },
     {
         "name": "OpenTargets_get_target_expression_by_ensemblID",
-        "description": "Retrieve baseline expression summary statistics for a target across tissues and cell types (GTEx, Tabula Sapiens, and other bulk/single-cell sources) by Ensembl gene ID. Each row gives the data source, tissue (and cell type for single-cell data), value unit, and min/q1/median/q3/max distribution stats plus specificity/distribution scores. Well-studied targets can return hundreds to thousands of rows across sources; filter client-side by datasourceId if needed. Use to profile where a target is normally expressed.",
+        "description": "Retrieve baseline expression summary statistics for a target across tissues and cell types (GTEx, Tabula Sapiens, and other bulk/single-cell sources) by Ensembl gene ID. Each row gives the data source, tissue (and cell type for single-cell data), value unit, and min/q1/median/q3/max distribution stats plus specificity/distribution scores. Results are PAGINATED: a target typically has ~1400 rows across sources and only `size` of them are returned per call (default 250, max 3000 per the API). `baselineExpression.count` is the total, `baselineExpression.returned` is how many came back, and `baselineExpression.truncated` is true when rows remain unfetched; a truncation note is added to metadata. Rows from a given datasource are interleaved throughout the full result, so a partial page is NOT a complete view of any one source — set size=3000 to retrieve every row before filtering client-side by datasourceId. Use to profile where a target is normally expressed.",
         "parameter": {
             "type": "object",
             "properties": {
                 "ensemblId": {
                     "type": "string",
                     "description": "Ensembl gene ID of the target (e.g., 'ENSG00000146648' for EGFR)."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Number of expression rows to return per page (default 250, max 3000). Targets carry ~1400 rows spread across all datasources, so use size=3000 to fetch the complete profile in one call; values above 3000 are clamped because the API rejects them.",
+                    "default": 250,
+                    "minimum": 1,
+                    "maximum": 3000
+                },
+                "index": {
+                    "type": "integer",
+                    "description": "0-based page index (default 0). Use with `size` to walk the remaining rows when `baselineExpression.truncated` is true.",
+                    "default": 0,
+                    "minimum": 0
                 }
             },
             "required": [
                 "ensemblId"
             ]
         },
-        "query_schema": "\n      query targetExpression($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          baselineExpression {\n            count\n            rows {\n              datasourceId\n              datatypeId\n              unit\n              min\n              q1\n              median\n              q3\n              max\n              specificity_score\n              distribution_score\n              tissueBiosample { biosampleId biosampleName }\n              celltypeBiosample { biosampleId biosampleName }\n            }\n          }\n        }\n      }\n    ",
+        "query_schema": "\n      query targetExpression($ensemblId: String!, $index: Int = 0, $size: Int = 250) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          baselineExpression(page: {index: $index, size: $size}) {\n            count\n            rows {\n              datasourceId\n              datatypeId\n              unit\n              min\n              q1\n              median\n              q3\n              max\n              specificity_score\n              distribution_score\n              tissueBiosample { biosampleId biosampleName }\n              celltypeBiosample { biosampleId biosampleName }\n            }\n          }\n        }\n      }\n    ",
         "label": [
             "Target",
             "Expression",
@@ -5228,7 +5241,28 @@
                                     "type": "object",
                                     "properties": {
                                         "count": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "description": "Total expression rows available for this target across all pages."
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of rows actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` plus the rows skipped by `index` is less than `count`, i.e. rows remain unfetched. Re-query with a larger `size` or a higher `index`."
+                                        },
+                                        "page": {
+                                            "type": "object",
+                                            "description": "The pagination actually applied to this request.",
+                                            "properties": {
+                                                "index": {
+                                                    "type": "integer"
+                                                },
+                                                "size": {
+                                                    "type": "integer"
+                                                }
+                                            }
                                         },
                                         "rows": {
                                             "type": "array",
