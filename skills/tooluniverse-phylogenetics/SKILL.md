@@ -6,6 +6,34 @@ disable-model-invocation: true
 
 # Phylogenetics and Sequence Analysis
 
+## Four traps that produce a confidently wrong number
+
+Each of these was observed producing a wrong answer *while the correct guidance
+was already present further down this file*. Check them before you answer.
+
+1. **PhyKIT prints more than one column.** `saturation` gives
+   `slope <TAB> 1-slope`; the saturation value is the **second**. Taking the
+   first returns exactly `1 - answer` (0.3854 where the answer is 0.6146 — they
+   sum to 1.0000, which is the tell). `treeness_over_rcv` gives
+   `ratio <TAB> treeness <TAB> RCV`; the ratio is first.
+
+2. **"Gap percentage" means the fraction of alignment COLUMNS containing at
+   least one gap**, not the fraction of residues that are gaps. On the fungal
+   scogs set the residue definition maxes out at 0.556, so a ">70% gaps" filter
+   selects **nothing** and the question looks unanswerable; by columns, three
+   orthologs qualify (max 0.783).
+
+3. **`treeness_over_rcv` and `rcv` take the UNTRIMMED `.faa.mafft`**, while
+   `saturation` takes the trimmed `.clipkit`. RCV measures variability across
+   columns, so trimming changes it: median 0.2683 untrimmed against 0.3050
+   trimmed, and among >70%-gap genes the maximum is 0.2572 untrimmed against
+   0.4174 trimmed.
+
+4. **Never loop PhyKIT per file.** `phykit_batch_analysis` is parallel and does
+   ~250 trees in about 35 seconds; a shell loop takes ~9 minutes and runs out of
+   turns mid-way, producing no answer at all. It also selects the right column
+   for every function, which removes trap 1 entirely.
+
 ## RULE ZERO — Check for pre-computed results FIRST
 
 Before following any instruction below, scan the data folder for:
@@ -176,8 +204,9 @@ set (249 orthologs, canonical shipped files):
 
 ```
 median treeness/RCV   untrimmed .faa.mafft = 0.2683    trimmed .clipkit = 0.3050
-max treeness/RCV                                                      (>70% gap genes)
-                      untrimmed .faa.mafft = 0.1866    trimmed .clipkit = 0.4205
+max treeness/RCV      (over the 3 genes with >70% gapped columns:
+                       1260807at2759 0.0861, 1567796at2759 0.1866, 939345at2759 0.2572)
+                      untrimmed .faa.mafft = 0.2572    trimmed .clipkit = 0.4174
 ```
 
 Plain `treeness` needs no alignment and is unaffected — it reproduces exactly
