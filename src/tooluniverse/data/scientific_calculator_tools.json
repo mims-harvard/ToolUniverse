@@ -38,8 +38,12 @@
             "integer",
             "null"
           ],
+          "enum": [
+            1,
+            null
+          ],
           "default": 1,
-          "description": "NCBI genetic code number. Currently only 1 (standard) is supported."
+          "description": "NCBI genetic code number. Only 1 (the standard code) is implemented; any other value is rejected with an error rather than translated with the standard table. Alternative code tables (2 = vertebrate mitochondrial, 3 = yeast mitochondrial, 11 = bacterial, etc.) are not supported by this tool."
         }
       },
       "required": [

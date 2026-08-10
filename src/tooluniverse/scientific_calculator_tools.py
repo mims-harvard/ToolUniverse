@@ -384,6 +384,25 @@ class ScientificCalculatorTool(BaseTool):
     # ── Tool 1: DNA translation in reading frames ──
 
     def _translate_reading_frames(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        # Only the standard code (NCBI code 1) is implemented. Reject any other
+        # value at input rather than silently translating with the wrong table.
+        genetic_code = args.get("genetic_code")
+        if genetic_code is not None and genetic_code != 1:
+            return {
+                "status": "error",
+                "error": (
+                    f"genetic_code={genetic_code!r} is not supported. This tool "
+                    "implements only NCBI genetic code 1 (the standard code). "
+                    "Alternative NCBI code tables (e.g. 2 = vertebrate "
+                    "mitochondrial, 3 = yeast mitochondrial, 11 = bacterial) "
+                    "reassign codons such as TGA and AGA, so translating them "
+                    "with the standard table would give a wrong protein. Omit "
+                    "genetic_code or pass 1 to translate with the standard code; "
+                    "for a non-standard code use a translation service that "
+                    "implements the NCBI code tables."
+                ),
+            }
+
         sequence = args.get("sequence", "")
         if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
