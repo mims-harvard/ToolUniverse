@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import math
 import os
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -56,7 +58,70 @@ class PlatformRemoteTool(BaseTool):
         configured_url = tool_config.get("base_url") or os.getenv("TU_BASE_URL")
         self.base_url = _validated_base_url(configured_url or _DEFAULT_BASE_URL)
         self.timeout = float(tool_config.get("timeout", 120))
+        if not math.isfinite(self.timeout) or not 1 <= self.timeout <= 900:
+            raise ValueError(
+                "PlatformRemoteTool timeout must be between 1 and 900 seconds"
+            )
         self._opener = urllib.request.build_opener(_NoRedirect)
+
+    def _request(self, path: str, api_key: str, *, method: str = "GET", payload=None):
+        if not path.startswith("/") or path.startswith("//"):
+            raise ValueError("platform returned an unsafe job status URL")
+        body = None
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Accept": "application/json",
+            "User-Agent": "tooluniverse-platform-remote/1",
+        }
+        if payload is not None:
+            body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+            headers["Content-Type"] = "application/json"
+        request = urllib.request.Request(
+            self.base_url + path, data=body, method=method, headers=headers
+        )
+        with self._opener.open(request, timeout=min(self.timeout, 120)) as response:
+            raw = response.read(_MAX_RESPONSE_BYTES + 1)
+        if len(raw) > _MAX_RESPONSE_BYTES:
+            raise ValueError("platform tool response exceeded 16 MiB")
+        return json.loads(raw.decode("utf-8"))
+
+    def _wait_for_job(self, api_key: str, payload: dict):
+        status_path = str(payload.get("status_url", ""))
+        job_id = str(payload.get("job_id", ""))
+        expected_path = f"/remote-tool-jobs/{job_id}"
+        if not job_id or status_path != expected_path:
+            raise ValueError("platform returned an invalid asynchronous job handle")
+        deadline = time.monotonic() + self.timeout
+        try:
+            while time.monotonic() < deadline:
+                job = self._request(status_path, api_key)
+                status = job.get("status")
+                if status == "succeeded":
+                    result = job.get("result")
+                    if isinstance(result, dict) and "value" in result:
+                        return result["value"]
+                    return result
+                if status in {"failed", "cancelled"}:
+                    return {
+                        "status": "error",
+                        "error": str(job.get("error") or f"remote job {status}"),
+                        "job_id": job_id,
+                    }
+                time.sleep(1)
+        except KeyboardInterrupt:
+            try:
+                self._request(status_path, api_key, method="DELETE")
+            finally:
+                raise
+        try:
+            self._request(status_path, api_key, method="DELETE")
+        except Exception:
+            pass
+        return {
+            "status": "error",
+            "error": "remote job timed out and cancellation was requested",
+            "job_id": job_id,
+        }
 
     @staticmethod
     def _api_key() -> str:
@@ -76,27 +141,15 @@ class PlatformRemoteTool(BaseTool):
                 ),
             }
 
-        body = json.dumps(
-            {"tool": self.resource_id, "arguments": arguments},
-            separators=(",", ":"),
-        ).encode("utf-8")
-        request = urllib.request.Request(
-            self.base_url + "/tools/call",
-            data=body,
-            method="POST",
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "User-Agent": "tooluniverse-platform-remote/1",
-            },
-        )
         try:
-            with self._opener.open(request, timeout=self.timeout) as response:
-                raw = response.read(_MAX_RESPONSE_BYTES + 1)
-            if len(raw) > _MAX_RESPONSE_BYTES:
-                raise ValueError("platform tool response exceeded 16 MiB")
-            payload = json.loads(raw.decode("utf-8"))
+            payload = self._request(
+                "/tools/call",
+                api_key,
+                method="POST",
+                payload={"tool": self.resource_id, "arguments": arguments},
+            )
+            if payload.get("job_id"):
+                return self._wait_for_job(api_key, payload)
             return payload.get("result", payload)
         except urllib.error.HTTPError as exc:
             detail = f"platform returned HTTP {exc.code}"

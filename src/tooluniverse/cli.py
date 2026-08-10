@@ -1687,7 +1687,7 @@ def _remote_tool_install_hint() -> str:
     return (
         'pip install "tuplatform-connect @ '
         "git+https://github.com/tooluniverse/tuplatform.git"
-        "@afbc47ff91504273cd18d11ccdae121847d1724f"
+        "@d79aaec4d1b5d7a886b9373aafc5e0b4bbbe47a9"
         '#subdirectory=sdk/tuplatform-connect"'
     )
 
@@ -1773,7 +1773,7 @@ def _start_remote_tool_server(args: argparse.Namespace) -> None:
     api_key = _resolve_private_connection_key()
     if not api_key:
         raise RuntimeError(
-            "--share requires a full-access private connection key. Set "
+            "--share requires a computer-only connection key. Set "
             "TOOLUNIVERSE_SERVICE_KEY or run interactively to enter it securely."
         )
 
@@ -1828,7 +1828,7 @@ def _forward_remote_tool_server(args: argparse.Namespace) -> None:
         ) from exc
     key = _resolve_private_connection_key()
     if not key:
-        raise RuntimeError("a full-access private connection key is required")
+        raise RuntimeError("a computer-only connection key is required")
     try:
         RelayAgent(
             args.service,
@@ -1839,6 +1839,39 @@ def _forward_remote_tool_server(args: argparse.Namespace) -> None:
         ).run_forever()
     except RelayError as exc:
         raise RuntimeError(str(exc)) from exc
+
+
+def cmd_doctor(args: argparse.Namespace) -> None:
+    """Run local SDK diagnostics or a joined local-MCP/platform preflight."""
+    if not args.forward:
+        from tooluniverse.doctor import main as doctor_main
+
+        raise SystemExit(doctor_main())
+    try:
+        from tuplatform_connect.doctor import run_checks
+    except ImportError as exc:
+        raise SystemExit(
+            "Remote diagnostics require tuplatform-connect. Install it with:\n  "
+            + _remote_tool_install_hint()
+        ) from exc
+    result = run_checks(
+        args.service,
+        _resolve_private_connection_key(),
+        args.forward,
+    )
+    if args.json:
+        print(json.dumps(result, separators=(",", ":")))
+    else:
+        for check in result["checks"]:
+            marker = "✓" if check["ok"] else "✗"
+            print(f"{marker} {check['name']}: {check['detail']}")
+        print(
+            "Ready to share."
+            if result["ok"]
+            else "Fix the failed checks and run this command again."
+        )
+    if not result["ok"]:
+        raise SystemExit(1)
 
 
 def cmd_serve(args: argparse.Namespace) -> None:
@@ -2314,6 +2347,27 @@ def main() -> None:
         ),
     )
     p.set_defaults(func=cmd_build)
+
+    # ── doctor ────────────────────────────────────────────────────────────────
+    p = sub.add_parser(
+        "doctor",
+        help="Check local ToolUniverse, or validate a remote MCP server and platform connection",
+    )
+    p.add_argument(
+        "--forward",
+        metavar="URL",
+        help="local Streamable HTTP MCP endpoint to validate",
+    )
+    p.add_argument(
+        "--service",
+        default=os.getenv(
+            "TOOLUNIVERSE_SERVICE_URL",
+            os.getenv("TU_BASE_URL", "https://tooluniverse-backend.onrender.com"),
+        ),
+        help="ToolUniverse Platform API base URL",
+    )
+    p.add_argument("--json", action="store_true", help="output machine-readable JSON")
+    p.set_defaults(func=cmd_doctor)
 
     # ── serve ─────────────────────────────────────────────────────────────────
     p = sub.add_parser(

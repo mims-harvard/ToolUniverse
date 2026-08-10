@@ -234,6 +234,63 @@ def test_platform_remote_tool_requires_key(monkeypatch):
     assert "TU_API_KEY" in result["error"]
 
 
+@pytest.mark.parametrize("timeout", [0, 901, float("inf"), float("nan")])
+def test_platform_remote_tool_rejects_unsafe_timeout(timeout):
+    with pytest.raises(ValueError, match="between 1 and 900"):
+        PlatformRemoteTool(
+            {
+                "name": "remote_model",
+                "resource_id": "123e4567-e89b-42d3-a456-426614174000",
+                "base_url": "https://api.example",
+                "timeout": timeout,
+            }
+        )
+
+
+def test_platform_remote_tool_waits_for_async_job(monkeypatch):
+    monkeypatch.setenv("TU_API_KEY", "test-key")
+    monkeypatch.setattr("tooluniverse.platform_remote_tool.time.sleep", lambda _seconds: None)
+    tool = PlatformRemoteTool(
+        {
+            "name": "remote_gpu_model",
+            "resource_id": "123e4567-e89b-42d3-a456-426614174000",
+            "base_url": "https://api.example",
+            "timeout": 30,
+        }
+    )
+    job_id = "019f8123-cfa2-7502-af19-7be93c844c6c"
+    tool._request = MagicMock(
+        side_effect=[
+            {"job_id": job_id, "status_url": f"/remote-tool-jobs/{job_id}"},
+            {"status": "running"},
+            {"status": "succeeded", "result": {"value": {"score": 0.91}}},
+        ]
+    )
+
+    assert tool.run({"sequence": "ABC"}) == {"score": 0.91}
+    assert tool._request.call_args_list[1].args[0] == f"/remote-tool-jobs/{job_id}"
+
+
+def test_platform_remote_tool_rejects_cross_origin_async_status(monkeypatch):
+    monkeypatch.setenv("TU_API_KEY", "test-key")
+    tool = PlatformRemoteTool(
+        {
+            "name": "remote_gpu_model",
+            "resource_id": "123e4567-e89b-42d3-a456-426614174000",
+            "base_url": "https://api.example",
+        }
+    )
+    tool._request = MagicMock(
+        return_value={
+            "job_id": "019f8123-cfa2-7502-af19-7be93c844c6c",
+            "status_url": "https://attacker.example/steal-key",
+        }
+    )
+    result = tool.run({})
+    assert result["status"] == "error"
+    assert "invalid asynchronous job handle" in result["error"]
+
+
 def test_mcp_auth_env_propagates_without_copying_secret(monkeypatch):
     monkeypatch.setenv("PRIVATE_MCP_TOKEN", "super-secret")
     loader = MCPAutoLoaderTool(

@@ -68,7 +68,7 @@ runtime instead of ToolUniverse's complete scientific dependency collection:
 
 .. code-block:: bash
 
-   python -m pip install fastmcp pyyaml "tuplatform-connect @ git+https://github.com/tooluniverse/tuplatform.git@afbc47ff91504273cd18d11ccdae121847d1724f#subdirectory=sdk/tuplatform-connect"
+   python -m pip install fastmcp pyyaml "tuplatform-connect @ git+https://github.com/tooluniverse/tuplatform.git@d79aaec4d1b5d7a886b9373aafc5e0b4bbbe47a9#subdirectory=sdk/tuplatform-connect"
    python -m pip install --no-deps tooluniverse
 
 Until this feature reaches a PyPI release, use the reviewed ToolUniverse source
@@ -82,7 +82,13 @@ Then run:
 
    tu serve my_model.py --share --name "My sequence model"
 
-Enter a full-access private connection key at the hidden prompt. For an
+Validate both the local MCP manifest and the computer-only platform connection before sharing:
+
+.. code-block:: bash
+
+   tu doctor --forward http://127.0.0.1:8080/mcp
+
+Enter a computer-only connection key at the hidden prompt. For an
 unattended service, provide it in a protected ``TOOLUNIVERSE_SERVICE_KEY``
 environment variable. The key is not written into the connection file or the
 command line.
@@ -93,6 +99,10 @@ Connect to inspect the discovered manifest. Publishing remains an explicit
 step: import and live-test exactly one operation before making it public. The
 platform does not give marketplace callers access to ``tools/list`` or sibling
 tools on the same provider server.
+
+For a server that already runs continuously, ``tuplatform-service install`` from the companion
+package creates a user-level launchd/systemd relay. The secret is stored in a separate ``0600``
+file, and ``tuplatform-service status`` and ``uninstall`` provide explicit lifecycle management.
 
 Share an Existing MCP Server
 ----------------------------
