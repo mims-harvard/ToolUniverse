@@ -444,8 +444,10 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
             "data": {
                 "id": profile.get("Id"),
                 "symbol": profile.get("Symbol"),
-                "scientific_name": profile.get("ScientificNameWithoutAuthor")
-                or profile.get("ScientificName"),
+                "scientific_name": _strip_html(
+                    profile.get("ScientificNameWithoutAuthor")
+                    or profile.get("ScientificName")
+                ),
                 "common_name": profile.get("CommonName"),
                 "group": profile.get("GroupName") or profile.get("Group"),
                 "rank": profile.get("Rank"),

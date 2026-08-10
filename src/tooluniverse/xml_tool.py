@@ -4,6 +4,14 @@ from typing import List, Dict, Any, Optional, Set
 from .base_tool import BaseTool
 from .utils import download_from_hf
 from .tool_registry import register_tool
+from .logging_config import get_logger
+
+# Fix-R13B-4: dataset-load status was reported via print(), which writes
+# straight to stdout. Any caller piping a tool's raw stdout as JSON (e.g.
+# `tu run ... --raw` or a script parsing captured output) got this line
+# prepended ahead of the JSON payload and failed to parse it. Routing
+# through the logging module keeps it on stderr instead.
+logger = get_logger(__name__)
 
 
 @register_tool("XMLTool")
@@ -21,7 +29,10 @@ class XMLDatasetTool(BaseTool):
         self.namespaces: Dict[str, str] = tool_config.get("settings").get(
             "namespaces", {}
         )
-        self.field_mappings: Dict[str, str] = tool_config.get("settings").get(
+        # Values may be a single XPath string, a LIST of XPath strings (tried
+        # in order, first non-empty wins -- see _extract_field_value), or a
+        # dict describing a nested structure (see _extract_record_data).
+        self.field_mappings: Dict[str, Any] = tool_config.get("settings").get(
             "field_mappings", {}
         )  # Dict of fields we're interested in extracting from each record
         self.filter_field: Optional[str] = tool_config.get("settings").get(
@@ -47,12 +58,14 @@ class XMLDatasetTool(BaseTool):
                 self.record_xpath, namespaces=self.namespaces
             )
 
-            print(
-                f"Loaded XML dataset: {len(self.records)} records from root '{self.xml_root.tag}'"
+            logger.info(
+                "Loaded XML dataset: %d records from root '%s'",
+                len(self.records),
+                self.xml_root.tag,
             )
 
         except Exception as e:
-            print(f"Error loading XML dataset: {e}")
+            logger.error("Error loading XML dataset: %s", e)
             self.records = []
 
     def _get_dataset_path(self) -> Optional[str]:
@@ -61,14 +74,28 @@ class XMLDatasetTool(BaseTool):
             result = download_from_hf(self.tool_config["settings"])
             if result.get("success"):
                 return result["local_path"]
-            print(f"Failed to download dataset: {result.get('error')}")
+            logger.error("Failed to download dataset: %s", result.get("error"))
             return None
 
         if "local_dataset_path" in self.tool_config["settings"]:
             return self.tool_config["settings"]["local_dataset_path"]
 
-        print("No dataset path provided in tool configuration")
+        logger.warning("No dataset path provided in tool configuration")
         return None
+
+    # Fix-R13B-4: a record's nested list field (e.g. DrugBank's
+    # interacting_drugs) has no size bound of its own -- the tool's `limit`
+    # parameter only caps how many *top-level matched records* come back,
+    # not the length of a list field inside one record. A well-connected
+    # drug like azathioprine has ~1286 documented interactions, so a
+    # single matched record (limit=5 had no effect, since only 1 record
+    # matched "azathioprine") produced an 80k+ token payload with the
+    # clinically critical interaction undifferentiated among hundreds of
+    # others. Capping nested list fields for display (while still using
+    # the untruncated list to build searchable text, so search matching
+    # is unaffected) keeps responses usable; the true count is preserved
+    # in a sibling `<field>_total_count` key so callers know more exist.
+    _NESTED_LIST_DISPLAY_CAP = 25
 
     def _extract_record_data(self, record_element: ET.Element) -> Dict[str, Any]:
         """Extract data from a record element with caching."""
@@ -95,9 +122,8 @@ class XMLDatasetTool(BaseTool):
                     if any(entry.values()):  # Only add entries with non-empty values
                         structured_list.append(entry)
 
-                data[field_name] = structured_list
-
-                # Flatten for search
+                # Flatten for search using the full, untruncated list so
+                # matching behavior doesn't change based on the display cap.
                 for sf_name, _ in subfields.items():
                     flat_key = f"{field_name}_{sf_name}"
 
@@ -107,14 +133,40 @@ class XMLDatasetTool(BaseTool):
                     )
 
                     self.temporary_record_fields.add(flat_key)
+
+                total_count = len(structured_list)
+                max_items = xpath_expr.get("max_items", self._NESTED_LIST_DISPLAY_CAP)
+                if max_items and total_count > max_items:
+                    data[f"{field_name}_total_count"] = total_count
+                    structured_list = structured_list[:max_items]
+                data[field_name] = structured_list
             else:
                 # Regular flat field extraction
                 data[field_name] = self._extract_field_value(record_element, xpath_expr)
 
         return data
 
-    def _extract_field_value(self, element: ET.Element, xpath_expr: str) -> str:
-        """Extract field value using XPath expression."""
+    def _extract_field_value(self, element: ET.Element, xpath_expr: Any) -> str:
+        """Extract field value using XPath expression.
+
+        Fix Round 25: `xpath_expr` may also be a LIST of XPath strings, which
+        are tried in order and the first non-empty result returned. Some
+        source datasets file the same logical field under different parents
+        depending on the record -- DrugBank puts Molecular Formula/Weight
+        under <calculated-properties> for small molecules but under
+        <experimental-properties> for biotech/peptide entries, so a single
+        XPath silently yields "" for one whole class of records. Note that
+        ElementTree/lxml's findall() does not accept `|` XPath unions, so a
+        list of expressions (rather than one union expression) is the right
+        shape here.
+        """
+        if isinstance(xpath_expr, (list, tuple)):
+            for candidate in xpath_expr:
+                value = self._extract_field_value(element, candidate)
+                if value:
+                    return value
+            return ""
+
         try:
             # Handle attribute extraction with /@
             if "/@" in xpath_expr:
@@ -129,7 +181,7 @@ class XMLDatasetTool(BaseTool):
                     for el in found_elements
                     if el.get(attr_name)
                 )
-                return " | ".join(values)
+                return " | ".join(dict.fromkeys(values))
 
             # Handle direct attribute on current element
             if xpath_expr.startswith("@"):
@@ -143,7 +195,11 @@ class XMLDatasetTool(BaseTool):
             # Use generator expression and filter out empty text
             values = ((elem.text or "").strip() for elem in found_elements)
             non_empty_values = (v for v in values if v)
-            return " | ".join(non_empty_values)
+            # Dedupe while preserving order: fields with many repeated child
+            # elements (e.g. DrugBank <products><product><name> repeats the
+            # same brand name once per country/dosage-form combination) would
+            # otherwise return the same string hundreds of times.
+            return " | ".join(dict.fromkeys(non_empty_values))
 
         except Exception:
             return ""
@@ -172,6 +228,36 @@ class XMLDatasetTool(BaseTool):
             .get("default", fallback)
         )
 
+    # Fix Round 17: every _search-mode tool built on this shared class takes
+    # a single param named 'query', regardless of what its own tool NAME
+    # promises (e.g. drugbank_get_pharmacology_by_drug_name_or_drugbank_id,
+    # mesh_get_subjects_by_subject_name). Confirmed live: calling that tool
+    # with 'drug_name' (the exact term in its own name) errored with
+    # "'query' is a required property" -- a natural first guess from reading
+    # the tool name fails. Accept the terms these tool names actually use as
+    # synonyms for 'query' instead of renaming the parameter across every
+    # config entry (a much larger, more disruptive change).
+    _QUERY_ALIASES = ("drug_name", "drugbank_id", "subject_name", "subject_id")
+
+    def _resolve_query_alias(self, arguments: Dict[str, Any]) -> None:
+        """Mutate arguments in place, filling in 'query' from a known alias.
+
+        Must run before schema validation (not just inside run()): jsonschema
+        rejects a missing required 'query' before run() is ever reached, so an
+        alias resolved only in run() would be dead code for every normal
+        (validated) call path.
+        """
+        if "query" in arguments or "condition" in arguments:
+            return
+        for alias in self._QUERY_ALIASES:
+            if arguments.get(alias):
+                arguments["query"] = arguments[alias]
+                break
+
+    def validate_parameters(self, arguments: Dict[str, Any]) -> Optional[Any]:
+        self._resolve_query_alias(arguments)
+        return super().validate_parameters(arguments)
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Main entry point for the tool."""
         if not self.records:
@@ -179,6 +265,10 @@ class XMLDatasetTool(BaseTool):
                 "status": "error",
                 "error": "XML dataset not loaded or contains no records",
             }
+
+        # Also resolve here so direct run() calls that skip validate_parameters
+        # (e.g. validate=False, or calling the tool class directly) still work.
+        self._resolve_query_alias(arguments)
 
         # Route to appropriate function based on arguments
         if "query" in arguments:
@@ -359,16 +449,17 @@ class XMLDatasetTool(BaseTool):
         """Get the appropriate filter function for the condition."""
         filter_functions = {
             "contains": lambda data, field: value.lower() in str(data[field]).lower(),
-            "starts_with": lambda data, field: str(data[field])
-            .lower()
-            .startswith(value.lower()),
-            "ends_with": lambda data, field: str(data[field])
-            .lower()
-            .endswith(value.lower()),
+            "starts_with": lambda data, field: (
+                str(data[field]).lower().startswith(value.lower())
+            ),
+            "ends_with": lambda data, field: (
+                str(data[field]).lower().endswith(value.lower())
+            ),
             "exact": lambda data, field: str(data[field]).lower() == value.lower(),
             "not_empty": lambda data, field: str(data[field]).strip() != "",
-            "has_attribute": lambda data, field: field == "_attributes"
-            and value in data["_attributes"],
+            "has_attribute": lambda data, field: (
+                field == "_attributes" and value in data["_attributes"]
+            ),
         }
         return filter_functions.get(condition)
 

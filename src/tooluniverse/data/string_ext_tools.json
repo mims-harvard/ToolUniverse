@@ -43,49 +43,27 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "identifiers": {
-                  "type": "string",
-                  "description": "Queried protein identifier"
-                },
-                "species": {
-                  "type": "integer",
-                  "description": "NCBI taxonomy ID"
-                },
-                "total_annotations": {
-                  "type": "integer",
-                  "description": "Total number of annotations across all categories"
-                },
-                "category_summary": {
-                  "type": "object",
-                  "description": "Number of annotations per category"
-                },
-                "annotations": {
-                  "type": "object",
-                  "description": "Annotations grouped by category, each with term, description, number_of_genes, input_genes (max 15 per category)"
-                }
-              }
+            "identifiers": {
+              "type": "string",
+              "description": "Queried protein identifier"
             },
-            "metadata": {
+            "species": {
+              "type": "integer",
+              "description": "NCBI taxonomy ID"
+            },
+            "total_annotations": {
+              "type": "integer",
+              "description": "Total number of annotations across all categories"
+            },
+            "category_summary": {
               "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "identifiers": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "integer"
-                }
-              }
+              "description": "Number of annotations per category"
+            },
+            "annotations": {
+              "type": "object",
+              "description": "Annotations grouped by category, each with term, description, number_of_genes, input_genes (max 15 per category)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -117,61 +95,105 @@
           "default": 9606
         },
         "background_string_identifiers": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional newline-separated background gene set. If not provided, the entire genome proteome is used as background."
         }
       },
-      "required": ["identifiers"]
+      "required": [
+        "identifiers"
+      ]
     },
     "fields": {
       "endpoint": "enrichment"
     },
     "type": "STRINGExtTool",
     "test_examples": [
-      {"identifiers": "BRCA1\nBRCA2\nTP53\nATM\nPALB2", "species": 9606},
-      {"identifiers": "EGFR\nERBB2\nKRAS\nBRAF\nPIK3CA", "species": 9606}
+      {
+        "identifiers": "BRCA1\nBRCA2\nTP53\nATM\nPALB2",
+        "species": 9606
+      },
+      {
+        "identifiers": "EGFR\nERBB2\nKRAS\nBRAF\nPIK3CA",
+        "species": 9606
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
+          "description": "Enrichment analysis results",
           "properties": {
-            "data": {
-              "type": "object",
-              "description": "Enrichment analysis results",
-              "properties": {
-                "identifiers": {"type": "string"},
-                "species": {"type": "integer"},
-                "enrichments": {
-                  "type": "array",
-                  "description": "List of enriched functional terms sorted by FDR",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "category": {"type": "string", "description": "Annotation category: Process (GO BP), Function (GO MF), Component (GO CC), KEGG, RCTM, WikiPathways, InterPro, Pfam, HPO, DISEASES, TISSUES, COMPARTMENTS"},
-                      "term": {"type": "string", "description": "Term identifier"},
-                      "description": {"type": "string", "description": "Term description"},
-                      "number_of_genes": {"type": "integer", "description": "Number of input genes with this annotation"},
-                      "number_of_genes_in_background": {"type": "integer", "description": "Total genes with this annotation in background"},
-                      "p_value": {"type": "number", "description": "Raw p-value"},
-                      "fdr": {"type": "number", "description": "FDR-corrected q-value"},
-                      "inputGenes": {"type": "array", "description": "Input genes matching this term", "items": {"type": "string"}},
-                      "preferredNames": {"type": "array", "items": {"type": "string"}}
+            "identifiers": {
+              "type": "string"
+            },
+            "species": {
+              "type": "integer"
+            },
+            "enrichments": {
+              "type": "array",
+              "description": "List of enriched functional terms sorted by FDR",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "description": "Annotation category: Process (GO BP), Function (GO MF), Component (GO CC), KEGG, RCTM, WikiPathways, InterPro, Pfam, HPO, DISEASES, TISSUES, COMPARTMENTS"
+                  },
+                  "term": {
+                    "type": "string",
+                    "description": "Term identifier"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Term description"
+                  },
+                  "number_of_genes": {
+                    "type": "integer",
+                    "description": "Number of input genes with this annotation"
+                  },
+                  "number_of_genes_in_background": {
+                    "type": "integer",
+                    "description": "Total genes with this annotation in background"
+                  },
+                  "p_value": {
+                    "type": "number",
+                    "description": "Raw p-value"
+                  },
+                  "fdr": {
+                    "type": "number",
+                    "description": "FDR-corrected q-value"
+                  },
+                  "inputGenes": {
+                    "type": "array",
+                    "description": "Input genes matching this term",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "preferredNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
                 }
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

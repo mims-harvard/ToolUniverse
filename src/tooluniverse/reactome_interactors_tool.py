@@ -72,6 +72,30 @@ class ReactomeInteractorsTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    def _fetch_total_interactor_count(self, accession: str):
+        """Return the true total interactor count, or None if unavailable.
+
+        Fix-R18B-2/Feature-23C-2: the ``count`` field of the interactors
+        ``/details`` response is the number of records on the page that was
+        requested, NOT the size of the full result set -- live-verified for
+        P04637, where page=1&pageSize=100 yields count=100 while
+        page=1&pageSize=300 yields count=249. The dedicated ``/summary``
+        endpoint is therefore the only cheap source of a real total
+        (live-verified: P04637 -> 249, P42345 -> 22). Returns None on any
+        failure so that a page count is never passed off as a total.
+        """
+        url = f"{REACTOME_BASE_URL}/interactors/static/molecule/{accession}/summary"
+        try:
+            response = requests.get(url, timeout=self.timeout)
+            response.raise_for_status()
+            entities = response.json().get("entities", [])
+        except (requests.exceptions.RequestException, ValueError, AttributeError):
+            return None
+        if not entities:
+            return None
+        count = entities[0].get("count")
+        return count if isinstance(count, int) else None
+
     def _get_interactors(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get protein-protein interactors for a UniProt accession."""
         accession = arguments.get("accession", "")
@@ -84,22 +108,30 @@ class ReactomeInteractorsTool(BaseTool):
         page_size = arguments.get("page_size") or 20
 
         url = f"{REACTOME_BASE_URL}/interactors/static/molecule/{accession}/details"
-        # Fix-R18B-2: page=-1 tells Reactome's interactors API to ignore
-        # pagination and return every interactor regardless of pageSize --
-        # confirmed live (page=-1&pageSize=10 returned all 153 interactors
-        # for P31749; page=1&pageSize=10 correctly returned 10), directly
-        # contradicting this tool's own documented page_size contract.
-        params = {"page": 1, "pageSize": min(page_size, 100)}
+        # The requested page_size is passed through unclamped: Reactome honours
+        # any pageSize on this endpoint (live-verified: pageSize=300 for P04637
+        # returns all 249 interactors), so clamping here would silently truncate
+        # results the caller explicitly asked for.
+        params = {"page": 1, "pageSize": page_size}
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
+        total = self._fetch_total_interactor_count(accession)
+
         entities = data.get("entities", [])
         if not entities:
             return {
                 "status": "success",
-                "data": {"accession": accession, "interactors": [], "total": 0},
+                "data": {
+                    "accession": accession,
+                    "total_interactors": total if total is not None else 0,
+                    "total_is_exact": total is not None,
+                    "returned_interactors": 0,
+                    "truncated": bool(total),
+                    "interactors": [],
+                },
                 "metadata": {"source": "Reactome Interactors (IntAct)"},
             }
 
@@ -118,13 +150,33 @@ class ReactomeInteractorsTool(BaseTool):
         # Sort by score descending
         interactors.sort(key=lambda x: x.get("score") or 0, reverse=True)
 
+        returned = len(interactors)
+        truncated = total is not None and returned < total
+        result = {
+            "accession": entity.get("acc"),
+            "total_interactors": total if total is not None else returned,
+            "total_is_exact": total is not None,
+            "returned_interactors": returned,
+            "truncated": truncated,
+            "interactors": interactors,
+        }
+        if truncated:
+            result["note"] = (
+                f"Showing {returned} of {total} interactors "
+                f"(page_size={page_size}). Re-run with page_size={total} "
+                "to retrieve all of them."
+            )
+        elif total is None:
+            result["note"] = (
+                "The total interactor count is unavailable (Reactome summary "
+                "endpoint did not respond), so total_interactors reports the "
+                f"{returned} interactor(s) returned on this page and may be "
+                "incomplete."
+            )
+
         return {
             "status": "success",
-            "data": {
-                "accession": entity.get("acc"),
-                "total_interactors": entity.get("count"),
-                "interactors": interactors,
-            },
+            "data": result,
             "metadata": {
                 "source": "Reactome Interactors (IntAct)",
                 "resource": data.get("resource"),

@@ -348,7 +348,7 @@
   {
     "name": "KEGG_get_drug_targets",
     "type": "KEGGExtTool",
-    "description": "Get human gene targets linked to a KEGG drug. Returns KEGG gene IDs (hsa:XXXXX format) for known drug targets. Example: D01441 (imatinib) returns hsa:25 (ABL1), hsa:3815 (KIT), hsa:5159 (PDGFRB). Useful for drug-target interaction analysis and pharmacogenomics. Limited to human targets by default.",
+    "description": "Get human gene targets linked to a KEGG drug. Returns raw KEGG gene IDs only (hsa:XXXXX format), not gene symbols -- resolve symbols separately if you need them. Example: D01441 (imatinib) returns hsa:25 (ABL1), hsa:3815 (KIT), hsa:5156 (PDGFRA). Useful for drug-target interaction analysis and pharmacogenomics. Limited to human targets by default.",
     "parameter": {
       "type": "object",
       "properties": {

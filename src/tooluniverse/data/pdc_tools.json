@@ -11,7 +11,8 @@
           "enum": [
             "search_studies"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_studies"
         },
         "query": {
           "type": "string",
@@ -19,7 +20,6 @@
         }
       },
       "required": [
-        "operation",
         "query"
       ]
     },
@@ -68,7 +68,10 @@
         "operation": "search_studies",
         "query": "Breast"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_studies"
+    }
   },
   {
     "name": "PDC_get_gene_protein",
@@ -82,7 +85,8 @@
           "enum": [
             "get_gene_protein"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_gene_protein"
         },
         "gene_name": {
           "type": "string",
@@ -90,7 +94,6 @@
         }
       },
       "required": [
-        "operation",
         "gene_name"
       ]
     },
@@ -170,7 +173,10 @@
         "operation": "get_gene_protein",
         "gene_name": "TP53"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_gene_protein"
+    }
   },
   {
     "name": "PDC_list_programs",
@@ -184,12 +190,11 @@
           "enum": [
             "list_programs"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "list_programs"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -236,7 +241,10 @@
       {
         "operation": "list_programs"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_programs"
+    }
   },
   {
     "name": "PDC_get_study_summary",
@@ -250,7 +258,8 @@
           "enum": [
             "get_study_summary"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_study_summary"
         },
         "pdc_study_id": {
           "type": "string",
@@ -258,7 +267,6 @@
         }
       },
       "required": [
-        "operation",
         "pdc_study_id"
       ]
     },
@@ -365,7 +373,10 @@
         "operation": "get_study_summary",
         "pdc_study_id": "PDC000127"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_study_summary"
+    }
   },
   {
     "name": "PDC_get_clinical_data",
@@ -379,7 +390,8 @@
           "enum": [
             "get_clinical_data"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_clinical_data"
         },
         "pdc_study_id": {
           "type": "string",
@@ -395,7 +407,6 @@
         }
       },
       "required": [
-        "operation",
         "pdc_study_id"
       ]
     },
@@ -480,7 +491,10 @@
         "pdc_study_id": "PDC000127",
         "limit": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_clinical_data"
+    }
   },
   {
     "name": "PDC_get_quant_data_matrix",
@@ -494,7 +508,8 @@
           "enum": [
             "get_quant_data_matrix"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_quant_data_matrix"
         },
         "pdc_study_id": {
           "type": "string",
@@ -512,7 +527,6 @@
         }
       },
       "required": [
-        "operation",
         "pdc_study_id"
       ]
     },
@@ -594,6 +608,9 @@
         "data_type": "log2_ratio",
         "max_genes": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_quant_data_matrix"
+    }
   }
 ]

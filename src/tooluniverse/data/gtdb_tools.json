@@ -7,8 +7,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_taxon"],
-          "description": "Operation type (fixed: search_taxon)"
+          "enum": [
+            "search_taxon"
+          ],
+          "description": "Operation type (fixed: search_taxon)",
+          "default": "search_taxon"
         },
         "query": {
           "type": "string",
@@ -19,7 +22,9 @@
           "description": "Maximum number of results per rank (default: 20, max: 100)"
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "query"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -67,9 +72,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "search_taxon"
     }
   },
   {
@@ -80,8 +90,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_species"],
-          "description": "Operation type (fixed: get_species)"
+          "enum": [
+            "get_species"
+          ],
+          "description": "Operation type (fixed: get_species)",
+          "default": "get_species"
         },
         "species": {
           "type": "string",
@@ -92,7 +105,9 @@
           "description": "Maximum number of genomes to return (default: 20). Species clusters can have thousands of genomes."
         }
       },
-      "required": ["operation", "species"]
+      "required": [
+        "species"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -164,9 +179,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "get_species"
     }
   },
   {
@@ -177,15 +197,20 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_taxon_info"],
-          "description": "Operation type (fixed: get_taxon_info)"
+          "enum": [
+            "get_taxon_info"
+          ],
+          "description": "Operation type (fixed: get_taxon_info)",
+          "default": "get_taxon_info"
         },
         "taxon": {
           "type": "string",
           "description": "GTDB taxon name with rank prefix (e.g., 'f__Lachnospiraceae', 'd__Bacteria', 'g__Escherichia', 's__Escherichia coli'). Use GTDB_search_taxon to find valid names."
         }
       },
-      "required": ["operation", "taxon"]
+      "required": [
+        "taxon"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -213,11 +238,17 @@
               "description": "The GTDB taxon name"
             },
             "rank": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Taxonomic rank (Domain, Phylum, Class, Order, Family, Genus, Species)"
             },
             "n_genomes": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Total number of genomes classified under this taxon"
             },
             "higher_ranks": {
@@ -235,7 +266,10 @@
               }
             },
             "lineage": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "Full lineage from domain (d) to species (s), keys: d, p, c, o, f, g, s"
             }
           }
@@ -248,9 +282,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "get_taxon_info"
     }
   },
   {
@@ -261,8 +300,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_genomes"],
-          "description": "Operation type (fixed: search_genomes)"
+          "enum": [
+            "search_genomes"
+          ],
+          "description": "Operation type (fixed: search_genomes)",
+          "default": "search_genomes"
         },
         "query": {
           "type": "string",
@@ -277,7 +319,9 @@
           "description": "Number of results per page (default: 10, max: 50)"
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "query"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -361,9 +405,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "search_genomes"
     }
   },
   {
@@ -374,15 +423,20 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_genome"],
-          "description": "Operation type (fixed: get_genome)"
+          "enum": [
+            "get_genome"
+          ],
+          "description": "Operation type (fixed: get_genome)",
+          "default": "get_genome"
         },
         "accession": {
           "type": "string",
           "description": "NCBI genome accession (e.g., 'GCF_000005845.2' for E. coli K-12, 'GCF_000009045.1' for B. subtilis)"
         }
       },
-      "required": ["operation", "accession"]
+      "required": [
+        "accession"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -431,13 +485,27 @@
                     "type": "string",
                     "description": "GTDB release version"
                   },
-                  "d": { "type": "string" },
-                  "p": { "type": "string" },
-                  "c": { "type": "string" },
-                  "o": { "type": "string" },
-                  "f": { "type": "string" },
-                  "g": { "type": "string" },
-                  "s": { "type": "string" }
+                  "d": {
+                    "type": "string"
+                  },
+                  "p": {
+                    "type": "string"
+                  },
+                  "c": {
+                    "type": "string"
+                  },
+                  "o": {
+                    "type": "string"
+                  },
+                  "f": {
+                    "type": "string"
+                  },
+                  "g": {
+                    "type": "string"
+                  },
+                  "s": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -451,9 +519,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "get_genome"
     }
   }
 ]

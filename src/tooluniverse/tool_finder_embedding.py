@@ -240,6 +240,8 @@ class ToolFinderEmbedding(BaseTool):
         try:
             from sentence_transformers import SentenceTransformer
             import torch
+            from . import configure_torch_cpu as _cfg_cpu
+            _cfg_cpu()
         except ImportError as e:
             raise ImportError(
                 "ToolFinderEmbedding requires 'sentence-transformers' package. "

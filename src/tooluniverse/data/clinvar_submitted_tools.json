@@ -11,7 +11,9 @@
           "description": "ClinVar variant identifier. Accepts a VCV accession (e.g. 'VCV000013961') OR a bare ClinVar variation id (e.g. '13961'); a numeric id is normalized to VCV%09d. Example: 'VCV000013961' (BRAF V600E)."
         }
       },
-      "required": ["variant_id"]
+      "required": [
+        "variant_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -141,10 +143,76 @@
         "variant_id": "13961"
       }
     ],
-    "label": ["clinvar", "variant", "clinical_significance", "submitter", "scv"],
+    "label": [
+      "clinvar",
+      "variant",
+      "clinical_significance",
+      "submitter",
+      "scv"
+    ],
     "metadata": {
       "data_source": "NCBI ClinVar (eutils efetch, rettype=vcv)",
       "requires_api_key": false
     }
+  },
+  {
+    "name": "ClinVar_search_by_region",
+    "description": "Find ClinVar variants that OVERLAP a genomic region, including large copy-number variants that begin far outside it. Use this for 'which variant is located at chr:start-end' questions: Entrez's chrpos search matches a variant's START position, so a narrow window misses a pathogenic CNV that spans the region but starts megabases upstream (an 11 bp search at chr7:155593770-155593780 returns nothing, though a 1.5 Mb pathogenic loss covers it). Results are sorted smallest span first, so the most specific overlapping variant comes first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "Region as written, e.g. 'chr7:155593770-155593780'. Alternative to chrom/start/end."
+        },
+        "chrom": {
+          "type": "string",
+          "description": "Chromosome, e.g. '7' or 'chr7'."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Region start (1-based)."
+        },
+        "end": {
+          "type": "integer",
+          "description": "Region end (1-based, inclusive)."
+        },
+        "assembly": {
+          "type": "string",
+          "enum": [
+            "GRCh37",
+            "GRCh38"
+          ],
+          "description": "Assembly the coordinates are in. Default GRCh37.",
+          "default": "GRCh37"
+        },
+        "clinical_significance": {
+          "type": "string",
+          "description": "Optional filter, e.g. 'pathogenic'."
+        },
+        "margin": {
+          "type": "integer",
+          "description": "How far upstream to look for variants that start before the region and span into it. Default 2000000.",
+          "default": 2000000
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum overlapping variants to return. Default 50.",
+          "default": 50
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search_by_region"
+    },
+    "type": "ClinVarSearchByRegion",
+    "test_examples": [
+      {
+        "region": "chr7:155593770-155593780",
+        "assembly": "GRCh37",
+        "clinical_significance": "pathogenic"
+      }
+    ]
   }
 ]

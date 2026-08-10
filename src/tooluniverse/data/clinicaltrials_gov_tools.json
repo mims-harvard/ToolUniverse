@@ -927,6 +927,14 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search"
+          ],
+          "description": "Operation (optional; defaults to 'search' for this tool).",
+          "default": "search"
+        },
         "query_cond": {
           "type": [
             "string",
@@ -1178,90 +1186,79 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "nct_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "brief_title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "official_title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "status": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "study_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "phases": {
-                  "type": "array"
-                },
-                "enrollment": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "brief_summary": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "conditions": {
-                  "type": "array"
-                },
-                "interventions": {
-                  "type": "array"
-                },
-                "primary_outcomes": {
-                  "type": "array"
-                },
-                "eligibility_criteria": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "sponsor": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "locations": {
-                  "type": "array"
-                },
-                "references": {
-                  "type": "array"
-                }
-              }
+            "nct_id": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "metadata": {
-              "type": "object"
+            "brief_title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "official_title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "study_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "phases": {
+              "type": "array"
+            },
+            "enrollment": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "brief_summary": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "conditions": {
+              "type": "array"
+            },
+            "interventions": {
+              "type": "array"
+            },
+            "primary_outcomes": {
+              "type": "array"
+            },
+            "eligibility_criteria": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sponsor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "locations": {
+              "type": "array"
+            },
+            "references": {
+              "type": "array"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -1349,33 +1346,22 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "studies": {
-                  "type": "array"
-                },
-                "total_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "next_page_token": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
+            "studies": {
+              "type": "array"
             },
-            "metadata": {
-              "type": "object"
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "next_page_token": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -1457,33 +1443,22 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "studies": {
-                  "type": "array"
-                },
-                "total_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "next_page_token": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
+            "studies": {
+              "type": "array"
             },
-            "metadata": {
-              "type": "object"
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "next_page_token": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -1611,47 +1586,36 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "string"
-                },
-                "values": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "studies_count": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "field": {
+              "type": "string"
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "studies_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
-                },
-                "total_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

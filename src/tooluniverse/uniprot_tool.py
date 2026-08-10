@@ -1,8 +1,55 @@
+import re
 import time
 import requests
 from typing import Any, Dict, Optional
 from .base_tool import BaseTool, ToolError
 from .tool_registry import register_tool
+
+
+# Common-name / scientific-name shortcuts for the handful of model organisms
+# callers name in prose. Anything not listed here still works -- it is routed
+# to UniProt's organism_name field rather than being rejected.
+_ORGANISM_TAXIDS = {
+    "human": "9606",
+    "homo sapiens": "9606",
+    "mouse": "10090",
+    "mus musculus": "10090",
+    "rat": "10116",
+    "rattus norvegicus": "10116",
+    "yeast": "559292",
+    "saccharomyces cerevisiae": "559292",
+    "zebrafish": "7955",
+    "danio rerio": "7955",
+    "fruitfly": "7227",
+    "drosophila melanogaster": "7227",
+    "c. elegans": "6239",
+    "caenorhabditis elegans": "6239",
+    "arabidopsis": "3702",
+    "arabidopsis thaliana": "3702",
+    "pig": "9823",
+    "sus scrofa": "9823",
+    "cow": "9913",
+    "bos taurus": "9913",
+    "rabbit": "9986",
+    "oryctolagus cuniculus": "9986",
+}
+
+
+def _uniprot_organism_filter(organism: str) -> str:
+    """Build the UniProt query clause for an organism the caller named.
+
+    UniProt's `organism_id` field accepts numeric taxonomy IDs only; passing a
+    species name to it makes the whole search fail with HTTP 400 rather than
+    returning zero hits. Any organism that does not resolve to a taxid is
+    therefore expressed as `organism_name:"..."`, which accepts free text and
+    covers the long tail of species (pathogens, plants, non-model organisms)
+    that no shortcut table can enumerate.
+    """
+    name = str(organism).strip()
+    resolved = _ORGANISM_TAXIDS.get(name.lower(), name)
+    if resolved.isdigit():
+        return f"organism_id:{resolved}"
+    return f'organism_name:"{resolved}"'
 
 
 def _protein_name(protein_desc: Dict[str, Any]) -> str:
@@ -257,45 +304,24 @@ class UniProtRESTTool(BaseTool):
             limit_value = int(limit_value)
         limit = min(limit_value, 500)
 
-        # Normalize query: replace 'organism:' with 'organism_id:'
-        # for UniProt API compatibility
-        query = query.replace("organism:", "organism_id:")
+        # Normalize query: UniProt has no bare 'organism' field. Numeric values
+        # belong in organism_id, everything else in organism_name -- rewriting a
+        # species name into organism_id makes UniProt reject the whole request
+        # with HTTP 400 (confirmed live: 'organism_id:Klebsiella pneumoniae').
+        query = re.sub(
+            r"\borganism:(\"[^\"]+\"|\S+)",
+            lambda m: _uniprot_organism_filter(m.group(1).strip('"')),
+            query,
+        )
 
         # Build query string
         query_parts = [query]
         if organism:
-            # Support common organism names (both common names and scientific names)
-            organism_map = {
-                "human": "9606",
-                "homo sapiens": "9606",
-                "mouse": "10090",
-                "mus musculus": "10090",
-                "rat": "10116",
-                "rattus norvegicus": "10116",
-                "yeast": "559292",
-                "saccharomyces cerevisiae": "559292",
-                "zebrafish": "7955",
-                "danio rerio": "7955",
-                "fruitfly": "7227",
-                "drosophila melanogaster": "7227",
-                "c. elegans": "6239",
-                "caenorhabditis elegans": "6239",
-                "arabidopsis": "3702",
-                "arabidopsis thaliana": "3702",
-                "pig": "9823",
-                "sus scrofa": "9823",
-                "cow": "9913",
-                "bos taurus": "9913",
-                "rabbit": "9986",
-                "oryctolagus cuniculus": "9986",
-            }
-            taxon_id = organism_map.get(organism.lower(), organism)
-
-            # Check if query already includes organism_id filter
-            # to avoid duplication
-            if "organism_id:" not in query.lower():
-                query_parts.append(f"organism_id:{taxon_id}")
-            # If it does, skip adding the organism filter
+            # Skip when the caller already scoped the query themselves, so we
+            # don't AND two conflicting organism clauses together.
+            lowered = query.lower()
+            if "organism_id:" not in lowered and "organism_name:" not in lowered:
+                query_parts.append(_uniprot_organism_filter(organism))
 
         # Auto-convert length parameters to range syntax
         if min_length or max_length:

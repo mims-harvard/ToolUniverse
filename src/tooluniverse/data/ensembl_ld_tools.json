@@ -61,70 +61,48 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "query_variant": {
-                  "type": "string"
-                },
-                "population": {
-                  "type": "string"
-                },
-                "total_ld_count": {
-                  "type": "integer",
-                  "description": "Total LD partners passing the thresholds, before truncation"
-                },
-                "ld_count": {
-                  "type": "integer",
-                  "description": "Number of LD partners actually returned in ld_variants"
-                },
-                "truncated": {
-                  "type": "boolean",
-                  "description": "True when total_ld_count exceeds ld_count; raise `limit` to retrieve the rest"
-                },
-                "ld_variants": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "variant1": {
-                        "type": "string"
-                      },
-                      "variant2": {
-                        "type": "string"
-                      },
-                      "r2": {
-                        "type": "number"
-                      },
-                      "d_prime": {
-                        "type": "number"
-                      },
-                      "population_name": {
-                        "type": "string"
-                      }
-                    }
+            "query_variant": {
+              "type": "string"
+            },
+            "population": {
+              "type": "string"
+            },
+            "total_ld_count": {
+              "type": "integer",
+              "description": "Total LD partners passing the thresholds, before truncation"
+            },
+            "ld_count": {
+              "type": "integer",
+              "description": "Number of LD partners actually returned in ld_variants"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when total_ld_count exceeds ld_count; raise `limit` to retrieve the rest"
+            },
+            "ld_variants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "variant1": {
+                    "type": "string"
+                  },
+                  "variant2": {
+                    "type": "string"
+                  },
+                  "r2": {
+                    "type": "number"
+                  },
+                  "d_prime": {
+                    "type": "number"
+                  },
+                  "population_name": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -179,55 +157,33 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant1": {
-                  "type": "string"
-                },
-                "variant2": {
-                  "type": "string"
-                },
-                "population_count": {
-                  "type": "integer"
-                },
-                "ld_by_population": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "population_name": {
-                        "type": "string"
-                      },
-                      "r2": {
-                        "type": "number"
-                      },
-                      "d_prime": {
-                        "type": "number"
-                      }
-                    }
+            "variant1": {
+              "type": "string"
+            },
+            "variant2": {
+              "type": "string"
+            },
+            "population_count": {
+              "type": "integer"
+            },
+            "ld_by_population": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "population_name": {
+                    "type": "string"
+                  },
+                  "r2": {
+                    "type": "number"
+                  },
+                  "d_prime": {
+                    "type": "number"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -292,61 +248,39 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "region": {
-                  "type": "string"
-                },
-                "population": {
-                  "type": "string"
-                },
-                "ld_count": {
-                  "type": "integer"
-                },
-                "ld_pairs": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "variant1": {
-                        "type": "string"
-                      },
-                      "variant2": {
-                        "type": "string"
-                      },
-                      "r2": {
-                        "type": "number"
-                      },
-                      "d_prime": {
-                        "type": "number"
-                      },
-                      "population_name": {
-                        "type": "string"
-                      }
-                    }
+            "region": {
+              "type": "string"
+            },
+            "population": {
+              "type": "string"
+            },
+            "ld_count": {
+              "type": "integer"
+            },
+            "ld_pairs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "variant1": {
+                    "type": "string"
+                  },
+                  "variant2": {
+                    "type": "string"
+                  },
+                  "r2": {
+                    "type": "number"
+                  },
+                  "d_prime": {
+                    "type": "number"
+                  },
+                  "population_name": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

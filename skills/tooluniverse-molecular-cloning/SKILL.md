@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-molecular-cloning
-description: Molecular cloning assembly design — Gibson Assembly (overlap design for seamless multi-fragment joining) and Golden Gate Assembly (Type IIS / BsaI / BbsI design with unique 4-bp fusion overhangs). Use when you need to plan how to join DNA fragments into a construct, design assembly overlaps/overhangs, or decide between cloning methods. Covers the domestication (internal-site removal), overhang-uniqueness, and overlap-Tm rules. For PCR primers to generate the fragments, see tooluniverse-primer-design.
+description: Molecular cloning, in both directions. DESIGN — Gibson Assembly (overlap design for seamless multi-fragment joining) and Golden Gate Assembly (Type IIS / BsaI / BbsI / Esp3I / BsmBI / SapI design with unique 4-bp fusion overhangs). ANALYSIS — work out what an existing reaction produces: given input plasmid sequences and an enzyme, digest them, join the fragments by their overhangs, and identify features of the product (expressed ORF, gRNA spacer and its target gene). Use when you need to plan how to join DNA fragments into a construct, design assembly overlaps/overhangs, decide between cloning methods, or determine the product of a stated Gibson/Golden Gate reaction. Covers the domestication (internal-site removal), overhang-uniqueness, and overlap-Tm rules. For PCR primers to generate the fragments, see tooluniverse-primer-design.
 disable-model-invocation: true
 ---
 
@@ -63,9 +63,47 @@ Returns `parts_with_overhangs`: each part's unique 4-bp `left_overhang`/`right_o
 - **Overlap Tm imbalance** (Gibson) → some junctions form, others don't.
 - **Generating the fragments** still needs primers with the overlaps/overhangs appended — design and QC those in `tooluniverse-primer-design` (and BLAST for specificity).
 
+## Working backwards — what does an existing assembly produce?
+
+The reverse question ("I combined these plasmids in a Golden Gate reaction with
+Esp3I — what does the product express / what does the gRNA target?") is answered by
+one call. Do **not** hand-write a digestion/ligation simulator.
+
+```bash
+tu run DNA_golden_gate_assemble '{"fragments":["<plasmid1>","<plasmid2>","<plasmid3>"],
+    "enzyme":"Esp3I","labels":["pLAB-CTU","pLAB-gTU2E","pLAB-CH3"]}'
+```
+
+It digests each input, drops the fragments that keep a recognition site (those are
+re-cut in the reaction and cannot persist), chains the rest by matching 4-bp
+overhangs, and returns `product_sequence`, `product_length` and the `assembly_order`
+with the overhang at every junction. Inputs are treated as circular plasmids unless
+you pass `circular: false`.
+
+Then **annotate the product**. Locate features in `product_sequence` (promoter, ORF,
+gRNA spacer). For a gRNA cassette the spacer is the ~20 nt immediately 5′ of the
+scaffold (`GTTTTAGAGCTAGAAATAGCAAG`); identify its target by matching that spacer
+against the genome (`BLAST_*`, or an Ensembl/NCBI/SGD sequence lookup) and check for
+an adjacent PAM. Match the **species implied by the construct** — yeast tRNA/Pol III
+parts mean search the yeast genome, not human.
+
+If the assembly reports that the fragments do not chain, digest the inputs
+individually with `DNA_virtual_digest` (`circular: true`) to see what each released:
+a Golden Gate donor carries its two Type IIS sites **inverted** around the insert, so
+a correct digest gives **2 fragments** per plasmid. Getting 1 means the enzyme name or
+`circular` is wrong — not that the plasmid lacks sites.
+
+Enzyme names: `Esp3I` and `BsmBI` are the same enzyme (`CGTCTC`); `BsaI`
+(`GGTCTC`), `BbsI` (`GAAGAC`) and `SapI` (`GCTCTTC`) all resolve too.
+
 ## Honest limitations
 
-- These tools design the assembly junctions; they do not simulate the full ligation/exonuclease reaction or guarantee efficiency — validate by sequencing the assembled construct.
+- Digestion and overhang-driven ligation are simulated faithfully (`DNA_virtual_digest`
+  and `DNA_golden_gate_assemble` cut both strands at each enzyme's real offset, including
+  Type IIS enzymes that cut outside their site). What is *not* modelled is reaction
+  efficiency — overhang ligation bias, partial digestion, incorrect-but-possible
+  junctions — so a returned product is the intended assembly, not a yield prediction.
+  Validate by sequencing the assembled construct.
 - No vector-backbone or ORF-frame checking — confirm reading frame and backbone compatibility yourself.
 
 ## Related skills

@@ -12,6 +12,7 @@ single id or a semicolon-delimited list — so we route every operation
 through the plural endpoint.
 """
 
+import re
 from typing import Any, Dict, List
 
 import requests
@@ -22,6 +23,21 @@ from .tool_registry import register_tool
 
 BASE_URL = "https://www.bindingdb.org/rest"
 DEFAULT_TIMEOUT = 30
+
+
+def _error_detail(resp: "requests.Response") -> str:
+    """Readable one-line summary of an error response body.
+
+    BindingDB serves Tomcat's HTML error page on failures, and echoing its
+    first 200 characters put a doctype and a stylesheet fragment in front of
+    the caller instead of anything diagnostic.
+    """
+    body = (resp.text or "").strip()
+    if "<html" in body[:200].lower() or body[:20].lower().startswith("<!doctype"):
+        title = re.search(r"<title>(.*?)</title>", body, re.IGNORECASE | re.DOTALL)
+        summary = title.group(1).strip() if title else "HTML error page"
+        return f"upstream returned an HTML error page ({summary})"
+    return body[:200] or "empty response body"
 
 
 def _http_get(
@@ -45,7 +61,7 @@ def _http_get(
     except requests.exceptions.ConnectionError as e:
         return {"_err": f"BindingDB connection failed: {e}"}
     if resp.status_code != 200:
-        return {"_err": f"BindingDB HTTP {resp.status_code}: {resp.text[:200]}"}
+        return {"_err": f"BindingDB HTTP {resp.status_code}: {_error_detail(resp)}"}
     try:
         return resp.json()
     except ValueError as e:
@@ -154,7 +170,24 @@ class BindingDBTool(BaseTool):
             timeout=self.timeout,
         )
         if "_err" in result:
-            return {"status": "error", "error": result["_err"]}
+            error = result["_err"]
+            # getLigandsByPDBs is currently answering 500 for every input, valid
+            # ids included (confirmed for 6OIM and 2RH1, with and without the
+            # cutoff parameter; the singular getLigandsByPDB is a 404 while
+            # getLigandsByUniprots answers 200). A bare relay of the upstream
+            # status leaves the caller unable to tell "this structure has no
+            # binding data" from "this whole lookup route is down", so name the
+            # route that does work.
+            if "HTTP 5" in error:
+                error += (
+                    ". BindingDB's PDB lookup endpoint is failing for all "
+                    "structures, not just this one. Map the PDB entry to a "
+                    "UniProt accession with PDBeSIFTS_get_pdb_to_uniprot and "
+                    "query BindingDB_get_ligands_by_uniprot instead, or use "
+                    "get_binding_affinity_by_pdb_id for RCSB's own curated "
+                    "affinity data."
+                )
+            return {"status": "error", "error": error}
         return {
             "status": "success",
             "data": {"pdbs": ids, "cutoff": cutoff, "affinities": _affinities(result)},

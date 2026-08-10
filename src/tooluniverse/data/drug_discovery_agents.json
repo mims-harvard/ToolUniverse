@@ -167,8 +167,8 @@
     },
     "test_examples": [
       {
-        "compounds": "Aspirin",
-        "patient_context": "The quick brown fox jumps over the lazy dog."
+        "compounds": "Aspirin, Warfarin",
+        "patient_context": "78-year-old with atrial fibrillation and reduced renal function (eGFR 45 mL/min), no known drug allergies."
       }
     ],
     "return_schema": {

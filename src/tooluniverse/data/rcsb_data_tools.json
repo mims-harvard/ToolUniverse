@@ -206,106 +206,84 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "pdb_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "PDB entry ID"
-                },
-                "assembly_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Assembly identifier"
-                },
-                "oligomeric_details": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Oligomeric state description (e.g., 'tetrameric', 'dimeric')"
-                },
-                "oligomeric_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of polymer chains in assembly"
-                },
-                "method_details": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Method used to determine assembly (PISA, author, etc.)"
-                },
-                "polymer_entity_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Unique polymer entity types in assembly"
-                },
-                "nonpolymer_entity_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Unique non-polymer entity types in assembly"
-                },
-                "polymer_entity_instance_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Total polymer chain instances in assembly"
-                },
-                "total_polymer_monomer_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Total residues across all polymer chains"
-                },
-                "operations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  },
-                  "description": "Symmetry operations defining the assembly"
-                },
-                "evidence": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  },
-                  "description": "Evidence for biological relevance"
-                }
-              }
+            "pdb_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PDB entry ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "pdb_id": {
-                  "type": "string"
-                },
-                "assembly_id": {
-                  "type": "string"
-                }
-              }
+            "assembly_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Assembly identifier"
+            },
+            "oligomeric_details": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Oligomeric state description (e.g., 'tetrameric', 'dimeric')"
+            },
+            "oligomeric_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of polymer chains in assembly"
+            },
+            "method_details": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Method used to determine assembly (PISA, author, etc.)"
+            },
+            "polymer_entity_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Unique polymer entity types in assembly"
+            },
+            "nonpolymer_entity_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Unique non-polymer entity types in assembly"
+            },
+            "polymer_entity_instance_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total polymer chain instances in assembly"
+            },
+            "total_polymer_monomer_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total residues across all polymer chains"
+            },
+            "operations": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Symmetry operations defining the assembly"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Evidence for biological relevance"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -360,85 +338,63 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "pdb_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "PDB entry ID"
-                },
-                "entity_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Entity identifier"
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Chemical name of the non-polymer entity"
-                },
-                "comp_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Chemical component ID (e.g., HEM, ATP, ZN)"
-                },
-                "formula_weight": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "description": "Formula weight in kDa"
-                },
-                "details": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Additional details"
-                },
-                "auth_asym_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Chain IDs where this entity is found"
-                },
-                "annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  },
-                  "description": "Database annotations (DrugBank, etc.)"
-                }
-              }
+            "pdb_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PDB entry ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "pdb_id": {
-                  "type": "string"
-                },
-                "entity_id": {
-                  "type": "string"
-                }
-              }
+            "entity_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Entity identifier"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Chemical name of the non-polymer entity"
+            },
+            "comp_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Chemical component ID (e.g., HEM, ATP, ZN)"
+            },
+            "formula_weight": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Formula weight in kDa"
+            },
+            "details": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Additional details"
+            },
+            "auth_asym_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Chain IDs where this entity is found"
+            },
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Database annotations (DrugBank, etc.)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

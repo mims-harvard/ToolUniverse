@@ -11,12 +11,48 @@ API: https://api.genome.ucsc.edu
 No authentication required. Rate limit: ~1 request/second recommended.
 """
 
+import re
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 UCSC_BASE_URL = "https://api.genome.ucsc.edu"
+
+_REGION_RE = re.compile(
+    r"^\s*(?P<chrom>[\w.\-]+)\s*:\s*(?P<start>[\d,]+)\s*(?:-|\.\.)\s*(?P<end>[\d,]+)\s*$"
+)
+
+
+def _region_to_half_open(region: str) -> Dict[str, Any]:
+    """Parse a written locus into the 0-based half-open coordinates UCSC wants.
+
+    A locus written ``chr14:89000000-89000100`` — the form used by the UCSC
+    browser, IGV, ``samtools faidx`` and papers — is **1-based inclusive** and
+    spans ``end - start + 1`` bases. The REST API takes 0-based half-open
+    coordinates, so the start must be decremented. Passing the written numbers
+    through unconverted silently drops the first base and returns a sequence
+    one short: the right length to look correct and the wrong sequence.
+    """
+    match = _REGION_RE.match(region or "")
+    if not match:
+        raise ValueError(
+            f"Could not parse region '{region}'. Expected 'chrom:start-end', "
+            "e.g. 'chr14:89000000-89000100'."
+        )
+    start_1based = int(match.group("start").replace(",", ""))
+    end_1based = int(match.group("end").replace(",", ""))
+    if start_1based < 1:
+        raise ValueError(f"1-based start must be >= 1, got {start_1based}")
+    if end_1based < start_1based:
+        raise ValueError(
+            f"end ({end_1based}) must be >= start ({start_1based}) in a 1-based region"
+        )
+    return {
+        "chrom": match.group("chrom"),
+        "start": start_1based - 1,
+        "end": end_1based,
+    }
 
 
 @register_tool("UCSCGenomeTool")
@@ -243,20 +279,75 @@ class UCSCGenomeTool(BaseTool):
         }
 
     def _get_sequence(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get DNA sequence for a specified genomic region."""
+        """Get DNA sequence for a specified genomic region.
+
+        Accepts either a written locus via ``region`` (1-based inclusive, the
+        form you can paste straight from a browser or paper) or explicit
+        ``chrom``/``start``/``end``. For the explicit form, ``coordinate_system``
+        states which convention the numbers are in; it defaults to the 0-based
+        half-open convention the UCSC API itself uses, so existing callers are
+        unaffected.
+        """
         genome = arguments.get("genome", "")
-        chrom = arguments.get("chrom", "")
-        start = arguments.get("start", None)
-        end = arguments.get("end", None)
+        if not genome:
+            return {"status": "error", "error": "genome parameter is required"}
 
-        if not genome or not chrom or start is None or end is None:
-            return {
-                "status": "error",
-                "error": "genome, chrom, start, and end parameters are all required",
-            }
+        region = arguments.get("region") or ""
+        coord_system = str(arguments.get("coordinate_system") or "0-based").lower()
 
-        if end <= start:
-            return {"status": "error", "error": "end must be greater than start"}
+        if region:
+            try:
+                parsed = _region_to_half_open(region)
+            except ValueError as exc:
+                return {"status": "error", "error": str(exc)}
+            chrom, start, end = parsed["chrom"], parsed["start"], parsed["end"]
+        else:
+            chrom = arguments.get("chrom", "")
+            start = arguments.get("start", None)
+            end = arguments.get("end", None)
+
+            if not chrom or start is None or end is None:
+                return {
+                    "status": "error",
+                    "error": (
+                        "Provide either 'region' (e.g. 'chr14:89000000-89000100') "
+                        "or all of 'chrom', 'start' and 'end'."
+                    ),
+                }
+
+            if coord_system in ("1-based", "1based", "1"):
+                # Written/inclusive coordinates: shift the start into half-open space.
+                if start < 1:
+                    return {
+                        "status": "error",
+                        "error": f"1-based start must be >= 1, got {start}",
+                    }
+                if end < start:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"end ({end}) must be >= start ({start}) "
+                            "in 1-based coordinates"
+                        ),
+                    }
+                start = start - 1
+            elif coord_system in ("0-based", "0based", "0"):
+                if end <= start:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"end ({end}) must be greater than start ({start}) "
+                            "in 0-based half-open coordinates"
+                        ),
+                    }
+            else:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Unknown coordinate_system '{coord_system}'. "
+                        "Use '1-based' (inclusive) or '0-based' (half-open)."
+                    ),
+                }
 
         if end - start > 100000:
             return {
@@ -271,11 +362,18 @@ class UCSCGenomeTool(BaseTool):
 
         dna = raw.get("dna", "")
 
+        # Echo both conventions: a convention mix-up shows up here as a region
+        # that does not match what the caller intended, instead of silently
+        # yielding a sequence shifted by one base.
+        region_1based = f"{chrom}:{start + 1}-{end}"
+
         result = {
             "genome": genome,
             "chrom": chrom,
-            "start": start,
+            "region_1based": region_1based,
+            "start_0based": start,
             "end": end,
+            "requested_length": end - start,
             "length": len(dna),
             "dna": dna,
         }
@@ -285,7 +383,11 @@ class UCSCGenomeTool(BaseTool):
             "data": result,
             "metadata": {
                 "source": "UCSC Genome Browser",
-                "query": f"{genome}:{chrom}:{start}-{end}",
+                "query": f"{genome}:{region_1based}",
+                "coordinate_note": (
+                    "region_1based is inclusive on both ends (browser/IGV style); "
+                    "start_0based/end are half-open (UCSC API style)."
+                ),
                 "endpoint": "getData/sequence",
             },
         }

@@ -11,7 +11,8 @@
           "enum": [
             "get_survival_data"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_survival_data"
         },
         "cancer": {
           "type": "string",
@@ -120,7 +121,10 @@
         "cancer": "BRCA",
         "max_patients": 50
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_survival_data"
+    }
   },
   {
     "name": "CancerPrognosis_get_gene_expression",
@@ -134,7 +138,8 @@
           "enum": [
             "get_gene_expression"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_gene_expression"
         },
         "cancer": {
           "type": "string",
@@ -249,7 +254,9 @@
                     },
                     "affected_patient_ids": {
                       "type": "array",
-                      "items": {"type": "string"}
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "message": {
                       "type": "string"
@@ -280,7 +287,10 @@
         "gene": "TP53",
         "max_samples": 50
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_gene_expression"
+    }
   },
   {
     "name": "CancerPrognosis_search_studies",
@@ -294,7 +304,8 @@
           "enum": [
             "search_studies"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_studies"
         },
         "keyword": {
           "type": "string",
@@ -382,7 +393,10 @@
         "keyword": "breast",
         "limit": 10
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_studies"
+    }
   },
   {
     "name": "CancerPrognosis_get_study_summary",
@@ -396,7 +410,8 @@
           "enum": [
             "get_study_summary"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_study_summary"
         },
         "cancer": {
           "type": "string",
@@ -495,6 +510,9 @@
         "operation": "get_study_summary",
         "cancer": "LUAD"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_study_summary"
+    }
   }
 ]

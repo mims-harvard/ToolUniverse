@@ -25,60 +25,122 @@
     },
     "return_schema": {
       "type": "object",
-      "oneOf": [
-        {
+      "description": "Unwrapped payload (result['data']) of a successful call.",
+      "properties": {
+        "query": {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "gene": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
+            "disease": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "sources_queried": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sources_failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "num_associations": {
+          "type": "integer"
+        },
+        "associations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "concordance": {
+                "type": "integer"
+              },
+              "total_sources_queried": {
+                "type": "integer"
+              },
+              "scores": {
+                "type": "object",
+                "description": "Association score keyed by source name; sources without a numeric score are omitted."
+              }
+            },
+            "required": [
+              "name",
+              "sources",
+              "concordance",
+              "total_sources_queried",
+              "scores"
+            ]
+          }
+        },
+        "per_source_results": {
+          "type": "object",
+          "description": "Up to 10 raw extracted items per source, keyed by source name (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar).",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
               "type": "object",
               "properties": {
-                "query": {
-                  "type": "object"
+                "name": {
+                  "type": "string"
                 },
-                "sources_queried": {
-                  "type": "array"
-                },
-                "sources_failed": {
-                  "type": "array"
-                },
-                "num_associations": {
-                  "type": "integer"
-                },
-                "associations": {
-                  "type": "array"
-                },
-                "per_source_results": {
-                  "type": "object"
-                },
-                "notes": {
+                "score": {
                   "type": [
-                    "array",
+                    "number",
                     "null"
-                  ],
-                  "description": "Present only when a source's contribution needs explanation beyond a plain empty result (e.g. it lacks the data shape this tool extracts from, distinct from genuinely having no data for the query)."
+                  ]
+                },
+                "source": {
+                  "type": "string"
+                },
+                "evidence": {
+                  "type": "string",
+                  "description": "Present only for GenCC entries (classification, e.g. Definitive, Strong, Moderate)."
                 }
-              }
+              },
+              "required": [
+                "name",
+                "score",
+                "source"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
-        {
-          "properties": {
-            "status": {
-              "const": "error"
-            },
-            "error": {
-              "type": "string"
-            }
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "required": [
-            "error"
-          ]
+          "description": "Present only when a source's contribution needs explanation beyond a plain empty result (e.g. it lacks the data shape this tool extracts from, distinct from genuinely having no data for the query)."
         }
+      },
+      "required": [
+        "query",
+        "sources_queried",
+        "sources_failed",
+        "num_associations",
+        "associations",
+        "per_source_results"
       ]
     },
     "test_examples": [

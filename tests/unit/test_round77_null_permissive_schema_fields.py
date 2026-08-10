@@ -4,16 +4,20 @@ return null for that field, so a genuinely-empty value failed schema
 validation even though the tool itself handled it correctly.
 
 Each of these already has a sibling field in the same schema that already
-permits null (e.g. DailyMed's previous_page/next_page, OmicsDI's organisms),
-confirming these are schema-definition gaps rather than deliberate strictness.
+permits null (e.g. OmicsDI's organisms), confirming these are
+schema-definition gaps rather than deliberate strictness.
 
 - OmicsDI_search_datasets: dataset.description / dataset.publicationDate
   (OmicsDI aggregates multiple repositories; not all of them populate these).
-- DailyMed_search_spls: metadata.previous_page_url / metadata.next_page_url
-  (already normalized to None by SearchSPLTool on the first/last page --
-  see tests/unit/test_dailymed_null_and_headers.py).
 - PDBe_get_compound_details: <compound>[].cross_links (a compound with no
   cross-references to external databases).
+
+Note: DailyMed_search_spls's return_schema no longer has a `metadata`
+sub-schema to guard -- cli.py only validates jsonschema against
+`result.get("data")`, so the tool's sibling `metadata` envelope key was
+never actually schema-checked; the old return_schema described the full
+envelope (a symptom of the double-wrapped return_schema bug fixed
+elsewhere) and has since been corrected to describe just the `data` array.
 """
 
 import json
@@ -30,13 +34,6 @@ def _dataset_item_schema():
     tool = next(t for t in tools if t["name"] == "OmicsDI_search_datasets")
     branch = tool["return_schema"]["oneOf"][0]
     return branch["properties"]["datasets"]["items"]
-
-
-def _dailymed_metadata_schema():
-    with open("src/tooluniverse/data/dailymed_tools.json") as f:
-        tools = json.load(f)
-    tool = next(t for t in tools if t["name"] == "DailyMed_search_spls")
-    return tool["return_schema"]["properties"]["metadata"]
 
 
 def _pdbe_compound_item_schema():
@@ -70,23 +67,6 @@ def test_omicsdi_dataset_still_requires_description_to_be_string_or_null():
     schema = _dataset_item_schema()
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(instance={"description": 12345}, schema=schema)
-
-
-def test_dailymed_metadata_allows_null_page_urls():
-    schema = _dailymed_metadata_schema()
-    jsonschema.validate(
-        instance={
-            "current_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json",
-            "next_page_url": None,
-            "total_elements": 1,
-            "total_pages": 1,
-            "current_page": 1,
-            "previous_page": None,
-            "previous_page_url": None,
-            "next_page": None,
-        },
-        schema=schema,
-    )
 
 
 def test_pdbe_compound_allows_null_cross_links():

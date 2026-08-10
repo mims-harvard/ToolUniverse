@@ -8,7 +8,7 @@
       "properties": {
         "disease_trait": {
           "type": "string",
-          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'coronary artery disease', 'breast cancer'). NOTE: GWAS associations are indexed by trait/disease, not by gene or drug name — passing a gene symbol or drug name here will fail. Use efo_id for precise filtering."
+          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'coronary artery disease', 'breast cancer'). NOTE: GWAS associations are indexed by trait/disease, not by gene or drug name \u2014 passing a gene symbol or drug name here will fail. Use efo_id for precise filtering."
         },
         "query": {
           "type": "string",
@@ -250,10 +250,8 @@
       "Search"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS studies search results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS study objects",
           "items": {
@@ -369,34 +367,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -438,10 +420,8 @@
       "Search"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS SNPs search results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of SNP objects",
           "items": {
@@ -514,34 +494,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -685,18 +649,20 @@
   {
     "type": "GWASStudyByID",
     "name": "gwas_get_study_by_id",
-    "description": "Get a specific GWAS study by its unique identifier.",
+    "description": "Get a specific GWAS study by its unique identifier. Accepts either 'study_id' or 'accession_id' (the same GCST identifier field name used by GWASAssociationsForStudy and returned on every association record) so IDs can be chained directly between gwas_* tools without renaming.",
     "parameter": {
       "type": "object",
       "properties": {
         "study_id": {
           "type": "string",
-          "description": "GWAS study identifier"
+          "description": "GWAS study identifier (GCST accession, e.g. 'GCST000392')"
+        },
+        "accession_id": {
+          "type": "string",
+          "description": "Alias for study_id -- the same GCST accession identifier, accepted so results from other gwas_* tools (which use the field name 'accession_id') can be passed straight in."
         }
       },
-      "required": [
-        "study_id"
-      ]
+      "required": []
     },
     "label": [
       "GWAS",
@@ -1002,10 +968,8 @@
       "Genetics"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS variants for trait results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of variant objects",
           "items": {
@@ -1078,34 +1042,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1176,10 +1124,8 @@
       "Significance"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS associations for trait results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS association objects",
           "items": {
@@ -1287,34 +1233,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1362,10 +1292,8 @@
       "Traits"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS associations for SNP results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS association objects",
           "items": {
@@ -1473,34 +1401,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1585,10 +1497,8 @@
       "Research"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS studies for trait results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS study objects",
           "items": {
@@ -1704,34 +1614,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1777,10 +1671,8 @@
       "Mapping"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS SNPs for gene results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of SNP objects",
           "items": {
@@ -1853,34 +1745,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1921,10 +1797,8 @@
       "Results"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS associations for study results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS association objects",
           "items": {
@@ -2032,34 +1906,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -2107,6 +1965,14 @@
         },
         "total_found": {
           "type": "integer"
+        },
+        "queried_gene_name": {
+          "type": "string",
+          "description": "Present only when the requested symbol matched nothing and an unhyphenated spelling was used instead; holds the symbol originally requested."
+        },
+        "gene_name_note": {
+          "type": "string",
+          "description": "Present only when the requested symbol matched nothing and an unhyphenated spelling was used instead; explains which spelling produced these results."
         }
       }
     },

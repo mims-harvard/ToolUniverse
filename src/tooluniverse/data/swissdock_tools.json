@@ -55,38 +55,27 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "session_id": {
-                  "type": "string",
-                  "description": "Unique session identifier for this docking job"
-                },
-                "download_url": {
-                  "type": "string",
-                  "description": "URL to download complete docking results (tar.gz archive)"
-                },
-                "result_size_bytes": {
-                  "type": "integer",
-                  "description": "Size of result archive in bytes"
-                },
-                "content_type": {
-                  "type": "string",
-                  "description": "MIME type of result file"
-                },
-                "message": {
-                  "type": "string",
-                  "description": "Human-readable status message"
-                }
-              }
+            "session_id": {
+              "type": "string",
+              "description": "Unique session identifier for this docking job"
             },
-            "metadata": {
-              "type": "object"
+            "download_url": {
+              "type": "string",
+              "description": "URL to download complete docking results (tar.gz archive)"
+            },
+            "result_size_bytes": {
+              "type": "integer",
+              "description": "Size of result archive in bytes"
+            },
+            "content_type": {
+              "type": "string",
+              "description": "MIME type of result file"
+            },
+            "message": {
+              "type": "string",
+              "description": "Human-readable status message"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -133,34 +122,23 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "session_id": {
-                  "type": "string",
-                  "description": "Session identifier"
-                },
-                "job_status": {
-                  "type": "string",
-                  "description": "Current job status: RUNNING, FINISHED, ERROR, NOT_FOUND"
-                },
-                "is_finished": {
-                  "type": "boolean",
-                  "description": "True if job has completed successfully"
-                },
-                "has_error": {
-                  "type": "boolean",
-                  "description": "True if job encountered an error"
-                }
-              }
+            "session_id": {
+              "type": "string",
+              "description": "Session identifier"
             },
-            "metadata": {
-              "type": "object"
+            "job_status": {
+              "type": "string",
+              "description": "Current job status: RUNNING, FINISHED, ERROR, NOT_FOUND"
+            },
+            "is_finished": {
+              "type": "boolean",
+              "description": "True if job has completed successfully"
+            },
+            "has_error": {
+              "type": "boolean",
+              "description": "True if job encountered an error"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -211,42 +189,31 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "session_id": {
-                  "type": "string",
-                  "description": "Session identifier"
-                },
-                "download_url": {
-                  "type": "string",
-                  "description": "URL to download complete docking results"
-                },
-                "result_size_bytes": {
-                  "type": "integer",
-                  "description": "Size of result archive"
-                },
-                "content_type": {
-                  "type": "string",
-                  "description": "MIME type of result file"
-                },
-                "message": {
-                  "type": "string",
-                  "description": "Status message"
-                },
-                "job_status": {
-                  "type": "string",
-                  "description": "Job status if not FINISHED yet"
-                }
-              }
+            "session_id": {
+              "type": "string",
+              "description": "Session identifier"
             },
-            "metadata": {
-              "type": "object"
+            "download_url": {
+              "type": "string",
+              "description": "URL to download complete docking results"
+            },
+            "result_size_bytes": {
+              "type": "integer",
+              "description": "Size of result archive"
+            },
+            "content_type": {
+              "type": "string",
+              "description": "MIME type of result file"
+            },
+            "message": {
+              "type": "string",
+              "description": "Status message"
+            },
+            "job_status": {
+              "type": "string",
+              "description": "Job status if not FINISHED yet"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

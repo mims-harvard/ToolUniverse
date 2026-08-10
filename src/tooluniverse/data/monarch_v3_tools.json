@@ -285,177 +285,149 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "average_score": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "best_score": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "metric": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "subject_best_matches": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "query_phenotype": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "query_label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "matched_phenotype": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "matched_label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "ancestor_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "ancestor_label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "jaccard_similarity": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "phenodigm_score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "object_best_matches": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "query_phenotype": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "query_label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "matched_phenotype": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "matched_label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "ancestor_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "ancestor_label": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "jaccard_similarity": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "phenodigm_score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "average_score": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "best_score": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "metric": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_best_matches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query_phenotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "query_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "matched_phenotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "matched_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "ancestor_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ancestor_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "jaccard_similarity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "phenodigm_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "subjects": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "objects": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+            "object_best_matches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query_phenotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "query_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "matched_phenotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "matched_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "ancestor_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ancestor_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "jaccard_similarity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "phenodigm_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

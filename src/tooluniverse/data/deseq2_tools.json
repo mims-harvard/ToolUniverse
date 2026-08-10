@@ -12,7 +12,8 @@
             "deseq2",
             "enrichgo"
           ],
-          "description": "deseq2: differential expression, enrichgo: GO enrichment with clusterProfiler::simplify"
+          "description": "deseq2: differential expression, enrichgo: GO enrichment with clusterProfiler::simplify",
+          "default": "deseq2"
         },
         "counts_file": {
           "type": "string",
@@ -87,31 +88,16 @@
           "description": "Organism annotation DB (org.Hs.eg.db, org.Mm.eg.db). Default: org.Hs.eg.db"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "data"
-          ]
+          "type": "object"
         },
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
@@ -130,6 +116,9 @@
         "metadata_file": "/tmp/meta.csv",
         "design": "~ condition"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "deseq2"
+    }
   }
 ]

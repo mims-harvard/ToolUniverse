@@ -430,6 +430,13 @@ def search_openfda(
     applied_return_field_mapping = {}  # primary_field -> fallback_field
     fallback_terms: list[str] = []
     used_generic_fallback = False
+    # Fix-20A-1: `used_generic_fallback` was tracked but never surfaced to the
+    # caller. Each fallback stage weakens the match in a different way, and
+    # the returned payload looked identical to an exact hit, so a caller had
+    # no way to tell "this is the drug you asked for" from "this is the
+    # closest thing we could find". Record which stage fired so we can attach
+    # an honest note.
+    fallback_note: str | None = None
 
     def _all_search_fields_from_orig() -> list[str]:
         out = []
@@ -575,6 +582,11 @@ def search_openfda(
                         requested_return_fields = [fb]
                         applied_return_field_mapping[primary] = fb
                         used_generic_fallback = True
+                        fallback_note = (
+                            f"Label section '{primary}' was not present for this "
+                            f"product; showing content from the related section "
+                            f"'{fb}' instead."
+                        )
                         break
                 if used_generic_fallback:
                     break
@@ -605,6 +617,12 @@ def search_openfda(
             if isinstance(tmp, dict) and "error" not in tmp:
                 response_data = tmp
                 used_generic_fallback = True
+                fallback_note = (
+                    f"No exact phrase match for '{qtext}'; results use a "
+                    f"broadened, term-based match in the same field(s) "
+                    f"({', '.join(sorted(orig_fields_flat))}) -- verify the "
+                    f"returned drug name is the one you intended."
+                )
 
         # Stage B: expand to label-text fields (robust when openfda is empty or name mismatched)
         if (
@@ -636,6 +654,22 @@ def search_openfda(
             if isinstance(tmp, dict) and "error" not in tmp:
                 response_data = tmp
                 used_generic_fallback = True
+                # Fix-20A-1: this stage matches '{qtext}' anywhere in full
+                # label-text fields, including ingredient lists -- so a query
+                # that is not a product name at all still returns rows. Live
+                # example: "magnesium stearate tablet" (an excipient plus a
+                # dosage form) returns unrelated products that merely list it,
+                # indistinguishable from a real hit. Flag that explicitly,
+                # since the field-based fallback above (Stage A) already
+                # covers ordinary name/spelling mismatches.
+                fallback_note = (
+                    f"No product/drug named '{qtext}' matched exactly; "
+                    f"results were broadened to full label text (e.g. "
+                    f"ingredients, indications, description) and may include "
+                    f"unrelated products that merely mention '{qtext}' -- "
+                    f"check the returned openfda.brand_name/generic_name "
+                    f"before treating this as data about '{qtext}' itself."
+                )
 
         # Stage C: data-driven closest-name candidates (name-based only, single token)
         if (
@@ -719,6 +753,13 @@ def search_openfda(
                         if isinstance(tmp, dict) and "error" not in tmp:
                             response_data = tmp
                             used_generic_fallback = True
+                            fallback_note = (
+                                f"No drug named '{term}' was found; showing "
+                                f"the closest-spelling candidate(s) "
+                                f"({', '.join(sorted(near))}) instead -- "
+                                f"verify the returned drug name matches what "
+                                f"you intended."
+                            )
                 except Exception:
                     pass
 
@@ -774,14 +815,32 @@ def search_openfda(
     # Extract meta information
     meta_info = response_data.get("meta", {})
     meta_info = meta_info.get("results", {})
+    # The NOT_FOUND fallback engine above re-queries with an internal
+    # `limit_override` (floored at 25) to get enough candidates to rank/dedupe,
+    # then truncates `extracted_results` back down to the caller's requested
+    # limit. Without this, `meta.limit` would leak that internal retry value
+    # (e.g. 25) even though only the caller's requested number of results
+    # (e.g. 1) is actually returned in `results`.
+    if meta_info:
+        meta_info = dict(meta_info)
+        if params.get("limit") is not None:
+            meta_info["limit"] = params.get("limit")
+        if params.get("skip") is not None:
+            meta_info["skip"] = params.get("skip")
 
     # Extract results and return only the specified return fields
     results = response_data.get("results", [])
     if return_fields == "ALL":
-        return {"meta": meta_info, "results": results}
+        out = {"meta": meta_info, "results": results}
+        if fallback_note:
+            out["note"] = fallback_note
+        return out
     # If count parameter is used, return results directly (count API format)
     if params.get("count") or count:
-        return {"meta": meta_info, "results": results}
+        out = {"meta": meta_info, "results": results}
+        if fallback_note:
+            out["note"] = fallback_note
+        return out
     flat_keys = []
     # Use original search_fields for consistent output schema even when we fell
     # back to broad text search.
@@ -860,7 +919,10 @@ def search_openfda(
         if user_limit_final:
             extracted_results = extracted_results[:user_limit_final]
 
-    return {"meta": meta_info, "results": extracted_results}
+    out = {"meta": meta_info, "results": extracted_results}
+    if fallback_note:
+        out["note"] = fallback_note
+    return out
 
 
 @register_tool("FDATool")

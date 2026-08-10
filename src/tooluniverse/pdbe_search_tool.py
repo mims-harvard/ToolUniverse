@@ -88,33 +88,62 @@ class PDBeSearchTool(BaseTool):
 
         limit = min(arguments.get("limit", 10), 50)
 
-        params = {
-            "q": query,
-            "rows": limit,
-            "fl": "pdb_id,title,resolution,experimental_method,deposition_date,number_of_entities,organism_scientific_name",
-            "wt": "json",
-            "sort": "resolution asc",
-        }
-
-        response = requests.get(PDBE_SEARCH_URL, params=params, timeout=self.timeout)
-        response.raise_for_status()
-        raw = response.json()
-
-        solr_response = raw.get("response", {})
-        total = solr_response.get("numFound", 0)
-
+        # PDBe's Solr index is entity-level, not deduplicated by PDB entry --
+        # a single structure with multiple matching chains/entities can
+        # appear as many docs sharing one pdb_id. For entity-dense queries
+        # (e.g. "ribosome 70S", where one structure has dozens of matching
+        # chains) a fixed over-fetch multiplier can exhaust its rows without
+        # finding enough unique pdb_ids, especially when `sort` clusters all
+        # of one entry's docs together. Page through Solr with `start`,
+        # accumulating unique entries, until `limit` is reached or the
+        # safety cap on rows scanned is hit.
+        max_rows_scanned = max(limit * 20, 500)
+        page_size = 100
+        total = 0
         structures = []
-        for doc in solr_response.get("docs", []):
-            entry = {
-                "pdb_id": doc.get("pdb_id", ""),
-                "title": doc.get("title", ""),
-                "resolution": doc.get("resolution"),
-                "experimental_method": doc.get("experimental_method", []),
-                "deposition_date": doc.get("deposition_date"),
-                "number_of_entities": doc.get("number_of_entities"),
-                "organism": doc.get("organism_scientific_name", []),
+        seen_pdb_ids = set()
+        start = 0
+        while len(structures) < limit and start < max_rows_scanned:
+            params = {
+                "q": query,
+                "rows": page_size,
+                "start": start,
+                "fl": "pdb_id,title,resolution,experimental_method,deposition_date,number_of_entities,organism_scientific_name",
+                "wt": "json",
+                "sort": "resolution asc",
             }
-            structures.append(entry)
+            response = requests.get(
+                PDBE_SEARCH_URL, params=params, timeout=self.timeout
+            )
+            response.raise_for_status()
+            raw = response.json()
+
+            solr_response = raw.get("response", {})
+            total = solr_response.get("numFound", 0)
+            docs = solr_response.get("docs", [])
+
+            for doc in docs:
+                pdb_id = doc.get("pdb_id", "")
+                if pdb_id and pdb_id in seen_pdb_ids:
+                    continue
+                seen_pdb_ids.add(pdb_id)
+                entry = {
+                    "pdb_id": pdb_id,
+                    "title": doc.get("title", ""),
+                    "resolution": doc.get("resolution"),
+                    "experimental_method": doc.get("experimental_method", []),
+                    "deposition_date": doc.get("deposition_date"),
+                    "number_of_entities": doc.get("number_of_entities"),
+                    "organism": doc.get("organism_scientific_name", []),
+                }
+                structures.append(entry)
+                if len(structures) >= limit:
+                    break
+
+            start += page_size
+            if len(docs) < page_size:
+                # Exhausted all matching docs before filling `limit`.
+                break
 
         return {
             "status": "success",
@@ -122,6 +151,11 @@ class PDBeSearchTool(BaseTool):
             "metadata": {
                 "source": "PDBe Search",
                 "total_found": total,
+                "total_found_note": (
+                    "Entity-level Solr match count, not unique PDB entries -- "
+                    "a single structure can contribute many matching chains/"
+                    "entities, so this is typically far larger than `returned`."
+                ),
                 "returned": len(structures),
                 "query": query,
                 "endpoint": "search_structures",

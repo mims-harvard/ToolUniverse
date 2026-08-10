@@ -1,12 +1,31 @@
 # faers_analytics_tool.py
 
+import os
 import requests
 import math
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, Optional
 from .base_tool import BaseTool
+from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
 FDA_BASE_URL = "https://api.fda.gov/drug/event.json"
+
+
+def _drug_clause(drug_name: str) -> str:
+    """openFDA search clause matching a drug by generic OR brand name.
+
+    Matching only `generic_name` makes every brand name look like a drug with
+    zero reports, which for the disproportionality math is indistinguishable
+    from a genuinely unreported drug (confirmed live: "XELJANZ" yielded
+    a=0, b=0 and an "Insufficient data" error while its generic "tofacitinib"
+    returned a real ROR; the generic-or-brand form returns 183,405 reports for
+    the same brand name). Brand names are what prescribers and labels use, so
+    they must resolve to the same reports as the generic.
+    """
+    return (
+        f'(patient.drug.openfda.generic_name:"{drug_name}"'
+        f'+OR+patient.drug.openfda.brand_name:"{drug_name}")'
+    )
 
 
 @register_tool("FAERSAnalyticsTool")
@@ -27,6 +46,7 @@ class FAERSAnalyticsTool(BaseTool):
         super().__init__(tool_config)
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
+        self.api_key = os.getenv("FDA_API_KEY")
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to analytics operation."""
@@ -74,6 +94,15 @@ class FAERSAnalyticsTool(BaseTool):
 
         return self._with_data_payload(operation_result)
 
+    def _with_api_key(self, url: str) -> str:
+        """Append FDA_API_KEY (if set) to an openFDA request URL -- reduces
+        how often the anonymous tier's low rate limit is hit (see
+        _get_faers_count)."""
+        if self.api_key:
+            separator = "&" if "?" in url else "?"
+            return f"{url}{separator}api_key={self.api_key}"
+        return url
+
     def _with_data_payload(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Ensure successful operation responses include a standardized data wrapper."""
         if not isinstance(result, dict):
@@ -111,18 +140,33 @@ class FAERSAnalyticsTool(BaseTool):
                     "error": "Must provide drug_name and adverse_event",
                 }
 
-            # Get counts for 2x2 table
-            # a = drug + event
+            # Get counts for 2x2 table. Each call is Optional[int]: None means
+            # the openFDA request itself failed (e.g. rate limited), which
+            # must not be treated as a genuine zero count -- see
+            # _get_faers_count.
             a = self._get_faers_count(drug_name, adverse_event)
+            drug_total = self._get_faers_count(drug_name, None)
+            event_total = self._get_faers_count(None, adverse_event)
+            total = self._get_faers_total_count()
+
+            if None in (a, drug_total, event_total, total):
+                return {
+                    "status": "error",
+                    "error": (
+                        "One or more openFDA FAERS count queries failed "
+                        "(commonly HTTP 429 rate limiting on the anonymous "
+                        "tier), so a disproportionality analysis cannot be "
+                        "computed right now. Retry in a moment, or set the "
+                        "FDA_API_KEY environment variable to raise the rate "
+                        "limit (https://open.fda.gov/apis/authentication/)."
+                    ),
+                }
 
             # b = drug + no event (all drug reports - drug+event)
-            b = self._get_faers_count(drug_name, None) - a
-
+            b = drug_total - a
             # c = no drug + event (all event reports - drug+event)
-            c = self._get_faers_count(None, adverse_event) - a
-
+            c = event_total - a
             # d = no drug + no event (total - a - b - c)
-            total = self._get_faers_total_count()
             d = total - a - b - c
 
             # Check for valid counts
@@ -233,13 +277,13 @@ class FAERSAnalyticsTool(BaseTool):
 
             # Feature-121A-003: adverse_event is optional — filter by drug alone if omitted
             if adverse_event:
-                base_query = f'patient.drug.openfda.generic_name:"{drug_name}"+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
+                base_query = f'{_drug_clause(drug_name)}+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
             else:
-                base_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+                base_query = _drug_clause(drug_name)
 
-            url = f"{FDA_BASE_URL}?search={base_query}&count={count_field}"
+            url = self._with_api_key(f"{FDA_BASE_URL}?search={base_query}&count={count_field}")
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
 
             data = response.json()
@@ -304,7 +348,7 @@ class FAERSAnalyticsTool(BaseTool):
                 return {"status": "error", "error": "Must provide drug_name"}
 
             # Build query for serious events
-            base_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+            base_query = _drug_clause(drug_name)
 
             # Add specific reaction filter if provided
             if adverse_event:
@@ -330,17 +374,19 @@ class FAERSAnalyticsTool(BaseTool):
             search_query = base_query + seriousness_map[seriousness_type]
 
             # Get top reactions for serious events
-            url = f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            )
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
 
             data = response.json()
             results = data.get("results", [])
 
             # Get total serious event count
-            total_url = f"{FDA_BASE_URL}?search={search_query}&limit=1"
-            total_response = requests.get(total_url, timeout=30)
+            total_url = self._with_api_key(f"{FDA_BASE_URL}?search={search_query}&limit=1")
+            total_response = request_with_retry(requests, "GET", total_url, timeout=30)
             total_data = total_response.json()
             total_serious = (
                 total_data.get("meta", {}).get("results", {}).get("total", 0)
@@ -414,15 +460,45 @@ class FAERSAnalyticsTool(BaseTool):
             ror1 = result1.get("metrics", {}).get("ROR", {}).get("value")
             ror2 = result2.get("metrics", {}).get("ROR", {}).get("value")
 
-            # Determine which drug has stronger signal
+            # Fix-19B-2: comparison text used to rank drugs purely by raw ROR
+            # magnitude ("X shows stronger signal than Y") even when NEITHER
+            # drug actually crossed this tool's own signal-detection
+            # threshold (signal_detection.signal_detected, from ROR lower CI
+            # > 1.0 and case count >= 3) -- confirmed live with
+            # nirsevimab/palivizumab + anaphylactic reaction, where both
+            # drugs had signal_detected=False (ROR < 1, i.e. no elevated-risk
+            # association) but the narrative still said one showed a
+            # "stronger signal" than the other. Ground the wording in
+            # signal_detected so "signal" language only appears when a
+            # signal was actually detected.
+            sig1 = result1.get("signal_detection", {}).get("signal_detected", False)
+            sig2 = result2.get("signal_detection", {}).get("signal_detected", False)
+
             comparison = "Inconclusive"
             if ror1 and ror2:
-                if ror1 > ror2 * 1.5:
-                    comparison = f"{drug1} shows stronger signal than {drug2}"
+                if not sig1 and not sig2:
+                    comparison = (
+                        f"Neither {drug1} nor {drug2} shows a detected safety signal "
+                        f"for {adverse_event} (ROR does not meet the signal-detection "
+                        "threshold for either drug); the higher raw ROR is not a "
+                        "meaningful difference."
+                    )
+                elif sig1 and not sig2:
+                    comparison = (
+                        f"{drug1} shows a detected safety signal for {adverse_event}; "
+                        f"{drug2} does not."
+                    )
+                elif sig2 and not sig1:
+                    comparison = (
+                        f"{drug2} shows a detected safety signal for {adverse_event}; "
+                        f"{drug1} does not."
+                    )
+                elif ror1 > ror2 * 1.5:
+                    comparison = f"Both show a detected signal; {drug1}'s is stronger than {drug2}'s"
                 elif ror2 > ror1 * 1.5:
-                    comparison = f"{drug2} shows stronger signal than {drug1}"
+                    comparison = f"Both show a detected signal; {drug2}'s is stronger than {drug1}'s"
                 else:
-                    comparison = f"{drug1} and {drug2} show similar signals"
+                    comparison = f"{drug1} and {drug2} show similar-strength detected signals"
 
             return {
                 "status": "success",
@@ -455,14 +531,14 @@ class FAERSAnalyticsTool(BaseTool):
 
             # Build base query
             if adverse_event:
-                search_query = f'patient.drug.openfda.generic_name:"{drug_name}"+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
+                search_query = f'{_drug_clause(drug_name)}+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
             else:
-                search_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+                search_query = _drug_clause(drug_name)
 
             # Get counts by receive date (year)
-            url = f"{FDA_BASE_URL}?search={search_query}&count=receivedate"
+            url = self._with_api_key(f"{FDA_BASE_URL}?search={search_query}&count=receivedate")
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
 
             data = response.json()
@@ -529,10 +605,12 @@ class FAERSAnalyticsTool(BaseTool):
                 return {"status": "error", "error": "Must provide drug_name"}
 
             # Get preferred term (PT) level reactions
-            search_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
-            url = f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            search_query = _drug_clause(drug_name)
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            )
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
 
             data = response.json()
@@ -567,12 +645,26 @@ class FAERSAnalyticsTool(BaseTool):
 
     # Helper methods for statistical calculations
 
-    def _get_faers_count(self, drug_name: str = None, adverse_event: str = None) -> int:
-        """Get count of FAERS reports matching criteria."""
+    def _get_faers_count(
+        self, drug_name: str = None, adverse_event: str = None
+    ) -> Optional[int]:
+        """Get count of FAERS reports matching criteria.
+
+        Returns None (not 0) if the request fails (e.g. rate limited or a
+        network error), so a failure isn't mistaken for a genuine zero
+        count -- a failed fetch used to be silently treated as a genuine
+        zero-count result, so `_calculate_disproportionality` reported
+        "Insufficient data: a=0, b=0, c=0, d=0" for well-known drug/event
+        pairs during a rate-limit window, indistinguishable from "this
+        combination truly has no FAERS reports" (confirmed live: retrying
+        the exact same query after the rate limit cleared returned correct
+        nonzero counts and a real ROR/PRR/IC signal). Callers must check
+        for None before doing arithmetic.
+        """
         try:
             query_parts = []
             if drug_name:
-                query_parts.append(f'patient.drug.openfda.generic_name:"{drug_name}"')
+                query_parts.append(_drug_clause(drug_name))
             if adverse_event:
                 query_parts.append(
                     f'patient.reaction.reactionmeddrapt:"{adverse_event}"'
@@ -585,16 +677,21 @@ class FAERSAnalyticsTool(BaseTool):
                 search_query = "+AND+".join(query_parts)
                 url = f"{FDA_BASE_URL}?search={search_query}&limit=1"
 
-            response = requests.get(url, timeout=30)
+            url = self._with_api_key(url)
+
+            response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code == 404:
+                # openFDA returns 404 (not an empty 200) for a query with no matches.
+                return 0
             response.raise_for_status()
 
             data = response.json()
             return data.get("meta", {}).get("results", {}).get("total", 0)
 
         except Exception:
-            return 0
+            return None
 
-    def _get_faers_total_count(self) -> int:
+    def _get_faers_total_count(self) -> Optional[int]:
         """Get total number of reports in FAERS database."""
         return self._get_faers_count(None, None)
 

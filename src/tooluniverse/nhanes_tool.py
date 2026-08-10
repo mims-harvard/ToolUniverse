@@ -118,7 +118,14 @@ class NHANESTool(BaseTool):
         year = arguments.get("year")
         limit = arguments.get("limit", 20)
 
-        cycle_year = year.split("-")[0] if year else "2017"
+        # Omitting `year` used to silently restrict the search to a single
+        # hardcoded cycle (2017-2018), which reported a false "no results"
+        # for datasets renamed or dropped in that one cycle (e.g. searching
+        # "phenols" found nothing even though other cycles measured them).
+        # Search the two most recent cycles by default instead, matching
+        # `_get_dataset_info`'s documented "omit year -> two most recent
+        # cycles" behavior.
+        cycles = [year] if year else self._CYCLES[:2]
         components = [
             "Demographics",
             "Dietary",
@@ -127,8 +134,40 @@ class NHANESTool(BaseTool):
             "Questionnaire",
         ]
 
-        datasets = []
+        datasets: list = []
         seen_files: set = set()
+        cycles_searched: list = []
+        for cycle in cycles:
+            cycles_searched.append(cycle)
+            self._search_cycle(cycle, components, search_term, limit, datasets, seen_files)
+            if len(datasets) >= limit:
+                break
+
+        return {
+            "status": "success",
+            "data": {
+                "datasets": datasets,
+                "count": len(datasets),
+                "search_term": search_term,
+                "cycles_searched": cycles_searched,
+            },
+            "metadata": {
+                "source": "NHANES Variable List (wwwn.cdc.gov)",
+                "components_searched": components,
+            },
+        }
+
+    def _search_cycle(
+        self,
+        cycle: str,
+        components: list,
+        search_term: str,
+        limit: int,
+        datasets: list,
+        seen_files: set,
+    ) -> None:
+        """Search one NHANES cycle's variable list, appending hits in place."""
+        cycle_year = cycle.split("-")[0]
         for component in components:
             url = (
                 "https://wwwn.cdc.gov/Nchs/Nhanes/search/variablelist.aspx"
@@ -150,13 +189,11 @@ class NHANESTool(BaseTool):
                 )
                 for var_name, var_desc, file_name, file_desc in rows:
                     if search_term and not any(
-                        search_term in s.lower()
-                        for s in [var_desc, var_name, file_desc]
+                        search_term in s.lower() for s in [var_desc, var_name, file_desc]
                     ):
                         continue
                     if file_name not in seen_files:
                         seen_files.add(file_name)
-                        end_year = str(int(cycle_year) + 1)
                         datasets.append(
                             {
                                 "file_name": file_name,
@@ -164,34 +201,19 @@ class NHANESTool(BaseTool):
                                 "component": component,
                                 "matching_variable": var_name,
                                 "variable_description": var_desc,
-                                "cycle": year or f"{cycle_year}-{end_year}",
+                                "cycle": cycle,
                                 "download_url": (
                                     f"https://wwwn.cdc.gov/Nchs/Nhanes/"
-                                    f"{cycle_year}-{end_year}/"
-                                    f"DataFiles/{file_name}.XPT"
+                                    f"{cycle}/DataFiles/{file_name}.XPT"
                                 ),
                             }
                         )
                     if len(datasets) >= limit:
-                        break
+                        return
             except Exception:
                 continue
             if len(datasets) >= limit:
-                break
-
-        return {
-            "status": "success",
-            "data": {
-                "datasets": datasets,
-                "count": len(datasets),
-                "search_term": search_term,
-                "cycle": year or f"{cycle_year}-{str(int(cycle_year) + 1)}",
-            },
-            "metadata": {
-                "source": "NHANES Variable List (wwwn.cdc.gov)",
-                "components_searched": components,
-            },
-        }
+                return
 
     # Cycle suffix mapping: cycle -> letter suffix for NHANES filenames
     _CYCLE_SUFFIX = {
@@ -250,6 +272,16 @@ class NHANESTool(BaseTool):
             f"{start_year}/DataFiles/{filename}.XPT"
         )
 
+    # pandas' XPORT reader converts an all-zero 8-byte IBM float to this exact
+    # value instead of 0.0 -- its IBM-to-IEEE754 conversion (_parse_float_vec
+    # in pandas.io.sas.sas_xport) has no special case for an all-zero byte
+    # pattern, so the exponent-bias arithmetic produces a tiny denormalized
+    # double rather than true zero. Confirmed by running that exact function
+    # against an 8-zero-byte input: it returns 5.397605346934028e-79 every
+    # time, not a range of "small" values, so this can be sanitized as an
+    # exact match with no risk to genuine (always much larger) NHANES values.
+    _SAS_XPORT_ZERO_ARTIFACT = 5.397605346934028e-79
+
     def _download_xpt(self, url: str) -> pd.DataFrame:
         """Download and parse an XPT file from CDC. Returns a DataFrame."""
         resp = requests.get(url, timeout=120)
@@ -262,7 +294,8 @@ class NHANESTool(BaseTool):
         # Check for HTML error page (CDC returns 200 with HTML for missing files)
         if content[:5] == b"<!DOC" or content[:5] == b"<html":
             raise ValueError(f"File not found at {url} (CDC returned HTML error page)")
-        return pd.read_sas(io.BytesIO(content), format="xport")
+        df = pd.read_sas(io.BytesIO(content), format="xport")
+        return df.replace(self._SAS_XPORT_ZERO_ARTIFACT, 0.0)
 
     @staticmethod
     def _format_age_bounds(age_min, age_max) -> str:

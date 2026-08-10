@@ -278,7 +278,7 @@
     },
     {
         "name": "OpenTargets_get_evidence_by_datasource",
-        "description": "Get target-disease evidence from Open Targets filtered by configurable data sources. Unlike OpenTargets_target_disease_evidence (intogen-only), this tool accepts any datasourceIds. Valid sources include: ot_genetics_portal, eva, eva_somatic, gene_burden, genomics_england, intogen, cancer_gene_census, clinical_precedence, crispr, europepmc, expression_atlas, gene2phenotype, orphanet, uniprot_literature, uniprot_variants, clingen, phewas_catalog, reactome, progeny, slapenrich, sysbio. Note: 'chembl' was renamed to 'clinical_precedence' upstream (confirmed live: 'chembl' now returns 0 rows even for well-documented drug-target-disease evidence). Returns evidence rows with scores, literature references, and source attribution.",
+        "description": "Get target-disease evidence from Open Targets filtered by configurable data sources. Unlike OpenTargets_target_disease_evidence (intogen-only), this tool accepts any datasourceIds. Valid sources include: gwas_credible_sets, eva, eva_somatic, gene_burden, genomics_england, intogen, cancer_gene_census, cancer_biomarkers, clinical_precedence, crispr, europepmc, expression_atlas, gene2phenotype, impc, orphanet, uniprot_literature, uniprot_variants, clingen, phewas_catalog, reactome, progeny, slapenrich, sysbio. Note: two source IDs were renamed upstream and the retired names now match nothing rather than erroring — 'ot_genetics_portal' became 'gwas_credible_sets' (confirmed live: IL23R/Crohn disease returns 0 rows for the old name and 43 for the new one) and 'chembl' became 'clinical_precedence'. This tool remaps both retired names automatically and reports the substitution in metadata.datasource_rename_note. Returns evidence rows with scores, literature references, and source attribution.",
         "label": [
             "Target",
             "Disease",
@@ -311,7 +311,7 @@
                     "items": {
                         "type": "string"
                     },
-                    "description": "List of datasource IDs to filter evidence. Examples: ['clinical_precedence', 'europepmc'], ['eva', 'clinvar'], ['intogen', 'cancer_gene_census']. Omit or pass empty array for all sources."
+                    "description": "List of datasource IDs to filter evidence. Examples: ['gwas_credible_sets', 'europepmc'], ['eva', 'clinical_precedence'], ['intogen', 'cancer_gene_census']. For genetic (GWAS) association evidence use 'gwas_credible_sets' — the retired 'ot_genetics_portal' name is remapped automatically. Omit or pass empty array for all sources."
                 },
                 "size": {
                     "type": "integer",
@@ -461,7 +461,7 @@
                 "chemblId"
             ]
         },
-        "query_schema": "\n  query drugMechanismsOfAction($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      mechanismsOfAction {\n        rows {\n          mechanismOfAction\n          actionType\n         targetName\n          targets {\n            id\n            approvedSymbol\n          }\n        }\n      }\n    }\n  }\n  ",
+        "query_schema": "\n  query drugMechanismsOfAction($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      mechanismsOfAction {\n        rows {\n          mechanismOfAction\n          actionType\n         targetName\n          targets {\n            id\n            approvedSymbol\n          }\n          references {\n            source\n            urls\n          }\n        }\n      }\n    }\n  }\n  ",
         "label": [
             "Drug",
             "MechanismsOfAction",
@@ -519,6 +519,23 @@
                                                                 },
                                                                 "approvedSymbol": {
                                                                     "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "references": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "source": {
+                                                                    "type": "string"
+                                                                },
+                                                                "urls": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -3679,60 +3696,51 @@
             "oneOf": [
                 {
                     "type": "object",
-                    "description": "GraphQL response with drug pharmacogenomics data",
                     "properties": {
-                        "data": {
+                        "drug": {
                             "type": "object",
                             "properties": {
-                                "drug": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "string"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "pharmacogenomics": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "datasourceId": {
-                                                        "type": "string"
-                                                    },
-                                                    "evidenceLevel": {
-                                                        "type": "string"
-                                                    },
-                                                    "genotype": {
-                                                        "type": "string"
-                                                    },
-                                                    "genotypeAnnotationText": {
-                                                        "type": "string"
-                                                    },
-                                                    "pgxCategory": {
-                                                        "type": "string"
-                                                    },
-                                                    "phenotypeText": {
-                                                        "type": "string"
-                                                    },
-                                                    "variantRsId": {
-                                                        "type": "string"
-                                                    },
-                                                    "isDirectTarget": {
-                                                        "type": "boolean"
-                                                    }
-                                                }
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "pharmacogenomics": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "datasourceId": {
+                                                "type": "string"
+                                            },
+                                            "evidenceLevel": {
+                                                "type": "string"
+                                            },
+                                            "genotype": {
+                                                "type": "string"
+                                            },
+                                            "genotypeAnnotationText": {
+                                                "type": "string"
+                                            },
+                                            "pgxCategory": {
+                                                "type": "string"
+                                            },
+                                            "phenotypeText": {
+                                                "type": "string"
+                                            },
+                                            "variantRsId": {
+                                                "type": "string"
+                                            },
+                                            "isDirectTarget": {
+                                                "type": "boolean"
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    },
-                    "required": [
-                        "data"
-                    ]
+                    }
                 },
                 {
                     "type": "null",
@@ -5075,96 +5083,88 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
+                        "target": {
+                            "type": [
+                                "object",
+                                "null"
+                            ],
                             "properties": {
-                                "target": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "approvedName": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "biotype": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "functionDescriptions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "proteinIds": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "source": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "genomicLocation": {
                                     "type": [
                                         "object",
                                         "null"
                                     ],
                                     "properties": {
-                                        "id": {
-                                            "type": "string"
-                                        },
-                                        "approvedSymbol": {
+                                        "chromosome": {
                                             "type": [
                                                 "string",
                                                 "null"
                                             ]
                                         },
-                                        "approvedName": {
+                                        "start": {
                                             "type": [
-                                                "string",
+                                                "integer",
                                                 "null"
                                             ]
                                         },
-                                        "biotype": {
+                                        "end": {
                                             "type": [
-                                                "string",
+                                                "integer",
                                                 "null"
                                             ]
                                         },
-                                        "functionDescriptions": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "proteinIds": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "string"
-                                                    },
-                                                    "source": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        "genomicLocation": {
+                                        "strand": {
                                             "type": [
-                                                "object",
+                                                "integer",
                                                 "null"
-                                            ],
-                                            "properties": {
-                                                "chromosome": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "start": {
-                                                    "type": [
-                                                        "integer",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "end": {
-                                                    "type": [
-                                                        "integer",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "strand": {
-                                                    "type": [
-                                                        "integer",
-                                                        "null"
-                                                    ]
-                                                }
-                                            }
+                                            ]
                                         }
                                     }
                                 }
                             }
                         }
-                    },
-                    "required": [
-                        "data"
-                    ]
+                    }
                 },
                 {
                     "type": "object",
@@ -5182,20 +5182,33 @@
     },
     {
         "name": "OpenTargets_get_target_expression_by_ensemblID",
-        "description": "Retrieve baseline expression summary statistics for a target across tissues and cell types (GTEx, Tabula Sapiens, and other bulk/single-cell sources) by Ensembl gene ID. Each row gives the data source, tissue (and cell type for single-cell data), value unit, and min/q1/median/q3/max distribution stats plus specificity/distribution scores. Well-studied targets can return hundreds to thousands of rows across sources; filter client-side by datasourceId if needed. Use to profile where a target is normally expressed.",
+        "description": "Retrieve baseline expression summary statistics for a target across tissues and cell types (GTEx, Tabula Sapiens, and other bulk/single-cell sources) by Ensembl gene ID. Each row gives the data source, tissue (and cell type for single-cell data), value unit, and min/q1/median/q3/max distribution stats plus specificity/distribution scores. Results are PAGINATED: a target typically has ~1400 rows across sources and only `size` of them are returned per call (default 250, max 3000 per the API). `baselineExpression.count` is the total, `baselineExpression.returned` is how many came back, and `baselineExpression.truncated` is true when rows remain unfetched; a truncation note is added to metadata. Rows from a given datasource are interleaved throughout the full result, so a partial page is NOT a complete view of any one source — set size=3000 to retrieve every row before filtering client-side by datasourceId. Use to profile where a target is normally expressed.",
         "parameter": {
             "type": "object",
             "properties": {
                 "ensemblId": {
                     "type": "string",
                     "description": "Ensembl gene ID of the target (e.g., 'ENSG00000146648' for EGFR)."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Number of expression rows to return per page (default 250, max 3000). Targets carry ~1400 rows spread across all datasources, so use size=3000 to fetch the complete profile in one call; values above 3000 are clamped because the API rejects them.",
+                    "default": 250,
+                    "minimum": 1,
+                    "maximum": 3000
+                },
+                "index": {
+                    "type": "integer",
+                    "description": "0-based page index (default 0). Use with `size` to walk the remaining rows when `baselineExpression.truncated` is true.",
+                    "default": 0,
+                    "minimum": 0
                 }
             },
             "required": [
                 "ensemblId"
             ]
         },
-        "query_schema": "\n      query targetExpression($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          baselineExpression {\n            count\n            rows {\n              datasourceId\n              datatypeId\n              unit\n              min\n              q1\n              median\n              q3\n              max\n              specificity_score\n              distribution_score\n              tissueBiosample { biosampleId biosampleName }\n              celltypeBiosample { biosampleId biosampleName }\n            }\n          }\n        }\n      }\n    ",
+        "query_schema": "\n      query targetExpression($ensemblId: String!, $index: Int = 0, $size: Int = 250) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          baselineExpression(page: {index: $index, size: $size}) {\n            count\n            rows {\n              datasourceId\n              datatypeId\n              unit\n              min\n              q1\n              median\n              q3\n              max\n              specificity_score\n              distribution_score\n              tissueBiosample { biosampleId biosampleName }\n              celltypeBiosample { biosampleId biosampleName }\n            }\n          }\n        }\n      }\n    ",
         "label": [
             "Target",
             "Expression",
@@ -5211,96 +5224,117 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "baselineExpression": {
-                      "type": "object",
-                      "properties": {
-                        "count": {
-                          "type": "integer"
-                        },
-                        "rows": {
-                          "type": "array",
-                          "items": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
                             "type": "object",
                             "properties": {
-                              "datasourceId": {
-                                "type": "string"
-                              },
-                              "datatypeId": {
-                                "type": "string"
-                              },
-                              "unit": {
-                                "type": "string"
-                              },
-                              "min": {
-                                "type": "number"
-                              },
-                              "q1": {
-                                "type": "number"
-                              },
-                              "median": {
-                                "type": "number"
-                              },
-                              "q3": {
-                                "type": "number"
-                              },
-                              "max": {
-                                "type": "number"
-                              },
-                              "specificity_score": {
-                                "type": "number"
-                              },
-                              "distribution_score": {
-                                "type": "number"
-                              },
-                              "tissueBiosample": {
-                                "type": [
-                                  "object",
-                                  "null"
-                                ]
-                              },
-                              "celltypeBiosample": {
-                                "type": [
-                                  "object",
-                                  "null"
-                                ]
-                              }
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "baselineExpression": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total expression rows available for this target across all pages."
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of rows actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` plus the rows skipped by `index` is less than `count`, i.e. rows remain unfetched. Re-query with a larger `size` or a higher `index`."
+                                        },
+                                        "page": {
+                                            "type": "object",
+                                            "description": "The pagination actually applied to this request.",
+                                            "properties": {
+                                                "index": {
+                                                    "type": "integer"
+                                                },
+                                                "size": {
+                                                    "type": "integer"
+                                                }
+                                            }
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "datasourceId": {
+                                                        "type": "string"
+                                                    },
+                                                    "datatypeId": {
+                                                        "type": "string"
+                                                    },
+                                                    "unit": {
+                                                        "type": "string"
+                                                    },
+                                                    "min": {
+                                                        "type": "number"
+                                                    },
+                                                    "q1": {
+                                                        "type": "number"
+                                                    },
+                                                    "median": {
+                                                        "type": "number"
+                                                    },
+                                                    "q3": {
+                                                        "type": "number"
+                                                    },
+                                                    "max": {
+                                                        "type": "number"
+                                                    },
+                                                    "specificity_score": {
+                                                        "type": "number"
+                                                    },
+                                                    "distribution_score": {
+                                                        "type": "number"
+                                                    },
+                                                    "tissueBiosample": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "celltypeBiosample": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                          }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -5333,55 +5367,55 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "pathways": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "pathwayId": {
-                            "type": "string"
-                          },
-                          "pathway": {
-                            "type": "string"
-                          },
-                          "topLevelTerm": {
-                            "type": "string"
-                          }
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "pathways": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pathwayId": {
+                                                "type": "string"
+                                            },
+                                            "pathway": {
+                                                "type": "string"
+                                            },
+                                            "topLevelTerm": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -5415,58 +5449,58 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "isEssential": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
-                    },
-                    "depMapEssentiality": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "tissueName": {
-                            "type": "string"
-                          },
-                          "screens": {
-                            "type": "array"
-                          }
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "isEssential": {
+                                    "type": [
+                                        "boolean",
+                                        "null"
+                                    ]
+                                },
+                                "depMapEssentiality": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "tissueName": {
+                                                "type": "string"
+                                            },
+                                            "screens": {
+                                                "type": "array"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -5499,60 +5533,60 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "prioritisation": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
-                      "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
                             "type": "object",
                             "properties": {
-                              "key": {
-                                "type": "string"
-                              },
-                              "value": {
-                                "type": "string"
-                              }
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "prioritisation": {
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "key": {
+                                                        "type": "string"
+                                                    },
+                                                    "value": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                          }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -5585,52 +5619,52 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "target": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "approvedSymbol": {
-                      "type": "string"
-                    },
-                    "hallmarks": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
-                      "properties": {
-                        "cancerHallmarks": {
-                          "type": "array"
-                        },
-                        "attributes": {
-                          "type": "array"
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "hallmarks": {
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "properties": {
+                                        "cancerHallmarks": {
+                                            "type": "array"
+                                        },
+                                        "attributes": {
+                                            "type": "array"
+                                        }
+                                    }
+                                }
+                            }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "target"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "target"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     }
 ]

@@ -42,7 +42,7 @@
   {
     "type": "MetaboLightsRESTTool",
     "name": "metabolights_search_studies",
-    "description": "List MetaboLights study IDs. NOTE: The MetaboLights API does not support keyword filtering — the query parameter is accepted but has no effect; all public study IDs are returned regardless of query. To find studies on a specific topic, use metabolights_get_study on individual IDs. Returns all public MetaboLights study accessions (MTBLS###).",
+    "description": "Keyword-search MetaboLights studies and return the matching study accessions (MTBLS###). Searches organism, disease, metabolite and free-text study content. MetaboLights' own /ws/studies endpoint ignores keyword queries, so this tool searches through EBI Search, which indexes the same studies. Use metabolights_list_studies to browse all public studies without a keyword, and metabolights_get_study for the full record of a returned accession.",
     "parameter": {
       "type": "object",
       "properties": {

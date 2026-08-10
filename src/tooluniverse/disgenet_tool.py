@@ -27,6 +27,22 @@ DISGENET_API_URL = "https://api.disgenet.com/api/v1"
 # A disease passed as a bare UMLS CUI looks like "C0006142".
 _CUI_RE = re.compile(r"^C\d+$")
 
+# Fix-R13B-2: DisGeNET's /summary endpoints emit one "warning" per
+# *unset* optional filter param (e.g. "min_pli > The parameter value is
+# unspecified or not a double number."), regardless of whether the
+# caller ever intended to supply it. A plain gene-only query returns
+# ~30 of these alongside the one warning that's actually actionable
+# (the academic-key CURATED-sources-only note), burying it. These are
+# recognizable by their fixed "unspecified" phrasing and are dropped;
+# any other warning text (real data-quality notes) is kept.
+_UNSET_PARAM_WARNING_RE = re.compile(
+    r"is (?:empty / unspecified|unspecified or not an? [\w\s]+)\.?\s*$"
+)
+
+
+def _drop_unset_param_noise(warnings: List[str]) -> List[str]:
+    return [w for w in warnings if not _UNSET_PARAM_WARNING_RE.search(w)]
+
 
 @register_tool("DisGeNETTool")
 class DisGeNETTool(BaseTool):
@@ -80,6 +96,22 @@ class DisGeNETTool(BaseTool):
             return d
         return None
 
+    @staticmethod
+    def _cui_format_error(disease: str) -> Dict[str, Any]:
+        """Feature-14C-01: shared by every '{disease}' is not a UMLS CUI'
+        error path. 'C0006142' is a fixed format example (breast cancer),
+        never a resolution of the caller's own input -- state that
+        explicitly so it can't be mistaken for a dynamically-resolved CUI."""
+        return {
+            "status": "error",
+            "error": (
+                f"'{disease}' is not a UMLS CUI. Resolve '{disease}' to its "
+                f"own CUI via umls_search_concepts -- 'C0006142' (breast "
+                f"cancer) is only a format example and unrelated to "
+                f"'{disease}'."
+            ),
+        }
+
     def _query_summary(self, kind: str, query: Dict[str, Any]):
         """Call /{gda,vda}/summary with query params. Returns (payload, warnings).
         Raises requests exceptions on HTTP error (handled by callers)."""
@@ -94,7 +126,7 @@ class DisGeNETTool(BaseTool):
         response.raise_for_status()
         body = response.json()
         payload = body.get("payload") or []
-        warnings = body.get("warnings") or []
+        warnings = _drop_unset_param_noise(body.get("warnings") or [])
         return payload, warnings
 
     @staticmethod
@@ -204,10 +236,7 @@ class DisGeNETTool(BaseTool):
         if disease:
             code = self._normalize_disease(disease)
             if code is None:
-                return {
-                    "status": "error",
-                    "error": f"'{disease}' is not a UMLS CUI. Resolve the disease name to a CUI first (e.g. umls_search_concepts), then pass disease='C0152200'.",
-                }
+                return self._cui_format_error(disease)
             query["disease"] = code
         if arguments.get("source"):
             query["source"] = arguments["source"]
@@ -222,6 +251,28 @@ class DisGeNETTool(BaseTool):
             arguments.get("min_score"),
             arguments.get("limit", self._declared_limit_default(25)),
         )
+        metadata: Dict[str, Any] = {
+            "source": "DisGeNET GDA",
+            "warnings": warnings,
+            "note": "Academic keys return CURATED sources only.",
+        }
+        # Fix-R13B-2: DisGeNET matches gene_symbol exactly, so a legacy/
+        # alias symbol (e.g. 'CARD15', the old official symbol for NOD2)
+        # silently returns an empty list with no hint that a symbol
+        # mismatch -- not a real absence of associations -- is the cause.
+        # Confirmed live: gene='CARD15' -> 0 associations, gene='NOD2' ->
+        # real Crohn/Blau-syndrome associations. We can't safely
+        # auto-resolve the alias ourselves (that needs a maintained
+        # gene-symbol synonym table we don't have), so just flag the
+        # ambiguity instead of leaving an empty result unexplained.
+        if gene and not rows and not gene.isdigit():
+            metadata["note"] += (
+                f" No associations found for gene symbol '{gene}'. DisGeNET "
+                "matches the current HGNC-approved symbol only, not older "
+                "aliases -- if this might be a legacy/alias symbol, resolve "
+                "it to its current official symbol first (e.g. via "
+                "NCBIGene_search_genes or HGNC) and retry."
+            )
         return {
             "status": "success",
             "data": {
@@ -230,11 +281,7 @@ class DisGeNETTool(BaseTool):
                 "associations": rows,
                 "count": len(rows),
             },
-            "metadata": {
-                "source": "DisGeNET GDA",
-                "warnings": warnings,
-                "note": "Academic keys return CURATED sources only.",
-            },
+            "metadata": metadata,
         }
 
     def _disease_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -243,13 +290,13 @@ class DisGeNETTool(BaseTool):
         if not disease:
             return {
                 "status": "error",
-                "error": "Missing required parameter: disease (UMLS CUI, e.g. C0152200).",
+                "error": "Missing required parameter: disease (UMLS CUI, e.g. 'C0006142' for breast cancer -- an example format, not a default value).",
             }
         code = self._normalize_disease(disease)
         if code is None:
             return {
                 "status": "error",
-                "error": f"'{disease}' is not a UMLS CUI. Resolve the disease name to a CUI first (e.g. umls_search_concepts), then pass disease='C0152200'.",
+                "error": f"'{disease}' is not a UMLS CUI. Resolve '{disease}' to its own CUI via umls_search_concepts -- 'C0006142' (breast cancer) is only a format example and unrelated to '{disease}'.",
             }
 
         query: Dict[str, Any] = {"disease": code}

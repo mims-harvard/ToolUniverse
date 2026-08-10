@@ -49,6 +49,52 @@ def _encode_orphadata_gene_name(name: str) -> str:
     return urllib.parse.quote(name.replace("/", "-"), safe="")
 
 
+def _same_char_class(a: str, b: str) -> bool:
+    """True when two characters continue the same token (digit-digit or
+    letter-letter)."""
+    return (a.isdigit() and b.isdigit()) or (a.isalpha() and b.isalpha())
+
+
+def _name_contains_disease(candidate_name: str, disease_name: str) -> bool:
+    """True when `candidate_name` names a subtype of `disease_name`.
+
+    A plain substring test is wrong here: Orphanet's preferred terms are
+    numbered, so "Mucopolysaccharidosis type 1" (ORPHA:579, MPS I) is a
+    substring of "Mucopolysaccharidosis type 10" (ORPHA:662216, MPS X) and the
+    gene lookup for MPS I answered with ARSK -- the MPS X gene -- instead of
+    IDUA. The same collision hits "Familial hyperaldosteronism type I" vs
+    "type II/III/IV", "Mucolipidosis type II" vs "type III", "Achondroplasia"
+    vs "Pseudoachondroplasia" and "Neuroblastoma" vs "Ganglioneuroblastoma".
+
+    So require the occurrence to sit on token boundaries: the characters
+    flanking it may not continue the same class (digit or letter) as the
+    adjacent character of the disease name. Real subtype names are unaffected,
+    because they extend the parent name across a class change -- a space, a
+    comma or a letter after a digit ("Mucopolysaccharidosis type 4A",
+    "Mucopolysaccharidosis type 2, severe form", "Autosomal dominant
+    Charcot-Marie-Tooth disease type 2N").
+    """
+    disease_lower = (disease_name or "").lower()
+    candidate_lower = (candidate_name or "").lower()
+    if not disease_lower:
+        return False
+    start = 0
+    while True:
+        index = candidate_lower.find(disease_lower, start)
+        if index < 0:
+            return False
+        end = index + len(disease_lower)
+        before_ok = index == 0 or not _same_char_class(
+            candidate_lower[index - 1], disease_lower[0]
+        )
+        after_ok = end >= len(candidate_lower) or not _same_char_class(
+            candidate_lower[end], disease_lower[-1]
+        )
+        if before_ok and after_ok:
+            return True
+        start = index + 1
+
+
 @register_tool("OrphanetTool")
 class OrphanetTool(BaseTool):
     """
@@ -383,12 +429,13 @@ class OrphanetTool(BaseTool):
             if response.status_code != 200:
                 return [], True
             all_entries = response.json().get("data", {}).get("results", [])
-            disease_lower = disease_name.lower()
             return (
                 [
                     entry
                     for entry in all_entries
-                    if disease_lower in entry.get("Preferred term", "").lower()
+                    if _name_contains_disease(
+                        entry.get("Preferred term", ""), disease_name
+                    )
                     and str(entry.get("ORPHAcode", "")) != str(exclude_code)
                 ],
                 False,

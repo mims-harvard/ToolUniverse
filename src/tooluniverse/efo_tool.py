@@ -29,7 +29,20 @@ class EFOTool(BaseTool):
         return self._search(disease, rows)
 
     def _search(self, disease, rows):
-        params = {"ontology": "efo", "q": disease, "rows": rows}
+        # Fix-20B-2: OLS4's default relevance ranking scores hits on the full
+        # indexed text (including free-text descriptions), not just the
+        # term's own name. For an abbreviation like "PCOS" this put a term
+        # whose *description* merely mentions "PCOS" in passing (EFO_0005187
+        # "C-peptide measurement") ahead of the actual term for the disease
+        # (MONDO_0008487 "polycystic ovary syndrome", which lists "PCOS" as
+        # an exact_synonym) -- confirmed live against the OLS4 API. Silently
+        # returning the wrong disease's EFO ID is worse than a fetch failure,
+        # since callers treat it as authoritative and chain further lookups
+        # on it. Always fetch enough candidates to see past a mis-ranked top
+        # hit, then prefer any candidate whose own label/exact_synonym is a
+        # case-insensitive exact match to the query over the raw OLS order.
+        fetch_rows = max(rows, 10)
+        params = {"ontology": "efo", "q": disease, "rows": fetch_rows}
         try:
             response = requests.get(self.base_url, params=params, timeout=20)
             response.raise_for_status()
@@ -44,6 +57,18 @@ class EFOTool(BaseTool):
         docs = data.get("docs", [])
         if not docs:
             return None
+
+        def _is_exact_match(doc):
+            target = disease.strip().lower()
+            label = (doc.get("label") or "").strip().lower()
+            if label == target:
+                return True
+            synonyms = doc.get("exact_synonyms") or []
+            return any(target == str(s).strip().lower() for s in synonyms)
+
+        exact = [d for d in docs if _is_exact_match(d)]
+        rest = [d for d in docs if d not in exact]
+        docs = (exact + rest)[:rows]
 
         if rows == 1:
             doc = docs[0]

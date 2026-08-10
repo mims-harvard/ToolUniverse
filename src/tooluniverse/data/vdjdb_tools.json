@@ -9,37 +9,59 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_cdr3"],
-          "description": "Operation type"
+          "enum": [
+            "search_cdr3"
+          ],
+          "description": "Operation type",
+          "default": "search_cdr3"
         },
         "cdr3": {
           "type": "string",
           "description": "CDR3 amino acid sequence to search (e.g., 'CASSIRSSYEQYF', 'CAAAASGGSYIPTF')"
         },
         "species": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Species filter: HomoSapiens, MusMusculus, or MacacaMulatta"
         },
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "TCR chain filter: TRA (alpha) or TRB (beta)"
         },
         "match_type": {
           "type": "string",
-          "enum": ["exact", "fuzzy", "pattern"],
+          "enum": [
+            "exact",
+            "fuzzy",
+            "pattern"
+          ],
           "default": "exact",
           "description": "Match type: 'exact' for exact CDR3 match, 'fuzzy' for Levenshtein distance, 'pattern' for regex pattern"
         },
         "substitutions": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max substitutions for fuzzy match (default: 1). Only used with match_type='fuzzy'"
         },
         "insertions": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max insertions for fuzzy match (default: 1). Only used with match_type='fuzzy'"
         },
         "deletions": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max deletions for fuzzy match (default: 1). Only used with match_type='fuzzy'"
         },
         "page": {
@@ -56,7 +78,9 @@
           "description": "Number of results per page (default: 25, max: 100)"
         }
       },
-      "required": ["operation", "cdr3"]
+      "required": [
+        "cdr3"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -66,26 +90,60 @@
           "items": {
             "type": "object",
             "properties": {
-              "gene": {"type": "string"},
-              "cdr3": {"type": "string"},
-              "v.segm": {"type": "string"},
-              "j.segm": {"type": "string"},
-              "species": {"type": "string"},
-              "mhc.a": {"type": "string"},
-              "mhc.b": {"type": "string"},
-              "mhc.class": {"type": "string"},
-              "antigen.epitope": {"type": "string"},
-              "antigen.gene": {"type": "string"},
-              "antigen.species": {"type": "string"},
-              "reference.id": {"type": "string"},
-              "vdjdb.score": {"type": "integer"}
+              "gene": {
+                "type": "string"
+              },
+              "cdr3": {
+                "type": "string"
+              },
+              "v.segm": {
+                "type": "string"
+              },
+              "j.segm": {
+                "type": "string"
+              },
+              "species": {
+                "type": "string"
+              },
+              "mhc.a": {
+                "type": "string"
+              },
+              "mhc.b": {
+                "type": "string"
+              },
+              "mhc.class": {
+                "type": "string"
+              },
+              "antigen.epitope": {
+                "type": "string"
+              },
+              "antigen.gene": {
+                "type": "string"
+              },
+              "antigen.species": {
+                "type": "string"
+              },
+              "reference.id": {
+                "type": "string"
+              },
+              "vdjdb.score": {
+                "type": "integer"
+              }
             }
           }
         },
-        "records_found": {"type": "integer"},
-        "page": {"type": "integer"},
-        "page_size": {"type": "integer"},
-        "page_count": {"type": "integer"}
+        "records_found": {
+          "type": "integer"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "page_size": {
+          "type": "integer"
+        },
+        "page_count": {
+          "type": "integer"
+        }
       }
     },
     "test_examples": [
@@ -103,7 +161,10 @@
         "page": 0,
         "page_size": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_cdr3"
+    }
   },
   {
     "name": "VDJDB_get_antigen_specificity",
@@ -115,27 +176,42 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_antigen_specificity"],
-          "description": "Operation type"
+          "enum": [
+            "get_antigen_specificity"
+          ],
+          "description": "Operation type",
+          "default": "get_antigen_specificity"
         },
         "epitope": {
           "type": "string",
           "description": "Epitope peptide sequence to search (e.g., 'GILGFVFTL' for Influenza M1, 'GLCTLVAML' for EBV BMLF1)"
         },
         "species": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Species filter: HomoSapiens, MusMusculus, or MacacaMulatta"
         },
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "TCR chain filter: TRA (alpha) or TRB (beta)"
         },
         "mhc_class": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "MHC class filter: MHCI or MHCII"
         },
         "min_score": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum VDJdb confidence score (0-3). Score 3 = highest confidence with multiple verification methods."
         },
         "page": {
@@ -152,7 +228,9 @@
           "description": "Number of results per page (default: 25, max: 100)"
         }
       },
-      "required": ["operation", "epitope"]
+      "required": [
+        "epitope"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -162,26 +240,60 @@
           "items": {
             "type": "object",
             "properties": {
-              "gene": {"type": "string"},
-              "cdr3": {"type": "string"},
-              "v.segm": {"type": "string"},
-              "j.segm": {"type": "string"},
-              "species": {"type": "string"},
-              "mhc.a": {"type": "string"},
-              "mhc.b": {"type": "string"},
-              "mhc.class": {"type": "string"},
-              "antigen.epitope": {"type": "string"},
-              "antigen.gene": {"type": "string"},
-              "antigen.species": {"type": "string"},
-              "reference.id": {"type": "string"},
-              "vdjdb.score": {"type": "integer"}
+              "gene": {
+                "type": "string"
+              },
+              "cdr3": {
+                "type": "string"
+              },
+              "v.segm": {
+                "type": "string"
+              },
+              "j.segm": {
+                "type": "string"
+              },
+              "species": {
+                "type": "string"
+              },
+              "mhc.a": {
+                "type": "string"
+              },
+              "mhc.b": {
+                "type": "string"
+              },
+              "mhc.class": {
+                "type": "string"
+              },
+              "antigen.epitope": {
+                "type": "string"
+              },
+              "antigen.gene": {
+                "type": "string"
+              },
+              "antigen.species": {
+                "type": "string"
+              },
+              "reference.id": {
+                "type": "string"
+              },
+              "vdjdb.score": {
+                "type": "integer"
+              }
             }
           }
         },
-        "records_found": {"type": "integer"},
-        "page": {"type": "integer"},
-        "page_size": {"type": "integer"},
-        "page_count": {"type": "integer"}
+        "records_found": {
+          "type": "integer"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "page_size": {
+          "type": "integer"
+        },
+        "page_count": {
+          "type": "integer"
+        }
       }
     },
     "test_examples": [
@@ -199,7 +311,10 @@
         "page": 0,
         "page_size": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_antigen_specificity"
+    }
   },
   {
     "name": "VDJDB_get_database_summary",
@@ -211,27 +326,44 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_database_summary"],
-          "description": "Operation type"
+          "enum": [
+            "get_database_summary"
+          ],
+          "description": "Operation type",
+          "default": "get_database_summary"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "total_records": {"type": "integer"},
-        "number_of_columns": {"type": "integer"},
+        "total_records": {
+          "type": "integer"
+        },
+        "number_of_columns": {
+          "type": "integer"
+        },
         "columns": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "name": {"type": "string"},
-              "title": {"type": "string"},
-              "data_type": {"type": "string"},
-              "column_type": {"type": "string"},
-              "comment": {"type": "string"}
+              "name": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "data_type": {
+                "type": "string"
+              },
+              "column_type": {
+                "type": "string"
+              },
+              "comment": {
+                "type": "string"
+              }
             }
           }
         }
@@ -241,6 +373,9 @@
       {
         "operation": "get_database_summary"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_database_summary"
+    }
   }
 ]

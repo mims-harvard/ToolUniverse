@@ -37,40 +37,31 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "species": {
-                                    "type": "string",
-                                    "description": "Species name"
-                                },
-                                "region": {
-                                    "type": "string",
-                                    "description": "Genomic region queried"
-                                },
-                                "molecule": {
-                                    "type": "string",
-                                    "description": "Molecule type (dna)"
-                                },
-                                "description": {
-                                    "type": ["string", "null"],
-                                    "description": "Region description from Ensembl"
-                                },
-                                "sequence_length": {
-                                    "type": "integer",
-                                    "description": "Length of returned sequence in bp"
-                                },
-                                "sequence": {
-                                    "type": "string",
-                                    "description": "DNA sequence (truncated to 10kb if longer)"
-                                }
-                            }
+                        "species": {
+                            "type": "string",
+                            "description": "Species name"
                         },
-                        "metadata": {
-                            "type": "object"
+                        "region": {
+                            "type": "string",
+                            "description": "Genomic region queried"
+                        },
+                        "molecule": {
+                            "type": "string",
+                            "description": "Molecule type (dna)"
+                        },
+                        "description": {
+                            "type": ["string", "null"],
+                            "description": "Region description from Ensembl"
+                        },
+                        "sequence_length": {
+                            "type": "integer",
+                            "description": "Length of returned sequence in bp"
+                        },
+                        "sequence": {
+                            "type": "string",
+                            "description": "DNA sequence (truncated to 10kb if longer)"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -122,36 +113,27 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "ensembl_id": {
-                                    "type": "string",
-                                    "description": "Ensembl stable ID"
-                                },
-                                "molecule": {
-                                    "type": ["string", "null"],
-                                    "description": "Molecule type (protein or dna)"
-                                },
-                                "description": {
-                                    "type": ["string", "null"],
-                                    "description": "Sequence description"
-                                },
-                                "sequence_length": {
-                                    "type": "integer",
-                                    "description": "Sequence length (aa for protein, bp for DNA)"
-                                },
-                                "sequence": {
-                                    "type": "string",
-                                    "description": "Amino acid or nucleotide sequence (truncated to 10kb)"
-                                }
-                            }
+                        "ensembl_id": {
+                            "type": "string",
+                            "description": "Ensembl stable ID"
                         },
-                        "metadata": {
-                            "type": "object"
+                        "molecule": {
+                            "type": ["string", "null"],
+                            "description": "Molecule type (protein or dna)"
+                        },
+                        "description": {
+                            "type": ["string", "null"],
+                            "description": "Sequence description"
+                        },
+                        "sequence_length": {
+                            "type": "integer",
+                            "description": "Sequence length (aa for protein, bp for DNA)"
+                        },
+                        "sequence": {
+                            "type": "string",
+                            "description": "Amino acid or nucleotide sequence (truncated to 10kb)"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",

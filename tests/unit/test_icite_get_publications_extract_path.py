@@ -66,7 +66,10 @@ def test_unwrapped_response_satisfies_return_schema():
     }
     result = tool._process_response(_mock_response(raw_icite_body), "https://icite.od.nih.gov/api/pubs")
 
-    jsonschema.validate(instance=result, schema=config["return_schema"])
+    # cli.py validates jsonschema against result["data"] alone (never the
+    # full {status, data, metadata} envelope), so that's what return_schema
+    # describes -- a bare array of publication objects, not the envelope.
+    jsonschema.validate(instance=result["data"], schema=config["return_schema"])
 
 
 def test_without_extract_path_would_double_wrap():
@@ -82,4 +85,4 @@ def test_without_extract_path_would_double_wrap():
 
     assert result["data"] == raw_icite_body  # double-wrapped, not unwrapped
     with pytest.raises(jsonschema.ValidationError):
-        jsonschema.validate(instance=result, schema=config["return_schema"])
+        jsonschema.validate(instance=result["data"], schema=config["return_schema"])

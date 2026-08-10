@@ -8,8 +8,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["hwe_test"],
-          "description": "Operation type"
+          "enum": [
+            "hwe_test"
+          ],
+          "description": "Operation type",
+          "default": "hwe_test"
         },
         "obs_AA": {
           "type": "integer",
@@ -24,7 +27,11 @@
           "description": "Observed count of homozygous recessive (aa) genotypes"
         }
       },
-      "required": ["operation", "obs_AA", "obs_Aa", "obs_aa"]
+      "required": [
+        "obs_AA",
+        "obs_Aa",
+        "obs_aa"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -34,15 +41,33 @@
             "data": {
               "type": "object",
               "properties": {
-                "chi2": {"type": "number"},
-                "p_value": {"type": "number"},
-                "in_HWE": {"type": "boolean"},
-                "allele_freq_A": {"type": "number"},
-                "allele_freq_a": {"type": "number"},
-                "exp_AA": {"type": "number"},
-                "exp_Aa": {"type": "number"},
-                "exp_aa": {"type": "number"},
-                "interpretation": {"type": "string"}
+                "chi2": {
+                  "type": "number"
+                },
+                "p_value": {
+                  "type": "number"
+                },
+                "in_HWE": {
+                  "type": "boolean"
+                },
+                "allele_freq_A": {
+                  "type": "number"
+                },
+                "allele_freq_a": {
+                  "type": "number"
+                },
+                "exp_AA": {
+                  "type": "number"
+                },
+                "exp_Aa": {
+                  "type": "number"
+                },
+                "exp_aa": {
+                  "type": "number"
+                },
+                "interpretation": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -50,9 +75,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -63,7 +92,10 @@
         "obs_Aa": 300,
         "obs_aa": 65
       }
-    ]
+    ],
+    "fields": {
+      "operation": "hwe_test"
+    }
   },
   {
     "name": "PopGen_fst",
@@ -74,8 +106,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["fst"],
-          "description": "Operation type"
+          "enum": [
+            "fst"
+          ],
+          "description": "Operation type",
+          "default": "fst"
         },
         "p1": {
           "type": "number",
@@ -94,7 +129,12 @@
           "description": "Sample size (number of individuals) for population 2"
         }
       },
-      "required": ["operation", "p1", "p2", "n1", "n2"]
+      "required": [
+        "p1",
+        "p2",
+        "n1",
+        "n2"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -104,9 +144,15 @@
             "data": {
               "type": "object",
               "properties": {
-                "Fst": {"type": "number"},
-                "p_bar": {"type": "number"},
-                "interpretation": {"type": "string"}
+                "Fst": {
+                  "type": "number"
+                },
+                "p_bar": {
+                  "type": "number"
+                },
+                "interpretation": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -114,9 +160,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -128,7 +178,10 @@
         "n1": 100,
         "n2": 100
       }
-    ]
+    ],
+    "fields": {
+      "operation": "fst"
+    }
   },
   {
     "name": "PopGen_inbreeding",
@@ -139,8 +192,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["inbreeding"],
-          "description": "Operation type"
+          "enum": [
+            "inbreeding"
+          ],
+          "description": "Operation type",
+          "default": "inbreeding"
         },
         "pedigree": {
           "type": "string",
@@ -151,7 +207,9 @@
           "description": "Number of successive inbreeding generations (default 1)"
         }
       },
-      "required": ["operation", "pedigree"]
+      "required": [
+        "pedigree"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -161,11 +219,21 @@
             "data": {
               "type": "object",
               "properties": {
-                "pedigree": {"type": "string"},
-                "cumulative_F": {"type": "number"},
-                "heterozygosity_retained": {"type": "number"},
-                "F_per_generation": {"type": "array"},
-                "interpretation": {"type": "string"}
+                "pedigree": {
+                  "type": "string"
+                },
+                "cumulative_F": {
+                  "type": "number"
+                },
+                "heterozygosity_retained": {
+                  "type": "number"
+                },
+                "F_per_generation": {
+                  "type": "array"
+                },
+                "interpretation": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -173,9 +241,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -185,7 +257,10 @@
         "pedigree": "half-sib",
         "generations": 3
       }
-    ]
+    ],
+    "fields": {
+      "operation": "inbreeding"
+    }
   },
   {
     "name": "PopGen_haplotype_count",
@@ -196,8 +271,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["haplotype_count"],
-          "description": "Operation type"
+          "enum": [
+            "haplotype_count"
+          ],
+          "description": "Operation type",
+          "default": "haplotype_count"
         },
         "n_snps": {
           "type": "integer",
@@ -212,7 +290,9 @@
           "description": "Per-adjacent-interval recombination rate [0, 1] per generation (default 0.5)"
         }
       },
-      "required": ["operation", "n_snps"]
+      "required": [
+        "n_snps"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -222,10 +302,18 @@
             "data": {
               "type": "object",
               "properties": {
-                "max_theoretical_haplotypes": {"type": "integer"},
-                "estimated_distinct_haplotypes": {"type": "integer"},
-                "p_at_least_one_recombination": {"type": "number"},
-                "interpretation": {"type": "string"}
+                "max_theoretical_haplotypes": {
+                  "type": "integer"
+                },
+                "estimated_distinct_haplotypes": {
+                  "type": "integer"
+                },
+                "p_at_least_one_recombination": {
+                  "type": "number"
+                },
+                "interpretation": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -233,9 +321,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -246,6 +338,9 @@
         "generations": 3,
         "recomb_rate": 0.5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "haplotype_count"
+    }
   }
 ]

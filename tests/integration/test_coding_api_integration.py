@@ -20,6 +20,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from tooluniverse import ToolUniverse  # noqa: E402
 from tooluniverse.generate_tools import main as generate_tools  # noqa: E402
 
+# Every generate_tools() call below must pass output_dir. Its default output
+# directory is the *committed* src/tooluniverse/tools/ tree, so calling it bare
+# — as these tests did, despite each site already allocating a temp dir and
+# commenting "Generate tools in temp directory" — rewrote 2,604 tracked wrapper
+# files as a side effect of running the integration suite.
+
 
 @pytest.mark.integration
 class TestCodingAPIIntegration(unittest.TestCase):
@@ -178,7 +184,7 @@ class TestSDKIntegration(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         
         # Generate SDK for testing
-        generate_tools()
+        generate_tools(output_dir=Path(self.temp_dir))
         
         # Invalidate import caches to ensure newly generated modules are loaded
         # Remove all tooluniverse.tools modules from cache
@@ -287,7 +293,7 @@ class TestEndToEndIntegration(unittest.TestCase):
             pass
         
         # Step 2: Generate SDK
-        generate_tools()
+        generate_tools(output_dir=Path(self.temp_dir))
         
         # Step 3: Test SDK
         sys.path.insert(0, self.temp_dir)
@@ -327,7 +333,7 @@ class TestEndToEndIntegration(unittest.TestCase):
         
         # Test error handling in SDK mode
         # Generate tools in temp directory
-        generate_tools()
+        generate_tools(output_dir=Path(self.temp_dir))
         
         sys.path.insert(0, self.temp_dir)
         try:
@@ -379,7 +385,7 @@ class TestEndToEndIntegration(unittest.TestCase):
         
         # Test caching in SDK mode
         # Generate tools in temp directory
-        generate_tools()
+        generate_tools(output_dir=Path(self.temp_dir))
         
         sys.path.insert(0, self.temp_dir)
         try:

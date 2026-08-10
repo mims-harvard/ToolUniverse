@@ -11,8 +11,9 @@ API: https://plantreactome.gramene.org/ContentService/
 No authentication required. Free for all use.
 """
 
+import re
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -53,9 +54,22 @@ class PlantReactomeTool(BaseTool):
                 "error": "Failed to connect to Plant Reactome API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
+            code = e.response.status_code if e.response is not None else None
+            if code == 404:
+                # Plant Reactome's ContentService uses 404 (not an empty 200)
+                # to signal "no matches" for /search/query, and "not found"
+                # for a bad pathway_id/tax_id -- surface the query so a
+                # zero-result search doesn't look like a broken request.
+                query = arguments.get("query") or arguments.get(
+                    "pathway_id", arguments.get("tax_id", "")
+                )
+                return {
+                    "status": "error",
+                    "error": f"No Plant Reactome results found for: {query}",
+                }
             return {
                 "status": "error",
-                "error": f"Plant Reactome API HTTP error: {e.response.status_code}",
+                "error": f"Plant Reactome API HTTP error: {code}",
             }
         except Exception as e:
             return {
@@ -77,6 +91,14 @@ class PlantReactomeTool(BaseTool):
             return self._get_species_tree(arguments)
         else:
             return {"status": "error", "error": f"Unknown action: {self.action}"}
+
+    @staticmethod
+    def _strip_html(text: Optional[str]) -> Optional[str]:
+        """Remove HTML tags (e.g. the <span class="highlighting"> markup the
+        Reactome ContentService search endpoint wraps matched terms in)."""
+        if not text:
+            return text
+        return re.sub(r"<[^>]+>", "", text)
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for plant pathways."""
@@ -107,7 +129,7 @@ class PlantReactomeTool(BaseTool):
                 results.append(
                     {
                         "stId": entry.get("stId", ""),
-                        "name": entry.get("name", ""),
+                        "name": self._strip_html(entry.get("name", "")),
                         "species": entry.get("species", [None]),
                         "exact_type": entry.get("exactType"),
                         "compartment_names": entry.get("compartmentNames"),

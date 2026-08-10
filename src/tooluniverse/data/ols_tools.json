@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "search_terms",
-          "description": "The operation to perform (search_terms)"
+          "description": "The operation to perform (search_terms)",
+          "default": "search_terms"
         },
         "query": {
           "type": "string",
@@ -179,6 +180,9 @@
           }
         }
       }
+    },
+    "fields": {
+      "operation": "search_terms"
     }
   },
   {
@@ -191,7 +195,8 @@
         "operation": {
           "type": "string",
           "const": "get_ontology_info",
-          "description": "The operation to perform (get_ontology_info)"
+          "description": "The operation to perform (get_ontology_info)",
+          "default": "get_ontology_info"
         },
         "ontology_id": {
           "type": "string",
@@ -260,6 +265,9 @@
           "type": "null"
         }
       }
+    },
+    "fields": {
+      "operation": "get_ontology_info"
     }
   },
   {
@@ -272,7 +280,8 @@
         "operation": {
           "type": "string",
           "const": "search_ontologies",
-          "description": "The operation to perform (search_ontologies)"
+          "description": "The operation to perform (search_ontologies)",
+          "default": "search_ontologies"
         },
         "search": {
           "type": "string",
@@ -341,6 +350,9 @@
           "type": "object"
         }
       }
+    },
+    "fields": {
+      "operation": "search_ontologies"
     }
   },
   {
@@ -353,7 +365,8 @@
         "operation": {
           "type": "string",
           "const": "get_term_info",
-          "description": "The operation to perform (get_term_info)"
+          "description": "The operation to perform (get_term_info)",
+          "default": "get_term_info"
         },
         "id": {
           "type": "string",
@@ -421,6 +434,9 @@
           "type": "array"
         }
       }
+    },
+    "fields": {
+      "operation": "get_term_info"
     }
   },
   {
@@ -433,7 +449,8 @@
         "operation": {
           "type": "string",
           "const": "get_term_children",
-          "description": "The operation to perform (get_term_children)"
+          "description": "The operation to perform (get_term_children)",
+          "default": "get_term_children"
         },
         "term_iri": {
           "type": "string",
@@ -521,6 +538,9 @@
           }
         }
       }
+    },
+    "fields": {
+      "operation": "get_term_children"
     }
   },
   {
@@ -533,7 +553,8 @@
         "operation": {
           "type": "string",
           "const": "get_term_ancestors",
-          "description": "The operation to perform (get_term_ancestors)"
+          "description": "The operation to perform (get_term_ancestors)",
+          "default": "get_term_ancestors"
         },
         "term_iri": {
           "type": "string",
@@ -620,6 +641,9 @@
           }
         }
       }
+    },
+    "fields": {
+      "operation": "get_term_ancestors"
     }
   },
   {
@@ -632,7 +656,8 @@
         "operation": {
           "type": "string",
           "const": "find_similar_terms",
-          "description": "The operation to perform (find_similar_terms)"
+          "description": "The operation to perform (find_similar_terms)",
+          "default": "find_similar_terms"
         },
         "term_iri": {
           "type": "string",
@@ -720,19 +745,23 @@
           "type": "string"
         }
       }
+    },
+    "fields": {
+      "operation": "find_similar_terms"
     }
   },
   {
     "type": "OLSTool",
     "name": "ols_get_term_xrefs",
-    "description": "Get the cross-references (obo_xref) of an ontology term in OLS — the canonical OxO-replacement ID-mapping tool. Translates any OLS term (EFO, MONDO, UBERON, CL, MAXO, GO, CHEBI, ORDO, etc.) to its equivalent identifiers in external vocabularies such as DOID, ICD10CM/ICD10WHO, OMIM, UMLS, MeSH, NCIt, SNOMED/SCTID, MedGen, and MedDRA. Pass a CURIE-style term ID (e.g. 'EFO:0004611' or 'MONDO:0005148'); the ontology is auto-inferred from the prefix. Each xref includes the source database, local id, a combined CURIE, and a resolver URL.",
+    "description": "Get the cross-references (obo_xref) of an ontology term in OLS \u2014 the canonical OxO-replacement ID-mapping tool. Translates any OLS term (EFO, MONDO, UBERON, CL, MAXO, GO, CHEBI, ORDO, etc.) to its equivalent identifiers in external vocabularies such as DOID, ICD10CM/ICD10WHO, OMIM, UMLS, MeSH, NCIt, SNOMED/SCTID, MedGen, and MedDRA. Pass a CURIE-style term ID (e.g. 'EFO:0004611' or 'MONDO:0005148'); the ontology is auto-inferred from the prefix. Each xref includes the source database, local id, a combined CURIE, and a resolver URL.",
     "parameter": {
       "type": "object",
       "properties": {
         "operation": {
           "type": "string",
           "const": "get_term_xrefs",
-          "description": "The operation to perform (get_term_xrefs)"
+          "description": "The operation to perform (get_term_xrefs)",
+          "default": "get_term_xrefs"
         },
         "id": {
           "type": "string",
@@ -740,15 +769,15 @@
         },
         "term_id": {
           "type": "string",
-          "description": "Alias for id — ontology term CURIE (e.g. 'MONDO:0005148')."
+          "description": "Alias for id \u2014 ontology term CURIE (e.g. 'MONDO:0005148')."
         },
         "obo_id": {
           "type": "string",
-          "description": "Alias for id — OBO-style term identifier (e.g. 'EFO:0004611')."
+          "description": "Alias for id \u2014 OBO-style term identifier (e.g. 'EFO:0004611')."
         },
         "term_iri": {
           "type": "string",
-          "description": "Alias for id — may also pass a full IRI/short-form term identifier."
+          "description": "Alias for id \u2014 may also pass a full IRI/short-form term identifier."
         },
         "ontology": {
           "type": "string",
@@ -798,13 +827,22 @@
               "type": "string"
             },
             "iri": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "label": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "ontology_name": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "is_obsolete": {
               "type": "boolean"
@@ -815,25 +853,43 @@
                 "type": "object",
                 "properties": {
                   "database": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "id": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "curie": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "url": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "description": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
             }
           },
-          "required": ["obo_id", "xrefs"]
+          "required": [
+            "obo_id",
+            "xrefs"
+          ]
         },
         {
           "type": "object",
@@ -843,9 +899,14 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "get_term_xrefs"
     }
   }
 ]

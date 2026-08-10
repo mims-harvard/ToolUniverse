@@ -19,51 +19,38 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": ["status", "data"],
-          "properties": {
-            "status": {"type": "string"},
-            "count": {"type": "integer", "description": "Number of records in this response (at most `limit`)."},
-            "offset": {"type": "integer"},
-            "limit": {"type": "integer"},
-            "has_more": {"type": "boolean", "description": "True when further matching records exist beyond this page."},
-            "url": {"type": "string"},
-            "message": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "AphiaID": {"type": "integer"},
-                  "url": {"type": "string"},
-                  "scientificname": {"type": "string"},
-                  "authority": {"type": ["string", "null"]},
-                  "status": {"type": "string"},
-                  "unacceptreason": {"type": ["string", "null"]},
-                  "taxonRankID": {"type": "integer"},
-                  "rank": {"type": "string"},
-                  "valid_AphiaID": {"type": "integer"},
-                  "valid_name": {"type": "string"},
-                  "valid_authority": {"type": ["string", "null"]},
-                  "parentNameUsageID": {"type": "integer"},
-                  "originalNameUsageID": {"type": ["integer", "null"]},
-                  "kingdom": {"type": "string"},
-                  "phylum": {"type": "string"},
-                  "class": {"type": "string"},
-                  "order": {"type": "string"},
-                  "family": {"type": ["string", "null"]},
-                  "genus": {"type": ["string", "null"]},
-                  "citation": {"type": "string"},
-                  "lsid": {"type": "string"},
-                  "isMarine": {"type": ["integer", "null"]},
-                  "isBrackish": {"type": ["integer", "null"]},
-                  "isFreshwater": {"type": ["integer", "null"]},
-                  "isTerrestrial": {"type": ["integer", "null"]},
-                  "isExtinct": {"type": ["integer", "null"]},
-                  "match_type": {"type": "string"},
-                  "modified": {"type": "string"}
-                }
-              }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "AphiaID": {"type": "integer"},
+              "url": {"type": "string"},
+              "scientificname": {"type": "string"},
+              "authority": {"type": ["string", "null"]},
+              "status": {"type": "string"},
+              "unacceptreason": {"type": ["string", "null"]},
+              "taxonRankID": {"type": "integer"},
+              "rank": {"type": "string"},
+              "valid_AphiaID": {"type": "integer"},
+              "valid_name": {"type": "string"},
+              "valid_authority": {"type": ["string", "null"]},
+              "parentNameUsageID": {"type": "integer"},
+              "originalNameUsageID": {"type": ["integer", "null"]},
+              "kingdom": {"type": "string"},
+              "phylum": {"type": "string"},
+              "class": {"type": "string"},
+              "order": {"type": "string"},
+              "family": {"type": ["string", "null"]},
+              "genus": {"type": ["string", "null"]},
+              "citation": {"type": "string"},
+              "lsid": {"type": "string"},
+              "isMarine": {"type": ["integer", "null"]},
+              "isBrackish": {"type": ["integer", "null"]},
+              "isFreshwater": {"type": ["integer", "null"]},
+              "isTerrestrial": {"type": ["integer", "null"]},
+              "isExtinct": {"type": ["integer", "null"]},
+              "match_type": {"type": "string"},
+              "modified": {"type": "string"}
             }
           }
         },
@@ -71,7 +58,6 @@
           "type": "object",
           "required": ["error"],
           "properties": {
-            "status": {"type": "string"},
             "error": {"type": "string"}
           }
         }

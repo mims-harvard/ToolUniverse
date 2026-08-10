@@ -380,10 +380,10 @@ class ArXivPDFSnippetsTool(BaseTool):
                 total_chars += len(snippet)
                 found += 1
 
-        return {
-            "status": "success",
+        payload = {
             "pdf_url": final_pdf_url,
             "snippets": snippets,
             "snippets_count": len(snippets),
             "truncated": total_chars >= max_total_chars,
         }
+        return {"status": "success", **payload, "data": payload}

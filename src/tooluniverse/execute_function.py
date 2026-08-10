@@ -3113,6 +3113,7 @@ class ToolUniverse:
             # Python wrappers, but schema validation rejects None for typed params.
             # None means "not provided" — simply omit such keys.
             arguments = {k: v for k, v in arguments.items() if v is not None}
+            self._apply_operation_default(function_name, arguments)
             function_call_json["arguments"] = arguments
 
             # Validate parameters if requested
@@ -3879,6 +3880,34 @@ class ToolUniverse:
                 coerced_args[param_name] = param_value
 
         return coerced_args
+
+    def _apply_operation_default(self, function_name: str, arguments: dict) -> None:
+        """Fill in `operation` for tools that are registered as a single operation.
+
+        Many multi-operation tool classes are registered once per operation
+        (``DNA_find_orfs``, ``Epidemiology_nnt``, ...) yet still read
+        ``arguments["operation"]``. Callers naturally omit it — the tool name
+        already says which operation it is — and previously got a bare parameter
+        validation failure, with no signal that the tool was usable at all.
+
+        The tool's own config names the operation (``fields.operation``, else the
+        schema default), so supply it here when the caller left it out. An
+        explicitly passed ``operation`` always wins. Mutates ``arguments`` in
+        place, before validation, so it applies whether or not validation runs.
+        """
+        if "operation" in arguments:
+            return
+        config = self.all_tool_dict.get(function_name)
+        if not isinstance(config, dict):
+            return
+        operation = (config.get("fields") or {}).get("operation")
+        if not operation:
+            schema = config.get("parameter") or {}
+            prop = (schema.get("properties") or {}).get("operation")
+            if isinstance(prop, dict):
+                operation = prop.get("default")
+        if isinstance(operation, str) and operation:
+            arguments["operation"] = operation
 
     def _validate_parameters(
         self, function_name: str, arguments: dict

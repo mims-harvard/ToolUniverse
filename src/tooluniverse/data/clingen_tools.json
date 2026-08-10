@@ -155,14 +155,38 @@
       "timeout": 200
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": ["array", "object"]
-        },
-        "total": {"type": "integer"},
-        "context": {"type": "string"},
-        "source": {"type": "string"}
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "docId": {"type": "string"},
+          "topicIri": {"type": "string"},
+          "curationType": {"type": "string"},
+          "latestSearchDate": {"type": "string"},
+          "lastUpdated": {"type": "string"},
+          "lastAuthor": {"type": "string"},
+          "context": {"type": "string"},
+          "contextIri": {"type": "string"},
+          "release": {"type": "string"},
+          "releaseDate": {"type": "string"},
+          "geneOrVariant": {"type": "string"},
+          "geneOmim": {"type": "string"},
+          "disease": {"type": "string"},
+          "omim": {"type": "string"},
+          "status-overall": {"type": "string"},
+          "status-stg1": {"type": "string"},
+          "status-stg2": {"type": "string"},
+          "status-scoring": {"type": "string"},
+          "outcome": {"type": ["string", "null"]},
+          "outcomeScoringGroup": {"type": "string"},
+          "intervention": {"type": ["string", "null"]},
+          "interventionScoringGroup": {"type": "string"},
+          "severity": {"type": ["string", "null"]},
+          "likelihood": {"type": ["string", "null"]},
+          "natureOfIntervention": {"type": ["string", "null"]},
+          "effectiveness": {"type": ["string", "null"]},
+          "overall": {"type": ["string", "null"]}
+        }
       }
     },
     "test_examples": [
@@ -189,14 +213,38 @@
       "timeout": 200
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": ["array", "object"]
-        },
-        "total": {"type": "integer"},
-        "context": {"type": "string"},
-        "source": {"type": "string"}
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "docId": {"type": "string"},
+          "topicIri": {"type": "string"},
+          "curationType": {"type": "string"},
+          "latestSearchDate": {"type": "string"},
+          "lastUpdated": {"type": "string"},
+          "lastAuthor": {"type": "string"},
+          "context": {"type": "string"},
+          "contextIri": {"type": "string"},
+          "release": {"type": "string"},
+          "releaseDate": {"type": "string"},
+          "geneOrVariant": {"type": "string"},
+          "geneOmim": {"type": "string"},
+          "disease": {"type": "string"},
+          "omim": {"type": "string"},
+          "status-overall": {"type": "string"},
+          "status-stg1": {"type": "string"},
+          "status-stg2": {"type": "string"},
+          "status-scoring": {"type": "string"},
+          "outcome": {"type": ["string", "null"]},
+          "outcomeScoringGroup": {"type": "string"},
+          "intervention": {"type": ["string", "null"]},
+          "interventionScoringGroup": {"type": "string"},
+          "severity": {"type": ["string", "null"]},
+          "likelihood": {"type": ["string", "null"]},
+          "natureOfIntervention": {"type": ["string", "null"]},
+          "effectiveness": {"type": ["string", "null"]},
+          "overall": {"type": ["string", "null"]}
+        }
       }
     },
     "test_examples": [

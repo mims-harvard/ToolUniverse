@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "list_libraries",
-          "description": "Operation type (fixed: list_libraries)"
+          "description": "Operation type (fixed: list_libraries)",
+          "default": "list_libraries"
         },
         "category": {
           "type": "string",
@@ -28,7 +29,10 @@
       {
         "category": "GO"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_libraries"
+    }
   },
   {
     "name": "Enrichr_enrich",
@@ -40,7 +44,8 @@
         "operation": {
           "type": "string",
           "const": "enrich",
-          "description": "Operation type (fixed: enrich)"
+          "description": "Operation type (fixed: enrich)",
+          "default": "enrich"
         },
         "gene_list": {
           "type": "array",
@@ -92,7 +97,10 @@
         "library": "KEGG_2021_Human",
         "top_n": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "enrich"
+    }
   },
   {
     "name": "Enrichr_get_top_enriched",
@@ -104,7 +112,8 @@
         "operation": {
           "type": "string",
           "const": "get_top_enriched",
-          "description": "Operation type (fixed: get_top_enriched)"
+          "description": "Operation type (fixed: get_top_enriched)",
+          "default": "get_top_enriched"
         },
         "gene_list": {
           "type": "array",
@@ -149,7 +158,10 @@
         ],
         "top_n": 3
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_top_enriched"
+    }
   },
   {
     "name": "Enrichr_gene_to_genesets",
@@ -161,7 +173,8 @@
         "operation": {
           "type": "string",
           "const": "gene_to_genesets",
-          "description": "Operation type (fixed: gene_to_genesets)"
+          "description": "Operation type (fixed: gene_to_genesets)",
+          "default": "gene_to_genesets"
         },
         "gene": {
           "type": "string",
@@ -239,6 +252,9 @@
         "gene": "BRCA1",
         "max_terms_per_library": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "gene_to_genesets"
+    }
   }
 ]

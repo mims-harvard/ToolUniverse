@@ -31,104 +31,85 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "tax_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "scientific_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "common_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "rank": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "division": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "lineage": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "genetic_code": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "mitochondrial_genetic_code": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "authority": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "other_names": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "submittable": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "binomial": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "formal_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
+            "tax_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "scientific_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "common_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rank": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "division": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lineage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "genetic_code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mitochondrial_genetic_code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "authority": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "other_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "query_tax_id": {
-                  "type": "string"
-                },
-                "source": {
-                  "type": "string"
-                }
-              }
+            "submittable": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "binomial": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "formal_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -174,82 +155,60 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tax_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "scientific_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "common_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "rank": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "division": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "lineage": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "genetic_code": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "authority": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "query_name": {
-                  "type": "string"
-                },
-                "source": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tax_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "scientific_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "common_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "division": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lineage": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genetic_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "authority": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -295,76 +254,54 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tax_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "scientific_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "common_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "rank": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "division": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "lineage": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "authority": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "query_name": {
-                  "type": "string"
-                },
-                "source": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tax_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "scientific_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "common_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "division": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lineage": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "authority": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -410,64 +347,42 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tax_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "scientific_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "common_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "rank": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "display_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "source": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tax_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "scientific_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "common_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

@@ -45,6 +45,57 @@ def _http_get(
             raise
 
 
+# Top-level keys in an ENCODE `/search/` response that describe the search
+# UI/facet machinery (available filter options across the *entire* ENCODE
+# database) rather than the query results themselves. They add tens of KB per
+# call and are irrelevant to a caller just looking for matching experiments.
+_ENCODE_SEARCH_UI_KEYS = {
+    "@context",
+    "@id",
+    "columns",
+    "facets",
+    "facet_groups",
+    "non_sortable",
+    "filters",
+    "clear_filters",
+    "sort",
+    "actions",
+    "views",
+}
+
+
+def _trim_encode_search_response(data: Any) -> Any:
+    """Strip search-UI metadata and per-item compliance `audit` blocks.
+
+    ENCODE's raw `/search/` JSON is meant to drive their web UI: besides the
+    matching records (`@graph`), every response repeats the full facet/column
+    schema for the whole database, and every matched record carries a nested
+    `audit` block of internal QC/compliance notices. None of that is needed to
+    answer "which experiments match this query" and can turn a handful of
+    real hits into a 100KB+ payload for a caller.
+    """
+    if not isinstance(data, dict):
+        return data
+    # `data` is a freshly-parsed JSON object owned solely by this call, so
+    # it's safe (and avoids copying every key/record) to strip it in place
+    # rather than rebuilding a new dict/list.
+    for key in _ENCODE_SEARCH_UI_KEYS:
+        data.pop(key, None)
+    graph = data.get("@graph")
+    if isinstance(graph, list):
+        for item in graph:
+            if isinstance(item, dict):
+                item.pop("audit", None)
+        if data.get("total") == 0 or (not graph and "total" not in data):
+            data["notification"] = (
+                "No matching ENCODE experiments for this query. ENCODE search "
+                "fields require exact values (e.g. target.label must be the "
+                "official gene symbol; biosample_ontology.term_name must be "
+                "an exact ontology term such as 'K562', not a loose synonym)."
+            )
+    return data
+
+
 def _handle_encode_error(exception: Exception) -> ToolError:
     """Shared error handler for all ENCODE tools - eliminates code duplication."""
     error_str = str(exception).lower()
@@ -165,7 +216,7 @@ class ENCODESearchTool:
                 "source": "ENCODE",
                 "endpoint": "search",
                 "query": query,
-                "data": data,
+                "data": _trim_encode_search_response(data),
                 "success": True,
             }
         except Exception as e:

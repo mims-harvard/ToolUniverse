@@ -140,7 +140,7 @@ class TestDrugCharacterization(unittest.TestCase):
         self.assertEqual(terms["Interacting"], 5371)
 
     def test_unknown_code_passes_through(self):
-        """An unmapped code is returned verbatim rather than dropped."""
+        """An unmapped code is returned verbatim (as a string, per return_schema) rather than dropped."""
         tool = _make_tool(self.TOOL)
         rows = [{"term": 4, "count": 15}]  # code 4 is not in the standard map
         with patch(
@@ -148,7 +148,7 @@ class TestDrugCharacterization(unittest.TestCase):
             return_value=_patched_get(rows),
         ):
             out = tool.run({"medicinalproduct": "METFORMIN"})
-        self.assertEqual(out[0]["term"], 4)
+        self.assertEqual(out[0]["term"], "4")
         self.assertEqual(out[0]["count"], 15)
 
     def test_api_failure_returns_error_not_raise(self):

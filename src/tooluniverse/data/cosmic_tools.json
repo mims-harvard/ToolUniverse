@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "search",
-          "description": "Operation type (fixed: search)"
+          "description": "Operation type (fixed: search)",
+          "default": "search"
         },
         "terms": {
           "type": "string",
@@ -30,7 +31,10 @@
           "type": "integer",
           "description": "Genome build version: 37 (GRCh37/hg19) or 38 (GRCh38/hg38). Default: 37",
           "default": 37,
-          "enum": [37, 38]
+          "enum": [
+            37,
+            38
+          ]
         }
       },
       "required": []
@@ -51,13 +55,13 @@
                 "type": "string",
                 "description": "COSMIC mutation ID (e.g., COSM476)"
               },
-                  "display": {
-                    "type": "array",
-                    "description": "Display array with mutation details [mutation_id, gene, CDS, AA]",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
+              "display": {
+                "type": "array",
+                "description": "Display array with mutation details [mutation_id, gene, CDS, AA]",
+                "items": {
+                  "type": "string"
+                }
+              },
               "GeneName": {
                 "type": "string",
                 "description": "Gene symbol"
@@ -98,7 +102,10 @@
         "terms": "TP53",
         "max_results": 20
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search"
+    }
   },
   {
     "name": "COSMIC_get_mutations_by_gene",
@@ -110,7 +117,8 @@
         "operation": {
           "type": "string",
           "const": "get_by_gene",
-          "description": "Operation type (fixed: get_by_gene)"
+          "description": "Operation type (fixed: get_by_gene)",
+          "default": "get_by_gene"
         },
         "gene": {
           "type": "string",
@@ -131,7 +139,10 @@
           "type": "integer",
           "description": "Genome build version: 37 (GRCh37/hg19) or 38 (GRCh38/hg38). Default: 37",
           "default": 37,
-          "enum": [37, 38]
+          "enum": [
+            37,
+            38
+          ]
         }
       },
       "required": []
@@ -198,6 +209,9 @@
         "gene": "TP53",
         "max_results": 100
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_by_gene"
+    }
   }
 ]

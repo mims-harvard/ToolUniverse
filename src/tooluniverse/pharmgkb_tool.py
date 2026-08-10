@@ -319,6 +319,15 @@ class PharmGKBTool(BaseTool):
             limit = 50
         limit = max(1, min(limit, 500))
 
+        # Fix-Round3-004: listing mode had no way to filter by drug —
+        # a caller who wanted "the FDA label for imatinib" had to page
+        # through up to 500 unlabeled {id, name} entries by hand. The API
+        # call already returns the full, unpaginated listing (`total` was
+        # already computed from one request), so filtering client-side by
+        # a case-insensitive substring match on `name` (e.g. "Annotation of
+        # FDA Label for imatinib and ABL1, BCR") is free — no extra request.
+        drug_name = arguments.get("drug_name") or arguments.get("drug")
+
         status_code, api_response, error = self._request_json(
             f"{PHARMGKB_BASE_URL}/data/label",
             {"source": source, "view": "min"},
@@ -335,13 +344,24 @@ class PharmGKBTool(BaseTool):
         results = api_response.get("data", [])
         if not isinstance(results, list):
             results = [results]
+
+        if drug_name:
+            needle = str(drug_name).lower()
+            results = [r for r in results if needle in str(r.get("name", "")).lower()]
+
         total = len(results)
         truncated = results[:limit]
         out: Dict[str, Any] = {"status": "success", "data": truncated}
-        if total > limit:
+        if drug_name and total == 0:
             out["note"] = (
-                f"Showing {limit} of {total} {source} drug-label annotations. "
-                f"Increase 'limit' or call with label_id=<id> for full details."
+                f"No {source} drug-label annotations matched "
+                f"drug_name='{drug_name}'."
+            )
+        elif total > limit:
+            out["note"] = (
+                f"Showing {limit} of {total} {source} drug-label annotations"
+                + (f" matching drug_name='{drug_name}'" if drug_name else "")
+                + ". Increase 'limit' or call with label_id=<id> for full details."
             )
         return out
 

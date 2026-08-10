@@ -11,7 +11,8 @@
           "enum": [
             "lookup_compound"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "lookup_compound"
         },
         "query": {
           "type": "string",
@@ -19,7 +20,6 @@
         }
       },
       "required": [
-        "operation",
         "query"
       ]
     },
@@ -60,6 +60,9 @@
         "purpose": "Check purchasability and pricing of chemical compounds.",
         "without": "Compound search works without it; the key unlocks ordering and availability."
       }
+    },
+    "fields": {
+      "operation": "lookup_compound"
     }
   },
   {
@@ -74,7 +77,8 @@
           "enum": [
             "get_compound"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_compound"
         },
         "mcule_id": {
           "type": "string",
@@ -82,7 +86,6 @@
         }
       },
       "required": [
-        "operation",
         "mcule_id"
       ]
     },
@@ -225,7 +228,10 @@
     ],
     "optional_api_keys": [
       "MCULE_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_compound"
+    }
   },
   {
     "name": "Mcule_list_databases",
@@ -239,7 +245,8 @@
           "enum": [
             "list_databases"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "list_databases"
         },
         "public_only": {
           "type": [
@@ -250,9 +257,7 @@
           "description": "If true (default), only return publicly accessible databases"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "array",
@@ -322,7 +327,10 @@
     ],
     "optional_api_keys": [
       "MCULE_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "list_databases"
+    }
   },
   {
     "name": "Mcule_get_database",
@@ -336,7 +344,8 @@
           "enum": [
             "get_database"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_database"
         },
         "database_id": {
           "type": "integer",
@@ -344,7 +353,6 @@
         }
       },
       "required": [
-        "operation",
         "database_id"
       ]
     },
@@ -414,6 +422,9 @@
     ],
     "optional_api_keys": [
       "MCULE_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_database"
+    }
   }
 ]

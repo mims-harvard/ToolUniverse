@@ -10,7 +10,9 @@
                     "description": "UniParc identifier (e.g., 'UPI000002ED67' for TP53/P04637). Find UPIs via UniParc_search or from UniProt protein pages."
                 }
             },
-            "required": ["upi"]
+            "required": [
+                "upi"
+            ]
         },
         "fields": {
             "endpoint": "get_entry"
@@ -26,69 +28,114 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
+                        "uniparc_id": {
+                            "type": "string"
+                        },
+                        "sequence": {
                             "type": "object",
                             "properties": {
-                                "uniparc_id": {"type": "string"},
-                                "sequence": {
-                                    "type": "object",
-                                    "properties": {
-                                        "value": {"type": "string", "description": "Full amino acid sequence"},
-                                        "length": {"type": "integer"},
-                                        "mol_weight": {"type": "integer"},
-                                        "crc64": {"type": "string"},
-                                        "md5": {"type": "string"}
-                                    }
+                                "value": {
+                                    "type": "string",
+                                    "description": "Full amino acid sequence"
                                 },
-                                "cross_references": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "database": {"type": "string"},
-                                            "id": {"type": "string"},
-                                            "active": {"type": "boolean"},
-                                            "gene_name": {"type": ["string", "null"]},
-                                            "protein_name": {"type": ["string", "null"]},
-                                            "organism": {"type": ["string", "null"]},
-                                            "taxon_id": {"type": ["integer", "null"]}
-                                        }
-                                    },
-                                    "description": "Active cross-references to other databases"
+                                "length": {
+                                    "type": "integer"
                                 },
-                                "sequence_features": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "database": {"type": "string"},
-                                            "database_id": {"type": "string"},
-                                            "interpro_id": {"type": ["string", "null"]},
-                                            "interpro_name": {"type": ["string", "null"]},
-                                            "locations": {"type": "array"}
-                                        }
-                                    },
-                                    "description": "InterPro domain annotations"
+                                "mol_weight": {
+                                    "type": "integer"
+                                },
+                                "crc64": {
+                                    "type": "string"
+                                },
+                                "md5": {
+                                    "type": "string"
                                 }
                             }
                         },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "total_cross_references": {"type": "integer"},
-                                "active_cross_references": {"type": "integer"}
-                            }
+                        "cross_references": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "database": {
+                                        "type": "string"
+                                    },
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "active": {
+                                        "type": "boolean"
+                                    },
+                                    "gene_name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "protein_name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "organism": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "taxon_id": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ]
+                                    }
+                                }
+                            },
+                            "description": "Active cross-references to other databases"
+                        },
+                        "sequence_features": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "database": {
+                                        "type": "string"
+                                    },
+                                    "database_id": {
+                                        "type": "string"
+                                    },
+                                    "interpro_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "interpro_name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "locations": {
+                                        "type": "array"
+                                    }
+                                }
+                            },
+                            "description": "InterPro domain annotations"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
                     "properties": {
-                        "error": {"type": "string"}
+                        "error": {
+                            "type": "string"
+                        }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }
@@ -108,7 +155,9 @@
                     "description": "Number of results to return (default 5, max 10)."
                 }
             },
-            "required": ["query"]
+            "required": [
+                "query"
+            ]
         },
         "fields": {
             "endpoint": "search"
@@ -126,49 +175,72 @@
         "return_schema": {
             "oneOf": [
                 {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "uniparc_id": {"type": "string", "description": "Stable UPI identifier"},
-                                    "uniprot_accessions": {"type": "array", "items": {"type": "string"}},
-                                    "organisms": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "name": {"type": ["string", "null"]},
-                                                "taxon_id": {"type": ["integer", "null"]}
-                                            }
-                                        }
-                                    },
-                                    "gene_names": {"type": "array", "items": {"type": "string"}},
-                                    "oldest_created": {"type": ["string", "null"]},
-                                    "most_recent_updated": {"type": ["string", "null"]}
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "uniparc_id": {
+                                "type": "string",
+                                "description": "Stable UPI identifier"
+                            },
+                            "uniprot_accessions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
                                 }
                             },
-                            "description": "Matching UniParc entries"
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "query": {"type": "string"},
-                                "returned": {"type": "integer"}
+                            "organisms": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "taxon_id": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "gene_names": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "oldest_created": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "most_recent_updated": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
                             }
                         }
                     },
-                    "required": ["data"]
+                    "description": "Matching UniParc entries"
                 },
                 {
                     "type": "object",
                     "properties": {
-                        "error": {"type": "string"}
+                        "error": {
+                            "type": "string"
+                        }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }

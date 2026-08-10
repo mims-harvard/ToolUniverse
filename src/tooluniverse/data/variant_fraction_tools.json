@@ -3,6 +3,7 @@
     "type": "CodingVariantFractionTool",
     "name": "coding_variant_fraction",
     "description": "Compute the fraction of CODING variants in an Excel/CSV variant table that match a given Sequence Ontology annotation and fall below a VAF threshold. Uses the CODING-only denominator convention (synonymous_variant, missense_variant, splice_region_variant, stop_gained, stop_lost, start_lost, frameshift_variant, inframe_insertion, inframe_deletion) - intronic, UTR, intergenic, and up/downstream records are excluded. Auto-detects 'variant allele frequency'/'VAF' and 'Sequence Ontology' columns if not specified. Supports flat headers (header_rows=1) and MultiIndex headers (header_rows=2) common in cancer variant reports. Returns the fraction with coding denominator plus the 'naive' fraction (over all VAF-filtered records) for comparison.",
+    "requires_local_input": true,
     "parameter": {
       "type": "object",
       "properties": {
@@ -46,71 +47,56 @@
       ]
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "total_variants": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "total_variants": {
-                  "type": "integer"
-                },
-                "vaf_filtered": {
-                  "type": "integer"
-                },
-                "coding_variants_below_vaf": {
-                  "type": "integer"
-                },
-                "matching_annotation": {
-                  "type": "integer"
-                },
-                "fraction": {
-                  "type": "number"
-                },
-                "naive_fraction": {
-                  "type": "number"
-                },
-                "vaf_column": {
-                  "type": "string"
-                },
-                "so_column": {
-                  "type": "string"
-                },
-                "vaf_threshold": {
-                  "type": "number"
-                },
-                "annotation": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "total_variants",
-                "coding_variants_below_vaf",
-                "matching_annotation",
-                "fraction"
-              ]
+            "vaf_filtered": {
+              "type": "integer"
+            },
+            "coding_variants_below_vaf": {
+              "type": "integer"
+            },
+            "matching_annotation": {
+              "type": "integer"
+            },
+            "fraction": {
+              "type": "number"
+            },
+            "naive_fraction": {
+              "type": "number"
+            },
+            "vaf_column": {
+              "type": "string"
+            },
+            "so_column": {
+              "type": "string"
+            },
+            "vaf_threshold": {
+              "type": "number"
+            },
+            "annotation": {
+              "type": "string"
             }
           },
           "required": [
-            "status",
-            "data"
+            "total_variants",
+            "coding_variants_below_vaf",
+            "matching_annotation",
+            "fraction"
           ]
         },
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

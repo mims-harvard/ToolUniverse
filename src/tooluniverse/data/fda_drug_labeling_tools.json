@@ -5619,13 +5619,13 @@
   },
   {
     "name": "FDA_get_drug_names_by_food_safety_warnings",
-    "description": "Retrieve drug names based on specific food safety warnings.",
+    "description": "Retrieve drug names whose label discusses a food-drug interaction or food safety warning (e.g. 'grapefruit', 'alcohol', 'dairy'). Searches across the label's food-interaction-relevant sections: 'food_safety_warning' (a real but very rarely populated openFDA section -- only a handful of labels use it), plus the much more commonly populated 'drug_interactions', 'precautions', and 'warnings_and_precautions' sections where food/beverage interactions are usually actually documented. Matching a single word like 'alcohol' can return many results since these are broad safety sections, not a dedicated food-warning field.",
     "parameter": {
       "type": "object",
       "properties": {
         "field_info": {
           "type": "string",
-          "description": "Information related to food safety warnings."
+          "description": "Food/beverage or interaction keyword to search for, e.g. 'grapefruit', 'alcohol', 'dairy', 'tyramine'."
         },
         "indication": {
           "type": "string",
@@ -5647,7 +5647,10 @@
     "fields": {
       "search_fields": {
         "field_info": [
-          "food_safety_warning"
+          "food_safety_warning",
+          "drug_interactions",
+          "precautions",
+          "warnings_and_precautions"
         ],
         "indication": [
           "indications_and_usage"
@@ -5666,8 +5669,7 @@
     ],
     "test_examples": [
       {
-        "field_info": "Instructions",
-        "indication": "Hypertension",
+        "field_info": "grapefruit",
         "limit": 1,
         "skip": 0
       }
@@ -5695,7 +5697,40 @@
             "type": "object",
             "properties": {
               "food_safety_warning": {
-                "type": "null"
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "drug_interactions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "warnings_and_precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
               },
               "indications_and_usage": {
                 "type": [
@@ -8702,7 +8737,7 @@
       "properties": {
         "mechanism_info": {
           "type": "string",
-          "description": "Information related to the desired mechanism of action."
+          "description": "Free-text mechanism-of-action keyword to search for in the drug label's 'Mechanism of Action' section (e.g., 'angiotensin', 'beta blocker', 'IL-4 receptor'). Not a diagnosis/ICD code -- this searches the label's mechanism text, not indication codes."
         },
         "indication": {
           "type": "string",
@@ -8744,8 +8779,8 @@
     ],
     "test_examples": [
       {
-        "mechanism_info": "E11.9",
-        "indication": "Hypertension",
+        "mechanism_info": "angiotensin",
+        "indication": "hypertension",
         "limit": 5,
         "skip": 0
       }

@@ -31,148 +31,129 @@
         {
           "type": "object",
           "properties": {
-            "data": {
+            "cluster_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniRef cluster ID"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cluster name (usually 'Cluster: protein_name')"
+            },
+            "entry_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cluster type (UniRef100, UniRef90, UniRef50)"
+            },
+            "member_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of sequences in the cluster"
+            },
+            "updated": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Last update date"
+            },
+            "seed_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Seed sequence identifier"
+            },
+            "common_taxon": {
               "type": "object",
               "properties": {
-                "cluster_id": {
+                "scientific_name": {
                   "type": [
                     "string",
                     "null"
-                  ],
-                  "description": "UniRef cluster ID"
+                  ]
                 },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Cluster name (usually 'Cluster: protein_name')"
-                },
-                "entry_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Cluster type (UniRef100, UniRef90, UniRef50)"
-                },
-                "member_count": {
+                "taxon_id": {
                   "type": [
                     "integer",
                     "null"
-                  ],
-                  "description": "Number of sequences in the cluster"
-                },
-                "updated": {
+                  ]
+                }
+              },
+              "description": "Most specific taxon common to all members"
+            },
+            "representative_member": {
+              "type": "object",
+              "properties": {
+                "member_id": {
                   "type": [
                     "string",
                     "null"
-                  ],
-                  "description": "Last update date"
+                  ]
                 },
-                "seed_id": {
+                "member_id_type": {
                   "type": [
                     "string",
                     "null"
-                  ],
-                  "description": "Seed sequence identifier"
+                  ]
                 },
-                "common_taxon": {
-                  "type": "object",
-                  "properties": {
-                    "scientific_name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "taxon_id": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    }
-                  },
-                  "description": "Most specific taxon common to all members"
-                },
-                "representative_member": {
-                  "type": "object",
-                  "properties": {
-                    "member_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "member_id_type": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "organism_name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "organism_tax_id": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "sequence_length": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "protein_name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "accessions": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "description": "Representative (longest) member details"
-                },
-                "sequence": {
+                "organism_name": {
                   "type": [
                     "string",
                     "null"
-                  ],
-                  "description": "Representative protein sequence"
+                  ]
+                },
+                "organism_tax_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "sequence_length": {
                   "type": [
                     "integer",
                     "null"
-                  ],
-                  "description": "Sequence length"
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
+                  ]
                 },
-                "cluster_id": {
-                  "type": "string"
+                "protein_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "accessions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
-              }
+              },
+              "description": "Representative (longest) member details"
+            },
+            "sequence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Representative protein sequence"
+            },
+            "sequence_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Sequence length"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -229,107 +210,82 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "cluster_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "UniRef cluster ID"
-                  },
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Cluster name"
-                  },
-                  "entry_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Cluster type"
-                  },
-                  "member_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of members"
-                  },
-                  "updated": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Last update date"
-                  },
-                  "representative_member_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Representative member ID"
-                  },
-                  "representative_organism": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Organism of representative"
-                  },
-                  "representative_protein": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Protein name of representative"
-                  },
-                  "representative_sequence_length": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Sequence length of representative"
-                  },
-                  "common_taxon": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Common taxon scientific name"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "cluster_type": {
-                  "type": "string"
-                },
-                "returned": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cluster_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniRef cluster ID"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Cluster name"
+              },
+              "entry_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Cluster type"
+              },
+              "member_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of members"
+              },
+              "updated": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Last update date"
+              },
+              "representative_member_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Representative member ID"
+              },
+              "representative_organism": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Organism of representative"
+              },
+              "representative_protein": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Protein name of representative"
+              },
+              "representative_sequence_length": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Sequence length of representative"
+              },
+              "common_taxon": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Common taxon scientific name"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

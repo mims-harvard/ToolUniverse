@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "search_gene",
-          "description": "Operation type (fixed: search_gene)"
+          "description": "Operation type (fixed: search_gene)",
+          "default": "search_gene"
         },
         "gene": {
           "type": "string",
@@ -65,11 +66,14 @@
         "purpose": "Pull curated gene\u2013disease association scores and supporting evidence.",
         "without": "Limited public data works without it; the key unlocks full access."
       }
+    },
+    "fields": {
+      "operation": "search_gene"
     }
   },
   {
     "name": "DisGeNET_search_disease",
-    "description": "Search DisGeNET for genes associated with a disease. Query by disease name or UMLS CUI (e.g., C0006142 for breast cancer). Returns associated genes with scores and evidence. Requires DISGENET_API_KEY.",
+    "description": "Search DisGeNET for genes associated with a disease. Requires a UMLS CUI, NOT a free-text disease name (e.g. 'C0006142' for breast cancer, not 'breast cancer') -- resolve a disease name to its CUI first via umls_search_concepts. Returns associated genes with scores and evidence. Requires DISGENET_API_KEY.",
     "type": "DisGeNETTool",
     "parameter": {
       "type": "object",
@@ -77,11 +81,12 @@
         "operation": {
           "type": "string",
           "const": "search_disease",
-          "description": "Operation type (fixed: search_disease)"
+          "description": "Operation type (fixed: search_disease)",
+          "default": "search_disease"
         },
         "disease": {
           "type": "string",
-          "description": "Disease name or UMLS CUI (e.g., C0006142, breast cancer)"
+          "description": "UMLS CUI for the disease, e.g. 'C0006142' (breast cancer). Free-text disease names are NOT accepted -- resolve one via umls_search_concepts first."
         },
         "limit": {
           "type": "integer",
@@ -123,7 +128,10 @@
     ],
     "required_api_keys": [
       "DISGENET_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "search_disease"
+    }
   },
   {
     "name": "DisGeNET_get_gda",
@@ -135,7 +143,8 @@
         "operation": {
           "type": "string",
           "const": "get_gda",
-          "description": "Operation type (fixed: get_gda)"
+          "description": "Operation type (fixed: get_gda)",
+          "default": "get_gda"
         },
         "gene": {
           "type": "string",
@@ -197,7 +206,10 @@
     ],
     "required_api_keys": [
       "DISGENET_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_gda"
+    }
   },
   {
     "name": "DisGeNET_get_vda",
@@ -209,7 +221,8 @@
         "operation": {
           "type": "string",
           "const": "get_vda",
-          "description": "Operation type (fixed: get_vda)"
+          "description": "Operation type (fixed: get_vda)",
+          "default": "get_vda"
         },
         "variant": {
           "type": "string",
@@ -254,7 +267,10 @@
     ],
     "required_api_keys": [
       "DISGENET_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_vda"
+    }
   },
   {
     "name": "DisGeNET_get_disease_genes",
@@ -266,7 +282,8 @@
         "operation": {
           "type": "string",
           "const": "get_disease_genes",
-          "description": "Operation type (fixed: get_disease_genes)"
+          "description": "Operation type (fixed: get_disease_genes)",
+          "default": "get_disease_genes"
         },
         "disease": {
           "type": "string",
@@ -333,6 +350,9 @@
     ],
     "required_api_keys": [
       "DISGENET_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_disease_genes"
+    }
   }
 ]

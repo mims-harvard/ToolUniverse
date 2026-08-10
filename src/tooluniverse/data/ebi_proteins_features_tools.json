@@ -31,99 +31,77 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "sequence_length": {
-                  "type": "integer",
-                  "description": "Protein sequence length"
-                },
-                "features": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE, etc.)"
-                      },
-                      "position_start": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start residue position"
-                      },
-                      "position_end": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End residue position"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature description (interaction partner, binding specificity, etc.)"
-                      },
-                      "evidences": {
-                        "type": "array",
-                        "items": {
-                          "type": "object"
-                        },
-                        "description": "Literature evidence"
-                      }
-                    }
-                  },
-                  "description": "Domain/site features (max 100)"
-                },
-                "total_features": {
-                  "type": "integer",
-                  "description": "Total feature count"
-                },
-                "feature_type_counts": {
-                  "type": "object",
-                  "description": "Count of each feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE)"
-                }
-              }
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt accession"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                },
-                "category": {
-                  "type": "string"
+            "entry_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt entry name"
+            },
+            "sequence_length": {
+              "type": "integer",
+              "description": "Protein sequence length"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE, etc.)"
+                  },
+                  "position_start": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Start residue position"
+                  },
+                  "position_end": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "End residue position"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Feature description (interaction partner, binding specificity, etc.)"
+                  },
+                  "evidences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Literature evidence"
+                  }
                 }
-              }
+              },
+              "description": "Domain/site features (max 100)"
+            },
+            "total_features": {
+              "type": "integer",
+              "description": "Total feature count"
+            },
+            "feature_type_counts": {
+              "type": "object",
+              "description": "Count of each feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -171,99 +149,77 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "sequence_length": {
-                  "type": "integer",
-                  "description": "Full precursor sequence length"
-                },
-                "features": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (SIGNAL, TRANSIT, CHAIN, PEPTIDE, PROPEP, INIT_MET)"
-                      },
-                      "position_start": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start residue position"
-                      },
-                      "position_end": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End residue position"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Chain/peptide name or processing description"
-                      },
-                      "evidences": {
-                        "type": "array",
-                        "items": {
-                          "type": "object"
-                        },
-                        "description": "Evidence references"
-                      }
-                    }
-                  },
-                  "description": "Molecule processing features"
-                },
-                "total_features": {
-                  "type": "integer",
-                  "description": "Total feature count"
-                },
-                "feature_type_counts": {
-                  "type": "object",
-                  "description": "Count of each processing type (SIGNAL, CHAIN, PEPTIDE, PROPEP, etc.)"
-                }
-              }
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt accession"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                },
-                "category": {
-                  "type": "string"
+            "entry_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt entry name"
+            },
+            "sequence_length": {
+              "type": "integer",
+              "description": "Full precursor sequence length"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Feature type (SIGNAL, TRANSIT, CHAIN, PEPTIDE, PROPEP, INIT_MET)"
+                  },
+                  "position_start": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Start residue position"
+                  },
+                  "position_end": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "End residue position"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Chain/peptide name or processing description"
+                  },
+                  "evidences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Evidence references"
+                  }
                 }
-              }
+              },
+              "description": "Molecule processing features"
+            },
+            "total_features": {
+              "type": "integer",
+              "description": "Total feature count"
+            },
+            "feature_type_counts": {
+              "type": "object",
+              "description": "Count of each processing type (SIGNAL, CHAIN, PEPTIDE, PROPEP, etc.)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -311,92 +267,70 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "sequence_length": {
-                  "type": "integer",
-                  "description": "Protein sequence length"
-                },
-                "features": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Secondary structure type (HELIX, STRAND, TURN)"
-                      },
-                      "position_start": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start residue position"
-                      },
-                      "position_end": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End residue position"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Additional description"
-                      }
-                    }
-                  },
-                  "description": "Secondary structure elements (max 100)"
-                },
-                "total_features": {
-                  "type": "integer",
-                  "description": "Total secondary structure element count"
-                },
-                "feature_type_counts": {
-                  "type": "object",
-                  "description": "Count of each type (HELIX, STRAND, TURN)"
-                }
-              }
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt accession"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                },
-                "category": {
-                  "type": "string"
+            "entry_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt entry name"
+            },
+            "sequence_length": {
+              "type": "integer",
+              "description": "Protein sequence length"
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Secondary structure type (HELIX, STRAND, TURN)"
+                  },
+                  "position_start": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Start residue position"
+                  },
+                  "position_end": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "End residue position"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Additional description"
+                  }
                 }
-              }
+              },
+              "description": "Secondary structure elements (max 100)"
+            },
+            "total_features": {
+              "type": "integer",
+              "description": "Total secondary structure element count"
+            },
+            "feature_type_counts": {
+              "type": "object",
+              "description": "Count of each type (HELIX, STRAND, TURN)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

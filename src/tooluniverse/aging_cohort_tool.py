@@ -8,6 +8,7 @@ No external API calls -- uses an internal curated database. Cohort metadata
 changes rarely (study design, variables, and access methods are stable).
 """
 
+import math
 from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -1258,6 +1259,24 @@ def _token_match_count(text: str, tokens: list[str]) -> int:
     return sum(1 for tok in tokens if tok in lower)
 
 
+# Words that carry little discriminating signal for this registry: nearly
+# every cohort's text contains "study" (it's in most full_names) and
+# "biomarkers" (it's a listed variable category for most cohorts), so
+# counting them toward the match threshold makes almost any multi-word
+# query -- including nonsense ones -- match nearly the whole registry.
+_LOW_SIGNAL_TOKENS = {
+    "a", "an", "the", "of", "in", "on", "and", "or", "with", "for", "to",
+    "by", "at", "study", "studies", "data", "cohort", "cohorts", "research",
+    "biomarker", "biomarkers",
+}
+
+
+def _meaningful_tokens(tokens: list[str]) -> list[str]:
+    """Drop low-signal tokens unless doing so would empty the query."""
+    filtered = [t for t in tokens if t not in _LOW_SIGNAL_TOKENS and len(t) > 2]
+    return filtered or tokens
+
+
 def _cohort_searchable_text(c: Dict[str, Any]) -> str:
     """Build a single searchable string from all cohort fields."""
     parts = [
@@ -1299,14 +1318,21 @@ class AgingCohortSearchTool(BaseTool):
                 "retryable": False,
             }
 
-        # Tokenize query -- match at least one token, rank by coverage
+        # Tokenize query and drop low-signal tokens (e.g. "study",
+        # "biomarker") that appear in nearly every cohort's text and would
+        # otherwise make almost any query -- including a nonsense one --
+        # match most of the registry. Require a majority of the remaining
+        # tokens to hit, not just one, so relevance actually tracks the
+        # query instead of any single common word.
         tokens = query.lower().split()
+        match_tokens = _meaningful_tokens(tokens)
+        min_hits = max(1, math.ceil(len(match_tokens) * 0.6))
         scored: list[tuple[int, Dict[str, Any]]] = []
 
         for cohort in _COHORTS:
             searchable = _cohort_searchable_text(cohort)
-            hits = _token_match_count(searchable, tokens)
-            if hits == 0:
+            hits = _token_match_count(searchable, match_tokens)
+            if hits < min_hits:
                 continue
 
             # --- Optional filters ---

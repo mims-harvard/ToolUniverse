@@ -176,6 +176,35 @@ class ReactomeRESTTool(BaseTool):
 
         # 5. Check HTTP status code
         if resp.status_code != 200:
+            # Fix-R15C-3: for the /data/mapping/... "list everything linked
+            # to this identifier" endpoints, Reactome signals a genuine
+            # empty result (identifier exists but has no entries of the
+            # requested kind -- e.g. a non-human ortholog with no directly
+            # curated pathways) as HTTP 404 with reason=NOT_FOUND and a
+            # "No <things> found for <id>" message, not as a real error.
+            # Confirmed live for bovine DGAT1 (Q8MK44): mapping/pathways and
+            # mapping/reactions both 404 this way, while the human ortholog
+            # (O75907) succeeds with real data via the same endpoint. Treat
+            # that specific shape as an empty list so batch/automated
+            # pipelines get a normal empty result instead of a hard
+            # exception. Scoped to /data/mapping/ only -- single-entity
+            # lookups (e.g. /data/pathway/{stId}) should keep erroring on a
+            # bad ID rather than silently returning nothing.
+            if resp.status_code == 404 and "/data/mapping/" in self.endpoint_template:
+                try:
+                    body = resp.json()
+                except ValueError:
+                    body = {}
+                if body.get("reason") == "NOT_FOUND":
+                    return {
+                        "status": "success",
+                        "data": [],
+                        "metadata": {
+                            "note": (body.get("messages") or [None])[0]
+                            or "No results found.",
+                            "source": "Reactome Content Service",
+                        },
+                    }
             return {
                 "status": "error",
                 "error": f"Reactome API returned HTTP {resp.status_code}",

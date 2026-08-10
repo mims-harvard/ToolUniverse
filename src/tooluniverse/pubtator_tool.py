@@ -134,7 +134,7 @@ class PubTatorTool(BaseTool):
                 ):
                     result["results"] = result["results"][:_limit]
             if isinstance(result, dict) and "status" not in result:
-                return {"status": "success", **result}
+                return {"status": "success", **result, "data": result}
             return result
         if "text" in ctype or "xml" in ctype:
             return response.text

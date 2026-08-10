@@ -6,6 +6,8 @@ os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 try:
     import torch
+    from . import configure_torch_cpu as _cfg_cpu
+    _cfg_cpu()
 
     if hasattr(torch, "set_default_device"):
         torch.set_default_device("cpu")

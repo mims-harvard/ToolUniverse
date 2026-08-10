@@ -1,5 +1,6 @@
 # hpa_tool.py
 
+import re
 import requests
 import xml.etree.ElementTree as ET
 from typing import Dict, Any, List
@@ -87,6 +88,22 @@ class HPAJsonApiTool(BaseTool):
 
     def _make_api_request(self, ensembl_id: str) -> Dict[str, Any]:
         """Make HPA JSON API request for a specific gene"""
+        if not re.match(r"^ENS[A-Z]*G\d+(\.\d+)?$", ensembl_id.strip(), re.IGNORECASE):
+            # HPA's endpoint 404s identically whether the ID is a
+            # validly-formatted-but-unknown Ensembl Gene ID or simply the
+            # wrong kind of identifier (e.g. a gene symbol like 'CLEC4C'
+            # instead of 'ENSG00000198178'). Catch the format mismatch here so
+            # the error tells the caller *why* nothing was found instead of
+            # implying the gene itself has no HPA data.
+            return {
+                "status": "error",
+                "error": (
+                    f"'{ensembl_id}' is not a valid Ensembl Gene ID format "
+                    "(expected e.g. 'ENSG00000141510'). This tool requires an "
+                    "Ensembl Gene ID, not a gene symbol -- resolve the symbol "
+                    "first (e.g. via Ensembl_lookup_gene_by_symbol)."
+                ),
+            }
         url = self.base_url_template.format(ensembl_id=ensembl_id)
         try:
             resp = requests.get(url, timeout=self.timeout)
@@ -1207,19 +1224,35 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
         if "error" in data:
             return data
 
-        # Get RNA tissue expression data
+        # "RNA tissue specific nTPM" is HPA's tissue-*enrichment* summary: it is
+        # populated only with the handful of tissues a gene is classified as
+        # enriched in, not the full ~50-tissue nTPM panel. Reading it alone made
+        # every non-enriched tissue look like missing data -- MAPT/'cerebral
+        # cortex' returned "No data" while HPA holds 147.9 nTPM for it. Query the
+        # per-tissue `t_RNA_<tissue>` columns instead (the same correction
+        # already applied to HPAGetRnaExpressionBySourceTool in Fix-R4A-2) and
+        # keep the enrichment summary only as a fallback.
         rna_data = data.get("RNA tissue specific nTPM", {})
         if not isinstance(rna_data, dict):
-            return {
-                "status": "error",
-                "error": "No RNA tissue expression data available for this gene",
-            }
-
-        expression_results = {}
+            rna_data = {}
         available_tissues = list(rna_data.keys())
 
+        panel = self._fetch_tissue_panel(ensembl_id, tissue_names)
+
+        expression_results = {}
         for tissue in tissue_names:
-            # Case-insensitive matching
+            value = panel.get(tissue)
+            if value is not None:
+                expression_results[tissue] = {
+                    "matched_tissue": tissue,
+                    "expression_value": value,
+                    "expression_level": self._categorize_expression(value),
+                    "source_field": f"Tissue RNA - {tissue} [nTPM]",
+                }
+                continue
+
+            # Fall back to the enrichment summary (case-insensitive substring
+            # match), which is all HPA's JSON record carries.
             found_tissue = None
             for available_tissue in available_tissues:
                 if (
@@ -1236,12 +1269,23 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
                     "expression_level": self._categorize_expression(
                         rna_data[found_tissue]
                     ),
+                    "source_field": "RNA tissue specific nTPM (enrichment summary)",
                 }
             else:
+                # HPA silently drops unknown columns, so an absent column means
+                # the tissue name is not one HPA publishes -- report that as a
+                # naming problem rather than as "this gene is not expressed".
                 expression_results[tissue] = {
                     "matched_tissue": "Not found",
                     "expression_value": "N/A",
                     "expression_level": "No data",
+                    "note": (
+                        f"'{tissue}' did not match an HPA tissue column "
+                        f"(t_RNA_{self._tissue_column_suffix(tissue)}). This means the "
+                        "tissue name is unrecognized, not that the gene lacks "
+                        "expression. Use HPA_get_rna_expression_by_source to list "
+                        "valid source names for source_type='tissue' or 'brain'."
+                    ),
                 }
 
         return {
@@ -1253,13 +1297,54 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
                 "expression_unit": "nTPM (normalized Transcripts Per Million)",
                 "queried_tissues": tissue_names,
                 "tissue_expression": expression_results,
-                "available_tissues_sample": (
-                    available_tissues[:10]
-                    if len(available_tissues) > 10
-                    else available_tissues
-                ),
-                "total_available_tissues": len(available_tissues),
+                "enriched_tissues": available_tissues,
             },
+        }
+
+    @staticmethod
+    def _tissue_column_suffix(tissue: str) -> str:
+        """Convert a human tissue name to HPA's column suffix form."""
+        return re.sub(r"[^a-z0-9]+", "_", str(tissue).strip().lower()).strip("_")
+
+    def _fetch_tissue_panel(
+        self, ensembl_id: str, tissue_names: List[str]
+    ) -> Dict[str, Any]:
+        """Fetch per-tissue nTPM values via HPA's search API `t_RNA_<tissue>` columns.
+
+        HPA drops columns it does not recognize instead of erroring, so a tissue
+        missing from the response is an unknown tissue name. Returns a mapping of
+        the caller's original tissue strings to their nTPM values.
+        """
+        suffixes = {t: self._tissue_column_suffix(t) for t in tissue_names}
+        columns = ",".join(["g", "eg"] + [f"t_RNA_{s}" for s in suffixes.values() if s])
+        params = {
+            "search": ensembl_id,
+            "format": "json",
+            "columns": columns,
+            "compress": "no",
+        }
+        try:
+            resp = requests.get(HPA_SEARCH_API, params=params, timeout=self.timeout)
+            if resp.status_code != 200:
+                return {}
+            rows = resp.json()
+        except (requests.RequestException, ValueError):
+            return {}
+        if not isinstance(rows, list) or not rows or not isinstance(rows[0], dict):
+            return {}
+
+        row = rows[0]
+        # HPA labels the returned columns "Tissue RNA - <tissue> [nTPM]".
+        by_suffix = {}
+        for key, value in row.items():
+            match = re.match(r"^Tissue RNA - (.+?) \[nTPM\]$", key)
+            if match:
+                by_suffix[self._tissue_column_suffix(match.group(1))] = value
+
+        return {
+            tissue: by_suffix[suffix]
+            for tissue, suffix in suffixes.items()
+            if by_suffix.get(suffix) not in (None, "")
         }
 
     def _categorize_expression(self, expr_value) -> str:

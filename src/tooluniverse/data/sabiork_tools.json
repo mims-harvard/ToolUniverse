@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "search_reactions",
-          "description": "Operation type (fixed: search_reactions)"
+          "description": "Operation type (fixed: search_reactions)",
+          "default": "search_reactions"
         },
         "ec_number": {
           "type": "string",
@@ -36,7 +37,10 @@
           "description": "Filter by kinetic parameter type (e.g., Km, kcat, Vmax, Ki)"
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of kinetic laws to return (default 20, max 100)"
         }
       },
@@ -63,21 +67,34 @@
               },
               "substrates": {
                 "type": "array",
-                "items": {"type": "string"}
+                "items": {
+                  "type": "string"
+                }
               },
               "products": {
                 "type": "array",
-                "items": {"type": "string"}
+                "items": {
+                  "type": "string"
+                }
               },
               "parameters": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "type": {"type": "string", "description": "Parameter type (Km, kcat, Ki, Vmax, kcat/Km)"},
-                    "name": {"type": "string"},
-                    "value": {"type": "number"},
-                    "unit": {"type": "string"}
+                    "type": {
+                      "type": "string",
+                      "description": "Parameter type (Km, kcat, Ki, Vmax, kcat/Km)"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -107,6 +124,9 @@
         "substrate": "ethanol",
         "limit": 10
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_reactions"
+    }
   }
 ]

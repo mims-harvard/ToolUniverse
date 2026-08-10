@@ -48,18 +48,7 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array"
-            },
-            "metadata": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "data"
-          ]
+          "type": "array"
         },
         {
           "type": "object",
@@ -117,18 +106,7 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array"
-            },
-            "metadata": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "data"
-          ]
+          "type": "array"
         },
         {
           "type": "object",
@@ -181,52 +159,41 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "epitope_regions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "start": {
-                        "type": [
-                          "string",
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "end": {
-                        "type": [
-                          "string",
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "peptide": {
-                        "type": "string"
-                      },
-                      "mean_score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "epitope_regions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "start": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "end": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "peptide": {
+                    "type": "string"
+                  },
+                  "mean_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
-                },
-                "per_residue": {
-                  "type": "array"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "per_residue": {
+              "type": "array"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -290,56 +257,37 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "peptide": {
-                    "type": "string"
-                  },
-                  "proteasome_score": {
-                    "type": ["number", "string"]
-                  },
-                  "tap_score": {
-                    "type": ["number", "string"]
-                  },
-                  "mhc_score": {
-                    "type": ["number", "string"]
-                  },
-                  "processing_score": {
-                    "type": ["number", "string"]
-                  },
-                  "total_score": {
-                    "type": ["number", "string"]
-                  },
-                  "ic50_score": {
-                    "type": ["number", "string"]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "peptide": {
+                "type": "string"
+              },
+              "proteasome_score": {
+                "type": ["number", "string"]
+              },
+              "tap_score": {
+                "type": ["number", "string"]
+              },
+              "mhc_score": {
+                "type": ["number", "string"]
+              },
+              "processing_score": {
+                "type": ["number", "string"]
+              },
+              "total_score": {
+                "type": ["number", "string"]
+              },
+              "ic50_score": {
+                "type": ["number", "string"]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }

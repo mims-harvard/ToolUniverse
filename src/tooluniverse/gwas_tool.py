@@ -152,11 +152,33 @@ class GWASRESTTool(BaseTool):
         # them was GWAS_search_associations_by_gene/gwas_get_snps_for_gene
         # (gene-based lookup), not a reworded trait string. Point to that
         # real fallback instead of a generic, non-adaptive example.
+        #
+        # Fix-R13C-1: GWAS Catalog's own trait-label search (used to
+        # resolve a plain-text disease_trait) isn't restricted to EFO --
+        # it also returns HPO/Orphanet/MONDO terms, and does no synonym
+        # expansion, so the exact current clinical term for a disease can
+        # resolve to a real-but-disconnected ontology term with zero
+        # tagged associations while an older/alternate synonym resolves
+        # to a term with real data. Confirmed live: "premature ovarian
+        # insufficiency" resolves to HP_0008209 (0 associations), but the
+        # older synonym "premature ovarian failure" resolves to
+        # MONDO_0005387 (9 real associations, e.g. PMID 21989058).
+        non_efo = not efo_id.upper().startswith("EFO")
+        ontology_hint = (
+            f" '{efo_id}' is not an EFO term (GWAS Catalog's trait search "
+            "also returns HPO/Orphanet/MONDO terms), and this ontology "
+            "does no synonym expansion, so it may resolve a current "
+            "clinical term to a real-but-disconnected entry."
+            if non_efo
+            else ""
+        )
         return (
-            f"No associations found for EFO ID '{efo_id}'. "
+            f"No associations found for EFO ID '{efo_id}'.{ontology_hint} "
             "GWAS Catalog may tag related associations under a different "
             "EFO/MONDO term, or under pleiotropic traits rather than this "
-            "specific one. If you know the gene of interest, try "
+            "specific one -- try an older/alternate clinical synonym of "
+            "the trait (e.g. an outdated but still-indexed name) if one "
+            "exists. If you know the gene of interest, try "
             "GWAS_search_associations_by_gene or gwas_get_snps_for_gene "
             "instead, which search by gene rather than by trait term."
         )
@@ -274,17 +296,18 @@ class GWASAssociationSearch(GWASRESTTool):
 
         sort = self._coerce_str(arguments.get("sort"))
         direction = self._coerce_str(arguments.get("direction"))
-        # A p_value threshold is applied CLIENT-SIDE to the fetched page (the API
-        # has no server-side p-value filter), but the API returns associations
-        # UNSORTED -- so without sorting by significance the fetched window omits
-        # the strongest loci and a strict threshold falsely returns 0 (SLE
-        # p<=1e-100 -> 0 even though hits exist at p=2e-298). When a p-value
-        # filter is requested and the caller gave no explicit sort, fetch
-        # most-significant-first so the threshold actually sees the top hits.
-        if not sort and (
-            arguments.get("p_value") is not None
-            or arguments.get("p_value_threshold") is not None
-        ):
+        # The API returns associations UNSORTED by default, so a plain
+        # discovery call with no explicit sort (e.g. just disease_trait+size)
+        # returns whichever page the API happens to store first -- which can
+        # be a low-information niche study with empty mapped_genes/locations,
+        # while the near-identical gwas_get_associations_for_trait tool
+        # defaults to sort=p_value and returns the expected top hit
+        # (Feature-4B-2). Default to most-significant-first here too, for
+        # consistency and so a p-value threshold (applied CLIENT-SIDE below,
+        # since the API has no server-side p-value filter) actually sees the
+        # top hits instead of missing them (SLE p<=1e-100 -> 0 even though
+        # hits exist at p=2e-298).
+        if not sort:
             sort = "p_value"
             if not direction:
                 direction = "asc"
@@ -439,10 +462,15 @@ class GWASStudyByID(GWASRESTTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get study by ID."""
-        if "study_id" not in arguments:
+        # Feature-4B-4: sibling tools (e.g. GWASAssociationsForStudy, and the
+        # "accession_id" field on every association record) use "accession_id"
+        # for this same GCST identifier, so accept it as an alias to avoid a
+        # natural chaining mistake when passing an ID straight from one tool
+        # to another.
+        study_id = arguments.get("study_id") or arguments.get("accession_id")
+        if not study_id:
             return {"status": "error", "error": "study_id is required"}
 
-        study_id = arguments["study_id"]
         return self._make_request(f"{self.endpoint}/{study_id}")
 
 
@@ -688,7 +716,28 @@ class GWASSNPsForGene(GWASRESTTool):
 
         data = self._make_request(self.endpoint, params)
         # v1 endpoint returns key "singleNucleotidePolymorphisms", not "snps"
-        return self._extract_embedded_data(data, "singleNucleotidePolymorphisms")
+        result = self._extract_embedded_data(data, "singleNucleotidePolymorphisms")
+
+        # Feature-4B-3: the v1 findByGene endpoint repeats identical SNP
+        # records (verified: byte-for-byte duplicate objects for the same
+        # rsId), inflating apparent SNP counts. Dedupe by rsId.
+        if result.get("status") == "success" and isinstance(result.get("data"), list):
+            seen: set = set()
+            deduped = []
+            for snp in result["data"]:
+                rs_id = snp.get("rsId") if isinstance(snp, dict) else None
+                if rs_id:
+                    if rs_id in seen:
+                        continue
+                    seen.add(rs_id)
+                deduped.append(snp)
+            if len(deduped) != len(result["data"]):
+                result.setdefault("metadata", {})["duplicates_removed"] = len(
+                    result["data"]
+                ) - len(deduped)
+            result["data"] = deduped
+
+        return result
 
 
 @register_tool("GWASAssociationsForStudy")

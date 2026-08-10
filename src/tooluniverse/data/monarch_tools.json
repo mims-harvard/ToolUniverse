@@ -52,14 +52,38 @@
         "HPO_ID_list": ["HP:0001250"],
         "limit": 5,
         "offset": 1
+      },
+      {
+        "HPO_ID_list": ["HP:9999999", "HP:0001249"],
+        "limit": 5
       }
     ],
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "List of disease names associated with the provided HPO phenotype IDs"
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of disease names associated with the intersection of ALL provided HPO phenotype IDs. Returned when every input HPO ID matched at least one disease."
+        },
+        {
+          "type": "object",
+          "description": "Returned when one or more input HPO IDs matched zero diseases (e.g. an invalid/obsolete ID, or a genuinely unassociated phenotype). Those IDs are excluded from the intersection rather than collapsing the whole result to an empty list.",
+          "properties": {
+            "diseases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "warning": {
+              "type": "string"
+            }
+          },
+          "required": ["diseases", "warning"]
+        }
+      ]
     }
   },
   {

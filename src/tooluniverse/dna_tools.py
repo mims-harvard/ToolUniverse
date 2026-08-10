@@ -480,6 +480,17 @@ NEB_ENZYMES = {
     "AscI": "GGCGCGCC",
     "PacI": "TTAATTAA",
     "SfiI": "GGCCNNNNNGGCC",
+    # Type IIS -- these cut OUTSIDE their recognition site, which is what makes
+    # them usable for Golden Gate (the fusion junction carries no enzyme scar).
+    # DNA_golden_gate_design/_assemble are built around exactly these, so they
+    # must resolve from the built-in table: Bio.Restriction is an optional
+    # dependency, and without these entries Golden Gate failed outright with
+    # "Unknown enzyme: BsaI" anywhere Biopython was absent.
+    "BsaI": "GGTCTC",
+    "BbsI": "GAAGAC",
+    "Esp3I": "CGTCTC",
+    "BsmBI": "CGTCTC",  # isoschizomer of Esp3I
+    "SapI": "GCTCTTC",
 }
 
 # Enzyme-specific cut offset (0-based, from start of recognition sequence)
@@ -513,6 +524,31 @@ NEB_CUT_OFFSETS: Dict[str, int] = {
     "AscI": 2,  # GG^CGCGCC (4-base 5' overhang)
     "PacI": 5,  # TTAAT^TAA (2-base 3' overhang)
     "SfiI": 8,  # GGCCNNNN^NGGCC (3-base 3' overhang)
+    # Type IIS: the cut is past the end of the recognition site, so the offset
+    # exceeds the site length. Values match Bio.Restriction's `fst5` exactly.
+    "BsaI": 7,  # GGTCTCN^NNNN    (4-base 5' overhang, 1 nt spacer)
+    "BbsI": 8,  # GAAGACNN^NNNN   (4-base 5' overhang, 2 nt spacer)
+    "Esp3I": 7,  # CGTCTCN^NNNN    (4-base 5' overhang, 1 nt spacer)
+    "BsmBI": 7,  # CGTCTCN^NNNN    (isoschizomer of Esp3I)
+    "SapI": 8,  # GCTCTTCN^NNN    (3-base 5' overhang, 1 nt spacer)
+}
+
+# Overhang length produced by each enzyme, needed to place the cut for a site
+# found in the REVERSE orientation. A reverse-oriented site is read by the
+# enzyme on the bottom strand, so its top-strand cut sits upstream of the site:
+#
+#     reverse_cut = site_start - (cut_offset - site_length + overhang_length)
+#
+# Only non-palindromic enzymes can occur in a distinguishable reverse
+# orientation, which in practice means the Type IIS cutters. Verified against
+# Bio.Restriction: the formula reproduces its both-strand `search()` positions
+# exactly for every enzyme listed here.
+NEB_OVERHANG_LEN: Dict[str, int] = {
+    "BsaI": 4,
+    "BbsI": 4,
+    "Esp3I": 4,
+    "BsmBI": 4,
+    "SapI": 3,
 }
 
 
@@ -540,6 +576,111 @@ _IUPAC_RE: Dict[str, str] = {
 def _site_to_regex(site: str) -> str:
     """Convert an IUPAC DNA recognition sequence into a regex pattern."""
     return "".join(_IUPAC_RE.get(c, c) for c in site.upper())
+
+
+_COMPLEMENT = str.maketrans(
+    "ACGTRYSWKMBDHVNacgtryswkmbdhvn", "TGCAYRSWMKVHDBNtgcayrswmkvhdbn"
+)
+
+
+def _reverse_complement(site: str) -> str:
+    """Reverse complement of an IUPAC recognition sequence."""
+    return site.translate(_COMPLEMENT)[::-1]
+
+
+def _enzyme_cut_positions(sequence: str, enzyme_name: str, circular: bool):
+    """Cut positions (0-based top-strand bond indices), Biopython optional.
+
+    Prefers Bio.Restriction, which knows every enzyme's real geometry. Falls
+    back to scanning both orientations of the recognition site and applying the
+    curated offsets, so the Type IIS enzymes Golden Gate depends on work without
+    the optional `bioinformatics` extra installed. The fallback reproduces
+    Bio.Restriction's both-strand `search()` exactly for those enzymes
+    (verified over randomised sequences).
+    """
+    cuts = _biopython_cut_positions(sequence, enzyme_name, circular)
+    if cuts:
+        return cuts
+
+    resolved = _resolve_enzyme(enzyme_name)
+    if resolved is None:
+        return []
+    canonical, site, cut_off = resolved
+    site_len = len(site)
+    ov = NEB_OVERHANG_LEN.get(canonical, 0)
+    n = len(sequence)
+    if n == 0:
+        return []
+
+    search_seq = (sequence + sequence) if circular else sequence
+    rc_site = _reverse_complement(site)
+    fwd_re = _site_to_regex(site)
+    out = []
+
+    for m in re.finditer(f"(?={fwd_re})", search_seq):
+        i = m.start()
+        if i >= n:
+            break
+        cut = i + cut_off
+        # A linear molecule can only be cut where the whole cut geometry fits;
+        # a circular one wraps instead.
+        if circular:
+            out.append(cut % n)
+        elif cut + ov <= n:
+            out.append(cut)
+
+    if rc_site != site:
+        back = cut_off - site_len + ov
+        for m in re.finditer(f"(?={_site_to_regex(rc_site)})", search_seq):
+            i = m.start()
+            if i >= n:
+                break
+            cut = i - back
+            if circular:
+                out.append(cut % n)
+            elif cut >= 0:
+                out.append(cut)
+
+    return sorted(set(out))
+
+
+def _biopython_cut_positions(sequence: str, enzyme_name: str, circular: bool):
+    """Cut positions (0-based top-strand bond indices) via Biopython, or None.
+
+    Recognition sites are only palindromic for a minority of enzymes. A
+    non-palindromic site (BsaI GGTCTC, Esp3I CGTCTC, BbsI GAAGAC, ...) also occurs
+    in the reverse orientation, and a forward-strand-only scan silently misses
+    those: a Golden Gate plasmid carries its two Type IIS sites *inverted* around
+    the insert, so a forward-only search finds one of two and reports the plasmid
+    as uncut. Biopython searches both strands and knows each enzyme's real cut
+    geometry, so delegate when it is available.
+
+    Returns None when Biopython or the enzyme is unavailable, so callers keep
+    their regex fallback.
+    """
+    try:
+        from Bio import Restriction
+        from Bio.Seq import Seq
+    except Exception:
+        return None
+    enz = getattr(Restriction, enzyme_name, None)
+    if enz is None:
+        try:
+            for a in Restriction.AllEnzymes:
+                if str(a).lower() == enzyme_name.lower():
+                    enz = a
+                    break
+        except Exception:
+            return None
+    if enz is None:
+        return None
+    try:
+        # Biopython returns 1-based positions of the bond on the sense strand;
+        # subtract 1 for the 0-based fragment-boundary convention used here.
+        positions = enz.search(Seq(sequence), linear=not circular)
+        return sorted({int(p) - 1 for p in positions})
+    except Exception:
+        return None
 
 
 def _resolve_enzyme(name: str):
@@ -574,9 +715,21 @@ def _resolve_enzyme(name: str):
     site = getattr(enz, "site", None) if enz is not None else None
     if not site:
         return None
-    try:
-        off = max(0, int(enz.fst) - 1)
-    except Exception:
+    # Biopython exposes the sense-strand cut as `fst5` (offset from the start of
+    # the recognition site); there is no `fst`, so the previous lookup always
+    # raised and every fallback enzyme silently got a midpoint cut. That is wrong
+    # for any asymmetric cutter and badly wrong for Type IIS enzymes (BsaI, BbsI,
+    # Esp3I/BsmBI, SapI), which cut *outside* their recognition site -- the cut
+    # landed inside the site instead, so Golden Gate fragments and overhangs came
+    # out wrong. `fst5` reproduces all 25 curated NEB_CUT_OFFSETS exactly.
+    off = None
+    fst5 = getattr(enz, "fst5", None)
+    if fst5 is not None:
+        try:
+            off = int(fst5)
+        except (TypeError, ValueError):
+            off = None
+    if off is None or off < 0:
         off = len(site) // 2
     return str(enz), site.upper(), off
 
@@ -598,10 +751,19 @@ class DNATool(BaseTool):
         super().__init__(tool_config)
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
+        # Each registered tool (DNA_find_orfs, DNA_virtual_digest, ...) is one
+        # operation, so its config names that operation and the caller does not
+        # have to repeat it. Fall back to the tool name (DNA_<operation>) when
+        # `fields` is absent, matching the pattern used by MSigDBTool.
+        self.operation = (tool_config.get("fields") or {}).get("operation")
+        if not self.operation:
+            name = tool_config.get("name", "")
+            if name.startswith("DNA_"):
+                self.operation = name[len("DNA_") :]
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute DNA analysis tool with given arguments."""
-        operation = arguments.get("operation")
+        operation = arguments.get("operation") or self.operation
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
 
@@ -616,6 +778,7 @@ class DNATool(BaseTool):
             "primer_design": self._primer_design,
             "gibson_design": self._gibson_design,
             "golden_gate_design": self._golden_gate_design,
+            "golden_gate_assemble": self._golden_gate_assemble,
         }
 
         handler = operation_handlers.get(operation)
@@ -671,27 +834,33 @@ class DNATool(BaseTool):
                         f"{sorted(NEB_ENZYMES.keys())}"
                     ),
                 }
-            # Case-insensitive normalization: enzyme names like "ecori", "ECORI",
-            # or "EcoRi" are silently mapped to the canonical form "EcoRI".
-            _neb_lower = {name.lower(): name for name in NEB_ENZYMES}
-            normalized_requested = []
+            # Resolve through the shared helper so this tool accepts exactly what
+            # the virtual digest accepts: the curated NEB table (case-insensitively)
+            # and, failing that, Biopython's ~600-enzyme library. Previously this
+            # path checked only the 25-enzyme table, so Type IIS enzymes central to
+            # Golden Gate work -- BsaI, BbsI, Esp3I/BsmBI, SapI -- were rejected here
+            # while the digest tool resolved them.
+            enzyme_dict = {}
             unknown_enzymes = []
             for e in enzymes_requested:
-                if e in NEB_ENZYMES:
-                    normalized_requested.append(e)
-                elif e.lower() in _neb_lower:
-                    normalized_requested.append(_neb_lower[e.lower()])
-                else:
+                resolved = _resolve_enzyme(e)
+                if resolved is None:
                     unknown_enzymes.append(e)
+                else:
+                    cname, site, _off = resolved
+                    enzyme_dict[cname] = site
             # Previously the whole call failed when ANY enzyme was unknown,
             # discarding results for valid enzymes.  Now: proceed with recognized enzymes
             # and report unknown ones in a warning.  Only fail if ALL are unknown.
-            if unknown_enzymes and not normalized_requested:
+            if unknown_enzymes and not enzyme_dict:
                 return {
                     "status": "error",
-                    "error": f"Unknown enzymes: {unknown_enzymes}. Available: {sorted(NEB_ENZYMES.keys())}",
+                    "error": (
+                        f"Unknown enzymes: {unknown_enzymes}. Not found in the curated "
+                        f"NEB set {sorted(NEB_ENZYMES.keys())} nor in Biopython's "
+                        "restriction library."
+                    ),
                 }
-            enzyme_dict = {name: NEB_ENZYMES[name] for name in normalized_requested}
         else:
             enzyme_dict = NEB_ENZYMES
             unknown_enzymes = []
@@ -728,16 +897,66 @@ class DNATool(BaseTool):
                     positions.append(pos + 1)  # 1-based
                     start = pos + 1
 
-            cut_off = NEB_CUT_OFFSETS.get(enzyme_name, len(recognition_seq) // 2)
+            # A non-palindromic site also occurs reverse-complemented; a
+            # forward-only scan reports half the sites (see
+            # _biopython_cut_positions). Add those occurrences so Golden Gate
+            # plasmids, whose Type IIS sites are inverted around the insert,
+            # report both.
+            rc_site = _reverse_complement(recognition_seq)
+            rc_positions: List[int] = []
+            if rc_site != recognition_seq:
+                rc_pattern = _site_to_regex(rc_site)
+                rc_positions = [
+                    m.start() + 1
+                    for m in re.finditer(f"(?={rc_pattern})", search_seq)
+                    if (not circular) or m.start() < seq_len
+                ]
+                # Keep the two orientations apart: they are reported together as
+                # recognition-site positions, but they cut on opposite sides of
+                # the site, so the cleavage calculation below must know which is
+                # which. Merging them and applying the forward offset to both
+                # placed every reverse-site cut in the wrong position -- which
+                # left the recognition site inside the fragment and made Golden
+                # Gate report that no site-free fragments were released.
+                forward_positions = sorted(set(positions))
+                positions = sorted(set(positions) | set(rc_positions))
+            else:
+                forward_positions = sorted(set(positions))
+                positions = forward_positions
+
+            # Use the resolved offset, not the curated table: enzymes that come
+            # from Biopython are absent there and were silently given a midpoint
+            # cut, which is wrong for every Type IIS enzyme.
+            resolved = _resolve_enzyme(enzyme_name)
+            cut_off = (
+                resolved[2]
+                if resolved
+                else NEB_CUT_OFFSETS.get(enzyme_name, len(recognition_seq) // 2)
+            )
+            bio_cuts = _biopython_cut_positions(sequence, enzyme_name, circular)
             if positions:
                 # `cut_sites` reports 1-based recognition sequence start
                 # positions, NOT the actual phosphodiester bond cleavage positions.
                 # For enzymes like KpnI (GGTAC^C, cut_offset=5), the difference is 4 bp.
                 # Add `cleavage_positions` (1-based) so callers can determine the exact
                 # cut site without having to look up enzyme-specific offsets.
-                cleavage_pos = sorted(
-                    set(((p - 1 + cut_off) % seq_len) + 1 for p in positions)
-                )
+                if bio_cuts:
+                    # Real cut geometry for both strands, converted back to the
+                    # 1-based convention this tool reports.
+                    cleavage_pos = sorted({(c % seq_len) + 1 for c in bio_cuts})
+                else:
+                    # Forward site: cut sits cut_off bases from the site start.
+                    cuts0 = [(p - 1 + cut_off) % seq_len for p in forward_positions]
+                    # Reverse site: the enzyme reads the bottom strand, so its
+                    # top-strand cut is upstream of the site by the spacer plus
+                    # the overhang (see NEB_OVERHANG_LEN).
+                    site_len = len(recognition_seq)
+                    ovhg = NEB_OVERHANG_LEN.get(
+                        (resolved[0] if resolved else enzyme_name), 0
+                    )
+                    back = cut_off - site_len + ovhg
+                    cuts0 += [(p - 1 - back) % seq_len for p in rc_positions]
+                    cleavage_pos = sorted({c + 1 for c in cuts0})
                 results[enzyme_name] = {
                     "recognition_sequence": recognition_seq,
                     "cut_sites": positions,  # 1-based recognition site START positions
@@ -1407,25 +1626,23 @@ class DNATool(BaseTool):
             cut_offsets = dict(NEB_CUT_OFFSETS)
             unknown_enzymes = []
 
-        # Search a doubled sequence for circular DNA to detect recognition sites
-        # that straddle the origin; keep only sites starting within [0, seq_len).
+        # Origin-straddling sites on circular DNA are handled inside
+        # _enzyme_cut_positions, which does the doubled-sequence search itself.
         seq_len = len(sequence)
-        search_seq = (sequence + sequence) if circular else sequence
         cut_sites_list = []
         enzymes_used = []
         for enzyme_name, recognition_seq in enzyme_dict.items():
-            pattern = _site_to_regex(recognition_seq)
-            positions = [
-                m.start()
-                for m in re.finditer(f"(?={pattern})", search_seq)
-                if m.start() < seq_len
-            ]
-            cut_offset = cut_offsets.get(enzyme_name, len(recognition_seq) // 2)
-            for pos in positions:
-                cut_pos = (pos + cut_offset) % seq_len  # wrap into [0, seq_len)
-                cut_sites_list.append({"enzyme": enzyme_name, "position": cut_pos})
-
-            if positions:
+            # Both strands with real cut geometry, whether or not Biopython is
+            # installed (see _enzyme_cut_positions). The previous fallback here
+            # scanned the forward strand only, so an inverted Type IIS pair --
+            # exactly what a Golden Gate donor carries -- yielded one cut
+            # instead of two and the plasmid came back looking almost uncut.
+            cuts = _enzyme_cut_positions(sequence, enzyme_name, circular)
+            if cuts:
+                for cut_pos in cuts:
+                    cut_sites_list.append(
+                        {"enzyme": enzyme_name, "position": cut_pos % seq_len}
+                    )
                 enzymes_used.append(enzyme_name)
 
         cut_sites_list.sort(key=lambda x: x["position"])
@@ -1662,10 +1879,31 @@ class DNATool(BaseTool):
                 "error": f"Target region ({target_end - target_start} bp) is smaller than product_size_min ({product_size_min} bp)",
             }
 
-        fwd_search_start = max(0, target_start - 50)
-        fwd_search_end = min(seq_len - 18, target_start + 50)
+        # Whole-sequence amplification (no target_start/target_end given) has no
+        # real edge to anchor to -- both primers are free to land anywhere near
+        # the ends, so the coverage constraint below is skipped for this case.
+        is_full_sequence = target_start == 0 and target_end == seq_len
 
-        rev_search_start = max(18, target_end - 50)
+        # The forward primer must *start* at or before target_start (else the
+        # product misses the left edge of the target), and the reverse primer
+        # must *end* at or after target_end (else it misses the right edge) --
+        # both are enforced by the coverage check below. Searching past those
+        # boundaries wastes effort on candidates that can never pass that check,
+        # and worse, can make one of them win the Tm-closeness scoring, causing
+        # a spurious "does not cover the target" failure even though a slightly
+        # worse-scoring, actually-covering primer was available in-window.
+        # Whole-sequence amplification has no such boundary to respect, so it
+        # keeps the original symmetric ±50 bp search window on both ends.
+        fwd_search_start = max(0, target_start - 50)
+        fwd_search_end = (
+            min(seq_len - 18, target_start + 50)
+            if is_full_sequence
+            else min(seq_len - 18, target_start)
+        )
+
+        rev_search_start = (
+            max(18, target_end - 50) if is_full_sequence else max(18, target_end)
+        )
         rev_search_end = min(seq_len, target_end + 50)
 
         complement_map = str.maketrans("ATGCNatgcn", "TACGNtacgn")
@@ -1794,11 +2032,11 @@ class DNATool(BaseTool):
                 ),
             }
 
-        # Verify the product actually spans the requested target region.
-        # Primer search windows are centered ±50 bp around target_start/target_end, so
-        # when the target falls near a sequence boundary the best primers may sit
-        # entirely before (or after) the target, producing a valid product that misses
-        # the declared target. Detect and report instead of silently returning wrong coords.
+        # Verify the product actually spans the requested target region. This is
+        # now mostly a formality since the search windows above already exclude
+        # non-covering candidates for a real target region -- but it stays as a
+        # defensive check (e.g. a target so close to a sequence boundary that no
+        # covering primer exists at all within the ±50 bp search radius).
         #
         # Skip the coverage check when the user requested full-sequence
         # amplification (target_start == 0 and target_end == seq_len).  In that case
@@ -1806,7 +2044,6 @@ class DNATool(BaseTool):
         # be satisfied simultaneously — no primer can start before position 0 or end
         # after the last base.  Any valid primer pair covering the majority of the
         # sequence is acceptable for full-sequence amplification.
-        is_full_sequence = target_start == 0 and target_end == seq_len
         if not is_full_sequence and (
             best_fwd["start"] > target_start or best_rev["end"] < target_end
         ):
@@ -1912,6 +2149,242 @@ class DNATool(BaseTool):
                 "n_fragments": n,
                 "overlap_length": overlap_length,
                 "topology": "circular" if circular else "linear",
+            },
+        }
+
+    def _golden_gate_assemble(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Simulate a Golden Gate reaction: digest the inputs and ligate by overhang.
+
+        Answers the reverse of `golden_gate_design`: given the plasmids actually
+        combined in a reaction, work out what the product is. Fragments that keep a
+        recognition site are re-cut in the reaction and cannot persist, so only
+        site-free fragments are assembled; they are chained by matching each
+        fragment's right-hand overhang to the next fragment's left-hand overhang.
+        """
+        fragments_in = arguments.get("fragments") or arguments.get("sequences")
+        if not fragments_in or not isinstance(fragments_in, list):
+            return {
+                "status": "error",
+                "error": "fragments must be a list of DNA sequences (the plasmids/parts combined in the reaction)",
+            }
+
+        enzyme_name = (arguments.get("enzyme") or "BsaI").strip()
+        resolved = _resolve_enzyme(enzyme_name)
+        if resolved is None:
+            return {
+                "status": "error",
+                "error": f"Unknown enzyme: {enzyme_name}. Golden Gate uses a Type IIS enzyme (BsaI, BbsI, Esp3I/BsmBI, SapI).",
+            }
+        canonical, site, cut_off = resolved
+
+        # Overhang length: from Biopython when available, else the curated table.
+        # The previous -4 default was silently wrong for SapI (3 nt).
+        _table_ov = NEB_OVERHANG_LEN.get(canonical)
+        try:
+            from Bio import Restriction
+
+            enz = getattr(Restriction, canonical, None)
+            ovhg = int(getattr(enz, "ovhg", -(_table_ov or 4)))
+        except Exception:
+            enz, ovhg = None, -(_table_ov or 4)
+        if _table_ov is None and enz is None:
+            # Not a known Type IIS cutter and no Biopython to say otherwise.
+            return {
+                "status": "error",
+                "error": (
+                    f"{canonical} is not known to leave a 5' overhang. Golden Gate requires "
+                    "a Type IIS enzyme that cuts outside its site leaving a 5' overhang "
+                    "(BsaI, BbsI, Esp3I/BsmBI, SapI); install the 'bioinformatics' extra "
+                    "for the full Bio.Restriction enzyme set."
+                ),
+            }
+        if ovhg >= 0:
+            return {
+                "status": "error",
+                "error": (
+                    f"{canonical} does not leave a 5' overhang (ovhg={ovhg}); Golden Gate "
+                    "requires a Type IIS enzyme that cuts outside its site leaving a 5' overhang."
+                ),
+            }
+        ov_len = abs(ovhg)
+        circular_in = arguments.get("circular", True)
+        labels = arguments.get("labels") or []
+
+        rc_site = _reverse_complement(site)
+        site_len = len(site)
+
+        def _has_site(seq: str) -> bool:
+            return site in seq or rc_site in seq
+
+        def _overhang_at(seq2: str, pos: int) -> str:
+            """The ov_len-bp overhang belonging to the fragment on the cut's
+            downstream side, in standard (top-strand-of-the-assembled-insert)
+            notation.
+
+            `pos` is always a top-strand bond index (see `_enzyme_cut_positions`),
+            regardless of which strand actually carried the recognition site that
+            produced it. For a forward-oriented site, the cut leaves a genuine 5'
+            overhang on the top strand immediately downstream, so the literal
+            top-strand bases at `pos` already are the overhang. For a
+            reverse-oriented site (recognition sequence on the bottom strand,
+            e.g. BsaI's GAGACC), the top-strand bond instead lands *before* the
+            overhang region, whose bases on the top strand are only the
+            complement strand's remnant — the real 5' overhang is on the bottom
+            strand at that position, so recovering it requires reverse-
+            complementing the literal read. Distinguish the two cases by checking
+            whether the forward pattern actually starts `cut_off` bases upstream
+            of `pos` (how every forward-type cut was produced); if not, this cut
+            came from the reverse-oriented match instead.
+            """
+            raw = seq2[pos : pos + ov_len]
+            fwd_start = pos - cut_off
+            is_forward_cut = (
+                fwd_start >= 0 and seq2[fwd_start : fwd_start + site_len] == site
+            )
+            return raw if is_forward_cut else _reverse_complement(raw)
+
+        pieces = []
+        per_input = []
+        for idx, raw in enumerate(fragments_in):
+            if not isinstance(raw, str) or not raw.strip():
+                return {
+                    "status": "error",
+                    "error": f"fragment {idx + 1} is not a DNA sequence",
+                }
+            seq = raw.upper().replace(" ", "").replace("\n", "").replace("\t", "")
+            err = self._validate_dna_sequence(seq)
+            if err:
+                return err
+            label = labels[idx] if idx < len(labels) else f"input_{idx + 1}"
+            n = len(seq)
+            cuts = _enzyme_cut_positions(seq, canonical, circular_in)
+            cuts = sorted({c % n for c in (cuts or [])})
+            if len(cuts) < 2:
+                per_input.append(
+                    {
+                        "label": label,
+                        "length": n,
+                        "cut_sites": cuts,
+                        "released_fragments": 0,
+                    }
+                )
+                continue
+
+            released = 0
+            seq2 = seq + seq
+            for i, start in enumerate(cuts):
+                end = cuts[(i + 1) % len(cuts)]
+                if end > start:
+                    span = seq[start:end]
+                elif circular_in:
+                    span = seq[start:] + seq[:end]
+                else:
+                    continue
+                # The overhang at a cut is the ov_len bases starting at the cut,
+                # corrected to standard notation if the cut came from a
+                # reverse-oriented site match (see `_overhang_at`).
+                left_ov = _overhang_at(seq2, start)
+                right_ov = _overhang_at(seq2, end)
+                if _has_site(span):
+                    continue  # re-cut in the reaction; cannot persist
+                pieces.append(
+                    {
+                        "source": label,
+                        "length": len(span),
+                        "left_overhang": left_ov,
+                        "right_overhang": right_ov,
+                        "sequence": span,
+                    }
+                )
+                released += 1
+            per_input.append(
+                {
+                    "label": label,
+                    "length": n,
+                    "cut_sites": cuts,
+                    "released_fragments": released,
+                }
+            )
+
+        if not pieces:
+            return {
+                "status": "error",
+                "error": (
+                    f"No site-free fragments were released by {canonical}. Check the enzyme "
+                    "and whether the inputs are circular (`circular`)."
+                ),
+                "data": {"enzyme": canonical, "inputs": per_input},
+            }
+
+        # Chain fragments by overhang compatibility, starting from each candidate.
+        def _assemble_from(start_i):
+            order = [start_i]
+            used = {start_i}
+            cur = pieces[start_i]
+            while True:
+                nxt = [
+                    j
+                    for j, p in enumerate(pieces)
+                    if j not in used and p["left_overhang"] == cur["right_overhang"]
+                ]
+                if len(nxt) != 1:
+                    if cur["right_overhang"] == pieces[start_i]["left_overhang"]:
+                        return order, True, None  # closed a circle
+                    return order, False, ("ambiguous" if nxt else "dead_end")
+                order.append(nxt[0])
+                used.add(nxt[0])
+                cur = pieces[nxt[0]]
+                if cur["right_overhang"] == pieces[start_i]["left_overhang"]:
+                    return order, True, None
+
+        best = None
+        for i in range(len(pieces)):
+            order, closed, why = _assemble_from(i)
+            if closed and (best is None or len(order) > len(best[0])):
+                best = (order, why)
+        if best is None:
+            return {
+                "status": "error",
+                "error": (
+                    "The site-free fragments do not form a circular product — their overhangs "
+                    "do not chain. Check the enzyme and that every intended part was supplied."
+                ),
+                "data": {
+                    "enzyme": canonical,
+                    "inputs": per_input,
+                    "fragments": [
+                        {k: v for k, v in p.items() if k != "sequence"} for p in pieces
+                    ],
+                },
+            }
+
+        order = best[0]
+        product = "".join(pieces[i]["sequence"] for i in order)
+        return {
+            "status": "success",
+            "data": {
+                "enzyme": canonical,
+                "recognition_site": site,
+                "overhang_length": ov_len,
+                "product_length": len(product),
+                "is_circular": True,
+                "num_fragments_assembled": len(order),
+                "assembly_order": [
+                    {
+                        "source": pieces[i]["source"],
+                        "length": pieces[i]["length"],
+                        "left_overhang": pieces[i]["left_overhang"],
+                        "right_overhang": pieces[i]["right_overhang"],
+                    }
+                    for i in order
+                ],
+                "unused_fragments": [
+                    {k: v for k, v in pieces[j].items() if k != "sequence"}
+                    for j in range(len(pieces))
+                    if j not in order
+                ],
+                "inputs": per_input,
+                "product_sequence": product,
             },
         }
 

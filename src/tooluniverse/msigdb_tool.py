@@ -38,27 +38,62 @@ class MSigDBTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown operation: {operation}"}
 
+    def _fetch_geneset(self, gene_set_name: str, species: str) -> Dict[str, Any] | None:
+        """Fetch one gene set from a species-specific MSigDB endpoint.
+
+        Returns the parsed ``{name: info}`` payload, or None when that endpoint
+        does not serve the set. MSigDB answers an unknown name with an HTML
+        error page rather than a 404, so a JSON decode failure means "not here"
+        — not a transport error.
+        """
+        url = (
+            f"{MSIGDB_BASE}/{species}/download_geneset.jsp"
+            f"?geneSetName={urllib.parse.quote(gene_set_name)}&fileType=json"
+        )
+        req = urllib.request.Request(url, headers={"User-Agent": "ToolUniverse/1.0"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            body = resp.read().decode("utf-8", "replace")
+        try:
+            data = json.loads(body)
+        except json.JSONDecodeError:
+            return None
+        return data or None
+
     def _get_gene_set(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Fetch a gene set by exact name."""
+        """Fetch a gene set by exact name.
+
+        MSigDB serves human (H/C1-C8) and mouse (MH/M1-M8, e.g. the ``MP_*``
+        mammalian-phenotype sets) from separate endpoints. ``species`` selects
+        one explicitly; the default "auto" tries human then mouse, so mouse-only
+        sets resolve instead of failing with a JSON decode error.
+        """
         gene_set_name = arguments.get("gene_set_name", "").strip()
         if not gene_set_name:
             return {"status": "error", "error": "gene_set_name is required"}
 
-        url = (
-            f"{MSIGDB_BASE}/human/download_geneset.jsp"
-            f"?geneSetName={urllib.parse.quote(gene_set_name)}&fileType=json"
-        )
+        species = (arguments.get("species") or "auto").strip().lower()
+        if species in ("human", "mouse"):
+            order = [species]
+        else:
+            order = ["human", "mouse"]
+
         try:
-            req = urllib.request.Request(
-                url, headers={"User-Agent": "ToolUniverse/1.0"}
-            )
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
+            data = None
+            matched = None
+            for sp in order:
+                data = self._fetch_geneset(gene_set_name, sp)
+                if data:
+                    matched = sp
+                    break
 
             if not data:
+                tried = "/".join(order)
                 return {
                     "status": "error",
-                    "error": f"Gene set '{gene_set_name}' not found in MSigDB",
+                    "error": (
+                        f"Gene set '{gene_set_name}' not found in MSigDB "
+                        f"({tried} collections)"
+                    ),
                 }
 
             # Data is {gene_set_name: {info}}
@@ -69,6 +104,7 @@ class MSigDBTool(BaseTool):
                 "status": "success",
                 "data": {
                     "gene_set_name": gene_set_name,
+                    "species": matched,
                     "systematic_name": info.get("systematicName", ""),
                     "collection": info.get("collection", ""),
                     "pmid": info.get("pmid", ""),
@@ -96,7 +132,9 @@ class MSigDBTool(BaseTool):
                 "error": "Both 'gene_set_name' and 'gene' are required",
             }
 
-        result = self._get_gene_set({"gene_set_name": gene_set_name})
+        result = self._get_gene_set(
+            {"gene_set_name": gene_set_name, "species": arguments.get("species")}
+        )
         if result.get("status") != "success":
             return result
 
@@ -108,6 +146,7 @@ class MSigDBTool(BaseTool):
             "status": "success",
             "data": {
                 "gene_set_name": gene_set_name,
+                "species": result["data"].get("species"),
                 "gene": gene,
                 "is_member": found,
                 "total_genes_in_set": len(genes),

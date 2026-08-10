@@ -677,7 +677,7 @@
         "fields": {
           "type": "string",
           "description": "Fields to return (pre-configured for pathogenicity scores)",
-          "default": "dbnsfp.revel.score,dbnsfp.cadd.phred,dbnsfp.alphamissense.score,dbnsfp.alphamissense.pred,dbnsfp.sift.score,dbnsfp.sift.pred,dbnsfp.polyphen2_hdiv.score,dbnsfp.polyphen2_hdiv.pred,dbnsfp.metarnn.score,dbnsfp.metarnn.pred,dbnsfp.gerp_rs,dbnsfp.phylop100way_vertebrate.rankscore,dbnsfp.phastcons100way_vertebrate.rankscore,dbnsfp.vest4.score,dbnsfp.mutationtaster.pred,clinvar.rcv.clinical_significance,dbsnp.rsid"
+          "default": "dbnsfp.revel.score,cadd.phred,dbnsfp.alphamissense.score,dbnsfp.alphamissense.pred,dbnsfp.sift.score,dbnsfp.sift.pred,dbnsfp.polyphen2.hdiv.score,dbnsfp.polyphen2.hdiv.pred,dbnsfp.metarnn.score,dbnsfp.metarnn.pred,cadd.gerp.rs,dbnsfp.phylop.100way_vertebrate.rankscore,dbnsfp.phastcons.100way_vertebrate.rankscore,dbnsfp.vest4.score,dbnsfp.mutationtaster.pred,clinvar.rcv.clinical_significance,dbsnp.rsid"
         }
       },
       "required": [
@@ -699,18 +699,7 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object"
-            },
-            "metadata": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "data"
-          ]
+          "type": "object"
         },
         {
           "type": "object",

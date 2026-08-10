@@ -9,7 +9,8 @@
       "properties": {
         "operation": {
           "const": "calculate_disproportionality",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "calculate_disproportionality"
         },
         "drug_name": {
           "type": "string",
@@ -37,7 +38,10 @@
         "drug_name": "IBUPROFEN",
         "adverse_event": "Gastrointestinal haemorrhage"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "calculate_disproportionality"
+    }
   },
   {
     "type": "FAERSAnalyticsTool",
@@ -49,7 +53,8 @@
       "properties": {
         "operation": {
           "const": "stratify_by_demographics",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "stratify_by_demographics"
         },
         "drug_name": {
           "type": "string",
@@ -97,7 +102,10 @@
         "adverse_event": "Gastrointestinal haemorrhage",
         "stratify_by": "sex"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "stratify_by_demographics"
+    }
   },
   {
     "type": "FAERSAnalyticsTool",
@@ -109,7 +117,8 @@
       "properties": {
         "operation": {
           "const": "filter_serious_events",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "filter_serious_events"
         },
         "drug_name": {
           "type": "string",
@@ -149,7 +158,10 @@
         "drug_name": "IBUPROFEN",
         "seriousness_type": "all"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "filter_serious_events"
+    }
   },
   {
     "type": "FAERSAnalyticsTool",
@@ -161,7 +173,8 @@
       "properties": {
         "operation": {
           "const": "compare_drugs",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "compare_drugs"
         },
         "drug1": {
           "type": "string",
@@ -197,7 +210,10 @@
         "drug2": "NAPROXEN",
         "adverse_event": "Gastrointestinal haemorrhage"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "compare_drugs"
+    }
   },
   {
     "type": "FAERSAnalyticsTool",
@@ -209,7 +225,8 @@
       "properties": {
         "operation": {
           "const": "analyze_temporal_trends",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "analyze_temporal_trends"
         },
         "drug_name": {
           "type": "string",
@@ -237,7 +254,10 @@
         "drug_name": "IBUPROFEN",
         "adverse_event": "Gastrointestinal haemorrhage"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "analyze_temporal_trends"
+    }
   },
   {
     "type": "FAERSAnalyticsTool",
@@ -249,7 +269,8 @@
       "properties": {
         "operation": {
           "const": "rollup_meddra_hierarchy",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "rollup_meddra_hierarchy"
         },
         "drug_name": {
           "type": "string",
@@ -268,6 +289,9 @@
       {
         "drug_name": "IBUPROFEN"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "rollup_meddra_hierarchy"
+    }
   }
 ]

@@ -34,6 +34,50 @@ _ALFA_POP_FALLBACK = {
 }
 
 
+def _grch38_placement_from_spdi(spdi: Dict[str, Any]) -> Dict[str, Any]:
+    """Turn one dbSNP SPDI allele into a genome placement.
+
+    SPDI positions are 0-based interbase offsets, but this tool advertises
+    "GRCh38 genomic coordinates" and its output sits next to ClinVar, Ensembl
+    VEP and MyVariant results, all of which report 1-based positions. Passing
+    the SPDI offset through under the name `position` therefore reported every
+    variant one base 5' of where it is: rs121965019 (IDUA c.1205G>A) came back
+    as chr4:1002746 where the other three tools say 1002747, and the tool's
+    own documented example rs429358 as chr19:44908683 rather than 44908684.
+
+    `position` is now the 1-based coordinate; the untranslated SPDI offset is
+    kept alongside it so callers building SPDI strings do not lose it. For a
+    pure insertion there is no deleted base, so the 1-based anchor is the base
+    immediately 5' of the insertion point, which is the SPDI offset itself.
+    """
+    offset = spdi.get("position")
+    deleted = spdi.get("deleted_sequence")
+    position = offset
+    if isinstance(offset, int):
+        position = offset + 1 if deleted else offset
+    return {
+        "seq_id": spdi.get("seq_id"),
+        "position": position,
+        "coordinate_system": "1-based",
+        "spdi_position": offset,
+        "deleted_sequence": deleted,
+        "inserted_sequence": spdi.get("inserted_sequence"),
+    }
+
+
+def _dedupe_genes(genes):
+    """Collapse the per-placement gene rows dbSNP repeats for each allele."""
+    seen = set()
+    unique = []
+    for gene in genes:
+        key = (gene.get("gene_id"), gene.get("gene"))
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(gene)
+    return unique
+
+
 @register_tool("NCBIVariationTool")
 class NCBIVariationTool(BaseTool):
     """
@@ -226,16 +270,7 @@ class NCBIVariationTool(BaseTool):
                             spdi = allele.get("allele", {}).get("spdi", {})
                             if spdi:
                                 grch38_placements.append(
-                                    {
-                                        "seq_id": spdi.get("seq_id"),
-                                        "position": spdi.get("position"),
-                                        "deleted_sequence": spdi.get(
-                                            "deleted_sequence"
-                                        ),
-                                        "inserted_sequence": spdi.get(
-                                            "inserted_sequence"
-                                        ),
-                                    }
+                                    _grch38_placement_from_spdi(spdi)
                                 )
                         break
 
@@ -257,7 +292,7 @@ class NCBIVariationTool(BaseTool):
                                 }
                             )
                 if clinical:
-                    result["genes"] = clinical
+                    result["genes"] = _dedupe_genes(clinical)
 
                 # Extract clinical significance
                 for annot in allele_annots:

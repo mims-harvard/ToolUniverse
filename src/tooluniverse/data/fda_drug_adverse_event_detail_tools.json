@@ -263,7 +263,7 @@
         },
         "reactionmeddrapt": {
           "type": "string",
-          "description": "MedDRA preferred term for the adverse reaction (required). Example: 'INFUSION RELATED REACTION', 'DYSPNOEA'."
+          "description": "MedDRA preferred term for the adverse reaction (required). Example: 'INFUSION RELATED REACTION', 'DYSPNOEA'. Must be the exact MedDRA Preferred Term FAERS uses, not a clinical description or synonym -- e.g. 'NEPHROTOXICITY' matches nothing, the real terms are 'ACUTE KIDNEY INJURY' or 'RENAL IMPAIRMENT'. A non-matching term returns an empty result (not an error), which looks identical to a genuine zero-report finding. If unsure of the exact term, call FAERS_count_reactions_by_drug_event first (with just medicinalproduct) to list the actual MedDRA terms reported for that drug."
         },
         "limit": {
           "type": "integer",

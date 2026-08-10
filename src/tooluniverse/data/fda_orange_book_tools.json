@@ -9,7 +9,8 @@
       "properties": {
         "operation": {
           "const": "search_drug",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "search_drug"
         },
         "brand_name": {
           "type": "string",
@@ -51,7 +52,10 @@
         "brand_name": "ADVIL",
         "limit": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_drug"
+    }
   },
   {
     "type": "FDAOrangeBookTool",
@@ -65,7 +69,8 @@
       "properties": {
         "operation": {
           "const": "get_approval_history",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "get_approval_history"
         },
         "application_number": {
           "type": "string",
@@ -97,7 +102,10 @@
       {
         "application_number": "NDA020402"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_approval_history"
+    }
   },
   {
     "type": "FDAOrangeBookTool",
@@ -109,7 +117,8 @@
       "properties": {
         "operation": {
           "const": "get_patent_info",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "get_patent_info"
         },
         "application_number": {
           "type": "string",
@@ -142,7 +151,10 @@
       {
         "brand_name": "ADVIL"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_patent_info"
+    }
   },
   {
     "type": "FDAOrangeBookTool",
@@ -154,7 +166,8 @@
       "properties": {
         "operation": {
           "const": "get_exclusivity",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "get_exclusivity"
         },
         "application_number": {
           "type": "string",
@@ -190,7 +203,10 @@
       {
         "brand_name": "ADVIL"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_exclusivity"
+    }
   },
   {
     "type": "FDAOrangeBookTool",
@@ -202,7 +218,8 @@
       "properties": {
         "operation": {
           "const": "check_generic_availability",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "check_generic_availability"
         },
         "brand_name": {
           "type": "string",
@@ -238,7 +255,10 @@
       {
         "brand_name": "ADVIL"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "check_generic_availability"
+    }
   },
   {
     "type": "FDAOrangeBookTool",
@@ -250,7 +270,8 @@
       "properties": {
         "operation": {
           "const": "get_te_code",
-          "description": "Operation type (fixed)"
+          "description": "Operation type (fixed)",
+          "default": "get_te_code"
         },
         "brand_name": {
           "type": "string",
@@ -280,6 +301,9 @@
       {
         "brand_name": "ADVIL"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_te_code"
+    }
   }
 ]

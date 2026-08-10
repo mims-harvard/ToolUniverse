@@ -44,59 +44,31 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "page_id": {
-                    "type": "integer",
-                    "description": "EOL page ID for detailed lookup"
-                  },
-                  "title": {
-                    "type": "string",
-                    "description": "Scientific name of the taxon"
-                  },
-                  "link": {
-                    "type": "string",
-                    "description": "URL to the EOL page"
-                  },
-                  "content": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Name variants and synonyms"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                },
-                "start_index": {
-                  "type": "integer"
-                },
-                "items_per_page": {
-                  "type": "integer"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "page_id": {
+                "type": "integer",
+                "description": "EOL page ID for detailed lookup"
+              },
+              "title": {
+                "type": "string",
+                "description": "Scientific name of the taxon"
+              },
+              "link": {
+                "type": "string",
+                "description": "URL to the EOL page"
+              },
+              "content": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name variants and synonyms"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -195,163 +167,138 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "page_id": {
-                  "type": "integer",
-                  "description": "EOL page identifier"
-                },
-                "scientific_name": {
-                  "type": "string",
-                  "description": "Full scientific name with authority"
-                },
-                "richness_score": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "description": "Data richness score"
-                },
-                "common_names": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "language": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "Vernacular names in various languages"
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
+            "page_id": {
+              "type": "integer",
+              "description": "EOL page identifier"
+            },
+            "scientific_name": {
+              "type": "string",
+              "description": "Full scientific name with authority"
+            },
+            "richness_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Data richness score"
+            },
+            "common_names": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
                     "type": "string"
                   },
-                  "description": "Taxonomic synonyms"
-                },
-                "images": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "media_url": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "thumbnail_url": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "rights_holder": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "license": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "Image data objects with URLs"
-                },
-                "descriptions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "text": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "source": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "license": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "Text descriptions from various sources"
-                },
-                "classifications": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "hierarchy_entry_id": {
-                        "type": "integer",
-                        "description": "ID for EOL_get_hierarchy_entry"
-                      },
-                      "source": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "rank": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "Available taxonomy classifications (NCBI, GBIF, etc.)"
+                  "language": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
-              }
+              },
+              "description": "Vernacular names in various languages"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "num_common_names": {
-                  "type": "integer"
-                },
-                "num_synonyms": {
-                  "type": "integer"
-                },
-                "num_classifications": {
-                  "type": "integer"
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Taxonomic synonyms"
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "media_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "thumbnail_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rights_holder": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
-              }
+              },
+              "description": "Image data objects with URLs"
+            },
+            "descriptions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "description": "Text descriptions from various sources"
+            },
+            "classifications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hierarchy_entry_id": {
+                    "type": "integer",
+                    "description": "ID for EOL_get_hierarchy_entry"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "description": "Available taxonomy classifications (NCBI, GBIF, etc.)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -415,159 +362,137 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "taxon_id": {
-                  "type": "integer",
-                  "description": "Hierarchy entry taxon ID"
-                },
-                "scientific_name": {
-                  "type": "string",
-                  "description": "Scientific name"
-                },
-                "rank": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Taxonomic rank (species, genus, etc.)"
-                },
-                "page_id": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Corresponding EOL page ID"
-                },
-                "source": {
-                  "type": "array",
-                  "items": {
+            "taxon_id": {
+              "type": "integer",
+              "description": "Hierarchy entry taxon ID"
+            },
+            "scientific_name": {
+              "type": "string",
+              "description": "Scientific name"
+            },
+            "rank": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Taxonomic rank (species, genus, etc.)"
+            },
+            "page_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Corresponding EOL page ID"
+            },
+            "source": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Classification source (NCBI, GBIF, etc.)"
+            },
+            "source_identifier": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Original identifier in source database"
+            },
+            "ancestors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "taxon_id": {
+                    "type": "integer"
+                  },
+                  "scientific_name": {
                     "type": "string"
                   },
-                  "description": "Classification source (NCBI, GBIF, etc.)"
-                },
-                "source_identifier": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Original identifier in source database"
-                },
-                "ancestors": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "taxon_id": {
-                        "type": "integer"
-                      },
-                      "scientific_name": {
-                        "type": "string"
-                      },
-                      "rank": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "page_id": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "source_url": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
-                  "description": "Full taxonomic lineage from root to parent"
-                },
-                "children": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "taxon_id": {
-                        "type": "integer"
-                      },
-                      "scientific_name": {
-                        "type": "string"
-                      },
-                      "rank": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "page_id": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+                  "page_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
-                  "description": "Direct child taxa"
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "scientific_name": {
-                        "type": "string"
-                      },
-                      "taxonomic_status": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
-                },
-                "vernacular_names": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "vernacularName": {
-                        "type": "string"
-                      },
-                      "language": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+                }
+              },
+              "description": "Full taxonomic lineage from root to parent"
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "taxon_id": {
+                    "type": "integer"
+                  },
+                  "scientific_name": {
+                    "type": "string"
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "page_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "description": "Direct child taxa"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scientific_name": {
+                    "type": "string"
+                  },
+                  "taxonomic_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "num_ancestors": {
-                  "type": "integer"
-                },
-                "num_children": {
-                  "type": "integer"
+            "vernacular_names": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "vernacularName": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -649,95 +574,73 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "Collection name"
-                },
-                "description": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Collection description"
-                },
-                "total_items": {
-                  "type": "integer",
-                  "description": "Total number of items in collection"
-                },
-                "items": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "object_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "object_id": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "annotation": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "Collection member items"
-                },
-                "created": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "modified": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
+            "name": {
+              "type": "string",
+              "description": "Collection name"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "collection_id": {
-                  "type": "integer"
-                },
-                "page": {
-                  "type": "integer"
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Collection description"
+            },
+            "total_items": {
+              "type": "integer",
+              "description": "Total number of items in collection"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "object_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "object_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
-              }
+              },
+              "description": "Collection member items"
+            },
+            "created": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "modified": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

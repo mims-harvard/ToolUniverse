@@ -53,11 +53,11 @@
       "properties": {
         "connected_paths": {
           "type": "object",
-          "description": "Ranked weighted paths between the first two genes routed through shared enrichment terms."
+          "description": "Ranked weighted paths between the first two genes routed through shared enrichment terms. Each key is 'Path: [gene, term, ..., gene]' and its value is 'Total Weight: <sum>', where the weight of each gene-term edge is that term's Enrichr combined score (higher = stronger enrichment support for that gene through that pathway/term)."
         },
         "connections": {
           "type": "object",
-          "description": "Per gene-to-term connectivity paths found in the enrichment graph."
+          "description": "Per gene-to-enrichment-term connectivity paths found in the enrichment graph (only real pathway/ontology terms are considered as targets, not other genes). Each key is 'Connectivity: <gene> - <term>' and its value is a list of (path, weight) pairs, where weight is the sum of Enrichr combined scores along that path; higher weight means stronger combined enrichment evidence linking the gene to that term."
         }
       }
     }

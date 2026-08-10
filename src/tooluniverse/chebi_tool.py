@@ -20,6 +20,15 @@ from .tool_registry import register_tool
 
 CHEBI_BASE_URL = "https://www.ebi.ac.uk/chebi/backend/api/public"
 
+# advanced_search is server-side paginated at 15 hits per page and exposes the
+# page number as a 1-indexed query-string parameter (`?page=1` is the first
+# page and is byte-identical to omitting the parameter; `?page=0` and any page
+# beyond `number_pages` return a non-JSON error body). `limit` is clamped to
+# 100, so at most ceil(100 / 15) == 7 pages are ever needed; the cap below is
+# a hard stop that protects against a server that stops honouring `page`.
+_SEARCH_PAGE_SIZE = 15
+_SEARCH_MAX_PAGES = 8
+
 _HTML_TAG_RE = re.compile(r"<[^>]+>")
 
 
@@ -202,7 +211,11 @@ class ChEBITool(BaseTool):
 
         if limit is None:
             limit = 10
-        limit = min(limit, 100)
+        try:
+            limit = int(limit)
+        except (TypeError, ValueError):
+            limit = 10
+        limit = max(0, min(limit, 100))
 
         # Use advanced_search endpoint for better relevance
         url = f"{CHEBI_BASE_URL}/advanced_search/"
@@ -212,35 +225,90 @@ class ChEBITool(BaseTool):
             },
             "stars": [2, 3],
         }
-        response = requests.post(
-            url,
-            json=payload,
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
-            timeout=self.timeout,
-        )
-        response.raise_for_status()
-        raw = response.json()
+        headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-        results = raw.get("results", [])
+        # The endpoint returns only one page (15 hits) per request, so a single
+        # POST can never satisfy limit > 15. Walk successive pages until we have
+        # `limit` compounds or the result set is exhausted.
         compounds = []
-        for hit in results[:limit]:
-            source = hit.get("_source", {})
-            # Strip HTML tags from name (ChEBI stores stereochemistry as HTML)
-            raw_name = source.get("name", "")
-            clean_name = re.sub(r"<[^>]+>", "", raw_name)
-            compounds.append(
-                {
-                    "chebi_accession": source.get("chebi_accession", ""),
-                    "name": clean_name,
-                    "formula": source.get("formula", None),
-                    "mass": source.get("mass", None),
-                    "stars": source.get("stars", None),
-                }
-            )
+        total_matches = None
+        number_pages = None
+        page = 1
+        pages_fetched = 0
+        while page <= _SEARCH_MAX_PAGES:
+            try:
+                response = requests.post(
+                    url,
+                    json=payload,
+                    params={"page": page},
+                    headers=headers,
+                    timeout=self.timeout,
+                )
+                response.raise_for_status()
+                raw = response.json()
+            except Exception:
+                # Never discard the pages already in hand: a failure while
+                # fetching page N > 1 degrades to "fewer results than asked
+                # for", not to an error. Only a failed first page is fatal.
+                if page == 1:
+                    raise
+                break
+
+            pages_fetched += 1
+
+            if not isinstance(raw, dict):
+                break
+
+            # `total` / `number_pages` are informational and may be absent on
+            # some responses; fall back to single-page behaviour rather than
+            # crashing or looping forever.
+            if total_matches is None and isinstance(raw.get("total"), int):
+                total_matches = raw["total"]
+            if number_pages is None and isinstance(raw.get("number_pages"), int):
+                number_pages = raw["number_pages"]
+
+            results = raw.get("results", [])
+            if not isinstance(results, list):
+                results = []
+
+            for hit in results:
+                source = hit.get("_source", {}) if isinstance(hit, dict) else {}
+                if not isinstance(source, dict):
+                    source = {}
+                compounds.append(
+                    {
+                        "chebi_accession": source.get("chebi_accession", ""),
+                        # Strip HTML tags from name (ChEBI stores
+                        # stereochemistry as HTML).
+                        "name": _strip_html(source.get("name", "")),
+                        "formula": source.get("formula", None),
+                        "mass": source.get("mass", None),
+                        "stars": source.get("stars", None),
+                    }
+                )
+
+            if len(compounds) >= limit:
+                break
+            if not results:
+                break
+            if number_pages is not None:
+                if page >= number_pages:
+                    break
+            elif len(results) < _SEARCH_PAGE_SIZE:
+                # No page metadata and a short page: this was the last one.
+                break
+            page += 1
+
+        compounds = compounds[:limit]
 
         result = {
             "query": query,
+            # `result_count` keeps its original meaning: how many compounds are
+            # in `compounds`. `total_matches` is how many the query matches in
+            # ChEBI overall, so a caller can distinguish "10 of 116" from
+            # "10 exist". It is None when the API omits the count.
             "result_count": len(compounds),
+            "total_matches": total_matches,
             "compounds": compounds,
         }
 
@@ -251,6 +319,7 @@ class ChEBITool(BaseTool):
                 "source": "ChEBI",
                 "query": query,
                 "endpoint": "advanced_search",
+                "pages_fetched": pages_fetched,
             },
         }
 

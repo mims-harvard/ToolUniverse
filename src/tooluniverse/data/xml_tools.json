@@ -710,7 +710,8 @@
       "search_fields": [
         "drug_name",
         "drugbank_id",
-        "synonyms"
+        "synonyms",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -724,7 +725,8 @@
         "approval_groups": "db:groups/db:group",
         "synonyms": "db:synonyms/db:synonym",
         "entry_creation_date": "@created",
-        "entry_last_updated": "@updated"
+        "entry_last_updated": "@updated",
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
@@ -897,7 +899,8 @@
       "search_fields": [
         "drug_name",
         "drugbank_id",
-        "synonyms"
+        "synonyms",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -912,7 +915,8 @@
             "children_codes": "db:level/@code"
           }
         },
-        "synonyms": "db:synonyms/db:synonym"
+        "synonyms": "db:synonyms/db:synonym",
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
@@ -1223,7 +1227,8 @@
       "search_fields": [
         "drug_name",
         "drugbank_id",
-        "synonyms"
+        "synonyms",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -1237,7 +1242,8 @@
         "protein_binding": "db:protein-binding",
         "route_of_elimination": "db:route-of-elimination",
         "volume_of_distribution": "db:volume-of-distribution",
-        "clearance": "db:clearance"
+        "clearance": "db:clearance",
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
@@ -1600,7 +1606,8 @@
       "record_xpath": "db:drug",
       "search_fields": [
         "drug_name",
-        "drugbank_id"
+        "drugbank_id",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -1613,7 +1620,8 @@
             "description": "db:description"
           }
         },
-        "food_interactions": "db:food-interactions/db:food-interaction"
+        "food_interactions": "db:food-interactions/db:food-interaction",
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
@@ -1771,7 +1779,8 @@
       "search_fields": [
         "drug_name",
         "drugbank_id",
-        "synonyms"
+        "synonyms",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -1812,7 +1821,8 @@
             "organism": "db:organism",
             "actions": "db:actions/db:action"
           }
-        }
+        },
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
@@ -2212,7 +2222,8 @@
       "search_fields": [
         "drug_name",
         "drugbank_id",
-        "synonyms"
+        "synonyms",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -2241,7 +2252,8 @@
             "currency": "db:cost/@currency",
             "unit": "db:unit"
           }
-        }
+        },
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
@@ -2452,7 +2464,8 @@
       "search_fields": [
         "drug_name",
         "drugbank_id",
-        "synonyms"
+        "synonyms",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -2460,7 +2473,8 @@
         "synonyms": "db:synonyms/db:synonym",
         "toxicity": "db:toxicity",
         "affected_organisms": "db:affected-organisms/db:affected-organism",
-        "food_interactions": "db:food-interactions/db:food-interaction"
+        "food_interactions": "db:food-interactions/db:food-interaction",
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
@@ -2609,7 +2623,8 @@
       "search_fields": [
         "drug_name",
         "drugbank_id",
-        "synonyms"
+        "synonyms",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -2617,8 +2632,14 @@
         "synonyms": "db:synonyms/db:synonym",
         "cas_number": "db:cas-number",
         "unii": "db:unii",
-        "molecular_formula": "db:experimental-properties/db:property[db:kind='Molecular Formula']/db:value",
-        "molecular_weight": "db:experimental-properties/db:property[db:kind='Molecular Weight']/db:value",
+        "molecular_formula": [
+          "db:calculated-properties/db:property[db:kind='Molecular Formula']/db:value",
+          "db:experimental-properties/db:property[db:kind='Molecular Formula']/db:value"
+        ],
+        "molecular_weight": [
+          "db:calculated-properties/db:property[db:kind='Molecular Weight']/db:value",
+          "db:experimental-properties/db:property[db:kind='Molecular Weight']/db:value"
+        ],
         "melting_point": "db:experimental-properties/db:property[db:kind='Melting Point']/db:value",
         "water_solubility": "db:experimental-properties/db:property[db:kind='Water Solubility']/db:value",
         "isoelectric_point": "db:experimental-properties/db:property[db:kind='Isoelectric Point']/db:value",
@@ -2627,7 +2648,8 @@
         "superclass": "db:classification/db:superclass",
         "class": "db:classification/db:class",
         "subclass": "db:classification/db:subclass",
-        "sequences": "db:sequences/db:sequence"
+        "sequences": "db:sequences/db:sequence",
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
@@ -2819,7 +2841,8 @@
       "search_fields": [
         "drug_name",
         "drugbank_id",
-        "synonyms"
+        "synonyms",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -2842,7 +2865,8 @@
           }
         },
         "external_identifiers": "db:external-identifiers/db:external-identifier",
-        "external_links": "db:external-links/db:external-link"
+        "external_links": "db:external-links/db:external-link",
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
@@ -3032,7 +3056,8 @@
       "search_fields": [
         "drug_name",
         "drugbank_id",
-        "synonyms"
+        "synonyms",
+        "brand_names"
       ],
       "field_mappings": {
         "drug_name": "db:name",
@@ -3053,7 +3078,8 @@
             "reaction_left_element": "db:left-element/db:name",
             "reaction_right_element": "db:right-element/db:name"
           }
-        }
+        },
+        "brand_names": "db:products/db:product/db:name"
       }
     },
     "parameter": {
