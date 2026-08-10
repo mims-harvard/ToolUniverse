@@ -16,7 +16,12 @@ from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-BGEE_BASE_URL = "https://www.bgee.org/api"
+# NOTE: the trailing slash is REQUIRED. Requests to "https://www.bgee.org/api"
+# (no slash) never reach the Bgee application -- they are intercepted by the
+# site's Cloudflare WAF and answered with an HTTP 403 challenge page
+# ("cf-mitigated: challenge"). Only "https://www.bgee.org/api/?..." is routed
+# to the API. This is independent of User-Agent and of any request header.
+BGEE_BASE_URL = "https://www.bgee.org/api/"
 
 
 @register_tool("BgeeTool")
@@ -54,13 +59,42 @@ class BgeeTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"Bgee API HTTP error: {e.response.status_code}",
+                "error": self._http_error_message(e),
             }
         except Exception as e:
             return {
                 "status": "error",
                 "error": f"Unexpected error querying Bgee: {str(e)}",
             }
+
+    def _http_error_message(self, exc: requests.exceptions.HTTPError) -> str:
+        """Build an actionable message from a failed Bgee HTTP response.
+
+        Bgee answers bad requests with a JSON body that carries a human
+        readable ``message`` (e.g. an unknown gene ID yields HTTP 404 with
+        ``"Page not found."``), so surface that instead of a bare status code.
+        """
+        response = exc.response
+        status = getattr(response, "status_code", None)
+        api_message = ""
+        try:
+            body = response.json()
+            if isinstance(body, dict):
+                api_message = str(body.get("message", "")).strip()
+        except (ValueError, AttributeError):
+            # non-JSON body (HTML error page) or no response attached
+            api_message = ""
+
+        message = f"Bgee API HTTP error: {status}"
+        if api_message:
+            message += f" - {api_message}"
+        if status == 404:
+            message += (
+                " (check that the gene ID is a valid Ensembl ID present in Bgee"
+                " for the requested species, e.g. gene_id=ENSG00000141510 with"
+                " species_id=9606)"
+            )
+        return message
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Bgee endpoint."""
