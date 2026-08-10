@@ -22,6 +22,11 @@ from .tool_registry import register_tool
 # Base URL for Pharos GraphQL API
 PHAROS_GRAPHQL_URL = "https://pharos-api.ncats.io/graphql"
 
+# How many associated diseases / ligands a single-target lookup samples. The
+# full totals always travel alongside as diseaseCounts / ligandCounts, so this
+# only bounds response size, never the reported counts.
+_TARGET_DETAIL_TOP = 10
+
 
 @register_tool("PharosTool")
 class PharosTool(BaseTool):
@@ -104,54 +109,37 @@ class PharosTool(BaseTool):
         """
         Get detailed target information by gene symbol or UniProt ID.
 
-        Returns TDL classification, protein family, disease associations,
-        ligands, and druggability information.
+        Returns TDL classification (Pharos' druggability assessment), protein
+        family, disease associations, and ligand/drug counts plus a sample of
+        the target's ligands.
         """
-        gene = arguments.get("gene")
-        uniprot = arguments.get("uniprot")
+        q, label = self._resolve_target_q(arguments)
+        if q is None:
+            return {"status": "error", "error": label}
 
-        if not gene and not uniprot:
-            return {
-                "status": "error",
-                "error": "Either 'gene' or 'uniprot' parameter is required",
+        # Field names verified against the live schema by introspecting the
+        # Pharos GraphQL "Target" type (diseaseCounts/diseases: IntProp/Disease,
+        # ligandCounts/ligands: IntProp/Ligand; diseases and ligands both take a
+        # "top" argument) and by running this exact selection for FOLH1.
+        query = """
+        query GetTarget($q: ITarget!, $top: Int!) {
+            target(q: $q) {
+                name
+                sym
+                uniprot
+                tdl
+                fam
+                novelty
+                description
+                publicationCount
+                diseaseCounts { name value }
+                diseases(top: $top) { name associationCount mondoID }
+                ligandCounts { name value }
+                ligands(top: $top) { ligid name isdrug }
             }
-
-        # Use the target query with q parameter (ITarget input type)
-        # Simplified query for reliability
-        if uniprot:
-            query = """
-            query GetTarget($q: ITarget!) {
-                target(q: $q) {
-                    name
-                    sym
-                    uniprot
-                    tdl
-                    fam
-                    novelty
-                    description
-                    publicationCount
-                }
-            }
-            """
-            variables = {"q": {"uniprot": uniprot}}
-        else:
-            query = """
-            query GetTarget($q: ITarget!) {
-                target(q: $q) {
-                    name
-                    sym
-                    uniprot
-                    tdl
-                    fam
-                    novelty
-                    description
-                    publicationCount
-                }
-            }
-            """
-            variables = {"q": {"sym": gene}}
-
-        result = self._execute_graphql(query, variables)
+        }
+        """
+        result = self._execute_graphql(query, {"q": q, "top": _TARGET_DETAIL_TOP})
 
         if result["status"] == "success":
             target = result["data"].get("target")
@@ -159,8 +147,17 @@ class PharosTool(BaseTool):
                 return {
                     "status": "success",
                     "data": None,
-                    "message": f"No target found for {'UniProt ' + uniprot if uniprot else 'gene ' + gene}",
+                    "message": f"No target found for {label}",
                 }
+            # diseaseCounts/ligandCounts are whole-target totals; the diseases and
+            # ligands lists are only the top _TARGET_DETAIL_TOP entries, so say so
+            # rather than letting a caller read the sample as the full set.
+            target["disease_count"] = len(target.get("diseaseCounts") or [])
+            target["ligands_note"] = (
+                f"'diseases' and 'ligands' list at most {_TARGET_DETAIL_TOP} "
+                "entries; 'diseaseCounts'/'ligandCounts' give the full totals. "
+                "Use Pharos_get_target_ligands for ligand bioactivity values."
+            )
             result["data"] = target
 
         return result
