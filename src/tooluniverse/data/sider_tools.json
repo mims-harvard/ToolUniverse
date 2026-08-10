@@ -85,7 +85,7 @@
   {
     "name": "SIDER_get_drug_side_effects",
     "type": "SiderTool",
-    "description": "Get the list of known side effects for a drug from SIDER, including frequency data when available. Side effects are extracted from drug labels and include MedDRA codes, frequency percentages from clinical trials (e.g., '21% - 57.5%'), and placebo comparison rates. Provide either a drug name (will auto-search) or a SIDER drug ID from SIDER_search_drug. Returns adverse reactions recorded in official drug labels.",
+    "description": "Get the list of known side effects for a drug from SIDER, including frequency data when available. Side effects are extracted from drug labels and include MedDRA codes, the frequency reported for the drug (e.g., '21% - 57.5%', '6%', or qualitative terms such as 'postmarketing' or 'rare'), and the placebo-arm rate when the label reports one. Most SIDER labels have no placebo arm, so placebo_frequency is null for the majority of side effects; null means SIDER has no placebo rate, not that the placebo rate is zero or equal to the drug's rate. Provide either a drug name (will auto-search) or a SIDER drug ID from SIDER_search_drug. Returns adverse reactions recorded in official drug labels.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -154,14 +154,14 @@
                   "string",
                   "null"
                 ],
-                "description": "Reported frequency range (e.g., '21% - 57.5%' or '6%') or null if unavailable"
+                "description": "Frequency reported for the drug itself, taken verbatim from the 'Data for drug' column of the SIDER label table. May be a percentage or range ('6%', '21% - 57.5%', '1-10%') or a qualitative term used by the label ('postmarketing', 'rare', 'infrequent', 'frequent'), or a combination ('uncommon, 5% - 7%'). Null when the label reports no frequency."
               },
               "placebo_frequency": {
                 "type": [
                   "string",
                   "null"
                 ],
-                "description": "Placebo group frequency if available"
+                "description": "Frequency observed in the placebo arm, taken verbatim from the separate 'Placebo' column of the SIDER label table. Null whenever that column is empty, which is the common case because most SIDER labels report no placebo arm at all - null therefore means 'SIDER has no placebo rate for this side effect', NOT 'the placebo rate is zero' and NOT 'the placebo rate equals the drug rate'. Never inferred from the drug's own frequency."
               },
               "description": {
                 "type": [
