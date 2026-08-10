@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import types
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -114,6 +115,40 @@ assert "faiss" not in sys.modules
     env.pop("TOOLUNIVERSE_LAZY_LOADING", None)
     env["PYTHONPATH"] = str(Path(__file__).parents[2] / "src")
     subprocess.run([sys.executable, "-c", script], env=env, check=True)
+
+
+def test_lazy_registry_still_imports_external_namespace_plugins(tmp_path, monkeypatch):
+    """Skipping built-ins must not disable separately installed TU plugins."""
+    from tooluniverse import tool_registry
+
+    builtin = tmp_path / "builtin" / "tooluniverse"
+    external = tmp_path / "external" / "tooluniverse"
+    builtin.mkdir(parents=True)
+    external.mkdir(parents=True)
+    (builtin / "__init__.py").touch()
+    for marker in ("execute_function.py", "default_config.py", "tool_registry.py"):
+        (builtin / marker).touch()
+    (builtin / "built_in_feature").mkdir()
+    (builtin / "built_in_feature" / "__init__.py").touch()
+    (external / "community_tools").mkdir()
+    (external / "community_tools" / "__init__.py").touch()
+
+    package = types.SimpleNamespace(
+        __file__=str(builtin / "__init__.py"),
+        __path__=[str(builtin), str(external)],
+    )
+    imported = []
+
+    def fake_import(name):
+        if name == "tooluniverse":
+            return package
+        imported.append(name)
+        return types.SimpleNamespace()
+
+    monkeypatch.setattr(tool_registry.importlib, "import_module", fake_import)
+    tool_registry._auto_import_subpackages()
+
+    assert imported == ["tooluniverse.community_tools"]
 
 
 def test_standalone_cli_does_not_contact_or_import_platform(tmp_path: Path):
@@ -353,7 +388,9 @@ def test_platform_remote_tool_rejects_unsafe_timeout(timeout):
 
 def test_platform_remote_tool_waits_for_async_job(monkeypatch):
     monkeypatch.setenv("TU_API_KEY", "test-key")
-    monkeypatch.setattr("tooluniverse.platform_remote_tool.time.sleep", lambda _seconds: None)
+    monkeypatch.setattr(
+        "tooluniverse.platform_remote_tool.time.sleep", lambda _seconds: None
+    )
     tool = PlatformRemoteTool(
         {
             "name": "remote_gpu_model",
