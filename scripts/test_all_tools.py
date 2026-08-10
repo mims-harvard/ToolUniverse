@@ -153,7 +153,7 @@ def find_all_tool_configs(data_dir: Path) -> List[Path]:
     json_files = sorted(set(json_files))
 
     # Filter out non-tool files if needed
-    json_files = [f for f in json_files if not f.name.startswith(".")]
+    json_files = [f for f in json_files if not f.name.startswith('.')]
 
     # Skip broken_apis/ — those configs document non-functional upstream APIs
     # and the tools are not registered at runtime, so testing them produces
@@ -175,8 +175,8 @@ def extract_tool_patterns(config_files: List[Path]) -> Dict[str, List[Path]]:
         base_name = config_file.stem
 
         # Extract pattern (typically the prefix before _tools).
-        if "_tools" in base_name:
-            pattern = base_name.replace("_tools", "")
+        if '_tools' in base_name:
+            pattern = base_name.replace('_tools', '')
         else:
             # Use the full stem for non-_tools files. Splitting on the first
             # underscore produced over-broad patterns: e.g. tool_page_index.json
@@ -193,7 +193,7 @@ def extract_tool_patterns(config_files: List[Path]) -> Dict[str, List[Path]]:
 def load_config_stats(config_file: Path) -> Dict[str, Any]:
     """Load basic statistics from a config file."""
     try:
-        with open(config_file, "r") as f:
+        with open(config_file, 'r') as f:
             content = json.load(f)
 
         if isinstance(content, list):
@@ -209,17 +209,24 @@ def load_config_stats(config_file: Path) -> Dict[str, Any]:
         return {
             "tool_count": tool_count,
             "example_count": example_count,
-            "tools": [t.get("name", "UNNAMED") for t in tools],
+            "tools": [t.get("name", "UNNAMED") for t in tools]
         }
     except Exception as e:
         return {"error": str(e)}
 
 
 def run_test_for_pattern(
-    pattern: str, repo_root: Path, verbose: bool = False, fail_fast: bool = False
+    pattern: str,
+    repo_root: Path,
+    verbose: bool = False,
+    fail_fast: bool = False
 ) -> Dict[str, Any]:
     """Run test_new_tools.py for a specific pattern."""
-    cmd = [sys.executable, str(repo_root / "scripts" / "test_new_tools.py"), pattern]
+    cmd = [
+        sys.executable,
+        str(repo_root / "scripts" / "test_new_tools.py"),
+        pattern
+    ]
 
     if verbose:
         cmd.append("-v")
@@ -232,7 +239,7 @@ def run_test_for_pattern(
             capture_output=True,
             text=True,
             cwd=repo_root,
-            timeout=300,  # 5 minute timeout per pattern
+            timeout=300  # 5 minute timeout per pattern
         )
 
         # Parse output to extract statistics
@@ -241,6 +248,7 @@ def run_test_for_pattern(
         stats["exit_code"] = result.returncode
         stats["raw_output"] = output
         stats["stderr"] = result.stderr
+
         return normalize_result(stats)
 
     except subprocess.TimeoutExpired:
@@ -349,17 +357,12 @@ def run_all_patterns(
             results[pattern] = result
             if on_result:
                 on_result(pattern, results)
-            print(
-                f"[{completed}/{total}] {pattern}: {_format_result_status(result)}",
-                flush=True,
-            )
+            print(f"[{completed}/{total}] {pattern}: {_format_result_status(result)}", flush=True)
 
             if fail_fast and result_is_failure(result) and not stop_requested:
                 stop_requested = True
-                print(
-                    "\n⚠️  --fail-fast: not starting any remaining not-yet-started patterns "
-                    "(already-running patterns will still finish)"
-                )
+                print("\n⚠️  --fail-fast: not starting any remaining not-yet-started patterns "
+                      "(already-running patterns will still finish)")
                 for f in future_to_pattern:
                     f.cancel()
 
@@ -385,14 +388,14 @@ def parse_test_output(output: str) -> Dict[str, Any]:
     stats: Dict[str, Any] = {key: 0 for _, key in _OUTPUT_LABELS}
     stats["duration"] = 0.0
 
-    for line in output.split("\n"):
+    for line in output.split('\n'):
         line = line.strip()
 
         for label, key in _OUTPUT_LABELS:
             if label in line:
                 try:
                     # Take the first token after the colon (handles "Passed: 12 (100.0%)")
-                    stats[key] = int(line.split(":")[1].strip().split()[0])
+                    stats[key] = int(line.split(':')[1].strip().split()[0])
                 except (ValueError, IndexError):
                     pass
                 break
@@ -400,7 +403,7 @@ def parse_test_output(output: str) -> Dict[str, Any]:
             # Duration is a float with a trailing 's'
             if "Duration:" in line:
                 try:
-                    stats["duration"] = float(line.split(":")[1].strip().rstrip("s"))
+                    stats["duration"] = float(line.split(':')[1].strip().rstrip('s'))
                 except (ValueError, IndexError):
                     pass
 
@@ -412,7 +415,7 @@ def generate_report(
     config_patterns: Dict[str, List[Path]],
     total_duration: float,
     output_file: str = "TOOL_TEST_REPORT.md",
-    skipped_tools: set = None,
+    skipped_tools: set = None
 ) -> str:
     """Generate a markdown report of all test results."""
     if skipped_tools is None:
@@ -556,9 +559,7 @@ def generate_report(
         issues_found = True
         lines.append("### 🔍 404 Errors Detected")
         lines.append("")
-        lines.append(
-            "These tools are returning 404 errors (API endpoints may have changed):"
-        )
+        lines.append("These tools are returning 404 errors (API endpoints may have changed):")
         lines.append("")
         for pattern in sorted(patterns_with_404):
             count = results[pattern]["errors_404"]
@@ -567,7 +568,8 @@ def generate_report(
 
     # Schema Mismatches
     patterns_with_schema_issues = [
-        p for p, r in results.items() if r.get("schema_invalid", 0) > 0
+        p for p, r in results.items()
+        if r.get("schema_invalid", 0) > 0
     ]
     if patterns_with_schema_issues:
         issues_found = True
@@ -582,8 +584,7 @@ def generate_report(
 
     # Other Failures
     patterns_with_failures = [
-        p
-        for p, r in results.items()
+        p for p, r in results.items()
         if r.get("failed", 0) > 0 and not r.get("errors_404", 0)
     ]
     if patterns_with_failures:
@@ -607,9 +608,7 @@ def generate_report(
     lines.append("")
 
     if patterns_with_404:
-        lines.append(
-            "1. **Fix 404 Errors**: Review API documentation for tools with 404 errors"
-        )
+        lines.append("1. **Fix 404 Errors**: Review API documentation for tools with 404 errors")
         lines.append("   - Check if API endpoints have changed")
         lines.append("   - Update tool configurations accordingly")
         lines.append("")
@@ -621,9 +620,7 @@ def generate_report(
         lines.append("")
 
     if patterns_with_failures:
-        lines.append(
-            "3. **Investigate Failures**: Review error messages and fix issues"
-        )
+        lines.append("3. **Investigate Failures**: Review error messages and fix issues")
         lines.append("   - Check API keys and authentication")
         lines.append("   - Verify network connectivity")
         lines.append("   - Review error messages in detail")
@@ -643,7 +640,7 @@ def generate_report(
     # Write to file
     repo_root = Path(__file__).parent.parent
     output_path = repo_root / output_file
-    with open(output_path, "w", encoding="utf-8") as f:
+    with open(output_path, 'w') as f:
         f.write(report)
 
     return str(output_path)
@@ -654,18 +651,24 @@ def main():
         description="Test all ToolUniverse tool configurations"
     )
     parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Show detailed output"
+        "-v", "--verbose",
+        action="store_true",
+        help="Show detailed output"
     )
     parser.add_argument(
-        "--fail-fast", action="store_true", help="Stop after first failure"
+        "--fail-fast",
+        action="store_true",
+        help="Stop after first failure"
     )
     parser.add_argument(
         "--parallel",
         action="store_true",
-        help=f"Run tests in parallel across patterns (up to {DEFAULT_PARALLEL_WORKERS} workers)",
+        help=f"Run tests in parallel across patterns (up to {DEFAULT_PARALLEL_WORKERS} workers)"
     )
     parser.add_argument(
-        "--output", default="TOOL_TEST_REPORT.md", help="Output report filename"
+        "--output",
+        default="TOOL_TEST_REPORT.md",
+        help="Output report filename"
     )
     parser.add_argument(
         "--json-output",
@@ -678,25 +681,26 @@ def main():
         help="Reuse completed categories from --json-output",
     )
     parser.add_argument(
-        "--pattern", help="Test only specific pattern (e.g., 'fda', 'cbioportal')"
+        "--pattern",
+        help="Test only specific pattern (e.g., 'fda', 'cbioportal')"
     )
     parser.add_argument(
         "--skip",
-        help="Skip specific tools (comma-separated, e.g., 'agentic,finder,tool')",
+        help="Skip specific tools (comma-separated, e.g., 'agentic,finder,tool')"
     )
     parser.add_argument(
         "--skip-pattern",
-        help="Skip tools matching wildcard pattern (e.g., 'agentic*' or '*discovery*')",
+        help="Skip tools matching wildcard pattern (e.g., 'agentic*' or '*discovery*')"
     )
     parser.add_argument(
         "--skip-remote",
         action="store_true",
-        help="Skip remote tools that require external servers",
+        help="Skip remote tools that require external servers"
     )
     parser.add_argument(
         "--skip-mcp",
         action="store_true",
-        help="Skip MCP (Model Context Protocol) tools that require MCP servers",
+        help="Skip MCP (Model Context Protocol) tools that require MCP servers"
     )
 
     args = parser.parse_args()
@@ -726,71 +730,57 @@ def main():
     # Build skip list
     skip_tools = set()
     if args.skip:
-        skip_tools.update(tool.strip() for tool in args.skip.split(","))
+        skip_tools.update(tool.strip() for tool in args.skip.split(','))
         print(f"📝 Skipping tools: {', '.join(sorted(skip_tools))}")
 
     # Skip remote tools if requested
     if args.skip_remote:
         remote_tools = [
-            "boltz",
-            "depmap",
-            "expert_feedback",
-            "immune_compass",
-            "pinnacle",
-            "transcriptformer",
-            "uspto_downloader",
+            'boltz', 'depmap', 'expert_feedback', 'immune_compass',
+            'pinnacle', 'transcriptformer', 'uspto_downloader',
             # Add external API services that require remote servers
-            "blast",  # NCBI BLAST API
-            "simbad",  # SIMBAD astronomical database API
-            "uspto",  # USPTO Patent API (in addition to uspto_downloader)
+            'blast',  # NCBI BLAST API
+            'simbad',  # SIMBAD astronomical database API
+            'uspto',  # USPTO Patent API (in addition to uspto_downloader)
         ]
         skip_tools.update(remote_tools)
-        print(
-            f"🌐 Skipping remote tools (require external servers): {', '.join(sorted(remote_tools))}"
-        )
+        print(f"🌐 Skipping remote tools (require external servers): {', '.join(sorted(remote_tools))}")
 
     # Skip MCP tools if requested
     if args.skip_mcp:
-        mcp_tools = ["boltz_mcp_loader", "mcp_client_example", "mcpautoloadertool"]
+        mcp_tools = ['boltz_mcp_loader', 'mcp_client_example', 'mcpautoloadertool']
         skip_tools.update(mcp_tools)
-        print(
-            f"🔌 Skipping MCP tools (require MCP servers): {', '.join(sorted(mcp_tools))}"
-        )
+        print(f"🔌 Skipping MCP tools (require MCP servers): {', '.join(sorted(mcp_tools))}")
 
     # Apply skip pattern
     if args.skip_pattern:
         pattern_to_skip = args.skip_pattern.strip()
         tools_to_skip = [
-            tool
-            for tool in config_patterns.keys()
+            tool for tool in config_patterns.keys()
             if fnmatch.fnmatch(tool, pattern_to_skip)
         ]
         skip_tools.update(tools_to_skip)
         if tools_to_skip:
-            print(
-                f"📝 Skipping tools matching '{pattern_to_skip}': {', '.join(sorted(tools_to_skip))}"
-            )
+            print(f"📝 Skipping tools matching '{pattern_to_skip}': {', '.join(sorted(tools_to_skip))}")
 
     # Filter by pattern if specified
     if args.pattern:
         filtered = {
-            k: v
-            for k, v in config_patterns.items()
+            k: v for k, v in config_patterns.items()
             if args.pattern.lower() in k.lower()
         }
         if not filtered:
             print(f"❌ No patterns found matching '{args.pattern}'")
             sys.exit(1)
         config_patterns = filtered
-        print(
-            f"✅ Filtered to {len(config_patterns)} pattern(s) matching '{args.pattern}'"
-        )
+        print(f"✅ Filtered to {len(config_patterns)} pattern(s) matching '{args.pattern}'")
 
     # Apply skip list
     if skip_tools:
         before_count = len(config_patterns)
         config_patterns = {
-            k: v for k, v in config_patterns.items() if k not in skip_tools
+            k: v for k, v in config_patterns.items()
+            if k not in skip_tools
         }
         skipped_count = before_count - len(config_patterns)
         if skipped_count > 0:
@@ -872,7 +862,11 @@ def main():
 
     # Generate report
     report_path = generate_report(
-        results, config_patterns, total_duration, args.output, skip_tools
+        results,
+        config_patterns,
+        total_duration,
+        args.output,
+        skip_tools
     )
 
     print(f"✅ Report saved to: {report_path}")
