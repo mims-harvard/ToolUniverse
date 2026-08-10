@@ -41,7 +41,7 @@
                 },
                 "clinical_significance": {
                     "type": "string",
-                    "description": "Filter by clinical significance (e.g., 'Pathogenic', 'Likely pathogenic', 'Benign', 'Uncertain significance', 'VUS'). Applied client-side after retrieval."
+                    "description": "Filter by clinical significance. Must be one of the classes ClinVar's index actually recognizes: 'Pathogenic', 'Likely pathogenic', 'Uncertain significance', 'VUS', 'Likely benign', 'Benign', 'Established risk allele', 'Likely risk allele', 'Uncertain risk allele', 'drug response', 'risk factor', 'not provided', 'other'. Case-insensitive; underscores/hyphens are treated as spaces. Combine two classes with '/' to search their union (e.g. 'Pathogenic/Likely pathogenic'). Any other value is rejected with an error rather than silently filtering the results to nothing."
                 },
                 "gene_symbol": {
                     "type": [
@@ -55,7 +55,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Alias for clinical_significance (e.g., \"pathogenic\", \"benign\", \"uncertain_significance\")."
+                    "description": "Alias for clinical_significance (e.g., \"pathogenic\", \"benign\", \"uncertain_significance\"). Same accepted value set and same validation as clinical_significance."
                 },
                 "query": {
                     "type": [
