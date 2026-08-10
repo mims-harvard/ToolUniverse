@@ -1,7 +1,7 @@
 [
   {
     "name": "ChEBI_get_compound",
-    "description": "Get detailed information about a chemical entity from ChEBI (Chemical Entities of Biological Interest) by its CHEBI ID. Returns the compound name, definition, synonyms, molecular formula, mass, InChIKey, SMILES, charge, and star rating (curation quality: 3=manually curated, 2=checked, 1=unchecked). ChEBI is maintained by EBI and is the standard reference for small molecules in biology. Example: CHEBI:15365 returns acetylsalicylic acid (aspirin).",
+    "description": "Get detailed information about a chemical entity from ChEBI (Chemical Entities of Biological Interest) by its CHEBI ID. Returns the compound name, definition, synonyms, molecular formula, mass, InChIKey, SMILES, charge, and star rating (curation quality: 3=manually curated, 2=checked, 1=unchecked). ChEBI is maintained by EBI and is the standard reference for small molecules in biology. Example: CHEBI:15365 returns acetylsalicylic acid (aspirin). ChEBI merges obsolete/duplicate accessions into a single primary entry and serves that primary for every id merged into it, so a legacy accession answers about a different compound (CHEBI:1 returns CHEBI:18357, (R)-noradrenaline). When that happens the result carries 'requested_chebi_id', 'requested_chebi_accession', 'redirect_note' and the primary entry's 'secondary_ids'; those keys are absent on a direct hit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -93,6 +93,25 @@
               "items": {
                 "type": "string"
               }
+            },
+            "requested_chebi_id": {
+              "type": "integer",
+              "description": "Only present when ChEBI answered with a DIFFERENT entry than the one requested (merged/obsolete accession). The ChEBI id that was actually asked for; compare against 'chebi_id', which is the entry that was returned."
+            },
+            "requested_chebi_accession": {
+              "type": "string",
+              "description": "Only present on a redirect. The requested accession in CURIE form, e.g. 'CHEBI:1' when the returned entry is 'CHEBI:18357'."
+            },
+            "redirect_note": {
+              "type": "string",
+              "description": "Only present on a redirect. Human-readable explanation naming both accessions and the relationship between them (secondary/merged id of the returned primary entry, or an unexplained substitution when the requested accession is not among the primary entry's secondary_ids). Absent on a direct hit."
+            },
+            "secondary_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Only present on a redirect, and only where the endpoint reports it (the compound endpoint does; the ontology endpoints do not). The returned primary entry's full list of merged/secondary accessions - the evidence for 'redirect_note'."
             }
           }
         },
@@ -215,7 +234,7 @@
   },
   {
     "name": "ChEBI_get_ontology_children",
-    "description": "Get the ontology children (is-a, has-part, has-functional-parent, etc.) of a ChEBI compound. ChEBI uses a rich ontology with relationships like 'is a', 'has part', 'has role', 'has functional parent', and 'is conjugate base/acid of'. This enables navigation of the chemical classification hierarchy. Example: CHEBI:15365 (aspirin) children include NCX-4040 (has functional parent), acetylsalicylate (conjugate base), and Yosprala (has part).",
+    "description": "Get the ontology children (is-a, has-part, has-functional-parent, etc.) of a ChEBI compound. ChEBI uses a rich ontology with relationships like 'is a', 'has part', 'has role', 'has functional parent', and 'is conjugate base/acid of'. This enables navigation of the chemical classification hierarchy. Example: CHEBI:15365 (aspirin) children include NCX-4040 (has functional parent), acetylsalicylate (conjugate base), and Yosprala (has part). If the requested id is an obsolete/merged accession, ChEBI serves the primary entry it was merged into and the result carries 'requested_chebi_id', 'requested_chebi_accession' and 'redirect_note'; those keys are absent on a direct hit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -279,6 +298,18 @@
                   }
                 }
               }
+            },
+            "requested_chebi_id": {
+              "type": "integer",
+              "description": "Only present when ChEBI answered with a DIFFERENT entry than the one requested (merged/obsolete accession). The ChEBI id that was actually asked for; compare against 'chebi_id', which is the entry that was returned."
+            },
+            "requested_chebi_accession": {
+              "type": "string",
+              "description": "Only present on a redirect. The requested accession in CURIE form, e.g. 'CHEBI:1' when the returned entry is 'CHEBI:18357'."
+            },
+            "redirect_note": {
+              "type": "string",
+              "description": "Only present on a redirect. Human-readable explanation naming both accessions and the relationship between them (secondary/merged id of the returned primary entry, or an unexplained substitution when the requested accession is not among the primary entry's secondary_ids). Absent on a direct hit."
             }
           }
         },
@@ -298,7 +329,7 @@
   },
   {
     "name": "ChEBI_get_ontology_parents",
-    "description": "Get the ontology parents (is-a / has-role ancestors) of a ChEBI compound, navigating UPWARD in the chemical classification hierarchy (the symmetric counterpart of ChEBI_get_ontology_children). ChEBI uses a rich ontology with relationships like 'is a', 'has role', 'has functional parent', and 'is conjugate base/acid of'. Example: CHEBI:15377 (water) parents include 'mononuclear parent hydride' and 'inorganic hydroxy compound' (is a), and 'human metabolite', 'amphiprotic solvent' (has role).",
+    "description": "Get the ontology parents (is-a / has-role ancestors) of a ChEBI compound, navigating UPWARD in the chemical classification hierarchy (the symmetric counterpart of ChEBI_get_ontology_children). ChEBI uses a rich ontology with relationships like 'is a', 'has role', 'has functional parent', and 'is conjugate base/acid of'. Example: CHEBI:15377 (water) parents include 'mononuclear parent hydride' and 'inorganic hydroxy compound' (is a), and 'human metabolite', 'amphiprotic solvent' (has role). If the requested id is an obsolete/merged accession, ChEBI serves the primary entry it was merged into and the result carries 'requested_chebi_id', 'requested_chebi_accession' and 'redirect_note'; those keys are absent on a direct hit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -356,6 +387,18 @@
                   }
                 }
               }
+            },
+            "requested_chebi_id": {
+              "type": "integer",
+              "description": "Only present when ChEBI answered with a DIFFERENT entry than the one requested (merged/obsolete accession). The ChEBI id that was actually asked for; compare against 'chebi_id', which is the entry that was returned."
+            },
+            "requested_chebi_accession": {
+              "type": "string",
+              "description": "Only present on a redirect. The requested accession in CURIE form, e.g. 'CHEBI:1' when the returned entry is 'CHEBI:18357'."
+            },
+            "redirect_note": {
+              "type": "string",
+              "description": "Only present on a redirect. Human-readable explanation naming both accessions and the relationship between them (secondary/merged id of the returned primary entry, or an unexplained substitution when the requested accession is not among the primary entry's secondary_ids). Absent on a direct hit."
             }
           }
         },
