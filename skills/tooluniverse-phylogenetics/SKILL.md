@@ -371,6 +371,22 @@ tool returns them for sets up to 50 and summary statistics always. For larger
 sets, compute the statistic from the per-group summaries the tool returns rather
 than re-deriving every value by hand.
 
+### PhyKIT column conventions — take the right one
+
+Several PhyKIT subcommands print more than one number per file, and the value
+the question wants is usually not the first:
+
+| subcommand | prints | the value asked for |
+|---|---|---|
+| `saturation` | `slope <TAB> 1-slope` | **column 2**, `1-slope` |
+| `treeness_over_rcv` | `treeness/RCV <TAB> treeness <TAB> RCV` | **column 1**, the ratio |
+| `parsimony_informative_sites` | `n_pi <TAB> n_total <TAB> %PIS` | column 3 for a percentage |
+
+Taking `saturation`'s first column gives exactly `1 - answer`: a fungal set
+whose saturation is 0.6146 reports 0.3854 instead, and the two sum to 1.0000,
+which is the tell. `phykit_batch_analysis` already selects the right column for
+each function — another reason to call it rather than run the CLI yourself.
+
 ### Commit the value you computed
 
 Two failures in this benchmark came from computing the right number and then
