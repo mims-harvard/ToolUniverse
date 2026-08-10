@@ -23,6 +23,69 @@ MONARCH_BASE_URL = "https://api.monarchinitiative.org/v3/api"
 
 _UNDERSCORE_CURIE_RE = re.compile(r"^([A-Za-z]+)_(\d+)$")
 
+# Biolink association categories are directed: the category name reads
+# "<subject>To<object>Association". Anchoring an entity on the wrong side is
+# silently valid at the API (it just matches nothing), so a caller asking
+# "which genes cause MONDO:0006559?" as subject=MONDO:0006559 gets a confident
+# empty list rather than the three causal genes the object side would return.
+# Map each category to the kind of entity that belongs on each side so an empty
+# result can say which side the caller's CURIE actually belongs on.
+_ASSOCIATION_SIDES = {
+    "biolink:CausalGeneToDiseaseAssociation": ("gene", "disease"),
+    "biolink:CorrelatedGeneToDiseaseAssociation": ("gene", "disease"),
+    "biolink:GeneToPhenotypicFeatureAssociation": ("gene", "phenotype"),
+    "biolink:DiseaseToPhenotypicFeatureAssociation": ("disease", "phenotype"),
+    "biolink:GeneToPathwayAssociation": ("gene", "pathway"),
+    "biolink:GeneToExpressionSiteAssociation": ("gene", "expression site"),
+}
+
+# Only unambiguous CURIE prefixes -- enough to recognise a disease passed where
+# a gene belongs (and vice versa) without guessing about multi-purpose
+# namespaces such as MGI/ZFIN, which identify both genes and genotypes.
+_CURIE_PREFIX_KIND = {
+    "HGNC": "gene",
+    "NCBIGENE": "gene",
+    "ENSEMBL": "gene",
+    "MONDO": "disease",
+    "OMIM": "disease",
+    "DOID": "disease",
+    "ORPHANET": "disease",
+    "HP": "phenotype",
+}
+
+
+def _curie_kind(curie: str) -> str:
+    """Best-effort entity kind for a CURIE, or '' when the prefix is ambiguous."""
+    if not isinstance(curie, str) or ":" not in curie:
+        return ""
+    return _CURIE_PREFIX_KIND.get(curie.split(":", 1)[0].strip().upper(), "")
+
+
+def _direction_hint(category: str, subject: str, obj: str) -> str:
+    """Explain the subject/object direction when a query returned nothing and
+    the supplied CURIE looks like it belongs on the other side."""
+    sides = _ASSOCIATION_SIDES.get(category)
+    if not sides:
+        return ""
+    subject_kind, object_kind = sides
+    if subject_kind == object_kind:
+        return ""
+    preamble = (
+        f"{category} is directed: the {subject_kind} is the 'subject' "
+        f"and the {object_kind} is the 'object'."
+    )
+    if subject and not obj and _curie_kind(subject) == object_kind:
+        return (
+            f"{preamble} You passed {subject} (a {object_kind}) as 'subject'; "
+            f"retry with object='{subject}' to get its {subject_kind}s."
+        )
+    if obj and not subject and _curie_kind(obj) == subject_kind:
+        return (
+            f"{preamble} You passed {obj} (a {subject_kind}) as 'object'; "
+            f"retry with subject='{obj}' to get its {object_kind}s."
+        )
+    return ""
+
 
 def _normalize_curie(entity_id: str) -> str:
     """Convert an underscore-delimited ontology CURIE to the colon form Monarch
@@ -145,7 +208,15 @@ class MonarchV3Tool(BaseTool):
         if not subject and not obj:
             return {
                 "status": "error",
-                "error": "Either subject or object CURIE is required (e.g., HGNC:11998 or MONDO:0005148)",
+                "error": (
+                    "At least one of 'subject' or 'object' is required (a CURIE). "
+                    "Associations are directed: use 'subject' for the entity on the "
+                    "left of the category (e.g. subject='HGNC:11998' with "
+                    "biolink:CausalGeneToDiseaseAssociation for a gene's diseases) "
+                    "and 'object' for the entity on the right (e.g. "
+                    "object='MONDO:0005148' with the same category for a disease's "
+                    "causal genes)."
+                ),
             }
 
         category = arguments.get("category", "")
@@ -180,15 +251,22 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
+        metadata = {
+            "source": "Monarch Initiative V3",
+            "subject": subject,
+            "object": obj,
+            "category": category,
+            "total_results": data.get("total", len(associations)),
+        }
+        if not associations:
+            hint = _direction_hint(category, subject, obj)
+            if hint:
+                metadata["note"] = hint
+
         return {
             "status": "success",
             "data": associations,
-            "metadata": {
-                "source": "Monarch Initiative V3",
-                "subject": subject,
-                "category": category,
-                "total_results": data.get("total", len(associations)),
-            },
+            "metadata": metadata,
         }
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

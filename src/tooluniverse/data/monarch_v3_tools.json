@@ -32,17 +32,21 @@
   },
   {
     "name": "MonarchV3_get_associations",
-    "description": "Query cross-species associations between biomedical entities in the Monarch Initiative knowledge graph. Find gene-phenotype, disease-phenotype, gene-disease, or gene-pathway associations. Uses Biolink model categories to specify association type. Integrates data from OMIM, ClinVar, HPO, MGI, ZFIN, FlyBase, WormBase. Example: HGNC:11998 (TP53) with category GeneToPhenotypicFeatureAssociation returns phenotypes like hepatocellular carcinoma and reticular hyperpigmentation.",
+    "description": "Query cross-species associations between biomedical entities in the Monarch Initiative knowledge graph. Find gene-phenotype, disease-phenotype, gene-disease, or gene-pathway associations. Uses Biolink model categories to specify association type. Integrates data from OMIM, ClinVar, HPO, MGI, ZFIN, FlyBase, WormBase. Associations are DIRECTED: every category has a fixed subject side and object side, so anchor your entity on the correct side. Supply 'subject', 'object', or both (at least one is required). Example: HGNC:11998 (TP53) as subject with category GeneToPhenotypicFeatureAssociation returns phenotypes like hepatocellular carcinoma; MONDO:0006559 as OBJECT with category CausalGeneToDiseaseAssociation returns the genes that cause that disease (NCSTN, PSENEN, PSEN1).",
     "parameter": {
       "type": "object",
       "properties": {
         "subject": {
           "type": "string",
-          "description": "Subject entity CURIE. Examples: 'HGNC:11998' (TP53), 'MONDO:0005148' (type 2 diabetes), 'HP:0001250' (seizure)."
+          "description": "Subject-side entity CURIE, i.e. the entity on the LEFT of the association (the arrow's source). For gene->disease categories (CausalGeneToDiseaseAssociation, CorrelatedGeneToDiseaseAssociation) the subject is the GENE; for gene->phenotype and gene->pathway the subject is the gene; for DiseaseToPhenotypicFeatureAssociation the subject is the disease. Examples: 'HGNC:11998' (TP53), 'MONDO:0005148' (type 2 diabetes), 'HP:0001250' (seizure). Optional, but at least one of 'subject' / 'object' must be supplied."
+        },
+        "object": {
+          "type": "string",
+          "description": "Object-side entity CURIE, i.e. the entity on the RIGHT of the association (the arrow's target). Use this to query the association backwards. For gene->disease categories the object is the DISEASE, so 'which genes cause this disease?' is object='MONDO:0006559' with category='biolink:CausalGeneToDiseaseAssociation'; for gene/disease->phenotype categories the object is the HP phenotype term. Optional, but at least one of 'subject' / 'object' must be supplied. Supplying both narrows to associations linking exactly that pair."
         },
         "category": {
           "type": "string",
-          "description": "Biolink association category. Options: 'biolink:GeneToPhenotypicFeatureAssociation' (gene->phenotypes), 'biolink:DiseaseToPhenotypicFeatureAssociation' (disease->phenotypes), 'biolink:CorrelatedGeneToDiseaseAssociation' (gene->diseases, correlated), 'biolink:CausalGeneToDiseaseAssociation' (gene->diseases, causal), 'biolink:GeneToPathwayAssociation' (gene->pathways), 'biolink:VariantToDiseaseAssociation' (variant->diseases), 'biolink:GeneToExpressionSiteAssociation' (gene->expression sites/tissues)."
+          "description": "Biolink association category, written as subject->object. Options: 'biolink:GeneToPhenotypicFeatureAssociation' (gene->phenotypes), 'biolink:DiseaseToPhenotypicFeatureAssociation' (disease->phenotypes), 'biolink:CorrelatedGeneToDiseaseAssociation' (gene->diseases, correlated), 'biolink:CausalGeneToDiseaseAssociation' (gene->diseases, causal), 'biolink:GeneToPathwayAssociation' (gene->pathways), 'biolink:VariantToDiseaseAssociation' (variant->diseases), 'biolink:GeneToExpressionSiteAssociation' (gene->expression sites/tissues). The left-hand side goes in 'subject' and the right-hand side goes in 'object'."
         },
         "limit": {
           "type": "integer",
@@ -50,7 +54,6 @@
         }
       },
       "required": [
-        "subject",
         "category"
       ]
     },
@@ -66,6 +69,10 @@
       {
         "subject": "MONDO:0005148",
         "category": "biolink:DiseaseToPhenotypicFeatureAssociation"
+      },
+      {
+        "object": "MONDO:0006559",
+        "category": "biolink:CausalGeneToDiseaseAssociation"
       }
     ],
     "return_schema": {
