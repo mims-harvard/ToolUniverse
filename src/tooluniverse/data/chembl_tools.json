@@ -283,6 +283,10 @@
           "type": "string",
           "description": "Alias for molecule_chembl_id__exact. ChEMBL molecule ID."
         },
+        "chembl_id": {
+          "type": "string",
+          "description": "Alias for molecule_chembl_id__exact. Accepts the same name ChEMBL_get_molecule uses, so an ID can be carried straight from that call into this one."
+        },
         "limit": {
           "type": "integer",
           "default": 500,

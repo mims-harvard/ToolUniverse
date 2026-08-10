@@ -1965,6 +1965,14 @@
         },
         "total_found": {
           "type": "integer"
+        },
+        "queried_gene_name": {
+          "type": "string",
+          "description": "Present only when the requested symbol matched nothing and an unhyphenated spelling was used instead; holds the symbol originally requested."
+        },
+        "gene_name_note": {
+          "type": "string",
+          "description": "Present only when the requested symbol matched nothing and an unhyphenated spelling was used instead; explains which spelling produced these results."
         }
       }
     },

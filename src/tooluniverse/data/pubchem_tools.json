@@ -184,7 +184,7 @@
   },
   {
     "name": "PubChem_get_compound_properties_by_CID",
-    "description": "Get a set of specified molecular properties through CID (Compound ID), such as molecular weight, IUPAC name, Canonical SMILES.",
+    "description": "Get a set of specified molecular properties through CID (Compound ID), such as molecular weight, IUPAC name, and SMILES. PubChem's PUG-REST renamed its SMILES properties: ask for 'ConnectivitySMILES' (formerly 'CanonicalSMILES') and 'SMILES' (formerly 'IsomericSMILES'). Requesting a legacy name returns the value under the CURRENT key, so a caller that looks up the key it asked for will not find it.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -201,7 +201,7 @@
           "items": {
             "type": "string"
           },
-          "description": "Optional list of PubChem property names to retrieve (e.g. ['MolecularFormula','InChIKey','XLogP','IUPACName','MolecularWeight']). If omitted, returns a default set (MolecularWeight, IUPACName, SMILES). See PubChem PUG-REST property tables for valid names. Accepts a list or a comma-separated string."
+          "description": "Optional list of PubChem property names to retrieve (e.g. ['MolecularFormula','InChIKey','XLogP','IUPACName','MolecularWeight']). If omitted, returns a default set (MolecularWeight, IUPACName, ConnectivitySMILES). For SMILES use the current names 'ConnectivitySMILES' (was 'CanonicalSMILES') or 'SMILES' (was 'IsomericSMILES') — a legacy name still returns data, but under the current key, not the one requested. See PubChem PUG-REST property tables for valid names. Accepts a list or a comma-separated string."
         }
       },
       "required": [

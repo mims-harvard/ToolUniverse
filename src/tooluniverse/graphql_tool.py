@@ -166,6 +166,15 @@ class GraphQLTool(BaseTool):
         return result
 
 
+# Open Targets datasource IDs that were renamed upstream. The retired name is
+# not aliased server-side -- it simply matches nothing -- so queries using it
+# come back as a successful zero-row result.
+_OT_RENAMED_DATASOURCES = {
+    "ot_genetics_portal": "gwas_credible_sets",
+    "chembl": "clinical_precedence",
+}
+
+
 _OT_SEARCH_QUERY = """
 query otSearch($q: String!, $entity: [String!]!) {
   search(queryString: $q, entityNames: $entity, page: {index: 0, size: 1}) {
@@ -362,7 +371,34 @@ class OpentargetTool(GraphQLTool):
                     "Try passing efoId directly (e.g. MONDO_0005011 for Crohn disease).",
                 }
 
+        # Open Targets retires datasource IDs without keeping the old name as an
+        # alias, so a stale ID returns a perfectly successful "count: 0" that is
+        # indistinguishable from "this datasource has no evidence for this pair"
+        # (confirmed live: IL23R/Crohn disease returns 0 rows for
+        # 'ot_genetics_portal' and 43 for 'gwas_credible_sets'; TP53/cancer
+        # returns 0 and 51). Remap the retired IDs and say so, rather than
+        # letting the caller conclude the evidence does not exist.
+        renamed_datasources = []
+        _ds = arguments.get("datasourceIds")
+        if isinstance(_ds, list):
+            remapped = []
+            for _id in _ds:
+                _new = _OT_RENAMED_DATASOURCES.get(_id)
+                if _new:
+                    renamed_datasources.append(f"'{_id}' -> '{_new}'")
+                    remapped.append(_new)
+                else:
+                    remapped.append(_id)
+            arguments = dict(arguments, datasourceIds=remapped)
+
         result = super().run(arguments)
+
+        if renamed_datasources and result.get("status") == "success":
+            result.setdefault("metadata", {})["datasource_rename_note"] = (
+                "Retired Open Targets datasource ID(s) remapped: "
+                + "; ".join(renamed_datasources)
+                + ". Use the current name(s) directly to avoid this remapping."
+            )
 
         # Add note when IntOGen evidence count is 0 (Feature-122B-002).
         # Fix-R31D-3: this note is IntOGen-specific but was applied to every

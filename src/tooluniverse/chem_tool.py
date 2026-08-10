@@ -390,8 +390,13 @@ class ChEMBLRESTTool(BaseTool):
             # Correct approach: query /activity.json?molecule_chembl_id=X and
             # deduplicate the target fields from the activity records.
             if tool_name == "ChEMBL_get_molecule_targets":
-                mol_id = arguments.get("molecule_chembl_id__exact") or arguments.get(
-                    "molecule_chembl_id"
+                mol_id = (
+                    arguments.get("molecule_chembl_id__exact")
+                    or arguments.get("molecule_chembl_id")
+                    # ChEMBL_get_molecule names this same identifier `chembl_id`,
+                    # so chaining its output into this tool otherwise failed
+                    # parameter validation on the ID you just looked up.
+                    or arguments.get("chembl_id")
                 )
                 if mol_id:
                     activity_url = self.base_url + "/activity.json"

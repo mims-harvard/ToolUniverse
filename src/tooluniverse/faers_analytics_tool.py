@@ -11,6 +11,23 @@ from .tool_registry import register_tool
 FDA_BASE_URL = "https://api.fda.gov/drug/event.json"
 
 
+def _drug_clause(drug_name: str) -> str:
+    """openFDA search clause matching a drug by generic OR brand name.
+
+    Matching only `generic_name` makes every brand name look like a drug with
+    zero reports, which for the disproportionality math is indistinguishable
+    from a genuinely unreported drug (confirmed live: "XELJANZ" yielded
+    a=0, b=0 and an "Insufficient data" error while its generic "tofacitinib"
+    returned a real ROR; the generic-or-brand form returns 183,405 reports for
+    the same brand name). Brand names are what prescribers and labels use, so
+    they must resolve to the same reports as the generic.
+    """
+    return (
+        f'(patient.drug.openfda.generic_name:"{drug_name}"'
+        f'+OR+patient.drug.openfda.brand_name:"{drug_name}")'
+    )
+
+
 @register_tool("FAERSAnalyticsTool")
 class FAERSAnalyticsTool(BaseTool):
     """
@@ -260,9 +277,9 @@ class FAERSAnalyticsTool(BaseTool):
 
             # Feature-121A-003: adverse_event is optional — filter by drug alone if omitted
             if adverse_event:
-                base_query = f'patient.drug.openfda.generic_name:"{drug_name}"+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
+                base_query = f'{_drug_clause(drug_name)}+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
             else:
-                base_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+                base_query = _drug_clause(drug_name)
 
             url = self._with_api_key(f"{FDA_BASE_URL}?search={base_query}&count={count_field}")
 
@@ -331,7 +348,7 @@ class FAERSAnalyticsTool(BaseTool):
                 return {"status": "error", "error": "Must provide drug_name"}
 
             # Build query for serious events
-            base_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+            base_query = _drug_clause(drug_name)
 
             # Add specific reaction filter if provided
             if adverse_event:
@@ -514,9 +531,9 @@ class FAERSAnalyticsTool(BaseTool):
 
             # Build base query
             if adverse_event:
-                search_query = f'patient.drug.openfda.generic_name:"{drug_name}"+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
+                search_query = f'{_drug_clause(drug_name)}+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
             else:
-                search_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+                search_query = _drug_clause(drug_name)
 
             # Get counts by receive date (year)
             url = self._with_api_key(f"{FDA_BASE_URL}?search={search_query}&count=receivedate")
@@ -588,7 +605,7 @@ class FAERSAnalyticsTool(BaseTool):
                 return {"status": "error", "error": "Must provide drug_name"}
 
             # Get preferred term (PT) level reactions
-            search_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+            search_query = _drug_clause(drug_name)
             url = self._with_api_key(
                 f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
             )
@@ -647,7 +664,7 @@ class FAERSAnalyticsTool(BaseTool):
         try:
             query_parts = []
             if drug_name:
-                query_parts.append(f'patient.drug.openfda.generic_name:"{drug_name}"')
+                query_parts.append(_drug_clause(drug_name))
             if adverse_event:
                 query_parts.append(
                     f'patient.reaction.reactionmeddrapt:"{adverse_event}"'

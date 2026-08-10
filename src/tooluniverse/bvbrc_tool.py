@@ -584,6 +584,21 @@ class BVBRCTool(BaseTool):
         if not taxon_id:
             return {"status": "error", "error": "taxon_id parameter is required"}
 
+        # /taxonomy/{id} is an NCBI-taxid lookup, so a species name reaches
+        # BV-BRC as a nonexistent path and comes back as a bare "HTTP error:
+        # 404" that says nothing about why. Reject the name here and name the
+        # tool that turns it into an id.
+        if not str(taxon_id).strip().isdigit():
+            return {
+                "status": "error",
+                "error": (
+                    f"taxon_id must be a numeric NCBI taxonomy ID (e.g. 573 for "
+                    f"Klebsiella pneumoniae), but got '{taxon_id}'. To look a "
+                    f"species up by name, call BVBRC_search_taxonomy with "
+                    f"keyword='{taxon_id}' and use the taxon_id it returns."
+                ),
+            }
+
         url = f"{BVBRC_BASE_URL}/taxonomy/{taxon_id}"
         headers = {"Accept": "application/json"}
         response = requests.get(url, headers=headers, timeout=self.timeout)

@@ -18,6 +18,10 @@
           "type": "string",
           "description": "Alias for qualifier: UniProt accession (e.g., 'P69905')."
         },
+        "accession": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P04637') -- the same parameter name the UniProt_*_by_accession tools use."
+        },
         "sequence_checksum": {
           "type": "string",
           "description": "Optional CRC64 checksum of the UniProt sequence."
@@ -280,6 +284,10 @@
         "uniprot_accession": {
           "type": "string",
           "description": "Alias for qualifier. UniProt accession (e.g., 'P04637')."
+        },
+        "accession": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P04637') -- the same parameter name the UniProt_*_by_accession tools use."
         }
       },
       "required": []
@@ -517,6 +525,10 @@
         "uniprot_accession": {
           "type": "string",
           "description": "Alias for qualifier. UniProt accession (e.g., 'P69905')."
+        },
+        "accession": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P04637') -- the same parameter name the UniProt_*_by_accession tools use."
         }
       },
       "required": []

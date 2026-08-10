@@ -278,7 +278,7 @@
     },
     {
         "name": "OpenTargets_get_evidence_by_datasource",
-        "description": "Get target-disease evidence from Open Targets filtered by configurable data sources. Unlike OpenTargets_target_disease_evidence (intogen-only), this tool accepts any datasourceIds. Valid sources include: ot_genetics_portal, eva, eva_somatic, gene_burden, genomics_england, intogen, cancer_gene_census, clinical_precedence, crispr, europepmc, expression_atlas, gene2phenotype, orphanet, uniprot_literature, uniprot_variants, clingen, phewas_catalog, reactome, progeny, slapenrich, sysbio. Note: 'chembl' was renamed to 'clinical_precedence' upstream (confirmed live: 'chembl' now returns 0 rows even for well-documented drug-target-disease evidence). Returns evidence rows with scores, literature references, and source attribution.",
+        "description": "Get target-disease evidence from Open Targets filtered by configurable data sources. Unlike OpenTargets_target_disease_evidence (intogen-only), this tool accepts any datasourceIds. Valid sources include: gwas_credible_sets, eva, eva_somatic, gene_burden, genomics_england, intogen, cancer_gene_census, cancer_biomarkers, clinical_precedence, crispr, europepmc, expression_atlas, gene2phenotype, impc, orphanet, uniprot_literature, uniprot_variants, clingen, phewas_catalog, reactome, progeny, slapenrich, sysbio. Note: two source IDs were renamed upstream and the retired names now match nothing rather than erroring — 'ot_genetics_portal' became 'gwas_credible_sets' (confirmed live: IL23R/Crohn disease returns 0 rows for the old name and 43 for the new one) and 'chembl' became 'clinical_precedence'. This tool remaps both retired names automatically and reports the substitution in metadata.datasource_rename_note. Returns evidence rows with scores, literature references, and source attribution.",
         "label": [
             "Target",
             "Disease",
@@ -311,7 +311,7 @@
                     "items": {
                         "type": "string"
                     },
-                    "description": "List of datasource IDs to filter evidence. Examples: ['clinical_precedence', 'europepmc'], ['eva', 'clinvar'], ['intogen', 'cancer_gene_census']. Omit or pass empty array for all sources."
+                    "description": "List of datasource IDs to filter evidence. Examples: ['gwas_credible_sets', 'europepmc'], ['eva', 'clinical_precedence'], ['intogen', 'cancer_gene_census']. For genetic (GWAS) association evidence use 'gwas_credible_sets' — the retired 'ot_genetics_portal' name is remapped automatically. Omit or pass empty array for all sources."
                 },
                 "size": {
                     "type": "integer",
