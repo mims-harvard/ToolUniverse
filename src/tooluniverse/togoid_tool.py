@@ -22,8 +22,36 @@ from .tool_registry import register_tool
 
 TOGOID_BASE = "https://api.togoid.dbcls.jp"
 
+# Guidance appended to TogoID's own explanation of an unroutable conversion.
+ROUTE_GUIDANCE = (
+    "source and target must be directly related; pick adjacent dataset types "
+    "or convert via an intermediate. TogoID itself supports multi-hop routes, "
+    "but this tool issues a direct 2-step route."
+)
 
-def _togoid_get(path: str, timeout: int, params: Dict[str, Any] | None = None):
+
+def _upstream_message(resp) -> str | None:
+    """Best-effort extraction of TogoID's explanatory {"message": ...} body.
+
+    TogoID reports actionable failures (notably ``no route: a <> b``) as a JSON
+    message served with HTTP 400, so the body is the only useful part of the
+    response. Returns None when the body is missing, non-JSON, or unhelpful.
+    """
+    try:
+        body = resp.json()
+    except (ValueError, requests.exceptions.RequestException):
+        return None
+    if isinstance(body, dict) and body.get("message"):
+        return str(body["message"]).strip()
+    return None
+
+
+def _togoid_get(
+    path: str,
+    timeout: int,
+    params: Dict[str, Any] | None = None,
+    error_hint: str = "",
+):
     """GET a TogoID endpoint and return (payload, None) or (None, error_dict)."""
     try:
         resp = requests.get(
@@ -32,6 +60,15 @@ def _togoid_get(path: str, timeout: int, params: Dict[str, Any] | None = None):
             headers={"Accept": "application/json"},
             timeout=timeout,
         )
+        if resp.status_code >= 400:
+            # Surface the server's own explanation before raise_for_status()
+            # collapses it into an opaque "400 Client Error for url: ..." dump.
+            message = _upstream_message(resp)
+            if message:
+                error = f"TogoID: {message}."
+                if error_hint:
+                    error = f"{error} {error_hint}"
+                return None, {"status": "error", "error": error}
         resp.raise_for_status()
         return resp.json(), None
     except requests.exceptions.Timeout:
@@ -65,7 +102,9 @@ class TogoIDConvertTool(BaseTool):
             }
 
         params = {"ids": ids, "route": f"{source},{target}", "format": "json"}
-        payload, error = _togoid_get("/convert", self.timeout, params=params)
+        payload, error = _togoid_get(
+            "/convert", self.timeout, params=params, error_hint=ROUTE_GUIDANCE
+        )
         if error:
             return error
 
@@ -73,8 +112,7 @@ class TogoIDConvertTool(BaseTool):
         if isinstance(payload, dict) and payload.get("message"):
             return {
                 "status": "error",
-                "error": f"TogoID: {payload['message']}. source and target must be directly "
-                "related; pick adjacent dataset types or convert via an intermediate.",
+                "error": f"TogoID: {payload['message']}. {ROUTE_GUIDANCE}",
             }
 
         results = payload.get("results", []) if isinstance(payload, dict) else []
