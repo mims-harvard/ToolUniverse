@@ -10,7 +10,7 @@ API Documentation: https://www.metabolomicsworkbench.org/tools/mw_rest.php
 """
 
 import requests
-from typing import Dict, Any
+from typing import Any, Dict, Optional
 from urllib.parse import quote
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -270,7 +270,49 @@ class MetabolomicsWorkbenchTool(BaseTool):
         output_item = arguments.get("output_item", "all")
         if not input_value:
             return {"status": "error", "error": "input_value parameter is required"}
-        return self._make_request(f"refmet/{input_item}/{input_value}/{output_item}")
+        result = self._make_request(f"refmet/{input_item}/{input_value}/{output_item}")
+
+        # `refmet/name/` is exact-match only, so standard clinical/HMDB names
+        # ("Octanoylcarnitine") return an empty success even though RefMet knows
+        # the compound under its own shorthand ("CAR 8:0"). RefMet's separate
+        # `refmet/match/` endpoint resolves synonyms -- use it to recover the
+        # canonical name, then re-run the original query with it.
+        if input_item == "name" and not result.get("data"):
+            canonical = self._resolve_refmet_name(input_value)
+            if canonical and canonical.lower() != str(input_value).lower():
+                retried = self._make_request(
+                    f"refmet/{input_item}/{canonical}/{output_item}"
+                )
+                if retried.get("data"):
+                    retried["name_resolution_note"] = (
+                        f"'{input_value}' is not a RefMet name; resolved to the "
+                        f"canonical RefMet name '{canonical}' via RefMet's synonym "
+                        "match endpoint."
+                    )
+                    return retried
+        return result
+
+    def _resolve_refmet_name(self, name: str) -> Optional[str]:
+        """Resolve a metabolite synonym to its canonical RefMet name.
+
+        Returns None when RefMet has no match -- the endpoint signals that with
+        a record whose every field is the literal string "-", not with an error.
+        """
+        try:
+            response = requests.get(
+                f"{MWBENCH_BASE_URL}/refmet/match/{quote(str(name), safe='')}/name/json",
+                timeout=self.timeout,
+            )
+            response.raise_for_status()
+            payload = response.json()
+        except (requests.RequestException, ValueError):
+            return None
+        if isinstance(payload, list):
+            payload = payload[0] if payload else None
+        if not isinstance(payload, dict):
+            return None
+        refmet_name = str(payload.get("refmet_name", "")).strip()
+        return None if refmet_name in ("", "-") else refmet_name
 
     def _search_moverz(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search by m/z value. Requires database as first URL path segment."""

@@ -532,6 +532,18 @@ class OpentargetGeneticsTool(GraphQLTool):
         return super().run(arguments)
 
 
+# Open Targets retires datasource IDs without keeping the old name as a
+# server-side alias -- a stale ID simply matches nothing, so the query comes
+# back as a perfectly successful zero-row result that reads as "no evidence
+# exists". Confirmed live: progressive supranuclear palsy (MONDO_0019037)
+# returns 0 targets for 'ot_genetics_portal' and 23 (MOBP 0.69, MAPT 0.62,
+# STX6 0.57) for 'gwas_credible_sets'.
+_RETIRED_DATASOURCE_IDS = {
+    "ot_genetics_portal": "gwas_credible_sets",
+    "chembl": "clinical_precedence",
+}
+
+
 @register_tool("DiseaseTargetScoreTool")
 class DiseaseTargetScoreTool(GraphQLTool):
     """Tool to extract disease-target association scores from specific data sources"""
@@ -560,7 +572,13 @@ class DiseaseTargetScoreTool(GraphQLTool):
         if not datasource_id:
             return {"status": "error", "error": "datasourceId is required"}
 
+        renamed_from = None
+        if datasource_id in _RETIRED_DATASOURCE_IDS:
+            renamed_from = datasource_id
+            datasource_id = _RETIRED_DATASOURCE_IDS[datasource_id]
+
         results = []
+        seen_datasources = set()
         page_index = 0
         total_fetched = 0
         total_count = None
@@ -610,10 +628,11 @@ class DiseaseTargetScoreTool(GraphQLTool):
             for row in rows:
                 symbol = row["target"]["approvedSymbol"]
                 target_id = row["target"]["id"]
-                score_entry = next(
-                    (ds for ds in row["datasourceScores"] if ds["id"] == datasource_id),
-                    None,
-                )
+                score_entry = None
+                for ds in row["datasourceScores"]:
+                    seen_datasources.add(ds["id"])
+                    if ds["id"] == datasource_id:
+                        score_entry = ds
                 if score_entry:
                     results.append(
                         {
@@ -629,18 +648,51 @@ class DiseaseTargetScoreTool(GraphQLTool):
                 break
             page_index += 1
 
+        # The API returns targets in its own order, so a run cut short by the
+        # time budget used to yield an arbitrary subset in arbitrary order --
+        # "the top expression-atlas targets for this disease" was unobtainable.
+        # Sort by score so the strongest associations are always first.
+        results.sort(key=lambda r: r["score"], reverse=True)
+
         data = {
             "disease_info": disease_info,
             "datasource": datasource_id,
             "total_targets_with_scores": len(results),
             "target_scores": results,
         }
+        if renamed_from:
+            data["datasource_rename_note"] = (
+                f"Retired Open Targets datasource ID '{renamed_from}' remapped to "
+                f"'{datasource_id}'. Use the current name directly to avoid this "
+                "remapping."
+            )
+        if not results and seen_datasources:
+            # Distinguish "this datasource has no scores for this disease" from
+            # "that datasource ID does not exist any more" -- otherwise both look
+            # like an empty success. The available IDs cost nothing: they were
+            # already present in the rows just scanned.
+            data["available_datasources"] = sorted(seen_datasources)
+            data["note"] = (
+                f"No target has a '{datasource_id}' score for this disease among the "
+                f"{total_fetched} associated targets scanned. Datasource IDs actually "
+                "present for this disease are listed in available_datasources."
+            )
         if truncated:
             data["truncated"] = True
-            data["note"] = (
+            truncation_note = (
                 f"Stopped after {_DISEASE_TARGET_SCORE_TIME_BUDGET_S:.0f}s; "
                 f"scanned {total_fetched} of {total_count} associated targets. "
+                "Scores are sorted strongest-first within what was scanned. "
                 "Increase pageSize to scan more targets per request, or query a "
                 "more specific disease."
+            )
+            # Don't drop the "which datasources actually exist" guidance when a
+            # zero-result run also hit the time budget -- that combination is
+            # exactly when the caller most needs to know the ID was wrong.
+            existing_note = data.get("note")
+            data["note"] = (
+                f"{existing_note} {truncation_note}"
+                if existing_note
+                else truncation_note
             )
         return {"status": "success", "data": data}
