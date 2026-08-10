@@ -17,12 +17,62 @@ This tool queries MyChem.info and extracts DrugCentral-specific fields:
 No authentication required.
 """
 
+import math
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 MYCHEM_BASE = "https://mychem.info/v1"
+
+# DrugCentral stores bioactivity potency in "act_value" on the p-scale --
+# -log10 of the molar potency (the pChEMBL convention) -- NOT as a
+# concentration in nM or uM. Reporting that number next to an "IC50" label
+# with no units reads as "IC50 = 4.01 (nM?)" when the underlying IC50 is
+# 10^-4.01 M = ~96.8 uM, i.e. a ~5-order-of-magnitude misstatement
+# (verified against ChEMBL: praziquantel/ABCB11 IC50 96800 nM, pchembl 4.01).
+# These constants/helpers let the tool disclose the scale explicitly without
+# changing the value it has always returned.
+P_ACTIVITY_SCALE = (
+    "pActivity: -log10 of the molar potency, not a concentration. "
+    "Higher = more potent. Convert with nM = 10**(9 - value); "
+    "e.g. 4.01 -> ~96800 nM (96.8 uM), 9.0 -> 1 nM."
+)
+
+
+def _p_activity_to_nanomolar(act_value: Any, sig_figs: int = 4) -> "float | None":
+    """Convert a -log10(molar) p-scale potency to nanomolar.
+
+    Returns None when ``act_value`` is missing or does not parse as a finite
+    float, so callers never see a fabricated concentration.
+    """
+    try:
+        p_value = float(act_value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(p_value):
+        return None
+    try:
+        nanomolar = 10.0 ** (9.0 - p_value)
+    except OverflowError:
+        return None
+    if not math.isfinite(nanomolar) or nanomolar <= 0:
+        return None
+    # The p-value upstream carries ~2 decimals, so anything past a few
+    # significant figures in the converted concentration is false precision.
+    decimals = -math.floor(math.log10(nanomolar)) + (sig_figs - 1)
+    return round(nanomolar, decimals)
+
+
+def _p_activity_type(act_type: Any) -> "str | None":
+    """Name the quantity actually reported, e.g. "IC50" -> "pIC50"."""
+    if not isinstance(act_type, str) or not act_type.strip():
+        return None
+    act_type = act_type.strip()
+    # Guard against upstream ever switching to already-p-prefixed labels.
+    if act_type[0] in "pP" and act_type[1:2].isupper():
+        return act_type
+    return f"p{act_type}"
 
 # Fields to retrieve from MyChem for DrugCentral data
 DC_ALL_FIELDS = "drugcentral"
@@ -324,14 +374,23 @@ class DrugCentralTool(BaseTool):
             gene_symbols = [
                 u.get("gene_symbol") for u in uniprot_info if u.get("gene_symbol")
             ]
+            act_type = ba.get("act_type")
+            act_value = ba.get("act_value")
             targets.append(
                 {
                     "target_name": ba.get("target_name"),
                     "target_class": ba.get("target_class"),
                     "organism": ba.get("organism"),
                     "action_type": ba.get("action_type"),
-                    "activity_type": ba.get("act_type"),
-                    "activity_value": ba.get("act_value"),
+                    # "activity_type"/"activity_value" are kept exactly as
+                    # upstream reports them for backward compatibility; the
+                    # three keys below disclose that the value is on the
+                    # p-scale (-log10 M) rather than a nM/uM concentration.
+                    "activity_type": act_type,
+                    "activity_value": act_value,
+                    "activity_type_reported": _p_activity_type(act_type),
+                    "activity_value_scale": P_ACTIVITY_SCALE,
+                    "activity_value_nM": _p_activity_to_nanomolar(act_value),
                     "is_moa": ba.get("moa") == "1",
                     "source": ba.get("act_source"),
                     "uniprot_ids": uniprot_ids,
