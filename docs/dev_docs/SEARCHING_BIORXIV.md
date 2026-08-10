@@ -63,7 +63,7 @@ result = tu.run({"name": "web_search", "arguments": {
 for item in (result or {}).get('data', []):
    # Parse DOI from URL or text
    # Then use BioRxiv_get_preprint
-   process_preprint_result(item)
+   pass
 ```
 
 ### Option 3: Use Semantic Scholar

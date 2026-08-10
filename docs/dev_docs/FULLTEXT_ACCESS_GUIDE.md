@@ -339,7 +339,7 @@ for r in results:
 ```python
 # For Semantic Scholar: verify OA status
 if paper.get("open_access") and paper.get("open_access_pdf_url"):
-   process_open_access_pdf(paper["open_access_pdf_url"])
+   pass  # Process paper["open_access_pdf_url"] with your PDF pipeline.
 
 # For ArXiv: ensure correct ID format
 arxiv_id = "2301.12345"  # Not "arXiv:2301.12345v1"

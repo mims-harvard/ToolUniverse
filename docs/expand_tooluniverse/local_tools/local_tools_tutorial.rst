@@ -438,6 +438,7 @@ Naming Conflicts (Failed to initialize tool for validation)
 **Cause**: Wrapper function name matches the class name
 
 **Solution**: Use different names
+
 .. code-block:: python
 
    # Wrapper function must use snake_case
