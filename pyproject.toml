@@ -41,13 +41,13 @@ dependencies = [
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
     # markitdown[all] (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
-    # azure-ai-documentintelligence). The [all] marker is deliberate: the
-    # convert_to_markdown tool takes an arbitrary http/https/file/data URI with no
-    # format allowlist, so every converter dropped here becomes a silent runtime
-    # failure for that input type. markitdown is also imported unconditionally at
-    # module scope by unified_guideline_tools.py, so it cannot move to an extra
-    # without guarding that import. Narrow only alongside those two changes.
-    "markitdown[all]>=0.1.0",
+    # azure-ai-documentintelligence). The broad converter set is deliberate: the
+    # convert_to_markdown tool accepts arbitrary supported resources. Upstream
+    # youtube-transcript-api currently declares Python <3.14, so Python 3.14+
+    # receives every MarkItDown converter except YouTube transcription. Keeping
+    # that one incompatible converter must not make the whole SDK inconsistent.
+    "markitdown[all]>=0.1.0; python_version < '3.14'",
+    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx]>=0.1.0; python_version >= '3.14'",
     "psutil>=5.9.0",
     "ddgs>=9.0.0",
     "pip>=25.3",

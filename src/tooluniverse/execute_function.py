@@ -76,6 +76,27 @@ LAZY_LOADING_ENABLED = (
     os.getenv("TOOLUNIVERSE_LAZY_LOADING", "true").lower() in _TRUTHY_VALUES
 )
 
+
+def _concise_exception_message(exc: BaseException) -> str:
+    """Return the most useful leaf message without dumping an exception group."""
+    seen = set()
+    current = exc
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
+        children = getattr(current, "exceptions", None)
+        if children:
+            current = children[0]
+            continue
+        nested = current.__cause__ or current.__context__
+        if nested is not None:
+            current = nested
+            continue
+        message = str(current).strip()
+        return message or type(current).__name__
+    message = str(exc).strip()
+    return message or type(exc).__name__
+
+
 if LAZY_LOADING_ENABLED:
     # Use lazy auto-discovery by default (much faster)
     debug("Starting lazy tool auto-discovery...")
@@ -905,6 +926,7 @@ class ToolUniverse:
         exclude_tool_types=None,
         python_files=None,
         quiet=True,
+        _apply_profile_defaults=True,
     ):
         """
         Load tools into the instance, with optional filtering.
@@ -934,6 +956,11 @@ class ToolUniverse:
                 ``.env.template`` generation. Default ``True``. Pass ``False``
                 to see which keys are missing.
 
+        When a Profile is active, omitted filter arguments inherit the Profile's
+        ``tools`` settings.  This keeps a plain ``load_tools()`` reload consistent
+        with the Profile that initialized the instance.  Explicit arguments still
+        override the corresponding Profile defaults.
+
         Examples:
             # Load everything (default)
             tu.load_tools()
@@ -950,6 +977,30 @@ class ToolUniverse:
                 exclude_tools=["EuropePMC_slow_tool"],
             )
         """
+        # A Profile describes the tool universe for the lifetime of this instance,
+        # not only for the first load.  Re-applying its omitted filter arguments
+        # prevents a later, otherwise ordinary ``load_tools()`` call from silently
+        # restoring tools that the Profile excluded.  ``load_profile()`` disables
+        # this inheritance for its own load so a newly selected Profile cannot
+        # inherit filters from the previous one.
+        if _apply_profile_defaults:
+            profile_tools = (getattr(self, "_current_profile_config", {}) or {}).get(
+                "tools", {}
+            )
+            if categories is None and tool_type is None:
+                profile_categories = profile_tools.get("categories")
+                categories = profile_categories or None
+            if exclude_tools is None:
+                exclude_tools = profile_tools.get("exclude_tools", [])
+            if exclude_categories is None:
+                exclude_categories = profile_tools.get("exclude_categories", [])
+            if include_tools is None and tools_file is None:
+                include_tools = profile_tools.get("include_tools", [])
+            if include_tool_types is None:
+                include_tool_types = profile_tools.get("include_tool_types", [])
+            if exclude_tool_types is None:
+                exclude_tool_types = profile_tools.get("exclude_tool_types", [])
+
         # --- backward-compat: tool_type → categories ---
         if tool_type is not None:
             warnings.warn(
@@ -1736,21 +1787,6 @@ class ToolUniverse:
                                     f"  - Tools: {', '.join(result['registered_tools'])}"
                                 )
 
-                            # Show available tools in callable_functions
-                            expert_tools = [
-                                name
-                                for name in self.callable_functions.keys()
-                                if name.startswith("expert_")
-                            ]
-                            if expert_tools:
-                                info(
-                                    f"  ✅ Expert tools now available: {', '.join(expert_tools)}"
-                                )
-                            else:
-                                info(
-                                    "  ⚠️  No expert tools found in callable_functions after registration"
-                                )
-
                         finally:
                             self.logger.debug("Closing async loop...")
                             # Clean up any remaining tasks
@@ -1769,12 +1805,12 @@ class ToolUniverse:
                             self.logger.debug("Async loop closed")
 
             except Exception as e:
-                self.logger.debug(f"Exception in auto loader processing: {e}")
-                import traceback
-
-                traceback.print_exc()
-                self.logger.debug(
-                    f"Failed to process MCP Auto Loader '{loader_config['name']}': {str(e)}"
+                self.logger.debug("MCP auto-loader processing failed", exc_info=True)
+                detail = _concise_exception_message(e)
+                warning(
+                    f"Remote MCP server '{loader_config['name']}' is unavailable: "
+                    f"{detail}. The connection was kept; start the server and call "
+                    "load_tools() again."
                 )
 
         # Update tool count after MCP registration
@@ -4732,6 +4768,15 @@ class ToolUniverse:
             "exclude_tool_types", []
         )
 
+        # Loading a Profile selects a complete tool universe.  Clear the previous
+        # selection before loading Profile sources so ``include_tools`` merge mode
+        # cannot accidentally retain tools selected by an earlier Profile.
+        self.all_tools = []
+        self.all_tool_dict = {}
+        self.tool_category_dicts = {}
+        self._excluded_api_key_tools = {}
+        self.callable_functions = {}
+
         # Load tools from external sources declared in the Profile
         sources = config.get("sources", [])
         if sources:
@@ -4746,6 +4791,7 @@ class ToolUniverse:
             tools_file=tools_file_param,  # KEY FIX: Pass tools_file
             include_tool_types=include_tool_types,
             exclude_tool_types=exclude_tool_types,
+            _apply_profile_defaults=False,
         )
 
         # Store the configuration for reference

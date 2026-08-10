@@ -672,7 +672,10 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                     "configs": self.generate_proxy_tool_configs(),
                 }
         except Exception as e:
-            logger.error(f"❌ MCPAutoLoaderTool auto-load failed: {str(e)}")
+            # The engine emits one concise, actionable availability message.
+            # Keep the full exception chain at debug level for diagnostics instead
+            # of printing a second, vague failure to ordinary SDK users.
+            logger.debug("MCPAutoLoaderTool auto-load failed", exc_info=True)
             raise Exception(f"Auto-load failed: {str(e)}")
 
     def run(self, arguments):
