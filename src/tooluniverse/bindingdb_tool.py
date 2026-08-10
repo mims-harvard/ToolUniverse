@@ -4,12 +4,25 @@ BindingDB Tool - Query protein-ligand binding affinity data.
 BindingDB contains 3.2M data points for 1.4M compounds and 11.4K targets.
 Provides binding affinities (Ki, IC50, Kd) for drug discovery research.
 
-NOTE: BindingDB's singular-form REST endpoints (``getLigandsByUniprot``,
-``getLigandsByPDB``, ``getTargetByCompound``) hang indefinitely as of
-2026. The plural-form siblings (``getLigandsByUniprots``,
-``getLigandsByPDBs``) respond normally (~100 ms) and accept either a
-single id or a semicolon-delimited list — so we route every operation
-through the plural endpoint.
+NOTE: BindingDB's singular-form ``getLigandsByUniprot`` endpoint hangs
+indefinitely (a 60 s request times out). Its plural sibling
+``getLigandsByUniprots`` responds normally (~100 ms) and accepts either a
+single id or a comma-delimited list, so we route both the single-id and
+multi-id operations through the plural endpoint.
+
+Parameter names follow BindingDB's published REST spec
+(https://bindingdb.org/rwd/bind/BindingDBRESTfulAPI.jsp), which documents
+the *singular* query-parameter names even on the plural endpoints:
+
+    getLigandsByUniprots?uniprot={UNIPROTs}&cutoff={affinity_cutoff}
+    getLigandsByPDBs?pdb={PDBs}&cutoff={affinity_cutoff}&identity={identity}
+
+Multiple ids are joined with a comma; the spec states UniProt identifiers are
+"separated by comma". Sending the plural spellings (``uniprots=``/``pdbs=``)
+does not error usefully -- ``uniprots=`` returns HTTP 200 with an empty
+affinities list and ``pdbs=`` returns HTTP 500 -- so the names below are
+load-bearing and are pinned by tests in
+``tests/unit/test_bindingdb_cutoff_param_names.py``.
 """
 
 import re
@@ -78,12 +91,74 @@ def _envelope_response_key(payload: Dict[str, Any]) -> str:
     return ""
 
 
+_BDB_PREFIX = "bdb."
+
+
+def _strip_bdb_prefix(obj: Any) -> Any:
+    """Drop BindingDB's ``bdb.`` key prefix.
+
+    ``getTargetByCompound`` returns its payload with every key namespaced --
+    ``bdb.affinities``, ``bdb.monomerid``, ``bdb.target``, ``bdb.species`` --
+    while the uniprot/pdb endpoints return the same fields unprefixed. Callers
+    should not have to care which endpoint produced a record, so normalise to
+    the unprefixed spelling. Note this keeps fields the other endpoints do not
+    supply (notably ``species``, which is scientifically load-bearing: hits are
+    frequently non-human orthologs).
+    """
+    if isinstance(obj, dict):
+        return {
+            (
+                k[len(_BDB_PREFIX) :]
+                if isinstance(k, str) and k.startswith(_BDB_PREFIX)
+                else k
+            ): _strip_bdb_prefix(v)
+            for k, v in obj.items()
+        }
+    if isinstance(obj, list):
+        return [_strip_bdb_prefix(v) for v in obj]
+    return obj
+
+
 def _affinities(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Pull the affinities list out of any BindingDB *Response envelope."""
     key = _envelope_response_key(payload)
     body = payload.get(key, {}) if key else payload
+    body = _strip_bdb_prefix(body)
+    if not isinstance(body, dict):
+        return []
     aff = body.get("affinities") or body.get("ligands") or []
     return aff if isinstance(aff, list) else [aff]
+
+
+_EMPTY_NOTE = (
+    "BindingDB returned no matching records for this query. Per BindingDB's "
+    "REST spec an unmatched identifier yields an empty result, so this is a "
+    "genuine no-data answer rather than a rejected request; widen the affinity "
+    "cutoff or check the identifier if records were expected."
+)
+
+
+def _split_ids(raw: Any) -> List[str]:
+    """Normalise a caller-supplied id list to a list of bare ids.
+
+    Accepts a list or a delimited string. Semicolons are accepted on input
+    because BindingDB's own docs use ``;`` for the singular endpoint and older
+    callers copied that spelling, but the wire format is always comma-joined --
+    a semicolon-joined list is accepted upstream with HTTP 200 and matches
+    nothing.
+    """
+    if isinstance(raw, str):
+        raw = re.split(r"[,;]", raw)
+    if not isinstance(raw, list):
+        return []
+    return [str(s).strip() for s in raw if str(s).strip()]
+
+
+def _with_empty_note(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Mark a successful-but-empty result so it reads as 'no data', not 'no query'."""
+    if not data.get("affinities"):
+        data["note"] = _EMPTY_NOTE
+    return data
 
 
 @register_tool("BindingDBTool")
@@ -121,12 +196,10 @@ class BindingDBTool(BaseTool):
         """Singular and plural callers funnel into the same plural endpoint —
         the singular ``getLigandsByUniprot`` hangs upstream."""
         if plural:
-            ids = arguments.get("uniprots") or arguments.get("uniprot_ids") or []
-            if isinstance(ids, str):
-                ids = [s.strip() for s in ids.split(",") if s.strip()]
+            ids = _split_ids(arguments.get("uniprots") or arguments.get("uniprot_ids"))
         else:
             single = arguments.get("uniprot") or arguments.get("uniprot_id") or ""
-            ids = [single] if single else []
+            ids = [single.strip()] if single.strip() else []
         if not ids:
             return {"status": "error", "error": "Provide uniprot accession(s)."}
         # Schema declares this param as `affinity_cutoff`; the legacy `cutoff`
@@ -135,10 +208,14 @@ class BindingDBTool(BaseTool):
         # ignored a user-supplied `affinity_cutoff` and always used the 10000 nM
         # default -- confirmed live: passing affinity_cutoff=1 echoed cutoff=10000.
         cutoff = int(arguments.get("affinity_cutoff", arguments.get("cutoff", 10000)))
+        # Parameter is `uniprot` (singular) even on the plural endpoint, and ids
+        # are comma-joined -- both per BindingDB's REST spec. The plural spelling
+        # `uniprots=` is silently ignored upstream: HTTP 200 with zero affinities
+        # for a target that has thousands.
         result = _http_get(
             "getLigandsByUniprots",
             {
-                "uniprots": ";".join(ids),
+                "uniprot": ",".join(ids),
                 "cutoff": cutoff,
                 "response": "application/json",
             },
@@ -148,49 +225,54 @@ class BindingDBTool(BaseTool):
             return {"status": "error", "error": result["_err"]}
         return {
             "status": "success",
-            "data": {
-                "uniprots": ids,
-                "cutoff": cutoff,
-                "affinities": _affinities(result),
-            },
+            "data": _with_empty_note(
+                {
+                    "uniprots": ids,
+                    "cutoff": cutoff,
+                    "affinities": _affinities(result),
+                }
+            ),
             "metadata": {"source": "BindingDB REST"},
         }
 
     def _get_ligands_by_pdbs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        ids = arguments.get("pdbs") or arguments.get("pdb_ids") or []
-        if isinstance(ids, str):
-            ids = [s.strip() for s in ids.split(",") if s.strip()]
+        ids = _split_ids(arguments.get("pdbs") or arguments.get("pdb_ids"))
         if not ids:
             return {"status": "error", "error": "Provide pdb id(s)."}
         # Schema declares this param as `affinity_cutoff` (see uniprot handler).
         cutoff = int(arguments.get("affinity_cutoff", arguments.get("cutoff", 10000)))
+        # Spec: `identity` is a sequence-identity cutoff in percent. The schema
+        # already declares it as `sequence_identity` with a default of 100, which
+        # matches what the endpoint does when the parameter is omitted, so wire
+        # the declared knob through instead of dropping it.
+        identity = int(
+            arguments.get("sequence_identity", arguments.get("identity", 100))
+        )
+        # Parameter is `pdb` (singular) even on the plural endpoint, and ids are
+        # comma-joined -- both per BindingDB's REST spec. The plural spelling
+        # `pdbs=` makes the endpoint answer HTTP 500.
         result = _http_get(
             "getLigandsByPDBs",
-            {"pdbs": ";".join(ids), "cutoff": cutoff, "response": "application/json"},
+            {
+                "pdb": ",".join(ids),
+                "cutoff": cutoff,
+                "identity": identity,
+                "response": "application/json",
+            },
             timeout=self.timeout,
         )
         if "_err" in result:
-            error = result["_err"]
-            # getLigandsByPDBs is currently answering 500 for every input, valid
-            # ids included (confirmed for 6OIM and 2RH1, with and without the
-            # cutoff parameter; the singular getLigandsByPDB is a 404 while
-            # getLigandsByUniprots answers 200). A bare relay of the upstream
-            # status leaves the caller unable to tell "this structure has no
-            # binding data" from "this whole lookup route is down", so name the
-            # route that does work.
-            if "HTTP 5" in error:
-                error += (
-                    ". BindingDB's PDB lookup endpoint is failing for all "
-                    "structures, not just this one. Map the PDB entry to a "
-                    "UniProt accession with PDBeSIFTS_get_pdb_to_uniprot and "
-                    "query BindingDB_get_ligands_by_uniprot instead, or use "
-                    "get_binding_affinity_by_pdb_id for RCSB's own curated "
-                    "affinity data."
-                )
-            return {"status": "error", "error": error}
+            return {"status": "error", "error": result["_err"]}
         return {
             "status": "success",
-            "data": {"pdbs": ids, "cutoff": cutoff, "affinities": _affinities(result)},
+            "data": _with_empty_note(
+                {
+                    "pdbs": ids,
+                    "cutoff": cutoff,
+                    "sequence_identity": identity,
+                    "affinities": _affinities(result),
+                }
+            ),
             "metadata": {"source": "BindingDB REST"},
         }
 
@@ -205,6 +287,12 @@ class BindingDBTool(BaseTool):
         similarity = float(
             arguments.get("similarity_cutoff", arguments.get("similarity", 0.85))
         )
+        # The spec names this endpoint's threshold `cutoff` rather than
+        # `similarity`, but the endpoint ignores it under either spelling and at
+        # every value tested (0.4 through 1.0 all return the same hits, as does
+        # omitting it entirely), so the name here is not load-bearing and is left
+        # as-is. Unlike the uniprot/pdb parameters below, renaming it would
+        # change no observable behaviour.
         result = _http_get(
             "getTargetByCompound",
             {
@@ -218,11 +306,13 @@ class BindingDBTool(BaseTool):
             return {"status": "error", "error": result["_err"]}
         return {
             "status": "success",
-            "data": {
-                "smiles": smiles,
-                "similarity": similarity,
-                "affinities": _affinities(result),
-            },
+            "data": _with_empty_note(
+                {
+                    "smiles": smiles,
+                    "similarity": similarity,
+                    "affinities": _affinities(result),
+                }
+            ),
             "metadata": {"source": "BindingDB REST"},
         }
 

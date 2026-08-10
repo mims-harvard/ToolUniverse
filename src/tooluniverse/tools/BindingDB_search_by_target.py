@@ -1,7 +1,7 @@
 """
 BindingDB_search_by_target
 
-Search BindingDB for binding affinity data by target gene name or protein name. NOTE: BindingDB R...
+Search BindingDB for binding affinity data by target. Requires a UniProt accession (e.g. 'P00533'...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def BindingDB_search_by_target(
     validate: bool = True,
 ) -> Any:
     """
-    Search BindingDB for binding affinity data by target gene name or protein name. NOTE: BindingDB R...
+    Search BindingDB for binding affinity data by target. Requires a UniProt accession (e.g. 'P00533'...
 
     Parameters
     ----------

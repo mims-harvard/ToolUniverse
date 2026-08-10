@@ -2,7 +2,7 @@
   {
     "type": "BindingDBTool",
     "name": "BindingDB_search_by_target",
-    "description": "Search BindingDB for binding affinity data by target gene name or protein name. NOTE: BindingDB REST API is currently unavailable (requests time out). Use ChEMBL_get_target_activities or PubChem BioAssay as alternatives. To query by UniProt ID, use BindingDB_get_ligands_by_uniprot instead.",
+    "description": "Search BindingDB for binding affinity data by target. Requires a UniProt accession (e.g. 'P00533'); free-text gene or protein names are not supported by BindingDB's REST API — use ChEMBL_search_target or PubChem BioAssay for name-based lookup. To query by UniProt ID directly, BindingDB_get_ligands_by_uniprot is equivalent.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -291,7 +291,7 @@
     },
     "test_examples": [
       {
-        "uniprot_ids": "P00533;P15056"
+        "uniprot_ids": "P00533,P15056"
       }
     ]
   },
