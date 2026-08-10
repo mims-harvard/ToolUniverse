@@ -23,6 +23,16 @@ trial with no vedolizumab intervention, and sponsor="Takeda" surfaced
 trials sponsored by Neurocrine Biosciences and Shire (confirmed live).
 Values are now wrapped in Essie's AREA[InterventionName] /
 AREA[LeadSponsorName] operators (still phrase-quoted when multi-word).
+
+Fix-R23-1: restricting to AREA[InterventionName] alone overcorrected --
+brand names are registered in the separate InterventionOtherName synonym
+field, so 'Eliquis' + atrial fibrillation matched 5 trials against 43 once
+other-names are searched too, and 'Opdualag' + melanoma 2 against 19. An
+intervention value is now matched against both name fields; the noise
+Fix-R13B-1 removed lived in description/arm-label text, which neither name
+field contains, so precision is retained (vedolizumab 134 -> 142, against
+215 unrestricted). Sponsor still restricts to the single LeadSponsorName
+field.
 """
 
 import json
@@ -75,23 +85,39 @@ def test_already_quoted_value_is_not_double_quoted():
     assert _phrase_quote_if_plain('"cervical cancer"') == '"cervical cancer"'
 
 
+_INTR_AREAS = ("InterventionName", "InterventionOtherName")
+
+
 def test_area_restricted_value_is_not_double_wrapped():
     assert (
-        _restrict_to_area("AREA[InterventionName]nivolumab", "InterventionName")
+        _restrict_to_area("AREA[InterventionName]nivolumab", _INTR_AREAS)
         == "AREA[InterventionName]nivolumab"
     )
 
 
-def test_single_word_value_is_area_restricted_without_quotes():
-    assert _restrict_to_area("nivolumab", "InterventionName") == (
-        "AREA[InterventionName]nivolumab"
+def test_single_area_value_is_restricted_without_quotes():
+    assert _restrict_to_area("Pfizer", ("LeadSponsorName",)) == (
+        "AREA[LeadSponsorName]Pfizer"
+    )
+
+
+def test_single_word_value_searches_both_intervention_name_fields():
+    assert _restrict_to_area("nivolumab", _INTR_AREAS) == (
+        "(AREA[InterventionName]nivolumab OR AREA[InterventionOtherName]nivolumab)"
     )
 
 
 def test_multiword_value_is_area_restricted_and_phrase_quoted():
-    assert _restrict_to_area("immunotherapy radiotherapy", "InterventionName") == (
-        'AREA[InterventionName]"immunotherapy radiotherapy"'
+    assert _restrict_to_area("immunotherapy radiotherapy", _INTR_AREAS) == (
+        '(AREA[InterventionName]"immunotherapy radiotherapy" OR '
+        'AREA[InterventionOtherName]"immunotherapy radiotherapy")'
     )
+
+
+def test_brand_name_reaches_synonym_field():
+    """Brand names live in InterventionOtherName; searching only
+    InterventionName is what made 'Eliquis' return almost nothing."""
+    assert "InterventionOtherName" in _restrict_to_area("Eliquis", _INTR_AREAS)
 
 
 def test_condition_and_intervention_are_quoted_in_live_request():
@@ -107,7 +133,10 @@ def test_condition_and_intervention_are_quoted_in_live_request():
 
     params = mock_get.call_args.kwargs["params"]
     assert params["query.cond"] == '"cervical cancer"'
-    assert params["query.intr"] == 'AREA[InterventionName]"immunotherapy radiotherapy"'
+    assert params["query.intr"] == (
+        '(AREA[InterventionName]"immunotherapy radiotherapy" OR '
+        'AREA[InterventionOtherName]"immunotherapy radiotherapy")'
+    )
 
 
 def test_sponsor_alias_maps_to_query_spons():

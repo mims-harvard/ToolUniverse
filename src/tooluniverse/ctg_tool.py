@@ -24,7 +24,7 @@ def _phrase_quote_if_plain(value: str) -> str:
     return value
 
 
-def _restrict_to_area(value: str, area: str) -> str:
+def _restrict_to_area(value: str, areas: tuple) -> str:
     """Fix-R13B-1: CTG API v2's Essie search engine treats a bare
     query.intr/query.spons value as a match against the whole study
     record (brief summaries, arm descriptions, eligibility text, etc.)
@@ -40,10 +40,77 @@ def _restrict_to_area(value: str, area: str) -> str:
     phrase-quoting multi-word values, same as _phrase_quote_if_plain)
     fixes this -- but only for a plain value with no existing Essie
     syntax, since advanced users may already supply their own
-    AREA/boolean operators."""
+    AREA/boolean operators.
+
+    Fix-R23-1: restricting an intervention query to AREA[InterventionName]
+    *alone* went too far the other way. Registrants record brand names in
+    the separate InterventionOtherName (synonym) field, so a brand-name
+    query all but vanished while its generic returned a full set --
+    confirmed live: 'Eliquis' + atrial fibrillation matched 5 trials on
+    InterventionName vs. 43 once other-names are included, and 'Opdualag'
+    + melanoma went 2 -> 19. Searching both name fields recovers those
+    without reopening R13B-1's hole, since the noise it removed came from
+    description/arm-label text that neither name field contains (checked
+    against the unrestricted counts: vedolizumab 134 -> 142 vs. 215
+    unrestricted, apixaban 96 -> 108 vs. 189)."""
     if _ESSIE_OPERATOR_RE.search(value):
         return value
-    return f"AREA[{area}]{_phrase_quote_if_plain(value)}"
+    quoted = _phrase_quote_if_plain(value)
+    clauses = [f"AREA[{area}]{quoted}" for area in areas]
+    if len(clauses) == 1:
+        return clauses[0]
+    return "(" + " OR ".join(clauses) + ")"
+
+
+# Fix-R23-2: CTG API v2 rejects anything but its exact upper-snake enum
+# spellings, and it does so with a bare HTTP 400 whose remediation reads
+# "Retry the request / Check service status / Report issue if persistent" --
+# advice that is actively wrong when the caller simply typed
+# filter_status='recruiting' or filter_phase='Phase 3'. Both are the natural
+# spellings (and 'Phase 3' is how ClinicalTrials.gov renders it on screen), so
+# normalize them here and reject anything genuinely unknown at input with the
+# legal values named, rather than letting a user-input error come back dressed
+# as a service outage.
+_CTG_STATUS_VALUES = (
+    "ACTIVE_NOT_RECRUITING",
+    "APPROVED_FOR_MARKETING",
+    "AVAILABLE",
+    "COMPLETED",
+    "ENROLLING_BY_INVITATION",
+    "NO_LONGER_AVAILABLE",
+    "NOT_YET_RECRUITING",
+    "RECRUITING",
+    "SUSPENDED",
+    "TEMPORARILY_NOT_AVAILABLE",
+    "TERMINATED",
+    "UNKNOWN",
+    "WITHDRAWN",
+    "WITHHELD",
+)
+
+_CTG_PHASE_VALUES = (
+    "EARLY_PHASE1",
+    "NA",
+    "PHASE1",
+    "PHASE2",
+    "PHASE3",
+    "PHASE4",
+)
+
+
+def _canonicalize_enum(value: str, allowed: tuple):
+    """Map a loosely-spelled enum value onto its exact CTG spelling.
+
+    Comparison ignores case and every non-alphanumeric separator, so
+    'recruiting', 'Active, not recruiting' and 'Phase 3' all resolve.
+    Returns None when the value matches nothing, so the caller can raise a
+    validation error naming the legal set.
+    """
+
+    def _key(v):
+        return "".join(ch for ch in str(v).upper() if ch.isalnum())
+
+    return {_key(a): a for a in allowed}.get(_key(value))
 
 
 @register_tool("ClinicalTrialsTool")
@@ -185,8 +252,10 @@ class ClinicalTrialsTool(RESTfulTool):
     # Essie fields that get restricted via AREA[<name>] rather than a plain
     # value match (see _restrict_to_area). Keyed by the mapped API param name.
     _AREA_RESTRICTED_FIELDS = {
-        "query.intr": "InterventionName",
-        "query.spons": "LeadSponsorName",
+        # InterventionOtherName holds registrant-supplied synonyms, which is
+        # where brand names live (see Fix-R23-1 in _restrict_to_area).
+        "query.intr": ("InterventionName", "InterventionOtherName"),
+        "query.spons": ("LeadSponsorName",),
     }
 
     def _run_search(self, arguments):
@@ -224,7 +293,24 @@ class ClinicalTrialsTool(RESTfulTool):
                 continue
             if key == "filter_phase":
                 # CTG API v2 uses filter.advanced for phase, not filter.phase
-                phases = [p.strip() for p in value.split(",")]
+                phases = []
+                for raw in str(value).split(","):
+                    raw = raw.strip()
+                    if not raw:
+                        continue
+                    canonical = _canonicalize_enum(raw, _CTG_PHASE_VALUES)
+                    if canonical is None:
+                        return {
+                            "status": "error",
+                            "error": (
+                                f"Invalid filter_phase value '{raw}'. "
+                                f"Valid values are: {', '.join(_CTG_PHASE_VALUES)}. "
+                                "Comma-separate to combine (e.g. 'PHASE2,PHASE3')."
+                            ),
+                        }
+                    phases.append(canonical)
+                if not phases:
+                    continue
                 phase_clause = " OR ".join(f"AREA[Phase]{p}" for p in phases)
                 if len(phases) > 1:
                     phase_clause = f"({phase_clause})"
@@ -240,7 +326,30 @@ class ClinicalTrialsTool(RESTfulTool):
                 advanced_clauses.append(study_type_clause)
             elif key in _SEARCH_PARAM_MAP:
                 mapped_key = _SEARCH_PARAM_MAP[key]
-                if mapped_key == "query.cond" and isinstance(value, str):
+                if mapped_key == "filter.overallStatus":
+                    statuses = []
+                    raw_values = (
+                        value if isinstance(value, list) else str(value).split(",")
+                    )
+                    for raw in raw_values:
+                        raw = str(raw).strip()
+                        if not raw:
+                            continue
+                        canonical = _canonicalize_enum(raw, _CTG_STATUS_VALUES)
+                        if canonical is None:
+                            return {
+                                "status": "error",
+                                "error": (
+                                    f"Invalid status value '{raw}'. Valid values "
+                                    f"are: {', '.join(_CTG_STATUS_VALUES)}. "
+                                    "Comma-separate to combine."
+                                ),
+                            }
+                        statuses.append(canonical)
+                    if not statuses:
+                        continue
+                    value = ",".join(statuses)
+                elif mapped_key == "query.cond" and isinstance(value, str):
                     value = _phrase_quote_if_plain(value)
                 elif mapped_key in self._AREA_RESTRICTED_FIELDS and isinstance(
                     value, str
@@ -260,6 +369,20 @@ class ClinicalTrialsTool(RESTfulTool):
         studies = []
         for s in data.get("studies", []):
             proto = s.get("protocolSection", {})
+            # Fix-R23-3: the intervention list is capped at 5 for brevity, but
+            # it used to be sliced with no count and no flag -- so a study that
+            # genuinely matched the queried drug could come back listing five
+            # *other* interventions and read as a false positive (e.g.
+            # NCT03337698 is a real tiragolumab trial with 18 interventions,
+            # none of which survived the slice). Report the true count so a
+            # short list can be told apart from a truncated one.
+            all_interventions = [
+                iv.get("name")
+                for iv in proto.get("armsInterventionsModule", {}).get(
+                    "interventions", []
+                )
+                if iv.get("name")
+            ]
             studies.append(
                 {
                     "nct_id": proto.get("identificationModule", {}).get("nctId"),
@@ -275,13 +398,9 @@ class ClinicalTrialsTool(RESTfulTool):
                     "conditions": proto.get("conditionsModule", {}).get(
                         "conditions", []
                     ),
-                    "interventions": [
-                        iv.get("name")
-                        for iv in proto.get("armsInterventionsModule", {}).get(
-                            "interventions", []
-                        )
-                        if iv.get("name")
-                    ][:5],
+                    "interventions": all_interventions[:5],
+                    "intervention_count": len(all_interventions),
+                    "interventions_truncated": len(all_interventions) > 5,
                     "sponsor": (
                         proto.get("sponsorCollaboratorsModule", {}).get("leadSponsor")
                         or {}
@@ -588,6 +707,18 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
             "consider searching https://clinicaltrials.gov/ directly for "
             "NA-phase/observational studies."
         )
+        # Fix-R23-5: this note used to be attached only when the filter
+        # produced zero results, so a caller who got a healthy-looking list
+        # never learned that phase-1 and observational studies had been
+        # dropped from it -- exactly the studies a landscape scan must not
+        # miss. A non-empty result is just as filtered as an empty one, so
+        # disclose the filter whenever it was applied.
+        nonempty_phase_filter_note = (
+            "Results exclude phase-1-only, phase-NA, and observational studies "
+            "(this tool filters to phase 2/3/4 by default), so this is not the "
+            "complete set of matching trials on ClinicalTrials.gov. Use "
+            "ClinicalTrials_search_studies for an unfiltered search."
+        )
 
         # Fix-Round3-002: a well-formed query that legitimately matches zero
         # trials (empty `studies` list) is a success, not the error below --
@@ -597,8 +728,12 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
         # _simplify_output handles an empty list fine on its own.
         if response is not None and response and "studies" in response.keys():
             metadata = {"source": "ClinicalTrials.gov API v2"}
-            if phase_filter_applied and not response.get("studies"):
-                metadata["note"] = phase_filter_note
+            if phase_filter_applied:
+                metadata["note"] = (
+                    phase_filter_note
+                    if not response.get("studies")
+                    else nonempty_phase_filter_note
+                )
             return {
                 "status": "success",
                 "data": self._simplify_output(response),
@@ -846,6 +981,15 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
         formatted_endpoint_url = self.endpoint_url
 
         responses = []
+        # Fix-R23-4: execute_RESTful_query returns a falsy value for every kind
+        # of failure -- HTTP error, timeout, undecodable JSON -- and each of
+        # those was dropped here without a trace. A transient upstream blip
+        # therefore surfaced as either a short result set (some IDs silently
+        # missing) or the "No relevant information found" message below, which
+        # reads as "this trial has no eligibility criteria" for a trial that
+        # demonstrably has them. Fetch failures and genuinely-absent data are
+        # different answers and must not share a response.
+        failed_ids = []
         for nct_id in nct_ids_list:
             formatted_endpoint_url = self._format_endpoint_url({"nctId": nct_id})
             response = execute_RESTful_query(
@@ -853,6 +997,8 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
             )
             if response:
                 responses.append(response)
+            else:
+                failed_ids.append(nct_id)
 
         if query_type not in {"outcome", "safety"}:
             responses = [
@@ -880,12 +1026,36 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
         # failure signal; a request that fetched real trials but simply
         # found no matching field data for them is a legitimate success.
         if not responses:
+            if failed_ids:
+                return {
+                    "status": "error",
+                    "error": (
+                        "Could not retrieve any of the requested studies from "
+                        f"ClinicalTrials.gov: {', '.join(failed_ids)}. This is a "
+                        "fetch failure (network error, timeout, or an "
+                        "unparseable API response), not a statement that these "
+                        "trials lack the requested data. Verify the NCT IDs and "
+                        "retry."
+                    ),
+                }
             return {
                 "status": "error",
                 "error": "No relevant information found for the given NCT IDs.",
             }
 
-        return {"status": "success", "data": responses}
+        result = {"status": "success", "data": responses}
+        if failed_ids:
+            result["metadata"] = {
+                "failed_nct_ids": failed_ids,
+                "note": (
+                    f"{len(failed_ids)} of {len(nct_ids_list)} requested studies "
+                    f"could not be retrieved ({', '.join(failed_ids)}) and are "
+                    "absent from `data`. These were fetch failures, not trials "
+                    "lacking the requested data -- retry them before concluding "
+                    "anything about them."
+                ),
+            }
+        return result
 
     def _simplify_output(self, study, query_type):
         """Manually extract generally most useful information"""
