@@ -12,6 +12,456 @@ HPA_BASE = "https://www.proteinatlas.org"
 HPA_JSON_API_TEMPLATE = "https://www.proteinatlas.org/{ensembl_id}.json"
 HPA_XML_API_TEMPLATE = "https://www.proteinatlas.org/{ensembl_id}.xml"
 
+# ---------------------------------------------------------------------------
+# HPA download-column catalogue
+# ---------------------------------------------------------------------------
+# search_download.php SILENTLY DROPS any column code it does not recognise: an
+# unknown code and a gene with no data produce byte-identical responses. Every
+# code below is an exact `data-abbr` value scraped from
+# https://www.proteinatlas.org/search and re-verified against the live API.
+# Do not invent codes here -- a wrong one is indistinguishable from "no data"
+# and gets blamed on the caller's input.
+#
+# Fix-R31: several previously-mapped names had no matching column, e.g.
+#   ?columns=g,eg,t_RNA_skin,t_RNA_skin_1,t_RNA_liver  ->
+#   {"Gene":"NCSTN","Tissue RNA - liver [nTPM]":"48.9",
+#    "Tissue RNA - skin 1 [nTPM]":"34.4"}       <- no "skin" key at all
+# so 'skin' was reported as an unrecognised tissue name for every gene that is
+# not skin-enriched. Likewise `rnascm`/`rnablm` are not column codes at all
+# (the real ones are `rnascsm`/`rnabcsm`), so source_type single_cell and blood
+# never returned anything.
+
+# t_RNA_<x> -> "Tissue RNA - <x> [nTPM]" (consensus tissue panel, 51 tissues)
+HPA_TISSUE_RNA_COLUMNS = (
+    "adipose_tissue",
+    "adrenal_gland",
+    "amygdala",
+    "appendix",
+    "basal_ganglia",
+    "blood_vessel",
+    "bone_marrow",
+    "breast",
+    "cerebellum",
+    "cerebral_cortex",
+    "cervix",
+    "choroid_plexus",
+    "colon",
+    "duodenum",
+    "endometrium_1",
+    "epididymis",
+    "esophagus",
+    "fallopian_tube",
+    "gallbladder",
+    "heart_muscle",
+    "hippocampal_formation",
+    "hypothalamus",
+    "kidney",
+    "liver",
+    "lung",
+    "lymph_node",
+    "midbrain",
+    "ovary",
+    "pancreas",
+    "parathyroid_gland",
+    "pituitary_gland",
+    "placenta",
+    "prostate",
+    "rectum",
+    "retina",
+    "salivary_gland",
+    "seminal_vesicle",
+    "skeletal_muscle",
+    "skin_1",
+    "small_intestine",
+    "smooth_muscle",
+    "spinal_cord",
+    "spleen",
+    "stomach_1",
+    "testis",
+    "thymus",
+    "thyroid_gland",
+    "tongue",
+    "tonsil",
+    "urinary_bladder",
+    "vagina",
+)
+
+# brain_RNA_<x> -> "Brain RNA - <x> [nTPM]"
+HPA_BRAIN_RNA_COLUMNS = (
+    "amygdala",
+    "basal_ganglia",
+    "cerebellum",
+    "cerebral_cortex",
+    "choroid_plexus",
+    "hippocampal_formation",
+    "hypothalamus",
+    "medulla_oblongata",
+    "midbrain",
+    "pons",
+    "spinal_cord",
+    "thalamus",
+    "white_matter",
+)
+
+# blood_RNA_<x> -> "Blood RNA - <x> [nTPM]".  HPA's blood atlas publishes
+# immune cell *subsets*; there is no aggregate "T-cell"/"B-cell"/"monocyte"
+# column, hence the fan-out aliases below.
+HPA_BLOOD_RNA_COLUMNS = (
+    "basophil",
+    "classical_monocyte",
+    "eosinophil",
+    "gdT-cell",
+    "intermediate_monocyte",
+    "MAIT_T-cell",
+    "memory_B-cell",
+    "memory_CD4_T-cell",
+    "memory_CD8_T-cell",
+    "myeloid_DC",
+    "naive_B-cell",
+    "naive_CD4_T-cell",
+    "naive_CD8_T-cell",
+    "neutrophil",
+    "NK-cell",
+    "non-classical_monocyte",
+    "plasmacytoid_DC",
+    "T-reg",
+    "total_PBMC",
+)
+
+# sc_RNA_<x> -> "Single Cell Type RNA - <x> [nCPM]".  Note the unit: single
+# cell data is nCPM, NOT nTPM.  Codes are case-sensitive (sc_RNA_hepatocytes
+# is dropped, sc_RNA_Hepatocytes is not).
+HPA_SINGLE_CELL_RNA_COLUMNS = (
+    "Adipocytes",
+    "Adrenal_cortex_cells",
+    "Adrenal_medulla_cells",
+    "Alveolar_cells_type_1",
+    "Alveolar_cells_type_2",
+    "Astrocytes",
+    "B-cells",
+    "Basal_keratinocytes",
+    "Basal_prostatic_cells",
+    "Bergmann_glia",
+    "Brain_excitatory_neurons",
+    "Brain_inhibitory_neurons",
+    "Breast_hormone-responsive_cells",
+    "Breast_lactating_cells",
+    "Breast_myoepithelial_cells",
+    "Breast_secretory_cells",
+    "Cardiomyocytes",
+    "cDC",
+    "Cholangiocytes",
+    "Choroid_plexus_epithelial_cells",
+    "Colonocytes",
+    "Cone_photoreceptor_cells",
+    "Conjunctival_goblet_cells",
+    "Corticotrophs",
+    "Cytotrophoblasts",
+    "Decidual_stromal_cells",
+    "Differentiating_spermatogonia",
+    "Distal_convoluted_tubule_cells",
+    "Early_primary_spermatocytes",
+    "Early_spermatids",
+    "Endometrial_ciliated_cells",
+    "Endometrial_glandular_cells",
+    "Endometrial_luminal_cells",
+    "Endometrial_secretory_cells",
+    "Endometrial_stromal_cells",
+    "Enteric_stem_cells",
+    "Enteric_transient_amplifying_cells",
+    "Enterocytes",
+    "Ependymal_cells",
+    "Epicardial_cells",
+    "Epididymal_basal_cells",
+    "Epididymal_clear_cells",
+    "Epididymal_efferent_duct_absorptive_cells",
+    "Epididymal_efferent_duct_ciliated_cells",
+    "Epididymal_principal_cells",
+    "Erythrocyte_progenitors",
+    "Erythrocytes",
+    "Esophageal_apical_cells",
+    "Esophageal_basal_cells",
+    "Esophageal_suprabasal_cells",
+    "Extravillous_trophoblasts",
+    "Fallopian_secretory_cells",
+    "Fallopian_tube_ciliated_cells",
+    "Fibro-adipogenic_progenitors",
+    "Fibroblasts",
+    "Foveolar_cells",
+    "Gastric_chief_cells",
+    "Gastric_progenitor_cells",
+    "Goblet_cells",
+    "Gonadotrophs",
+    "Granulosa_cells",
+    "Hematopoietic_stem_cells",
+    "Hepatic_stellate_cells",
+    "Hepatocytes",
+    "Hofbauer_cells",
+    "Innate_lymphoid_cells",
+    "Kupffer_cells",
+    "Lacrimal_acinar_cells",
+    "Lactotrophs",
+    "Late_primary_spermatocytes",
+    "Late_spermatids",
+    "Leydig_cells",
+    "Loop_of_henle_epithelial_cells",
+    "Lymphatic_endothelial_cells",
+    "Macrophages",
+    "Mast_cells",
+    "Medullary_thymic_epithelial_cells",
+    "Megakaryocyte-Erythroid_progenitors",
+    "Megakaryocyte_progenitors",
+    "Megakaryocytes",
+    "Melanocytes",
+    "Mesothelial_cells",
+    "Microglia",
+    "Migrating_cytotrophoblasts",
+    "Monocyte_progenitors",
+    "monocytes",
+    "Mucous_neck_cells",
+    "Müller_glia",
+    "Myonuclei",
+    "Myosatellite_cells",
+    "Neuroendocrine_cells",
+    "Neutrophil_progenitors",
+    "Neutrophils",
+    "NK-cells",
+    "Ocular_epithelial_cells",
+    "Oligodendrocyte_progenitor_cells",
+    "Oligodendrocytes",
+    "Oocytes",
+    "Other_brain_neurons",
+    "Ovarian_stromal_cells",
+    "Pancreatic_acinar_cells",
+    "Pancreatic_duct_cells",
+    "Pancreatic_islet_cells",
+    "Paneth_cells",
+    "Papillary_tip_epithelial_cells",
+    "Parietal_cells",
+    "pDCs",
+    "Pericytes",
+    "Peritubular_myoid_cells",
+    "Pituicytes/FSCs",
+    "Pituitary_stem_cells",
+    "Plasma_cells",
+    "Platelets",
+    "Podocytes",
+    "Prostatic_club_cells",
+    "Prostatic_glandular_cells",
+    "Prostatic_hillock_cells",
+    "Proximal_tubule_cells",
+    "Renal_collecting_duct_intercalated_cells",
+    "Renal_collecting_duct_principal_cells",
+    "Renal_connecting_tubule_cells",
+    "Respiratory_basal_cells",
+    "Respiratory_ciliated_cells",
+    "Respiratory_deuterosomal_cells",
+    "Respiratory_ionocytes",
+    "Respiratory_secretory_cells",
+    "Retinal_amacrine_cells",
+    "Retinal_bipolar_cells",
+    "Retinal_ganglion_cells",
+    "Retinal_horizontal_cells",
+    "Retinal_pigment_epithelial_cells",
+    "Rod_photoreceptor_cells",
+    "Salivary_acinar_cells",
+    "Salivary_basal_cells",
+    "Salivary_duct_cells",
+    "Salivary_ionocytes",
+    "Salivary_myoepithelial_cells",
+    "Schwann_cells",
+    "Sertoli_cells",
+    "Smooth_muscle_cells",
+    "Somatotrophs",
+    "Submucosal_glandular_cells",
+    "Suprabasal_keratinocytes",
+    "Syncytiotrophoblasts",
+    "T-cells",
+    "Thymic_myoid_cells",
+    "Thymocytes",
+    "Thyrotrophs",
+    "Transitional_alveolar_cells",
+    "Tuft_cells",
+    "Undifferentiated_spermatogonia",
+    "Urothelial_cells",
+    "Vascular_endothelial_cells",
+    "Vascular_smooth_muscle_cells",
+)
+
+
+def hpa_slug(name: Any) -> str:
+    """Normalise a tissue/cell-type name or column suffix to a comparison key.
+
+    'Skin 1' / 'skin_1' -> 'skin_1'; 'T-reg' -> 't_reg'; 'Muller glia' and
+    'Müller_glia' both collapse to 'm_ller_glia'.
+    """
+    return re.sub(r"[^a-z0-9]+", "_", str(name).strip().lower()).strip("_")
+
+
+def _column_alias_map(
+    columns: tuple[str, ...],
+    extra: dict[str, list[str]] | None = None,
+    singularize: bool = False,
+) -> dict[str, list[str]]:
+    """Build {caller-supplied name -> [exact HPA column suffixes]}.
+
+    Every column is registered under its own slug. `singularize` additionally
+    registers a singular alias for plural columns ('Hepatocytes' ->
+    'hepatocyte'), which is only sensible for the single cell catalogue.
+    `extra` adds hand-written aliases and always wins.
+    """
+    aliases: dict[str, list[str]] = {}
+    for column in columns:
+        aliases.setdefault(hpa_slug(column), [column])
+    if singularize:
+        for column in columns:
+            slug = hpa_slug(column)
+            if slug.endswith("s") and not slug.endswith("ss"):
+                aliases.setdefault(slug[:-1], [column])
+    for name, targets in (extra or {}).items():
+        aliases[hpa_slug(name)] = list(targets)
+    return aliases
+
+
+# Names HPA once published (or that callers reasonably try) for which HPA has
+# NO RNA column at all -- verified live: every one of
+# t_RNA_bronchus / t_RNA_nasopharynx / t_RNA_oral_mucosa / t_RNA_soft_tissue /
+# brain_RNA_brainstem is dropped from the response. Reporting them as valid
+# source names produced a permanent, unexplained "N/A".
+HPA_UNAVAILABLE_SOURCES = {
+    "tissue": {
+        "bronchus": "HPA covers bronchus only in its protein/IHC tissue atlas; there is no consensus RNA nTPM column for it. Closest RNA tissues: 'lung'.",
+        "nasopharynx": "HPA covers nasopharynx only in its protein/IHC tissue atlas; there is no consensus RNA nTPM column for it.",
+        "oral_mucosa": "HPA covers oral mucosa only in its protein/IHC tissue atlas; there is no consensus RNA nTPM column for it. Closest RNA tissues: 'esophagus', 'tongue'.",
+        "soft_tissue": "HPA covers soft tissue only in its protein/IHC tissue atlas; there is no consensus RNA nTPM column for it. Closest RNA tissues: 'adipose_tissue', 'smooth_muscle'.",
+    },
+    "brain": {
+        "brainstem": "HPA's brain atlas has no 'brainstem' column; query its components instead: 'medulla_oblongata', 'pons', 'midbrain'.",
+    },
+    "blood": {},
+    "single_cell": {},
+}
+
+HPA_TISSUE_COLUMN_ALIASES = _column_alias_map(
+    HPA_TISSUE_RNA_COLUMNS,
+    {
+        # HPA suffixes its two re-sampled tissues with "_1"; callers say the
+        # bare organ name.
+        "skin": ["skin_1"],
+        "stomach": ["stomach_1"],
+        "endometrium": ["endometrium_1"],
+        "hippocampus": ["hippocampal_formation"],
+        "heart": ["heart_muscle"],
+        "muscle": ["skeletal_muscle"],
+        "brain": ["cerebral_cortex"],
+        "cortex": ["cerebral_cortex"],
+        "fat": ["adipose_tissue"],
+        "adrenal": ["adrenal_gland"],
+        "thyroid": ["thyroid_gland"],
+        "pituitary": ["pituitary_gland"],
+        "parathyroid": ["parathyroid_gland"],
+        "salivary": ["salivary_gland"],
+        "bladder": ["urinary_bladder"],
+        "oesophagus": ["esophagus"],
+        "gut": ["small_intestine"],
+    },
+)
+
+HPA_BRAIN_COLUMN_ALIASES = _column_alias_map(
+    HPA_BRAIN_RNA_COLUMNS,
+    {
+        "hippocampus": ["hippocampal_formation"],
+        "cortex": ["cerebral_cortex"],
+        "striatum": ["basal_ganglia"],
+    },
+)
+
+HPA_BLOOD_COLUMN_ALIASES = _column_alias_map(
+    HPA_BLOOD_RNA_COLUMNS,
+    {
+        # No aggregate lineage columns exist -- fan out to the subsets HPA
+        # actually publishes, most-representative first.
+        "t_cell": [
+            "T-reg",
+            "naive_CD4_T-cell",
+            "memory_CD4_T-cell",
+            "naive_CD8_T-cell",
+            "memory_CD8_T-cell",
+            "MAIT_T-cell",
+            "gdT-cell",
+        ],
+        "b_cell": ["naive_B-cell", "memory_B-cell"],
+        "nk_cell": ["NK-cell"],
+        "monocyte": [
+            "classical_monocyte",
+            "intermediate_monocyte",
+            "non-classical_monocyte",
+        ],
+        "dendritic_cell": ["myeloid_DC", "plasmacytoid_DC"],
+        "pbmc": ["total_PBMC"],
+    },
+)
+
+HPA_SINGLE_CELL_COLUMN_ALIASES = _column_alias_map(
+    HPA_SINGLE_CELL_RNA_COLUMNS,
+    {
+        "t_cell": ["T-cells"],
+        "b_cell": ["B-cells"],
+        "nk_cell": ["NK-cells"],
+        "neuron": [
+            "Brain_excitatory_neurons",
+            "Brain_inhibitory_neurons",
+            "Other_brain_neurons",
+        ],
+        "keratinocyte": ["Basal_keratinocytes", "Suprabasal_keratinocytes"],
+        "dendritic_cell": ["cDC", "pDCs"],
+    },
+    singularize=True,
+)
+
+# source_type -> column prefix, unit, alias map and the canonical HPA names
+# (used for error messages -- the alias map also holds synonyms and would make
+# the list several times longer than the catalogue it describes).  The unit is
+# HPA's, not a guess: sc_RNA_* columns are labelled [nCPM], the rest [nTPM].
+HPA_SOURCE_COLUMNS: dict[str, dict[str, Any]] = {
+    "tissue": {
+        "prefix": "t_RNA_",
+        "unit": "nTPM",
+        "aliases": HPA_TISSUE_COLUMN_ALIASES,
+        "canonical": HPA_TISSUE_RNA_COLUMNS,
+    },
+    "blood": {
+        "prefix": "blood_RNA_",
+        "unit": "nTPM",
+        "aliases": HPA_BLOOD_COLUMN_ALIASES,
+        "canonical": HPA_BLOOD_RNA_COLUMNS,
+    },
+    "brain": {
+        "prefix": "brain_RNA_",
+        "unit": "nTPM",
+        "aliases": HPA_BRAIN_COLUMN_ALIASES,
+        "canonical": HPA_BRAIN_RNA_COLUMNS,
+    },
+    "single_cell": {
+        "prefix": "sc_RNA_",
+        "unit": "nCPM",
+        "aliases": HPA_SINGLE_CELL_COLUMN_ALIASES,
+        "canonical": HPA_SINGLE_CELL_RNA_COLUMNS,
+    },
+}
+
+
+def hpa_unit_from_column_label(label: Any, default: str = "") -> str:
+    """Read the unit out of an HPA column header.
+
+    'Single Cell Type RNA - Hepatocytes [nCPM]' -> 'nCPM'.  Never hard-code
+    the unit: HPA reports single cell data in nCPM and everything else in
+    nTPM, and mislabelling silently changes the meaning of the number.
+    """
+    match = re.search(r"\[([^\[\]]+)\]\s*$", str(label or ""))
+    return match.group(1).strip() if match else default
+
+
 # --- Base Tool Classes ---
 
 
@@ -258,7 +708,13 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
-        # Use correct HPA API column identifiers
+        # Aggregate "*specific nTPM" enrichment-summary columns, kept only as a
+        # last-resort fallback. NOTE: of these four codes only `rnatsm` is a
+        # real HPA column -- `rnablm`/`rnabrm`/`rnascm` are silently dropped
+        # (the real codes are `rnabcsm`/`rnabrsm`/`rnascsm`). They are left
+        # verbatim for backwards compatibility; the per-source columns below
+        # are what actually answer a query, and they carry a value for every
+        # gene rather than only the ones HPA classifies as enriched.
         self.source_column_mappings = {
             "tissue": "rnatsm",  # RNA tissue specific nTPM
             "blood": "rnablm",  # RNA blood lineage specific nTPM
@@ -266,20 +722,20 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
             "single_cell": "rnascm",  # RNA single cell type specific nTPM
         }
 
-        # Fix-R4A-2: the aggregate "*specific nTPM" columns above are populated
-        # only for genes HPA classifies as enriched in that source type, and
-        # "rnabrm" is not a valid HPA column at all -- HPA silently drops
-        # unknown columns, so every brain query returned "N/A" with
-        # status "success". Confirmed live: ?columns=g,rnabrm returns
-        # {"Gene":"GFAP"} with no data column, while
-        # ?columns=g,brain_RNA_thalamus returns 14782.4 nTPM. HPA exposes a
-        # per-source column for each source name; query that first and only
-        # fall back to the aggregate column if it yields nothing.
+        # Fix-R4A-2 / Fix-R31: HPA silently drops unknown column codes, so a
+        # bad code is indistinguishable from "no data" and the tool ended up
+        # blaming the caller's source name. Prefixes and the per-source-name
+        # column catalogue now come from HPA's published `data-abbr` list (see
+        # the module header), so `single_cell` and `blood` return real numbers
+        # instead of a permanent N/A.
         self.source_column_prefixes = {
-            "tissue": "t_RNA_",
-            "blood": "blood_RNA_",
-            "brain": "brain_RNA_",
-            "single_cell": "sc_RNA_",
+            key: spec["prefix"] for key, spec in HPA_SOURCE_COLUMNS.items()
+        }
+
+        # HPA's unit differs per source family: single cell is nCPM, the rest
+        # are nTPM. Never hard-code one unit for all of them.
+        self.source_units = {
+            key: spec["unit"] for key, spec in HPA_SOURCE_COLUMNS.items()
         }
 
         self.api_response_fields = {
@@ -289,89 +745,20 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
             "single_cell": "RNA single cell type specific nTPM",
         }
 
-        # Map source names to expected keys in API response
+        # source_name -> the exact HPA column suffixes it resolves to. Values
+        # are real column codes, not free-text guesses.
         self.source_name_mappings = {
-            "tissue": {
-                "adipose_tissue": ["adipose tissue", "fat"],
-                "adrenal_gland": ["adrenal gland", "adrenal"],
-                "appendix": ["appendix"],
-                "bone_marrow": ["bone marrow"],
-                "brain": ["brain", "cerebral cortex"],
-                "breast": ["breast"],
-                "bronchus": ["bronchus"],
-                "cerebellum": ["cerebellum"],
-                "cerebral_cortex": ["cerebral cortex", "brain"],
-                "cervix": ["cervix"],
-                "choroid_plexus": ["choroid plexus"],
-                "colon": ["colon"],
-                "duodenum": ["duodenum"],
-                "endometrium": ["endometrium"],
-                "epididymis": ["epididymis"],
-                "esophagus": ["esophagus"],
-                "fallopian_tube": ["fallopian tube"],
-                "gallbladder": ["gallbladder"],
-                "heart_muscle": ["heart muscle", "heart"],
-                "hippocampal_formation": ["hippocampus", "hippocampal formation"],
-                "hypothalamus": ["hypothalamus"],
-                "kidney": ["kidney"],
-                "liver": ["liver"],
-                "lung": ["lung"],
-                "lymph_node": ["lymph node"],
-                "nasopharynx": ["nasopharynx"],
-                "oral_mucosa": ["oral mucosa"],
-                "ovary": ["ovary"],
-                "pancreas": ["pancreas"],
-                "parathyroid_gland": ["parathyroid gland"],
-                "pituitary_gland": ["pituitary gland"],
-                "placenta": ["placenta"],
-                "prostate": ["prostate"],
-                "rectum": ["rectum"],
-                "retina": ["retina"],
-                "salivary_gland": ["salivary gland"],
-                "seminal_vesicle": ["seminal vesicle"],
-                "skeletal_muscle": ["skeletal muscle"],
-                "skin": ["skin"],
-                "small_intestine": ["small intestine"],
-                "smooth_muscle": ["smooth muscle"],
-                "soft_tissue": ["soft tissue"],
-                "spleen": ["spleen"],
-                "stomach": ["stomach"],
-                "testis": ["testis"],
-                "thymus": ["thymus"],
-                "thyroid_gland": ["thyroid gland"],
-                "tongue": ["tongue"],
-                "tonsil": ["tonsil"],
-                "urinary_bladder": ["urinary bladder"],
-                "vagina": ["vagina"],
-            },
-            "blood": {
-                "t_cell": ["t-cell", "t cell"],
-                "b_cell": ["b-cell", "b cell"],
-                "nk_cell": ["nk-cell", "nk cell", "natural killer"],
-                "monocyte": ["monocyte"],
-                "neutrophil": ["neutrophil"],
-                "eosinophil": ["eosinophil"],
-                "basophil": ["basophil"],
-                "dendritic_cell": ["dendritic cell"],
-            },
-            "brain": {
-                "cerebellum": ["cerebellum"],
-                "cerebral_cortex": ["cerebral cortex", "cortex"],
-                "hippocampus": ["hippocampus", "hippocampal formation"],
-                "hypothalamus": ["hypothalamus"],
-                "amygdala": ["amygdala"],
-                "brainstem": ["brainstem", "brain stem"],
-                "thalamus": ["thalamus"],
-            },
-            "single_cell": {
-                "t_cell": ["t-cell", "t cell"],
-                "b_cell": ["b-cell", "b cell"],
-                "hepatocyte": ["hepatocyte"],
-                "neuron": ["neuron"],
-                "astrocyte": ["astrocyte"],
-                "fibroblast": ["fibroblast"],
-            },
+            key: spec["aliases"] for key, spec in HPA_SOURCE_COLUMNS.items()
         }
+
+        # The canonical HPA names behind those aliases, for error messages.
+        self.source_canonical_names = {
+            key: sorted(spec["canonical"], key=str.lower)
+            for key, spec in HPA_SOURCE_COLUMNS.items()
+        }
+
+        # source_name -> why HPA cannot answer it at all (it has no RNA column).
+        self.unavailable_sources = HPA_UNAVAILABLE_SOURCES
 
     @staticmethod
     def _categorize_expression(expression_value):
@@ -393,7 +780,12 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
         return "very low"
 
     def _query_source_column(self, gene_name, source_type, candidate_names):
-        """Fetch a single source's value from its dedicated HPA column.
+        """Fetch a source's value from its dedicated HPA column.
+
+        `candidate_names` are exact HPA column suffixes, most-representative
+        first; they are requested in a single call (HPA drops the ones it does
+        not know without failing the request) and the first candidate that
+        carries a value wins.
 
         Returns (value, column_label) or (None, None) when HPA has no such
         column or no value for this gene.
@@ -402,33 +794,56 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
         if not prefix:
             return None, None
 
+        columns = []
         for candidate in candidate_names:
             if not candidate:
                 continue
             column = prefix + str(candidate).strip().replace(" ", "_")
-            try:
-                response = self._make_api_request(gene_name, f"g,{column}")
-            except Exception:
-                continue
-            if not response or isinstance(response, dict):
-                continue
+            if column not in columns:
+                columns.append(column)
+        if not columns:
+            return None, None
 
-            # HPA's search matches synonyms too (search=GFAP also returns
-            # HGFAC), so pick the row whose Gene actually equals the query.
-            row = next(
-                (
-                    r
-                    for r in response
-                    if str(r.get("Gene", "")).upper() == gene_name.upper()
-                ),
-                response[0],
-            )
-            for key, value in row.items():
-                # HPA labels the column e.g. "Brain RNA - thalamus [nTPM]".
-                if " RNA - " not in key:
-                    continue
-                if value not in (None, "", "N/A"):
-                    return value, key
+        try:
+            response = self._make_api_request(gene_name, ",".join(["g"] + columns))
+        except Exception:
+            return None, None
+        if not response or isinstance(response, dict):
+            return None, None
+
+        # HPA's search matches synonyms too (search=GFAP also returns HGFAC),
+        # so pick the row whose Gene actually equals the query.
+        row = next(
+            (
+                r
+                for r in response
+                if str(r.get("Gene", "")).upper() == str(gene_name).upper()
+            ),
+            response[0],
+        )
+
+        # HPA labels the columns e.g. "Brain RNA - thalamus [nTPM]" or
+        # "Single Cell Type RNA - Hepatocytes [nCPM]"; match the part after
+        # " RNA - " back to the requested suffix.
+        by_slug = {}
+        for key, value in row.items():
+            if " RNA - " not in key:
+                continue
+            source_label = key.split(" RNA - ", 1)[1]
+            source_label = re.sub(r"\s*\[[^\[\]]*\]\s*$", "", source_label)
+            by_slug.setdefault(hpa_slug(source_label), (value, key))
+
+        for candidate in candidate_names:
+            hit = by_slug.get(hpa_slug(candidate))
+            if hit and hit[0] not in (None, "", "N/A"):
+                return hit
+
+        # Lenient fallback: HPA returned a per-source column we could not tie
+        # back to a candidate name (renamed column). Use it rather than
+        # reporting "no data" for a value HPA clearly published.
+        for value, key in by_slug.values():
+            if value not in (None, "", "N/A"):
+                return value, key
         return None, None
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -464,9 +879,24 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                 },
             }
 
+        # Names HPA does not publish an RNA column for at all: say so
+        # explicitly instead of returning a permanent, unexplained "N/A".
+        unavailable = self.unavailable_sources.get(source_type, {})
+        if source_name in unavailable:
+            return {
+                "status": "error",
+                "data": {
+                    "error": (
+                        f"HPA has no RNA expression column for source_name "
+                        f"'{source_name}' (source_type '{source_type}'). "
+                        + unavailable[source_name]
+                    )
+                },
+            }
+
         # Enhanced validation with intelligent recommendations
         if source_name not in self.source_name_mappings[source_type]:
-            available_sources = list(self.source_name_mappings[source_type].keys())
+            available_sources = sorted(self.source_name_mappings[source_type].keys())
 
             # Find similar source names (fuzzy matching)
             similar_sources = []
@@ -507,9 +937,15 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
             )
             if similar_sources:
                 error_msg += f"Similar options: {similar_sources[:3]}. "
+            # HPA publishes ~160 single cell types; listing every alias makes
+            # the message unusable, so show the canonical names and cap them.
+            canonical = self.source_canonical_names[source_type]
+            shown = canonical[:40]
             error_msg += (
-                f"All available sources for '{source_type}': {available_sources}"
+                f"Valid HPA names for '{source_type}' ({len(canonical)} total): {shown}"
             )
+            if len(canonical) > len(shown):
+                error_msg += f" ... and {len(canonical) - len(shown)} more"
             return {"status": "error", "data": {"error": error_msg}}
 
         try:
@@ -521,18 +957,40 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                 gene_name, source_type, candidates
             )
             if direct_value is not None:
-                return {
-                    "status": "success",
-                    "data": {
-                        "gene_name": gene_name,
-                        "source_type": source_type,
-                        "source_name": source_name,
-                        "expression_value": direct_value,
-                        "expression_level": self._categorize_expression(direct_value),
-                        "column_queried": direct_label,
-                        "status": "ok",
-                    },
+                data = {
+                    "gene_name": gene_name,
+                    "source_type": source_type,
+                    "source_name": source_name,
+                    "expression_value": direct_value,
+                    "expression_level": self._categorize_expression(direct_value),
+                    # Unit comes from HPA's own column header, never a
+                    # hard-coded default: sc_RNA_* columns are [nCPM].
+                    "expression_unit": hpa_unit_from_column_label(
+                        direct_label, self.source_units.get(source_type, "nTPM")
+                    ),
+                    "column_queried": direct_label,
+                    "status": "ok",
                 }
+                # If the request resolved to a differently-named HPA column
+                # (an alias, or a subset standing in for an aggregate HPA does
+                # not publish), say which column the number actually is.
+                matched_label = direct_label.split(" RNA - ", 1)[-1]
+                matched_label = re.sub(r"\s*\[[^\[\]]*\]\s*$", "", matched_label)
+                if hpa_slug(matched_label) != hpa_slug(source_name):
+                    others = [
+                        c
+                        for c in self.source_name_mappings[source_type][source_name]
+                        if hpa_slug(c) != hpa_slug(matched_label)
+                    ]
+                    note = (
+                        f"HPA has no column named '{source_name}' for source_type "
+                        f"'{source_type}'; this value is from its '{matched_label}' "
+                        "column."
+                    )
+                    if others:
+                        note += f" Other columns this name covers: {others}."
+                    data["note"] = note
+                return {"status": "success", "data": data}
 
             # Get the correct API column
             api_column = self.source_column_mappings[source_type]
@@ -605,7 +1063,9 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                 "source_name": source_name,
                 "expression_value": expression_value,
                 "expression_level": expression_level,
-                "expression_unit": "nTPM",
+                # Per-source-family unit, not a blanket "nTPM": HPA's single
+                # cell columns are nCPM.
+                "expression_unit": self.source_units.get(source_type, "nTPM"),
                 "column_queried": api_column,
                 "available_sources": (
                     available_sources[:10]
@@ -619,6 +1079,13 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                     else "no_expression_data_for_source"
                 ),
             }
+            if expression_value == "N/A":
+                result["note"] = (
+                    f"HPA's per-source column for '{source_name}' returned no value "
+                    f"and the '{api_column}' enrichment-summary fallback carried "
+                    "nothing either. 'N/A' here means HPA published no number for "
+                    "this gene/source pair, not that the source name is invalid."
+                )
             return {"status": "success", "data": result}
 
         except Exception as e:
@@ -1241,13 +1708,40 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
 
         expression_results = {}
         for tissue in tissue_names:
-            value = panel.get(tissue)
-            if value is not None:
-                expression_results[tissue] = {
-                    "matched_tissue": tissue,
+            hit = panel.get(tissue)
+            if hit is not None:
+                value, label = hit
+                # HPA's own column header is the source of truth for both the
+                # matched tissue and the unit -- never synthesise it from the
+                # caller's string, which is how 'skin' used to be reported as
+                # "Tissue RNA - skin [nTPM]", a column HPA does not have.
+                matched = label.split(" RNA - ", 1)[-1]
+                matched = re.sub(r"\s*\[[^\[\]]*\]\s*$", "", matched)
+                entry = {
+                    "matched_tissue": matched,
                     "expression_value": value,
                     "expression_level": self._categorize_expression(value),
-                    "source_field": f"Tissue RNA - {tissue} [nTPM]",
+                    "expression_unit": hpa_unit_from_column_label(label, "nTPM"),
+                    "source_field": label,
+                }
+                if hpa_slug(matched) != hpa_slug(tissue):
+                    column = HPA_TISSUE_COLUMN_ALIASES.get(
+                        hpa_slug(tissue), [hpa_slug(matched)]
+                    )[0]
+                    entry["note"] = (
+                        f"HPA publishes this tissue as '{matched}', not "
+                        f"'{tissue}'; the value is from its 't_RNA_{column}' column."
+                    )
+                expression_results[tissue] = entry
+                continue
+
+            unavailable = HPA_UNAVAILABLE_SOURCES["tissue"].get(hpa_slug(tissue))
+            if unavailable:
+                expression_results[tissue] = {
+                    "matched_tissue": "Not found",
+                    "expression_value": "N/A",
+                    "expression_level": "No data",
+                    "note": unavailable,
                 }
                 continue
 
@@ -1283,8 +1777,8 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
                         f"'{tissue}' did not match an HPA tissue column "
                         f"(t_RNA_{self._tissue_column_suffix(tissue)}). This means the "
                         "tissue name is unrecognized, not that the gene lacks "
-                        "expression. Use HPA_get_rna_expression_by_source to list "
-                        "valid source names for source_type='tissue' or 'brain'."
+                        "expression. HPA's consensus tissues: "
+                        f"{sorted(HPA_TISSUE_RNA_COLUMNS)}."
                     ),
                 }
 
@@ -1304,7 +1798,24 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
     @staticmethod
     def _tissue_column_suffix(tissue: str) -> str:
         """Convert a human tissue name to HPA's column suffix form."""
-        return re.sub(r"[^a-z0-9]+", "_", str(tissue).strip().lower()).strip("_")
+        return hpa_slug(tissue)
+
+    @staticmethod
+    def _tissue_column_candidates(tissue: str) -> list[str]:
+        """Resolve a caller's tissue name to real HPA `t_RNA_` column suffixes.
+
+        Fix-R31: the slugified name is NOT always a column. HPA publishes
+        'skin' as `t_RNA_skin_1`, 'stomach' as `t_RNA_stomach_1` and
+        'endometrium' as `t_RNA_endometrium_1`; `t_RNA_skin` etc. are silently
+        dropped, which the tool then misreported as an unrecognized tissue
+        name. Consult the verified catalogue first, and still try the raw slug
+        so a column HPA adds later keeps working without a code change.
+        """
+        slug = hpa_slug(tissue)
+        candidates = list(HPA_TISSUE_COLUMN_ALIASES.get(slug, []))
+        if slug and slug not in candidates:
+            candidates.append(slug)
+        return candidates
 
     def _fetch_tissue_panel(
         self, ensembl_id: str, tissue_names: List[str]
@@ -1313,14 +1824,19 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
 
         HPA drops columns it does not recognize instead of erroring, so a tissue
         missing from the response is an unknown tissue name. Returns a mapping of
-        the caller's original tissue strings to their nTPM values.
+        the caller's original tissue strings to (value, HPA column header).
         """
-        suffixes = {t: self._tissue_column_suffix(t) for t in tissue_names}
-        columns = ",".join(["g", "eg"] + [f"t_RNA_{s}" for s in suffixes.values() if s])
+        candidates = {t: self._tissue_column_candidates(t) for t in tissue_names}
+        columns = ["g", "eg"]
+        for suffixes in candidates.values():
+            for suffix in suffixes:
+                column = f"t_RNA_{suffix}"
+                if column not in columns:
+                    columns.append(column)
         params = {
             "search": ensembl_id,
             "format": "json",
-            "columns": columns,
+            "columns": ",".join(columns),
             "compress": "no",
         }
         try:
@@ -1337,15 +1853,18 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
         # HPA labels the returned columns "Tissue RNA - <tissue> [nTPM]".
         by_suffix = {}
         for key, value in row.items():
-            match = re.match(r"^Tissue RNA - (.+?) \[nTPM\]$", key)
+            match = re.match(r"^Tissue RNA - (.+?) \[[^\[\]]+\]$", key)
             if match:
-                by_suffix[self._tissue_column_suffix(match.group(1))] = value
+                by_suffix[hpa_slug(match.group(1))] = (value, key)
 
-        return {
-            tissue: by_suffix[suffix]
-            for tissue, suffix in suffixes.items()
-            if by_suffix.get(suffix) not in (None, "")
-        }
+        panel = {}
+        for tissue, suffixes in candidates.items():
+            for suffix in suffixes:
+                hit = by_suffix.get(suffix)
+                if hit and hit[0] not in (None, ""):
+                    panel[tissue] = hit
+                    break
+        return panel
 
     def _categorize_expression(self, expr_value) -> str:
         """Categorize expression level"""
@@ -1719,15 +2238,57 @@ class HPAGetGenePageDetailsTool(HPAXmlApiTool):
             result["cell_line_expression"] = self._extract_cell_line_expression(root)
 
         # Extract summary statistics
+        tissue_rows = result.get("tissue_expression", [])
+        detected, assayed = self._count_tissues(tissue_rows)
         result["summary"] = {
             "total_antibodies": len(result.get("antibodies", [])),
             "total_ihc_images": len(result.get("ihc_images", [])),
             "total_if_images": len(result.get("if_images", [])),
-            "tissues_with_expression": len(result.get("tissue_expression", [])),
+            # Fix-R31: this used to be len(tissue_expression), i.e. the number
+            # of assayed ROWS -- 184 for NCSTN, of which 135 carried no level
+            # at all, 9 said "not detected", and the remainder repeated the
+            # same tissue once per antibody ("Skin 1" appeared 4x). HPA
+            # publishes ~44 consensus tissues, so the old number was
+            # impossible on its face. Count distinct tissues whose IHC level
+            # is actually detected.
+            "tissues_with_expression": detected,
+            "distinct_tissues_assayed": assayed,
+            "tissue_expression_rows": len(tissue_rows),
             "cell_lines_with_expression": len(result.get("cell_line_expression", [])),
         }
+        result["summary"]["summary_note"] = (
+            "'tissues_with_expression' counts distinct tissues with a detected "
+            "IHC expression level; rows with no level and rows scored "
+            "'not detected' are excluded. 'tissue_expression_rows' is the raw "
+            "row count of the tissue_expression array (one row per "
+            "tissue x antibody)."
+        )
 
         return result
+
+    @staticmethod
+    def _count_tissues(tissue_rows: list) -> tuple[int, int]:
+        """Return (distinct tissues with detected expression, distinct assayed).
+
+        `tissue_expression` holds one row per tissue x antibody, many of them
+        with a blank or "not detected" level, so its length is neither a
+        tissue count nor an expression count.
+        """
+        not_detected = {"", "not detected", "none", "negative", "n/a", "undetected"}
+        detected, assayed = set(), set()
+        for row in tissue_rows or []:
+            if not isinstance(row, dict):
+                continue
+            name = str(row.get("tissue_name") or "").strip().lower()
+            if not name:
+                continue
+            assayed.add(name)
+            level = str(row.get("expression_level") or "").strip().lower()
+            # Levels arrive as "<type>: <level>", e.g. "expression: medium".
+            level = level.rsplit(":", 1)[-1].strip()
+            if level and level not in not_detected:
+                detected.add(name)
+        return len(detected), len(assayed)
 
     def _extract_ihc_images(self, root: ET.Element) -> List[Dict[str, Any]]:
         """Extract tissue immunohistochemistry (IHC) images based on actual HPA XML structure"""
