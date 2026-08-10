@@ -48,7 +48,7 @@ tu.load_mcp_tools(["http://localhost:8001"])
 result = tu.tools.mcp_my_analyzer(
    operation="call_tool",
    tool_name="my_analyzer",
-   tool_arguments={"data": "test data"}
+   tool_arguments={"data": "test data"},
 )
 print(result)
 ```
@@ -62,8 +62,6 @@ print(result)
    config={"description": "External API wrapper"},
    mcp_config={"port": 8001}
 )
-def registered_tool(param):
-   return param
 class APIService:
    def run(self, arguments):
        import requests
@@ -120,26 +118,42 @@ class DataProcessor:
    },
    mcp_config={"port": 8001}
 )
-def registered_tool(param):
-   return param
+class SimpleTool:
+   def run(self, arguments):
+       return {"result": arguments["param"]}
 ```
 
 ### Multi-Server Setup
 ```python
-# Text tools on port 8001
-@register_mcp_tool(..., mcp_config={"port": 8001})
-def text_tool():
-   ...
+# Text tool on port 8001
+@register_mcp_tool(
+   tool_type_name="text_tool",
+   config={"description": "Process text"},
+   mcp_config={"port": 8001}
+)
+class TextTool:
+   def run(self, arguments):
+       return {"text": arguments.get("text", "")}
 
-# Data tools on port 8002
-@register_mcp_tool(..., mcp_config={"port": 8002})
-def data_tool():
-   ...
+# Data tool on port 8002
+@register_mcp_tool(
+   tool_type_name="data_tool",
+   config={"description": "Process data"},
+   mcp_config={"port": 8002}
+)
+class DataTool:
+   def run(self, arguments):
+       return {"data": arguments.get("data", [])}
 
-# File tools on port 8003
-@register_mcp_tool(..., mcp_config={"port": 8003})
-def file_tool():
-   ...
+# File tool on port 8003
+@register_mcp_tool(
+   tool_type_name="file_tool",
+   config={"description": "Process a file"},
+   mcp_config={"port": 8003}
+)
+class FileTool:
+   def run(self, arguments):
+       return {"filepath": arguments.get("filepath", "")}
 ```
 
 ##  Common Mistakes
@@ -151,7 +165,7 @@ def file_tool():
    description="Tool description",  # Wrong!
    mcp_config={"port": 8001}
 )
-def incorrectly_registered_tool():
+class IncorrectlyRegisteredTool:
    ...
 ```
 
@@ -161,12 +175,16 @@ def incorrectly_registered_tool():
    tool_type_name="tool_name",  # Correct!
    config={
        "description": "Tool description",  # Correct!
-       "parameter_schema": {...}
+       "parameter_schema": {
+           "type": "object",
+           "properties": {}
+       }
    },
    mcp_config={"port": 8001}
 )
-def correctly_registered_tool():
-   ...
+class CorrectlyRegisteredTool:
+   def run(self, arguments):
+       return {"result": "success"}
 ```
 
 ###  Wrong: Missing run method
@@ -205,7 +223,7 @@ tu.load_mcp_tools(["http://localhost:8001"])
 result = tu.tools.mcp_my_tool(
    operation="call_tool",
    tool_name="my_tool",
-   tool_arguments={"param": "test"}
+   tool_arguments={"param": "test"},
 )
 print(result)
 ```
@@ -329,7 +347,7 @@ protein_result = tu.tools.mcp_protein_analyzer(
    tool_arguments={
        "sequence": "MKWVTFISLLFLFSSAYSRGVFRRDAHKSEVAHRFKDLGEENFKALVLIAFAQYLQQCPFEDHVKLVNEVTEFAKTCVADESAENCDKSLHTLFGDKLCTVATLRETYGEMADCCAKQEPERNECFLQHKDDNPNLPRLVRPEVDVMCTAFHDNEETFLKKYLYEIARRHPYFYAPELLFFAKRYKAAFTECCQAADKAACLLPKLDELRDEGKASSAKQRLKCASLQKFGERAFKAWAVARLSQRFPKAEFAEVSKLVTDLTKVHTECCHGDLLECADDRADLAKYICENQDSISSKLKECCEKPLLEKSHCIAEVENDEMPADLPSLAADFVESKDVCKNYAEAKDVFLGMFLYEYARRHPDYSVVLLLRLAKTYETTLEKCCAAADPHECYAKVFDEFKPLVEEPQNLIKQNCELFEQLGEYKFQNALLVRYTKKVPQVSTPTLVEVSRNLGKVGSKCCKHPEAKRMPCAEDYLSVVLNQLCVLHEKTPVSDRVTKCCTESLVNRRPCFSALEVDETYVPKEFNAETFTFHADICTLSEKERQIKKQTALVELVKHKPKATKEQLKAVMDDFAAFVEKCCKADDKETCFAEEGKKLVAASQAALGL",
        "analysis_type": "detailed"
-   }
+   },
 )
 
 print("🧬 Protein Analysis Result:")
@@ -487,7 +505,7 @@ def main():
        tool_name="text_sentiment",
        tool_arguments={
            "text": "This tool is amazing! The functionality is excellent and I think it's wonderful."
-       }
+       },
    )
    print(f"📝 Sentiment Analysis: {sentiment_result}")
 
@@ -497,7 +515,7 @@ def main():
        tool_name="data_stats",
        tool_arguments={
            "data": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-       }
+       },
    )
    print(f"📊 Data Statistics: {stats_result}")
 
@@ -507,7 +525,7 @@ def main():
        tool_name="file_analyzer",
        tool_arguments={
            "filepath": __file__  # Analyze current file
-       }
+       },
    )
    print(f"📁 File Analysis: {file_result}")
 
