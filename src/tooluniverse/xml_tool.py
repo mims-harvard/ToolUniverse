@@ -29,7 +29,10 @@ class XMLDatasetTool(BaseTool):
         self.namespaces: Dict[str, str] = tool_config.get("settings").get(
             "namespaces", {}
         )
-        self.field_mappings: Dict[str, str] = tool_config.get("settings").get(
+        # Values may be a single XPath string, a LIST of XPath strings (tried
+        # in order, first non-empty wins -- see _extract_field_value), or a
+        # dict describing a nested structure (see _extract_record_data).
+        self.field_mappings: Dict[str, Any] = tool_config.get("settings").get(
             "field_mappings", {}
         )  # Dict of fields we're interested in extracting from each record
         self.filter_field: Optional[str] = tool_config.get("settings").get(
@@ -143,8 +146,27 @@ class XMLDatasetTool(BaseTool):
 
         return data
 
-    def _extract_field_value(self, element: ET.Element, xpath_expr: str) -> str:
-        """Extract field value using XPath expression."""
+    def _extract_field_value(self, element: ET.Element, xpath_expr: Any) -> str:
+        """Extract field value using XPath expression.
+
+        Fix Round 25: `xpath_expr` may also be a LIST of XPath strings, which
+        are tried in order and the first non-empty result returned. Some
+        source datasets file the same logical field under different parents
+        depending on the record -- DrugBank puts Molecular Formula/Weight
+        under <calculated-properties> for small molecules but under
+        <experimental-properties> for biotech/peptide entries, so a single
+        XPath silently yields "" for one whole class of records. Note that
+        ElementTree/lxml's findall() does not accept `|` XPath unions, so a
+        list of expressions (rather than one union expression) is the right
+        shape here.
+        """
+        if isinstance(xpath_expr, (list, tuple)):
+            for candidate in xpath_expr:
+                value = self._extract_field_value(element, candidate)
+                if value:
+                    return value
+            return ""
+
         try:
             # Handle attribute extraction with /@
             if "/@" in xpath_expr:

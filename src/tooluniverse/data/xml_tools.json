@@ -2632,8 +2632,14 @@
         "synonyms": "db:synonyms/db:synonym",
         "cas_number": "db:cas-number",
         "unii": "db:unii",
-        "molecular_formula": "db:experimental-properties/db:property[db:kind='Molecular Formula']/db:value",
-        "molecular_weight": "db:experimental-properties/db:property[db:kind='Molecular Weight']/db:value",
+        "molecular_formula": [
+          "db:calculated-properties/db:property[db:kind='Molecular Formula']/db:value",
+          "db:experimental-properties/db:property[db:kind='Molecular Formula']/db:value"
+        ],
+        "molecular_weight": [
+          "db:calculated-properties/db:property[db:kind='Molecular Weight']/db:value",
+          "db:experimental-properties/db:property[db:kind='Molecular Weight']/db:value"
+        ],
         "melting_point": "db:experimental-properties/db:property[db:kind='Melting Point']/db:value",
         "water_solubility": "db:experimental-properties/db:property[db:kind='Water Solubility']/db:value",
         "isoelectric_point": "db:experimental-properties/db:property[db:kind='Isoelectric Point']/db:value",
