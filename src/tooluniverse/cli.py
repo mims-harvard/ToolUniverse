@@ -1706,6 +1706,13 @@ def _resolve_private_connection_key() -> str:
         return ""
 
 
+def _local_mcp_endpoint(host: str, port: int) -> tuple[str, str]:
+    """Return a connectable host and correctly formatted local MCP URL."""
+    connect_host = {"0.0.0.0": "127.0.0.1", "::": "::1"}.get(host, host)
+    url_host = f"[{connect_host}]" if ":" in connect_host else connect_host
+    return connect_host, f"http://{url_host}:{port}/mcp"
+
+
 def _start_remote_tool_server(args: argparse.Namespace) -> None:
     import hashlib
     import importlib.util
@@ -1752,8 +1759,7 @@ def _start_remote_tool_server(args: argparse.Namespace) -> None:
             "a class with @register_remote_tool"
         )
 
-    local_host = "127.0.0.1" if args.host in {"0.0.0.0", "::"} else args.host
-    local_url = f"http://{local_host}:{args.port}/mcp"
+    local_host, local_url = _local_mcp_endpoint(args.host, args.port)
     print(f"Remote tool server: {server_name}", flush=True)
     print(f"Tools: {', '.join(item['name'] for item in selected)}", flush=True)
     print(f"Local MCP: {local_url}", flush=True)
@@ -1892,7 +1898,7 @@ def cmd_serve(args: argparse.Namespace) -> None:
             from tooluniverse.smcp_server import run_default_stdio_server
 
             run_default_stdio_server()
-    except (OSError, RuntimeError, ValueError) as exc:
+    except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
         raise SystemExit(2) from exc
 
@@ -2021,6 +2027,50 @@ def cmd_connect(args: argparse.Namespace) -> None:
     print(f"{action}: {connection['name']}")
     print(f"Tool name: {tool_hint}")
     print("It will load on the next ToolUniverse.load_tools() or `tu serve` start.")
+
+
+def cmd_connections(args: argparse.Namespace) -> None:
+    """List explicit remote connections without resolving or contacting them."""
+    from tooluniverse.remote_connections import read_connections
+
+    connections = read_connections()
+    if args.json:
+        print(json.dumps(connections, indent=2, ensure_ascii=False))
+        return
+    if not connections:
+        print("No remote tool connections saved.")
+        print("Add one with: tu connect <MCP-URL> --name <unique-name>")
+        return
+    for connection in connections:
+        kind = connection.get("kind", "remote")
+        target = connection.get("url") or connection.get("resource_id") or "unknown"
+        namespace = connection.get("tool_name") or connection.get("prefix") or ""
+        auth = (
+            f" (token from {connection['auth_env']})"
+            if connection.get("auth_env")
+            else ""
+        )
+        print(f"{connection.get('name', 'Remote tool')} [{kind}]")
+        print(f"  target: {target}{auth}")
+        print(f"  tool namespace: {namespace}")
+
+
+def cmd_disconnect(args: argparse.Namespace) -> None:
+    """Remove one explicit remote connection without contacting the server."""
+    from tooluniverse.remote_connections import remove_connection
+
+    try:
+        removed = remove_connection(args.target)
+    except (OSError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+    if removed is None:
+        print(f"No saved connection matched: {args.target}", file=sys.stderr)
+        raise SystemExit(1)
+    print(f"Disconnected: {removed.get('name', 'Remote tool')}")
+    print(
+        "It will be absent after the next ToolUniverse.load_tools() or `tu serve` start."
+    )
 
 
 # ── argument parser ────────────────────────────────────────────────────────────
@@ -2443,6 +2493,22 @@ def main() -> None:
         help="ToolUniverse Platform API base URL",
     )
     p.set_defaults(func=cmd_connect)
+
+    p = sub.add_parser(
+        "connections",
+        help="list saved remote tool connections without contacting them",
+    )
+    p.add_argument("--json", action="store_true", help="output JSON")
+    p.set_defaults(func=cmd_connections)
+
+    p = sub.add_parser(
+        "disconnect",
+        help="remove one saved remote tool connection",
+    )
+    p.add_argument(
+        "target", help="exact MCP URL, UUID, display name, or tool namespace"
+    )
+    p.set_defaults(func=cmd_disconnect)
 
     # Quiet is now the default. --verbose/-v opts back in to warnings.
     # We check argv directly because argparse hasn't run yet.

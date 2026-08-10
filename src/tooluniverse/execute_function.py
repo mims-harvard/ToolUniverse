@@ -355,6 +355,7 @@ class ToolUniverse:
         profile: Optional[str] = None,
         workspace: Optional[str] = None,
         use_global: bool = False,
+        load_workspace: bool = True,
     ):
         """
         Initialize the ToolUniverse with tool file configurations.
@@ -383,6 +384,10 @@ class ToolUniverse:
             use_global (bool, optional): When True, use the global ``~/.tooluniverse`` directory
                                          as the default workspace instead of ``./.tooluniverse``.
                                          Has no effect if ``workspace`` or ``TOOLUNIVERSE_HOME`` is set.
+            load_workspace (bool, optional): When False, do not read workspace ``.env``,
+                                            Profile, or user tools during initialization.
+                                            Provider servers use this isolation mode so they
+                                            expose only explicitly registered tools.
         """
         # Set log level if specified
         if log_level is not None:
@@ -396,6 +401,7 @@ class ToolUniverse:
 
         self.name_mapper = ToolNameMapper()
         self.enable_name_shortening = enable_name_shortening
+        self.load_workspace = load_workspace
 
         if enable_name_shortening:
             self.logger.debug("Name shortening enabled for MCP compatibility")
@@ -497,6 +503,13 @@ class ToolUniverse:
         # Priority: workspace= param → TOOLUNIVERSE_HOME env → ./.tooluniverse (local)
         # Use ~/.tooluniverse when use_global=True and no explicit workspace is set.
         self._workspace_dir: Path = self._resolve_workspace(workspace, use_global)
+
+        # Provider runtimes must not inherit a developer's local Profile, tools,
+        # secrets, or saved consumer connections. Keep the path available for
+        # APIs that inspect it, but skip all workspace I/O and auto-loading.
+        if not self.load_workspace:
+            self._workspace_profile_config = None
+            return
 
         # Auto-load .env from workspace directory (secrets stay out of profile.yaml).
         # Existing env vars are never overwritten (shell / system env always wins).
@@ -1214,6 +1227,8 @@ class ToolUniverse:
 
     def _load_connected_remote_tools(self):
         """Load tools selected with ``tu connect`` without contacting a registry."""
+        if not self.load_workspace:
+            return
         try:
             from .remote_connections import connection_configs
 
@@ -3171,10 +3186,7 @@ class ToolUniverse:
                 # Update the original dict so coerced arguments are used
                 function_call_json["arguments"] = arguments
 
-            # Strip None values from arguments: optional params default to None in
-            # Python wrappers, but schema validation rejects None for typed params.
-            # None means "not provided" — simply omit such keys.
-            arguments = {k: v for k, v in arguments.items() if v is not None}
+            arguments = self._strip_omitted_none_arguments(function_name, arguments)
             self._apply_operation_default(function_name, arguments)
             function_call_json["arguments"] = arguments
 
@@ -3361,6 +3373,10 @@ class ToolUniverse:
         if self.lenient_type_coercion:
             arguments = self._coerce_arguments_to_schema(function_name, arguments)
             function_call_json["arguments"] = arguments
+
+        arguments = self._strip_omitted_none_arguments(function_name, arguments)
+        self._apply_operation_default(function_name, arguments)
+        function_call_json["arguments"] = arguments
 
         # Validate parameters if requested
         if validate:
@@ -3897,6 +3913,36 @@ class ToolUniverse:
                 return False
 
         return value
+
+    def _strip_omitted_none_arguments(
+        self, function_name: str, arguments: dict
+    ) -> dict:
+        """Drop wrapper-default ``None`` values without deleting valid JSON nulls."""
+        config = self.all_tool_dict.get(function_name, {})
+        parameter_schema = config.get("parameter", {})
+        properties = parameter_schema.get("properties") or {}
+        required = set(parameter_schema.get("required") or [])
+
+        def allows_null(schema: dict) -> bool:
+            schema_type = schema.get("type")
+            if schema_type == "null":
+                return True
+            if isinstance(schema_type, list) and "null" in schema_type:
+                return True
+            return any(
+                allows_null(option)
+                for key in ("oneOf", "anyOf")
+                for option in schema.get(key, [])
+                if isinstance(option, dict)
+            )
+
+        return {
+            name: value
+            for name, value in arguments.items()
+            if value is not None
+            or name in required
+            or allows_null(properties.get(name, {}))
+        }
 
     def _coerce_arguments_to_schema(self, function_name: str, arguments: dict) -> dict:
         """

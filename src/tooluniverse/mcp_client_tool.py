@@ -21,6 +21,41 @@ import os
 logger = get_logger(__name__)
 
 
+def _unwrap_mcp_tool_result(result: Any) -> Any:
+    """Return the value of a standard MCP tools/call response when unambiguous."""
+    if not isinstance(result, dict):
+        return result
+
+    content = result.get("content")
+    if result.get("isError"):
+        error_parts = [
+            str(item.get("text"))
+            for item in content or []
+            if isinstance(item, dict)
+            and item.get("type") == "text"
+            and item.get("text") is not None
+        ]
+        detail: Any = "\n".join(error_parts) or result.get("structuredContent")
+        return {"status": "error", "error": detail or "remote MCP tool failed"}
+
+    structured = result.get("structuredContent")
+    if structured is not None:
+        return structured
+
+    if not isinstance(content, list) or len(content) != 1:
+        return result
+    item = content[0]
+    if not isinstance(item, dict) or item.get("type") != "text":
+        return result
+    text = item.get("text")
+    if not isinstance(text, str):
+        return result
+    try:
+        return json.loads(text)
+    except (json.JSONDecodeError, TypeError):
+        return text
+
+
 class BaseMCPClient:
     """
     Base MCP client with common functionality shared between MCPClientTool and MCPAutoLoaderTool.
@@ -358,7 +393,7 @@ class MCPProxyTool(MCPClientTool):
         async def _run_async():
             try:
                 result = await self.call_tool(self.target_tool_name, arguments)
-                return result
+                return _unwrap_mcp_tool_result(result)
             except Exception as e:
                 return {"status": "error", "error": str(e)}
             finally:

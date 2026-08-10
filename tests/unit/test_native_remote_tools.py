@@ -1,10 +1,12 @@
+import asyncio
 import json
+import multiprocessing
 import os
 from pathlib import Path
 import subprocess
 import sys
 import types
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -16,10 +18,11 @@ from tooluniverse.remote_connections import (
     normalize_mcp_url,
     platform_connection,
     read_connections,
+    remove_connection,
     save_connection,
 )
 from tooluniverse.platform_remote_tool import PlatformRemoteTool
-from tooluniverse.mcp_client_tool import MCPAutoLoaderTool
+from tooluniverse.mcp_client_tool import MCPAutoLoaderTool, _unwrap_mcp_tool_result
 
 
 @pytest.fixture(autouse=True)
@@ -27,15 +30,28 @@ def clean_remote_registry():
     saved_tools = dict(registry._mcp_tool_registry)
     saved_servers = dict(registry._mcp_server_configs)
     saved_unported = list(registry._unported_tools)
+    saved_instances = dict(registry._mcp_server_instances)
     registry._mcp_tool_registry.clear()
     registry._mcp_server_configs.clear()
     registry._unported_tools.clear()
+    registry._mcp_server_instances.clear()
     yield
     registry._mcp_tool_registry.clear()
     registry._mcp_tool_registry.update(saved_tools)
     registry._mcp_server_configs.clear()
     registry._mcp_server_configs.update(saved_servers)
     registry._unported_tools[:] = saved_unported
+    registry._mcp_server_instances.clear()
+    registry._mcp_server_instances.update(saved_instances)
+
+
+def _save_connection_worker(path: str, index: int, start_event) -> None:
+    """Process target for the persisted-connection race regression test."""
+    start_event.wait()
+    save_connection(
+        mcp_connection(f"http://localhost:{12000 + index}", f"server {index}"),
+        Path(path),
+    )
 
 
 def test_light_cli_entry_imports_remote_decorator_without_full_sdk():
@@ -56,6 +72,26 @@ assert 'tooluniverse.profile' not in sys.modules
         "PYTHONPATH": str(Path(__file__).parents[2] / "src"),
         "TOOLUNIVERSE_LIGHT_IMPORT": "1",
     }
+    subprocess.run([sys.executable, "-c", script], env=env, check=True)
+
+
+def test_light_import_preserves_public_provider_class_api():
+    """Class-based provider files can keep importing BaseTool from the package."""
+    script = """
+import sys
+from tooluniverse import BaseTool, register_remote_tool
+assert BaseTool.__module__ == 'tooluniverse.base_tool'
+assert callable(register_remote_tool)
+assert 'tooluniverse.execute_function' not in sys.modules
+assert 'faiss' not in sys.modules
+"""
+    env = dict(os.environ)
+    env.update(
+        {
+            "PYTHONPATH": str(Path(__file__).parents[2] / "src"),
+            "TOOLUNIVERSE_LIGHT_IMPORT": "1",
+        }
+    )
     subprocess.run([sys.executable, "-c", script], env=env, check=True)
 
 
@@ -157,6 +193,7 @@ import builtins
 import contextlib
 import io
 import json
+import os
 import sys
 
 real_import = builtins.__import__
@@ -176,6 +213,7 @@ assert payload["total_tools"] > 100
 assert len(payload["tools"]) == 2
 assert "tuplatform_connect" not in sys.modules
 assert "tooluniverse.platform_remote_tool" not in sys.modules
+assert "TOOLUNIVERSE_LIGHT_IMPORT" not in os.environ
 """
     env = dict(os.environ)
     for name in (
@@ -241,11 +279,81 @@ def test_remote_tool_infers_schema_and_remains_callable():
 
 
 def test_remote_tool_rejects_variadic_signatures():
-    with pytest.raises(TypeError, match=r"\*args or \*\*kwargs"):
+    with pytest.raises(TypeError, match=r"\*args, or \*\*kwargs"):
 
         @registry.remote_tool
         def invalid(**kwargs):
             return kwargs
+
+
+def test_remote_tool_rejects_positional_only_parameters():
+    with pytest.raises(TypeError, match="positional-only"):
+
+        @registry.remote_tool
+        def invalid(value: int, /):
+            return value
+
+
+def test_remote_tool_rejects_unbound_methods():
+    with pytest.raises(TypeError, match="unbound instance"):
+
+        @registry.remote_tool
+        def invalid(self, value: int):
+            return value
+
+
+def test_remote_tool_preserves_async_execution():
+    @registry.remote_tool
+    async def async_score(value: int) -> int:
+        await asyncio.sleep(0)
+        return value * 2
+
+    tool_class = registry._mcp_tool_registry["async_score"]["class"]
+    assert asyncio.iscoroutinefunction(tool_class.run)
+    assert asyncio.run(tool_class().run({"value": 4})) == 8
+
+
+def test_remote_tool_emits_json_schema_for_nullable_union_and_tuple():
+    from typing import Optional, Tuple, Union
+
+    @registry.remote_tool
+    def typed(
+        optional: Optional[int], mixed: Union[int, str, None], pair: Tuple[int, str]
+    ) -> dict:
+        return {"optional": optional, "mixed": mixed, "pair": pair}
+
+    properties = registry._mcp_tool_registry["typed"]["parameter_schema"]["properties"]
+    assert properties["optional"] == {"type": ["integer", "null"]}
+    assert properties["mixed"] == {"type": ["integer", "string", "null"]}
+    assert properties["pair"] == {
+        "type": "array",
+        "prefixItems": [{"type": "integer"}, {"type": "string"}],
+        "minItems": 2,
+        "maxItems": 2,
+    }
+    json.dumps(registry._mcp_tool_registry["typed"]["parameter_schema"])
+
+
+def test_remote_tool_rejects_non_json_default():
+    with pytest.raises(TypeError, match="default for 'value'.*JSON-serializable"):
+
+        @registry.remote_tool
+        def invalid_default(value=object()):
+            return str(value)
+
+
+def test_remote_tool_rejects_duplicate_function_names():
+    def first(value: int) -> int:
+        return value
+
+    def second(value: int) -> int:
+        return value * 2
+
+    first.__name__ = "duplicate"
+    second.__name__ = "duplicate"
+    registry.remote_tool(first)
+    with pytest.raises(ValueError, match="already registered"):
+        registry.remote_tool(second)
 
 
 def test_collect_tools_for_serve_uses_one_explicit_server():
@@ -285,6 +393,8 @@ def test_mcp_connection_is_normalized_and_secret_free():
         normalize_mcp_url("https://user:secret@gpu.example/mcp")
     with pytest.raises(ValueError, match="valid variable name"):
         mcp_connection("https://gpu.example/mcp", auth_env="BAD-NAME")
+    with pytest.raises(ValueError, match="must use https"):
+        mcp_connection("http://gpu.example/mcp", auth_env="PRIVATE_MCP_TOKEN")
 
 
 def test_connections_round_trip_and_generate_configs(tmp_path: Path):
@@ -310,6 +420,87 @@ def test_connections_round_trip_and_generate_configs(tmp_path: Path):
     assert configs[1]["resource_id"] == published["resource_id"]
     assert json.loads(path.read_text())["version"] == 1
     assert path.stat().st_mode & 0o777 == 0o600
+
+
+def test_connection_namespaces_cannot_silently_replace_each_other(tmp_path: Path):
+    path = tmp_path / "connections.json"
+    assert save_connection(mcp_connection("http://localhost:8080", "GPU model"), path)
+
+    with pytest.raises(ValueError, match="name collision"):
+        save_connection(mcp_connection("http://localhost:8081", "GPU-model"), path)
+
+    assert len(read_connections(path)) == 1
+
+
+def test_remove_connection_by_supported_selectors(tmp_path: Path):
+    path = tmp_path / "connections.json"
+    direct = mcp_connection("http://localhost:8080", "Local model")
+    published = platform_connection(
+        "123e4567-e89b-42d3-a456-426614174000",
+        name="Published Model",
+        description="Run it",
+        input_schema={"type": "object"},
+        base_url="https://api.example",
+    )
+    save_connection(direct, path)
+    save_connection(published, path)
+
+    assert remove_connection("http://localhost:8080/", path) == direct
+    assert remove_connection(published["resource_id"], path) == published
+    assert remove_connection("missing", path) is None
+    assert read_connections(path) == []
+
+
+def test_disconnect_rejects_ambiguous_legacy_names(tmp_path: Path):
+    path = tmp_path / "connections.json"
+    first = mcp_connection("http://localhost:8080", "same")
+    second = platform_connection(
+        "123e4567-e89b-42d3-a456-426614174000",
+        name="same",
+        description="",
+        input_schema={"type": "object"},
+        base_url="https://api.example",
+    )
+    path.write_text(json.dumps({"version": 1, "connections": [first, second]}))
+
+    with pytest.raises(ValueError, match="ambiguous"):
+        remove_connection("same", path)
+
+
+def test_save_connection_does_not_overwrite_corrupt_file(tmp_path: Path):
+    path = tmp_path / "connections.json"
+    original = "{not-json\n"
+    path.write_text(original)
+
+    with pytest.raises(ValueError, match="cannot update invalid"):
+        save_connection(mcp_connection("http://localhost:8080", "local"), path)
+
+    assert path.read_text() == original
+
+
+@pytest.mark.skipif(
+    "fork" not in multiprocessing.get_all_start_methods(),
+    reason="cross-process race test requires fork",
+)
+def test_concurrent_connection_saves_do_not_lose_updates(tmp_path: Path):
+    path = tmp_path / "connections.json"
+    context = multiprocessing.get_context("fork")
+    start_event = context.Event()
+    processes = [
+        context.Process(
+            target=_save_connection_worker,
+            args=(str(path), index, start_event),
+        )
+        for index in range(16)
+    ]
+    for process in processes:
+        process.start()
+    start_event.set()
+    for process in processes:
+        process.join(10)
+        assert process.exitcode == 0
+
+    assert len(read_connections(path)) == len(processes)
 
 
 def test_extract_resource_id_from_marketplace_url():
@@ -412,6 +603,60 @@ def test_platform_remote_tool_waits_for_async_job(monkeypatch):
     assert tool._request.call_args_list[1].args[0] == f"/remote-tool-jobs/{job_id}"
 
 
+def test_platform_remote_poll_uses_remaining_total_deadline(monkeypatch):
+    tool = PlatformRemoteTool(
+        {
+            "name": "remote_gpu_model",
+            "resource_id": "123e4567-e89b-42d3-a456-426614174000",
+            "base_url": "https://api.example",
+            "timeout": 30,
+        }
+    )
+    job_id = "019f8123-cfa2-7502-af19-7be93c844c6c"
+    tool._request = MagicMock(side_effect=[{"status": "running"}, {}])
+    monkeypatch.setattr(
+        "tooluniverse.platform_remote_tool.time.monotonic",
+        MagicMock(side_effect=[0, 1, 2, 10]),
+    )
+    monkeypatch.setattr(
+        "tooluniverse.platform_remote_tool.time.sleep", lambda _seconds: None
+    )
+
+    result = tool._wait_for_job(
+        "test-key",
+        {"job_id": job_id, "status_url": f"/remote-tool-jobs/{job_id}"},
+        deadline=10,
+    )
+
+    assert result["status"] == "error"
+    assert tool._request.call_args_list[0].kwargs["timeout"] == 9
+    assert tool._request.call_args_list[1].kwargs["method"] == "DELETE"
+
+
+def test_platform_remote_poll_failure_requests_job_cancellation():
+    tool = PlatformRemoteTool(
+        {
+            "name": "remote_gpu_model",
+            "resource_id": "123e4567-e89b-42d3-a456-426614174000",
+            "base_url": "https://api.example",
+            "timeout": 30,
+        }
+    )
+    job_id = "019f8123-cfa2-7502-af19-7be93c844c6c"
+    tool._request = MagicMock(
+        side_effect=[TimeoutError("poll timed out"), {"status": "cancelled"}]
+    )
+
+    with pytest.raises(TimeoutError, match="poll timed out"):
+        tool._wait_for_job(
+            "test-key",
+            {"job_id": job_id, "status_url": f"/remote-tool-jobs/{job_id}"},
+            deadline=10**12,
+        )
+
+    assert tool._request.call_args_list[1].kwargs["method"] == "DELETE"
+
+
 def test_platform_remote_tool_rejects_cross_origin_async_status(monkeypatch):
     monkeypatch.setenv("TU_API_KEY", "test-key")
     tool = PlatformRemoteTool(
@@ -456,6 +701,40 @@ def test_mcp_auth_env_propagates_without_copying_secret(monkeypatch):
     assert "super-secret" not in json.dumps(proxy)
 
 
+def test_mcp_proxy_unwraps_standard_text_and_error_results():
+    assert _unwrap_mcp_tool_result(
+        {
+            "content": [{"type": "text", "text": '{"score": 0.9}'}],
+            "structuredContent": None,
+            "isError": False,
+        }
+    ) == {"score": 0.9}
+    assert _unwrap_mcp_tool_result(
+        {
+            "content": [{"type": "text", "text": "provider failed"}],
+            "isError": True,
+        }
+    ) == {"status": "error", "error": "provider failed"}
+    assert _unwrap_mcp_tool_result(
+        {
+            "content": [],
+            "structuredContent": {"code": "GPU_OOM"},
+            "isError": True,
+        }
+    ) == {"status": "error", "error": {"code": "GPU_OOM"}}
+
+
+def test_mcp_proxy_preserves_multi_part_content_envelope():
+    result = {
+        "content": [
+            {"type": "text", "text": "caption"},
+            {"type": "image", "data": "abc", "mimeType": "image/png"},
+        ],
+        "isError": False,
+    }
+    assert _unwrap_mcp_tool_result(result) is result
+
+
 def test_tooluniverse_loads_explicit_platform_connection(tmp_path, monkeypatch):
     from tooluniverse import ToolUniverse
 
@@ -475,3 +754,143 @@ def test_tooluniverse_loads_explicit_platform_connection(tmp_path, monkeypatch):
     tu = ToolUniverse(tool_files={}, keep_default_tools=False)
     tu.load_tools()
     assert tu.all_tool_dict["remote_published_model"]["type"] == ("PlatformRemoteTool")
+
+
+def test_provider_isolation_does_not_load_workspace_connections(tmp_path, monkeypatch):
+    from tooluniverse import ToolUniverse
+
+    path = tmp_path / "connections.json"
+    save_connection(mcp_connection("http://localhost:8080", "consumer tool"), path)
+    monkeypatch.setenv("TOOLUNIVERSE_CONNECTIONS_FILE", str(path))
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    (workspace / "profile.yaml").write_text("name: should-not-load\n")
+
+    tu = ToolUniverse(
+        tool_files={},
+        keep_default_tools=False,
+        workspace=str(workspace),
+        load_workspace=False,
+    )
+
+    assert tu.all_tools == []
+    assert tu._workspace_profile_config is None
+
+
+def test_tooluniverse_preserves_required_nullable_arguments():
+    from tooluniverse import ToolUniverse
+
+    class NullableEcho:
+        def run(self, arguments):
+            return arguments
+
+    tu = ToolUniverse(tool_files={}, keep_default_tools=False, load_workspace=False)
+    tu.register_custom_tool(
+        tool_class=NullableEcho,
+        tool_name="nullable_echo",
+        tool_config={
+            "name": "nullable_echo",
+            "type": "nullable_echo",
+            "description": "echo",
+            "parameter": {
+                "type": "object",
+                "properties": {"value": {"type": ["integer", "null"]}},
+                "required": ["value"],
+            },
+        },
+        instantiate=True,
+    )
+
+    assert tu.run_one_function(
+        {"name": "nullable_echo", "arguments": {"value": None}}
+    ) == {"value": None}
+
+
+def test_ipv6_local_mcp_endpoint_is_connectable():
+    from tooluniverse.cli import _local_mcp_endpoint
+
+    assert _local_mcp_endpoint("::", 8080) == (
+        "::1",
+        "http://[::1]:8080/mcp",
+    )
+    assert _local_mcp_endpoint("0.0.0.0", 8080) == (
+        "127.0.0.1",
+        "http://127.0.0.1:8080/mcp",
+    )
+
+
+def test_start_mcp_server_without_registered_tools_is_safe(capsys):
+    registry.start_mcp_server()
+    assert "No MCP tools registered" in capsys.readouterr().out
+
+
+def test_failed_server_start_does_not_poison_retry(monkeypatch):
+    class FakeToolUniverse:
+        def __init__(self, **_kwargs):
+            self.all_tools = []
+            self.all_tool_dict = {}
+            self.callable_functions = {}
+
+        def register_custom_tool(self, **kwargs):
+            config = kwargs["tool_config"]
+            self.all_tools.append(config)
+            self.all_tool_dict[config["name"]] = config
+
+    class FailingServer:
+        def __init__(self, **_kwargs):
+            pass
+
+        def run_simple(self, **_kwargs):
+            raise OSError("address already in use")
+
+    class Tool:
+        def run(self, arguments):
+            return arguments
+
+    port = 18888
+    tool_info = {
+        "name": "retry_tool",
+        "type": "retry_tool",
+        "class": Tool,
+        "description": "test",
+        "parameter_schema": {"type": "object", "properties": {}},
+        "server_config": {
+            "server_name": "retry",
+            "host": "127.0.0.1",
+            "port": port,
+            "transport": "http",
+            "max_workers": 1,
+        },
+    }
+    registry._mcp_server_configs[port] = {
+        "config": tool_info["server_config"],
+        "tools": [tool_info],
+    }
+    monkeypatch.setattr(registry, "_get_tooluniverse", lambda: FakeToolUniverse)
+    monkeypatch.setattr(registry, "_get_smcp", lambda: FailingServer)
+
+    with pytest.raises(OSError, match="address already in use"):
+        registry._start_server_for_port(port)
+
+    assert port not in registry._mcp_server_instances
+
+
+def test_smcp_run_simple_propagates_startup_failure():
+    from tooluniverse.smcp import SMCP
+
+    server = SMCP.__new__(SMCP)
+    server.logger = MagicMock()
+    server._mcp_server = MagicMock(name="mcp_server")
+    server._mcp_server.name = "failing"
+    server._exposed_tools = set()
+    server.search_enabled = False
+    server.hooks_enabled = False
+    server.hook_type = None
+    server.hook_config = None
+    server.run = MagicMock(side_effect=OSError("address already in use"))
+    server.close = AsyncMock()
+
+    with pytest.raises(OSError, match="address already in use"):
+        server.run_simple(transport="http", port=18889)
+
+    server.close.assert_awaited_once()

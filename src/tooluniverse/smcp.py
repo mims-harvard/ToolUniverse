@@ -1541,6 +1541,7 @@ class SMCP(FastMCP):
             self.logger.info("\n🛑 Server stopped by user")
         except Exception as e:
             self.logger.error(f"❌ Server error: {e}")
+            raise
         finally:
             # Cleanup
             asyncio.run(self.close())
@@ -1596,6 +1597,9 @@ class SMCP(FastMCP):
             elif item_type == "object":
                 one_of_types.append(dict)
                 one_of_schemas.append(item)
+            elif item_type == "null":
+                one_of_types.append(type(None))
+                one_of_schemas.append({"type": "null"})
 
         if len(one_of_types) == 0:
             python_type = str
@@ -1625,10 +1629,15 @@ class SMCP(FastMCP):
             non_null = [t for t in param_type if t != "null"]
             is_nullable = "null" in param_type
             base_type = non_null[0] if non_null else "string"
-            base_python_type = cls._SIMPLE_TYPE_MAP.get(base_type, str)
+            python_types = [cls._SIMPLE_TYPE_MAP.get(item, str) for item in non_null]
+            if len(python_types) > 1:
+                base_python_type = Union[tuple(python_types)]
+            else:
+                base_python_type = python_types[0] if python_types else str
             python_type = (
                 Optional[base_python_type] if is_nullable else base_python_type
             )
+            extra["json_schema_extra"] = {"type": param_info["type"]}
             param_type = base_type
         else:
             python_type = cls._SIMPLE_TYPE_MAP.get(param_type, str)
@@ -1640,7 +1649,13 @@ class SMCP(FastMCP):
                 if items_info
                 else {"type": "string"}
             )
-            extra["json_schema_extra"] = {"type": "array", "items": cleaned_items}
+            array_schema = {"type": "array"}
+            if items_info:
+                array_schema["items"] = cleaned_items
+            for key in ("prefixItems", "minItems", "maxItems", "uniqueItems"):
+                if key in param_info:
+                    array_schema[key] = param_info[key]
+            extra["json_schema_extra"] = array_schema
 
         elif param_type == "object":
             object_props = param_info.get("properties", {})
@@ -1697,6 +1712,19 @@ class SMCP(FastMCP):
             if properties is None:
                 properties = {}
             required_params = parameters.get("required", [])
+
+            def _schema_allows_null(schema: Dict[str, Any]) -> bool:
+                schema_type = schema.get("type")
+                if schema_type == "null":
+                    return True
+                if isinstance(schema_type, list) and "null" in schema_type:
+                    return True
+                return any(
+                    _schema_allows_null(option)
+                    for key in ("oneOf", "anyOf")
+                    for option in schema.get(key, [])
+                    if isinstance(option, dict)
+                )
 
             # Handle non-standard schema format where 'required' is set on individual properties
             # instead of at the object level (common in ToolUniverse schemas)
@@ -1797,8 +1825,18 @@ class SMCP(FastMCP):
                     args_dict = {
                         _param_name_map.get(k, k): v
                         for k, v in kwargs.items()
-                        if v is not None
+                        if v is not None or _param_name_map.get(k, k) in required_params
                     }
+                    # FastMCP validates a required nullable input before this
+                    # function, but its Pydantic invocation drops the explicit
+                    # ``None`` from kwargs. Reinsert only those already-validated
+                    # nullable required parameters; genuinely missing required
+                    # non-null inputs still fail below.
+                    for param_name in required_params:
+                        if param_name not in args_dict and _schema_allows_null(
+                            properties.get(param_name, {})
+                        ):
+                            args_dict[param_name] = None
 
                     # Check if tool supports tasks
                     execution_config = tool_config.get("execution", {})

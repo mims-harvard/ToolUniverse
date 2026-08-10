@@ -49,6 +49,7 @@ result = tu.run_tool("my_analysis_tool", {"data": "input"})
 
 import asyncio
 import inspect
+import json
 import types
 import typing
 from typing import Dict, Any, List, Optional
@@ -212,20 +213,41 @@ def _py_type_to_json_schema(hint: Any) -> Dict[str, Any]:
     if origin is typing.Annotated and args:
         return _py_type_to_json_schema(args[0])
     if origin in (typing.Union, types.UnionType):
-        non_null = [item for item in args if item is not type(None)]
-        if len(non_null) == 1:
-            schema = _py_type_to_json_schema(non_null[0])
-            return {**schema, "nullable": True}
-        return {"anyOf": [_py_type_to_json_schema(item) for item in non_null]}
+        schemas = [
+            {"type": "null"} if item is type(None) else _py_type_to_json_schema(item)
+            for item in args
+        ]
+        simple_types = [
+            schema.get("type")
+            for schema in schemas
+            if set(schema) == {"type"} and isinstance(schema.get("type"), str)
+        ]
+        if len(simple_types) == len(schemas):
+            return {"type": list(dict.fromkeys(simple_types))}
+        return {"oneOf": schemas}
     if origin is typing.Literal:
         values = list(args)
         schema: Dict[str, Any] = {"enum": values}
-        if values:
+        if values and all(type(value) is type(values[0]) for value in values):
             schema.update(_py_type_to_json_schema(type(values[0])))
         return schema
-    if origin in (list, List, tuple, set):
+    if origin in (list, List, set):
         item_hint = args[0] if args else Any
-        return {"type": "array", "items": _py_type_to_json_schema(item_hint)}
+        schema = {"type": "array", "items": _py_type_to_json_schema(item_hint)}
+        if origin is set:
+            schema["uniqueItems"] = True
+        return schema
+    if origin is tuple:
+        if len(args) == 2 and args[1] is Ellipsis:
+            return {"type": "array", "items": _py_type_to_json_schema(args[0])}
+        if args:
+            return {
+                "type": "array",
+                "prefixItems": [_py_type_to_json_schema(item) for item in args],
+                "minItems": len(args),
+                "maxItems": len(args),
+            }
+        return {"type": "array"}
     if origin in (dict, Dict):
         value_hint = args[1] if len(args) > 1 else Any
         result: Dict[str, Any] = {"type": "object"}
@@ -259,6 +281,9 @@ def remote_tool(fn):
         raise TypeError("@remote_tool can only decorate a callable")
 
     tool_name = fn.__name__
+    existing = _mcp_tool_registry.get(tool_name)
+    if existing is not None and existing.get("fn") is not fn:
+        raise ValueError(f"remote tool name already registered: {tool_name}")
     signature = inspect.signature(fn)
     try:
         hints = typing.get_type_hints(fn, include_extras=True)
@@ -268,16 +293,31 @@ def remote_tool(fn):
     properties: Dict[str, Any] = {}
     required: List[str] = []
     for name, parameter in signature.parameters.items():
-        if name == "self":
-            continue
+        if name in {"self", "cls"}:
+            raise TypeError(
+                "@remote_tool cannot decorate an unbound instance or class method; "
+                "wrap it in a plain function or use @register_remote_tool"
+            )
         if parameter.kind in (
+            inspect.Parameter.POSITIONAL_ONLY,
             inspect.Parameter.VAR_POSITIONAL,
             inspect.Parameter.VAR_KEYWORD,
         ):
-            raise TypeError("@remote_tool does not support *args or **kwargs")
+            raise TypeError(
+                "@remote_tool does not support positional-only parameters, "
+                "*args, or **kwargs"
+            )
         field = _py_type_to_json_schema(hints.get(name, parameter.annotation))
         if parameter.default is not inspect.Parameter.empty:
-            field = {**field, "default": parameter.default}
+            try:
+                default = json.loads(
+                    json.dumps(parameter.default, allow_nan=False, ensure_ascii=False)
+                )
+            except (TypeError, ValueError) as exc:
+                raise TypeError(
+                    f"@remote_tool default for '{name}' must be JSON-serializable"
+                ) from exc
+            field = {**field, "default": default}
         else:
             required.append(name)
         properties[name] = field
@@ -296,17 +336,31 @@ def remote_tool(fn):
         hints.get("return", signature.return_annotation)
     )
 
-    class _FunctionRemoteTool:
-        def run(self, arguments):
-            values = {
-                name: value
-                for name, value in arguments.items()
-                if name in signature.parameters
-            }
-            return fn(**values)
+    def _call_values(arguments):
+        return {
+            name: value
+            for name, value in arguments.items()
+            if name in signature.parameters
+        }
 
-    _FunctionRemoteTool.__name__ = f"{tool_name}_remote_tool"
-    _FunctionRemoteTool.__qualname__ = _FunctionRemoteTool.__name__
+    if inspect.iscoroutinefunction(fn):
+
+        class _AsyncFunctionRemoteTool:
+            async def run(self, arguments):
+                return await fn(**_call_values(arguments))
+
+        function_tool_class = _AsyncFunctionRemoteTool
+
+    else:
+
+        class _SyncFunctionRemoteTool:
+            def run(self, arguments):
+                return fn(**_call_values(arguments))
+
+        function_tool_class = _SyncFunctionRemoteTool
+
+    function_tool_class.__name__ = f"{tool_name}_remote_tool"
+    function_tool_class.__qualname__ = function_tool_class.__name__
 
     tool_config: Dict[str, Any] = {
         "name": tool_name,
@@ -319,7 +373,7 @@ def remote_tool(fn):
     tool_info = {
         "name": tool_name,
         "type": tool_name,
-        "class": _FunctionRemoteTool,
+        "class": function_tool_class,
         "fn": fn,
         "description": description,
         "parameter_schema": parameter_schema,
@@ -501,6 +555,9 @@ def start_mcp_server(port: Optional[int] = None, **kwargs):
     else:
         # Start servers for all registered ports
         ports = list(_mcp_server_configs.keys())
+        if not ports:
+            print("❌ No MCP tools registered. Nothing to serve.")
+            return
         if len(ports) > 1:
             print(
                 f"⚠️  Multiple ports registered ({len(ports)}), starting server for port {ports[0]} only"
@@ -535,6 +592,7 @@ def _start_server_for_port(port: int, **kwargs):
     tu = ToolUniverse(
         tool_files={},  # Empty tool files - no default categories
         keep_default_tools=False,  # Don't load any default tools
+        load_workspace=False,  # Never inherit or re-export consumer connections
     )
 
     # Register MCP tools using the public API
@@ -572,15 +630,15 @@ def _start_server_for_port(port: int, **kwargs):
         **kwargs,
     )
 
-    # Store server instance
-    _mcp_server_instances[port] = server
-
     # Start server (blocking call)
     host = config["host"]
     print(f"✅ MCP server starting on {host}:{port}")
     print(f"   Server URL: http://{host}:{port}/mcp")
 
     try:
+        # Store only while the blocking server call is active. A bind/startup
+        # failure must not poison retries with a stale "already running" entry.
+        _mcp_server_instances[port] = server
         # Enable stateless mode for MCPAutoLoaderTool compatibility
         server.run_simple(
             transport=config["transport"],
@@ -591,6 +649,9 @@ def _start_server_for_port(port: int, **kwargs):
     except Exception as e:
         print(f"❌ Error running MCP server on port {port}: {e}")
         raise
+    finally:
+        if _mcp_server_instances.get(port) is server:
+            del _mcp_server_instances[port]
 
 
 # Note: Removed 438 lines of dead code:

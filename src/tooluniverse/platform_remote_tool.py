@@ -64,7 +64,15 @@ class PlatformRemoteTool(BaseTool):
             )
         self._opener = urllib.request.build_opener(_NoRedirect)
 
-    def _request(self, path: str, api_key: str, *, method: str = "GET", payload=None):
+    def _request(
+        self,
+        path: str,
+        api_key: str,
+        *,
+        method: str = "GET",
+        payload=None,
+        timeout: float | None = None,
+    ):
         if not path.startswith("/") or path.startswith("//"):
             raise ValueError("platform returned an unsafe job status URL")
         body = None
@@ -79,22 +87,37 @@ class PlatformRemoteTool(BaseTool):
         request = urllib.request.Request(
             self.base_url + path, data=body, method=method, headers=headers
         )
-        with self._opener.open(request, timeout=min(self.timeout, 120)) as response:
+        request_timeout = min(self.timeout if timeout is None else timeout, 120)
+        if request_timeout <= 0:
+            raise TimeoutError("platform tool deadline expired")
+        with self._opener.open(request, timeout=request_timeout) as response:
             raw = response.read(_MAX_RESPONSE_BYTES + 1)
         if len(raw) > _MAX_RESPONSE_BYTES:
             raise ValueError("platform tool response exceeded 16 MiB")
         return json.loads(raw.decode("utf-8"))
 
-    def _wait_for_job(self, api_key: str, payload: dict):
+    def _wait_for_job(self, api_key: str, payload: dict, deadline: float):
         status_path = str(payload.get("status_url", ""))
         job_id = str(payload.get("job_id", ""))
         expected_path = f"/remote-tool-jobs/{job_id}"
         if not job_id or status_path != expected_path:
             raise ValueError("platform returned an invalid asynchronous job handle")
-        deadline = time.monotonic() + self.timeout
+
+        def request_cancellation() -> None:
+            try:
+                self._request(
+                    status_path,
+                    api_key,
+                    method="DELETE",
+                    timeout=min(5, self.timeout),
+                )
+            except Exception:
+                pass
+
         try:
             while time.monotonic() < deadline:
-                job = self._request(status_path, api_key)
+                remaining = deadline - time.monotonic()
+                job = self._request(status_path, api_key, timeout=remaining)
                 status = job.get("status")
                 if status == "succeeded":
                     result = job.get("result")
@@ -107,16 +130,16 @@ class PlatformRemoteTool(BaseTool):
                         "error": str(job.get("error") or f"remote job {status}"),
                         "job_id": job_id,
                     }
-                time.sleep(1)
+                time.sleep(min(1, max(0, deadline - time.monotonic())))
         except KeyboardInterrupt:
-            try:
-                self._request(status_path, api_key, method="DELETE")
-            finally:
-                raise
-        try:
-            self._request(status_path, api_key, method="DELETE")
+            request_cancellation()
+            raise
         except Exception:
-            pass
+            # A timed-out poll can otherwise leave an expensive provider job
+            # running after the local caller has already given up.
+            request_cancellation()
+            raise
+        request_cancellation()
         return {
             "status": "error",
             "error": "remote job timed out and cancellation was requested",
@@ -142,14 +165,16 @@ class PlatformRemoteTool(BaseTool):
             }
 
         try:
+            deadline = time.monotonic() + self.timeout
             payload = self._request(
                 "/tools/call",
                 api_key,
                 method="POST",
                 payload={"tool": self.resource_id, "arguments": arguments},
+                timeout=deadline - time.monotonic(),
             )
             if payload.get("job_id"):
-                return self._wait_for_job(api_key, payload)
+                return self._wait_for_job(api_key, payload, deadline)
             return payload.get("result", payload)
         except urllib.error.HTTPError as exc:
             detail = f"platform returned HTTP {exc.code}"

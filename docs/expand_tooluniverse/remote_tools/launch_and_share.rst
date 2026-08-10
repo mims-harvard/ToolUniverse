@@ -52,6 +52,15 @@ Register the MCP endpoint once:
 On later ``ToolUniverse.load_tools()`` calls, the remote operation is discovered
 and appears with the stable prefix ``my_model_``.
 
+Each connection name must generate a unique prefix; ToolUniverse rejects a
+second connection that could silently replace tools from the first. Inspect or
+remove saved connections without contacting their servers:
+
+.. code-block:: bash
+
+   tu connections
+   tu disconnect http://gpu-host:8080/mcp
+
 For a bearer-authenticated MCP endpoint, store only the environment-variable
 name, never the secret itself:
 
@@ -74,7 +83,9 @@ runtime instead of ToolUniverse's complete scientific dependency collection:
 Until this feature reaches a PyPI release, use the reviewed ToolUniverse source
 command shown in ToolUniverse Connect instead of the second command above. If
 the full ToolUniverse SDK is already installed, only the relay package is
-needed.
+needed. This reduced installation is intended for running provider files with
+the ``tu serve`` command; install the normal ToolUniverse dependencies when the
+provider code also uses the full Python SDK.
 
 Then run:
 
