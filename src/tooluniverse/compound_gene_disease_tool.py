@@ -191,10 +191,34 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
                     "error": f"No target match for gene '{gene}'",
                 }
 
+            # Fix-R28D-2: OpenTargets_get_target_id_description_by_name is a
+            # fuzzy free-text search, so an unrecognised symbol still comes back
+            # with a full hit list ranked by text relevance. Falling back to
+            # hits[0] when nothing matched exactly made the tool answer about a
+            # DIFFERENT gene with no signal at all -- confirmed live that
+            # {"gene": "THP"} (the clinical alias for uromodulin) returned
+            # GLI2's holoprosencephaly associations at score 0.80, shaped
+            # exactly like a correct answer. The hits carry only id/name/
+            # description -- no synonym fields -- so the alias is genuinely
+            # unresolvable here; report it as unresolved and name the
+            # candidates instead of guessing.
             gene_upper = gene.upper()
             match = next(
-                (h for h in hits if h.get("name", "").upper() == gene_upper), hits[0]
+                (h for h in hits if h.get("name", "").upper() == gene_upper), None
             )
+            if match is None:
+                candidates = [h.get("name", "") for h in hits if h.get("name")][:8]
+                candidate_text = ", ".join(candidates) if candidates else "none named"
+                msg = (
+                    f"'{gene}' did not exactly match any OpenTargets target "
+                    f"symbol, so no associated diseases were fetched (answering "
+                    f"with another target's diseases would misattribute them to "
+                    f"'{gene}'). The fuzzy target search returned these "
+                    f"candidate symbols: {candidate_text}. Re-query with the "
+                    f"exact approved symbol you mean."
+                )
+                sources_failed.append(f"OpenTargets: {msg}")
+                return {"status": "error", "error": msg}
             ensembl_id = match.get("id")
 
             result = tu.run_one_function(

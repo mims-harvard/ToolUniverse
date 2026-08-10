@@ -117,13 +117,113 @@ class BVBRCTool(BaseTool):
 
         return "&".join(parts)
 
-    def _make_request(self, endpoint: str, query: str) -> Any:
-        """Make a request to BV-BRC API."""
+    @staticmethod
+    def _parse_content_range_total(header: Any) -> Optional[int]:
+        """Extract the upstream match count from a ``Content-Range`` header.
+
+        BV-BRC answers list queries with a header shaped like
+        ``items 0-9/2431``, where the value after the slash is the number of
+        records matching the query upstream -- independent of how many rows
+        the current page returned.
+
+        Returns ``None`` whenever the total cannot be determined (header
+        absent, malformed, or reporting an unknown total as ``*``). This
+        never raises: an unparseable header simply means "total unknown".
+        """
+        if not isinstance(header, str):
+            return None
+        try:
+            total_part = header.rsplit("/", 1)[-1].strip()
+            if not total_part or total_part == "*":
+                return None
+            total = int(total_part)
+        except (ValueError, TypeError):
+            return None
+        return total if total >= 0 else None
+
+    def _make_request_with_total(self, endpoint: str, query: str) -> Any:
+        """Make a request to BV-BRC API, returning ``(payload, upstream_total)``.
+
+        ``upstream_total`` is the number of records matching the query on the
+        server (from the ``Content-Range`` header), or ``None`` when BV-BRC
+        did not report one.
+        """
         url = f"{BVBRC_BASE_URL}/{endpoint}/?{query}"
         headers = {"Accept": "application/json"}
         response = requests.get(url, headers=headers, timeout=self.timeout)
         response.raise_for_status()
-        return response.json()
+
+        response_headers = getattr(response, "headers", None)
+        try:
+            content_range = response_headers.get(
+                "Content-Range"
+            ) or response_headers.get("X-Content-Range")
+        except (AttributeError, TypeError):
+            content_range = None
+
+        return response.json(), self._parse_content_range_total(content_range)
+
+    def _make_request(self, endpoint: str, query: str) -> Any:
+        """Make a request to BV-BRC API and return the decoded payload."""
+        data, _ = self._make_request_with_total(endpoint, query)
+        return data
+
+    def _search_metadata(
+        self,
+        results: List[Any],
+        limit: int,
+        upstream_total: Optional[int],
+        **query_fields: Any,
+    ) -> Dict[str, Any]:
+        """Build the metadata block shared by every BV-BRC search operation.
+
+        Distinguishes the rows on this page (``returned_results``) from the
+        number of records matching the query upstream (``total_results``), and
+        states plainly when the response was truncated.
+        """
+        returned = len(results)
+
+        if isinstance(upstream_total, int) and upstream_total >= returned:
+            total = upstream_total
+            total_known = True
+        else:
+            total = returned
+            total_known = False
+
+        metadata: Dict[str, Any] = {
+            "source": "BV-BRC",
+            "returned_results": returned,
+            "total_results": total,
+            "limit": limit,
+        }
+
+        if not total_known:
+            # Only worth saying when it is not true: otherwise total_results
+            # means what its name says, and a constant description string on
+            # every response is noise.
+            metadata["total_results_note"] = (
+                "BV-BRC did not report a total; this is the number of rows "
+                "returned and may undercount the true number of matches"
+            )
+
+        if total_known and total > returned:
+            metadata["truncated"] = True
+            metadata["truncation_note"] = (
+                f"Showing {returned} of {total} matching records. "
+                f"Raise 'limit' (maximum 100) to retrieve more."
+            )
+        elif not total_known and returned >= limit:
+            metadata["truncated"] = True
+            metadata["truncation_note"] = (
+                f"BV-BRC did not report a total and this page is full at the "
+                f"requested limit of {limit}, so more matching records may exist. "
+                f"Raise 'limit' (maximum 100) to retrieve more."
+            )
+        else:
+            metadata["truncated"] = False
+
+        metadata.update(query_fields)
+        return metadata
 
     def _get_genome(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get a specific genome by ID."""
@@ -198,17 +298,18 @@ class BVBRCTool(BaseTool):
             select_fields=select_fields,
         )
 
-        data = self._make_request("genome", query)
+        data, upstream_total = self._make_request_with_total("genome", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query": keyword,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query=keyword,
+            ),
         }
 
     def _search_amr(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -251,18 +352,19 @@ class BVBRCTool(BaseTool):
         query = self._build_query_string(
             conditions, limit=limit, select_fields=select_fields
         )
-        data = self._make_request("genome_amr", query)
+        data, upstream_total = self._make_request_with_total("genome_amr", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query_antibiotic": antibiotic,
-                "query_genome_id": genome_id,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query_antibiotic=antibiotic,
+                query_genome_id=genome_id,
+            ),
         }
 
     def _search_features(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -308,18 +410,19 @@ class BVBRCTool(BaseTool):
         query = self._build_query_string(
             conditions, limit=limit, select_fields=select_fields
         )
-        data = self._make_request("genome_feature", query)
+        data, upstream_total = self._make_request_with_total("genome_feature", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query_gene": gene,
-                "query_product": product,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query_gene=gene,
+                query_product=product,
+            ),
         }
 
     def _search_epitopes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -365,18 +468,19 @@ class BVBRCTool(BaseTool):
         query = self._build_query_string(
             conditions, limit=limit, select_fields=select_fields
         )
-        data = self._make_request("epitope", query)
+        data, upstream_total = self._make_request_with_total("epitope", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query_taxon_id": taxon_id,
-                "query_protein_name": protein_name,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query_taxon_id=taxon_id,
+                query_protein_name=protein_name,
+            ),
         }
 
     def _search_surveillance(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -429,18 +533,19 @@ class BVBRCTool(BaseTool):
         query = self._build_query_string(
             conditions, limit=limit, select_fields=select_fields
         )
-        data = self._make_request("surveillance", query)
+        data, upstream_total = self._make_request_with_total("surveillance", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query_subtype": subtype,
-                "query_geographic_group": geographic_group,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query_subtype=subtype,
+                query_geographic_group=geographic_group,
+            ),
         }
 
     def _search_specialty_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -487,18 +592,19 @@ class BVBRCTool(BaseTool):
         query = self._build_query_string(
             conditions, limit=limit, select_fields=select_fields
         )
-        data = self._make_request("sp_gene", query)
+        data, upstream_total = self._make_request_with_total("sp_gene", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query_gene": gene,
-                "query_property": prop,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query_gene=gene,
+                query_property=prop,
+            ),
         }
 
     def _get_protein_structure(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -564,18 +670,19 @@ class BVBRCTool(BaseTool):
         query = self._build_query_string(
             conditions, limit=limit, select_fields=select_fields
         )
-        data = self._make_request("protein_structure", query)
+        data, upstream_total = self._make_request_with_total("protein_structure", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query_taxon_id": taxon_id,
-                "query_gene": gene,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query_taxon_id=taxon_id,
+                query_gene=gene,
+            ),
         }
 
     def _get_taxonomy(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -640,17 +747,18 @@ class BVBRCTool(BaseTool):
             limit=limit,
             select_fields=select_fields,
         )
-        data = self._make_request("taxonomy", query)
+        data, upstream_total = self._make_request_with_total("taxonomy", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query": keyword,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query=keyword,
+            ),
         }
 
     def _search_pathways(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -705,18 +813,19 @@ class BVBRCTool(BaseTool):
         query = self._build_query_string(
             conditions, limit=limit, select_fields=select_fields
         )
-        data = self._make_request("pathway", query)
+        data, upstream_total = self._make_request_with_total("pathway", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query_taxon_id": taxon_id,
-                "query_pathway_name": pathway_name,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query_taxon_id=taxon_id,
+                query_pathway_name=pathway_name,
+            ),
         }
 
     def _search_subsystems(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -765,16 +874,17 @@ class BVBRCTool(BaseTool):
         query = self._build_query_string(
             conditions, limit=limit, select_fields=select_fields
         )
-        data = self._make_request("subsystem", query)
+        data, upstream_total = self._make_request_with_total("subsystem", query)
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BV-BRC",
-                "total_results": len(results),
-                "query_taxon_id": taxon_id,
-                "query_subsystem_name": subsystem_name,
-            },
+            "metadata": self._search_metadata(
+                results,
+                limit,
+                upstream_total,
+                query_taxon_id=taxon_id,
+                query_subsystem_name=subsystem_name,
+            ),
         }
