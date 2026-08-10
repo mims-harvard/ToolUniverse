@@ -79,6 +79,37 @@ class TestHPOPhenotypeAnnotations(unittest.TestCase):
         self.assertEqual(result["status"], "error")
         get2.assert_not_called()
 
+    def test_offset_pages_past_the_limit_cap(self):
+        # Fix-19C-1/19C-2: a phenotype with more associations than fit in one
+        # `limit`-capped response must be reachable via `offset` -- the
+        # endpoint returns everything in one call, so paging is a client-side
+        # slice over the same fetched list, not a second network round-trip.
+        tool = _tool("get_associated_genes")
+        with patch("tooluniverse.hpo_tool.requests.get", return_value=_resp()) as get:
+            first_page = tool.run({"term_id": "HP:0001250", "limit": 2, "offset": 0})
+        with patch("tooluniverse.hpo_tool.requests.get", return_value=_resp()):
+            second_page = tool.run({"term_id": "HP:0001250", "limit": 2, "offset": 2})
+
+        self.assertEqual(get.call_count, 1)
+        self.assertEqual(len(first_page["data"]["genes"]), 2)
+        self.assertTrue(first_page["metadata"]["has_more"])
+        self.assertEqual(first_page["metadata"]["offset"], 0)
+
+        # Third gene ("LGI1") is only reachable past the first page.
+        self.assertEqual(len(second_page["data"]["genes"]), 1)
+        self.assertEqual(second_page["data"]["genes"][0]["name"], "LGI1")
+        self.assertFalse(second_page["metadata"]["has_more"])
+        self.assertEqual(second_page["metadata"]["offset"], 2)
+
+    def test_offset_defaults_to_zero_when_omitted(self):
+        # Backward compatibility: no `offset` argument behaves exactly as
+        # before this fix (starts from position 0).
+        tool = _tool("get_associated_genes")
+        with patch("tooluniverse.hpo_tool.requests.get", return_value=_resp()):
+            result = tool.run({"term_id": "HP:0001250", "limit": 2})
+        self.assertEqual(result["metadata"]["offset"], 0)
+        self.assertEqual(result["data"]["genes"][0]["name"], "RELN")
+
 
 if __name__ == "__main__":
     unittest.main()
