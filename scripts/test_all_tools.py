@@ -17,7 +17,7 @@ Options:
     --parallel      Run tests in parallel (faster but less readable output)
     --output FILE   Save report to file (default: TOOL_TEST_REPORT.md)
     --json-output   Save atomic JSON progress (default: TOOL_TEST_RESULTS.json)
-    --resume        Reuse completed categories from the JSON checkpoint
+    --resume        Reuse completed categories when source/config still match
     --skip TOOLS    Skip specific tools (comma-separated, e.g., "agentic,finder,tool")
     --skip-pattern  Skip tools matching pattern (e.g., "agentic*" or "*discovery*")
     --skip-remote   Skip remote tools that require external servers
@@ -27,6 +27,7 @@ Options:
 import argparse
 import concurrent.futures
 import fnmatch
+import hashlib
 import json
 import subprocess
 import sys
@@ -41,7 +42,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 # --parallel substantially without hammering any single upstream API too hard.
 DEFAULT_PARALLEL_WORKERS = 10
 
-CHECKPOINT_SCHEMA_VERSION = 1
+CHECKPOINT_SCHEMA_VERSION = 2
 RESULT_STATES = (
     "passed",
     "failed",
@@ -87,10 +88,45 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def compute_sweep_fingerprint(
+    repo_root: Path,
+    expected_patterns: List[str],
+    config_patterns: Dict[str, List[Path]],
+) -> str:
+    """Hash the local inputs that determine a tool sweep's results."""
+    input_paths = {
+        repo_root / "pyproject.toml",
+        repo_root / "scripts" / "test_all_tools.py",
+        repo_root / "scripts" / "test_new_tools.py",
+    }
+    input_paths.update((repo_root / "src" / "tooluniverse").rglob("*.py"))
+    for pattern in expected_patterns:
+        input_paths.update(config_patterns.get(pattern, []))
+
+    digest = hashlib.sha256()
+    digest.update(
+        json.dumps(expected_patterns, separators=(",", ":")).encode("utf-8")
+    )
+    for path in sorted(input_paths, key=lambda item: item.as_posix()):
+        try:
+            relative_path = path.relative_to(repo_root)
+        except ValueError:
+            relative_path = path
+        digest.update(b"\0path\0")
+        digest.update(relative_path.as_posix().encode("utf-8"))
+        digest.update(b"\0content\0")
+        if path.is_file():
+            digest.update(path.read_bytes())
+        else:
+            digest.update(b"<missing>")
+    return digest.hexdigest()
+
+
 def write_checkpoint(
     output_path: Path,
     results: Dict[str, Dict[str, Any]],
     expected_patterns: List[str],
+    sweep_fingerprint: str,
     started_at: str,
     complete: bool,
 ) -> None:
@@ -108,6 +144,7 @@ def write_checkpoint(
         "updated_at": _utc_now(),
         "complete": complete,
         "expected_patterns": expected_patterns,
+        "sweep_fingerprint": sweep_fingerprint,
         "completed_patterns": len(normalized_results),
         "status_counts": status_counts,
         "results": normalized_results,
@@ -120,7 +157,11 @@ def write_checkpoint(
     temporary_path.replace(output_path)
 
 
-def load_checkpoint(output_path: Path) -> Dict[str, Dict[str, Any]]:
+def load_checkpoint(
+    output_path: Path,
+    expected_patterns: List[str],
+    sweep_fingerprint: str,
+) -> Dict[str, Dict[str, Any]]:
     """Load and validate results from a prior machine-readable checkpoint."""
     if not output_path.exists():
         return {}
@@ -128,6 +169,15 @@ def load_checkpoint(output_path: Path) -> Dict[str, Dict[str, Any]]:
     if payload.get("schema_version") != CHECKPOINT_SCHEMA_VERSION:
         raise ValueError(
             f"Unsupported checkpoint schema: {payload.get('schema_version')!r}"
+        )
+    checkpoint_patterns = payload.get("expected_patterns")
+    if checkpoint_patterns != expected_patterns:
+        raise ValueError(
+            "Checkpoint test scope does not match the current selected patterns"
+        )
+    if payload.get("sweep_fingerprint") != sweep_fingerprint:
+        raise ValueError(
+            "Checkpoint source/config fingerprint does not match the current tree"
         )
     results = payload.get("results")
     if not isinstance(results, dict):
@@ -678,7 +728,7 @@ def main():
     parser.add_argument(
         "--resume",
         action="store_true",
-        help="Reuse completed categories from --json-output",
+        help="Reuse completed categories when source/config still match --json-output",
     )
     parser.add_argument(
         "--pattern",
@@ -799,6 +849,9 @@ def main():
     start_time = time.time()
     started_at = _utc_now()
     expected_patterns = sorted(config_patterns.keys())
+    sweep_fingerprint = compute_sweep_fingerprint(
+        repo_root, expected_patterns, config_patterns
+    )
     checkpoint_path = Path(args.json_output)
     if not checkpoint_path.is_absolute():
         checkpoint_path = repo_root / checkpoint_path
@@ -806,7 +859,9 @@ def main():
     resumed_results: Dict[str, Dict[str, Any]] = {}
     if args.resume:
         try:
-            checkpoint_results = load_checkpoint(checkpoint_path)
+            checkpoint_results = load_checkpoint(
+                checkpoint_path, expected_patterns, sweep_fingerprint
+            )
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             print(f"❌ Cannot resume from {checkpoint_path}: {exc}")
             sys.exit(1)
@@ -821,6 +876,7 @@ def main():
         checkpoint_path,
         resumed_results,
         expected_patterns,
+        sweep_fingerprint,
         started_at,
         complete=False,
     )
@@ -832,6 +888,7 @@ def main():
             checkpoint_path,
             current_results,
             expected_patterns,
+            sweep_fingerprint,
             started_at,
             complete=False,
         )
@@ -852,6 +909,7 @@ def main():
         checkpoint_path,
         results,
         expected_patterns,
+        sweep_fingerprint,
         started_at,
         complete=checkpoint_complete,
     )

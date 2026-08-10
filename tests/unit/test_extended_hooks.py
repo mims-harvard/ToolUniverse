@@ -12,7 +12,7 @@ from tooluniverse.extended_hooks import (
     LoggingHook,
     ValidationHook,
 )
-from tooluniverse.output_hook import HookManager, OutputHook
+from tooluniverse.output_hook import HookManager, HookProcessingError, OutputHook
 
 
 class _ToolUniverse:
@@ -124,15 +124,86 @@ def test_validation_fix_adds_required_fields_without_mutating_input():
     assert source == {"data": [{"gene": "BRCA1"}]}
 
 
-@pytest.mark.parametrize("action", ["warn", "fail"])
-def test_validation_non_fix_actions_preserve_output(action):
+def test_validation_warn_preserves_output(capsys):
     hook = ValidationHook(
         _hook_config(
-            "ValidationHook", required_fields=["missing"], error_action=action
+            "ValidationHook", required_fields=["missing"], error_action="warn"
         )
     )
     source = {"data": []}
     assert hook.process(source, "tool", {}, {}) is source
+    assert "Missing required field: missing" in capsys.readouterr().out
+
+
+def test_validation_fail_raises_and_manager_propagates(monkeypatch):
+    config = {
+        "hooks": [
+            _hook_config(
+                "ValidationHook", required_fields=["missing"], error_action="fail"
+            )
+        ]
+    }
+    manager = _manager(monkeypatch, config)
+
+    with pytest.raises(HookProcessingError, match="Missing required field: missing"):
+        manager.apply_hooks({"data": []}, "tool", {}, {})
+
+
+def test_validation_schema_and_strict_format_checks():
+    schema = {
+        "type": "object",
+        "properties": {
+            "score": {"type": "number"},
+            "contact": {"type": "string", "format": "email"},
+        },
+        "required": ["score", "contact"],
+    }
+    strict = ValidationHook(
+        _hook_config(
+            "ValidationHook",
+            validation_schema=schema,
+            strict_mode=True,
+            error_action="fail",
+        )
+    )
+    non_strict = ValidationHook(
+        _hook_config(
+            "ValidationHook",
+            validation_schema=schema,
+            strict_mode=False,
+            error_action="fail",
+        )
+    )
+
+    with pytest.raises(HookProcessingError, match="not-a-number"):
+        strict.process(
+            {"score": "not-a-number", "contact": "not-an-email"},
+            "tool",
+            {},
+            {},
+        )
+    with pytest.raises(HookProcessingError, match="not-an-email"):
+        strict.process({"score": 1, "contact": "not-an-email"}, "tool", {}, {})
+    assert (
+        non_strict.process(
+            {"score": 1, "contact": "not-an-email"}, "tool", {}, {}
+        )["score"]
+        == 1
+    )
+
+
+@pytest.mark.parametrize(
+    ("hook_config", "message"),
+    [
+        ({"error_action": "ignore"}, "error_action"),
+        ({"strict_mode": "yes"}, "strict_mode"),
+        ({"required_fields": [""]}, "required_fields"),
+        ({"validation_schema": {"type": "unknown"}}, "validation_schema"),
+    ],
+)
+def test_validation_rejects_invalid_configuration(hook_config, message):
+    with pytest.raises(ValueError, match=message):
+        ValidationHook(_hook_config("ValidationHook", **hook_config))
 
 
 @pytest.mark.parametrize("log_format", ["simple", "detailed", "json"])

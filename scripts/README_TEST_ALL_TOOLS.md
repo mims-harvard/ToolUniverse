@@ -61,6 +61,9 @@ python scripts/test_all_tools.py --json-output TOOL_TEST_RESULTS.json
 python scripts/test_all_tools.py --json-output TOOL_TEST_RESULTS.json --resume
 ```
 
+Resume is accepted only when the selected patterns and local ToolUniverse
+source/configuration still match the checkpoint. Changed inputs require a fresh run.
+
 ## Command Line Options
 
 | Option | Description |

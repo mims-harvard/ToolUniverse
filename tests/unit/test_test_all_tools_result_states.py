@@ -10,6 +10,8 @@ import pytest
 
 pytestmark = pytest.mark.unit
 
+FINGERPRINT = "a" * 64
+
 SCRIPT_PATH = Path(__file__).parents[2] / "scripts" / "test_all_tools.py"
 SPEC = importlib.util.spec_from_file_location("tool_sweep_result_states", SCRIPT_PATH)
 tool_sweep = importlib.util.module_from_spec(SPEC)
@@ -77,6 +79,7 @@ def test_checkpoint_round_trip_is_atomic_and_self_describing(tmp_path):
         checkpoint,
         results,
         ["alpha", "beta"],
+        FINGERPRINT,
         "2026-01-01T00:00:00+00:00",
         complete=True,
     )
@@ -88,7 +91,10 @@ def test_checkpoint_round_trip_is_atomic_and_self_describing(tmp_path):
     assert payload["status_counts"]["passed"] == 1
     assert payload["status_counts"]["no_tests"] == 1
     assert not checkpoint.with_name("results.json.tmp").exists()
-    assert tool_sweep.load_checkpoint(checkpoint) == payload["results"]
+    assert (
+        tool_sweep.load_checkpoint(checkpoint, ["alpha", "beta"], FINGERPRINT)
+        == payload["results"]
+    )
 
 
 def test_checkpoint_rejects_a_tampered_state(tmp_path):
@@ -97,6 +103,8 @@ def test_checkpoint_rejects_a_tampered_state(tmp_path):
         json.dumps(
             {
                 "schema_version": tool_sweep.CHECKPOINT_SCHEMA_VERSION,
+                "expected_patterns": ["alpha"],
+                "sweep_fingerprint": FINGERPRINT,
                 "results": {
                     "alpha": {
                         "state": "passed",
@@ -111,7 +119,55 @@ def test_checkpoint_rejects_a_tampered_state(tmp_path):
     )
 
     with pytest.raises(ValueError, match="state mismatch"):
-        tool_sweep.load_checkpoint(checkpoint)
+        tool_sweep.load_checkpoint(checkpoint, ["alpha"], FINGERPRINT)
+
+
+@pytest.mark.parametrize(
+    ("expected_patterns", "fingerprint", "message"),
+    [
+        (["beta"], FINGERPRINT, "test scope"),
+        (["alpha"], "b" * 64, "fingerprint"),
+    ],
+)
+def test_checkpoint_rejects_stale_scope_or_sources(
+    tmp_path, expected_patterns, fingerprint, message
+):
+    checkpoint = tmp_path / "results.json"
+    tool_sweep.write_checkpoint(
+        checkpoint,
+        {"alpha": {"tests_run": 1, "passed": 1, "exit_code": 0}},
+        ["alpha"],
+        FINGERPRINT,
+        "2026-01-01T00:00:00+00:00",
+        complete=True,
+    )
+
+    with pytest.raises(ValueError, match=message):
+        tool_sweep.load_checkpoint(checkpoint, expected_patterns, fingerprint)
+
+
+def test_sweep_fingerprint_changes_with_relevant_inputs(tmp_path):
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "src" / "tooluniverse" / "data").mkdir(parents=True)
+    (tmp_path / "pyproject.toml").write_text("[project]\n", encoding="utf-8")
+    (tmp_path / "scripts" / "test_all_tools.py").write_text(
+        "runner", encoding="utf-8"
+    )
+    (tmp_path / "scripts" / "test_new_tools.py").write_text(
+        "harness", encoding="utf-8"
+    )
+    (tmp_path / "src" / "tooluniverse" / "base.py").write_text(
+        "BASE = 1\n", encoding="utf-8"
+    )
+    config = tmp_path / "src" / "tooluniverse" / "data" / "alpha_tools.json"
+    config.write_text("[]\n", encoding="utf-8")
+    patterns = {"alpha": [config]}
+
+    before = tool_sweep.compute_sweep_fingerprint(tmp_path, ["alpha"], patterns)
+    config.write_text('[{"name": "changed"}]\n', encoding="utf-8")
+    after = tool_sweep.compute_sweep_fingerprint(tmp_path, ["alpha"], patterns)
+
+    assert before != after
 
 
 def test_resume_skips_completed_patterns_and_checkpoints_new_results():

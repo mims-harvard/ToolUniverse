@@ -25,6 +25,10 @@ from tooluniverse.logging_config import get_logger
 _logger = get_logger(__name__)
 
 
+class HookProcessingError(RuntimeError):
+    """A deliberate hook failure that must propagate to the caller."""
+
+
 class HookRule:
     """
     Defines rules for when hooks should be triggered.
@@ -535,6 +539,9 @@ class HookManager:
 
         Returns
             Any: The processed output after applying all applicable hooks
+
+        Raises:
+            HookProcessingError: If a hook deliberately rejects the output
         """
         if not self.enabled:
             return result
@@ -561,6 +568,8 @@ class HookManager:
                             "Applying hook: %s for tool: %s", hook.name, tool_name
                         )
                         result = hook.process(result, tool_name, arguments, context)
+            except HookProcessingError:
+                raise
             except Exception:
                 _logger.exception(
                     "Hook %s failed for tool %s; preserving the current result",

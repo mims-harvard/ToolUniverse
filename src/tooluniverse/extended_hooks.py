@@ -10,7 +10,12 @@ import json
 import re
 from pathlib import Path
 from typing import Dict, Any, List
-from .output_hook import OutputHook
+
+from jsonschema import FormatChecker
+from jsonschema.exceptions import SchemaError
+from jsonschema.validators import validator_for
+
+from .output_hook import HookProcessingError, OutputHook
 
 
 class FilteringHook(OutputHook):
@@ -254,6 +259,9 @@ class ValidationHook(OutputHook):
     - Check required fields
     - Ensure data quality
 
+    ``strict_mode`` enables JSON Schema format checks. ``error_action`` may warn,
+    apply the supported missing-field fix, or fail the tool call.
+
     Args:
         config (Dict[str, Any]): Hook configuration containing validation settings
         tooluniverse: Optional ToolUniverse instance (not used for validation)
@@ -270,11 +278,40 @@ class ValidationHook(OutputHook):
         super().__init__(config)
         hook_config = config.get("hook_config", {})
 
-        # Validation configuration
-        self.validation_schema = hook_config.get("validation_schema", None)
+        self.validation_schema = hook_config.get("validation_schema")
         self.strict_mode = hook_config.get("strict_mode", True)
-        self.error_action = hook_config.get("error_action", "warn")  # warn, fix, fail
+        self.error_action = hook_config.get("error_action", "warn")
         self.required_fields = hook_config.get("required_fields", [])
+
+        if self.error_action not in {"warn", "fix", "fail"}:
+            raise ValueError(
+                "ValidationHook error_action must be one of: warn, fix, fail"
+            )
+        if not isinstance(self.strict_mode, bool):
+            raise ValueError("ValidationHook strict_mode must be a boolean")
+        if not isinstance(self.required_fields, list) or any(
+            not isinstance(field, str) or not field
+            for field in self.required_fields
+        ):
+            raise ValueError(
+                "ValidationHook required_fields must be a list of non-empty strings"
+            )
+
+        self._schema_validator = None
+        if self.validation_schema is not None:
+            if not isinstance(self.validation_schema, dict):
+                raise ValueError("ValidationHook validation_schema must be an object")
+            validator_class = validator_for(self.validation_schema)
+            try:
+                validator_class.check_schema(self.validation_schema)
+            except SchemaError as exc:
+                raise ValueError(
+                    f"Invalid ValidationHook validation_schema: {exc.message}"
+                ) from exc
+            format_checker = FormatChecker() if self.strict_mode else None
+            self._schema_validator = validator_class(
+                self.validation_schema, format_checker=format_checker
+            )
 
     def process(
         self,
@@ -293,7 +330,10 @@ class ValidationHook(OutputHook):
             context (Dict[str, Any]): Additional context information
 
         Returns
-            Any: The validated output, or original output if validation fails
+            Any: The validated, fixed, or warning-preserved output
+
+        Raises:
+            HookProcessingError: If validation fails with ``error_action="fail"``
         """
         try:
             validation_result = self._validate_output(result)
@@ -309,19 +349,31 @@ class ValidationHook(OutputHook):
                     )
                 return result
             else:
+                details = "; ".join(validation_result["errors"])
                 if self.error_action == "fail":
-                    print(f"❌ ValidationHook: {tool_name} output validation failed")
-                    return result
+                    raise HookProcessingError(
+                        f"ValidationHook rejected {tool_name} output: {details}"
+                    )
                 elif self.error_action == "fix":
                     fixed_result = self._fix_output(result, validation_result["errors"])
-                    print(
-                        f"🔧 ValidationHook: Fixed {tool_name} output based on validation errors"
-                    )
+                    remaining = self._validate_output(fixed_result)
+                    if remaining["valid"]:
+                        print(f"🔧 ValidationHook: Fixed {tool_name} output")
+                    else:
+                        print(
+                            f"⚠️ ValidationHook: {tool_name} output remains invalid "
+                            f"after supported fixes: {'; '.join(remaining['errors'])}"
+                        )
                     return fixed_result
                 else:  # warn
-                    print(f"⚠️ ValidationHook: {tool_name} output has validation issues")
+                    print(
+                        f"⚠️ ValidationHook: {tool_name} output has validation "
+                        f"issues: {details}"
+                    )
                     return result
 
+        except HookProcessingError:
+            raise
         except Exception as e:
             print(f"Error in validation hook: {str(e)}")
             return result
@@ -330,17 +382,30 @@ class ValidationHook(OutputHook):
         """Validate the output against configured rules."""
         validation_result = {"valid": True, "errors": [], "warnings": []}
 
-        # Check required fields for dict outputs
-        if isinstance(result, dict) and self.required_fields:
-            for field in self.required_fields:
-                if field not in result:
-                    validation_result["errors"].append(
-                        f"Missing required field: {field}"
-                    )
-                    validation_result["valid"] = False
+        if self.required_fields:
+            if not isinstance(result, dict):
+                validation_result["errors"].append(
+                    "Required fields can only be checked on object outputs"
+                )
+            else:
+                for field in self.required_fields:
+                    if field not in result:
+                        validation_result["errors"].append(
+                            f"Missing required field: {field}"
+                        )
 
-        # Add schema validation here if needed
-        # This would integrate with jsonschema or similar libraries
+        if self._schema_validator is not None:
+            schema_errors = sorted(
+                self._schema_validator.iter_errors(result),
+                key=lambda error: tuple(str(part) for part in error.absolute_path),
+            )
+            for error in schema_errors:
+                path = ".".join(str(part) for part in error.absolute_path) or "<root>"
+                validation_result["errors"].append(
+                    f"Schema validation failed at {path}: {error.message}"
+                )
+
+        validation_result["valid"] = not validation_result["errors"]
 
         return validation_result
 
