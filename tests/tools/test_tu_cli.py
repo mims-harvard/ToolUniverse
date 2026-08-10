@@ -1942,7 +1942,8 @@ class TestRenderFunctions:
                 "detail": "Service temporarily unavailable, try again later",
             }
         )
-        assert "Tips:" in out
+        assert "Detail:" in out
+        assert out.count("Service temporarily unavailable, try again later") == 1
         assert "Service temporarily unavailable, try again later" in out
 
     @pytest.mark.unit

@@ -48,6 +48,10 @@ result = tu.run_tool("my_analysis_tool", {"data": "input"})
 """
 
 import asyncio
+import inspect
+import json
+import types
+import typing
 from typing import Dict, Any, List, Optional
 
 from .tool_registry import register_tool
@@ -56,14 +60,14 @@ from .tool_registry import register_tool
 # Import SMCP and ToolUniverse dynamically to avoid circular imports
 def _get_smcp():
     """Get SMCP class with delayed import to avoid circular import"""
-    from tooluniverse import SMCP
+    from tooluniverse.smcp import SMCP
 
     return SMCP
 
 
 def _get_tooluniverse():
     """Get ToolUniverse class with delayed import to avoid circular import"""
-    from tooluniverse import ToolUniverse
+    from tooluniverse.execute_function import ToolUniverse
 
     return ToolUniverse
 
@@ -73,6 +77,7 @@ _mcp_tool_registry: Dict[str, Any] = {}
 _mcp_server_configs: Dict[int, Dict[str, Any]] = {}
 _mcp_server_instances: Dict[int, Any] = {}
 _mcp_tool_configs: List[Dict[str, Any]] = []  # Store tool configs
+_unported_tools: List[str] = []
 
 
 def register_mcp_tool(tool_type_name=None, config=None, mcp_config=None):
@@ -190,6 +195,241 @@ def register_mcp_tool(tool_type_name=None, config=None, mcp_config=None):
         return registered_cls  # Return registered class
 
     return decorator
+
+
+# Clearer public name for provider-side tools. Keep register_mcp_tool for
+# compatibility with the many existing remote servers shipped by ToolUniverse.
+register_remote_tool = register_mcp_tool
+
+
+def _py_type_to_json_schema(hint: Any) -> Dict[str, Any]:
+    """Convert the common Python typing forms used by ``@remote_tool``."""
+    if hint in (inspect.Parameter.empty, inspect.Signature.empty, Any):
+        return {}
+
+    origin = typing.get_origin(hint)
+    args = typing.get_args(hint)
+
+    if origin is typing.Annotated and args:
+        return _py_type_to_json_schema(args[0])
+    if origin in (typing.Union, types.UnionType):
+        schemas = [
+            {"type": "null"} if item is type(None) else _py_type_to_json_schema(item)
+            for item in args
+        ]
+        simple_types = [
+            schema.get("type")
+            for schema in schemas
+            if set(schema) == {"type"} and isinstance(schema.get("type"), str)
+        ]
+        if len(simple_types) == len(schemas):
+            return {"type": list(dict.fromkeys(simple_types))}
+        return {"oneOf": schemas}
+    if origin is typing.Literal:
+        values = list(args)
+        schema: Dict[str, Any] = {"enum": values}
+        if values and all(type(value) is type(values[0]) for value in values):
+            schema.update(_py_type_to_json_schema(type(values[0])))
+        return schema
+    if origin in (list, List, set):
+        item_hint = args[0] if args else Any
+        schema = {"type": "array", "items": _py_type_to_json_schema(item_hint)}
+        if origin is set:
+            schema["uniqueItems"] = True
+        return schema
+    if origin is tuple:
+        if len(args) == 2 and args[1] is Ellipsis:
+            return {"type": "array", "items": _py_type_to_json_schema(args[0])}
+        if args:
+            return {
+                "type": "array",
+                "prefixItems": [_py_type_to_json_schema(item) for item in args],
+                "minItems": len(args),
+                "maxItems": len(args),
+            }
+        return {"type": "array"}
+    if origin in (dict, Dict):
+        value_hint = args[1] if len(args) > 1 else Any
+        result: Dict[str, Any] = {"type": "object"}
+        value_schema = _py_type_to_json_schema(value_hint)
+        if value_schema:
+            result["additionalProperties"] = value_schema
+        return result
+
+    type_map = {
+        str: "string",
+        int: "integer",
+        float: "number",
+        bool: "boolean",
+        list: "array",
+        tuple: "array",
+        set: "array",
+        dict: "object",
+    }
+    json_type = type_map.get(hint)
+    return {"type": json_type} if json_type else {}
+
+
+def remote_tool(fn):
+    """Expose a plain typed function through ``tu serve <file.py>``.
+
+    The MCP input schema is inferred from the function signature. The original
+    function is returned unchanged, so it remains directly callable and easy to
+    test outside ToolUniverse.
+    """
+    if not callable(fn):
+        raise TypeError("@remote_tool can only decorate a callable")
+
+    tool_name = fn.__name__
+    existing = _mcp_tool_registry.get(tool_name)
+    if existing is not None and existing.get("fn") is not fn:
+        raise ValueError(f"remote tool name already registered: {tool_name}")
+    signature = inspect.signature(fn)
+    try:
+        hints = typing.get_type_hints(fn, include_extras=True)
+    except Exception:
+        hints = dict(getattr(fn, "__annotations__", {}))
+
+    properties: Dict[str, Any] = {}
+    required: List[str] = []
+    for name, parameter in signature.parameters.items():
+        if name in {"self", "cls"}:
+            raise TypeError(
+                "@remote_tool cannot decorate an unbound instance or class method; "
+                "wrap it in a plain function or use @register_remote_tool"
+            )
+        if parameter.kind in (
+            inspect.Parameter.POSITIONAL_ONLY,
+            inspect.Parameter.VAR_POSITIONAL,
+            inspect.Parameter.VAR_KEYWORD,
+        ):
+            raise TypeError(
+                "@remote_tool does not support positional-only parameters, "
+                "*args, or **kwargs"
+            )
+        field = _py_type_to_json_schema(hints.get(name, parameter.annotation))
+        if parameter.default is not inspect.Parameter.empty:
+            try:
+                default = json.loads(
+                    json.dumps(parameter.default, allow_nan=False, ensure_ascii=False)
+                )
+            except (TypeError, ValueError) as exc:
+                raise TypeError(
+                    f"@remote_tool default for '{name}' must be JSON-serializable"
+                ) from exc
+            field = {**field, "default": default}
+        else:
+            required.append(name)
+        properties[name] = field
+
+    parameter_schema: Dict[str, Any] = {
+        "type": "object",
+        "properties": properties,
+        "additionalProperties": False,
+    }
+    if required:
+        parameter_schema["required"] = required
+
+    doc = inspect.getdoc(fn) or f"Run {tool_name}."
+    description = next((line.strip() for line in doc.splitlines() if line.strip()), "")
+    return_schema = _py_type_to_json_schema(
+        hints.get("return", signature.return_annotation)
+    )
+
+    def _call_values(arguments):
+        return {
+            name: value
+            for name, value in arguments.items()
+            if name in signature.parameters
+        }
+
+    if inspect.iscoroutinefunction(fn):
+
+        class _AsyncFunctionRemoteTool:
+            async def run(self, arguments):
+                return await fn(**_call_values(arguments))
+
+        function_tool_class = _AsyncFunctionRemoteTool
+
+    else:
+
+        class _SyncFunctionRemoteTool:
+            def run(self, arguments):
+                return fn(**_call_values(arguments))
+
+        function_tool_class = _SyncFunctionRemoteTool
+
+    function_tool_class.__name__ = f"{tool_name}_remote_tool"
+    function_tool_class.__qualname__ = function_tool_class.__name__
+
+    tool_config: Dict[str, Any] = {
+        "name": tool_name,
+        "description": description,
+        "parameter_schema": parameter_schema,
+    }
+    if return_schema:
+        tool_config["return_schema"] = return_schema
+
+    tool_info = {
+        "name": tool_name,
+        "type": tool_name,
+        "class": function_tool_class,
+        "fn": fn,
+        "description": description,
+        "parameter_schema": parameter_schema,
+        "return_schema": return_schema or None,
+        "server_config": {
+            "server_name": "Remote Tool Server",
+            "host": "127.0.0.1",
+            "port": 0,
+            "transport": "http",
+            "auto_start": False,
+            "max_workers": 8,
+        },
+        "tool_config": tool_config,
+    }
+    _mcp_tool_registry[tool_name] = tool_info
+    if tool_name not in _unported_tools:
+        _unported_tools.append(tool_name)
+    return fn
+
+
+def collect_tools_for_serve(
+    port: int,
+    *,
+    host: str = "127.0.0.1",
+    server_name: Optional[str] = None,
+    max_workers: int = 8,
+) -> List[Dict[str, Any]]:
+    """Put all tools imported by ``tu serve`` on one explicitly chosen server."""
+    if not _mcp_tool_registry:
+        return []
+
+    selected: List[Dict[str, Any]] = []
+    # A CLI process starts clean, but clearing the selected port also keeps tests
+    # and repeated programmatic invocations deterministic.
+    _mcp_server_configs.pop(port, None)
+    for tool_info in _mcp_tool_registry.values():
+        config = dict(tool_info["server_config"])
+        config.update(
+            {
+                "host": host,
+                "port": port,
+                "transport": "http",
+                "max_workers": max_workers,
+            }
+        )
+        if server_name:
+            config["server_name"] = server_name
+        tool_info["server_config"] = config
+        selected.append(tool_info)
+
+    _mcp_server_configs[port] = {
+        "config": selected[0]["server_config"],
+        "tools": selected,
+    }
+    _unported_tools.clear()
+    return selected
 
 
 def register_mcp_tool_from_config(tool_class: type, config: Dict[str, Any]):
@@ -315,6 +555,9 @@ def start_mcp_server(port: Optional[int] = None, **kwargs):
     else:
         # Start servers for all registered ports
         ports = list(_mcp_server_configs.keys())
+        if not ports:
+            print("❌ No MCP tools registered. Nothing to serve.")
+            return
         if len(ports) > 1:
             print(
                 f"⚠️  Multiple ports registered ({len(ports)}), starting server for port {ports[0]} only"
@@ -349,6 +592,7 @@ def _start_server_for_port(port: int, **kwargs):
     tu = ToolUniverse(
         tool_files={},  # Empty tool files - no default categories
         keep_default_tools=False,  # Don't load any default tools
+        load_workspace=False,  # Never inherit or re-export consumer connections
     )
 
     # Register MCP tools using the public API
@@ -386,15 +630,15 @@ def _start_server_for_port(port: int, **kwargs):
         **kwargs,
     )
 
-    # Store server instance
-    _mcp_server_instances[port] = server
-
     # Start server (blocking call)
     host = config["host"]
     print(f"✅ MCP server starting on {host}:{port}")
     print(f"   Server URL: http://{host}:{port}/mcp")
 
     try:
+        # Store only while the blocking server call is active. A bind/startup
+        # failure must not poison retries with a stale "already running" entry.
+        _mcp_server_instances[port] = server
         # Enable stateless mode for MCPAutoLoaderTool compatibility
         server.run_simple(
             transport=config["transport"],
@@ -405,6 +649,9 @@ def _start_server_for_port(port: int, **kwargs):
     except Exception as e:
         print(f"❌ Error running MCP server on port {port}: {e}")
         raise
+    finally:
+        if _mcp_server_instances.get(port) is server:
+            del _mcp_server_instances[port]
 
 
 # Note: Removed 438 lines of dead code:
