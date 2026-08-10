@@ -58,6 +58,92 @@ assert 'tooluniverse.profile' not in sys.modules
     subprocess.run([sys.executable, "-c", script], env=env, check=True)
 
 
+def test_standalone_sdk_does_not_require_or_import_platform(tmp_path: Path):
+    script = r"""
+import builtins
+import sys
+
+real_import = builtins.__import__
+def guarded_import(name, *args, **kwargs):
+    if name == "tuplatform_connect" or name.startswith("tuplatform_connect."):
+        raise AssertionError("standalone ToolUniverse imported the platform companion")
+    return real_import(name, *args, **kwargs)
+builtins.__import__ = guarded_import
+
+import tooluniverse
+assert tooluniverse._LIGHT_IMPORT is False
+from tooluniverse import BaseTool, ToolUniverse, default_tool_files
+instance = ToolUniverse(tool_files={}, keep_default_tools=False)
+assert instance.all_tools == []
+assert "tuplatform_connect" not in sys.modules
+assert "tooluniverse.platform_remote_tool" not in sys.modules
+"""
+    env = dict(os.environ)
+    for name in (
+        "TU_API_KEY",
+        "TU_BASE_URL",
+        "TOOLUNIVERSE_LIGHT_IMPORT",
+        "TOOLUNIVERSE_SERVICE_KEY",
+        "TOOLUNIVERSE_SERVICE_URL",
+    ):
+        env.pop(name, None)
+    env.update(
+        {
+            "PYTHONPATH": str(Path(__file__).parents[2] / "src"),
+            "TOOLUNIVERSE_CONNECTIONS_FILE": str(tmp_path / "missing.json"),
+            "TOOLUNIVERSE_HOME": str(tmp_path / "workspace"),
+            "TOOLUNIVERSE_TESTING": "1",
+        }
+    )
+    subprocess.run([sys.executable, "-c", script], env=env, check=True)
+
+
+def test_standalone_cli_does_not_contact_or_import_platform(tmp_path: Path):
+    script = r"""
+import builtins
+import contextlib
+import io
+import json
+import sys
+
+real_import = builtins.__import__
+def guarded_import(name, *args, **kwargs):
+    if name == "tuplatform_connect" or name.startswith("tuplatform_connect."):
+        raise AssertionError("ordinary tu command imported the platform companion")
+    return real_import(name, *args, **kwargs)
+builtins.__import__ = guarded_import
+
+import tooluniverse_cli_entry
+sys.argv = ["tu", "list", "--limit", "2", "--json"]
+output = io.StringIO()
+with contextlib.redirect_stdout(output):
+    tooluniverse_cli_entry.main()
+payload = json.loads(output.getvalue())
+assert payload["total_tools"] > 100
+assert len(payload["tools"]) == 2
+assert "tuplatform_connect" not in sys.modules
+assert "tooluniverse.platform_remote_tool" not in sys.modules
+"""
+    env = dict(os.environ)
+    for name in (
+        "TU_API_KEY",
+        "TU_BASE_URL",
+        "TOOLUNIVERSE_LIGHT_IMPORT",
+        "TOOLUNIVERSE_SERVICE_KEY",
+        "TOOLUNIVERSE_SERVICE_URL",
+    ):
+        env.pop(name, None)
+    env.update(
+        {
+            "PYTHONPATH": str(Path(__file__).parents[2] / "src"),
+            "TOOLUNIVERSE_CONNECTIONS_FILE": str(tmp_path / "missing.json"),
+            "TOOLUNIVERSE_HOME": str(tmp_path / "workspace"),
+            "TOOLUNIVERSE_TESTING": "1",
+        }
+    )
+    subprocess.run([sys.executable, "-c", script], env=env, check=True)
+
+
 def test_smcp_does_not_reload_a_preconfigured_remote_tool_universe():
     from tooluniverse.smcp import SMCP
 
