@@ -414,15 +414,45 @@ class FAERSAnalyticsTool(BaseTool):
             ror1 = result1.get("metrics", {}).get("ROR", {}).get("value")
             ror2 = result2.get("metrics", {}).get("ROR", {}).get("value")
 
-            # Determine which drug has stronger signal
+            # Fix-19B-2: comparison text used to rank drugs purely by raw ROR
+            # magnitude ("X shows stronger signal than Y") even when NEITHER
+            # drug actually crossed this tool's own signal-detection
+            # threshold (signal_detection.signal_detected, from ROR lower CI
+            # > 1.0 and case count >= 3) -- confirmed live with
+            # nirsevimab/palivizumab + anaphylactic reaction, where both
+            # drugs had signal_detected=False (ROR < 1, i.e. no elevated-risk
+            # association) but the narrative still said one showed a
+            # "stronger signal" than the other. Ground the wording in
+            # signal_detected so "signal" language only appears when a
+            # signal was actually detected.
+            sig1 = result1.get("signal_detection", {}).get("signal_detected", False)
+            sig2 = result2.get("signal_detection", {}).get("signal_detected", False)
+
             comparison = "Inconclusive"
             if ror1 and ror2:
-                if ror1 > ror2 * 1.5:
-                    comparison = f"{drug1} shows stronger signal than {drug2}"
+                if not sig1 and not sig2:
+                    comparison = (
+                        f"Neither {drug1} nor {drug2} shows a detected safety signal "
+                        f"for {adverse_event} (ROR does not meet the signal-detection "
+                        "threshold for either drug); the higher raw ROR is not a "
+                        "meaningful difference."
+                    )
+                elif sig1 and not sig2:
+                    comparison = (
+                        f"{drug1} shows a detected safety signal for {adverse_event}; "
+                        f"{drug2} does not."
+                    )
+                elif sig2 and not sig1:
+                    comparison = (
+                        f"{drug2} shows a detected safety signal for {adverse_event}; "
+                        f"{drug1} does not."
+                    )
+                elif ror1 > ror2 * 1.5:
+                    comparison = f"Both show a detected signal; {drug1}'s is stronger than {drug2}'s"
                 elif ror2 > ror1 * 1.5:
-                    comparison = f"{drug2} shows stronger signal than {drug1}"
+                    comparison = f"Both show a detected signal; {drug2}'s is stronger than {drug1}'s"
                 else:
-                    comparison = f"{drug1} and {drug2} show similar signals"
+                    comparison = f"{drug1} and {drug2} show similar-strength detected signals"
 
             return {
                 "status": "success",
