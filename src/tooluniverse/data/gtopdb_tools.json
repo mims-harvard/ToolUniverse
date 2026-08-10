@@ -24,7 +24,7 @@
             "string",
             "null"
           ],
-          "description": "Target type filter. Values: 'GPCR', 'Ion channel', 'Nuclear receptor', 'Enzyme', 'Transporter', 'Catalytic receptor'"
+          "description": "Target type filter, enforced by ToolUniverse against each returned record (GtoPdb ignores its own ?type= parameter whenever a name search is also supplied). Valid values, matching GtoPdb's real target classification: 'GPCR', 'NHR' (nuclear hormone receptor), 'LGIC' (ligand-gated ion channel), 'VGIC' (voltage-gated ion channel), 'OtherIC' (other ion channel), 'Enzyme', 'CatalyticReceptor', 'Transporter', 'OtherProtein', 'AccessoryProtein'. Convenience aliases: 'Ion channel' (= LGIC + VGIC + OtherIC), 'Nuclear receptor' (= NHR), 'Catalytic receptor', 'Other protein', 'Accessory protein'. Matching is case- and underscore-insensitive. Any other value is rejected with the list of valid values rather than silently ignored."
         },
         "query": {
           "type": [
@@ -78,7 +78,7 @@
               },
               "type": {
                 "type": "string",
-                "description": "Target type (GPCR, Ion channel, etc.)"
+                "description": "Target type as GtoPdb records it, lower_snake_case: 'gpcr', 'nhr', 'lgic', 'vgic', 'other_ic', 'enzyme', 'catalytic_receptor', 'transporter', 'other_protein', or '' (accessory proteins)"
               },
               "familyIds": {
                 "type": "array",
@@ -134,14 +134,14 @@
             "string",
             "null"
           ],
-          "description": "Ligand type filter. Values: 'Approved', 'Synthetic organic', 'Natural product', 'Endogenous peptide', 'Antibody', 'Inorganic'"
+          "description": "Ligand type filter, enforced by ToolUniverse against each returned record (GtoPdb ignores its own ?type= parameter whenever a name search is also supplied). Structural types, which are the values a ligand record's 'type' field actually carries: 'Synthetic organic', 'Peptide', 'Natural product', 'Metabolite', 'Antibody', 'Nucleic acid', 'Inorganic'. Status types, which match a boolean flag on the record: 'Approved', 'Withdrawn', 'Labelled'. Matching is case-insensitive. Any other value -- including 'Endogenous peptide' and 'INN', which appear in GtoPdb's own web-service docs but match no record -- is rejected with the list of valid values rather than silently ignored."
         },
         "approved": {
           "type": [
             "boolean",
             "null"
           ],
-          "description": "Filter to approved drugs only (true) or all ligands (false/omit)"
+          "description": "Filter to approved drugs only (true) or all ligands (false/omit). Enforced by ToolUniverse against each record's 'approved' boolean -- GtoPdb's own ?approved= parameter is a no-op that returns the full ligand set either way. Equivalent to type='Approved'."
         },
         "query": {
           "type": [
@@ -168,14 +168,34 @@
       },
       {
         "name": "dopamine",
-        "type": "Endogenous peptide"
+        "type": "Metabolite"
+      },
+      {
+        "name": "semaglutide",
+        "type": "Peptide"
       }
     ],
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of ligands. Every record satisfies the requested 'type'/'approved' filters -- ToolUniverse enforces them client-side because GtoPdb does not.",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     }
   },
   {

@@ -61,6 +61,207 @@ _HGNC_TO_GTOPDB_NAME: dict = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Fix-R30-GtoPdb-type: make the `type` filter on the /ligands and /targets
+# search endpoints real.
+#
+# Verified live against https://www.guidetopharmacology.org/services on
+# 2026-08-10:
+#
+#   /ligands?name=semaglutide                       -> 1 record, type "Peptide"
+#   /ligands?name=semaglutide&type=Synthetic%20organic -> the SAME record
+#   /ligands?name=semaglutide&type=NotARealType     -> the SAME record
+#   /targets?name=serotonin                         -> 19 records (gpcr/lgic/transporter)
+#   /targets?name=serotonin&type=GPCR               -> the SAME 19 records
+#   /targets?name=serotonin&type=NotARealType       -> the SAME 19 records
+#
+# i.e. GtoPdb silently DROPS ?type= whenever ?name= is present, on both search
+# endpoints. Used alone, ?type= does filter, but only for a specific vocabulary
+# that is neither the record `type` vocabulary nor the enum ToolUniverse used to
+# document:
+#
+#   /ligands?type=Peptide            -> HTTP 404 {"error":"No ligands found"}
+#   /ligands?type=Endogenous peptide -> HTTP 404   (GtoPdb's own docs list it)
+#   /ligands?type=INN                -> HTTP 404   (GtoPdb's own docs list it)
+#   /targets?type=Ion channel        -> HTTP 404   (ToolUniverse documented it)
+#   /targets?type=Nuclear receptor   -> HTTP 404   (ToolUniverse documented it)
+#   /targets?type=Catalytic receptor -> HTTP 404   (ToolUniverse documented it)
+#
+# So the only trustworthy filter is a client-side one against the record's own
+# `type` field, plus input validation against the values GtoPdb actually uses.
+#
+# Census of the full record vocabulary (GET /ligands, 13856 records; GET
+# /targets, 3317 records), 2026-08-10:
+#   ligands: Synthetic organic 9753, Peptide 2452, Natural product 558,
+#            Metabolite 514, Antibody 495, Nucleic acid 45, Inorganic 39
+#   targets: enzyme 1337, transporter 557, gpcr 411, other_protein 348,
+#            catalytic_receptor 313, vgic 145, lgic 86, other_ic 61, nhr 49,
+#            "" 10 (the records ?type=AccessoryProtein returns)
+# ---------------------------------------------------------------------------
+
+
+def _norm_type(value: Any) -> str:
+    """Normalize a type token for comparison.
+
+    Case-, space- and underscore-insensitive so that the API query vocabulary
+    ("CatalyticReceptor"), the record vocabulary ("catalytic_receptor") and
+    human spellings ("Catalytic receptor") all collapse to one key.
+    """
+    if value is None:
+        return ""
+    return re.sub(r"[\s_\-]+", " ", str(value).strip().lower())
+
+
+class _TypeSpec:
+    """One accepted `type` value for a GtoPdb search endpoint.
+
+    canonical      display spelling used in messages
+    record_types   normalized record `type` values that satisfy the filter
+                   (None when the filter is a boolean record flag instead)
+    flag           record boolean field that satisfies the filter, e.g.
+                   'approved' -- GtoPdb exposes these through ?type= too
+    server_value   value that ?type= actually honours upstream when no name
+                   search is in play, or None if GtoPdb 404s on it
+    """
+
+    __slots__ = ("canonical", "flag", "record_types", "server_value")
+
+    def __init__(self, canonical, record_types=None, flag=None, server_value=None):
+        self.canonical = canonical
+        self.record_types = (
+            frozenset(_norm_type(t) for t in record_types)
+            if record_types is not None
+            else None
+        )
+        self.flag = flag
+        self.server_value = server_value
+
+    def matches(self, record: Any) -> bool:
+        if not isinstance(record, dict):
+            return False
+        if self.flag is not None:
+            return record.get(self.flag) is True
+        return _norm_type(record.get("type")) in self.record_types
+
+
+def _build_specs(entries) -> dict:
+    """Expand (aliases, spec) pairs into a normalized alias -> spec lookup."""
+    table = {}
+    for aliases, spec in entries:
+        for alias in aliases:
+            table[_norm_type(alias)] = spec
+    return table
+
+
+_LIGAND_TYPE_SPECS = _build_specs(
+    [
+        # Structural types -- these are the values a ligand record's `type`
+        # field actually carries.
+        (
+            ("Synthetic organic",),
+            _TypeSpec(
+                "Synthetic organic", ["Synthetic organic"], None, "Synthetic organic"
+            ),
+        ),
+        # ?type=Peptide 404s upstream even though 2452 records carry it, so it
+        # must never be pushed server-side; client-side only.
+        (("Peptide",), _TypeSpec("Peptide", ["Peptide"], None, None)),
+        (
+            ("Natural product",),
+            _TypeSpec("Natural product", ["Natural product"], None, "Natural product"),
+        ),
+        (("Metabolite",), _TypeSpec("Metabolite", ["Metabolite"], None, "Metabolite")),
+        (("Antibody",), _TypeSpec("Antibody", ["Antibody"], None, "Antibody")),
+        (
+            ("Nucleic acid",),
+            _TypeSpec("Nucleic acid", ["Nucleic acid"], None, "Nucleic acid"),
+        ),
+        (("Inorganic",), _TypeSpec("Inorganic", ["Inorganic"], None, "Inorganic")),
+        # Boolean "flag" pseudo-types: not record `type` values, but boolean
+        # fields present on every ligand record, and accepted by ?type=.
+        (("Approved",), _TypeSpec("Approved", None, "approved", "Approved")),
+        (("Withdrawn",), _TypeSpec("Withdrawn", None, "withdrawn", "Withdrawn")),
+        (
+            ("Labelled", "Labeled"),
+            _TypeSpec("Labelled", None, "labelled", "Labelled"),
+        ),
+    ]
+)
+
+_TARGET_TYPE_SPECS = _build_specs(
+    [
+        (("GPCR",), _TypeSpec("GPCR", ["gpcr"], None, "GPCR")),
+        (
+            ("NHR", "Nuclear receptor"),
+            _TypeSpec("NHR", ["nhr"], None, "NHR"),
+        ),
+        (("LGIC",), _TypeSpec("LGIC", ["lgic"], None, "LGIC")),
+        (("VGIC",), _TypeSpec("VGIC", ["vgic"], None, "VGIC")),
+        (("OtherIC",), _TypeSpec("OtherIC", ["other_ic"], None, "OtherIC")),
+        (("Enzyme",), _TypeSpec("Enzyme", ["enzyme"], None, "Enzyme")),
+        (
+            ("CatalyticReceptor", "Catalytic receptor"),
+            _TypeSpec(
+                "CatalyticReceptor",
+                ["catalytic_receptor"],
+                None,
+                "CatalyticReceptor",
+            ),
+        ),
+        (
+            ("Transporter",),
+            _TypeSpec("Transporter", ["transporter"], None, "Transporter"),
+        ),
+        (
+            ("OtherProtein", "Other protein"),
+            _TypeSpec("OtherProtein", ["other_protein"], None, "OtherProtein"),
+        ),
+        (
+            ("AccessoryProtein", "Accessory protein"),
+            # ?type=AccessoryProtein returns 10 records whose `type` is "".
+            _TypeSpec("AccessoryProtein", [""], None, "AccessoryProtein"),
+        ),
+        # Convenience umbrella: GtoPdb splits ion channels into three record
+        # types and has no single query value covering them, so this one is
+        # client-side only.
+        (
+            ("Ion channel", "Ion channels"),
+            _TypeSpec("Ion channel", ["lgic", "vgic", "other_ic"], None, None),
+        ),
+    ]
+)
+
+# Values GtoPdb's own web-service documentation lists but that match nothing
+# (verified: all three return HTTP 404 "No ligands found"). Rejecting them with
+# a pointer beats silently returning every record.
+_LIGAND_TYPE_DEAD_VALUES = {
+    "endogenous peptide": "Peptide",
+    "inn": "Approved",
+}
+
+
+def _type_validation_error(raw_value: Any, specs: dict, dead: dict, kind: str) -> dict:
+    """Structured rejection for an unrecognised `type` value."""
+    valid = sorted({spec.canonical for spec in specs.values()})
+    message = (
+        f"Invalid {kind} type={raw_value!r}. GtoPdb does not use this value, and its "
+        f"?type= parameter is silently ignored whenever a name search is also supplied, "
+        f"so an unrecognised value would otherwise return every record unfiltered. "
+        f"Valid values: {', '.join(valid)}."
+    )
+    hint = dead.get(_norm_type(raw_value))
+    if hint:
+        message += (
+            f" Note: {raw_value!r} appears in GtoPdb's web-service documentation but "
+            f"matches no record in the database -- use {hint!r} instead."
+        )
+    return {
+        "status": "error",
+        "error": message,
+        "valid_types": valid,
+    }
+
+
 @register_tool("GtoPdbRESTTool")
 class GtoPdbRESTTool(BaseTool):
     def __init__(self, tool_config: Dict):
@@ -389,10 +590,65 @@ class GtoPdbRESTTool(BaseTool):
             arguments = dict(arguments)
             arguments.pop("approved_only", None)
 
-        # Feature-63B-001: GtoPdb API silently ignores ligand_type= when combined with name=
-        # (e.g., ligand_type='Approved' + name='vemurafenib' returns all name matches,
-        # including non-approved compounds). Capture early for client-side post-filtering.
-        _ligand_type_requested = arguments.get("ligand_type")
+        # Fix-R30-GtoPdb-type: resolve and validate the `type` filter, then take it
+        # out of the upstream query. GtoPdb drops ?type= whenever ?name= is present
+        # (see module header), so the only honest implementation is client-side
+        # filtering against the record's own `type` field / boolean flags. The value
+        # is pushed back into the query ONLY when GtoPdb honours it there, purely as
+        # a bandwidth optimisation -- the client-side filter runs either way.
+        _endpoint_path = endpoint.rstrip("/")
+        _is_ligand_search = _endpoint_path.endswith("/ligands")
+        _is_target_search = _endpoint_path.endswith("/targets")
+        _type_filter = None
+        _type_full_scan = False
+        if _is_ligand_search or _is_target_search:
+            _raw_type = None
+            for _key in ("type", "ligand_type", "target_type"):
+                if arguments.get(_key) not in (None, ""):
+                    _raw_type = arguments[_key]
+                    break
+            if _raw_type is not None:
+                _specs = _LIGAND_TYPE_SPECS if _is_ligand_search else _TARGET_TYPE_SPECS
+                _spec = _specs.get(_norm_type(_raw_type))
+                if _spec is None:
+                    return _type_validation_error(
+                        _raw_type,
+                        _specs,
+                        _LIGAND_TYPE_DEAD_VALUES if _is_ligand_search else {},
+                        "ligand" if _is_ligand_search else "target",
+                    )
+                _type_filter = _spec
+                arguments = dict(arguments)
+                for _key in ("type", "ligand_type", "target_type"):
+                    arguments.pop(_key, None)
+                _name_present = any(
+                    arguments.get(k)
+                    for k in ("name", "query", "gene_symbol", "gene", "geneSymbol")
+                )
+                if not _name_present:
+                    if _spec.server_value is not None:
+                        arguments["type"] = _spec.server_value
+                    else:
+                        # No name and no server-side equivalent: we must pull the
+                        # whole collection and filter it ourselves.
+                        _type_full_scan = True
+
+        # Fix-R30-GtoPdb-type: `approved` is a total no-op upstream -- verified,
+        # /ligands?approved=true returns all 13856 ligands, identical to
+        # ?approved=false and to no parameter at all. Strip it from the query and
+        # apply it client-side against the record's `approved` boolean.
+        _approved_requested = arguments.get("approved") if _is_ligand_search else None
+        if _approved_requested is not None:
+            arguments = dict(arguments)
+            arguments.pop("approved", None)
+            if _approved_requested is True and _type_filter is None:
+                _name_present = any(
+                    arguments.get(k) for k in ("name", "query", "gene_symbol", "gene")
+                )
+                if not _name_present:
+                    # ?type=Approved is the one server-side filter GtoPdb honours
+                    # for approval status; use it instead of pulling 13856 records.
+                    arguments["type"] = "Approved"
 
         # Feature-46A-04: gene_symbol convenience parameter for GtoPdb_get_interactions.
         # Auto-resolve gene symbol → targetId so users don't need a separate
@@ -556,8 +812,12 @@ class GtoPdbRESTTool(BaseTool):
 
         try:
             url = self._build_url(arguments)
+            # Fix-R30-GtoPdb-type: a full-collection scan (type filter with no
+            # server-side equivalent and no name search) pulls ~8 MB and takes
+            # ~25 s, so it needs more headroom than the 30 s default.
+            _req_timeout = 120 if _type_full_scan else self.timeout
             response = request_with_retry(
-                self.session, "GET", url, timeout=self.timeout, max_attempts=3
+                self.session, "GET", url, timeout=_req_timeout, max_attempts=3
             )
             if response.status_code == 404 and "?" in url:
                 # Feature-37A-02: on search endpoints (URL has query params), 404 means no results
@@ -649,16 +909,24 @@ class GtoPdbRESTTool(BaseTool):
                 except Exception:
                     pass  # on API failure, keep all data unfiltered
 
-            if _ligand_type_requested and isinstance(data, list) and "/ligands" in url:
-                lt_lower = _ligand_type_requested.lower()
-                if lt_lower == "approved":
-                    # 'approved' is a boolean field on GtoPdb ligand records
-                    data = [x for x in data if x.get("approved") is True]
-                else:
-                    # Match structural type field (case-insensitive)
-                    data = [
-                        x for x in data if (x.get("type") or "").lower() == lt_lower
-                    ]
+            # Fix-R30-GtoPdb-type: apply the `type` filter client-side. This runs
+            # unconditionally when a type was requested -- including when the value
+            # was also pushed server-side, where it is simply a no-op -- so the rows
+            # returned always satisfy the filter the caller submitted.
+            _type_scanned = _type_matched = None
+            if _type_filter is not None and isinstance(data, list):
+                _type_scanned = len(data)
+                data = [x for x in data if _type_filter.matches(x)]
+                _type_matched = len(data)
+
+            # Fix-R30-GtoPdb-type: `approved=true` filtered client-side (no-op upstream).
+            # `approved=false` remains "no filter", as this parameter has always been
+            # documented ("approved drugs only (true) or all ligands (false/omit)").
+            _approved_scanned = _approved_matched = None
+            if _approved_requested is True and isinstance(data, list):
+                _approved_scanned = len(data)
+                data = [x for x in data if x.get("approved") is True]
+                _approved_matched = len(data)
 
             # Apply limit if specified (max_results is an alias for limit)
             # Feature-47A-04: increased default from 20 to 50 — interaction-rich targets
@@ -674,6 +942,34 @@ class GtoPdbRESTTool(BaseTool):
                 "url": url,
                 "count": len(data) if isinstance(data, list) else 1,
             }
+
+            # Fix-R30-GtoPdb-type: disclose that the filter was enforced here rather
+            # than upstream, and how many records it removed, so a shrunken result
+            # set is never mistaken for a thin database.
+            if _type_filter is not None and _type_scanned is not None:
+                result["type_filter"] = {
+                    "requested": _type_filter.canonical,
+                    "enforced": "client-side",
+                    "records_scanned": _type_scanned,
+                    "records_matched": _type_matched,
+                    "note": (
+                        "GtoPdb's own ?type= parameter is unreliable -- it is silently "
+                        "ignored whenever a name search is also supplied, and it returns "
+                        "HTTP 404 for several values its documentation lists -- so "
+                        "ToolUniverse filters the returned records itself."
+                    ),
+                }
+            if _approved_requested is True and _approved_scanned is not None:
+                result["approved_filter"] = {
+                    "enforced": "client-side",
+                    "records_scanned": _approved_scanned,
+                    "records_matched": _approved_matched,
+                    "note": (
+                        "GtoPdb's ?approved= parameter is a no-op (it returns the full "
+                        "ligand set either way), so ToolUniverse filters on each "
+                        "record's 'approved' boolean instead."
+                    ),
+                }
 
             # Feature-62B-003 / Feature-63B-001: for non-interaction endpoints, approved_only is not
             # applicable. For ligand searches, use ligand_type='Approved' instead.
@@ -742,6 +1038,11 @@ class GtoPdbRESTTool(BaseTool):
                 if not names_contain_query and data:
                     # The match was via synonym/abbreviation; try numbered variants
                     extra = self._search_targets_by_abbreviation_variants(query, limit)
+                    # Fix-R30-GtoPdb-type: these merged-in extras bypass the main
+                    # request, so they must pass the same client-side type filter --
+                    # otherwise the filter leaks right back out here.
+                    if extra and _type_filter is not None:
+                        extra = [t for t in extra if _type_filter.matches(t)]
                     if extra:
                         existing_ids = {t.get("targetId") for t in data}
                         new_targets = [
