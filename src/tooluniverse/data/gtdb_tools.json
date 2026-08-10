@@ -294,7 +294,7 @@
   },
   {
     "name": "GTDB_search_genomes",
-    "description": "Search for prokaryotic genomes in GTDB by organism name. This matches against the whole taxonomic clade, not just the organism-name text, so results can include other members of the same family/genus alongside genomes whose own name matches the query (exact/prefix name matches are ranked first). Returns genome accessions with both NCBI and GTDB taxonomy classifications, allowing comparison between the two taxonomic systems. Each result shows the genome accession (GCA/GCF), NCBI organism name, NCBI taxonomy, GTDB taxonomy, and whether the genome is a GTDB species representative. Supports pagination. Useful for finding genome accessions, exploring taxonomic reclassifications, and linking genomes to the GTDB taxonomy.",
+    "description": "Search for prokaryotic genomes in GTDB by organism name. A multi-word query (e.g. a binomial like 'Mycobacterium tuberculosis') is first matched precisely, requiring EVERY term of the query to appear in the genome's name or taxonomy; 'match_type' is then 'exact'. If nothing matches the whole query, the tool falls back to GTDB's loose search, which matches ANY term of the query and therefore returns a broader taxon (often just the genus) or a different species; that case is reported as 'match_type': 'broad' with a top-level 'note', and 'total_results' then counts the broader match rather than the queried organism -- always read 'match_type' and 'total_results_scope' before quoting a count or trusting a result. Results also match against the whole taxonomic clade rather than organism-name text alone, so exact/prefix name matches are ranked first within a page. Returns genome accessions with both NCBI and GTDB taxonomy classifications, allowing comparison between the two taxonomic systems. Each result shows the genome accession (GCA/GCF), NCBI organism name, NCBI taxonomy, GTDB taxonomy, and whether the genome is a GTDB species representative. Supports pagination. Useful for finding genome accessions, exploring taxonomic reclassifications, and linking genomes to the GTDB taxonomy.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -346,9 +346,26 @@
               "type": "string",
               "description": "The search query"
             },
+            "match_type": {
+              "type": "string",
+              "enum": [
+                "exact",
+                "broad",
+                "none"
+              ],
+              "description": "How the results relate to the query. 'exact': every returned genome matches every term of the query. 'broad': nothing matched the whole query, so these results match only part of it (typically the genus) and are NOT the queried organism -- see 'note'. 'none': GTDB holds no matching genome."
+            },
             "total_results": {
               "type": "integer",
-              "description": "Total number of matching genomes"
+              "description": "Total number of genomes in the match described by 'match_type'. When match_type is 'broad' this is the count for the broader match, NOT for the queried organism -- see 'total_results_scope'."
+            },
+            "total_results_scope": {
+              "type": "string",
+              "description": "Plain-language statement of exactly what 'total_results' counts"
+            },
+            "note": {
+              "type": "string",
+              "description": "Present when match_type is 'broad' or 'none': explains that the results are not the queried organism and that total_results must not be reported as its genome count"
             },
             "page": {
               "type": "integer",

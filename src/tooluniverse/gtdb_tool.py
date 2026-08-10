@@ -247,21 +247,108 @@ class GTDBTool(BaseTool):
         page = arguments.get("page", 1)
         items_per_page = arguments.get("items_per_page", 10)
 
+        # Fix-R29: GTDB's /search/gtdb endpoint ORs the terms of a multi-word
+        # query rather than requiring all of them, so a binomial silently
+        # degrades to a genus-wide match. Confirmed live against
+        # https://gtdb-api.ecogenomic.org/search/gtdb :
+        #   search=xyzzyplop                 -> totalRows 0
+        #   search=Mycobacterium             -> totalRows 13027
+        #   search=Mycobacterium xyzzyplop   -> totalRows 13027 (identical rows)
+        #   search=Mycobacterium tuberculosis-> totalRows 13381, first row
+        #                                       "Mycobacterium leprae Br4923"
+        # i.e. an unmatchable second term is discarded entirely, and the
+        # reported total is the union count for the broader taxon, not for the
+        # species the caller named.
+        #
+        # The endpoint's documented `filterText` parameter applies an
+        # additional case-insensitive literal-substring test that must hold for
+        # every returned row, which is the precise lookup we want (confirmed
+        # live: search+filterText="Mycobacterium tuberculosis" -> totalRows
+        # 7869, all M. tuberculosis; filterText="Mycobacterium xyzzyplop" -> 0).
+        # It is order- and whitespace-literal ("tuberculosis Mycobacterium" and
+        # a double space both return 0), so collapse internal whitespace first.
+        normalized_query = " ".join(query.split())
+        base_params = {
+            "search": normalized_query,
+            "page": page,
+            "itemsPerPage": min(items_per_page, 50),
+        }
+
+        # Precise lookup first: every row must contain the whole query.
         result = self._make_request(
             "search/gtdb",
-            params={
-                "search": query,
-                "page": page,
-                "itemsPerPage": min(items_per_page, 50),
-            },
+            params=dict(base_params, filterText=normalized_query),
         )
 
-        if not result["ok"]:
-            return {"status": "error", "error": result["error"]}
+        match_type = "exact"
+        note = None
+
+        precise_total = 0
+        if result["ok"]:
+            precise_rows = result["data"].get("rows", [])
+            precise_total = result["data"].get("totalRows", len(precise_rows))
+
+        if not result["ok"] or precise_total == 0:
+            # Either the precise filter is unavailable on this GTDB deployment,
+            # or nothing matches the full query. Fall back to GTDB's loose
+            # union search -- but say so, because those rows are a different
+            # (usually broader) entity than the one that was asked for.
+            precise_failed = not result["ok"]
+            precise_error = result.get("error") if precise_failed else None
+
+            fallback = self._make_request("search/gtdb", params=base_params)
+            if not fallback["ok"]:
+                return {"status": "error", "error": precise_error or fallback["error"]}
+
+            fb_rows = fallback["data"].get("rows", [])
+            fb_total = fallback["data"].get("totalRows", len(fb_rows))
+
+            if fb_total or fb_rows:
+                result = fallback
+                match_type = "broad"
+                if precise_failed:
+                    note = (
+                        "GTDB rejected the precise (all-terms) filter for "
+                        "'{q}' ({err}), so these results come from GTDB's "
+                        "loose search, which matches ANY term of the query. "
+                        "They may belong to a different species or a broader "
+                        "taxon than '{q}', and total_results ({n}) is the "
+                        "count for that looser match, not for '{q}'. Check "
+                        "each result's gtdbTaxonomy before relying on it."
+                    ).format(q=normalized_query, err=precise_error, n=fb_total)
+                else:
+                    note = (
+                        "No GTDB genome matches the full query '{q}'. GTDB's "
+                        "genome search unions the terms of a multi-word query, "
+                        "so these results match only PART of '{q}' (e.g. its "
+                        "genus) and are NOT '{q}'. total_results ({n}) is the "
+                        "count for that broader match, not for '{q}'. Check "
+                        "each result's gtdbTaxonomy before relying on it."
+                    ).format(q=normalized_query, n=fb_total)
+            elif not result["ok"]:
+                return {"status": "error", "error": precise_error}
+            else:
+                match_type = "none"
 
         data = result["data"]
         rows = data.get("rows", [])
         total = data.get("totalRows", len(rows))
+
+        if match_type == "exact":
+            scope = "Number of GTDB genomes matching every term of '{}'.".format(
+                normalized_query
+            )
+        elif match_type == "broad":
+            scope = (
+                "Number of GTDB genomes matching only SOME terms of '{}' -- a "
+                "broader set than '{}' itself, which matched no genome."
+            ).format(normalized_query, normalized_query)
+        else:
+            scope = "No GTDB genome matched '{}'.".format(normalized_query)
+            note = (
+                "GTDB holds no genome matching '{}', either as a whole or by "
+                "any of its terms.".format(normalized_query)
+            )
 
         # GTDB's search matches against the whole taxonomic clade, not just
         # organism-name substrings (confirmed live: querying "Akkermansia
@@ -269,7 +356,7 @@ class GTDBTool(BaseTool):
         # TMED18" ranked above the exact species) -- boost rows whose own
         # ncbiOrgName actually matches the query so the requested organism
         # isn't buried under broader clade results within this page.
-        query_lower = query.strip().lower()
+        query_lower = normalized_query.lower()
 
         def _relevance(row):
             name = (row.get("ncbiOrgName") or "").lower()
@@ -281,16 +368,19 @@ class GTDBTool(BaseTool):
 
         rows = sorted(rows, key=_relevance)
 
-        return {
-            "status": "success",
-            "data": {
-                "query": query,
-                "total_results": total,
-                "page": page,
-                "results": rows,
-                "count": len(rows),
-            },
+        payload = {
+            "query": query,
+            "match_type": match_type,
+            "total_results": total,
+            "total_results_scope": scope,
+            "page": page,
+            "results": rows,
+            "count": len(rows),
         }
+        if note:
+            payload["note"] = note
+
+        return {"status": "success", "data": payload}
 
     def _get_genome(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed genome metadata by accession."""
