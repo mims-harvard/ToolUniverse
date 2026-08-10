@@ -7,9 +7,11 @@ prescribing information including indications, dosing, contraindications,
 warnings, drug interactions, and pharmacology.
 
 API: https://open.fda.gov/apis/drug/label/
-No authentication required. Optional API key raises rate limits.
+No authentication required. Set the FDA_API_KEY env var to raise the
+default ~40 req/min anonymous rate limit (https://open.fda.gov/apis/authentication/).
 """
 
+import os
 import requests
 from typing import Any
 
@@ -17,6 +19,16 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 FDA_LABEL_URL = "https://api.fda.gov/drug/label.json"
+
+# Placeholder values users sometimes leave in FDA_API_KEY; treat as "unset".
+_API_KEY_PLACEHOLDERS = {"none", "null", "your_fda_key_here", "your_key_here"}
+
+
+def _valid_api_key(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    v = value.strip()
+    return bool(v) and v.lower() not in _API_KEY_PLACEHOLDERS
 
 
 def _ok(data: Any, **metadata: Any) -> dict:
@@ -84,6 +96,17 @@ class FDALabelTool(BaseTool):
     def __init__(self, tool_config: dict[str, Any]):
         super().__init__(tool_config)
         self.query_type = tool_config.get("fields", {}).get("query_type", "search")
+        self.api_key = os.getenv("FDA_API_KEY")
+
+    def _params(self, **kwargs: Any) -> dict:
+        """Build request params, adding api_key when a valid FDA_API_KEY is set.
+
+        openFDA's anonymous tier is heavily rate-limited (~40 req/min); an
+        API key raises that substantially. See https://open.fda.gov/apis/authentication/
+        """
+        if _valid_api_key(self.api_key):
+            kwargs["api_key"] = self.api_key
+        return kwargs
 
     def run(self, arguments: dict[str, Any]) -> Any:
         try:
@@ -113,7 +136,7 @@ class FDALabelTool(BaseTool):
             for q in (f'{field}:"{drug_name}"', f"{field}:{drug_name}"):
                 resp = requests.get(
                     FDA_LABEL_URL,
-                    params={"search": q, "limit": limit},
+                    params=self._params(search=q, limit=limit),
                     timeout=20,
                 )
                 if resp.status_code == 404:
@@ -139,7 +162,7 @@ class FDALabelTool(BaseTool):
         q = f'indications_and_usage:"{indication}"'
         resp = requests.get(
             FDA_LABEL_URL,
-            params={"search": q, "limit": limit},
+            params=self._params(search=q, limit=limit),
             timeout=20,
         )
         labels = []
@@ -173,10 +196,10 @@ class FDALabelTool(BaseTool):
         limit = min(int(arguments.get("limit", 20)), 100)
         resp = requests.get(
             FDA_LABEL_URL,
-            params={
-                "count": "openfda.pharm_class_epc.exact",
-                "limit": limit,
-            },
+            params=self._params(
+                count="openfda.pharm_class_epc.exact",
+                limit=limit,
+            ),
             timeout=20,
         )
         resp.raise_for_status()

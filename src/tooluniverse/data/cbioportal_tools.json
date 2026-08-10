@@ -475,7 +475,7 @@
   {
     "type": "CBioPortalRESTTool",
     "name": "cBioPortal_get_gene_info",
-    "description": "Get detailed information about a specific gene by Entrez Gene ID. Returns gene symbol, aliases, type, and chromosome location.",
+    "description": "Get basic information about a specific gene by Entrez Gene ID. Returns the HUGO gene symbol and gene type (e.g., 'protein-coding'); does not return aliases -- use HGNC_fetch_gene_by_symbol or NCBIGene_get_summary for gene aliases/chromosome location.",
     "parameter": {
       "type": "object",
       "properties": {

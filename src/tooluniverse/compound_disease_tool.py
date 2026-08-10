@@ -11,6 +11,20 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
+def _truncate_msg(msg: str, limit: int = 240) -> str:
+    """Truncate an error message on a word boundary, never mid-word.
+
+    Sub-tool error messages are the only actionable guidance a caller gets
+    on a failed source; cutting them off mid-word at a fixed character
+    count silently drops that guidance (e.g. DisGeNET's "...resolve first
+    (e.g. umls_search_concepts)..." hint used to get cut to "umls_search_").
+    """
+    if len(msg) <= limit:
+        return msg
+    head = msg[:limit].rsplit(" ", 1)[0]
+    return head + "..."
+
+
 @register_tool("CompoundDiseaseProfileTool")
 class CompoundDiseaseProfileTool(BaseTool):
     """Gather a comprehensive disease profile from Orphanet, OMIM, DisGeNET, OpenTargets, and OLS."""
@@ -35,10 +49,12 @@ class CompoundDiseaseProfileTool(BaseTool):
             try:
                 r = tu.run_one_function({"name": tool_name, "arguments": args})
                 if isinstance(r, dict) and r.get("status") == "error":
-                    sources_failed.append(f"{source_name}: {r.get('error', '')[:100]}")
+                    sources_failed.append(
+                        f"{source_name}: {_truncate_msg(r.get('error', ''))}"
+                    )
                 return r
             except Exception as e:
-                sources_failed.append(f"{source_name}: {str(e)[:100]}")
+                sources_failed.append(f"{source_name}: {_truncate_msg(str(e))}")
                 return {"status": "error"}
 
         # 1. Orphanet
