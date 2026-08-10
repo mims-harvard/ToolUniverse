@@ -1,7 +1,7 @@
 [
   {
     "name": "HGNC_fetch_gene_by_symbol",
-    "description": "Fetch detailed gene information from HGNC (HUGO Gene Nomenclature Committee) by official gene symbol. Returns comprehensive gene data including HGNC ID, full name, chromosomal location, cross-references to Ensembl, NCBI Entrez, UniProt, OMIM, and RefSeq. HGNC is the authoritative source for human gene nomenclature. Example: 'TP53' returns tumor protein p53 with all its identifiers.",
+    "description": "Fetch detailed gene information from HGNC (HUGO Gene Nomenclature Committee) by official gene symbol. Returns comprehensive gene data including HGNC ID, full name, chromosomal location, cross-references to Ensembl, NCBI Entrez, UniProt, OMIM, and RefSeq. HGNC is the authoritative source for human gene nomenclature. Example: 'TP53' returns tumor protein p53 with all its identifiers. Retired symbols are resolved automatically: if the symbol is not a current approved symbol, it is looked up as a previous symbol and then as an alias symbol, and the current gene's full record is returned with the substitution disclosed in metadata ('resolved_from', 'resolved_symbol', 'resolution_relation', 'symbol_resolution_note'). Example: 'CYP2E' returns CYP2E1 (renamed in 2002), 'DIA4' returns NQO1. If the retired symbol is ambiguous (shared by several genes) an error naming every candidate is returned instead of an arbitrary pick; if the symbol is unknown to HGNC entirely, metadata carries 'no_results_note' pointing at HGNC_search_genes.",
     "parameter": {
       "type": "object",
       "properties": {
