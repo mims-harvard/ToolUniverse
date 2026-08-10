@@ -488,7 +488,7 @@ Always include proper error handling for robust applications:
                 "name": tool_name,
                 "arguments": arguments
             })
-
+        
             if isinstance(result, list):
                 return {"success": True, "data": result, "count": len(result)}
             elif isinstance(result, dict) and "error" in result:
@@ -600,23 +600,23 @@ Here's a complete example that demonstrates searching across multiple literature
         
         for tool in search_tools:
             print(f"\nSearching {tool['description']}...")
-            
+        
             try:
                 result = tu.run({
                     "name": tool["name"],
                     "arguments": tool["args"]
                 })
-
+            
                 if isinstance(result, list) and len(result) > 0:
                     print(f"✅ Found {len(result)} results")
                     all_results.extend(result)
-
+        
                     # Show first result
                     first_paper = result[0]
                     print(f"📄 Sample: {first_paper.get('title', 'No title')[:60]}...")
                 else:
                     print(f"❌ No results or error: {result}")
-
+        
             except Exception as e:
                 print(f"❌ Exception: {str(e)[:100]}...")
         

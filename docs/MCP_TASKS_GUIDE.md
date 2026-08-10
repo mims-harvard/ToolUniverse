@@ -131,14 +131,13 @@ async def research():
 The system detects your execution context using `asyncio.get_running_loop()`:
 
 ```python
-# Sync context detection
+import asyncio
+
 try:
     asyncio.get_running_loop()
-    # Async context - use await
-    pass
+    execution_mode = "async"  # Use await.
 except RuntimeError:
-    # Sync context - blocking execution
-    pass
+    execution_mode = "sync"  # Use blocking execution.
 ```
 
 ### Execution Modes

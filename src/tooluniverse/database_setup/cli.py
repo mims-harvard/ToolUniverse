@@ -221,8 +221,17 @@ def main():
     )
     s.add_argument("--top-k", default=10, type=positive_int, help="Number of results")
     s.add_argument("--alpha", default=0.5, type=unit_interval, help="Hybrid mix weight")
-    s.add_argument("--provider", help="Embedding provider (optional)")
-    s.add_argument("--model", help="Embedding model (optional)")
+    s.add_argument(
+        "--provider",
+        help=(
+            "Embedding provider (required for embedding/hybrid unless "
+            "EMBED_PROVIDER is set)"
+        ),
+    )
+    s.add_argument(
+        "--model",
+        help="Embedding model override (defaults to collection metadata)",
+    )
 
     # --------------------------------------------------------------------------
     # sync-hf
@@ -325,10 +334,17 @@ def main():
         if args.method == "keyword":
             provider = model = None
         else:
-            # Existing collections record their embedding model. Leave values
-            # optional so the search pipeline can use stored metadata and its
-            # provider resolver when explicit overrides are not supplied.
+            # Collections record the embedding model but not its provider.
+            # Require the provider explicitly so a stored remote model is not
+            # accidentally executed by the default local provider. The model
+            # itself may still come from collection metadata in the pipeline.
             provider = args.provider or os.getenv("EMBED_PROVIDER")
+            if not provider:
+                raise SystemExit(
+                    "Missing embedding provider. Use --provider or set "
+                    "EMBED_PROVIDER; the collection stores its model but not "
+                    "its provider."
+                )
             model = args.model or os.getenv("EMBED_MODEL")
         res = search(
             db_path=db_path,

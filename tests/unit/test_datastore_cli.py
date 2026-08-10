@@ -159,7 +159,7 @@ def test_keyword_search_never_requires_embedding_configuration(
     assert json.loads(capsys.readouterr().out) == result
 
 
-def test_embedding_search_can_use_collection_metadata_without_cli_model(
+def test_embedding_search_can_use_collection_model_without_cli_model(
     monkeypatch, tmp_path
 ):
     db_path = tmp_path / "study.db"
@@ -176,10 +176,35 @@ def test_embedding_search_can_use_collection_metadata_without_cli_model(
             str(db_path),
             "--method",
             "embedding",
+            "--provider",
+            "local",
         )
 
-    assert search.call_args.kwargs["embed_provider"] is None
+    assert search.call_args.kwargs["embed_provider"] == "local"
     assert search.call_args.kwargs["embed_model"] is None
+
+
+def test_embedding_search_requires_provider_missing_from_collection_metadata(
+    monkeypatch, tmp_path
+):
+    with (
+        patch.object(cli, "search") as search,
+        pytest.raises(SystemExit, match="Missing embedding provider"),
+    ):
+        _run(
+            monkeypatch,
+            "search",
+            "--collection",
+            "study",
+            "--query",
+            "BRCA1",
+            "--db",
+            str(tmp_path / "study.db"),
+            "--method",
+            "embedding",
+        )
+
+    search.assert_not_called()
 
 
 def test_search_uses_optional_embedding_environment_overrides(monkeypatch, tmp_path):
