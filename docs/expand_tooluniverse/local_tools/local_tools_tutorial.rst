@@ -444,7 +444,6 @@ Naming Conflicts (Failed to initialize tool for validation)
    # Wrapper function must use snake_case
    def my_tool(*args, **kwargs):  # ✅ Good
        ...
-
    def MyTool(*args, **kwargs):  # ❌ Bad if class is also called MyTool
        ...
 

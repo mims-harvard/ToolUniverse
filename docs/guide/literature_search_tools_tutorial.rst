@@ -168,8 +168,8 @@ All literature search tools follow a similar usage pattern:
     result = tu.run({
         "name": "tool_name",
         "arguments": {
-            "query": "your search terms",
-            "limit": 5  # number of results
+        "query": "your search terms",
+        "limit": 5  # number of results
         }
     })
 
@@ -410,17 +410,17 @@ Search across multiple databases for comprehensive results:
         
         # Search different databases
         databases = [
-            ("ArXiv", "ArXiv_search_papers"),
-            ("Crossref", "Crossref_search_works"),
-            ("Semantic Scholar", "SemanticScholar_search_papers"),
-            ("OpenAlex", "openalex_literature_search")
+        ("ArXiv", "ArXiv_search_papers"),
+        ("Crossref", "Crossref_search_works"),
+        ("Semantic Scholar", "SemanticScholar_search_papers"),
+        ("OpenAlex", "openalex_literature_search")
         ]
         
         for db_name, tool_name in databases:
             try:
                 result = tu.run({
-                    "name": tool_name,
-                    "arguments": {"query": query, "limit": max_results}
+        "name": tool_name,
+        "arguments": {"query": query, "limit": max_results}
                 })
                 results[db_name] = result if isinstance(result, list) else []
             except Exception as e:
@@ -485,8 +485,8 @@ Always include proper error handling for robust applications:
         """Safely search with error handling."""
         try:
             result = tu.run({
-                "name": tool_name,
-                "arguments": arguments
+            "name": tool_name,
+            "arguments": arguments
             })
         
             if isinstance(result, list):
@@ -571,26 +571,26 @@ Here's a complete example that demonstrates searching across multiple literature
         
         # Define tools to search
         search_tools = [
-            {
-                "name": "ArXiv_search_papers",
-                "description": "ArXiv Preprints",
-                "args": {"query": query, "limit": 2, "sort_by": "relevance"}
-            },
-            {
-                "name": "Crossref_search_works",
-                "description": "Crossref Articles",
-                "args": {"query": query, "limit": 2}
-            },
-            {
-                "name": "SemanticScholar_search_papers",
-                "description": "Semantic Scholar",
-                "args": {"query": query, "limit": 2}
-            },
-            {
-                "name": "openalex_literature_search",
-                "description": "OpenAlex",
-                "args": {"search_keywords": query, "max_results": 2}
-            }
+        {
+            "name": "ArXiv_search_papers",
+            "description": "ArXiv Preprints",
+            "args": {"query": query, "limit": 2, "sort_by": "relevance"}
+        },
+        {
+            "name": "Crossref_search_works",
+            "description": "Crossref Articles",
+            "args": {"query": query, "limit": 2}
+        },
+        {
+            "name": "SemanticScholar_search_papers",
+            "description": "Semantic Scholar",
+            "args": {"query": query, "limit": 2}
+        },
+        {
+            "name": "openalex_literature_search",
+            "description": "OpenAlex",
+            "args": {"search_keywords": query, "max_results": 2}
+        }
         ]
         
         print(f"Searching for: '{query}'")
@@ -603,8 +603,8 @@ Here's a complete example that demonstrates searching across multiple literature
         
             try:
                 result = tu.run({
-                    "name": tool["name"],
-                    "arguments": tool["args"]
+        "name": tool["name"],
+        "arguments": tool["args"]
                 })
             
                 if isinstance(result, list) and len(result) > 0:
@@ -1074,11 +1074,11 @@ Here are examples showing the enhanced features of the optimized tools:
         
         total_papers = len(results)
         quality_stats = {
-            'has_abstract': 0,
-            'has_authors': 0,
-            'has_doi': 0,
-            'has_citations': 0,
-            'has_keywords': 0
+        'has_abstract': 0,
+        'has_authors': 0,
+        'has_doi': 0,
+        'has_citations': 0,
+        'has_keywords': 0
         }
         
         for paper in results:
@@ -1096,8 +1096,8 @@ Here are examples showing the enhanced features of the optimized tools:
     result = tu.run({
         "name": "openalex_literature_search",
         "arguments": {
-            "search_keywords": "machine learning",
-            "max_results": 5
+        "search_keywords": "machine learning",
+        "max_results": 5
         }
     })
     

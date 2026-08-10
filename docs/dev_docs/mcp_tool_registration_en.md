@@ -48,7 +48,7 @@ tu.load_mcp_tools(["http://localhost:8001"])
 result = tu.tools.mcp_my_analyzer(
    operation="call_tool",
    tool_name="my_analyzer",
-   tool_arguments={"data": "test data"},
+   tool_arguments={"data": "test data"}
 )
 print(result)
 ```
@@ -223,7 +223,7 @@ tu.load_mcp_tools(["http://localhost:8001"])
 result = tu.tools.mcp_my_tool(
    operation="call_tool",
    tool_name="my_tool",
-   tool_arguments={"param": "test"},
+   tool_arguments={"param": "test"}
 )
 print(result)
 ```
@@ -347,7 +347,7 @@ protein_result = tu.tools.mcp_protein_analyzer(
    tool_arguments={
        "sequence": "MKWVTFISLLFLFSSAYSRGVFRRDAHKSEVAHRFKDLGEENFKALVLIAFAQYLQQCPFEDHVKLVNEVTEFAKTCVADESAENCDKSLHTLFGDKLCTVATLRETYGEMADCCAKQEPERNECFLQHKDDNPNLPRLVRPEVDVMCTAFHDNEETFLKKYLYEIARRHPYFYAPELLFFAKRYKAAFTECCQAADKAACLLPKLDELRDEGKASSAKQRLKCASLQKFGERAFKAWAVARLSQRFPKAEFAEVSKLVTDLTKVHTECCHGDLLECADDRADLAKYICENQDSISSKLKECCEKPLLEKSHCIAEVENDEMPADLPSLAADFVESKDVCKNYAEAKDVFLGMFLYEYARRHPDYSVVLLLRLAKTYETTLEKCCAAADPHECYAKVFDEFKPLVEEPQNLIKQNCELFEQLGEYKFQNALLVRYTKKVPQVSTPTLVEVSRNLGKVGSKCCKHPEAKRMPCAEDYLSVVLNQLCVLHEKTPVSDRVTKCCTESLVNRRPCFSALEVDETYVPKEFNAETFTFHADICTLSEKERQIKKQTALVELVKHKPKATKEQLKAVMDDFAAFVEKCCKADDKETCFAEEGKKLVAASQAALGL",
        "analysis_type": "detailed"
-   },
+   }
 )
 
 print("🧬 Protein Analysis Result:")
@@ -505,7 +505,7 @@ def main():
        tool_name="text_sentiment",
        tool_arguments={
            "text": "This tool is amazing! The functionality is excellent and I think it's wonderful."
-       },
+       }
    )
    print(f"📝 Sentiment Analysis: {sentiment_result}")
 
@@ -515,7 +515,7 @@ def main():
        tool_name="data_stats",
        tool_arguments={
            "data": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-       },
+       }
    )
    print(f"📊 Data Statistics: {stats_result}")
 
@@ -525,7 +525,7 @@ def main():
        tool_name="file_analyzer",
        tool_arguments={
            "filepath": __file__  # Analyze current file
-       },
+       }
    )
    print(f"📁 File Analysis: {file_result}")
 
