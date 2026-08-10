@@ -10,12 +10,53 @@ API: https://www.ebi.ac.uk/gwas/summary-statistics/api/
 No authentication required.
 """
 
+import math
+import numbers
+
 import requests
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 GWAS_SS_BASE_URL = "https://www.ebi.ac.uk/gwas/summary-statistics/api"
+
+
+def _p_value_is_reported(p_value: Any) -> bool:
+    """Is ``p_value`` an actual p-value rather than a missing-data sentinel?
+
+    The GWAS Catalog summary-statistics store encodes "not reported" as the
+    numeric sentinel ``-99.0`` (confirmed live: rows from GCST004415 in
+    chr2:179000000-179600000 come back with ``p_value == -99.0`` *and*
+    ``odds_ratio == -99.0``, neither of which is a legal value for its
+    field). Those sentinel rows are served even when the caller asks the
+    API for ``p_upper=5e-8``, because ``-99 <= 5e-8`` is numerically true.
+
+    Note the upstream ``code`` field is *not* a usable discriminator here:
+    it is the harmonisation code, and code 10 means "forward strand,
+    alleles already in the correct orientation" (a success), while code 14
+    means "invalid for harmonisation" -- observed live on rows carrying
+    perfectly real p-values. So the test is on the value itself: a real
+    p-value is a finite number in [0, 1]. ``0.0`` is kept because sumstats
+    legitimately underflow to zero for extremely significant hits.
+    """
+    if isinstance(p_value, bool) or not isinstance(p_value, numbers.Real):
+        return False
+    value = float(p_value)
+    if not math.isfinite(value):
+        return False
+    return 0.0 <= value <= 1.0
+
+
+def _p_sort_key(association: dict[str, Any]):
+    """Ascending-by-significance sort key that never ranks a sentinel first.
+
+    Rows with no reported p-value sort after every row that has one, instead
+    of being lifted to the top by ``-99 < 5e-24``.
+    """
+    p_value = association.get("p_value")
+    if _p_value_is_reported(p_value):
+        return (0, float(p_value))
+    return (1, 0.0)
 
 
 @register_tool("GWASSumStatsTool")
@@ -191,14 +232,35 @@ class GWASSumStatsTool(BaseTool):
         data = resp.json()
 
         assocs_raw = data.get("_embedded", {}).get("associations", {})
+        if isinstance(assocs_raw, dict):
+            assoc_values = list(assocs_raw.values())
+        else:
+            assoc_values = list(assocs_raw or [])
+
         associations: List[Dict[str, Any]] = []
-        for _key, v in assocs_raw.items():
+        sentinel_rows_excluded = 0
+        for v in assoc_values:
+            if not isinstance(v, dict):
+                continue
+            p_value = v.get("p_value")
+            p_value_reported = _p_value_is_reported(p_value)
+
+            # A row whose p-value is a missing-data sentinel (-99) is not a
+            # significant association, so it must not satisfy a p_upper
+            # threshold -- the upstream API lets it through because the
+            # comparison -99 <= 5e-8 is numerically true.
+            if p_upper is not None and not p_value_reported:
+                sentinel_rows_excluded += 1
+                continue
+
             associations.append(
                 {
                     "variant_id": v.get("variant_id"),
                     "chromosome": v.get("chromosome"),
                     "position": v.get("base_pair_location"),
-                    "p_value": v.get("p_value"),
+                    "p_value": p_value,
+                    "p_value_reported": p_value_reported,
+                    "code": v.get("code"),
                     "beta": v.get("beta"),
                     "odds_ratio": v.get("odds_ratio"),
                     "effect_allele": v.get("effect_allele"),
@@ -211,15 +273,26 @@ class GWASSumStatsTool(BaseTool):
                 }
             )
 
-        associations.sort(key=lambda x: x.get("p_value") or 1.0)
+        # Most significant first; rows with no reported p-value always last.
+        associations.sort(key=_p_sort_key)
 
+        metadata: dict[str, Any] = {
+            "source": "EBI GWAS Summary Statistics",
+            "region": f"chr{chromosome}:{bp_lower}-{bp_upper}",
+            "p_upper_filter": p_upper,
+            "num_associations": len(associations),
+            "sentinel_rows_excluded": sentinel_rows_excluded,
+        }
+        if sentinel_rows_excluded:
+            metadata["sentinel_note"] = (
+                f"{sentinel_rows_excluded} of {len(assoc_values)} rows returned by "
+                "the API carried the GWAS Catalog missing-value sentinel "
+                "(p_value = -99) instead of a p-value; they were excluded because "
+                "a missing p-value cannot meet the p_upper threshold. Omit p_upper "
+                "to see them, flagged with p_value_reported = false."
+            )
         return {
             "status": "success",
             "data": associations,
-            "metadata": {
-                "source": "EBI GWAS Summary Statistics",
-                "region": f"chr{chromosome}:{bp_lower}-{bp_upper}",
-                "p_upper_filter": p_upper,
-                "num_associations": len(associations),
-            },
+            "metadata": metadata,
         }
