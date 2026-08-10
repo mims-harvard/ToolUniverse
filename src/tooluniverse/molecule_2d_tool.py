@@ -147,17 +147,19 @@ class Molecule2DTool(VisualizationTool):
         """Resolve molecule name to SMILES using PubChem."""
         try:
             # Use PubChem PUG REST API
+            # PubChem renamed "IsomericSMILES" to "SMILES"; accept either key
+            # so the resolver keeps working against both response shapes.
             url = (
                 f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/"
-                f"{name}/property/IsomericSMILES/JSON"
+                f"{name}/property/SMILES/JSON"
             )
             response = requests.get(url, timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 if "PropertyTable" in data and "Properties" in data["PropertyTable"]:
                     props = data["PropertyTable"]["Properties"]
-                    if props and "IsomericSMILES" in props[0]:
-                        return props[0]["IsomericSMILES"]
+                    if props:
+                        return props[0].get("SMILES") or props[0].get("IsomericSMILES")
         except Exception:
             pass
         return None
