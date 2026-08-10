@@ -53,6 +53,93 @@ def _normalize_chebi_id(chebi_id):
     return chebi_id
 
 
+def _redirect_disclosure(requested_id, raw):
+    """Disclose it when ChEBI answers about a *different* entity than the one
+    that was asked for.
+
+    ChEBI merges obsolete/duplicate accessions into a single primary entry and
+    then serves that primary entry for every accession that was merged into it.
+    `GET /compound/1/` returns id 18357, chebi_accession 'CHEBI:18357',
+    ascii_name '(R)-noradrenaline' -- CHEBI:1 is one of that entry's
+    `secondary_ids`. (EBI OLS4 agrees: CHEBI_1 is `is_obsolete: true` with
+    `term_replaced_by: CHEBI_18357`.) Serving the primary is correct upstream
+    behaviour; presenting it as though it *were* the requested compound is not.
+    A researcher pasting a legacy accession out of an old paper or dataset
+    would otherwise get a confident, success-labelled answer about the wrong
+    molecule.
+
+    Returns the keys to merge into the tool's `data` payload, or an empty dict
+    when the returned entity is the requested one -- so a direct hit stays
+    byte-identical to the pre-fix output.
+    """
+    if not isinstance(raw, dict):
+        return {}
+
+    try:
+        requested_int = int(str(_normalize_chebi_id(requested_id)).strip())
+        returned_int = int(raw.get("id"))
+    except (TypeError, ValueError):
+        # Either side unparseable: we cannot prove a substitution happened, and
+        # inventing a warning would be worse than staying quiet.
+        return {}
+
+    if requested_int == returned_int:
+        return {}
+
+    requested_accession = f"CHEBI:{requested_int}"
+    returned_accession = raw.get("chebi_accession") or f"CHEBI:{returned_int}"
+    name = _strip_html(raw.get("ascii_name") or raw.get("name") or "")
+    described = f"{returned_accession} ({name})" if name else returned_accession
+
+    secondary_ids = raw.get("secondary_ids")
+    if not isinstance(secondary_ids, list):
+        secondary_ids = None
+
+    disclosure = {
+        "requested_chebi_id": requested_int,
+        "requested_chebi_accession": requested_accession,
+    }
+
+    if secondary_ids is None:
+        # The ontology endpoints redirect identically but do not return
+        # secondary_ids, so the precise relationship cannot be asserted from
+        # this response -- say only what this payload proves.
+        note = (
+            f"Requested {requested_accession}, but ChEBI returned "
+            f"{described}. Every field below describes {returned_accession}, "
+            f"not {requested_accession}. This endpoint does not report "
+            f"secondary_ids, so the exact relationship is not confirmable "
+            f"from this response; ChEBI normally serves the primary entry "
+            f"when an obsolete or secondary accession is requested. Call "
+            f"ChEBI_get_compound with {requested_accession} to confirm."
+        )
+    elif requested_accession in {str(s).strip().upper() for s in secondary_ids}:
+        note = (
+            f"Requested {requested_accession}, but ChEBI returned "
+            f"{described}. {requested_accession} is a secondary (merged or "
+            f"obsolete) accession of the primary entry {returned_accession}, "
+            f"as listed in that entry's secondary_ids. Every field below "
+            f"describes {returned_accession}, not {requested_accession}."
+        )
+    else:
+        note = (
+            f"Requested {requested_accession}, but ChEBI returned "
+            f"{described}, and {requested_accession} is NOT listed among that "
+            f"entry's secondary_ids. The reason for the substitution is "
+            f"therefore unknown and unverified. Every field below describes "
+            f"{returned_accession}; do not treat it as data about "
+            f"{requested_accession} without independent confirmation."
+        )
+
+    disclosure["redirect_note"] = note
+    if secondary_ids is not None:
+        # Provenance, and the evidence for the note itself. Emitted only on the
+        # redirect path, where it is the thing that makes the claim checkable --
+        # so the normal path carries no extra bytes.
+        disclosure["secondary_ids"] = [str(s) for s in secondary_ids]
+    return disclosure
+
+
 @register_tool("ChEBITool")
 class ChEBITool(BaseTool):
     """
@@ -124,10 +211,7 @@ class ChEBITool(BaseTool):
         # Accept the "CHEBI:27732" CURIE form that ChEBI_search returns as
         # chebi_accession, not just the bare integer — so the two tools chain
         # without the caller having to strip the prefix.
-        if isinstance(chebi_id, str):
-            chebi_id = chebi_id.strip()
-            if chebi_id.upper().startswith("CHEBI:"):
-                chebi_id = chebi_id.split(":", 1)[1].strip()
+        chebi_id = _normalize_chebi_id(chebi_id)
 
         url = f"{CHEBI_BASE_URL}/compound/{chebi_id}/"
         response = requests.get(
@@ -188,6 +272,11 @@ class ChEBITool(BaseTool):
             "inchikey": struct_data.get("standard_inchi_key", None),
             "synonyms": synonyms[:20],
         }
+
+        # ChEBI serves the primary entry when a merged/obsolete accession is
+        # requested. Lead with the disclosure so the substitution is the first
+        # thing a reader sees, not a footnote after the synonym list.
+        result = {**_redirect_disclosure(chebi_id, raw), **result}
 
         return {
             "status": "success",
@@ -365,6 +454,10 @@ class ChEBITool(BaseTool):
             "relations": relations,
         }
 
+        # Same silent-substitution shape as _get_compound: /ontology/children/1/
+        # answers with id 18357. Disclosed through the same helper.
+        result = {**_redirect_disclosure(chebi_id, raw), **result}
+
         return {
             "status": "success",
             "data": result,
@@ -415,6 +508,10 @@ class ChEBITool(BaseTool):
             "relation_count": len(relations),
             "relations": relations,
         }
+
+        # Same silent-substitution shape as _get_compound: /ontology/parents/1/
+        # answers with id 18357. Disclosed through the same helper.
+        result = {**_redirect_disclosure(chebi_id, raw), **result}
 
         return {
             "status": "success",

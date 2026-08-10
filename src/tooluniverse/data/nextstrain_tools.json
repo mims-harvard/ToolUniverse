@@ -1,7 +1,7 @@
 [
   {
     "name": "Nextstrain_list_datasets",
-    "description": "List available pathogen phylogenetic datasets from Nextstrain. Returns datasets grouped by pathogen (e.g., avian-flu, dengue, ebola, flu, measles, mpox, SARS-CoV-2, zika). Optionally filter by pathogen name. Nextstrain provides real-time molecular epidemiology for public health, tracking how pathogens evolve and spread worldwide.",
+    "description": "List available pathogen phylogenetic datasets from Nextstrain. Returns datasets grouped by pathogen (e.g., avian-flu, dengue, ebola, flu, measles, mpox, SARS-CoV-2, zika), each with its true 'dataset_count'. By default only the first 10 dataset paths per pathogen are listed; when that hides entries the response sets 'truncated': true with a 'truncation_note', and 'metadata.total_datasets' always reports the full catalogue size (not the number listed). Pass datasets_per_pathogen=0 to list every dataset. Optionally filter by pathogen name. Nextstrain provides real-time molecular epidemiology for public health, tracking how pathogens evolve and spread worldwide.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,6 +11,14 @@
             "null"
           ],
           "description": "Optional pathogen name filter. Examples: 'flu', 'ebola', 'zika', 'dengue', 'mpox'. Leave empty for all pathogens."
+        },
+        "datasets_per_pathogen": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Maximum number of dataset paths listed per pathogen (default 10). Set to 0 to list every dataset with no cap, or to a larger number (e.g. 100) to cover the biggest pathogens such as ncov and avian-flu."
         }
       },
       "required": []
@@ -38,13 +46,23 @@
                 "type": "string"
               },
               "dataset_count": {
-                "type": "integer"
+                "type": "integer",
+                "description": "True number of datasets available for this pathogen, regardless of how many are listed below."
               },
               "datasets": {
                 "type": "array",
                 "items": {
                   "type": "string"
-                }
+                },
+                "description": "Dataset paths, capped by the datasets_per_pathogen argument (default 10)."
+              },
+              "datasets_listed": {
+                "type": "integer",
+                "description": "Number of entries actually present in 'datasets'."
+              },
+              "datasets_truncated": {
+                "type": "boolean",
+                "description": "Present and true when 'datasets' lists fewer paths than 'dataset_count'."
               }
             }
           }
@@ -139,6 +157,9 @@
               "items": {
                 "type": "string"
               }
+            },
+            "available_colorings_count": {
+              "type": "integer"
             }
           }
         },

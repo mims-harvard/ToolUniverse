@@ -295,11 +295,20 @@ class XMLDatasetTool(BaseTool):
         )  # Cap at 1000
 
         search_query = query if case_sensitive else query.lower()
-        results = []
 
         all_records = self._get_all_records_data()
-        total_matches = 0
-        for record_data in all_records:
+        # Feature-27B-01: this loop used to truncate to `limit` *while*
+        # scanning, so the page handed back was simply "the first N records in
+        # the file that matched anything" and match quality never entered into
+        # it. Asking DrugBank for "Aspirin" was therefore answered with
+        # caffeine's chemistry: DB00201 Caffeine and nine other combination
+        # products merely carry the string "Aspirin" inside a brand name, and
+        # being earlier in the document they filled the entire page, while the
+        # record the caller actually asked for -- DB00945 Acetylsalicylic
+        # acid, an exact synonym hit -- was pushed off it. Collect every match
+        # first, rank, and only then truncate.
+        matched_records = []
+        for position, record_data in enumerate(all_records):
             matched_fields = self._find_matches(
                 record_data,
                 search_query,
@@ -309,13 +318,23 @@ class XMLDatasetTool(BaseTool):
             )
 
             if matched_fields:
-                total_matches += 1
-                if len(results) < limit:
-                    result_record = record_data.copy()
-                    for temp in self.temporary_record_fields:
-                        result_record.pop(temp, None)
-                    result_record["matched_fields"] = matched_fields
-                    results.append(result_record)
+                rank = self._match_rank(
+                    record_data, matched_fields, search_query, case_sensitive
+                )
+                matched_records.append((rank, position, record_data, matched_fields))
+
+        total_matches = len(matched_records)
+        # Stable sort on (rank, position) keeps document order as the final
+        # tiebreaker among equally-ranked records.
+        matched_records.sort(key=lambda item: (item[0], item[1]))
+
+        results = []
+        for _rank, _position, record_data, matched_fields in matched_records[:limit]:
+            result_record = record_data.copy()
+            for temp in self.temporary_record_fields:
+                result_record.pop(temp, None)
+            result_record["matched_fields"] = matched_fields
+            results.append(result_record)
 
         return {
             "status": "success",
@@ -331,6 +350,51 @@ class XMLDatasetTool(BaseTool):
                 },
             },
         }
+
+    def _match_rank(
+        self,
+        record_data: Dict[str, Any],
+        matched_fields: List[str],
+        search_query: str,
+        case_sensitive: bool,
+    ) -> tuple:
+        """Rank key for a matched record -- lower sorts first.
+
+        Feature-27B-01: scored on the *best* field the record matched, as
+        ``(exactness_tier, field_index)``:
+
+        * ``exactness_tier`` is 0 when the query equals a whole field value, or
+          a whole ``|``-separated item within a multi-valued field (how
+          synonyms and brand names are stored), and 1 for a mere substring hit.
+        * ``field_index`` is the field's position in the tool's declared
+          ``search_fields``, which the configs order by identity strength
+          (drug_name, drugbank_id, then synonyms, then brand_names).
+
+        Exactness deliberately outranks field priority: an exact synonym hit is
+        a stronger signal that this is the entity the caller named than a
+        substring buried in a nominally higher-priority field. Under
+        ``exact_match=True`` every hit is already whole-value, so the tier is a
+        constant 0 and ranking degenerates to field priority plus document
+        order.
+        """
+        lowest_priority = len(self.search_fields)
+        best = (1, lowest_priority)
+
+        for field in matched_fields:
+            field_value = self._get_searchable_value(record_data, field, case_sensitive)
+            # Reuse the exact-match predicate so "whole value" means exactly
+            # what exact_match=True already means for this class.
+            exactness_tier = 0 if self._is_match(field_value, search_query, True) else 1
+            field_index = (
+                self.search_fields.index(field)
+                if field in self.search_fields
+                else lowest_priority
+            )
+            candidate = (exactness_tier, field_index)
+            if candidate < best:
+                best = candidate
+
+        return best
 
     def _find_matches(
         self,

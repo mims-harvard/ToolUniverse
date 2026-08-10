@@ -100,7 +100,7 @@
   {
     "name": "PopGen_fst",
     "type": "PopGenTool",
-    "description": "Calculate simplified Weir-Cockerham Fst between two populations given allele frequencies and sample sizes. Fst quantifies genetic differentiation: <0.05 little, 0.05-0.15 moderate, 0.15-0.25 great, >0.25 very great differentiation. Useful for measuring population structure and divergence at individual loci.",
+    "description": "Calculate the Weir-Cockerham (1984) theta Fst estimator between two populations given allele frequencies and sample sizes, including the n_c sample-size correction (theta = (MSP - MSG) / (MSP + (n_c - 1) * MSG)) so the result reflects allele-frequency divergence rather than sample size. Fst quantifies genetic differentiation: <0.05 little, 0.05-0.15 moderate, 0.15-0.25 great, >0.25 very great differentiation. Useful for measuring population structure and divergence at individual loci.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -149,6 +149,9 @@
                 },
                 "p_bar": {
                   "type": "number"
+                },
+                "estimator": {
+                  "type": "string"
                 },
                 "interpretation": {
                   "type": "string"

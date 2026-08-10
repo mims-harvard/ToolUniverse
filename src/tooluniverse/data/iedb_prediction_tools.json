@@ -1,27 +1,27 @@
 [
   {
     "name": "IEDB_predict_mhci_binding",
-    "description": "Predict MHC class I peptide binding using NetMHCpan via the IEDB Analysis Resource API. Given a protein sequence and HLA allele, predicts which peptides will bind and be presented on the cell surface. Returns peptides ranked by percentile rank (lower = stronger binding). Essential for vaccine design, neoantigen prediction, and epitope mapping. Supports human HLA-A/B/C and mouse H-2 alleles.",
+    "description": "Predict MHC class I peptide binding using NetMHCpan via the IEDB next-generation tools API (https://api-nextgen-tools.iedb.org). Given a protein sequence and HLA allele, predicts which peptides will bind and be presented on the cell surface. Returns one row per scored peptide with the method's own score/IC50 and percentile columns, plus a uniform 'percentile_rank' (lower = stronger binding), sorted strongest first. Essential for vaccine design, neoantigen prediction, and epitope mapping. Supports human HLA-A/B/C and mouse H2 alleles. The prediction runs asynchronously upstream and typically returns within about 15 seconds.",
     "parameter": {
       "type": "object",
       "properties": {
         "sequence": {
           "type": "string",
-          "description": "Protein sequence (amino acid letters, e.g., 'TYQRTRALVFQRTRALKMFAL'). Multiple peptides can be concatenated."
+          "description": "Protein sequence (amino acid letters, e.g., 'TYQRTRALVFQRTRALKMFAL'). Multiple peptides can be concatenated. A FASTA block (starting with '>') is also accepted."
         },
         "allele": {
           "type": "string",
-          "description": "MHC allele name. Human: 'HLA-A*02:01', 'HLA-B*07:02'. Mouse: 'H-2-Kd', 'H-2-Db'. Default: HLA-A*02:01",
+          "description": "MHC allele name, validated upstream against the MHC Restriction Ontology. Human: 'HLA-A*02:01', 'HLA-B*07:02'. Mouse: 'H2-Kd', 'H2-Db' (the legacy 'H-2-Kd' spelling is accepted and translated). Comma-separate for several alleles. Default: HLA-A*02:01",
           "default": "HLA-A*02:01"
         },
         "method": {
           "type": "string",
-          "description": "Prediction method. 'netmhcpan_el' (recommended, eluted ligand), 'netmhcpan_ba' (binding affinity), 'ann', 'smm'",
+          "description": "Prediction method: 'netmhcpan_el' (recommended, eluted ligand), 'netmhcpan_ba' (binding affinity), 'netmhcpan', 'ann', 'smm', 'smmpmbec', 'comblib_sidney2008', 'consensus', 'mhcflurry', 'mhcnp', 'pickpocket'",
           "default": "netmhcpan_el"
         },
         "length": {
           "type": "integer",
-          "description": "Peptide length (8-14 for MHC-I, typically 9)",
+          "description": "Peptide length (8-15 for MHC-I, typically 9)",
           "default": 9
         }
       },
@@ -66,27 +66,27 @@
   },
   {
     "name": "IEDB_predict_mhcii_binding",
-    "description": "Predict MHC class II peptide binding using NetMHCIIpan via the IEDB Analysis Resource API. Predicts CD4+ T helper cell epitopes. Given a protein sequence and HLA-DR/DP/DQ allele, returns predicted binding peptides ranked by percentile rank. Essential for vaccine design (helper epitopes) and autoimmunity research.",
+    "description": "Predict MHC class II peptide binding using NetMHCIIpan via the IEDB next-generation tools API (https://api-nextgen-tools.iedb.org). Predicts CD4+ T helper cell epitopes. Given a protein sequence and HLA-DR/DP/DQ allele, returns one row per scored sliding-window peptide with the method's own core/score/percentile columns plus a uniform 'percentile_rank' (lower = stronger binding), sorted strongest first. Essential for vaccine design (helper epitopes) and autoimmunity research. The prediction runs asynchronously upstream and typically returns within about 15 seconds.",
     "parameter": {
       "type": "object",
       "properties": {
         "sequence": {
           "type": "string",
-          "description": "Protein sequence (amino acid letters)"
+          "description": "Protein sequence (amino acid letters). A FASTA block (starting with '>') is also accepted."
         },
         "allele": {
           "type": "string",
-          "description": "MHC-II allele. Examples: 'HLA-DRB1*01:01', 'HLA-DRB1*15:01'. Default: HLA-DRB1*01:01",
+          "description": "MHC-II allele, validated upstream against the MHC Restriction Ontology. Examples: 'HLA-DRB1*01:01', 'HLA-DRB1*15:01'. Comma-separate for several alleles. Default: HLA-DRB1*01:01",
           "default": "HLA-DRB1*01:01"
         },
         "method": {
           "type": "string",
-          "description": "Prediction method: 'netmhciipan_el' (recommended), 'netmhciipan_ba', 'nn_align'",
+          "description": "Prediction method: 'netmhciipan_el' (recommended), 'netmhciipan_ba', 'nn_align', 'smm_align', 'comblib', 'tepitope', 'consensus'",
           "default": "netmhciipan_el"
         },
         "length": {
           "type": ["integer", "null"],
-          "description": "Sliding-window peptide length IEDB scores within 'sequence'. IEDB defaults this to 15 server-side and errors if 'sequence' is shorter than it; omit to auto-match the sequence's own length when it's under 15."
+          "description": "Sliding-window peptide length scored within 'sequence' (11-30, default 15). Cannot exceed the sequence length; omit to use 15, or the sequence's own length when that is shorter."
         }
       },
       "required": [
@@ -211,13 +211,13 @@
   },
   {
     "name": "IEDB_predict_antigen_processing",
-    "description": "Predict MHC class I antigen processing using the IEDB Analysis Resource processing tool. Unlike raw binding prediction, this chains proteasomal cleavage + TAP transport + MHC-I binding into a combined processing_score and total_score, predicting peptides that are naturally processed and presented to CD8+ T cells. Given a protein sequence and HLA allele, returns per-peptide proteasome_score, tap_score, mhc_score, processing_score, total_score and ic50_score (nM). Use for neoantigen and epitope prioritization beyond binding affinity. No authentication required.",
+    "description": "Predict MHC class I antigen processing using the IEDB next-generation tools API (https://api-nextgen-tools.iedb.org). Unlike raw binding prediction, this runs the NetCTLpan processing predictor alongside an MHC-I binding predictor, chaining proteasomal cleavage + TAP transport + MHC-I binding into a combined score that identifies peptides likely to be naturally processed and presented to CD8+ T cells. Returns one row per peptide with cleavage_prediction_score, tap_prediction_score, mhc_prediction and combined_prediction_score (sorted highest first), alongside the binding method's own IC50/score and percentile columns. Use for neoantigen and epitope prioritization beyond binding affinity. Sequences of 20 or more residues are recommended, since cleavage prediction needs flanking context. No authentication required.",
     "parameter": {
       "type": "object",
       "properties": {
         "sequence": {
           "type": "string",
-          "description": "Protein sequence (single-letter amino acids), e.g. 'SLYNTVATLYCVHQRIDV'. Aliases: sequence_text."
+          "description": "Protein sequence (single-letter amino acids), e.g. 'SLYNTVATLYCVHQRIDVKQNTLKLATGGKS'. 20+ residues recommended. Aliases: sequence_text."
         },
         "sequence_text": {
           "type": "string",
@@ -225,17 +225,17 @@
         },
         "allele": {
           "type": "string",
-          "description": "MHC class I allele. Human: 'HLA-A*02:01', 'HLA-B*07:02'. Mouse: 'H-2-Kd'. Default: HLA-A*02:01",
+          "description": "MHC class I allele, validated upstream against the MHC Restriction Ontology. Human: 'HLA-A*02:01', 'HLA-B*07:02'. Mouse: 'H2-Kd' (the legacy 'H-2-Kd' spelling is accepted and translated). Default: HLA-A*02:01",
           "default": "HLA-A*02:01"
         },
         "method": {
           "type": "string",
-          "description": "MHC-I binding method used in the chain: 'netmhcpan' (default), 'ann', 'smm', 'comblib_sidney2008'.",
+          "description": "MHC-I binding method used in the chain: 'netmhcpan' (default), 'netmhcpan_ba', 'netmhcpan_el', 'ann', 'smm', 'smmpmbec', 'comblib_sidney2008', 'consensus'.",
           "default": "netmhcpan"
         },
         "length": {
           "type": "integer",
-          "description": "Peptide length (8-14 for MHC-I, typically 9).",
+          "description": "Peptide length (8-15 for MHC-I, typically 9).",
           "default": 9
         }
       },
@@ -249,7 +249,7 @@
     "type": "IEDBPredictionTool",
     "test_examples": [
       {
-        "sequence": "SLYNTVATLYCVHQRIDV",
+        "sequence": "SLYNTVATLYCVHQRIDVKQNTLKLATGGKS",
         "allele": "HLA-A*02:01",
         "length": 9
       }
@@ -264,23 +264,29 @@
               "peptide": {
                 "type": "string"
               },
-              "proteasome_score": {
+              "start": {
                 "type": ["number", "string"]
               },
-              "tap_score": {
+              "end": {
                 "type": ["number", "string"]
               },
-              "mhc_score": {
-                "type": ["number", "string"]
+              "allele": {
+                "type": "string"
               },
-              "processing_score": {
-                "type": ["number", "string"]
+              "cleavage_prediction_score": {
+                "type": ["number", "string", "null"]
               },
-              "total_score": {
-                "type": ["number", "string"]
+              "tap_prediction_score": {
+                "type": ["number", "string", "null"]
               },
-              "ic50_score": {
-                "type": ["number", "string"]
+              "mhc_prediction": {
+                "type": ["number", "string", "null"]
+              },
+              "combined_prediction_score": {
+                "type": ["number", "string", "null"]
+              },
+              "median_percentile": {
+                "type": ["number", "string", "null"]
               }
             }
           }

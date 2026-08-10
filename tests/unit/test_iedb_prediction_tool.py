@@ -1,18 +1,20 @@
-"""Regression guard for two Fix-R23B bugs in IEDBPredictionTool.
+"""Regression guard for two Fix-R23B defects in IEDBPredictionTool.
 
-Fix-R23B-1 (percentile_rank): the mhcii/ endpoint's real TSV column is
-"rank", not "percentile_rank" (confirmed live) -- _predict_mhcii read the
-wrong key, so every result silently defaulted to percentile_rank=100.0
-regardless of true binding strength, hiding real strong binders from any
-caller filtering on the documented convention.
+Fix-R23B-1 (percentile_rank): every result silently reported
+percentile_rank=100.0 regardless of true binding strength, hiding real
+strong binders from any caller filtering on the documented convention.
 
-Fix-R23B-2 (invalid-allele silent success): IEDB's tools_api endpoints
-return HTTP 200 with a plain-text error message (not a TSV table) for
-invalid input like an unrecognized HLA allele name -- confirmed live for
-mhci/. Naively parsing that as TSV produced bogus single-column "rows"
-keyed on the error prose itself, with status:"success" and fabricated
-score/percentile_rank of 0.0/100.0. Fixed by detecting non-tabular
-responses before parsing and returning a clear error instead.
+Fix-R23B-2 (invalid-allele silent success): an unrecognized HLA allele name
+produced a bogus `status: "success"` payload with fabricated scores instead
+of an error.
+
+Both concerns still apply after Fix-R29A-1 moved the MHC-I and MHC-II
+predictions off the retired synchronous ``tools-cluster-interface.iedb.org``
+endpoint (which accepts a POST and then never answers) onto IEDB's
+next-generation async pipeline API, so the guards are expressed against that
+contract: a peptide table of ``table_columns``/``table_data``, and a
+validation rejection that returns HTTP 200 carrying ``errors`` and no
+``result_id`` (both shapes confirmed live).
 """
 
 from unittest.mock import MagicMock, patch
@@ -23,44 +25,115 @@ from tooluniverse.iedb_prediction_tool import IEDBPredictionTool
 
 pytestmark = pytest.mark.unit
 
-_MHCII_TSV = (
-    "allele\tseq_num\tstart\tend\tlength\tcore_peptide\tpeptide\tscore\trank\n"
-    "HLA-DRB1*01:01\t1\t194\t208\t15\tFELLHAPAT\tVLSFELLHAPATVCG\t0.8447\t0.67\n"
-    "HLA-DRB1*01:01\t1\t192\t206\t15\tFELLHAPAT\tVVVLSFELLHAPATV\t0.8119\t0.86\n"
-)
-
-_MHCI_INVALID_ALLELE_TEXT = (
-    "Invalid allele name HLA-A*99:99 found.\n\n"
-    "* Please go to the link below for more usage info:\n"
-    "http://tools.iedb.org/main/html/tools_api.html"
-)
-
-_MHCI_VALID_TSV = (
-    "allele\tseq_num\tstart\tend\tlength\tpeptide\tcore\ticore\tscore\tpercentile_rank\n"
-    "HLA-A*02:01\t1\t1\t9\t9\tKIADYNYKL\tKIADYNYKL\tKIADYNYKL\t0.865\t0.05\n"
-)
-
 
 def _tool(endpoint_type):
-    return IEDBPredictionTool(
+    tool = IEDBPredictionTool(
         {"name": "iedb_test", "fields": {"endpoint_type": endpoint_type}}
     )
+    tool.poll_interval = 0
+    return tool
 
 
-def _resp(text):
+def _resp(payload, status_code=200):
     r = MagicMock()
-    r.text = text
+    r.status_code = status_code
+    r.json.return_value = payload
+    r.text = str(payload)
     r.raise_for_status = MagicMock()
     return r
 
 
-class TestMhciiPercentileRank:
-    def test_reads_rank_column_not_hardcoded_100(self):
-        tool = _tool("predict_mhcii")
-        resp = _resp(_MHCII_TSV)
+def _done(columns, rows):
+    return {
+        "status": "done",
+        "data": {
+            "errors": [],
+            "warnings": [],
+            "results": [
+                {
+                    "type": "peptide_table",
+                    "table_columns": [{"name": c} for c in columns],
+                    "table_data": rows,
+                }
+            ],
+        },
+    }
 
-        with patch(
-            "tooluniverse.iedb_prediction_tool.requests.post", return_value=resp
+
+_SUBMIT_OK = {"result_id": "rid-1", "warnings": []}
+
+_MHCII_DONE = _done(
+    [
+        "allele",
+        "start",
+        "end",
+        "length",
+        "netmhciipan_el_core",
+        "peptide",
+        "netmhciipan_el_score",
+        "median_percentile",
+        "netmhciipan_el_percentile",
+    ],
+    [
+        [
+            "HLA-DRB1*01:01",
+            194,
+            208,
+            15,
+            "FELLHAPAT",
+            "VLSFELLHAPATVCG",
+            0.8447,
+            0.67,
+            0.67,
+        ],
+        [
+            "HLA-DRB1*01:01",
+            192,
+            206,
+            15,
+            "FELLHAPAT",
+            "VVVLSFELLHAPATV",
+            0.8119,
+            0.86,
+            0.86,
+        ],
+    ],
+)
+
+_MHCI_DONE = _done(
+    [
+        "allele",
+        "start",
+        "end",
+        "length",
+        "peptide",
+        "netmhcpan_el_score",
+        "median_percentile",
+        "netmhcpan_el_percentile",
+    ],
+    [["HLA-A*02:01", 1, 9, 9, "KIADYNYKL", 0.865, 0.05, 0.05]],
+)
+
+# Live shape for an unknown allele: HTTP 200, `errors`, no `result_id`.
+_INVALID_ALLELE_REJECTION = {
+    "errors": ["The following are not valid alleles: HLA-A*99:99"],
+    "warnings": [],
+}
+
+
+class TestMhciiPercentileRank:
+    def test_reads_real_percentile_not_hardcoded_100(self):
+        tool = _tool("predict_mhcii")
+
+        with (
+            patch(
+                "tooluniverse.iedb_prediction_tool.requests.post",
+                return_value=_resp(_SUBMIT_OK),
+            ),
+            patch(
+                "tooluniverse.iedb_prediction_tool.requests.get",
+                return_value=_resp(_MHCII_DONE),
+            ),
         ):
             result = tool.run({"sequence": "X" * 20, "allele": "HLA-DRB1*01:01"})
 
@@ -71,25 +144,31 @@ class TestMhciiPercentileRank:
 
 
 class TestInvalidAlleleErrorDetection:
-    def test_mhci_plain_text_error_returns_status_error(self):
+    def test_mhci_invalid_allele_returns_status_error(self):
         tool = _tool("predict_mhci")
-        resp = _resp(_MHCI_INVALID_ALLELE_TEXT)
 
         with patch(
-            "tooluniverse.iedb_prediction_tool.requests.post", return_value=resp
+            "tooluniverse.iedb_prediction_tool.requests.post",
+            return_value=_resp(_INVALID_ALLELE_REJECTION),
         ):
             result = tool.run({"sequence": "KIADYNYKLPDDFTGC", "allele": "HLA-A*99:99"})
 
         assert result["status"] == "error"
-        assert "Invalid allele name HLA-A*99:99" in result["error"]
+        assert "HLA-A*99:99" in result["error"]
         assert "data" not in result
 
-    def test_mhci_valid_tsv_still_succeeds(self):
+    def test_mhci_valid_response_still_succeeds(self):
         tool = _tool("predict_mhci")
-        resp = _resp(_MHCI_VALID_TSV)
 
-        with patch(
-            "tooluniverse.iedb_prediction_tool.requests.post", return_value=resp
+        with (
+            patch(
+                "tooluniverse.iedb_prediction_tool.requests.post",
+                return_value=_resp(_SUBMIT_OK),
+            ),
+            patch(
+                "tooluniverse.iedb_prediction_tool.requests.get",
+                return_value=_resp(_MHCI_DONE),
+            ),
         ):
             result = tool.run({"sequence": "KIADYNYKLPDDFTGC", "allele": "HLA-A*02:01"})
 

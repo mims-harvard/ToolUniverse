@@ -103,6 +103,9 @@ class ClinGenAlleleTool(BaseTool):
         # Extract genomic coordinates
         genomic = []
         for ga in data.get("genomicAlleles") or []:
+            # `referenceGenome` (and `chromosome`) live on the parent
+            # genomicAlleles[i] object, not on the inner coordinates[j]
+            # dict -- the inner dict only has start/end/allele/referenceAllele.
             for coord in ga.get("coordinates") or []:
                 genomic.append(
                     {
@@ -111,7 +114,7 @@ class ClinGenAlleleTool(BaseTool):
                         "end": coord.get("end"),
                         "allele": coord.get("allele"),
                         "reference_allele": coord.get("referenceAllele"),
-                        "reference_genome": coord.get("referenceGenome"),
+                        "reference_genome": ga.get("referenceGenome"),
                     }
                 )
 

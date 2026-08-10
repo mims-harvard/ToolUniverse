@@ -255,7 +255,7 @@
         },
         "organism": {
           "type": "string",
-          "description": "Restrict the search to an organism by name (e.g. 'Klebsiella pneumoniae', 'Escherichia coli'). By default a gene/protein-name search is biased toward human (taxid 9606); set this for non-human proteins. If omitted and no human match is found, the search auto-widens to all organisms."
+          "description": "Restrict the search to an organism by NAME (e.g. 'Klebsiella pneumoniae', 'Escherichia coli'); use 'taxid' for numeric NCBI taxonomy ids. A purely numeric value here (e.g. '9606') is auto-corrected to a taxid lookup and the response reports it in 'normalization_note'. By default a gene/protein-name search is biased toward human (taxid 9606); set this for non-human proteins. If omitted and no human match is found, the search auto-widens to all organisms."
         },
         "taxid": {
           "type": "string",

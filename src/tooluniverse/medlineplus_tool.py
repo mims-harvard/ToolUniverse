@@ -1,15 +1,34 @@
 # medlineplus_tool.py
 
+import re
+from typing import Any, Dict, Optional
+
 import requests
 import xmltodict
-from typing import Optional, Dict, Any
-import re
-import json
 
 from .base_tool import BaseTool
+from .logging_config import get_logger
 from .tool_registry import register_tool
 
+logger = get_logger("MedlinePlusRESTTool")
+
 _HTML_TAG_RE = re.compile(r"<[^>]+>")
+
+# The wsearch service wraps every term match in <span class="qt0">...</span>
+# highlight markup in the flat `brief`/`all` content nodes. The same text in
+# the `topic` <health-topic> record carries no such markup, so stripping the
+# spans (keeping their inner text) makes the three rettypes agree.
+_HIGHLIGHT_SPAN_RE = re.compile(r"</?span[^>]*>")
+
+# NLM's wsearch endpoint accepts any `db` value but only actually serves the
+# two health-topic databases; every query against the other historically
+# documented databases returns <count>0</count>. Verified live (2026-08) for
+# drugs / drugsSpanish / genetics / medicalTests / medicalEncyclopedia across
+# the terms aspirin, cancer, heart, BRCA1, diabetes and vitamin -- all zero,
+# while healthTopics/healthTopicsSpanish return hundreds of hits for the same
+# terms. The values stay accepted so existing callers keep working; they just
+# now get an explanation instead of a generic "no results".
+_SERVED_SEARCH_DBS = ("healthTopics", "healthTopicsSpanish")
 
 
 @register_tool("MedlinePlusRESTTool")
@@ -95,7 +114,156 @@ class MedlinePlusRESTTool(BaseTool):
             return _HTML_TAG_RE.sub("", html.replace("</p>", "\n")).strip()
         return ""
 
-    def _format_response(self, response: Any, tool_name: str) -> Dict[str, Any]:
+    @staticmethod
+    def _strip_highlight(value: Any) -> str:
+        """Drop the wsearch term-highlight <span> wrappers, keeping their text."""
+        if not isinstance(value, str):
+            return ""
+        return _HIGHLIGHT_SPAN_RE.sub("", value).strip()
+
+    @staticmethod
+    def _truncate_summary(summary: Any) -> Any:
+        text = summary if isinstance(summary, str) else str(summary)
+        return text[:500] + "..." if len(text) > 500 else summary
+
+    @staticmethod
+    def _split_document_content(doc: dict):
+        """Split a <document>'s <content> nodes into the structured
+        <health-topic> record (rettype=topic / all) and a name -> [text] map
+        of the flat content nodes (rettype=brief / all).
+
+        rettype=topic yields exactly one <content name="healthTopic"> node,
+        which xmltodict collapses to a bare dict; brief yields several flat
+        <content name="..."> nodes (a list); all yields both in one list.
+        The old code only ever looked at the dict shape, so every brief/all
+        document was silently discarded.
+        """
+        content = doc.get("content", {})
+        if isinstance(content, dict):
+            entries = [content]
+        elif isinstance(content, list):
+            entries = [c for c in content if isinstance(c, dict)]
+        else:
+            entries = []
+
+        health_topic = {}
+        flat: dict[str, list] = {}
+        for entry in entries:
+            nested = entry.get("health-topic")
+            if isinstance(nested, dict):
+                health_topic = nested
+                continue
+            text = entry.get("#text")
+            if isinstance(text, str):
+                flat.setdefault(entry.get("@name", ""), []).append(text)
+        return health_topic, flat
+
+    def _format_health_topic(self, health_topic: dict, doc_url: str, doc_rank: str):
+        """Format the structured <health-topic> record (rettype=topic/all)."""
+        title = health_topic.get("@title", "")
+        meta_desc = health_topic.get("@meta-desc", "")
+        topic_url = health_topic.get("@url", doc_url)
+        language = health_topic.get("@language", "")
+
+        # Extract aliases
+        also_called = health_topic.get("also-called", [])
+        if isinstance(also_called, str):
+            also_called = [also_called]
+        elif isinstance(also_called, dict):
+            also_called = [also_called.get("#text", str(also_called))]
+        elif not isinstance(also_called, list):
+            also_called = []
+
+        # Extract summary
+        full_summary = health_topic.get("full-summary", "")
+        if isinstance(full_summary, dict):
+            full_summary = str(full_summary)
+
+        # Extract group information
+        groups = health_topic.get("group", [])
+        if isinstance(groups, str):
+            groups = [groups]
+        elif isinstance(groups, dict):
+            groups = [groups.get("#text", str(groups))]
+        elif not isinstance(groups, list):
+            groups = []
+
+        return {
+            "title": title,
+            "meta_desc": meta_desc,
+            "url": topic_url,
+            "language": language,
+            "rank": doc_rank,
+            "also_called": also_called,
+            "summary": self._truncate_summary(full_summary),
+            "groups": groups,
+        }
+
+    def _format_brief_document(
+        self, flat: dict[str, list], doc_url: str, doc_rank: str, db: str
+    ):
+        """Format a rettype=brief document, whose fields arrive as flat
+        <content name="title|altTitle|FullSummary|groupName|snippet"> nodes
+        instead of a nested <health-topic> record."""
+
+        def first(name: str) -> str:
+            values = flat.get(name) or [""]
+            return self._strip_highlight(values[0])
+
+        # brief carries no meta-desc; the search snippet is the equivalent
+        # short description the service offers for this rettype.
+        snippet = first("snippet")
+        # brief carries no language attribute either; it is fixed by the db.
+        if db.lower().endswith("spanish"):
+            language = "Spanish"
+        elif db:
+            language = "English"
+        else:
+            language = ""
+
+        return {
+            "title": first("title"),
+            "meta_desc": snippet,
+            "url": doc_url,
+            "language": language,
+            "rank": doc_rank,
+            "also_called": [
+                self._strip_highlight(v)
+                for v in flat.get("altTitle", [])
+                if self._strip_highlight(v)
+            ],
+            "summary": self._truncate_summary(first("FullSummary")),
+            "groups": [
+                self._strip_highlight(v)
+                for v in flat.get("groupName", [])
+                if self._strip_highlight(v)
+            ],
+        }
+
+    @staticmethod
+    def _no_documents_error(arguments: dict[str, Any]) -> str:
+        """Explain an empty result set, naming the real cause when the caller
+        targeted a `db` that wsearch accepts but never serves."""
+        db = str(arguments.get("db", "") or "")
+        term = str(arguments.get("term", "") or "")
+        if db and db not in _SERVED_SEARCH_DBS:
+            return (
+                f"MedlinePlus wsearch does not serve `db={db}`; only "
+                f"{' and '.join(_SERVED_SEARCH_DBS)} return results. The service "
+                f"accepts the request but always answers with count=0, so this is "
+                f"not a 'no match for your term' result. Retry with "
+                f"db=healthTopics (or db=healthTopicsSpanish)."
+            )
+        where = f" in db={db}" if db else ""
+        for_term = f" for term '{term}'" if term else ""
+        return f"MedlinePlus returned no matching documents{for_term}{where} (count=0)."
+
+    def _format_response(
+        self,
+        response: Any,
+        tool_name: str,
+        arguments: dict[str, Any] | None = None,
+    ) -> Dict[str, Any]:
         """Format response content"""
         if not isinstance(response, dict):
             return {"raw_response": response}
@@ -147,13 +315,8 @@ class MedlinePlusRESTTool(BaseTool):
 
         # Format response based on tool type
         if tool_name == "MedlinePlus_search_topics_by_keyword":
-            # First print raw response for debugging
-            print("\n🔍 Raw response structure:")
-            print(
-                json.dumps(response, indent=2, ensure_ascii=False)[:2000] + "..."
-                if len(json.dumps(response, indent=2, ensure_ascii=False)) > 2000
-                else json.dumps(response, indent=2, ensure_ascii=False)
-            )
+            arguments = arguments or {}
+            logger.debug("MedlinePlus raw search response: %s", response)
 
             # Extract topic information from XML structure
             nlm_result = response.get("nlmSearchResult", {})
@@ -163,68 +326,36 @@ class MedlinePlusRESTTool(BaseTool):
             # Get document list
             document_list = nlm_result.get("list", {}).get("document", [])
             if not document_list:
-                return {"status": "error", "error": "document list not found"}
+                return {
+                    "status": "error",
+                    "error": self._no_documents_error(arguments),
+                }
 
             # Ensure document_list is a list
             if isinstance(document_list, dict):
                 document_list = [document_list]
 
+            db = str(arguments.get("db", "") or "")
             formatted_topics = []
             for doc in document_list:
+                if not isinstance(doc, dict):
+                    continue
                 # Get document basic info
                 doc_url = doc.get("@url", "")
                 doc_rank = doc.get("@rank", "")
 
-                # Get content node
-                content = doc.get("content", {})
-                if isinstance(content, dict):
-                    health_topic = content.get("health-topic", {})
-                    if health_topic:
-                        # Extract health topic information
-                        title = health_topic.get("@title", "")
-                        meta_desc = health_topic.get("@meta-desc", "")
-                        topic_url = health_topic.get("@url", doc_url)
-                        language = health_topic.get("@language", "")
-
-                        # Extract aliases
-                        also_called = health_topic.get("also-called", [])
-                        if isinstance(also_called, str):
-                            also_called = [also_called]
-                        elif isinstance(also_called, dict):
-                            also_called = [also_called.get("#text", str(also_called))]
-                        elif not isinstance(also_called, list):
-                            also_called = []
-
-                        # Extract summary
-                        full_summary = health_topic.get("full-summary", "")
-                        if isinstance(full_summary, dict):
-                            full_summary = str(full_summary)
-
-                        # Extract group information
-                        groups = health_topic.get("group", [])
-                        if isinstance(groups, str):
-                            groups = [groups]
-                        elif isinstance(groups, dict):
-                            groups = [groups.get("#text", str(groups))]
-                        elif not isinstance(groups, list):
-                            groups = []
-
-                        formatted_topics.append(
-                            {
-                                "title": title,
-                                "meta_desc": meta_desc,
-                                "url": topic_url,
-                                "language": language,
-                                "rank": doc_rank,
-                                "also_called": also_called,
-                                "summary": (
-                                    full_summary[:500] + "..."
-                                    if len(str(full_summary)) > 500
-                                    else full_summary
-                                ),
-                                "groups": groups,
-                            }
-                        )
+                health_topic, flat = self._split_document_content(doc)
+                if health_topic:
+                    # rettype=topic, and rettype=all (which ships the same
+                    # structured record alongside the flat fields).
+                    formatted_topics.append(
+                        self._format_health_topic(health_topic, doc_url, doc_rank)
+                    )
+                elif flat:
+                    # rettype=brief: only the flat content nodes are present.
+                    formatted_topics.append(
+                        self._format_brief_document(flat, doc_url, doc_rank, db)
+                    )
 
             return (
                 {"topics": formatted_topics}
@@ -357,8 +488,11 @@ class MedlinePlusRESTTool(BaseTool):
         if isinstance(url, dict) and "error" in url:
             return url
 
-        # Print complete URL
-        print(f"\n🔗 Request URL: {url}")
+        # Diagnostics go to the shared ToolUniverse logger at DEBUG level
+        # (enable with TOOLUNIVERSE_LOG_LEVEL=DEBUG). They used to be bare
+        # print() calls, which polluted stdout on every single call and
+        # corrupted any consumer parsing the tool's JSON payload from there.
+        logger.debug("Request URL: %s", url)
 
         # Make request
         try:
@@ -370,9 +504,12 @@ class MedlinePlusRESTTool(BaseTool):
                     "detail": resp.text,
                 }
 
-            print(f"\n📊 Response status: {resp.status_code}")
-            print(f"📏 Response length: {len(resp.text)} characters")
-            print(f"🔤 First 500 characters of response: {resp.text[:500]}...")
+            logger.debug(
+                "Response status: %s, length: %s characters",
+                resp.status_code,
+                len(resp.text),
+            )
+            logger.debug("First 500 characters of response: %s", resp.text[:500])
 
             # Improved parsing logic
             tool_name = self.tool_config["name"]
@@ -384,11 +521,11 @@ class MedlinePlusRESTTool(BaseTool):
                 # JSON format
                 try:
                     response = resp.json()
-                    print("📋 Parsed as: JSON")
+                    logger.debug("Parsed as: JSON")
                 except Exception:
                     # If JSON parsing fails, fall back to XML
                     response = xmltodict.parse(resp.text)
-                    print("📋 Parsed as: XML -> Dictionary (fallback)")
+                    logger.debug("Parsed as: XML -> Dictionary (fallback)")
             elif (
                 url.endswith(".xml")
                 or response_text.startswith("<?xml")
@@ -396,25 +533,24 @@ class MedlinePlusRESTTool(BaseTool):
             ):
                 # XML format
                 response = xmltodict.parse(resp.text)
-                print("📋 Parsed as: XML -> Dictionary")
+                logger.debug("Parsed as: XML -> Dictionary")
             elif tool_name == "MedlinePlus_search_topics_by_keyword":
                 # Search tool defaults to XML
                 response = xmltodict.parse(resp.text)
-                print("📋 Parsed as: XML -> Dictionary (Search tool)")
+                logger.debug("Parsed as: XML -> Dictionary (Search tool)")
             elif tool_name == "MedlinePlus_get_genetics_index":
                 # Genetics index defaults to XML
                 response = xmltodict.parse(resp.text)
-                print("📋 Parsed as: XML -> Dictionary (Genetics index)")
+                logger.debug("Parsed as: XML -> Dictionary (Genetics index)")
             else:
                 # Other cases keep original text
                 response = resp.text
-                print("📋 Parsed as: Plain text")
+                logger.debug("Parsed as: Plain text")
 
-            print(f"🔍 Parsed data type: {type(response)}")
             if isinstance(response, dict):
-                print(f"🗝️ Top-level dictionary keys: {list(response.keys())}")
+                logger.debug("Top-level dictionary keys: %s", list(response.keys()))
 
-            return self._format_response(response, tool_name)
+            return self._format_response(response, tool_name, arguments)
 
         except requests.RequestException as e:
             return {
@@ -424,7 +560,7 @@ class MedlinePlusRESTTool(BaseTool):
 
     # Tool methods
     def search_topics_by_keyword(
-        self, term: str, db: str, rettype: str = "brief"
+        self, term: str, db: str, rettype: str = "topic"
     ) -> Dict[str, Any]:
         return self.run({"term": term, "db": db, "rettype": rettype})
 

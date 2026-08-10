@@ -29,7 +29,8 @@
       "required": [
         "ids",
         "from_db"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint_type": "convert"
@@ -118,7 +119,8 @@
       },
       "required": [
         "uniprot_ids"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint_type": "to_pdb"
@@ -195,7 +197,7 @@
         },
         "tax_id": {
           "type": "integer",
-          "description": "NCBI Taxonomy ID. Required. 9606 = human, 10090 = mouse, 10116 = rat, 7227 = fruit fly, 6239 = C. elegans.",
+          "description": "NCBI Taxonomy ID restricting the species searched. Optional; when omitted it defaults to 9606 (human), so a non-human query MUST pass this explicitly or it will silently return human proteins. Examples: 9606 = human, 10090 = mouse, 10116 = rat, 7227 = fruit fly, 6239 = C. elegans. There is no species-name parameter -- give the numeric taxonomy ID.",
           "default": 9606
         },
         "reviewed_only": {
@@ -208,7 +210,8 @@
       },
       "required": [
         "gene_names"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint_type": "gene_to_uniprot"
@@ -288,7 +291,8 @@
     "parameter": {
       "type": "object",
       "properties": {},
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint_type": "list_databases"

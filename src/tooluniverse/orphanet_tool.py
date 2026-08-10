@@ -324,6 +324,38 @@ class OrphanetTool(BaseTool):
             },
         }
 
+    def _lookup_orpha_name(self, orpha_code: str) -> "tuple[bool, str | None]":
+        """Resolve an ORPHA code against the RDcode Name endpoint.
+
+        Returns ``(code_exists, preferred_term)``. A 404 from this endpoint
+        is the only signal that definitively means the ORPHA code itself is
+        unknown -- every dataset-specific Orphadata endpoint 404s both for
+        an unknown code AND for a real disease that simply has no record in
+        that particular dataset. Anything other than a clean 200 leaves the
+        preferred term as None; network errors and non-404 failures report
+        ``(True, None)`` -- "can't tell, proceed" -- so a transient lookup
+        failure never manufactures a false "disease not found".
+        """
+        try:
+            response = requests.get(
+                f"{RDCODE_API_URL}/EN/ClinicalEntity/orphacode/{orpha_code}/Name",
+                timeout=self.timeout,
+                headers=get_rdcode_headers(),
+            )
+        except requests.exceptions.RequestException:
+            return True, None
+        if response.status_code == 404:
+            return False, None
+        if response.status_code != 200:
+            return True, None
+        try:
+            payload = response.json()
+        except ValueError:
+            return True, None
+        if isinstance(payload, dict):
+            return True, payload.get("Preferred term") or payload.get("Name") or None
+        return True, None
+
     def _orpha_code_exists(self, orpha_code: str) -> bool:
         """True unless the RDcode Name endpoint definitively 404s for this
         ORPHA code -- i.e. the code itself doesn't exist, as opposed to a
@@ -333,15 +365,7 @@ class OrphanetTool(BaseTool):
         they're treated as "can't tell, proceed" so a transient
         existence-check failure doesn't mask an otherwise-working request.
         """
-        try:
-            response = requests.get(
-                f"{RDCODE_API_URL}/EN/ClinicalEntity/orphacode/{orpha_code}/Name",
-                timeout=self.timeout,
-                headers=get_rdcode_headers(),
-            )
-        except requests.exceptions.RequestException:
-            return True
-        return response.status_code != 404
+        return self._lookup_orpha_name(orpha_code)[0]
 
     def _orpha_not_found_error(self, orpha_code: str) -> Optional[Dict[str, Any]]:
         """Standard "Disease not found" error payload if `orpha_code`
@@ -844,9 +868,40 @@ class OrphanetTool(BaseTool):
 
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
+                # Orphadata answers with a byte-identical 404 body
+                # ({"error":{"code":404,"type":"Query not found"}}) for a
+                # genuinely unknown ORPHA code AND for a real, current
+                # disease that simply has no record in the rd-phenotypes
+                # dataset. Confirmed live: ORPHA:1247 (Schistosomiasis)
+                # 404s here, yet resolves fine on RDcode and on the
+                # natural-history and ICD-mapping datasets. Blanket-
+                # reporting "disease not found" was therefore a false
+                # statement, and its advice to run Orphanet_search_diseases
+                # sent the caller into a loop -- that search hands ORPHA:1247
+                # straight back. Discriminate with the RDcode Name endpoint,
+                # the same existence check the sibling operations already
+                # use (Fix-R20D-1): it 200s for 1247 and 404s only for a
+                # truly unknown code.
+                code_exists, preferred_term = self._lookup_orpha_name(orpha_code)
+                if not code_exists:
+                    return {
+                        "status": "error",
+                        "error": f"Disease ORPHA:{orpha_code} not found. Use Orphanet_search_diseases to find a valid ORPHA code.",
+                    }
+                named = f" ({preferred_term})" if preferred_term else ""
                 return {
                     "status": "error",
-                    "error": f"Disease ORPHA:{orpha_code} not found. Use Orphanet_search_diseases to find a valid ORPHA code.",
+                    "error": (
+                        f"No HPO phenotype annotations available for "
+                        f"ORPHA:{orpha_code}{named}: Orphanet's rd-phenotypes "
+                        "dataset holds no record for this code. The ORPHA code "
+                        "itself is valid and current, so re-searching for it "
+                        "will not help -- Orphanet curates phenotype "
+                        "annotations for only a subset of its diseases. Other "
+                        "Orphanet datasets may still cover this code: try "
+                        "Orphanet_get_disease, Orphanet_get_natural_history, "
+                        "Orphanet_get_epidemiology or Orphanet_get_icd_mapping."
+                    ),
                 }
             return {"status": "error", "error": f"HTTP error: {e.response.status_code}"}
         except requests.exceptions.RequestException as e:

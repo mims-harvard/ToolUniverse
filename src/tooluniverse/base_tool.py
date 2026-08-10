@@ -16,6 +16,28 @@ import hashlib
 import inspect
 
 
+def resolve_configured_operation(tool_config: Any) -> Optional[str]:
+    """Return the ``operation`` a tool's own config implies, if any.
+
+    Many multi-operation tool classes are registered once per operation and
+    still read ``arguments["operation"]``, so ToolUniverse fills that key in
+    from the tool's own config (``fields.operation``, else the schema default)
+    before the tool runs -- see
+    ``ToolUniverse._apply_operation_default``. Both the injection and the
+    validation-side recognition of the injected key resolve the value through
+    this single function, so the two cannot drift apart.
+    """
+    if not isinstance(tool_config, dict):
+        return None
+    operation = (tool_config.get("fields") or {}).get("operation")
+    if not operation:
+        schema = tool_config.get("parameter") or {}
+        prop = (schema.get("properties") or {}).get("operation")
+        if isinstance(prop, dict):
+            operation = prop.get("default")
+    return operation if isinstance(operation, str) and operation else None
+
+
 class BaseTool:
     STATIC_CACHE_VERSION = "1"
 
@@ -297,6 +319,28 @@ class BaseTool:
 
             jsonschema.validate(filtered_arguments, schema)
 
+            # Feature-26A-8: ToolUniverse fills `operation` into `arguments`
+            # from the tool's own config before validation, for the tool
+            # classes that read it from there. The caller never sent it, so
+            # the unrecognized-parameter reporting below must not see it:
+            # `Pharos_get_target_expression {"target": "EGFR"}` was answered
+            # with "Unrecognized parameter(s): 'target', 'operation'", naming a
+            # parameter the caller did not pass and could not remove. Drop the
+            # key only when its value is exactly what the config would have
+            # supplied -- a caller-supplied `operation` that says anything else
+            # is a genuine mistake and stays in the report. Dropping it from
+            # `checked_arguments` (not just from the message) also keeps the
+            # total-mismatch guard honest in both directions: the injected key
+            # must not pad the "recognized" side for the 348 configs that do
+            # declare `operation`, nor pad the "unknown" side for the 235 that
+            # do not. jsonschema itself still sees the full argument set.
+            checked_arguments = filtered_arguments
+            auto_operation = resolve_configured_operation(self.tool_config)
+            if auto_operation and filtered_arguments.get("operation") == auto_operation:
+                checked_arguments = {
+                    k: v for k, v in filtered_arguments.items() if k != "operation"
+                }
+
             # Feature-14A-01 / Feature-14B-01: jsonschema only rejects an
             # unknown key when it causes a *required* property to end up
             # missing. A tool whose schema has no required properties (a
@@ -325,10 +369,10 @@ class BaseTool:
             # risk of being a genuine mistake, and flagging it risks
             # rejecting legitimate pass-through/forward-compatible callers.
             properties = schema.get("properties", {})
-            if properties and filtered_arguments:
-                unknown = self._unknown_keys(filtered_arguments, properties)
+            if properties and checked_arguments:
+                unknown = self._unknown_keys(checked_arguments, properties)
                 if unknown:
-                    unset_props = [p for p in properties if p not in filtered_arguments]
+                    unset_props = [p for p in properties if p not in checked_arguments]
                     # Match each *unknown supplied key* (typically 1-2) against
                     # the unset schema properties (can be 30+ for a
                     # filter-heavy endpoint), rather than the reverse -- same
@@ -351,7 +395,7 @@ class BaseTool:
                                 "valid_parameters": sorted(properties),
                             },
                         )
-                    if len(unknown) == len(filtered_arguments):
+                    if len(unknown) == len(checked_arguments):
                         return ToolValidationError(
                             f"Unrecognized parameter(s): "
                             f"{', '.join(repr(k) for k in unknown)}. "

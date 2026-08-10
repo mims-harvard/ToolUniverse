@@ -493,6 +493,70 @@ class PubMedRESTTool(BaseRESTTool):
             result["count"] = len(articles)
         return result
 
+    @staticmethod
+    def _search_warning_metadata(esearch_result: dict) -> dict:
+        """Surface NCBI's own report that it did not run the query as asked.
+
+        esearch silently drops quoted phrases it cannot match and then answers
+        a broader query. NCBI discloses this in ``esearchresult.warninglist``;
+        without propagating it a caller cannot tell that the returned articles
+        answer a different question than the one they submitted.
+
+        Returns an empty dict when NCBI reported no warnings, so unaffected
+        queries keep their existing metadata shape.
+        """
+        if not isinstance(esearch_result, dict):
+            return {}
+
+        warning_list = esearch_result.get("warninglist")
+        if not isinstance(warning_list, dict):
+            return {}
+
+        def _as_list(value: Any) -> list:
+            if isinstance(value, str):
+                return [value] if value.strip() else []
+            if isinstance(value, (list, tuple)):
+                return [v for v in value if v]
+            return []
+
+        not_found = _as_list(warning_list.get("quotedphrasesnotfound"))
+        ignored = _as_list(warning_list.get("phrasesignored"))
+        messages = _as_list(warning_list.get("outputmessages"))
+
+        if not (not_found or ignored or messages):
+            return {}
+
+        metadata: dict = {}
+        if not_found:
+            metadata["quoted_phrases_not_found"] = not_found
+        if ignored:
+            metadata["phrases_ignored"] = ignored
+        if messages:
+            metadata["ncbi_messages"] = messages
+
+        translation = esearch_result.get("querytranslation")
+        if isinstance(translation, str) and translation.strip():
+            metadata["executed_query"] = translation.strip()
+
+        # Top-level, unmissable statement of the mismatch for any caller that
+        # reads metadata but not the individual warning keys.
+        notes = []
+        if not_found:
+            notes.append(
+                "PubMed could not match the quoted phrase(s) "
+                f"{not_found}; they were dropped and these results answer a "
+                "BROADER query than the one submitted."
+            )
+        if ignored:
+            notes.append(f"PubMed ignored the phrase(s) {ignored}.")
+        if messages:
+            notes.append("; ".join(str(m) for m in messages))
+        if notes:
+            metadata["query_not_executed_as_submitted"] = True
+            metadata["warning"] = " ".join(notes)
+
+        return metadata
+
     def _fetch_abstracts(self, pmid_list: list[str]) -> Dict[str, str]:
         """Best-effort abstract fetch via efetch XML for a list of PMIDs."""
         pmids = [str(p).strip() for p in (pmid_list or []) if str(p).strip()]
@@ -601,6 +665,11 @@ class PubMedRESTTool(BaseRESTTool):
                     # If this is a search request (has 'query' in arguments),
                     # fetch article summaries and return the standard envelope.
                     if "query" in arguments:
+                        # NCBI reports quoted phrases it could not match; that
+                        # report must reach the caller or the answer looks like
+                        # it came from the query they actually submitted.
+                        search_warnings = self._search_warning_metadata(esearch_result)
+
                         # A search that matched nothing must still return the
                         # same {status, data, metadata} envelope as a search
                         # that matched — otherwise zero-hit queries fall through
@@ -615,6 +684,7 @@ class PubMedRESTTool(BaseRESTTool):
                                     "total": int(esearch_result.get("count", 0)),
                                     "query": arguments.get("query"),
                                     "source": "PubMed",
+                                    **search_warnings,
                                 },
                             }
 
@@ -701,6 +771,7 @@ class PubMedRESTTool(BaseRESTTool):
                                 ),
                                 "query": arguments.get("query"),
                                 "source": "PubMed",
+                                **search_warnings,
                             },
                         }
 

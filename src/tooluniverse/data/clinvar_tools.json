@@ -12,7 +12,7 @@
                 },
                 "condition": {
                     "type": "string",
-                    "description": "Disease or condition name (e.g., 'breast cancer', 'diabetes') At least one of gene, condition, or variant_id must be provided."
+                    "description": "Disease or condition name (e.g., 'breast cancer', 'diabetes') At least one of gene, condition, or variant_id must be provided. Matched against ClinVar's disease index, which carries MedGen's own condition names exactly -- a synonym, a locus name or a misspelling ('Lebers congenital amaurosis' for the indexed 'Leber congenital amaurosis') matches nothing there, so the search falls back to an unrestricted free-text match. When that happens the response says so: 'condition_filter_applied': false plus a 'condition_filter_warning', meaning total_count is NOT a disease-filtered count. Use MedGen_search_conditions to get the indexed name."
                 },
                 "variant_id": {
                     "type": "string",

@@ -17,6 +17,10 @@ from .tool_registry import register_tool
 
 NEXTSTRAIN_BASE_URL = "https://nextstrain.org/charon"
 
+# Default number of dataset paths listed per pathogen. Callers can raise this
+# (or pass 0 for "no cap") via the ``datasets_per_pathogen`` argument.
+DEFAULT_DATASETS_PER_PATHOGEN = 10
+
 
 @register_tool("NextstrainTool")
 class NextstrainTool(BaseTool):
@@ -76,7 +80,30 @@ class NextstrainTool(BaseTool):
 
     def _list_datasets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List available Nextstrain pathogen datasets."""
-        pathogen_filter = arguments.get("pathogen", "").lower()
+        pathogen_filter = (arguments.get("pathogen") or "").lower()
+
+        raw_limit = arguments.get("datasets_per_pathogen")
+        if raw_limit is None or raw_limit == "":
+            per_pathogen_limit = DEFAULT_DATASETS_PER_PATHOGEN
+        else:
+            try:
+                per_pathogen_limit = int(raw_limit)
+            except (TypeError, ValueError):
+                return {
+                    "status": "error",
+                    "error": (
+                        "datasets_per_pathogen must be a non-negative integer "
+                        "(0 means return every dataset)."
+                    ),
+                }
+            if per_pathogen_limit < 0:
+                return {
+                    "status": "error",
+                    "error": (
+                        "datasets_per_pathogen must be a non-negative integer "
+                        "(0 means return every dataset)."
+                    ),
+                }
 
         url = f"{NEXTSTRAIN_BASE_URL}/getAvailable"
         response = requests.get(url, timeout=self.timeout)
@@ -105,25 +132,54 @@ class NextstrainTool(BaseTool):
         # Build response
         results = []
         for pathogen, paths in sorted(pathogen_groups.items()):
-            results.append(
-                {
-                    "pathogen": pathogen,
-                    "dataset_count": len(paths),
-                    "datasets": sorted(paths)[:10],
-                }
-            )
+            ordered = sorted(paths)
+            listed = ordered if per_pathogen_limit == 0 else ordered[:per_pathogen_limit]
+            entry = {
+                "pathogen": pathogen,
+                "dataset_count": len(ordered),
+                "datasets": listed,
+                "datasets_listed": len(listed),
+            }
+            if len(listed) < len(ordered):
+                entry["datasets_truncated"] = True
+            results.append(entry)
 
-        return {
+        # 'total_datasets' is the true catalogue size (sum of every pathogen's
+        # dataset_count), never the size of the possibly-truncated listings.
+        total_datasets = sum(r["dataset_count"] for r in results)
+        listed_datasets = sum(r["datasets_listed"] for r in results)
+        truncated = listed_datasets < total_datasets
+
+        response = {
             "status": "success",
             "data": results,
+            "truncated": truncated,
             "metadata": {
                 "source": "Nextstrain",
                 "total_pathogens": len(results),
-                "total_datasets": sum(len(r["datasets"]) for r in results),
+                "total_datasets": total_datasets,
+                "listed_datasets": listed_datasets,
+                "datasets_per_pathogen": per_pathogen_limit,
+                "truncated": truncated,
                 "filter": pathogen_filter or "(none)",
                 "endpoint": "list_datasets",
             },
         }
+
+        if truncated:
+            largest = max(r["dataset_count"] for r in results)
+            note = (
+                f"Listed {listed_datasets} of {total_datasets} datasets: each pathogen's "
+                f"'datasets' array is capped at {per_pathogen_limit} entries, while its "
+                f"'dataset_count' reports the true number available. To retrieve the rest, "
+                f"re-run with datasets_per_pathogen=0 (no cap) or a higher cap "
+                f"(datasets_per_pathogen={largest} covers the largest pathogen), and/or "
+                f"narrow the query with the 'pathogen' filter."
+            )
+            response["truncation_note"] = note
+            response["metadata"]["truncation_note"] = note
+
+        return response
 
     def _get_dataset(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get metadata and tree summary for a Nextstrain dataset."""
@@ -187,12 +243,15 @@ class NextstrainTool(BaseTool):
             "root_attributes": root_info,
         }
 
-        # Color-by options
+        # Color-by options (complete list — these are short keys, so nothing is
+        # dropped; the count is reported alongside so callers can verify.)
         colorings = meta.get("colorings", [])
         if colorings:
-            result["available_colorings"] = [
+            coloring_keys = [
                 c.get("key", "") for c in colorings if isinstance(c, dict)
-            ][:15]
+            ]
+            result["available_colorings"] = coloring_keys
+            result["available_colorings_count"] = len(coloring_keys)
 
         return {
             "status": "success",

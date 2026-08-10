@@ -661,6 +661,33 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
             if k in arguments and arguments[k] is not None:
                 query_params[k] = arguments[k]
 
+        # Feature-27A-1: Fix-R13B-1's AREA restriction landed only in
+        # ClinicalTrialsTool._run_search, which builds its own params, so this
+        # tool -- the one advertised as "the PRIMARY tool for finding clinical
+        # trials" -- kept passing a bare value to query.intr. CTG API v2's
+        # Essie engine matches a bare query.intr against the whole study
+        # record, so intervention="Luxturna" returned exactly one study,
+        # NCT07681778, an RDH12 gene-therapy trial whose only tie to Luxturna
+        # is the phrase "using a method similar to approved gene therapies
+        # like Luxturna" in its brief summary -- a trial for a different drug
+        # and a different gene, presented as *the* match. The restriction is
+        # applied here from the shared _AREA_RESTRICTED_FIELDS mapping (and
+        # via the shared _restrict_to_area helper) so the two code paths
+        # cannot drift apart again, which is what caused this.
+        area_restricted_params = set()
+        for mapped_key, areas in self._AREA_RESTRICTED_FIELDS.items():
+            value = query_params.get(mapped_key)
+            if not isinstance(value, str):
+                continue
+            restricted = _restrict_to_area(value, areas)
+            # An unchanged value means the caller supplied their own Essie
+            # syntax (AREA[...]/boolean/quotes), which _restrict_to_area
+            # deliberately leaves alone -- nothing was restricted, so there
+            # is nothing to report about it below either.
+            if restricted != value:
+                query_params[mapped_key] = restricted
+                area_restricted_params.add(mapped_key)
+
         # Add default parameters that are not shown in the schema.
         # filter.advanced used to be skipped whenever a status filter was set,
         # to work around its old AREA[HasResults]true clause. That clause was
@@ -720,6 +747,26 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
             "ClinicalTrials_search_studies for an unfiltered search."
         )
 
+        # Feature-27A-2: once the intervention query is restricted to the
+        # registered name fields (above), a brand name that no registrant
+        # recorded in either field returns zero with nothing to explain it --
+        # confirmed live: query.intr=(AREA[InterventionName]Luxturna OR
+        # AREA[InterventionOtherName]Luxturna) has totalCount 0, while
+        # intervention="voretigene neparvovec" (the INN for the same product)
+        # returns a full set. A clinician searching the name printed on the
+        # vial must not read that zero as "no trials exist". This is a
+        # different cause of zero from the phase gate above, so it is reported
+        # as its own note and only when the restriction was actually applied.
+        intervention_restricted = "query.intr" in area_restricted_params
+        intervention_restriction_note = (
+            "This search matched the intervention names and synonyms "
+            "registered on each study (ClinicalTrials.gov "
+            "InterventionName/InterventionOtherName), not free text in study "
+            "summaries. Brand/trade names are often not recorded in either "
+            "field, so if you searched one, retry with the generic/INN name "
+            "(e.g. 'voretigene neparvovec' rather than 'Luxturna')."
+        )
+
         # Fix-Round3-002: a well-formed query that legitimately matches zero
         # trials (empty `studies` list) is a success, not the error below --
         # `execute_RESTful_query` already returns False for genuine failures
@@ -728,12 +775,18 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
         # _simplify_output handles an empty list fine on its own.
         if response is not None and response and "studies" in response.keys():
             metadata = {"source": "ClinicalTrials.gov API v2"}
-            if phase_filter_applied:
-                metadata["note"] = (
-                    phase_filter_note
-                    if not response.get("studies")
-                    else nonempty_phase_filter_note
-                )
+            # Both causes of an empty result can hold at once, so name each
+            # one that actually applied rather than blaming a single filter.
+            notes = []
+            if not response.get("studies"):
+                if intervention_restricted:
+                    notes.append(intervention_restriction_note)
+                if phase_filter_applied:
+                    notes.append(phase_filter_note)
+            elif phase_filter_applied:
+                notes.append(nonempty_phase_filter_note)
+            if notes:
+                metadata["note"] = " ".join(notes)
             return {
                 "status": "success",
                 "data": self._simplify_output(response),

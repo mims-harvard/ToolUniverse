@@ -7,6 +7,39 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
+# ---- openFDA `count=` aggregation paging ----
+#
+# openFDA answers a `count=` query with only the most frequent values and does
+# NOT report how many distinct values exist -- its `meta` block carries just
+# disclaimer/terms/license/last_updated, never a grand total. Measured live
+# 2026-08 against
+#   https://api.fda.gov/drug/event.json?search=...&count=patient.reaction.reactionmeddrapt.exact
+# an unqualified count query returns exactly 100 rows, so 100 is the effective
+# default page size for these aggregations.
+COUNT_DEFAULT_LIMIT = 100
+
+# Documented maximum for `limit`: "Currently, the largest allowed value for the
+# `limit` parameter is 1000." -- https://open.fda.gov/apis/query-parameters/
+COUNT_MAX_LIMIT = 1000
+
+# Measured, undocumented: anonymous callers are capped one below the documented
+# maximum. limit=1000 (and above) answers HTTP 403 {"code": "API_KEY_MISSING"}
+# while limit=999 succeeds, reproduced across both count and plain search
+# queries. Callers with FDA_API_KEY set may use the full documented maximum.
+COUNT_MAX_LIMIT_ANONYMOUS = 999
+
+
+def _is_error_payload(payload):
+    """True when ``_search`` returned an error sentinel rather than count rows."""
+    return (
+        isinstance(payload, list)
+        and len(payload) > 0
+        and isinstance(payload[0], dict)
+        and "error" in payload[0]
+        and "term" not in payload[0]
+    )
+
+
 def _is_range(value):
     """True for a Lucene range such as "[20141001 TO 20141231]".
 
@@ -120,11 +153,110 @@ class FDADrugAdverseEventTool(BaseTool):
         if validation_error:
             return {"status": "error", "error": validation_error}
 
+        limit_error, limit = self._resolve_count_limit(arguments)
+        if limit_error:
+            return {"status": "error", "error": limit_error}
+
         # Store reactionmeddraverse for filtering results
         reaction_filter = arguments.get("reactionmeddraverse")
 
-        response = self._search(arguments)
-        return self._post_process(response, reaction_filter=reaction_filter)
+        response = self._search(arguments, limit=self._fetch_limit(limit))
+        if _is_error_payload(response):
+            return response
+        return self._build_count_envelope(
+            response, limit, reaction_filter=reaction_filter
+        )
+
+    # ---- count paging / truncation disclosure ----
+
+    def _limit_ceiling(self):
+        """Highest `limit` this caller may send to openFDA."""
+        return COUNT_MAX_LIMIT if self.api_key else COUNT_MAX_LIMIT_ANONYMOUS
+
+    def _resolve_count_limit(self, arguments):
+        """Pop and validate `limit`, returning ``(error_message, limit)``."""
+        limit = arguments.pop("limit", COUNT_DEFAULT_LIMIT)
+        if limit is None:
+            limit = COUNT_DEFAULT_LIMIT
+        if isinstance(limit, bool) or not isinstance(limit, int):
+            message = (
+                f"Invalid value '{limit}' for 'limit'. Expected an integer between 1 "
+                f"and {COUNT_MAX_LIMIT}."
+            )
+            return message, None
+        if limit < 1 or limit > COUNT_MAX_LIMIT:
+            message = (
+                f"'limit' must be between 1 and {COUNT_MAX_LIMIT} "
+                f"(openFDA's documented maximum); got {limit}."
+            )
+            return message, None
+        if limit > self._limit_ceiling():
+            message = (
+                f"'limit' above {COUNT_MAX_LIMIT_ANONYMOUS} requires an openFDA API "
+                "key: set the FDA_API_KEY environment variable, or lower 'limit' to "
+                f"{COUNT_MAX_LIMIT_ANONYMOUS} or below."
+            )
+            return message, None
+        return None, limit
+
+    def _fetch_limit(self, limit):
+        """Ask openFDA for one extra row so truncation can be reported exactly.
+
+        openFDA never states how many distinct values a `count=` aggregation has,
+        so the only way to know whether the caller's page is the whole story is
+        to request one row past it and see whether it comes back.
+        """
+        return min(limit + 1, self._limit_ceiling())
+
+    def _build_count_envelope(self, response, limit, reaction_filter=None):
+        """Return count rows alongside a top-level truncation disclosure."""
+        if not isinstance(response, list):
+            response = []
+
+        fetch_limit = self._fetch_limit(limit)
+        probed = fetch_limit > limit
+        if probed:
+            # The probe row came back, so more terms definitely exist.
+            truncated = len(response) > limit
+        else:
+            # Already at the ceiling: a full page is all we can observe, so the
+            # honest answer is "possibly incomplete", not "complete".
+            truncated = len(response) >= limit
+
+        rows = self._post_process(response[:limit], reaction_filter=reaction_filter)
+
+        envelope = {
+            "results": rows,
+            "result_count": len(rows),
+            "limit": limit,
+            "truncated": truncated,
+        }
+        if truncated:
+            certainty = (
+                "more terms exist beyond that limit"
+                if probed
+                else "openFDA filled the page exactly, so more terms may exist beyond it"
+            )
+            # When a term filter is applied client-side, 'results' is a subset of
+            # the ranked list; say so, so the flag is not read as "your one row
+            # is incomplete".
+            scope = (
+                " 'results' was then narrowed to the requested term, so the "
+                "truncation applies to the underlying ranking rather than to the "
+                "rows shown."
+                if reaction_filter
+                else ""
+            )
+            envelope["truncation_note"] = (
+                f"openFDA returned only the {min(len(response), limit)} most-reported "
+                f"terms for this query (limit={limit}), ranked by descending report "
+                f"count; {certainty}. openFDA's count endpoint does not report how "
+                "many distinct terms there are in total, so the size of the remainder "
+                f"is unknown. Pass a larger 'limit' (maximum {COUNT_MAX_LIMIT}) to "
+                "retrieve more. A term missing from this list is NOT evidence that it "
+                f"was never reported -- query the term directly to check.{scope}"
+            )
+        return envelope
 
     def validate_enum_arguments(self, arguments):
         """Validate that enum-based arguments match the allowed values"""
@@ -180,7 +312,7 @@ class FDADrugAdverseEventTool(BaseTool):
 
         return mapped_results
 
-    def _search(self, arguments):
+    def _search(self, arguments, limit=None):
         search_parts = []
         for param_name, value in arguments.items():
             # Only forward parameters defined in the search-field map; an
@@ -237,13 +369,16 @@ class FDADrugAdverseEventTool(BaseTool):
         search_query = "+AND+".join(search_parts)
         search_encoded = urllib.parse.quote(search_query, safe='+:"')
 
-        # Build URL
+        # Build URL. `limit` is appended after `count` so it is never mistaken
+        # for part of the Lucene search clause.
         if self.api_key:
             url = f"{self.endpoint_url}?api_key={self.api_key}&search={search_encoded}&count={self.count_field}"
         else:
             url = (
                 f"{self.endpoint_url}?search={search_encoded}&count={self.count_field}"
             )
+        if limit is not None:
+            url = f"{url}&limit={limit}"
 
         # API request (30s timeout so a hung connection cannot block the caller)
         try:
@@ -333,6 +468,10 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
         if validation_error:
             return {"status": "error", "error": validation_error}
 
+        limit_error, limit = self._resolve_count_limit(arguments)
+        if limit_error:
+            return {"status": "error", "error": limit_error}
+
         # Build OR clause for multiple drugs
         escaped = []
         for d in drugs:
@@ -370,7 +509,8 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
         # URL encode the search query, preserving +, :, and " as safe chars
         search_encoded = urllib.parse.quote(search_query, safe='+:"')
 
-        # Call API
+        # Call API. `limit` is appended after `count` so it is never mistaken
+        # for part of the Lucene search clause.
         if self.api_key:
             url = (
                 f"{self.endpoint_url}?api_key={self.api_key}"
@@ -380,23 +520,24 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
             url = (
                 f"{self.endpoint_url}?search={search_encoded}&count={self.count_field}"
             )
+        url = f"{url}&limit={self._fetch_limit(limit)}"
 
         try:
             resp = requests.get(url)
-            # Handle 404 as "no matches found" - return empty list instead of error
+            # Handle 404 as "no matches found" - return an empty (but explicitly
+            # non-truncated) envelope instead of an error.
             if resp.status_code == 404:
                 try:
                     error_data = resp.json()
                     if "error" in error_data and "No matches found" in str(
                         error_data.get("error", {})
                     ):
-                        return []  # Return empty list for no matches
+                        return self._build_count_envelope([], limit)
                 except (ValueError, KeyError):
                     pass
             resp.raise_for_status()
             results = resp.json().get("results", [])
-            results = self._post_process(results)
-            return results
+            return self._build_count_envelope(results, limit)
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"API request failed: {str(e)}"}
 

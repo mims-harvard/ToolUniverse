@@ -8,6 +8,7 @@ API Documentation: https://civicdb.org/api
 GraphQL Endpoint: https://civicdb.org/api/graphql
 """
 
+import re
 import requests
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
@@ -55,6 +56,74 @@ CIVIC_EVIDENCE_SIGNIFICANCES = {
     "LIKELY_ONCOGENIC",
 }
 CIVIC_EVIDENCE_DIRECTIONS = {"SUPPORTS", "DOES_NOT_SUPPORT", "NA"}
+
+# Feature-26A-03 / Feature-26A-04: gene-symbol-prefixed variant spellings.
+# Clinical writing joins the gene symbol and the variant designation into one
+# token ("EGFRvIII", "BRAFV600E", "KRASG12C"), but CIViC stores the variant under
+# the bare designation ("VIII", "V600E") and names its molecular profile
+# "<GENE> <designation>". Every CIViC name filter (variants(name:),
+# evidenceItems(molecularProfileName:)) is a case-insensitive *substring* match,
+# so the joined spelling can never reach the curated record — it silently matches
+# only same-spelled duplicate stubs, or nothing at all. We detect that spelling
+# and query the gene-stripped form as well, then merge.
+_GENE_SYMBOL_RE = re.compile(r"^[A-Z][A-Z0-9]*$")
+# A trailing designation is recognized either by a lowercase initial ("vIII",
+# "del", "fs") or by protein-change notation ("V600E", "G12C", "R175fs").
+# Both require a character after the digits, so a plain gene symbol carrying
+# digits ("ERBB2", "TP53") never splits.
+_VARIANT_DESIGNATION_RES = (
+    re.compile(r"^[a-z][A-Za-z0-9]*$"),
+    re.compile(r"^[A-Z]\d+[A-Za-z*]\w*$"),
+)
+_GENE_PREFIX_MIN_LEN = 2
+
+
+def _split_gene_prefixed_name(name: Any, gene: Optional[str] = None) -> Optional[tuple]:
+    """Split a "<GENE><designation>" spelling into (gene_symbol, designation).
+
+    When ``gene`` is supplied the caller has already named the gene, so a
+    case-insensitive prefix match is authoritative. Otherwise the longest leading
+    run that looks like a gene symbol and leaves a recognizable variant
+    designation behind is used. Returns None when ``name`` is not a
+    gene-symbol-prefixed spelling (including already-separated forms such as
+    "EGFR VIII", which CIViC matches natively).
+    """
+    if not isinstance(name, str):
+        return None
+    name = name.strip()
+    if not name:
+        return None
+    if isinstance(gene, str) and gene.strip():
+        gene = gene.strip()
+        if len(name) > len(gene) and name.upper().startswith(gene.upper()):
+            designation = name[len(gene) :].lstrip(" \t:_.-")
+            if designation:
+                return gene.upper(), designation
+        return None
+    for cut in range(len(name) - 1, _GENE_PREFIX_MIN_LEN - 1, -1):
+        prefix, designation = name[:cut], name[cut:]
+        if _GENE_SYMBOL_RE.match(prefix) and any(
+            pattern.match(designation) for pattern in _VARIANT_DESIGNATION_RES
+        ):
+            return prefix, designation
+    return None
+
+
+def _name_matches_any(name: Any, terms: list) -> bool:
+    """True when any of ``terms`` occurs in ``name`` (case-insensitive)."""
+    lowered = (name or "").lower() if isinstance(name, str) else ""
+    return any(term.lower() in lowered for term in terms)
+
+
+def _union_nodes_by_id(preferred: list, extra: list) -> list:
+    """Concatenate two node lists, dropping repeats of an already-seen id."""
+    merged = list(preferred)
+    seen = {node.get("id") for node in preferred}
+    for node in extra:
+        if node.get("id") not in seen:
+            seen.add(node.get("id"))
+            merged.append(node)
+    return merged
 
 
 @register_tool("CIViCTool")
@@ -451,16 +520,33 @@ class CIViCTool(BaseTool):
                     gene_data = result["data"].get("gene", {})
                     nodes = gene_data.get("variants", {}).get("nodes", [])
                     q_lower = query_term.lower()
+                    # Feature-26A-03: when the caller writes the gene symbol as a
+                    # prefix of the variant name (EGFRvIII), the joined spelling
+                    # cannot substring-match the record CIViC stores under the bare
+                    # designation (VIII) — it reaches only same-spelled duplicate
+                    # stubs. Match on both spellings and merge.
+                    _primary_split = _split_gene_prefixed_name(query_term, gene_name)
+                    _primary_terms = [query_term]
+                    if _primary_split:
+                        _primary_terms.append(_primary_split[1])
                     filtered = [
-                        v for v in nodes if q_lower in v.get("name", "").lower()
+                        v
+                        for v in nodes
+                        if _name_matches_any(v.get("name"), _primary_terms)
                     ]
                     # Feature-54A-005: AND logic when both query and variant_name provided
+                    _secondary_split = None
                     if _secondary_term:
-                        sec_lower = _secondary_term.lower()
+                        _secondary_split = _split_gene_prefixed_name(
+                            _secondary_term, gene_name
+                        )
+                        _secondary_terms = [_secondary_term]
+                        if _secondary_split:
+                            _secondary_terms.append(_secondary_split[1])
                         filtered = [
                             v
                             for v in filtered
-                            if sec_lower in v.get("name", "").lower()
+                            if _name_matches_any(v.get("name"), _secondary_terms)
                         ]
                         result["filter_note"] = (
                             f"Both query='{raw_query}' and variant_name='{raw_variant_name}' "
@@ -470,6 +556,27 @@ class CIViCTool(BaseTool):
                     if user_limit:
                         filtered = filtered[:user_limit]
                     gene_data.get("variants", {})["nodes"] = filtered
+                    # Feature-26A-03: disclose the gene-prefix expansion — a caller
+                    # must never be unable to tell that two spellings were unioned.
+                    _prefix_notes = []
+                    for _raw_form, _split in (
+                        (query_term, _primary_split),
+                        (_secondary_term, _secondary_split),
+                    ):
+                        if _split:
+                            _prefix_notes.append(
+                                f"'{_raw_form}' carries the gene symbol as a prefix, but CIViC "
+                                f"stores {_split[0]} variants under the bare designation, so both "
+                                f"'{_raw_form}' and '{_split[1]}' were matched within {_split[0]} "
+                                f"and the results merged (de-duplicated by variant id)."
+                            )
+                    if _prefix_notes:
+                        result["normalization_note"] = (
+                            "Gene-prefixed input expanded: "
+                            + " ".join(_prefix_notes)
+                            + " These records differ in curation depth — check each one's"
+                            " molecularProfileScore with civic_get_variant before relying on it."
+                        )
                     # Feature-48B-02: recompute duplicate names among filtered results only.
                     # The metadata.note from _get_variants_for_gene_id cites duplicates from ALL
                     # gene variants; after filtering, only filtered duplicates are relevant.
@@ -669,6 +776,62 @@ class CIViCTool(BaseTool):
             if tool_name == "civic_search_evidence_items":
                 mol_profile = arguments.get("molecular_profile")
                 disease = arguments.get("disease") or arguments.get("disease_name")
+
+                # Feature-26A-04: a gene-symbol-prefixed profile name ("EGFRvIII",
+                # "BRAFV600E") cannot substring-match CIViC's "<GENE> <designation>"
+                # profile ("EGFR VIII", "BRAF V600E"), so it silently returns a small
+                # plausible subset (or nothing) while most of the evidence is dropped.
+                # Query the separated form as well and merge, but only when the input
+                # actually carries a gene prefix — no extra round-trip otherwise.
+                _mp_prefix_split = _split_gene_prefixed_name(mol_profile)
+                if _mp_prefix_split:
+                    _mp_alt = f"{_mp_prefix_split[0]} {_mp_prefix_split[1]}"
+                    _mp_alt_nodes: list = []
+                    try:
+                        _alt_args = dict(arguments)
+                        _alt_args["molecular_profile"] = _mp_alt
+                        _alt_resp = requests.post(
+                            CIVIC_GRAPHQL_URL,
+                            json=self._build_graphql_query(_alt_args),
+                            timeout=self.timeout,
+                            headers={
+                                "Content-Type": "application/json",
+                                "Accept": "application/json",
+                            },
+                        )
+                        _mp_alt_nodes = (
+                            _alt_resp.json()
+                            .get("data", {})
+                            .get("evidenceItems", {})
+                            .get("nodes", [])
+                        )
+                    except Exception:
+                        _mp_alt_nodes = []
+                    _mp_orig_nodes = (
+                        result.get("data", {}).get("evidenceItems", {}).get("nodes", [])
+                    )
+                    # The separated form is the exact CIViC profile, so it leads the
+                    # merged list; nothing found under the original spelling is dropped.
+                    _mp_merged = _union_nodes_by_id(_mp_alt_nodes, _mp_orig_nodes)
+                    if len(_mp_merged) > len(_mp_orig_nodes):
+                        result.setdefault("data", {}).setdefault("evidenceItems", {})[
+                            "nodes"
+                        ] = _mp_merged
+                        _mp_union_note = (
+                            f"Gene-prefixed input expanded: molecular_profile "
+                            f"'{mol_profile}' carries the gene symbol as a prefix, but CIViC "
+                            f"names this profile '<gene> <designation>'. Both '{mol_profile}' "
+                            f"({len(_mp_orig_nodes)} item(s)) and '{_mp_alt}' "
+                            f"({len(_mp_alt_nodes)} item(s)) were queried and the results merged "
+                            f"({len(_mp_merged)} item(s), de-duplicated by evidence id, "
+                            f"'{_mp_alt}' matches first). The merged list may exceed `limit`, "
+                            f"which applies per queried spelling."
+                        )
+                        result["normalization_note"] = (
+                            result["normalization_note"] + " " + _mp_union_note
+                            if result.get("normalization_note")
+                            else _mp_union_note
+                        )
 
                 # Feature-63B-002: CIViC GraphQL uses substring/contains matching for
                 # molecularProfileName — compound profiles like "BRAF V600E OR KIAA1549::BRAF
@@ -898,6 +1061,52 @@ class CIViCTool(BaseTool):
                 _variant_nodes = (
                     result.get("data", {}).get("variants", {}).get("nodes", [])
                 )
+                # Feature-26A-03: same expansion on the no-gene path — variants(name:)
+                # is a substring filter, so a gene-prefixed spelling reaches only
+                # same-spelled stubs. Re-query the bare designation and keep the hits
+                # that belong to the prefixed gene.
+                _vn_split = _split_gene_prefixed_name(arguments.get("query"))
+                if _vn_split:
+                    _vn_gene, _vn_designation = _vn_split
+                    _vn_alt_nodes: list = []
+                    try:
+                        _vn_alt_args = dict(arguments)
+                        _vn_alt_args["query"] = _vn_designation
+                        _vn_alt_resp = requests.post(
+                            CIVIC_GRAPHQL_URL,
+                            json=self._build_graphql_query(_vn_alt_args),
+                            timeout=self.timeout,
+                            headers={
+                                "Content-Type": "application/json",
+                                "Accept": "application/json",
+                            },
+                        )
+                        _vn_alt_nodes = [
+                            node
+                            for node in _vn_alt_resp.json()
+                            .get("data", {})
+                            .get("variants", {})
+                            .get("nodes", [])
+                            if (node.get("feature") or {}).get("name", "").upper()
+                            == _vn_gene
+                        ]
+                    except Exception:
+                        _vn_alt_nodes = []
+                    _vn_merged = _union_nodes_by_id(_vn_alt_nodes, _variant_nodes)
+                    if len(_vn_merged) > len(_variant_nodes):
+                        result.setdefault("data", {}).setdefault("variants", {})[
+                            "nodes"
+                        ] = _vn_merged
+                        _variant_nodes = _vn_merged
+                        result["normalization_note"] = (
+                            f"Gene-prefixed input expanded: '{arguments.get('query')}' carries "
+                            f"the gene symbol as a prefix, but CIViC stores {_vn_gene} variants "
+                            f"under the bare designation, so '{_vn_designation}' was queried as "
+                            f"well and the {_vn_gene} matches merged in (de-duplicated by variant "
+                            f"id). These records differ in "
+                            f"curation depth — check each one's molecularProfileScore with "
+                            f"civic_get_variant before relying on it."
+                        )
                 if len(_variant_nodes) == 0:
                     import re as _re_vn
 

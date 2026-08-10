@@ -122,6 +122,103 @@ def _invalid_clinsig_error(param_name: str, raw_value: Any, invalid: list) -> di
     }
 
 
+# One term of an Entrez query translation together with the field tag Entrez
+# actually applied to it: either a quoted phrase or a bare token, followed by
+# "[<field>]". Entrez echoes its translation verbatim in `querytranslation`
+# (confirmed live: 'RB1[gene] AND retinoblastoma[dis]' comes back unchanged),
+# which is how a term's real search field can be read off a response that has
+# already been fetched, with no extra request.
+_TRANSLATED_TERM_RE = re.compile(r'("[^"]*"|[^\s()\[\]]+)\s*\[([^\]]+)\]')
+
+
+def _normalize_translated_term(text: Any) -> str:
+    """Fold a query term to a comparable form (unquoted, lowercase, single
+    spaces) so a term this module emitted can be located in Entrez's echo of
+    it regardless of quoting or case."""
+    return re.sub(r"\s+", " ", str(text).replace('"', "").strip().lower())
+
+
+def _field_tags_for_term(query_translation: str, term: str) -> list:
+    """The field tag(s) Entrez actually attached to `term` in the translation
+    it returned. Empty when the term is absent or carries no tag at all."""
+    wanted = _normalize_translated_term(term)
+    if not wanted or not query_translation:
+        return []
+    return [
+        tag.strip()
+        for raw, tag in _TRANSLATED_TERM_RE.findall(query_translation)
+        if _normalize_translated_term(raw) == wanted
+    ]
+
+
+# ClinVar's [dis] index carries MedGen's concept names, not free clinical
+# phrasing, and it has no fuzzy matching: confirmed live via raw E-utils that
+# '"Leber congenital amaurosis"[dis]' returns 996 RPE65 records while the
+# one-letter-different '"Lebers congenital amaurosis"[dis]' and the locus name
+# 'RP20[dis]' each return 0. Any disclosure about a condition term points the
+# caller at the index that decides the answer.
+_CONDITION_INDEX_GUIDANCE = (
+    "ClinVar's disease index carries MedGen's own condition names, matched "
+    "exactly -- a synonym, a locus name or a one-letter misspelling matches "
+    "nothing there. Look the condition up (e.g. via MedGen_search_conditions) "
+    "and re-run with the indexed name to get a disease-filtered answer."
+)
+
+
+def _condition_filter_disclosure(
+    condition: Any,
+    condition_term: str,
+    query_translation: str,
+    freetext_retry: bool,
+) -> Dict[str, Any]:
+    """State, at the top level of the response, whether the caller's
+    `condition` actually acted as a DISEASE filter on the count being returned.
+
+    A disease-filtered count and a free-text count are indistinguishable in the
+    payload but mean entirely different things -- "996 RPE65 records classified
+    for Leber congenital amaurosis" versus "1 RPE65 record that happens to
+    contain this text somewhere". Either the tool's own untagged retry below or
+    an Entrez rewrite of the field tag can turn one into the other, and both
+    are visible in the `querytranslation` Entrez already returned, so the
+    distinction is disclosed without a second request.
+    """
+    fields = _field_tags_for_term(query_translation, condition_term)
+    if any(f.lower() == "dis" for f in fields):
+        return {"condition_filter_applied": True}
+    if freetext_retry:
+        field = fields[0] if fields else "All Fields"
+        return {
+            "condition_filter_applied": False,
+            "condition_search_field": field,
+            "condition_filter_warning": (
+                f"total_count is NOT disease-filtered. The disease-restricted "
+                f"search for condition '{condition}' returned no records, so the "
+                f"term was automatically retried unrestricted (Entrez searched it "
+                f"as [{field}]) and that free-text count is what is reported here: "
+                "it counts records merely mentioning this text anywhere -- variant "
+                "names, submitter comments, other linked conditions -- rather than "
+                "records classified for this condition. " + _CONDITION_INDEX_GUIDANCE
+            ),
+        }
+    if fields:
+        field = fields[0]
+        return {
+            "condition_filter_applied": False,
+            "condition_search_field": field,
+            "condition_filter_warning": (
+                f"total_count is NOT disease-filtered. Entrez did not keep the "
+                f"[dis] field tag for condition '{condition}' -- it searched the "
+                f"term as [{field}] instead (see query_translation), which matches "
+                "the text anywhere in a record rather than restricting to records "
+                "classified for this condition. " + _CONDITION_INDEX_GUIDANCE
+            ),
+        }
+    # No translation echoed back (or the term is unrecognisable in it): there
+    # is no evidence either way, and inventing a warning would be as misleading
+    # as omitting a real one.
+    return {}
+
+
 class ClinVarRESTTool(BaseTool):
     """Base class for ClinVar REST API tools."""
 
@@ -349,6 +446,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         if arguments.get("raw_term"):
             query_parts.append(str(arguments["raw_term"]))
 
+        gene = None
         gene_hyphen_variant = None
         if "gene" in arguments:
             # Fix-R10D-1: ClinVar's [gene] index only matches a bare HGNC
@@ -388,6 +486,8 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             query_parts.append(f"{gene}[gene]")
 
         condition_dis_index = None
+        condition_query_term = None
+        condition_freetext_retry = False
         if "condition" in arguments:
             # Feature-70B-005: [disease/phenotype] is not a valid ClinVar eSearch field.
             # Use [dis] (disease/phenotype) field tag for condition searches.
@@ -395,6 +495,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             condition = arguments["condition"].strip()
             if " " in condition and not condition.startswith('"'):
                 condition = f'"{condition}"'
+            condition_query_term = condition
             condition_dis_index = len(query_parts)
             query_parts.append(f"{condition}[dis]")
 
@@ -605,6 +706,14 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         # with the condition term unrestricted to any field ([All Fields])
         # when the [dis]-restricted search comes back empty -- this can only
         # add matches the strict query missed, never drop ones it found.
+        #
+        # ...but the count it produces is a free-text count, not a
+        # disease-filtered one, and the two used to be reported identically:
+        # `{"gene":"RPE65","condition":"Lebers congenital amaurosis"}` (one
+        # letter off the indexed name) came back a plain success with
+        # total_count 1 next to the 996 of the correctly-spelled query, with
+        # nothing saying the second number was a substring match. Record that
+        # this retry happened so the response can say so.
         if (
             condition_dis_index is not None
             and int(data["esearchresult"].get("count", 0)) == 0
@@ -624,6 +733,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             ):
                 result = freetext_result
                 data = result["data"]
+                condition_freetext_retry = True
 
         esearch = data["esearchresult"]
         ids = esearch.get("idlist", [])
@@ -654,81 +764,40 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             }.items()
             if v is not None
         }
+        query_translation = esearch.get("querytranslation", "")
         response_data = {
             "total_count": count,
             "variant_ids": ids,
             "variants": variants,
-            "query_translation": esearch.get("querytranslation", ""),
+            "query_translation": query_translation,
             "search_params": search_params,
         }
+        # Whether `condition` acted as a disease filter on the count above is
+        # part of what the count MEANS, so it belongs beside it at the top
+        # level rather than inside a note the caller has to read to notice.
+        condition_applied = None
+        if condition_query_term is not None:
+            disclosure = _condition_filter_disclosure(
+                arguments.get("condition"),
+                condition_query_term,
+                query_translation,
+                condition_freetext_retry,
+            )
+            response_data.update(disclosure)
+            condition_applied = disclosure.get("condition_filter_applied")
+        if count == 0:
+            response_data.update(
+                self._explain_empty_result(
+                    arguments=arguments,
+                    gene=gene,
+                    condition_term=condition_query_term,
+                    condition_applied=condition_applied,
+                    clnsig_param=_clnsig_param,
+                    clnsig_components=clnsig_components,
+                )
+            )
         if unrecognized:
             response_data["ignored_parameters"] = unrecognized
-        if count == 0 and "gene" in arguments:
-            # Fix-R9B-2: a 0-count response for a `gene` filter is
-            # indistinguishable from "this gene truly has no ClinVar
-            # entries" whether the symbol was a typo (e.g. "MEPC2"), a
-            # protein/full name instead of the HGNC gene symbol (e.g.
-            # "dystrophin" instead of "DMD"), or a species mismatch --
-            # confirmed live that ClinVar's [gene] index only matches an
-            # exact current HGNC symbol and has no fuzzy/synonym fallback of
-            # its own. Automatically retrying with an unrestricted free-text
-            # search was tried and rejected: "dystrophin[All Fields]"
-            # matches 12,000+ unrelated ClinVar records that merely mention
-            # the word, which would silently swap a false-empty for a
-            # false-positive result set -- worse than reporting nothing.
-            # Surface the ambiguity instead of guessing.
-            #
-            # ...but only blame the GENE when the gene is actually what failed.
-            # When other filters narrowed the query, a 0 count says nothing
-            # about the symbol, and the hint used to send callers off to
-            # re-verify a symbol that was never the problem. Establish the
-            # facts with one cheap count-only query on the bare gene term
-            # before attributing the empty result to anything.
-            other_filters = [
-                name
-                for name, present in (
-                    ("condition", bool(arguments.get("condition"))),
-                    ("variant_id", "variant_id" in arguments),
-                    ("variant_name", bool(arguments.get("variant_name"))),
-                    ("rsid", bool(arguments.get("rsid"))),
-                    ("raw_term", bool(arguments.get("raw_term"))),
-                    (_clnsig_param, bool(clnsig_components)),
-                )
-                if present
-            ]
-            gene_only_count = (
-                self._count_for_term(f"{gene}[gene]") if other_filters else None
-            )
-            if other_filters and gene_only_count is None:
-                response_data["zero_result_hint"] = (
-                    f"No ClinVar records matched gene '{arguments['gene']}' "
-                    f"combined with {', '.join(other_filters)}. The gene symbol "
-                    "could not be checked on its own (follow-up query failed), "
-                    "so it is unknown whether the symbol or the other filter(s) "
-                    "produced the empty result -- retry with the filters removed "
-                    "to tell them apart."
-                )
-            elif gene_only_count:
-                response_data["gene_only_match_count"] = gene_only_count
-                response_data["zero_result_hint"] = (
-                    f"The gene symbol '{arguments['gene']}' is fine: it matches "
-                    f"{gene_only_count} ClinVar record(s) on its own. The empty "
-                    f"result comes from the other filter(s) -- "
-                    f"{', '.join(other_filters)} -- which no record for this gene "
-                    "satisfies. Relax or correct them (or drop them to see the "
-                    "gene's full record set) rather than re-checking the symbol."
-                )
-            else:
-                if gene_only_count is not None:
-                    response_data["gene_only_match_count"] = gene_only_count
-                response_data["zero_result_hint"] = (
-                    f"No ClinVar records matched gene '{arguments['gene']}'. "
-                    "ClinVar's gene index only recognizes the current official "
-                    "HGNC symbol (e.g. 'DMD', not the protein name 'dystrophin' "
-                    "or an outdated/misspelled symbol) -- verify the symbol "
-                    "(e.g. via HGNC_search_genes or NCBIDatasets_get_gene) "
-                    "before concluding this gene has no reported variants."
-                )
         if compound_clnsig:
             response_data["clinical_significance_note"] = (
                 "The '/' in the requested clinical_significance was treated as OR: "
@@ -737,6 +806,161 @@ class ClinVarSearchVariants(ClinVarRESTTool):
                 "'Pathogenic/Likely pathogenic' review class."
             )
         return {"status": "success", "data": response_data}
+
+    def _explain_empty_result(
+        self,
+        *,
+        arguments: Dict[str, Any],
+        gene: Optional[str],
+        condition_term: Optional[str],
+        condition_applied: Optional[bool],
+        clnsig_param: str,
+        clnsig_components: list,
+    ) -> Dict[str, Any]:
+        """Attribute an empty result to the input that actually caused it.
+
+        A 0-count is only usable if the caller can tell "ClinVar holds no such
+        record" from "one of my inputs is not something ClinVar indexes", so
+        the evidence is established with count-only queries (retmax=0) on a
+        path that has already come back empty, rather than assumed. Both the
+        gene symbol and -- since a disease NAME missing from ClinVar's index
+        empties a result exactly as silently as a wrong symbol does -- the
+        condition are checked on their own before anything is blamed.
+        """
+        extras: Dict[str, Any] = {}
+        condition = arguments.get("condition")
+        has_gene = "gene" in arguments
+
+        # Fix-R9B-2: a 0-count response for a `gene` filter is
+        # indistinguishable from "this gene truly has no ClinVar
+        # entries" whether the symbol was a typo (e.g. "MEPC2"), a
+        # protein/full name instead of the HGNC gene symbol (e.g.
+        # "dystrophin" instead of "DMD"), or a species mismatch --
+        # confirmed live that ClinVar's [gene] index only matches an
+        # exact current HGNC symbol and has no fuzzy/synonym fallback of
+        # its own. Automatically retrying with an unrestricted free-text
+        # search was tried and rejected: "dystrophin[All Fields]"
+        # matches 12,000+ unrelated ClinVar records that merely mention
+        # the word, which would silently swap a false-empty for a
+        # false-positive result set -- worse than reporting nothing.
+        # Surface the ambiguity instead of guessing.
+        #
+        # ...but only blame the GENE when the gene is actually what failed.
+        # When other filters narrowed the query, a 0 count says nothing
+        # about the symbol, and the hint used to send callers off to
+        # re-verify a symbol that was never the problem. Establish the
+        # facts with one cheap count-only query on the bare gene term
+        # before attributing the empty result to anything.
+        other_filters = [
+            name
+            for name, present in (
+                ("condition", bool(condition)),
+                ("variant_id", "variant_id" in arguments),
+                ("variant_name", bool(arguments.get("variant_name"))),
+                ("rsid", bool(arguments.get("rsid"))),
+                ("raw_term", bool(arguments.get("raw_term"))),
+                (clnsig_param, bool(clnsig_components)),
+            )
+            if present
+        ]
+        gene_only_count = (
+            self._count_for_term(f"{gene}[gene]")
+            if has_gene and other_filters
+            else None
+        )
+        if gene_only_count is not None:
+            extras["gene_only_match_count"] = gene_only_count
+        # The same evidence, for the condition: `condition` is the only other
+        # input whose value has to exist in an NCBI-curated index to match
+        # anything, and a name that index does not carry (a synonym, a locus
+        # name, a misspelling) empties the result just as silently as a wrong
+        # gene symbol -- yet it used to go unmentioned while the hint sent the
+        # caller off to re-verify the symbol.
+        condition_only_count = (
+            self._count_for_term(f"{condition_term}[dis]")
+            if condition_term is not None
+            else None
+        )
+        if condition_only_count is not None:
+            extras["condition_only_match_count"] = condition_only_count
+
+        gene_verdict = ""
+        if has_gene and gene_only_count:
+            gene_verdict = (
+                f" The gene symbol '{arguments['gene']}' is not the problem: it "
+                f"matches {gene_only_count} ClinVar record(s) on its own."
+            )
+
+        # 1. The condition never acted as a disease filter at all -- whatever
+        #    else is true, this result is not the disease-filtered answer the
+        #    caller asked for.
+        if condition_term is not None and condition_applied is False:
+            extras["zero_result_hint"] = (
+                f"No ClinVar records matched, and the condition '{condition}' was "
+                "not applied as a disease filter: Entrez did not keep the [dis] "
+                "field tag for it (see query_translation), so this empty result "
+                "says nothing about whether ClinVar holds records for this "
+                f"condition.{gene_verdict} " + _CONDITION_INDEX_GUIDANCE
+            )
+            return extras
+        # 2. The condition name matches nothing in ClinVar's disease index at
+        #    all, so it -- not the gene, not the other filters -- is what
+        #    emptied the result.
+        if condition_term is not None and condition_only_count == 0:
+            extras["zero_result_hint"] = (
+                f"The condition '{condition}' matches no ClinVar records at all on "
+                f"its own ({condition_term}[dis] returns 0 across every gene), so "
+                "the empty result is attributable to the condition name rather "
+                f"than to the other search inputs.{gene_verdict} "
+                + _CONDITION_INDEX_GUIDANCE
+            )
+            return extras
+
+        if has_gene and other_filters and gene_only_count is None:
+            extras["zero_result_hint"] = (
+                f"No ClinVar records matched gene '{arguments['gene']}' "
+                f"combined with {', '.join(other_filters)}. The gene symbol "
+                "could not be checked on its own (follow-up query failed), "
+                "so it is unknown whether the symbol or the other filter(s) "
+                "produced the empty result -- retry with the filters removed "
+                "to tell them apart."
+            )
+        elif has_gene and gene_only_count:
+            hint = (
+                f"The gene symbol '{arguments['gene']}' is fine: it matches "
+                f"{gene_only_count} ClinVar record(s) on its own. The empty "
+                f"result comes from the other filter(s) -- "
+                f"{', '.join(other_filters)} -- which no record for this gene "
+                "satisfies. Relax or correct them (or drop them to see the "
+                "gene's full record set) rather than re-checking the symbol."
+            )
+            if condition_only_count:
+                hint += (
+                    f" The condition '{condition}' is itself a recognized ClinVar "
+                    f"disease term ({condition_only_count} record(s) across all "
+                    "genes), so this gene and this condition simply have no record "
+                    "in common."
+                )
+            extras["zero_result_hint"] = hint
+        elif has_gene:
+            extras["zero_result_hint"] = (
+                f"No ClinVar records matched gene '{arguments['gene']}'. "
+                "ClinVar's gene index only recognizes the current official "
+                "HGNC symbol (e.g. 'DMD', not the protein name 'dystrophin' "
+                "or an outdated/misspelled symbol) -- verify the symbol "
+                "(e.g. via HGNC_search_genes or NCBIDatasets_get_gene) "
+                "before concluding this gene has no reported variants."
+            )
+        elif condition_term is not None:
+            remaining = [f for f in other_filters if f != "condition"]
+            extras["zero_result_hint"] = (
+                f"The condition '{condition}' is a recognized ClinVar disease term "
+                f"({condition_only_count} record(s) on its own), so the empty "
+                "result comes from the other filter(s)"
+                + (f" -- {', '.join(remaining)} -- " if remaining else " ")
+                + "rather than from the condition name."
+            )
+        return extras
 
     def _count_for_term(self, term: str) -> "int | None":
         """Count-only eSearch for `term` (retmax=0, no summaries fetched).
