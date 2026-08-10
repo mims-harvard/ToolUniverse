@@ -85,9 +85,12 @@ class TestIndicationsByDrug(unittest.TestCase):
             url = get.call_args.args[0]
         self.assertIn("count=patient.drug.drugindication.exact", url)
         self.assertIn("WARFARIN", url)
-        self.assertEqual(out[0]["term"], "PRODUCT USED FOR UNKNOWN INDICATION")
-        self.assertEqual(out[0]["count"], 36767)
-        self.assertEqual(out[1]["term"], "ATRIAL FIBRILLATION")
+        rows = out["results"]
+        self.assertEqual(rows[0]["term"], "PRODUCT USED FOR UNKNOWN INDICATION")
+        self.assertEqual(rows[0]["count"], 36767)
+        self.assertEqual(rows[1]["term"], "ATRIAL FIBRILLATION")
+        # The ranking is short, so it must not be advertised as clipped.
+        self.assertFalse(out["truncated"])
 
     def test_api_failure_returns_error_not_raise(self):
         """A network failure surfaces an error entry and never raises."""
@@ -134,7 +137,7 @@ class TestDrugCharacterization(unittest.TestCase):
             out = tool.run({"medicinalproduct": "WARFARIN"})
             url = get.call_args.args[0]
         self.assertIn("count=patient.drug.drugcharacterization", url)
-        terms = {r["term"]: r["count"] for r in out}
+        terms = {r["term"]: r["count"] for r in out["results"]}
         self.assertEqual(terms["Suspect"], 132943)
         self.assertEqual(terms["Concomitant"], 105667)
         self.assertEqual(terms["Interacting"], 5371)
@@ -148,8 +151,8 @@ class TestDrugCharacterization(unittest.TestCase):
             return_value=_patched_get(rows),
         ):
             out = tool.run({"medicinalproduct": "METFORMIN"})
-        self.assertEqual(out[0]["term"], "4")
-        self.assertEqual(out[0]["count"], 15)
+        self.assertEqual(out["results"][0]["term"], "4")
+        self.assertEqual(out["results"][0]["count"], 15)
 
     def test_api_failure_returns_error_not_raise(self):
         """A network failure surfaces an error entry and never raises."""
@@ -197,7 +200,7 @@ class TestReporterQualification(unittest.TestCase):
             out = tool.run({"medicinalproduct": "WARFARIN"})
             url = get.call_args.args[0]
         self.assertIn("count=primarysource.qualification", url)
-        terms = {r["term"]: r["count"] for r in out}
+        terms = {r["term"]: r["count"] for r in out["results"]}
         self.assertEqual(terms["Consumer or non-health professional"], 39363)
         self.assertEqual(terms["Physician"], 29597)
         self.assertEqual(terms["Lawyer"], 1106)

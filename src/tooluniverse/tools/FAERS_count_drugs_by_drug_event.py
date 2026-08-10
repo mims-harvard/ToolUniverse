@@ -13,6 +13,7 @@ def FAERS_count_drugs_by_drug_event(
     patientagegroup: Optional[str] = None,
     occurcountry: Optional[str] = None,
     serious: Optional[str] = None,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def FAERS_count_drugs_by_drug_event(
         Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'...
     serious : str
         Optional: Filter by event seriousness. Omit this parameter if you don't want ...
+    limit : int
+        Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def FAERS_count_drugs_by_drug_event(
             "patientagegroup": patientagegroup,
             "occurcountry": occurcountry,
             "serious": serious,
+            "limit": limit,
         }.items()
         if v is not None
     }

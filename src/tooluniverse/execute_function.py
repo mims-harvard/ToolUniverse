@@ -47,6 +47,7 @@ from .exceptions import (
     ToolConfigError,
     ToolServerError,
 )
+from .base_tool import resolve_configured_operation
 from .tool_registry import (
     auto_discover_tools,
     get_tool_registry,
@@ -3890,19 +3891,16 @@ class ToolUniverse:
         schema default), so supply it here when the caller left it out. An
         explicitly passed ``operation`` always wins. Mutates ``arguments`` in
         place, before validation, so it applies whether or not validation runs.
+
+        The value is resolved through ``resolve_configured_operation`` because
+        ``BaseTool.validate_parameters`` needs the same answer to tell an
+        auto-supplied ``operation`` apart from a caller-supplied one
+        (Feature-26A-8); resolving it in two places would let them drift.
         """
         if "operation" in arguments:
             return
-        config = self.all_tool_dict.get(function_name)
-        if not isinstance(config, dict):
-            return
-        operation = (config.get("fields") or {}).get("operation")
-        if not operation:
-            schema = config.get("parameter") or {}
-            prop = (schema.get("properties") or {}).get("operation")
-            if isinstance(prop, dict):
-                operation = prop.get("default")
-        if isinstance(operation, str) and operation:
+        operation = resolve_configured_operation(self.all_tool_dict.get(function_name))
+        if operation:
             arguments["operation"] = operation
 
     def _validate_parameters(

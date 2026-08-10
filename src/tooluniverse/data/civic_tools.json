@@ -292,7 +292,7 @@
         },
         "variant_name": {
           "type": "string",
-          "description": "Specific variant name to filter within a gene (e.g., 'L858R', 'V600E', 'T790M'). Use together with gene_name — CIViC stores variants without the gene prefix (use 'L858R' not 'EGFR L858R')."
+          "description": "Specific variant name to filter within a gene (e.g., 'L858R', 'V600E', 'T790M'). Use together with gene_name — CIViC stores variants without the gene prefix (use 'L858R' not 'EGFR L858R'). Gene-prefixed clinical spellings ('EGFRvIII', 'BRAFV600E') are still handled: the gene-stripped designation is queried as well and both result sets are merged, reported in normalization_note."
         }
       },
       "required": []
@@ -435,7 +435,7 @@
         },
         "molecular_profile": {
           "type": "string",
-          "description": "Filter by molecular profile name (e.g., 'BRAF V600E', 'EGFR T790M', 'KRAS G12C'). Uses substring matching — 'FLT3 ITD' will also match 'FLT3 ITD AND FLT3 D835Y'. For gene fusions, CIViC uses double-colon notation: 'GENE::PARTNER Fusion' (e.g., 'FGFR2::BICC1 Fusion', 'ALK::EML4 Fusion'). Use civic_search_molecular_profiles to discover exact profile names."
+          "description": "Filter by molecular profile name (e.g., 'BRAF V600E', 'EGFR T790M', 'KRAS G12C'). Uses substring matching — 'FLT3 ITD' will also match 'FLT3 ITD AND FLT3 D835Y'. For gene fusions, CIViC uses double-colon notation: 'GENE::PARTNER Fusion' (e.g., 'FGFR2::BICC1 Fusion', 'ALK::EML4 Fusion'). Use civic_search_molecular_profiles to discover exact profile names. Gene-prefixed clinical spellings ('EGFRvIII', 'BRAFV600E') are also handled: CIViC names the profile '<gene> <designation>' ('EGFR VIII'), so that separated form is queried too and both result sets are merged, reported in normalization_note."
         },
         "evidence_type": {
           "type": [

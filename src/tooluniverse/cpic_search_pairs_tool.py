@@ -359,6 +359,34 @@ class CPICSearchPairsTool(BaseRESTTool):
     def _build_url(self, args: Dict[str, Any]) -> str:
         return super()._build_url(self._resolve_aliases(args))
 
+    def _process_response(
+        self, response: requests.Response, url: str
+    ) -> Dict[str, Any]:
+        """Report the URL that was actually requested, filters included.
+
+        Feature-26C-4: the base class reports the endpoint *template* as the
+        response's `url`, while the PostgREST filter clauses this tool builds
+        (``genesymbol=eq.HLA-B``, ``cpiclevel=eq.A``, ``limit=...``) travel
+        separately in the request's query params. Confirmed live that the two
+        answers `{"gene": "HLA-B"}` (13 rows) and `{}` (635 rows) advertised a
+        byte-identical url --
+        `.../pair?select=genesymbol,drugid,cpiclevel,guidelineid,usedforrecommendation,clinpgxlevel,pgxtesting,drug(name)`
+        -- which returns all 635 rows when pasted, so a caller spot-checking
+        provenance concludes the gene filter was ignored (it was not; only the
+        reported url was wrong). `response.url` is the URL requests actually
+        sent, assembled from the very params object used for the request, so
+        the advertised and requested URLs cannot drift apart again. This is the
+        same shape CPICGetAllelesTool in this module already reports.
+        """
+        result = super()._process_response(response, url)
+        if (
+            isinstance(result, dict)
+            and "url" in result
+            and isinstance(response.url, str)
+        ):
+            result["url"] = response.url
+        return result
+
 
 @register_tool("CPICGetAllelesTool")
 class CPICGetAllelesTool(BaseTool):
