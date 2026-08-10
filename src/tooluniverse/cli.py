@@ -1687,7 +1687,7 @@ def _remote_tool_install_hint() -> str:
     return (
         'pip install "tuplatform-connect @ '
         "git+https://github.com/tooluniverse/tuplatform.git"
-        "@d79aaec4d1b5d7a886b9373aafc5e0b4bbbe47a9"
+        "@fde2edb73d573fac3fe8831e9ca19771b7583931"
         '#subdirectory=sdk/tuplatform-connect"'
     )
 

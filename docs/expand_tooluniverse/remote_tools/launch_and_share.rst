@@ -68,7 +68,7 @@ runtime instead of ToolUniverse's complete scientific dependency collection:
 
 .. code-block:: bash
 
-   python -m pip install fastmcp pyyaml "tuplatform-connect @ git+https://github.com/tooluniverse/tuplatform.git@d79aaec4d1b5d7a886b9373aafc5e0b4bbbe47a9#subdirectory=sdk/tuplatform-connect"
+   python -m pip install fastmcp pyyaml "tuplatform-connect @ git+https://github.com/tooluniverse/tuplatform.git@fde2edb73d573fac3fe8831e9ca19771b7583931#subdirectory=sdk/tuplatform-connect"
    python -m pip install --no-deps tooluniverse
 
 Until this feature reaches a PyPI release, use the reviewed ToolUniverse source
