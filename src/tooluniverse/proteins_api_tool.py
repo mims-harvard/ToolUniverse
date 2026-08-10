@@ -492,12 +492,19 @@ class ProteinsAPIRESTTool(BaseTool):
                 used_gene = "gene" in params
 
                 def _retry_params(use_gene: bool, keep_human: bool) -> Dict[str, Any]:
-                    p = {"format": params.get("format", "json")}
-                    if "size" in params:
-                        p["size"] = params["size"]
+                    # Carry the original request forward and change only the
+                    # field being retried. Rebuilding from scratch dropped
+                    # every scoping parameter the caller had supplied
+                    # (organism=/taxid=), so a wheat query silently retried
+                    # against all of UniProt and answered with an insect.
+                    p = {
+                        k: v for k, v in params.items() if k not in ("gene", "protein")
+                    }
                     p["gene" if use_gene else "protein"] = query
-                    if keep_human and auto_human:
-                        p["taxid"] = "9606"
+                    if not keep_human and auto_human:
+                        # Only the human default this tool added itself may be
+                        # dropped; a caller-supplied taxid stays.
+                        p.pop("taxid", None)
                     return p
 
                 # Order: swap field but keep human; then drop the human filter
@@ -523,7 +530,7 @@ class ProteinsAPIRESTTool(BaseTool):
                     if isinstance(retry_data, list) and len(retry_data) > 0:
                         data = retry_data
                         response = retry_resp
-                        widened_organism = "taxid" not in cand
+                        widened_organism = auto_human and "taxid" not in cand
                         break
 
             # Cap features per entry to avoid 25MB+ responses for heavily-annotated proteins

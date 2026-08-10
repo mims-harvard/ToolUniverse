@@ -139,7 +139,7 @@
   },
   {
     "name": "NCBIVariation_rsid_lookup",
-    "description": "Look up a dbSNP rsID and retrieve variant details including GRCh38 genomic coordinates, associated genes, clinical significance (ClinVar), citations, and MANE Select transcript IDs. Accepts rsID with or without 'rs' prefix (e.g., 'rs429358' or '429358'). Returns structured summary of the variant.",
+    "description": "Look up a dbSNP rsID and retrieve variant details including GRCh38 genomic coordinates, associated genes, clinical significance (ClinVar), citations, and MANE Select transcript IDs. Each entry in 'grch38_placements' reports 'position' as a 1-based GRCh38 coordinate (matching ClinVar, Ensembl VEP and MyVariant) and keeps dbSNP's 0-based interbase SPDI offset in 'spdi_position'. Accepts rsID with or without 'rs' prefix (e.g., 'rs429358' or '429358'). Returns structured summary of the variant.",
     "parameter": {
       "type": "object",
       "properties": {

@@ -32,6 +32,25 @@ _VARIANT_XREF_FIELDS = {
 }
 
 
+# KEGG deposits its compound/drug/disease records into PubChem as
+# *substances*, so a DBLINKS line "PubChem: 7805" carries a PubChem SID, not
+# a CID. Emitting it under the bare key "PubChem" invites callers to feed it
+# straight into a CID-based tool, which silently returns a different molecule
+# (SID 7805 = KEGG C05443 cholecalciferol, but CID 7805 = 1-bromo-4-
+# methylbenzene; SID 4808 = KEGG C01659 acrylamide, but CID 4808 is an
+# unrelated C36 compound). Verified live against PubChem PUG-REST:
+# /substance/sid/7805/cids -> 5280795 and /substance/sid/4808/cids -> 6579,
+# which are the real CIDs for those two compounds. Renaming the key makes the
+# namespace explicit at the point the value is produced.
+_DBLINK_KEY_RENAMES = {"PubChem": "PubChem_SID"}
+
+
+def _store_dblink(dblinks: Dict[str, str], raw_key: str, value: str) -> None:
+    """Record one KEGG DBLINKS entry under a namespace-explicit key."""
+    key = raw_key.strip()
+    dblinks[_DBLINK_KEY_RENAMES.get(key, key)] = value.strip()
+
+
 def _new_kegg_variation(mutation: str) -> Dict[str, Any]:
     """A fresh KEGG variant record with all cross-reference lists empty."""
     return {
@@ -418,7 +437,7 @@ class KEGGExtTool(BaseTool):
                 current_field = "DBLINKS"
                 parts = line[12:].strip().split(": ", 1)
                 if len(parts) == 2:
-                    result["dblinks"][parts[0].strip()] = parts[1].strip()
+                    _store_dblink(result["dblinks"], parts[0], parts[1])
             elif line.startswith("REMARK"):
                 result["remark"] = line[12:].strip()
                 current_field = None
@@ -439,7 +458,7 @@ class KEGGExtTool(BaseTool):
                 elif current_field == "DBLINKS":
                     parts = content.split(": ", 1)
                     if len(parts) == 2:
-                        result["dblinks"][parts[0].strip()] = parts[1].strip()
+                        _store_dblink(result["dblinks"], parts[0], parts[1])
             else:
                 # New field we don't specifically handle
                 current_field = None
@@ -716,7 +735,7 @@ class KEGGExtTool(BaseTool):
                 current_field = "DBLINKS"
                 parts = line[12:].strip().split(": ", 1)
                 if len(parts) == 2:
-                    result["dblinks"][parts[0].strip()] = parts[1].strip()
+                    _store_dblink(result["dblinks"], parts[0], parts[1])
             elif line.startswith("REFERENCE"):
                 current_field = "REFERENCE"
                 ref = line[12:].strip()
@@ -745,7 +764,7 @@ class KEGGExtTool(BaseTool):
                 elif current_field == "DBLINKS":
                     parts = content.split(": ", 1)
                     if len(parts) == 2:
-                        result["dblinks"][parts[0].strip()] = parts[1].strip()
+                        _store_dblink(result["dblinks"], parts[0], parts[1])
                 elif current_field == "REFERENCE":
                     result["references"].append(content)
             else:
@@ -914,7 +933,7 @@ class KEGGExtTool(BaseTool):
                 current_field = "DBLINKS"
                 parts = line[12:].strip().split(": ", 1)
                 if len(parts) == 2:
-                    result["dblinks"][parts[0].strip()] = parts[1].strip()
+                    _store_dblink(result["dblinks"], parts[0], parts[1])
             elif line.startswith("EFFICACY"):
                 current_field = "EFFICACY"
                 result["efficacy"] = line[12:].strip()
@@ -942,7 +961,7 @@ class KEGGExtTool(BaseTool):
                 elif current_field == "DBLINKS":
                     parts = content.split(": ", 1)
                     if len(parts) == 2:
-                        result["dblinks"][parts[0].strip()] = parts[1].strip()
+                        _store_dblink(result["dblinks"], parts[0], parts[1])
                 elif current_field == "EFFICACY":
                     result["efficacy"] = (result["efficacy"] or "") + " " + content
                 elif current_field == "PRODUCT":

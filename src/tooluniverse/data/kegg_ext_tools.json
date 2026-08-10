@@ -198,7 +198,7 @@
                         },
                         "dblinks": {
                             "type": "object",
-                            "description": "Cross-references to other databases (PubChem, ChEBI, DrugBank, etc.)"
+                            "description": "Cross-references to other databases (ChEBI, DrugBank, CAS, LIPIDMAPS, etc.). KEGG's PubChem cross-reference is a PubChem *substance* ID and is therefore returned as 'PubChem_SID' -- it is not a CID and must not be passed to CID-based tools. Resolve it first, e.g. PubChem PUG-REST /substance/sid/{sid}/cids."
                         }
                     }
                 },
