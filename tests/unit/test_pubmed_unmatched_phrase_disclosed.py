@@ -44,11 +44,13 @@ def _esearch_response(esearch_result):
 def _run(esearch_result, summaries):
     """Run the tool against a mocked esearch payload (no network)."""
     tool = _tool()
-    with patch.object(tool, "_enforce_rate_limit"), patch.object(
-        tool, "_fetch_summaries", return_value=summaries
-    ), patch(
-        "tooluniverse.pubmed_tool.request_with_retry",
-        return_value=_esearch_response(esearch_result),
+    with (
+        patch.object(tool, "_enforce_rate_limit"),
+        patch.object(tool, "_fetch_summaries", return_value=summaries),
+        patch(
+            "tooluniverse.pubmed_tool.request_with_retry",
+            return_value=_esearch_response(esearch_result),
+        ),
     ):
         return tool.run({"query": '"JAK2 V617F thrombosis unicornwombatxyz"'})
 

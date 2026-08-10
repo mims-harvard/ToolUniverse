@@ -668,9 +668,7 @@ class PubMedRESTTool(BaseRESTTool):
                         # NCBI reports quoted phrases it could not match; that
                         # report must reach the caller or the answer looks like
                         # it came from the query they actually submitted.
-                        search_warnings = self._search_warning_metadata(
-                            esearch_result
-                        )
+                        search_warnings = self._search_warning_metadata(esearch_result)
 
                         # A search that matched nothing must still return the
                         # same {status, data, metadata} envelope as a search
