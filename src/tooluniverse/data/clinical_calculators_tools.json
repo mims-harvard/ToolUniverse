@@ -1,7 +1,7 @@
 [
   {
     "name": "ClinicalCalc_CHA2DS2_VASc",
-    "description": "CHA2DS2-VASc score: stroke risk in non-valvular atrial fibrillation, used to decide oral anticoagulation. Deterministic point score (0-9). Provide age plus boolean risk factors. Returns score, anticoagulation interpretation, and per-component points.",
+    "description": "CHA2DS2-VASc score: stroke risk in non-valvular atrial fibrillation, used to decide oral anticoagulation. Deterministic point score (0-9). Provide age plus boolean risk factors and sex. Returns score, anticoagulation interpretation, and per-component points.",
     "parameter": {"type": "object", "properties": {
       "age": {"type": "number", "description": "Age in years"},
       "chf": {"type": "boolean", "description": "Congestive heart failure / LV dysfunction"},
@@ -9,13 +9,15 @@
       "diabetes": {"type": "boolean", "description": "Diabetes mellitus"},
       "stroke_history": {"type": "boolean", "description": "Prior stroke, TIA, or thromboembolism (2 points)"},
       "vascular_disease": {"type": "boolean", "description": "Vascular disease (prior MI, PAD, aortic plaque)"},
-      "female": {"type": "boolean", "description": "Female sex"}
+      "female": {"type": "boolean", "description": "Female sex (legacy boolean; equivalent to sex='female'). If both 'female' and 'sex' are given they must agree."},
+      "sex": {"type": "string", "description": "Biological sex: 'female'/'f' or 'male'/'m' (case-insensitive). Preferred over 'female'. If neither 'sex' nor 'female' is supplied, male is assumed by default and the response's 'assumptions' field discloses this."}
     }, "required": ["age"]},
     "fields": {"calculator": "cha2ds2_vasc"},
     "type": "ClinicalCalculatorTool",
     "test_examples": [
       {"age": 80, "female": true, "hypertension": true, "diabetes": true},
-      {"age": 55, "chf": false, "hypertension": false}
+      {"age": 55, "chf": false, "hypertension": false},
+      {"age": 68, "sex": "female", "hypertension": true}
     ],
     "return_schema": {
       "oneOf": [
@@ -30,6 +32,12 @@
             },
             "components": {
               "type": "object"
+            },
+            "assumptions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "required": [
@@ -417,13 +425,15 @@
     "parameter": {"type": "object", "properties": {
       "creatinine": {"type": "number", "description": "Serum creatinine in mg/dL"},
       "age": {"type": "number", "description": "Age in years"},
-      "female": {"type": "boolean", "description": "Female sex"}
+      "female": {"type": "boolean", "description": "Female sex (legacy boolean; equivalent to sex='female'). If both 'female' and 'sex' are given they must agree."},
+      "sex": {"type": "string", "description": "Biological sex: 'female'/'f' or 'male'/'m' (case-insensitive). Preferred over 'female'. If neither 'sex' nor 'female' is supplied, male is assumed by default and the response's 'assumptions' field discloses this — this materially changes the eGFR value."}
     }, "required": ["creatinine", "age"]},
     "fields": {"calculator": "ckd_epi"},
     "type": "ClinicalCalculatorTool",
     "test_examples": [
       {"creatinine": 0.9, "age": 60, "female": true},
-      {"creatinine": 1.3, "age": 60, "female": false}
+      {"creatinine": 1.3, "age": 60, "female": false},
+      {"creatinine": 1.2, "age": 55, "sex": "female"}
     ],
     "return_schema": {
       "oneOf": [
@@ -441,6 +451,12 @@
             },
             "unit": {
               "type": "string"
+            },
+            "assumptions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "required": [
@@ -472,14 +488,16 @@
       "bp_treated": {"type": "boolean", "description": "Currently on blood-pressure-lowering medication"},
       "smoker": {"type": "boolean", "description": "Current smoker"},
       "diabetes": {"type": "boolean", "description": "Diabetes mellitus"},
-      "female": {"type": "boolean", "description": "Female sex"},
-      "race": {"type": "string", "description": "'white' (or other) vs 'black'/'African American'; affects the coefficient set", "default": "white"}
+      "female": {"type": "boolean", "description": "Female sex (legacy boolean; equivalent to sex='female'). If both 'female' and 'sex' are given they must agree."},
+      "sex": {"type": "string", "description": "Biological sex: 'female'/'f' or 'male'/'m' (case-insensitive). Preferred over 'female'. If neither 'sex' nor 'female' is supplied, male is assumed by default and the response's 'assumptions' field discloses this — this materially changes the risk value."},
+      "race": {"type": "string", "description": "'white' (or other) vs 'black'/'African American'; affects the coefficient set. If omitted, White/other coefficients are assumed by default and the response's 'assumptions' field discloses this.", "default": "white"}
     }, "required": ["age", "total_cholesterol", "hdl_cholesterol", "systolic_bp"]},
     "fields": {"calculator": "ascvd"},
     "type": "ClinicalCalculatorTool",
     "test_examples": [
       {"age": 55, "total_cholesterol": 213, "hdl_cholesterol": 50, "systolic_bp": 120, "bp_treated": false, "smoker": false, "diabetes": false, "female": false, "race": "white"},
-      {"age": 60, "total_cholesterol": 240, "hdl_cholesterol": 40, "systolic_bp": 140, "bp_treated": true, "smoker": true, "diabetes": true, "female": true, "race": "black"}
+      {"age": 60, "total_cholesterol": 240, "hdl_cholesterol": 40, "systolic_bp": 140, "bp_treated": true, "smoker": true, "diabetes": true, "female": true, "race": "black"},
+      {"age": 60, "total_cholesterol": 240, "hdl_cholesterol": 40, "systolic_bp": 140, "bp_treated": true, "smoker": true, "diabetes": true, "sex": "female", "race": "black"}
     ],
     "return_schema": {
       "oneOf": [
@@ -497,6 +515,12 @@
             },
             "unit": {
               "type": "string"
+            },
+            "assumptions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "required": [

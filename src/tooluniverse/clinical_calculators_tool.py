@@ -37,6 +37,68 @@ def _req_number(args: Dict[str, Any], key: str) -> float:
         raise ValueError(f"'{key}' must be a number, got {val!r}")
 
 
+# Accepted string values for the `sex` parameter (case-insensitive).
+_SEX_STRING_MAP = {"female": True, "f": True, "male": False, "m": False}
+
+
+def _resolve_sex(a: Dict[str, Any]) -> "tuple[bool, Any]":
+    """Resolve biological sex from the `female` boolean and/or `sex` string args.
+
+    Both are accepted for backward compatibility: `female` is the original
+    parameter, `sex` is the natural-language clinical term this tool's own
+    output already speaks in terms of ("components": {"sex": ...}). Accepting
+    it as input too makes the interface symmetric.
+
+    Returns (is_female, assumption_note). `assumption_note` is None unless
+    neither `female` nor `sex` was supplied, in which case the *existing*
+    default (male) is still used, but a note is returned so the caller can
+    disclose that the default was silently assumed.
+
+    Raises ValueError if:
+      - `sex` is supplied but is not a recognised value (female/f/male/m,
+        case-insensitive), or
+      - both `female` and `sex` are supplied and they disagree.
+    """
+    has_female = "female" in a and a.get("female") is not None
+    has_sex = "sex" in a and a.get("sex") is not None
+
+    sex_is_female = None
+    if has_sex:
+        raw = str(a["sex"]).strip().lower()
+        if raw not in _SEX_STRING_MAP:
+            raise ValueError(
+                "'sex' must be one of "
+                f"{sorted(_SEX_STRING_MAP)} (case-insensitive), got {a['sex']!r}"
+            )
+        sex_is_female = _SEX_STRING_MAP[raw]
+
+    female_is_female = _truthy(a["female"]) if has_female else None
+
+    if has_sex and has_female:
+        if sex_is_female != female_is_female:
+            raise ValueError(
+                "conflicting sex inputs: "
+                f"'female'={a['female']!r} implies "
+                f"{'female' if female_is_female else 'male'}, but "
+                f"'sex'={a['sex']!r} implies "
+                f"{'female' if sex_is_female else 'male'}. "
+                "Provide consistent values (or only one of the two)."
+            )
+        return female_is_female, None
+
+    if has_sex:
+        return sex_is_female, None
+    if has_female:
+        return female_is_female, None
+
+    return False, (
+        "Neither 'female' nor 'sex' was supplied; male coefficients/points "
+        "were assumed by default. This choice materially changes the "
+        "result — supply 'sex' (or 'female') explicitly for an accurate "
+        "calculation."
+    )
+
+
 def _ok(score, interpretation, components, **extra) -> Dict[str, Any]:
     data = {"score": score, "interpretation": interpretation, "components": components}
     data.update(extra)
@@ -53,6 +115,7 @@ def _ok(score, interpretation, components, **extra) -> Dict[str, Any]:
 def _cha2ds2_vasc(a: Dict[str, Any]) -> Dict[str, Any]:
     """CHA2DS2-VASc stroke risk in atrial fibrillation (Lip 2010)."""
     age = _req_number(a, "age")
+    female, sex_note = _resolve_sex(a)
     comp = {
         "CHF": int(_truthy(a.get("chf"))),
         "Hypertension": int(_truthy(a.get("hypertension"))),
@@ -62,7 +125,7 @@ def _cha2ds2_vasc(a: Dict[str, Any]) -> Dict[str, Any]:
         "Stroke/TIA/thromboembolism": 2 if _truthy(a.get("stroke_history")) else 0,
         "Vascular_disease": int(_truthy(a.get("vascular_disease"))),
         "Age_65-74": 1 if 65 <= age < 75 else 0,
-        "Female": int(_truthy(a.get("female"))),
+        "Female": int(female),
     }
     score = sum(comp.values())
     if score == 0:
@@ -71,7 +134,10 @@ def _cha2ds2_vasc(a: Dict[str, Any]) -> Dict[str, Any]:
         interp = "Low-moderate risk (1) — consider anticoagulation"
     else:
         interp = f"Elevated risk ({score}) — oral anticoagulation recommended"
-    return _ok(score, interp, comp, max_score=9)
+    extra = {"max_score": 9}
+    if sex_note:
+        extra["assumptions"] = [sex_note]
+    return _ok(score, interp, comp, **extra)
 
 
 def _has_bled(a: Dict[str, Any]) -> Dict[str, Any]:
@@ -301,7 +367,7 @@ def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
     """eGFR by CKD-EPI 2021 creatinine equation, race-free (Inker 2021)."""
     scr = _req_number(a, "creatinine")  # mg/dL
     age = _req_number(a, "age")
-    female = _truthy(a.get("female"))
+    female, sex_note = _resolve_sex(a)
     kappa = 0.7 if female else 0.9
     alpha = -0.241 if female else -0.302
     egfr = (
@@ -325,11 +391,14 @@ def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
     else:
         stage = "G5 (kidney failure, <15)"
     comp = {"creatinine_mg_dL": scr, "age": age, "sex": "female" if female else "male"}
+    extra = {"unit": "mL/min/1.73m^2"}
+    if sex_note:
+        extra["assumptions"] = [sex_note]
     return _ok(
         egfr,
         f"eGFR {egfr} mL/min/1.73m^2 — CKD stage {stage}",
         comp,
-        unit="mL/min/1.73m^2",
+        **extra,
     )
 
 
@@ -410,12 +479,25 @@ def _ascvd(a: Dict[str, Any]) -> Dict[str, Any]:
     treated = _truthy(a.get("bp_treated"))
     smoker = _truthy(a.get("smoker"))
     diabetes = _truthy(a.get("diabetes"))
-    female = _truthy(a.get("female"))
-    black = str(a.get("race", "")).strip().lower() in (
+    female, sex_note = _resolve_sex(a)
+    race_raw = a.get("race")
+    black = str(race_raw or "").strip().lower() in (
         "black",
         "african american",
         "aa",
     )
+    assumptions = []
+    if sex_note:
+        assumptions.append(sex_note)
+    if race_raw is None or str(race_raw).strip() == "":
+        assumptions.append(
+            "'race' was not supplied; White/other coefficients were assumed "
+            "by default (per the Pooled Cohort Equations guideline, which "
+            "uses White coefficients for race/ethnicities other than "
+            "non-Hispanic Black). This choice materially changes the result "
+            "for Black patients — supply 'race' explicitly for an accurate "
+            "calculation."
+        )
 
     key = f"{'black' if black else 'white'}_{'female' if female else 'male'}"
     c = _ASCVD_COEFF[key]
@@ -466,7 +548,10 @@ def _ascvd(a: Dict[str, Any]) -> Dict[str, Any]:
         "smoker": smoker,
         "diabetes": diabetes,
     }
-    return _ok(risk, f"10-year ASCVD risk {risk}% — {band} risk", comp, unit="percent")
+    extra = {"unit": "percent"}
+    if assumptions:
+        extra["assumptions"] = assumptions
+    return _ok(risk, f"10-year ASCVD risk {risk}% — {band} risk", comp, **extra)
 
 
 _DISPATCH: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]]] = {
