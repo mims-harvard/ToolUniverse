@@ -98,6 +98,24 @@ assert "tooluniverse.platform_remote_tool" not in sys.modules
     subprocess.run([sys.executable, "-c", script], env=env, check=True)
 
 
+def test_standard_sdk_import_keeps_heavy_builtin_subpackages_lazy():
+    """A normal SDK import must not initialize optional native runtimes."""
+    script = r"""
+import sys
+import tooluniverse
+
+assert tooluniverse._LIGHT_IMPORT is False
+assert "tooluniverse.database_setup" not in sys.modules
+assert "tooluniverse.database_setup.vector_store" not in sys.modules
+assert "faiss" not in sys.modules
+"""
+    env = dict(os.environ)
+    env.pop("TOOLUNIVERSE_LIGHT_IMPORT", None)
+    env.pop("TOOLUNIVERSE_LAZY_LOADING", None)
+    env["PYTHONPATH"] = str(Path(__file__).parents[2] / "src")
+    subprocess.run([sys.executable, "-c", script], env=env, check=True)
+
+
 def test_standalone_cli_does_not_contact_or_import_platform(tmp_path: Path):
     script = r"""
 import builtins

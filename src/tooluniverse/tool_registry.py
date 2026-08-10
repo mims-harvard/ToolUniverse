@@ -603,10 +603,32 @@ def _auto_import_subpackages(package_name: str = "tooluniverse"):
     except ImportError:
         return
 
+    # ``extend_path`` can add directories contributed by separately installed
+    # packages to ``tooluniverse.__path__``. Only those external namespace
+    # directories need eager importing here. Importing the package's own
+    # built-in subpackages defeats lazy loading and can initialize heavyweight
+    # native dependencies (notably FAISS) during a plain ``import
+    # tooluniverse``. On macOS, importing FAISS before PyTorch can also crash
+    # the process because of their OpenMP runtime interaction.
+    package_file = getattr(pkg, "__file__", None)
+    builtin_package_dir = (
+        Path(package_file).resolve().parent if package_file is not None else None
+    )
+
     for pkg_dir in pkg.__path__:
         try:
-            base = Path(pkg_dir)
+            base = Path(pkg_dir).resolve()
         except Exception:
+            continue
+        is_builtin_package_dir = base == builtin_package_dir or all(
+            (base / marker).is_file()
+            for marker in (
+                "execute_function.py",
+                "default_config.py",
+                "tool_registry.py",
+            )
+        )
+        if is_builtin_package_dir:
             continue
         for subpkg in sorted(base.iterdir()):
             if not subpkg.is_dir():
