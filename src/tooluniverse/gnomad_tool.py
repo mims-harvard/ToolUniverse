@@ -8,9 +8,134 @@ using GraphQL.
 
 import re
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, Optional, Tuple
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+
+
+# --- Dataset provenance ------------------------------------------------------
+#
+# Every gnomAD response echoes the dataset that actually answered and the
+# assembly its coordinates are in, because neither was previously recoverable
+# from the payload. Two facts make that dangerous rather than merely untidy:
+#
+# 1. The defaults in this family deliberately differ. `gnomad_get_variant`,
+#    `gnomad_search_variants` and `gnomad_get_region` default to `gnomad_r3`,
+#    while `gnomad_get_variant_populations` and `gnomad_get_constraint` default
+#    to `gnomad_r4`. Sibling calls on the same variant therefore disagree by
+#    design, and nothing in the response said which callset produced which
+#    number.
+# 2. gnomAD v3 is a genomes-only callset -- it has no exome component at all --
+#    so under the r3 default `exome` is structurally null for *every* variant,
+#    which is indistinguishable from "not observed in exomes". On GJB2 c.35delG
+#    (13-20189546-AC-A) that silently hid the 10,423 exome allele observations
+#    out of 1,461,600 alleles that `gnomad_r4` reports. ExAC is the mirror
+#    image: exomes only, `genome` always null.
+#
+# Verified live against the API's own `variant.reference_genome` field and the
+# per-dataset allele numbers for 13-20189546-AC-A (GRCh38) and
+# 13-20763685-AC-A (GRCh37):
+#   gnomad_r4, gnomad_r4_non_ukb       GRCh38  genome an=151882, exome an=1461600
+#   gnomad_r3 + its five subsets       GRCh38  genome an=151764, exome null
+#   gnomad_r2_1 + its four subsets     GRCh37  genome an=31334,  exome an=249362
+#   exac                               GRCh37  genome null,      exome an=121352
+# Structural-variant callsets follow the same version-to-assembly rule and have
+# no exome/genome split at all, hence `None` rather than an empty tuple.
+#
+# Matched by prefix so subsets released later resolve without a code change.
+_DATASET_FAMILIES = (
+    # (dataset id prefix, reference assembly, callsets the dataset contains).
+    # `None` means the callset has no exome/genome split at all (SV callsets).
+    ("gnomad_sv_r2_1", "GRCh37", None),
+    ("gnomad_sv_r4", "GRCh38", None),
+    ("gnomad_r2_1", "GRCh37", ("genome", "exome")),
+    ("gnomad_r3", "GRCh38", ("genome",)),
+    ("gnomad_r4", "GRCh38", ("genome", "exome")),
+    ("exac", "GRCh37", ("exome",)),
+)
+
+_DEFAULT_ASSEMBLY = "GRCh38"
+
+# Where to send a caller for the callset the selected dataset does not carry.
+_CALLSET_ALTERNATIVES = {
+    "exome": "dataset='gnomad_r4' (GRCh38) or dataset='gnomad_r2_1' (GRCh37)",
+    "genome": "dataset='gnomad_r4' or dataset='gnomad_r3' (GRCh38)",
+}
+
+
+def _dataset_family(dataset: Optional[str]) -> Tuple[str, Optional[Tuple[str, ...]]]:
+    """Return (reference assembly, callsets carried) for a gnomAD dataset id."""
+    key = (dataset or "").lower()
+    for prefix, assembly, callsets in _DATASET_FAMILIES:
+        if key.startswith(prefix):
+            return assembly, callsets
+    return _DEFAULT_ASSEMBLY, None
+
+
+def resolve_dataset_assembly(dataset: Optional[str]) -> str:
+    """Map a gnomAD dataset id to the reference assembly it is built on."""
+    return _dataset_family(dataset)[0]
+
+
+def _reports_null(payload: Any, key: str) -> bool:
+    """True when the payload sets `key` to null, at the root or one node down.
+
+    gnomAD nests the record under its query field (``{"variant": {...}}``), so a
+    single extra level is all that is ever needed.
+    """
+    if not isinstance(payload, dict):
+        return False
+    nodes = [payload, *(v for v in payload.values() if isinstance(v, dict))]
+    return any(key in node and node[key] is None for node in nodes)
+
+
+def _missing_callset_note(dataset: Optional[str], payload: Any) -> Optional[str]:
+    """Explain a null callset that is structural rather than an observation.
+
+    Only the single-component callsets can reach a note: v3 carries genomes and
+    ExAC carries exomes, while v2.1 and v4 carry both and so never have a
+    structurally absent one.
+    """
+    callsets = _dataset_family(dataset)[1]
+    if not callsets:
+        return None
+    absent = next((k for k in _CALLSET_ALTERNATIVES if k not in callsets), None)
+    if absent is None or not _reports_null(payload, absent):
+        return None
+    return (
+        f"Dataset '{dataset}' is a {callsets[0]}-only callset with no {absent} "
+        f"component, so `{absent}` is null for every variant in it. That means "
+        f"'not present in this callset', NOT 'not observed'. For {absent} allele "
+        f"counts query {_CALLSET_ALTERNATIVES[absent]}."
+    )
+
+
+def describe_dataset(
+    dataset: Optional[str], payload: Any = None, assembly: Optional[str] = None
+) -> Dict[str, Any]:
+    """Build the provenance block echoed on every dataset-backed response.
+
+    Always reports `dataset` and `reference_genome` -- including when the caller
+    omitted `dataset` and silently received the tool's default -- plus a
+    `dataset_note` whenever the payload's null callset is a property of the
+    callset rather than of the variant.
+
+    `assembly` is the reference genome the query actually sent, for the queries
+    that carry one of their own (gnomad_get_region does). It wins over the
+    lookup table: reporting an inference in preference to the value that was
+    transmitted is the very thing this disclosure exists to prevent. gnomAD
+    rejects a mismatched pair with HTTP 500 (confirmed live: dataset=gnomad_r2_1
+    with reference_genome=GRCh38, and gnomad_r3 with GRCh37, both 500 while the
+    matching pairs succeed), so the two agree on every response that gets here.
+    """
+    block: Dict[str, Any] = {
+        "dataset": dataset,
+        "reference_genome": assembly or resolve_dataset_assembly(dataset),
+    }
+    note = _missing_callset_note(dataset, payload)
+    if note:
+        block["dataset_note"] = note
+    return block
 
 
 class gnomADGraphQLTool(BaseTool):
@@ -185,7 +310,17 @@ class gnomADGraphQLQueryTool(gnomADGraphQLTool):
                 continue
             variables[self.variable_map.get(k, k)] = v
         self._apply_derived_variables(variables)
-        return super().run(variables)
+        result = super().run(variables)
+        # Disclose the callset that answered. `svDataset` is covered too because
+        # the SV tools derive it rather than taking it from the caller, so it is
+        # the least visible dataset choice in the family.
+        dataset = variables.get("dataset") or variables.get("svDataset")
+        data = result.get("data")
+        if dataset and isinstance(data, dict):
+            data.update(
+                describe_dataset(dataset, data, variables.get("referenceGenome"))
+            )
+        return result
 
 
 @register_tool("gnomADGetVariantPopulations")
@@ -269,10 +404,14 @@ class gnomADGetVariantPopulations(gnomADGraphQLTool):
             "ref": variant.get("ref"),
             "alt": variant.get("alt"),
             "rsid": variant.get("rsid"),
-            "dataset": dataset,
             "genome": self._build_callset(variant.get("genome")),
             "exome": self._build_callset(variant.get("exome")),
         }
+        # This tool defaults to gnomad_r4 while gnomad_get_variant defaults to
+        # gnomad_r3, so the two disagree on the same variant by design. The
+        # dataset id was always reported here; the assembly and the structural
+        # null now come with it.
+        data.update(describe_dataset(dataset, data))
 
         return {
             "status": "success",

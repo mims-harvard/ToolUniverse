@@ -439,7 +439,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_search_variants",
-    "description": "Search for variants in gnomAD by free-text query (commonly an rsID like 'rs7412'). Returns matching `variant_id` strings. Note: gnomAD's `variant_search` response only exposes `variant_id`. Use the returned `variant_id` with `gnomad_get_variant`.",
+    "description": "Search for variants in gnomAD by free-text query (commonly an rsID like 'rs7412'). Returns matching `variant_id` strings. Note: gnomAD's `variant_search` response only exposes `variant_id`. Use the returned `variant_id` with `gnomad_get_variant`. `dataset` defaults to `gnomad_r3` (GRCh38, genomes only); which variants exist depends on the callset searched. Defaults deliberately differ across this gnomAD family: gnomad_get_variant, gnomad_search_variants and gnomad_get_region default to `gnomad_r3` while gnomad_get_variant_populations and gnomad_get_constraint default to `gnomad_r4`, so gnomad_get_variant and gnomad_get_variant_populations report different numbers for the same variant unless you pass the same `dataset` to both. Every response echoes `dataset` and `reference_genome` (gnomad_r2_1* and exac = GRCh37; gnomad_r3* and gnomad_r4* = GRCh38) so the callset that answered is never a guess.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -450,7 +450,7 @@
         "dataset": {
           "type": "string",
           "default": "gnomad_r3",
-          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac."
+          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac. Coverage: gnomad_r4* = GRCh38 with genomes + exomes; gnomad_r3* = GRCh38 with genomes ONLY (no exome component, so `exome` is always null); gnomad_r2_1* = GRCh37 with genomes + exomes; exac = GRCh37 with exomes only."
         }
       },
       "required": [
@@ -480,6 +480,18 @@
                   }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -509,7 +521,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_variant",
-    "description": "Get basic variant metadata from gnomAD by `variant_id` (format like '19-44908822-C-T'). Use `gnomad_search_variants` to discover valid `variant_id` values from an rsID query. `dataset` is required by gnomAD and defaults to `gnomad_r3`.",
+    "description": "Get basic variant metadata from gnomAD by `variant_id` (format like '19-44908822-C-T'). Use `gnomad_search_variants` to discover valid `variant_id` values from an rsID query. `dataset` is required by gnomAD and defaults to `gnomad_r3`. `gnomad_r3` is a GENOMES-ONLY callset with no exome component, so under that default `exome` is null for every variant -- that means 'not present in this callset', NOT 'not observed in exomes'; responses carry a `dataset_note` saying so. Pass dataset='gnomad_r4' for exome allele counts (on GJB2 c.35delG that is a further 10,423 allele observations out of 1,461,600 alleles). Defaults deliberately differ across this gnomAD family: gnomad_get_variant, gnomad_search_variants and gnomad_get_region default to `gnomad_r3` while gnomad_get_variant_populations and gnomad_get_constraint default to `gnomad_r4`, so gnomad_get_variant and gnomad_get_variant_populations report different numbers for the same variant unless you pass the same `dataset` to both. Every response echoes `dataset` and `reference_genome` (gnomad_r2_1* and exac = GRCh37; gnomad_r3* and gnomad_r4* = GRCh38) so the callset that answered is never a guess.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -520,7 +532,7 @@
         "dataset": {
           "type": "string",
           "default": "gnomad_r3",
-          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac."
+          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac. Coverage: gnomad_r4* = GRCh38 with genomes + exomes; gnomad_r3* = GRCh38 with genomes ONLY (no exome component, so `exome` is always null); gnomad_r2_1* = GRCh37 with genomes + exomes; exac = GRCh37 with exomes only."
         }
       },
       "required": [
@@ -588,9 +600,42 @@
                   }
                 },
                 "exome": {
-                  "type": "null"
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Exome callset frequencies. Null when the variant is absent from the exome callset OR when the selected dataset has no exome component at all (gnomad_r3*) -- see `dataset_note`.",
+                  "properties": {
+                    "af": {
+                      "type": "number"
+                    },
+                    "an": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "ac": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    }
+                  }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -620,7 +665,7 @@
   {
     "type": "gnomADGetVariantPopulations",
     "name": "gnomad_get_variant_populations",
-    "description": "Get per-ancestry (population-stratified) allele frequencies for a variant from gnomAD by `variant_id` (format like '1-55051215-G-GA'). Unlike `gnomad_get_variant` (aggregate AF only), this returns per-ancestry rows (`amr`, `nfe`, `fin`, `afr`, `eas`, `sas`, `asj`, `ami`, `mid`, `remaining`, plus `_XX`/`_XY` sex splits) with computed `af = ac / an` (af is null when an = 0), separated into `genome` and `exome` callsets. `dataset` defaults to `gnomad_r4`. Use `gnomad_search_variants` to find a `variant_id` from an rsID.",
+    "description": "Get per-ancestry (population-stratified) allele frequencies for a variant from gnomAD by `variant_id` (format like '1-55051215-G-GA'). Unlike `gnomad_get_variant` (aggregate AF only), this returns per-ancestry rows (`amr`, `nfe`, `fin`, `afr`, `eas`, `sas`, `asj`, `ami`, `mid`, `remaining`, plus `_XX`/`_XY` sex splits) with computed `af = ac / an` (af is null when an = 0), separated into `genome` and `exome` callsets. `dataset` defaults to `gnomad_r4`. Use `gnomad_search_variants` to find a `variant_id` from an rsID. `gnomad_r4` carries both genomes and exomes; `gnomad_r3` is genomes-only, so selecting it makes `exome` null for every variant (a property of the callset, not of the variant) and the response says so in `dataset_note`. Defaults deliberately differ across this gnomAD family: gnomad_get_variant, gnomad_search_variants and gnomad_get_region default to `gnomad_r3` while gnomad_get_variant_populations and gnomad_get_constraint default to `gnomad_r4`, so gnomad_get_variant and gnomad_get_variant_populations report different numbers for the same variant unless you pass the same `dataset` to both. Every response echoes `dataset` and `reference_genome` (gnomad_r2_1* and exac = GRCh37; gnomad_r3* and gnomad_r4* = GRCh38) so the callset that answered is never a guess.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -631,7 +676,7 @@
         "dataset": {
           "type": "string",
           "default": "gnomad_r4",
-          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac."
+          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac. Coverage: gnomad_r4* = GRCh38 with genomes + exomes; gnomad_r3* = GRCh38 with genomes ONLY (no exome component, so `exome` is always null); gnomad_r2_1* = GRCh37 with genomes + exomes; exac = GRCh37 with exomes only."
         }
       },
       "required": [
@@ -673,7 +718,8 @@
               ]
             },
             "dataset": {
-              "type": "string"
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
             },
             "genome": {
               "type": [
@@ -792,6 +838,14 @@
                   }
                 }
               }
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -832,7 +886,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_region",
-    "description": "Get basic regional information from gnomAD by genomic interval. Returns genes overlapping the region and a list of `variant_id` values in the region for the selected dataset. Use those IDs with `gnomad_get_variant`. Keep regions small to avoid large payloads.",
+    "description": "Get basic regional information from gnomAD by genomic interval. Returns genes overlapping the region and a list of `variant_id` values in the region for the selected dataset. Use those IDs with `gnomad_get_variant`. Keep regions small to avoid large payloads. `dataset` defaults to `gnomad_r3` (GRCh38, genomes only), so the variant list is the one that callset contains. Defaults deliberately differ across this gnomAD family: gnomad_get_variant, gnomad_search_variants and gnomad_get_region default to `gnomad_r3` while gnomad_get_variant_populations and gnomad_get_constraint default to `gnomad_r4`, so gnomad_get_variant and gnomad_get_variant_populations report different numbers for the same variant unless you pass the same `dataset` to both. Every response echoes `dataset` and `reference_genome` (gnomad_r2_1* and exac = GRCh37; gnomad_r3* and gnomad_r4* = GRCh38) so the callset that answered is never a guess.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -860,7 +914,7 @@
         "dataset": {
           "type": "string",
           "default": "gnomad_r3",
-          "description": "gnomAD dataset ID used for `variants(dataset: ...)`. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac."
+          "description": "gnomAD dataset ID used for `variants(dataset: ...)`. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac. Coverage: gnomad_r4* = GRCh38 with genomes + exomes; gnomad_r3* = GRCh38 with genomes ONLY (no exome component, so `exome` is always null); gnomad_r2_1* = GRCh37 with genomes + exomes; exac = GRCh37 with exomes only."
         }
       },
       "required": [
@@ -930,6 +984,18 @@
                   }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -1105,6 +1171,18 @@
                   }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -1307,6 +1385,18 @@
                   }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -1513,6 +1603,18 @@
                   ]
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [

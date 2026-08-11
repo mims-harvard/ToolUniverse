@@ -470,10 +470,38 @@ class CPICGetAllelesTool(BaseTool):
     star alleles from that page silently loses 158 of them, and there was no
     `offset` to walk the rest. Ask PostgREST for the exact count, report it,
     and page explicitly.
+
+    Feature-33-2: the `select` clause also dropped CPIC's `frequency` object --
+    the per-biogeographic-group star-allele frequencies -- so every row came
+    back as just name/functionalstatus/activityvalue/clinicalfunctionalstatus.
+    CPIC populates frequency on most but not all alleles (measured: 36 of 49
+    for CYP2C19, 183 of 208 for CYP2D6), and it is the one field a
+    pharmacogenomics counselling note needs; there is no other route to it in
+    this tool. See `_SELECT_FIELDS` for what is now requested and why.
     """
 
     _DEFAULT_LIMIT = 50
     _MAX_LIMIT = 1000
+
+    # `findings` is deliberately NOT selected: it is narrative prose restating
+    # `strength`, and measured 78,541 bytes across CYP2D6's 208 alleles versus
+    # 9,621 for `citations`, which grounds the same claim by PMID.
+    _SELECT_FIELDS = (
+        "name",
+        "functionalstatus",
+        "activityvalue",
+        "clinicalfunctionalstatus",
+        # CPIC's own biogeographic-group labels ("Sub-Saharan African",
+        # "Central/South Asian", ...) are passed through verbatim -- remapping
+        # them onto gnomAD population codes would relabel an ancestry group.
+        # CPIC returns null (never {}) where it publishes no frequency, and a
+        # published 0.0 for a group is real data: 16 of CYP2C19's 49 alleles
+        # carry at least one 0.0, so null must never be collapsed to zero.
+        "frequency",
+        "inferredfrequency",
+        "strength",
+        "citations",
+    )
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Fetch one page of alleles plus the gene's true allele count."""
@@ -489,7 +517,7 @@ class CPICGetAllelesTool(BaseTool):
 
         params = {
             "genesymbol": f"eq.{gene}",
-            "select": "name,functionalstatus,activityvalue,clinicalfunctionalstatus",
+            "select": ",".join(self._SELECT_FIELDS),
             "limit": limit,
             "offset": offset,
         }

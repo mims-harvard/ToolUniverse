@@ -975,7 +975,7 @@
   },
   {
     "name": "CPIC_get_alleles",
-    "description": "Get pharmacogenomics alleles and their functional status for a gene from CPIC. Returns allele names, activity values, and functional status, plus 'total_count' -- the number of alleles CPIC curates for the gene, which is often far larger than one page (CYP2D6 has 208). Returns 50 per call by default; use 'limit' (max 1000) and 'offset' to retrieve the rest. Note: use 'clinicalfunctionalstatus' field for the active clinical classification (e.g., 'No function', 'Normal function'); the 'functionalstatus' field may be null for some genes. Critical for translating genotype to phenotype (e.g., CYP2D6 *4 = no function, CYP2D6 *1 = normal function).",
+    "description": "Get pharmacogenomics alleles and their functional status for a gene from CPIC. Returns allele names, activity values, and functional status, plus 'total_count' -- the number of alleles CPIC curates for the gene, which is often far larger than one page (CYP2D6 has 208). Returns 50 per call by default; use 'limit' (max 1000) and 'offset' to retrieve the rest. Note: use 'clinicalfunctionalstatus' field for the active clinical classification (e.g., 'No function', 'Normal function'); the 'functionalstatus' field may be null for some genes. Critical for translating genotype to phenotype (e.g., CYP2D6 *4 = no function, CYP2D6 *1 = normal function). Each allele also carries 'frequency', CPIC's per-ancestry star-allele frequencies: a map keyed by CPIC's own biogeographic-group labels ('European', 'East Asian', 'Sub-Saharan African', 'Central/South Asian', 'African American/Afro-Caribbean', 'Latino', 'American', 'Near Eastern', 'Oceanian'), passed through verbatim and deliberately NOT remapped to gnomAD population codes. CPIC does not publish a frequency for every allele -- 'frequency' is null on 13 of CYP2C19's 49 alleles and 25 of CYP2D6's 208 -- and null means 'not published', never zero: a published 0.0 for a group is real data and appears as 0.0, and single groups inside the map can be null while others carry values. Alongside it, 'strength' is CPIC's evidence level for the function assignment, 'inferredfrequency' is true when CPIC inferred the frequency rather than measuring it, and 'citations' lists supporting PMIDs; these are null on the alleles that lack a frequency. CPIC's narrative 'findings' text is not returned (it restates 'strength' at ~78 KB per gene).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1049,6 +1049,43 @@
                   "null",
                   "string"
                 ]
+              },
+              "frequency": {
+                "type": [
+                  "null",
+                  "object"
+                ],
+                "description": "Per-ancestry allele frequency keyed by CPIC's own biogeographic-group labels, passed through verbatim. Null when CPIC publishes no frequency for the allele -- that is 'not published', not zero. A group's value may itself be null while other groups carry numbers, and a published 0.0 is real data.",
+                "additionalProperties": {
+                  "type": [
+                    "null",
+                    "number"
+                  ]
+                }
+              },
+              "inferredfrequency": {
+                "type": [
+                  "null",
+                  "boolean"
+                ],
+                "description": "True when CPIC inferred the frequency rather than measuring it."
+              },
+              "strength": {
+                "type": [
+                  "null",
+                  "string"
+                ],
+                "description": "CPIC's evidence level for the function assignment (e.g. 'Definitve', 'Limited'). Null on alleles CPIC has not graded."
+              },
+              "citations": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "description": "PMIDs supporting the function assignment and frequency. Null on alleles CPIC has not graded.",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
