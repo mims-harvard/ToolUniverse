@@ -32,6 +32,7 @@ on:
     paths:
       - 'plugin/**'
       - '.claude-plugin/**'
+      - '.github/workflows/auto-release.yml'
   workflow_dispatch:
     inputs:
       level:
