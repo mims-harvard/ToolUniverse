@@ -1688,7 +1688,7 @@
   {
     "type": "FDACountAdditiveReactionsTool",
     "name": "FAERS_count_additive_adverse_reactions",
-    "description": "Aggregate adverse reaction counts across specified medicinal products. Note: 'medicinalproducts' is combined with OR (union) -- counts are reports mentioning ANY listed product, not reports where all of them co-occur, so results for a multi-drug list can look nearly identical to the single most-reported drug's own counts. For co-occurrence/combination-risk analysis (e.g. checking two specific drugs taken together), use FAERS_search_reports_by_drug_combination (AND) or FAERS_calculate_disproportionality instead. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry, serious, seriousnessdeath) are optional. Use filters sparingly to avoid overly restrictive searches that return no results. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported.",
+    "description": "Aggregate adverse reaction counts across specified medicinal products. Note: 'medicinalproducts' is combined with OR (union) -- counts are reports mentioning ANY listed product, not reports where all of them co-occur, so results for a multi-drug list can look nearly identical to the single most-reported drug's own counts. For co-occurrence/combination-risk analysis (e.g. checking two specific drugs taken together), use FAERS_search_reports_by_drug_combination (AND) or FAERS_calculate_disproportionality instead. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry, serious, seriousnessdeath) are optional. Use filters sparingly to avoid overly restrictive searches that return no results. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported. COUNT SEMANTICS: 'patient.reaction.reactionmeddrapt' is recorded once per reaction, NOT once per report, so a report with several reactions is counted in several rows and the rows can sum to MORE than the number of matching reports (measured for a single-product list ['VASOPRESSIN']: the first 999 ranked rows already sum to 28,818 against 4,676 matching reports, 616% of them). The response therefore also carries 'total_reports_matching_query' (every report matching this query, from a separate openFDA request on the same search; null if that request fails), 'stratified_report_count' (what the rows shown sum to) and a 'coverage_note' stating which way the facet is off. DO NOT use the row sum as a denominator: it counts recorded patient.reaction.reactionmeddrapt values, not reports. Use 'total_reports_matching_query' if you need one.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1790,6 +1790,8 @@
         "patient.reaction.reactionmeddrapt.exact"
       ]
     },
+    "disclose_denominator": true,
+    "count_field_cardinality": "per_reaction",
     "test_examples": [
       {
         "medicinalproducts": [
@@ -1837,13 +1839,31 @@
             "truncation_note": {
               "type": "string",
               "description": "Present only when 'truncated' is true; states the applied limit and how to retrieve more terms."
+            },
+            "total_reports_matching_query": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this query, from a separate openFDA request on the same search. Null when that request failed (commonly HTTP 429 rate limiting on the anonymous tier), in which case 'coverage_note' says so."
+            },
+            "stratified_report_count": {
+              "type": "integer",
+              "description": "What the counts in 'results' sum to. patient.reaction.reactionmeddrapt is recorded once per reaction rather than once per report, so this is a count of recorded patient.reaction.reactionmeddrapt values, NOT of reports: it double-counts reports carrying several reactions and can exceed 'total_reports_matching_query'. Never use it as a denominator."
+            },
+            "coverage_note": {
+              "type": "string",
+              "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
             }
           },
           "required": [
             "results",
             "result_count",
             "limit",
-            "truncated"
+            "truncated",
+            "total_reports_matching_query",
+            "stratified_report_count",
+            "coverage_note"
           ]
         },
         {
@@ -1882,7 +1902,7 @@
   {
     "type": "FDACountAdditiveReactionsTool",
     "name": "FAERS_count_additive_event_reports_by_country",
-    "description": "Aggregate report counts by country of occurrence across specified medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, serious) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported.",
+    "description": "Aggregate report counts by country of occurrence across specified medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, serious) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported. COUNT SEMANTICS: 'occurcountry' holds at most one value per report, but openFDA computes a count facet only over reports that record the field, so reports missing it are EXCLUDED from the rows entirely rather than bucketed as unknown and the rows sum BELOW the number of matching reports (measured for a single-product list ['VASOPRESSIN']: the rows sum to 3,888 of 4,676 matching reports). The response therefore also carries 'total_reports_matching_query' (every report matching this query, from a separate openFDA request on the same search; null if that request fails), 'stratified_report_count' (what the rows shown sum to) and a 'coverage_note' stating which way the facet is off. Neither figure is a population at risk, so dividing a row by either does not give a rate.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1966,6 +1986,8 @@
         "occurcountry.exact"
       ]
     },
+    "disclose_denominator": true,
+    "count_field_cardinality": "per_report",
     "test_examples": [
       {
         "medicinalproducts": [
@@ -2011,13 +2033,31 @@
             "truncation_note": {
               "type": "string",
               "description": "Present only when 'truncated' is true; states the applied limit and how to retrieve more terms."
+            },
+            "total_reports_matching_query": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this query, from a separate openFDA request on the same search. Null when that request failed (commonly HTTP 429 rate limiting on the anonymous tier), in which case 'coverage_note' says so."
+            },
+            "stratified_report_count": {
+              "type": "integer",
+              "description": "The subset of matching reports where occurcountry is recorded; the counts in 'results' sum to exactly this. Reports missing the field are absent from 'results' entirely rather than bucketed as unknown, so this is at or below 'total_reports_matching_query'."
+            },
+            "coverage_note": {
+              "type": "string",
+              "description": "Names both figures and the coverage fraction, and explains that reports not recording occurcountry are excluded from the facet rather than bucketed as unknown."
             }
           },
           "required": [
             "results",
             "result_count",
             "limit",
-            "truncated"
+            "truncated",
+            "total_reports_matching_query",
+            "stratified_report_count",
+            "coverage_note"
           ]
         },
         {
@@ -2056,7 +2096,7 @@
   {
     "type": "FDACountAdditiveReactionsTool",
     "name": "FAERS_count_additive_reports_by_reporter_country",
-    "description": "Aggregate adverse event reports by primary reporter country across medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, serious) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported.",
+    "description": "Aggregate adverse event reports by primary reporter country across medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, serious) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported. COUNT SEMANTICS: 'primarysource.reportercountry' holds at most one value per report, but openFDA computes a count facet only over reports that record the field, so reports missing it are EXCLUDED from the rows entirely rather than bucketed as unknown and the rows sum BELOW the number of matching reports (measured for a single-product list ['VASOPRESSIN']: the rows sum to 4,608 of 4,676 matching reports). The response therefore also carries 'total_reports_matching_query' (every report matching this query, from a separate openFDA request on the same search; null if that request fails), 'stratified_report_count' (what the rows shown sum to) and a 'coverage_note' stating which way the facet is off. Neither figure is a population at risk, so dividing a row by either does not give a rate.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2140,6 +2180,8 @@
         "primarysource.reportercountry.exact"
       ]
     },
+    "disclose_denominator": true,
+    "count_field_cardinality": "per_report",
     "test_examples": [
       {
         "medicinalproducts": [
@@ -2185,13 +2227,31 @@
             "truncation_note": {
               "type": "string",
               "description": "Present only when 'truncated' is true; states the applied limit and how to retrieve more terms."
+            },
+            "total_reports_matching_query": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this query, from a separate openFDA request on the same search. Null when that request failed (commonly HTTP 429 rate limiting on the anonymous tier), in which case 'coverage_note' says so."
+            },
+            "stratified_report_count": {
+              "type": "integer",
+              "description": "The subset of matching reports where primarysource.reportercountry is recorded; the counts in 'results' sum to exactly this. Reports missing the field are absent from 'results' entirely rather than bucketed as unknown, so this is at or below 'total_reports_matching_query'."
+            },
+            "coverage_note": {
+              "type": "string",
+              "description": "Names both figures and the coverage fraction, and explains that reports not recording primarysource.reportercountry are excluded from the facet rather than bucketed as unknown."
             }
           },
           "required": [
             "results",
             "result_count",
             "limit",
-            "truncated"
+            "truncated",
+            "total_reports_matching_query",
+            "stratified_report_count",
+            "coverage_note"
           ]
         },
         {
@@ -2230,7 +2290,7 @@
   {
     "type": "FDACountAdditiveReactionsTool",
     "name": "FAERS_count_additive_seriousness_classification",
-    "description": "Quantify serious vs non-serious classifications across medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported.",
+    "description": "Quantify serious vs non-serious classifications across medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported. COUNT SEMANTICS: 'serious' holds at most one value per report, but openFDA computes a count facet only over reports that record the field, so reports missing it are EXCLUDED from the rows entirely rather than bucketed as unknown and the rows sum BELOW the number of matching reports (measured for a single-product list ['VASOPRESSIN']: the rows sum to 4,676 of 4,676 matching reports, but coverage is not guaranteed for every query). The response therefore also carries 'total_reports_matching_query' (every report matching this query, from a separate openFDA request on the same search; null if that request fails), 'stratified_report_count' (what the rows shown sum to) and a 'coverage_note' stating which way the facet is off. Neither figure is a population at risk, so dividing a row by either does not give a rate.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2317,6 +2377,8 @@
         }
       }
     },
+    "disclose_denominator": true,
+    "count_field_cardinality": "per_report",
     "test_examples": [
       {
         "medicinalproducts": [
@@ -2362,13 +2424,31 @@
             "truncation_note": {
               "type": "string",
               "description": "Present only when 'truncated' is true; states the applied limit and how to retrieve more terms."
+            },
+            "total_reports_matching_query": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this query, from a separate openFDA request on the same search. Null when that request failed (commonly HTTP 429 rate limiting on the anonymous tier), in which case 'coverage_note' says so."
+            },
+            "stratified_report_count": {
+              "type": "integer",
+              "description": "The subset of matching reports where serious is recorded; the counts in 'results' sum to exactly this. Reports missing the field are absent from 'results' entirely rather than bucketed as unknown, so this is at or below 'total_reports_matching_query'."
+            },
+            "coverage_note": {
+              "type": "string",
+              "description": "Names both figures and the coverage fraction, and explains that reports not recording serious are excluded from the facet rather than bucketed as unknown."
             }
           },
           "required": [
             "results",
             "result_count",
             "limit",
-            "truncated"
+            "truncated",
+            "total_reports_matching_query",
+            "stratified_report_count",
+            "coverage_note"
           ]
         },
         {
@@ -2407,7 +2487,7 @@
   {
     "type": "FDACountAdditiveReactionsTool",
     "name": "FAERS_count_additive_reaction_outcomes",
-    "description": "Determine reaction outcome counts (e.g., recovered, resolving, fatal) across medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported.",
+    "description": "Determine reaction outcome counts (e.g., recovered, resolving, fatal) across medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported. COUNT SEMANTICS: 'patient.reaction.reactionoutcome' is recorded once per reaction, NOT once per report, so a report with several reactions is counted in several rows and the rows can sum to MORE than the number of matching reports (measured for a single-product list ['VASOPRESSIN']: the rows sum to 5,430 against 4,676 matching reports, so 'Fatal' over the row sum is NOT a case-fatality rate). The response therefore also carries 'total_reports_matching_query' (every report matching this query, from a separate openFDA request on the same search; null if that request fails), 'stratified_report_count' (what the rows shown sum to) and a 'coverage_note' stating which way the facet is off. DO NOT use the row sum as a denominator: it counts recorded patient.reaction.reactionoutcome values, not reports. Use 'total_reports_matching_query' if you need one.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2495,6 +2575,8 @@
         }
       }
     },
+    "disclose_denominator": true,
+    "count_field_cardinality": "per_reaction",
     "test_examples": [
       {
         "medicinalproducts": [
@@ -2540,13 +2622,31 @@
             "truncation_note": {
               "type": "string",
               "description": "Present only when 'truncated' is true; states the applied limit and how to retrieve more terms."
+            },
+            "total_reports_matching_query": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this query, from a separate openFDA request on the same search. Null when that request failed (commonly HTTP 429 rate limiting on the anonymous tier), in which case 'coverage_note' says so."
+            },
+            "stratified_report_count": {
+              "type": "integer",
+              "description": "What the counts in 'results' sum to. patient.reaction.reactionoutcome is recorded once per reaction rather than once per report, so this is a count of recorded patient.reaction.reactionoutcome values, NOT of reports: it double-counts reports carrying several reactions and can exceed 'total_reports_matching_query'. Never use it as a denominator."
+            },
+            "coverage_note": {
+              "type": "string",
+              "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
             }
           },
           "required": [
             "results",
             "result_count",
             "limit",
-            "truncated"
+            "truncated",
+            "total_reports_matching_query",
+            "stratified_report_count",
+            "coverage_note"
           ]
         },
         {
@@ -2585,7 +2685,7 @@
   {
     "type": "FDACountAdditiveReactionsTool",
     "name": "FAERS_count_additive_administration_routes",
-    "description": "Enumerate and count administration routes for adverse events across specified medicinal products. Only medicinalproducts is required; serious filter is optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported.",
+    "description": "Enumerate and count administration routes for adverse events across specified medicinal products. Only medicinalproducts is required; serious filter is optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported. COUNT SEMANTICS: 'patient.drug.drugadministrationroute' is recorded once per drug, NOT once per report, so a report with several drugs is counted in several rows and the rows can sum to MORE than the number of matching reports (measured for a single-product list ['VASOPRESSIN']: the rows sum to 9,169 against 4,676 matching reports, 196% of them). The response therefore also carries 'total_reports_matching_query' (every report matching this query, from a separate openFDA request on the same search; null if that request fails), 'stratified_report_count' (what the rows shown sum to) and a 'coverage_note' stating which way the facet is off. DO NOT use the row sum as a denominator: it counts recorded patient.drug.drugadministrationroute values, not reports. Use 'total_reports_matching_query' if you need one.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2700,6 +2800,8 @@
         }
       }
     },
+    "disclose_denominator": true,
+    "count_field_cardinality": "per_drug",
     "test_examples": [
       {
         "medicinalproducts": [
@@ -2743,13 +2845,31 @@
             "truncation_note": {
               "type": "string",
               "description": "Present only when 'truncated' is true; states the applied limit and how to retrieve more terms."
+            },
+            "total_reports_matching_query": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this query, from a separate openFDA request on the same search. Null when that request failed (commonly HTTP 429 rate limiting on the anonymous tier), in which case 'coverage_note' says so."
+            },
+            "stratified_report_count": {
+              "type": "integer",
+              "description": "What the counts in 'results' sum to. patient.drug.drugadministrationroute is recorded once per drug rather than once per report, so this is a count of recorded patient.drug.drugadministrationroute values, NOT of reports: it double-counts reports carrying several drugs and can exceed 'total_reports_matching_query'. Never use it as a denominator."
+            },
+            "coverage_note": {
+              "type": "string",
+              "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
             }
           },
           "required": [
             "results",
             "result_count",
             "limit",
-            "truncated"
+            "truncated",
+            "total_reports_matching_query",
+            "stratified_report_count",
+            "coverage_note"
           ]
         },
         {

@@ -84,7 +84,19 @@ def _capture(tool, arguments):
         urls.append(url)
         return _Response()
 
-    with patch("tooluniverse.openfda_adv_tool.requests.get", side_effect=fake_get):
+    # The denominator probe goes through request_with_retry -> requests.request,
+    # which patching requests.get does not intercept. Without this the count
+    # tools that disclose their denominator reach api.fda.gov for real.
+    def fake_probe(_module, _method, url, **_kwargs):
+        urls.append(url)
+        return _Response()
+
+    with (
+        patch("tooluniverse.openfda_adv_tool.requests.get", side_effect=fake_get),
+        patch(
+            "tooluniverse.openfda_adv_tool.request_with_retry", side_effect=fake_probe
+        ),
+    ):
         tool.run(arguments)
     assert urls, "tool made no request"
     return urls[0]

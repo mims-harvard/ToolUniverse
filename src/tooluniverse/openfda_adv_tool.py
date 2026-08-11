@@ -218,9 +218,7 @@ class FDADrugAdverseEventTool(BaseTool):
         # bogus rate, so the multi-valued tools need it more, not less.
         #
         # Disclosure costs one extra openFDA request per call and fails soft.
-        # Only this class's run() honours the flag; FDACountAdditiveReactionsTool
-        # builds its query differently and would need its own denominator probe,
-        # so setting the flag on one of its configs is currently a no-op.
+        # Every subclass inherits it, because run() is shared.
         self.disclose_denominator = bool(tool_config.get("disclose_denominator", False))
         # "per_report" (default), "per_reaction" or "per_drug" -- see
         # COUNT_FIELD_UNITS. An unrecognized value degrades to the conservative
@@ -757,45 +755,29 @@ class FDADrugAdverseEventTool(BaseTool):
 
 @register_tool("FDACountAdditiveReactionsTool")
 class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
+    """Count an openFDA facet across SEVERAL drugs in one request.
+
+    Only the search clause differs from the parent -- ``medicinalproducts`` is a
+    LIST whose names are OR-ed (a union, not a co-occurrence) -- so only
+    ``_build_search_query`` is overridden and everything downstream stays the
+    parent's, including the denominator probe that reuses this same query.
     """
-    Leverage openFDA API to count adverse reaction events across multiple drugs in one request.
-    """
 
-    def __init__(
-        self,
-        tool_config,
-        endpoint_url="https://api.fda.gov/drug/event.json",
-        api_key=None,
-    ):
-        super().__init__(tool_config)
+    DRUG_PARAMETER = "medicinalproducts"
 
-    def run(self, arguments):
-        # Make a copy to avoid modifying the original
-        arguments = copy.deepcopy(arguments)
+    def _build_search_query(self, arguments):
+        # Read the FDA field(s) from the config's own search-field map, the same
+        # source the parent uses for every other parameter, so a config can widen
+        # the union to a second field (e.g. openfda.generic_name) without a code
+        # change here.
+        fda_fields = self.search_fields.get(self.DRUG_PARAMETER) or [
+            "patient.drug.medicinalproduct"
+        ]
 
-        # Validate medicinalproducts list first
-        drugs = arguments.pop("medicinalproducts", [])
-        if not drugs:
-            return {"status": "error", "error": "`medicinalproducts` list is required."}
-        if not isinstance(drugs, list):
-            return {
-                "status": "error",
-                "error": "`medicinalproducts` must be a list of drug names.",
-            }
-
-        # Validate the remaining enum parameters
-        validation_error = self.validate_enum_arguments(arguments)
-        if validation_error:
-            return {"status": "error", "error": validation_error}
-
-        limit_error, limit = self._resolve_count_limit(arguments)
-        if limit_error:
-            return {"status": "error", "error": limit_error}
-
-        # Build OR clause for multiple drugs. The drug name goes through the
-        # shared clause renderer for the same reason every other value does: a
-        # multi-word name needs Lucene quotes, and the percent-encoding is done
-        # ONCE, below, on the finished query.
+        # Each name goes through the shared renderer for the same reason every
+        # other value does: a multi-word name needs Lucene quotes, several FDA
+        # fields for one parameter must be OR-ed inside parens, and the
+        # percent-encoding happens ONCE, later, on the finished query.
         #
         # Percent-encoding the name here as well used to double-encode it. The
         # space in "SODIUM CHLORIDE" became %2520; openFDA decoded that once to
@@ -808,72 +790,39 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
         # form returns 605,620 + 173,560 = 779,180, exactly equal to the count
         # for the bare term "SODIUM" -- an 8.6x over-count.
         or_clause = "+OR+".join(
-            _render_clause("patient.drug.medicinalproduct", d) for d in drugs
+            _render_field_group(fda_fields, drug)
+            for drug in arguments.get(self.DRUG_PARAMETER, ())
         )
 
-        # Combine additional filters
-        filters = []
-        for k, v in arguments.items():
-            # Get FDA field name(s) from the search-field map; skip unrecognized
-            # filters rather than forwarding them as bogus FDA constraints.
-            fda_fields = self.search_fields.get(k)
-            if not fda_fields:
-                continue
-            # Use the first field name for value mapping
-            fda_field = fda_fields[0]
+        # Every other filter is the parent's job, so the quoting and grouping
+        # rules keep exactly one home. The drug list is withheld rather than
+        # popped: run() hands the SAME dict to the facet and to the denominator
+        # probe, and mutating it would leave the probe counting reports for the
+        # filters alone.
+        filter_error, filter_query = super()._build_search_query(
+            {k: v for k, v in arguments.items() if k != self.DRUG_PARAMETER}
+        )
+        if filter_error:
+            return filter_error, None
 
-            # Map value using FDA field name (for proper enum mapping)
-            mapping_error, mapped = self._map_value(fda_field, v)
-            if mapping_error:
-                return {"status": "error", "error": mapping_error}
-            if mapped is None:
-                continue  # Skip this field if instructed
+        query = f"({or_clause})"
+        if filter_query:
+            query = f"{query}+AND+{filter_query}"
+        return None, query
 
-            # Use FDA field name(s) in the query via the shared renderer, so both
-            # the quoting rule (a Lucene range stays unquoted) and the grouping
-            # rule (several fields for one parameter are OR-ed inside parens)
-            # have exactly one home. Every config for this tool type maps each
-            # parameter to a single field today, so this is currently a plain
-            # clause -- routing it through the helper anyway keeps a future
-            # multi-field config from silently AND-ing what should be OR-ed.
-            filters.append(_render_field_group(fda_fields, mapped))
-
-        filter_str = "+AND+".join(filters) if filters else ""
-        search_query = f"({or_clause})" + (f"+AND+{filter_str}" if filter_str else "")
-        # URL encode the search query, preserving +, :, and " as safe chars
-        search_encoded = urllib.parse.quote(search_query, safe='+:"')
-
-        # Call API. `limit` is appended after `count` so it is never mistaken
-        # for part of the Lucene search clause.
-        if self.api_key:
-            url = (
-                f"{self.endpoint_url}?api_key={self.api_key}"
-                f"&search={search_encoded}&count={self.count_field}"
-            )
-        else:
-            url = (
-                f"{self.endpoint_url}?search={search_encoded}&count={self.count_field}"
-            )
-        url = f"{url}&limit={self._fetch_limit(limit)}"
-
-        try:
-            resp = requests.get(url)
-            # Handle 404 as "no matches found" - return an empty (but explicitly
-            # non-truncated) envelope instead of an error.
-            if resp.status_code == 404:
-                try:
-                    error_data = resp.json()
-                    if "error" in error_data and "No matches found" in str(
-                        error_data.get("error", {})
-                    ):
-                        return self._build_count_envelope([], limit)
-                except (ValueError, KeyError):
-                    pass
-            resp.raise_for_status()
-            results = resp.json().get("results", [])
-            return self._build_count_envelope(results, limit)
-        except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"API request failed: {str(e)}"}
+    def run(self, arguments):
+        drugs = arguments.get(self.DRUG_PARAMETER)
+        if not drugs:
+            return {
+                "status": "error",
+                "error": f"`{self.DRUG_PARAMETER}` list is required.",
+            }
+        if not isinstance(drugs, list):
+            return {
+                "status": "error",
+                "error": f"`{self.DRUG_PARAMETER}` must be a list of drug names.",
+            }
+        return super().run(arguments)
 
 
 @register_tool("FDADrugAdverseEventDetailTool")
@@ -1273,7 +1222,8 @@ class FDADrugInteractionDetailTool(BaseTool):
         # through the shared clause renderer so a multi-word name gets Lucene
         # quotes and is percent-encoded exactly once, on the finished query
         # below -- encoding it here too widened each clause to the name's first
-        # token (see the matching note in FDACountAdditiveReactionsTool.run).
+        # token (see the matching note in
+        # FDACountAdditiveReactionsTool._build_search_query).
         drug_parts = [
             _render_clause("patient.drug.medicinalproduct", drug) for drug in drugs
         ]
