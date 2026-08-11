@@ -38,6 +38,46 @@ _CLIENT_SIDE_FILTER_NOTE = (
 )
 
 
+def _order_ci_bounds(record: Dict[str, Any]) -> Dict[str, Any]:
+    """Swap ``ci_lower``/``ci_upper`` when the upstream record has them inverted.
+
+    GWAS Catalog derives these two numbers by splitting its own ``range``
+    string, and sometimes writes that string high-bound-first, so the values
+    arrive under field names that assert the opposite ordering. Measured live on
+    2026-08-11 over 1,172 associations (periodontitis MONDO_0005076, asthma
+    MONDO_0004979, BMI EFO_0004340), 4 were inverted -- all 4 in periodontitis,
+    where they are 4 of its 172 rows:
+
+        range=[0.07-0.03]  ci_lower=0.07  ci_upper=0.03  rs75933965 TCF7L2 p=6e-13
+        range=[0.06-0.02]  ci_lower=0.06  ci_upper=0.02  rs149290349 ZFP36L2
+        range=[0.1-0.06]   ci_lower=0.1   ci_upper=0.06  rs76895963 CCND2
+        range=[0.05-0.01]  ci_lower=0.05  ci_upper=0.01  rs77464186 ARAP1
+
+    The first is the TCF7L2 locus, a top periodontitis hit, so it lands in any
+    results table. Confirmed at
+    https://www.ebi.ac.uk/gwas/rest/api/v2/associations/105855749.
+
+    The bounds are ordered from the two NUMERIC fields; ``range`` is deliberately
+    never re-parsed. Its bounds are joined by a bare "-" that is also the minus
+    sign of a negative bound, so a ``split("-")`` would corrupt exactly the rows
+    it looks safe on: the same sweep found 3 genuinely negative ranges, e.g.
+    "[-0.00131-0.00151]", whose upstream ci_lower/ci_upper (-0.00131, 0.00151)
+    are already correct and already correctly ordered. ``range`` is therefore
+    passed through verbatim, and remains the record of what upstream sent.
+    """
+    lower, upper = record.get("ci_lower"), record.get("ci_upper")
+    # 15 of the 172 periodontitis rows have no bounds at all -- upstream sends
+    # range "-" or "[NR]" and ci_lower/ci_upper null -- so both must be numbers
+    # before they can be compared.
+    if (
+        isinstance(lower, (int, float))
+        and isinstance(upper, (int, float))
+        and lower > upper
+    ):
+        return {**record, "ci_lower": upper, "ci_upper": lower}
+    return record
+
+
 class GWASRESTTool(BaseTool):
     """Base class for GWAS Catalog REST API tools."""
 
@@ -461,6 +501,18 @@ class GWASRESTTool(BaseTool):
         if efo_id:
             result["note"] = self._empty_result_note(efo_id)
 
+    def _get_one(self, record_id: Any) -> Dict[str, Any]:
+        """Fetch one record by ID, with the same row repair the list path applies.
+
+        The three ``*ByID`` tools all fetch ``{endpoint}/{id}`` and return the
+        record verbatim, bypassing ``_extract_embedded_data`` -- so without a
+        shared seam here each of them has to remember ``_order_ci_bounds``
+        separately, and a fourth one added later would silently forget. Only
+        associations carry confidence bounds today; the repair is keyed on the
+        field pair, so it is a no-op for studies and SNPs.
+        """
+        return _order_ci_bounds(self._make_request(f"{self.endpoint}/{record_id}"))
+
     def _extract_embedded_data(
         self, data: Dict[str, Any], data_type: str
     ) -> Dict[str, Any]:
@@ -475,7 +527,9 @@ class GWASRESTTool(BaseTool):
 
         # Extract the main data from _embedded
         if "_embedded" in data and data_type in data["_embedded"]:
-            result["data"] = data["_embedded"][data_type]
+            result["data"] = [
+                _order_ci_bounds(row) for row in data["_embedded"][data_type]
+            ]
 
         # Extract pagination metadata
         if "page" in data:
@@ -851,8 +905,7 @@ class GWASAssociationByID(GWASRESTTool):
         if "association_id" not in arguments:
             return {"status": "error", "error": "association_id is required"}
 
-        association_id = arguments["association_id"]
-        return self._make_request(f"{self.endpoint}/{association_id}")
+        return self._get_one(arguments["association_id"])
 
 
 @register_tool("GWASStudyByID")
@@ -874,7 +927,7 @@ class GWASStudyByID(GWASRESTTool):
         if not study_id:
             return {"status": "error", "error": "study_id is required"}
 
-        return self._make_request(f"{self.endpoint}/{study_id}")
+        return self._get_one(study_id)
 
 
 @register_tool("GWASSNPByID")
@@ -890,8 +943,7 @@ class GWASSNPByID(GWASRESTTool):
         if "rs_id" not in arguments:
             return {"status": "error", "error": "rs_id is required"}
 
-        rs_id = arguments["rs_id"]
-        return self._make_request(f"{self.endpoint}/{rs_id}")
+        return self._get_one(arguments["rs_id"])
 
 
 # Specialized search tools based on common use cases from examples
