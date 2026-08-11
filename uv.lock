@@ -501,6 +501,24 @@ wheels = [
 ]
 
 [[package]]
+name = "boltz-api"
+version = "0.46.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "httpx" },
+    { name = "pydantic", version = "2.11.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.14'" },
+    { name = "pydantic", version = "2.13.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.14'" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fb/f9/8f70ea353a4df1801126f15a5585cbdfd0d56f3b53d8f1c4039ee94cab11/boltz_api-0.46.0.tar.gz", hash = "sha256:fddb10963bae5264406e5a2e19df7a0644ccbf2f6ba8b93c0d2176a4fcfebf09", size = 406209, upload-time = "2026-08-04T10:45:27.743Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/28/ce/5f1b2567564fd57c9f94d45e84ae103b28b568398317a7455552eeba30e2/boltz_api-0.46.0-py3-none-any.whl", hash = "sha256:36fbb8d03331d1516659950d6e0b4338594657dd499ecd25b9d140c1c8f84797", size = 339932, upload-time = "2026-08-04T10:45:26.584Z" },
+]
+
+[[package]]
 name = "botocore"
 version = "1.41.5"
 source = { registry = "https://pypi.org/simple" }
@@ -6225,6 +6243,7 @@ source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
     { name = "beautifulsoup4" },
+    { name = "boltz-api" },
     { name = "ddgs" },
     { name = "epam-indigo" },
     { name = "faiss-cpu" },
@@ -6406,6 +6425,7 @@ requires-dist = [
     { name = "aiohttp" },
     { name = "beautifulsoup4", specifier = ">=4.12.0" },
     { name = "biopython", marker = "extra == 'bioinformatics'", specifier = ">=1.80" },
+    { name = "boltz-api", specifier = ">=0.46.0,<0.47.0" },
     { name = "cellxgene-census", marker = "extra == 'singlecell'", specifier = ">=1.10.0" },
     { name = "ddgs", specifier = ">=9.0.0" },
     { name = "epam-indigo", specifier = ">=1.34.0" },
