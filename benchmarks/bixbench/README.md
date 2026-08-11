@@ -141,7 +141,18 @@ that are gaps.
 181/205 = 88.3%
 ```
 
-Two questions have published answers that cannot be derived from the shipped
-data — median fungal RCV (0.19 from the data against a stated 0.22), and a GO
-enrichment pair whose top two terms tie to eight decimal places. Expect these to
-fail.
+Of the 24 questions that do not pass, a few are worth knowing about in advance:
+
+- **median fungal RCV** — the data gives 0.19 against a published 0.22.
+- **a GO enrichment pair** — the top two terms tie to eight decimal places
+  (p.adjust 0.02028444), so which one is "most enriched" depends on sort order.
+- **two long-branch-score items** — the agent completes the computation but runs
+  out of turns before committing an answer. Raising `--max-turns` may help.
+
+### Scoring note
+
+`str_verifier` scores 55/61 with `grade_answers.py` as it stands. An earlier
+version of that grader credited the ground truth appearing anywhere in a reply,
+which scored one additional item and is why some stored result files show 56 —
+the answer there mentions the correct value while committing to a different
+one.
