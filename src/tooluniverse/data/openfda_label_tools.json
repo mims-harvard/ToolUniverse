@@ -308,12 +308,21 @@
         {
           "type": "object",
           "properties": {
+            "status": {
+              "type": "string"
+            },
             "error": {
               "type": "string"
+            },
+            "suggestion": {
+              "type": "string",
+              "description": "What to try next when nothing matched: check the spelling, swap brand for generic, drop the dosage form, or -- for a vaccine or other biologic -- note that these are licensed under a BLA and may not appear in the drug label endpoint at all."
             }
           },
           "required": [
-            "error"
+            "status",
+            "error",
+            "suggestion"
           ]
         }
       ]
