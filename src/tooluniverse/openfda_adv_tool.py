@@ -627,12 +627,24 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
         if limit_error:
             return {"status": "error", "error": limit_error}
 
-        # Build OR clause for multiple drugs
-        escaped = []
-        for d in drugs:
-            val = urllib.parse.quote(d, safe="")
-            escaped.append(f"patient.drug.medicinalproduct:{val}")
-        or_clause = "+OR+".join(escaped)
+        # Build OR clause for multiple drugs. The drug name goes through the
+        # shared clause renderer for the same reason every other value does: a
+        # multi-word name needs Lucene quotes, and the percent-encoding is done
+        # ONCE, below, on the finished query.
+        #
+        # Percent-encoding the name here as well used to double-encode it. The
+        # space in "SODIUM CHLORIDE" became %2520; openFDA decoded that once to
+        # the literal term "SODIUM%20CHLORIDE", whose analyzer split it and left
+        # the field bound to the first token alone. The query silently widened
+        # to every product whose name merely contains "SODIUM" -- and because it
+        # returned MORE data rather than none, nothing looked broken. Verified
+        # live against the API: medicinalproduct:"SODIUM CHLORIDE" counts
+        # 74,079 serious + 16,715 non-serious = 90,794, while the double-encoded
+        # form returns 605,620 + 173,560 = 779,180, exactly equal to the count
+        # for the bare term "SODIUM" -- an 8.6x over-count.
+        or_clause = "+OR+".join(
+            _render_clause("patient.drug.medicinalproduct", d) for d in drugs
+        )
 
         # Combine additional filters
         filters = []
@@ -1092,11 +1104,14 @@ class FDADrugInteractionDetailTool(BaseTool):
                 {"error": "medicinalproducts must be a list of at least 2 drug names"}
             ]
 
-        # Build AND clause for multiple drugs (all must be present)
-        drug_parts = []
-        for drug in drugs:
-            escaped_drug = urllib.parse.quote(drug, safe="")
-            drug_parts.append(f"patient.drug.medicinalproduct:{escaped_drug}")
+        # Build AND clause for multiple drugs (all must be present). Routed
+        # through the shared clause renderer so a multi-word name gets Lucene
+        # quotes and is percent-encoded exactly once, on the finished query
+        # below -- encoding it here too widened each clause to the name's first
+        # token (see the matching note in FDACountAdditiveReactionsTool.run).
+        drug_parts = [
+            _render_clause("patient.drug.medicinalproduct", drug) for drug in drugs
+        ]
 
         # Build additional filters
         filter_parts = []
