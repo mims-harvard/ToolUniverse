@@ -357,6 +357,28 @@ def _excipient_guard_term(search_fields):
     return None
 
 
+def _excipient_text_fields(search_fields):
+    """The non-name fields the guarded filter searches, i.e. the real match route.
+
+    A row the guard drops matched the query through one of these and NOT through
+    a resolved openFDA name -- that is the definition of the drop. Naming them is
+    what keeps the caller-facing note true after a broadening stage has replaced
+    the field set: the note used to assert ``spl_product_data_elements`` was the
+    route unconditionally, which is false for a Stage-B query that also searched
+    ``indications_and_usage`` / ``description``.
+    """
+    for field, value in (search_fields or {}).items():
+        if not isinstance(field, tuple):
+            continue
+        if "spl_product_data_elements" not in field:
+            continue
+        if not _RESOLVED_SEARCH_FIELDS.intersection(field):
+            continue
+        if isinstance(value, str) and value.strip():
+            return [f for f in field if f not in _RESOLVED_SEARCH_FIELDS]
+    return []
+
+
 def _resolved_identity_text(record):
     """Every name openFDA itself resolved for ``record``, folded and joined.
 
@@ -371,6 +393,30 @@ def _resolved_identity_text(record):
     parts = []
     for field in RESOLVED_IDENTITY_FIELDS:
         value = openfda.get(field)
+        if isinstance(value, str):
+            parts.append(value)
+        elif isinstance(value, list):
+            parts.extend(str(v) for v in value if v)
+    return " ".join(parts).lower()
+
+
+def _returned_row_identity_text(record):
+    """``_resolved_identity_text`` for a row in the shape the CALLER receives.
+
+    ``extract_nested_fields`` flattens ``openfda.brand_name`` & co into top-level
+    dotted keys, so the raw-shape reader above returns "" for every returned row
+    and would report the whole page as unresolved. Counting on the returned rows
+    -- rather than on the pre-limit ``kept`` list -- is what makes the note's
+    "N of the returned label(s)" literally checkable against ``results``.
+    """
+    text = _resolved_identity_text(record)
+    if text:
+        return text
+    if not isinstance(record, dict):
+        return ""
+    parts = []
+    for field in RESOLVED_IDENTITY_FIELDS:
+        value = record.get(f"openfda.{field}")
         if isinstance(value, str):
             parts.append(value)
         elif isinstance(value, list):
@@ -692,19 +738,28 @@ def search_openfda(
     # search the same blob and would otherwise re-admit exactly the rows the
     # first pass rejected. It is a pure local filter: no extra round-trip.
     excipient_term = _excipient_guard_term(orig_search_fields)
+    # The fields the caller's own query searches besides the resolved openFDA
+    # names. Broadening stages replace this per re-query (see `_run_search`).
+    excipient_default_fields = _excipient_text_fields(orig_search_fields)
     # Number of rows the guard removed from the payload currently held in
     # `response_data`. Overwritten, not accumulated, so it always describes the
     # payload actually returned rather than the sum of abandoned attempts.
     excipient_dropped = 0
-    # Rows the guard KEPT without being able to check them: their openFDA block
-    # is empty, so there is no resolved identity to compare the query against.
-    # Keeping them is deliberate (it is what preserves the denosumab recall),
-    # but it means a kept row can still be an unrelated product that merely
-    # lists the queried name in its ingredient blob -- so the count is carried
-    # into the note rather than left for the caller to discover.
-    excipient_unchecked = 0
+    # The fields through which the dropped rows actually matched, for the payload
+    # currently held. Overwritten per payload for the same reason.
+    excipient_matched_via = list(excipient_default_fields)
+    # Whether the `meta.total` correction below is EXACT. It is exact only when
+    # the page the guard inspected covered the entire result set; otherwise only
+    # this page's drops are observable and the corrected number is an upper
+    # bound. The note has to say which, because the two differ by 2.3x on a real
+    # query ({"drug_name": "albumin human", "limit": 10} reported 37 against a
+    # true post-guard total of 16).
+    excipient_total_exact = True
+    excipient_total_upstream = None
+    excipient_total_corrected = None
+    excipient_page_rows = 0
 
-    def _guard_excipients(payload):
+    def _guard_excipients(payload, text_fields=None):
         """Drop excipient-only matches from an openFDA payload.
 
         When that empties the payload it is turned into openFDA's own NOT_FOUND
@@ -715,7 +770,9 @@ def search_openfda(
         (2 labels, no boxed warning, warnings_and_cautions present) instead of a
         dead end.
         """
-        nonlocal excipient_dropped, excipient_unchecked
+        nonlocal excipient_dropped, excipient_matched_via
+        nonlocal excipient_total_exact, excipient_total_upstream
+        nonlocal excipient_total_corrected, excipient_page_rows
         if not excipient_term or not isinstance(payload, dict):
             return payload
         rows = payload.get("results")
@@ -723,7 +780,11 @@ def search_openfda(
             return payload
         kept, dropped = _drop_excipient_matches(rows, excipient_term)
         excipient_dropped = dropped
-        excipient_unchecked = sum(1 for r in kept if not _resolved_identity_text(r))
+        excipient_matched_via = list(text_fields or excipient_default_fields)
+        excipient_total_exact = True
+        excipient_total_upstream = None
+        excipient_total_corrected = None
+        excipient_page_rows = len(rows)
         if not dropped:
             return payload
         if not kept:
@@ -732,16 +793,24 @@ def search_openfda(
         payload["results"] = kept
         # Keep `meta.total` describing the answer rather than the raw upstream
         # hit count: reporting "3 labels" for Albuminex when one of them is a
-        # docetaxel product is the same misstatement in smaller print. Only this
-        # page's drops are observable, so the correction is a lower bound on the
-        # page and exact whenever the whole result set fits in one page.
+        # docetaxel product is the same misstatement in smaller print.
+        #
+        # Only THIS page's drops are observable, so the subtraction is exact
+        # only when the page held the whole result set; otherwise it is an upper
+        # bound. Record which case this is so `_attach_notes` can say so instead
+        # of asserting a correctness the number does not have.
         meta = payload.get("meta")
         results_meta = meta.get("results") if isinstance(meta, dict) else None
         if isinstance(results_meta, dict) and isinstance(
             results_meta.get("total"), int
         ):
+            total = results_meta["total"]
+            skip = results_meta.get("skip") or 0
+            excipient_total_upstream = total
+            excipient_total_exact = not skip and len(rows) >= total
             results_meta = dict(results_meta)
-            results_meta["total"] = max(results_meta["total"] - dropped, len(kept))
+            results_meta["total"] = max(total - dropped, len(kept))
+            excipient_total_corrected = results_meta["total"]
             meta = dict(meta)
             meta["results"] = results_meta
             payload["meta"] = meta
@@ -873,7 +942,11 @@ def search_openfda(
             return search_str
         return search_str + "+AND+(" + "+OR+".join(f"_exists_:{e}" for e in ex) + ")"
 
-    def _run_search(search: str, limit_override: int | None = None) -> dict | None:
+    def _run_search(
+        search: str,
+        limit_override: int | None = None,
+        text_fields: list[str] | None = None,
+    ) -> dict | None:
         p = {k: v for k, v in params.items() if k != "search"}
         p["search"] = search
         if limit_override is not None:
@@ -890,7 +963,7 @@ def search_openfda(
             url += f"&api_key={api_key}"
         resp = requests.get(url)
         try:
-            return _guard_excipients(resp.json())
+            return _guard_excipients(resp.json(), text_fields=text_fields)
         except Exception:
             return {
                 "status": "error",
@@ -1048,7 +1121,14 @@ def search_openfda(
             per_field = [f"{f}:({term_expr})" for f in fields_b]
             search_b = _guarded("(" + "+OR+".join(per_field) + ")", set(fields_b))
             tmp = _run_search(
-                search_b, limit_override=max(int(params.get("limit") or 0), 25)
+                search_b,
+                limit_override=max(int(params.get("limit") or 0), 25),
+                # This stage searches MORE than the ingredient blob, so a row the
+                # excipient guard drops here may have matched
+                # `indications_and_usage` / `description` instead. Hand the real
+                # field set to the guard or its note names the wrong route and
+                # sends the reader to a field that does not contain the term.
+                text_fields=[f for f in fields_b if f not in _RESOLVED_SEARCH_FIELDS],
             )
             if isinstance(tmp, dict) and "error" not in tmp:
                 response_data = tmp
@@ -1189,20 +1269,55 @@ def search_openfda(
                 except Exception:
                     pass
 
+    def _excipient_total_sentence():
+        """State what the guard did to ``meta.total`` -- and how far to trust it.
+
+        The subtraction only ever sees the rows on the page it was handed, so on
+        a result set that spans pages the corrected number is an UPPER BOUND, not
+        a count. Asserting "reduced accordingly" in that case is the same class
+        of over-claim the guard exists to remove, one level up: measured live,
+        ``{"drug_name": "albumin human", "limit": 10}`` reported meta.total 37
+        against a true post-guard total of 16.
+        """
+        if excipient_total_corrected is None:
+            # openFDA sent no usable `meta.results.total`; nothing was corrected,
+            # so nothing may be claimed about it.
+            return ""
+        if excipient_total_exact:
+            return (
+                f" meta.total was reduced accordingly, to {excipient_total_corrected}."
+            )
+        return (
+            f" meta.total ({excipient_total_corrected}) was reduced by the "
+            f"{excipient_dropped} drop(s) visible on THIS page only -- openFDA "
+            f"reported {excipient_total_upstream} hit(s) and this page carried "
+            f"{excipient_page_rows} row(s), so the rest of the result set was "
+            f"never inspected. Treat meta.total as an UPPER BOUND on the "
+            f"post-filter total, not an exact count; raise 'limit' until the "
+            f"whole result set fits on one page to get an exact number."
+        )
+
     def _attach_notes(out):
         """Put every caveat under the existing ``note`` key, none overwriting another."""
         parts = []
         if fallback_note:
             parts.append(fallback_note)
+        # The fields the guarded query actually searched. Naming them, rather
+        # than hard-coding `spl_product_data_elements`, is what keeps this true
+        # after a broadening stage: `FDA_get_child_safety_info_by_drug_name
+        # {"drug_name": "minocycline"}` searches indications_and_usage and
+        # description as well, and none of its returned rows contains
+        # "minocycline" in the ingredient blob the old wording named.
+        route = ", ".join(excipient_matched_via or ["spl_product_data_elements"])
         if excipient_dropped:
             parts.append(
                 f"{excipient_dropped} label(s) matched '{excipient_term}' only "
-                f"through the product/ingredient data "
-                f"(spl_product_data_elements) while their own openFDA brand / "
+                f"through the label text searched ({route}) -- not through a "
+                f"resolved product name -- while their own openFDA brand / "
                 f"generic / substance names identify a DIFFERENT product -- a "
                 f"combination or co-packaged product that merely contains "
-                f"'{excipient_term}' as an ingredient. Those rows were dropped "
-                f"and meta.total reduced accordingly."
+                f"'{excipient_term}' as an ingredient. Those rows were dropped."
+                + _excipient_total_sentence()
             )
         # State the limit of the guard, but only once it has actually caught
         # contamination on this query: a row whose openFDA block is empty has no
@@ -1217,15 +1332,29 @@ def search_openfda(
         # is returned would fire on nearly every clean lookup and train the
         # reader to skip the note, which is how the caveat stops being read on
         # the queries that need it.
+        #
+        # Counted over the rows in THIS payload, not over the guard's pre-limit
+        # `kept` list: `extracted_results` is truncated by the caller's `limit`
+        # after the guard runs, so the pre-limit count produced sentences like
+        # "12 of the returned label(s)" on a response holding 3. The phrase says
+        # "of the returned label(s)", so it has to be counted on them.
+        excipient_unchecked = 0
+        if excipient_dropped:
+            returned_rows = out.get("results")
+            if isinstance(returned_rows, list):
+                excipient_unchecked = sum(
+                    1 for r in returned_rows if not _returned_row_identity_text(r)
+                )
         if excipient_dropped and excipient_unchecked:
             parts.append(
-                f"{excipient_unchecked} of the returned label(s) carry an "
+                f"{excipient_unchecked} of the {len(out.get('results') or [])} "
+                f"returned label(s) carry an "
                 f"empty/unresolved openFDA name block, so the check above "
                 f"could NOT be applied to them: they are kept because an "
                 f"unresolved block is also how genuine products of "
                 f"'{excipient_term}' appear, but a kept row may still be an "
                 f"unrelated product that merely lists '{excipient_term}' among "
-                f"its ingredients. Read spl_product_data_elements on each such "
+                f"its ingredients. Read {route} on each such "
                 f"row before treating it as data about '{excipient_term}'."
             )
         if parts:
@@ -1486,9 +1615,25 @@ def search_openfda(
         }
     )
     if deduplicated:
+        # Two caveats in one payload must not contradict each other. When the
+        # excipient guard has already rewritten `meta.total`, calling it "the
+        # upstream hit count before local processing" is false -- and it is
+        # false in exactly the payload that also carries the guard's own note
+        # saying the number WAS changed. Say which of the two it is.
+        if excipient_dropped and excipient_total_corrected is not None:
+            total_clause = (
+                f"meta.total ({meta_info.get('total')}) is openFDA's hit count "
+                f"ALREADY reduced by the {excipient_dropped} excipient-only "
+                f"row(s) described in 'note' above -- it is not the raw upstream "
+                f"count (openFDA reported {excipient_total_upstream}); "
+            )
+        else:
+            total_clause = (
+                f"meta.total ({meta_info.get('total')}) is openFDA's upstream hit "
+                f"count before local processing; "
+            )
         out["dedup_note"] = (
-            f"meta.total ({meta_info.get('total')}) is openFDA's upstream hit "
-            f"count before local processing; 'results' holds {len(extracted_results)} "
+            f"{total_clause}'results' holds {len(extracted_results)} "
             f"row(s) after {duplicates_removed} byte-identical duplicate label(s) "
             f"were dropped and the caller's limit was applied. Deduplication runs "
             f"per request on the records fetched for that request, so paging with "

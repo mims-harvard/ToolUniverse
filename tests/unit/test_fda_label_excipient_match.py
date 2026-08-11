@@ -262,6 +262,37 @@ def _fake_get_for(corpus):
     return _fake_get
 
 
+def _paged_fake_get_for(corpus):
+    """Like ``_fake_get_for`` but HONOURS ``limit`` / ``skip``, so a set can page.
+
+    ``_fake_get_for`` hands back every hit and reports ``limit: 100`` whatever
+    was asked, which makes the guard's ``meta.total`` correction exact by
+    construction -- and the case where it is NOT exact is the one that produced
+    a 2.3x overstatement live (``{"drug_name": "albumin human", "limit": 10}``
+    reported 37 against a true post-guard total of 16). Pinning that case needs
+    a transport that can actually return a window of a larger result set.
+    """
+
+    def _fake_get(url, *args, **kwargs):
+        query = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
+        search = query.get("search", [""])[0]
+        limit = int(query.get("limit", ["100"])[0])
+        skip = int(query.get("skip", ["0"])[0])
+        hits = [r for r in corpus if _matches(r, search)]
+        page = hits[skip : skip + limit]
+        payload = (
+            {
+                "meta": {"results": {"skip": skip, "limit": limit, "total": len(hits)}},
+                "results": page,
+            }
+            if page
+            else NOT_FOUND
+        )
+        return SimpleNamespace(status_code=200 if page else 404, json=lambda: payload)
+
+    return _fake_get
+
+
 @cache
 def _configs():
     return tuple(json.loads(CONFIG_PATH.read_text()))
@@ -280,6 +311,13 @@ def _run(tool_name, drug_name, corpus):
         "tooluniverse.openfda_tool.requests.get", side_effect=_fake_get_for(corpus)
     ):
         return tool.run({"drug_name": drug_name, "limit": 50})
+
+
+def _run_args(tool_name, arguments, corpus, fake=_fake_get_for):
+    """``_run`` with the caller's own arguments and a choice of fake transport."""
+    tool = FDADrugLabelTool(_shipped_config(tool_name))
+    with patch("tooluniverse.openfda_tool.requests.get", side_effect=fake(corpus)):
+        return tool.run(arguments)
 
 
 # --------------------------------------------------------------------------
@@ -515,6 +553,268 @@ def test_a_contradicted_identity_is_dropped_and_an_absent_one_is_not():
 def test_an_empty_query_never_drops_anything():
     rows = [{"openfda": {"brand_name": ["ANYTHING"]}}]
     assert _drop_excipient_matches(rows, "   ") == (rows, 0)
+
+
+# --------------------------------------------------------------------------
+# The disclosure note itself.
+#
+# The guard's behaviour was pinned above from the day it shipped; the SENTENCE
+# it emits was not, and that is where the next four defects were found -- every
+# one of them an assertion the payload does not support. A note is a
+# caller-visible contract exactly like the rows are, so it gets the same
+# treatment: assert what the words claim, against the numbers in the very same
+# response.
+# --------------------------------------------------------------------------
+
+CHILD_TOOL = "FDA_get_child_safety_info_by_drug_name"
+
+_UNCHECKED_CLAIM = re.compile(r"(\d+) of the (\d+) returned label\(s\)")
+
+
+def _albumin_product(n):
+    """A genuine albumin product: its own resolved names say ALBUMIN HUMAN."""
+    return {
+        "openfda": {
+            "brand_name": [f"ALBUGEN-{n}"],
+            "generic_name": ["ALBUMIN HUMAN"],
+            "substance_name": ["ALBUMIN HUMAN"],
+        },
+        "spl_product_data_elements": [f"ALBUGEN-{n} Albumin Human Sodium Chloride"],
+        "boxed_warning": [f"WARNING: hypervolemia risk, ALBUGEN-{n}."],
+    }
+
+
+def _albumin_excipient_carrier(n):
+    """A different drug that merely co-packages albumin as a diluent."""
+    return {
+        "openfda": {
+            "brand_name": [f"CARRIER-{n}"],
+            "generic_name": [f"DOCETAXEL-{n}"],
+            "substance_name": ["DOCETAXEL ANHYDROUS"],
+        },
+        "spl_product_data_elements": [
+            f"CARRIER-{n} docetaxel ALBUMINEX Albumin Human CAPRYLIC ACID"
+        ],
+        "boxed_warning": [f"WARNING: TOXIC DEATHS, CARRIER-{n}."],
+    }
+
+
+# 12 hits: 4 genuine, 8 excipient-only. Interleaved so that ANY page carries
+# both kinds -- a page of only one kind would not exercise the arithmetic.
+PAGED_ALBUMIN_CORPUS = [
+    _albumin_excipient_carrier(1),
+    _albumin_product(1),
+    _albumin_excipient_carrier(2),
+    _albumin_excipient_carrier(3),
+    _albumin_product(2),
+    _albumin_excipient_carrier(4),
+    _albumin_excipient_carrier(5),
+    _albumin_excipient_carrier(6),
+    _albumin_product(3),
+    _albumin_excipient_carrier(7),
+    _albumin_excipient_carrier(8),
+    _albumin_product(4),
+]
+
+
+def test_meta_total_is_exact_when_the_whole_result_set_fits_on_one_page():
+    """The only case in which "reduced accordingly" is a true statement."""
+    result = _run_args(
+        BOXED_TOOL,
+        {"drug_name": "albumin human", "limit": 50},
+        PAGED_ALBUMIN_CORPUS,
+        fake=_paged_fake_get_for,
+    )
+
+    assert result["result_count"] == 4
+    assert result["meta"]["total"] == 4
+    # Exactness is checkable by the caller precisely because the two agree.
+    assert result["meta"]["total"] == result["result_count"]
+    assert "reduced accordingly" in result["note"]
+    assert "UPPER BOUND" not in result["note"]
+
+
+def test_a_page_local_meta_total_is_declared_an_upper_bound_not_a_correction():
+    """The 2.3x overstatement, and the sentence that must accompany it.
+
+    Only the rows on the requested page can be inspected, so subtracting this
+    page's drops from openFDA's whole-set total leaves a number that is larger
+    than the truth -- here 9 against a true post-guard total of 4. That is
+    defensible only if the response SAYS so; the previous wording asserted the
+    total had been "reduced accordingly", which is the same class of over-claim
+    the guard exists to remove, one level up.
+    """
+    result = _run_args(
+        BOXED_TOOL,
+        {"drug_name": "albumin human", "limit": 5},
+        PAGED_ALBUMIN_CORPUS,
+        fake=_paged_fake_get_for,
+    )
+
+    # Page of 5 = 3 excipient carriers + 2 genuine products.
+    assert result["result_count"] == 2
+    assert result["meta"]["total"] == 9  # 12 upstream - 3 drops seen on THIS page
+    assert result["meta"]["total"] != 4  # ... and the truth is 4, from the test above
+
+    note = result["note"]
+    assert "UPPER BOUND" in note
+    assert "reduced accordingly" not in note
+    # The reader is given the two numbers that make the bound auditable: what
+    # openFDA reported, and how much of it was actually looked at.
+    assert "12 hit(s)" in note
+    assert "5 row(s)" in note
+
+
+def test_the_guard_note_and_the_dedup_note_never_contradict_each_other():
+    """Two caveats in one payload, one of which used to deny the other.
+
+    ``dedup_note`` said "meta.total (2) is openFDA's upstream hit count before
+    local processing" in the very same Albuminex response whose ``note`` said
+    the total had been reduced by the guard. Upstream was 3.
+    """
+    result = _run_args(
+        CHILD_TOOL,
+        {"drug_name": "minocycline", "limit": 3},
+        MINOCYCLINE_CORPUS,
+    )
+
+    note, dedup_note = result["note"], result["dedup_note"]
+    assert "Those rows were dropped" in note  # the guard did modify meta.total
+    assert "upstream hit count before local processing" not in dedup_note
+    assert "ALREADY reduced" in dedup_note
+    # Both sentences quote the same post-guard number.
+    assert f"meta.total ({result['meta']['total']})" in dedup_note
+    assert str(result["meta"]["total"]) in note
+
+
+def test_a_clean_lookup_emits_no_caveat_at_all():
+    """The caveat is gated on the guard having caught something.
+
+    An unresolved ``openfda`` block is the NORMAL shape for a large minority of
+    genuine labels -- 3 of the 6 denosumab records here, 6 of the 25 live. Firing
+    the "could NOT be applied" warning whenever one is returned would put it on
+    nearly every clean lookup, which is how a caveat stops being read on the
+    queries that need it.
+    """
+    result = _run_args(
+        WARNINGS_TOOL, {"drug_name": "denosumab", "limit": 50}, DENOSUMAB_CORPUS
+    )
+
+    assert result["result_count"] == 6
+    assert "note" not in result
+    assert "dedup_note" not in result
+    assert "could NOT be applied" not in _all_text(result)
+
+
+# --------------------------------------------------------------------------
+# A minocycline-shaped corpus: nothing is NAMED minocycline, so the query is
+# broadened past the ingredient blob into `indications_and_usage` /
+# `description`, and the surviving rows contain the term in neither the blob nor
+# any resolved name.
+# --------------------------------------------------------------------------
+
+KEEP_OUT = "Keep out of reach of children."
+
+
+def _mentions_minocycline_but_is_not(n):
+    return {
+        "openfda": {
+            "brand_name": [f"ZINC LOZENGE {n}"],
+            "generic_name": ["ZINC GLUCONATE"],
+            "substance_name": ["ZINC GLUCONATE"],
+        },
+        "spl_product_data_elements": [f"Zinc Lozenge {n} ZINC GLUCONATE SUCROSE"],
+        "description": [
+            f"Lozenge {n} was compared with minocycline in periodontal therapy."
+        ],
+        "keep_out_of_reach_of_children": [f"{KEEP_OUT} Zinc {n}."],
+    }
+
+
+def _unresolved_minocycline_mention(n):
+    return {
+        # The unresolved shape: nothing can contradict the text match, so the
+        # guard keeps the row and must say it could not check it.
+        "openfda": {},
+        "spl_product_data_elements": [f"UNRESOLVED-{n} tablet HYPROMELLOSE"],
+        "indications_and_usage": [
+            f"Product {n} is indicated as an adjunct to minocycline therapy."
+        ],
+        "keep_out_of_reach_of_children": [f"{KEEP_OUT} Product {n}."],
+    }
+
+
+MINOCYCLINE_CORPUS = [
+    _mentions_minocycline_but_is_not(1),
+    _unresolved_minocycline_mention(1),
+    _mentions_minocycline_but_is_not(2),
+    _unresolved_minocycline_mention(2),
+    _mentions_minocycline_but_is_not(3),
+    _unresolved_minocycline_mention(3),
+    _mentions_minocycline_but_is_not(4),
+    _unresolved_minocycline_mention(4),
+    _mentions_minocycline_but_is_not(5),
+]
+
+
+def test_the_unchecked_count_describes_the_rows_actually_returned():
+    """The unchecked count was taken BEFORE the caller's limit truncated rows.
+
+    ``_guard_excipients`` summed over its pre-limit ``kept`` list while
+    ``extracted_results`` is truncated to the caller's ``limit`` afterwards, so
+    the response said "12 of the returned label(s)" while holding 3. The phrase
+    names the returned rows, so it has to be counted on them.
+    """
+    result = _run_args(
+        CHILD_TOOL, {"drug_name": "minocycline", "limit": 3}, MINOCYCLINE_CORPUS
+    )
+
+    assert result["result_count"] == 3  # truncated from the 4 rows the guard kept
+    claim = _UNCHECKED_CLAIM.search(result["note"])
+    assert claim, result["note"]
+    unchecked, returned = int(claim.group(1)), int(claim.group(2))
+    assert returned == result["result_count"]
+    assert unchecked <= result["result_count"]
+    # ... and it is not merely a coincidence of small numbers: the pre-limit
+    # count was 4, which must not be what the sentence reports.
+    assert unchecked == 3
+
+
+def test_the_note_names_the_fields_that_were_actually_searched():
+    """A reader who follows the instruction has to find the term where it says.
+
+    The note used to assert ``spl_product_data_elements`` as the match route
+    unconditionally. On a broadened query it is false: none of the returned rows
+    carries 'minocycline' in the ingredient blob -- they matched
+    ``indications_and_usage`` / ``description``.
+    """
+    result = _run_args(
+        CHILD_TOOL, {"drug_name": "minocycline", "limit": 3}, MINOCYCLINE_CORPUS
+    )
+
+    note = result["note"]
+    for row in result["results"]:
+        assert "minocycline" not in _blob(row).lower()
+    for field in ("spl_product_data_elements", "indications_and_usage", "description"):
+        assert field in note
+    # The instruction must not send the reader to the blob alone.
+    assert "Read spl_product_data_elements on each" not in note
+
+
+def test_the_note_flags_the_unchecked_rows_without_vouching_for_them():
+    """It must state the limit of the check, and claim nothing beyond it."""
+    result = _run_args(
+        CHILD_TOOL, {"drug_name": "minocycline", "limit": 3}, MINOCYCLINE_CORPUS
+    )
+
+    note = result["note"]
+    assert "could NOT be applied" in note
+    assert "may still be an unrelated product" in note
+    # Nowhere may the response assert that what it returned describes the drug
+    # asked for -- that is exactly false here, where every surviving row is an
+    # unresolved label that merely mentions minocycline.
+    assert re.search(r"describes[^.]*itself", note) is None
+    assert re.search(r"describes[^.]*itself", _all_text(result)) is None
 
 
 @pytest.mark.parametrize(
