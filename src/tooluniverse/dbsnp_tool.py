@@ -58,7 +58,22 @@ class dbSNPGetVariantByRsID(dbSNPRESTTool):
                         "refsnp_id": f"rs{rsid}",
                         "snp_id": variant_data.get("snp_id"),
                         "chromosome": variant_data.get("chr"),
+                        # esummary's `chrpos` is the coordinate on dbSNP's
+                        # CURRENT assembly (GRCh38) and `chrpos_prev_assm` the
+                        # one on the PREVIOUS assembly (GRCh37); confirmed live
+                        # for rs429358, whose chrpos 19:44908684 is the textbook
+                        # GRCh38 APOE coordinate and whose chrpos_prev_assm
+                        # 19:45411941 is the textbook GRCh37 one. `position` was
+                        # historically emitted unlabelled, with the GRCh37
+                        # coordinate dropped entirely -- for rs80338939 the two
+                        # differ by ~574 kb, so a GRCh37 pipeline could not tell
+                        # which build it had received. `position` keeps its
+                        # original value and type; the assembly label and the
+                        # explicitly-named coordinates below are additive.
                         "position": variant_data.get("chrpos"),
+                        "assembly": "GRCh38",
+                        "position_grch38": variant_data.get("chrpos"),
+                        "position_grch37": variant_data.get("chrpos_prev_assm"),
                         "allele": variant_data.get("allele"),
                         "snp_class": variant_data.get("snp_class"),
                         "clinical_significance": variant_data.get(
@@ -184,20 +199,38 @@ class dbSNPGetFrequencies(dbSNPRESTTool):
                         study = maf.get("study", "Unknown")
                         freq_str = maf.get("freq", "")
 
-                        # Parse frequency string (e.g., "C=0.1505591/754")
+                        # Parse frequency string (e.g., "C=0.1505591/754").
+                        # The `/N` token is the count of observed ALLELES
+                        # (chromosomes) carrying `allele`, NOT a number of
+                        # individuals. Verified arithmetically on two rsIDs:
+                        # 1000 Genomes phase 3 is 2504 samples = 5008 alleles,
+                        # and 0.1505591 x 5008 = 754 (rs429358) while
+                        # 0.002396 x 5008 = 12 (rs80338939) -- multiplying by
+                        # 2504 instead gives 377 and 6, matching neither token.
+                        # TOPMED freeze 8 (132,345 samples = 264,690 alleles)
+                        # confirms it independently: 0.1553138 x 264690 = 41110.
+                        # Emitting this as `sample_count` understated study
+                        # power by ~2x and, read as individuals, made a rare
+                        # variant look like it rested on a dozen people rather
+                        # than a dozen carrier chromosomes out of 5008.
                         if "=" in freq_str and "/" in freq_str:
                             try:
                                 allele_part, count_part = freq_str.split("/")
                                 allele = allele_part.split("=")[0]
                                 frequency = float(allele_part.split("=")[1])
-                                sample_count = int(count_part)
+                                allele_count = int(count_part)
 
                                 frequencies.append(
                                     {
                                         "study": study,
                                         "allele": allele,
                                         "frequency": frequency,
-                                        "sample_count": sample_count,
+                                        # Correctly-named field.
+                                        "allele_count": allele_count,
+                                        # Legacy misnomer, retained verbatim
+                                        # for backwards compatibility. Same
+                                        # value as `allele_count`.
+                                        "sample_count": allele_count,
                                     }
                                 )
                             except (ValueError, IndexError):
