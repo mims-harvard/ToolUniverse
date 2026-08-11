@@ -476,22 +476,24 @@ def search_openfda(
     params["sort"] = params.get("sort", sort)
     params["skip"] = params.get("skip", skip)
     params["count"] = params.get("count", count)
+    # The `_exists_:<section>` clause appended below, remembered verbatim so the
+    # NOT_FOUND path can re-run the very same query with it removed. That probe
+    # is what tells "no such drug" apart from "drug is right, section absent" --
+    # two situations that are indistinguishable from the NOT_FOUND alone, and
+    # which need opposite advice.
+    section_exists_clause = ""
     if exists is not None:
         if isinstance(exists, str):
             exists = [exists]
         if "search" in params:
-            if exist_option == "AND":
-                params["search"] += (
+            if exist_option in ("AND", "OR"):
+                joiner = f"+{exist_option}+"
+                section_exists_clause = (
                     "+AND+("
-                    + "+AND+".join([f"_exists_:{keyword}" for keyword in exists])
+                    + joiner.join([f"_exists_:{keyword}" for keyword in exists])
                     + ")"
                 )
-            elif exist_option == "OR":
-                params["search"] += (
-                    "+AND+("
-                    + "+OR+".join([f"_exists_:{keyword}" for keyword in exists])
-                    + ")"
-                )
+                params["search"] += section_exists_clause
         else:
             if exist_option == "AND":
                 params["search"] = "+AND+".join(
@@ -652,6 +654,22 @@ def search_openfda(
             cleaned.append(e)
         return cleaned
 
+    def _guarded(search_str: str, allowed_fields: set[str]) -> str:
+        """Re-apply the caller's `_exists_` guard to a broadened search string.
+
+        Every broadening stage builds its query from a different field set, so
+        the guard has to be re-appended per stage rather than centrally. Stage C
+        used to skip this step, which made it answer a different question --
+        "labels mentioning X" rather than "labels mentioning X that have the
+        requested section" -- and report that broader query's hit count as the
+        answer. Routing all stages through one function is what stops the next
+        stage from forgetting it too.
+        """
+        ex = _filter_exists(exists, allowed_fields)
+        if not ex:
+            return search_str
+        return search_str + "+AND+(" + "+OR+".join(f"_exists_:{e}" for e in ex) + ")"
+
     def _run_search(search: str, limit_override: int | None = None) -> dict | None:
         p = {k: v for k, v in params.items() if k != "search"}
         p["search"] = search
@@ -790,13 +808,10 @@ def search_openfda(
             per_field = []
             for f in orig_fields_flat:
                 per_field.append(f"{f}:({term_expr})")
-            search_a = "(" + "+OR+".join(per_field) + ")"
             # Respect exists only for fields we are actually using in this stage.
-            ex_a = _filter_exists(exists, set(orig_fields_flat))
-            if ex_a:
-                search_a += (
-                    "+AND+(" + "+OR+".join([f"_exists_:{e}" for e in ex_a]) + ")"
-                )
+            search_a = _guarded(
+                "(" + "+OR+".join(per_field) + ")", set(orig_fields_flat)
+            )
             tmp = _run_search(
                 search_a, limit_override=max(int(params.get("limit") or 0), 25)
             )
@@ -828,12 +843,7 @@ def search_openfda(
                 # Generic expansion for non-name tools
                 fields_b = list(orig_fields_flat) + ["clinical_studies"]
             per_field = [f"{f}:({term_expr})" for f in fields_b]
-            search_b = "(" + "+OR+".join(per_field) + ")"
-            ex_b = _filter_exists(exists, set(fields_b))
-            if ex_b:
-                search_b += (
-                    "+AND+(" + "+OR+".join([f"_exists_:{e}" for e in ex_b]) + ")"
-                )
+            search_b = _guarded("(" + "+OR+".join(per_field) + ")", set(fields_b))
             tmp = _run_search(
                 search_b, limit_override=max(int(params.get("limit") or 0), 25)
             )
@@ -930,8 +940,19 @@ def search_openfda(
                             raise RuntimeError(
                                 "No close-enough match after edit-distance filter"
                             )
-                        per_field = [f'spl_product_data_elements:"{m}"' for m in near]
-                        search_c = "(" + "+OR+".join(per_field) + ")"
+                        near_sorted = sorted(set(near))
+                        per_field = [
+                            f'spl_product_data_elements:"{m}"' for m in near_sorted
+                        ]
+                        # This stage used to skip `_guarded`, which is what made
+                        # it answer a broader question than the caller asked and
+                        # report that query's hit count as the answer: codeine
+                        # came back with meta.total=533 when only 524 labels in
+                        # all of openFDA have a `pharmacogenomics` section.
+                        search_c = _guarded(
+                            "(" + "+OR+".join(per_field) + ")",
+                            {"spl_product_data_elements"},
+                        )
                         tmp = _run_search(
                             search_c,
                             limit_override=max(int(params.get("limit") or 0), 25),
@@ -939,13 +960,29 @@ def search_openfda(
                         if isinstance(tmp, dict) and "error" not in tmp:
                             response_data = tmp
                             used_generic_fallback = True
-                            fallback_note = (
-                                f"No drug named '{term}' was found; showing "
-                                f"the closest-spelling candidate(s) "
-                                f"({', '.join(sorted(near))}) instead -- "
-                                f"verify the returned drug name matches what "
-                                f"you intended."
-                            )
+                            # A candidate equal to the input except for case is
+                            # not a spelling suggestion -- it is proof the name
+                            # was already correct, so saying "no drug named X was
+                            # found" sends the reader to fix a spelling that was
+                            # never wrong.
+                            if t_upper in near_sorted:
+                                fallback_note = (
+                                    f"'{term}' matched on the product data "
+                                    f"elements (ingredient) field rather than on "
+                                    f"brand/generic name, so results may include "
+                                    f"combination products that merely contain "
+                                    f"it -- check openfda.brand_name/"
+                                    f"openfda.generic_name on each row."
+                                )
+                            else:
+                                misspelled = [m for m in near_sorted if m != t_upper]
+                                fallback_note = (
+                                    f"No drug named '{term}' was found; showing "
+                                    f"the closest-spelling candidate(s) "
+                                    f"({', '.join(misspelled)}) instead -- "
+                                    f"verify the returned drug name matches what "
+                                    f"you intended."
+                                )
                 except Exception:
                     pass
 
@@ -968,43 +1005,40 @@ def search_openfda(
             if isinstance(requested_return_fields, list) and requested_return_fields:
                 section = requested_return_fields[0]
 
-            suggestion_parts = []
-            if is_abbrev_like:
-                suggestion_parts.append(
-                    "Try using the full generic/brand name instead of an abbreviation."
+            # Re-run the caller's own query with the `_exists_:<section>` guard
+            # removed. A hit means the drug name was never the problem -- the
+            # section simply does not exist on any of its labels -- and spelling
+            # advice would send the reader to fix something that is not broken.
+            section_hits = 0
+            sections_present = []
+            if section and section_exists_clause:
+                probe = _run_search(
+                    params["search"].replace(section_exists_clause, ""),
+                    limit_override=5,
                 )
-            if name_based:
-                suggestion_parts.append(
-                    "Try removing punctuation/hyphens, checking spelling, or using a longer drug name."
-                )
-            if section:
-                # `warnings_and_precautions` used to be suggested here. It is the
-                # printed heading, not an openFDA field -- it is not in openFDA's
-                # searchable-field list for drug/label and
-                # `search=_exists_:warnings_and_precautions` returns NOT_FOUND, so
-                # the suggestion could never work. Name the real sibling sections
-                # and the tools that return them instead.
-                siblings = LABEL_SECTION_SIBLINGS.get(section) or [
-                    "contraindications",
-                    "warnings_and_cautions",
-                ]
-                sibling_tools = [
-                    LABEL_SECTION_TOOLS[s] for s in siblings if s in LABEL_SECTION_TOOLS
-                ]
-                hint = (
-                    f"This label section ('{section}') may be missing for that "
-                    f"product -- FDA labels split this content by format, with "
-                    f"modern PLR labels using 'warnings_and_cautions' and legacy/"
-                    f"OTC labels using 'warnings'/'precautions'. Try a related "
-                    f"section: {', '.join(siblings)}."
-                )
-                if sibling_tools:
-                    hint += f" Corresponding tools: {', '.join(sibling_tools)}."
-                suggestion_parts.append(hint)
-            suggestion_parts.append(
-                "As a fallback, try searching label text fields (e.g., spl_product_data_elements) and then pivot to the desired section."
+                if isinstance(probe, dict) and "error" not in probe:
+                    section_hits = (
+                        probe.get("meta", {}).get("results", {}).get("total") or 0
+                    )
+                    for row in probe.get("results") or []:
+                        if not isinstance(row, dict):
+                            continue
+                        for key in LABEL_SECTION_TOOLS:
+                            # Truthiness, not key membership: openFDA can report a
+                            # section as explicitly null, and pointing the caller
+                            # at an empty section would repeat the very mistake
+                            # this message exists to correct.
+                            if row.get(key) and key not in sections_present:
+                                sections_present.append(key)
+
+            suggestion = _build_not_found_suggestion(
+                query_text=query_text,
+                section=section,
+                section_hits=section_hits,
+                sections_present=sections_present,
+                is_abbrev_like=is_abbrev_like,
+                name_based=name_based,
             )
-            suggestion = " ".join(suggestion_parts)
             return {
                 "status": "error",
                 "error": err,
@@ -1223,6 +1257,98 @@ def search_openfda(
     return out
 
 
+def _tools_for_sections(sections):
+    """Name the ToolUniverse tool that returns each section, order-preserving."""
+    tools = []
+    for section in sections:
+        tool = LABEL_SECTION_TOOLS.get(section)
+        if tool and tool not in tools:
+            tools.append(tool)
+    return tools
+
+
+def _build_not_found_suggestion(
+    query_text,
+    section,
+    section_hits,
+    sections_present,
+    is_abbrev_like,
+    name_based,
+):
+    """Advise the caller after a NOT_FOUND, based on WHY it was empty.
+
+    ``section_hits`` is the number of labels the drug name matched once the
+    ``_exists_:<section>`` guard was lifted. When it is non-zero the name was
+    never the problem and the requested section simply does not exist for that
+    drug -- advising a spelling check there sends the reader to fix something
+    that is not broken, and an empty answer on a section like
+    ``pharmacogenomics`` reads as "no concern" when the concern is merely filed
+    elsewhere on the label.
+    """
+    if section_hits:
+        hint = (
+            f"The name '{query_text}' is spelled correctly -- it matches "
+            f"{section_hits} openFDA label(s). What is missing is the "
+            f"'{section}' SECTION: none of those labels carries one, so "
+            f"there is nothing for this tool to return. Absence of the "
+            f"section is NOT evidence that the drug has no '{section}' "
+            f"concern -- FDA frequently files that content under a "
+            f"different section of the same label."
+        )
+        if sections_present:
+            hint += (
+                f" Labels sampled for this drug DO carry: "
+                f"{', '.join(sections_present)} -- retrieve that content with "
+                f"{', '.join(_tools_for_sections(sections_present))}."
+            )
+        return hint
+
+    parts = []
+    if is_abbrev_like:
+        parts.append(
+            "Try using the full generic/brand name instead of an abbreviation."
+        )
+    if name_based:
+        parts.append(
+            "Try removing punctuation/hyphens, checking spelling, or using a longer drug name."
+        )
+    if section:
+        # `warnings_and_precautions` used to be suggested here. It is the printed
+        # heading, not an openFDA field -- it is not in openFDA's searchable-field
+        # list for drug/label and `search=_exists_:warnings_and_precautions`
+        # returns NOT_FOUND, so the suggestion could never work. Name the real
+        # sibling sections and the tools that return them instead. Only sections
+        # with a known sibling get the PLR/legacy explanation: it is a fact about
+        # the warnings family, and asserting it of an unrelated section
+        # (pharmacogenomics, say) points the reader at sections that are not
+        # related to theirs at all.
+        siblings = LABEL_SECTION_SIBLINGS.get(section)
+        if siblings:
+            hint = (
+                f"This label section ('{section}') may be missing for that "
+                f"product -- FDA labels split this content by format, with "
+                f"modern PLR labels using 'warnings_and_cautions' and legacy/OTC "
+                f"labels using 'warnings'/'precautions'. Try a related section: "
+                f"{', '.join(siblings)}."
+            )
+            sibling_tools = _tools_for_sections(siblings)
+            if sibling_tools:
+                hint += f" Corresponding tools: {', '.join(sibling_tools)}."
+        else:
+            hint = (
+                f"This label section ('{section}') is absent from most FDA "
+                f"labels; a drug can have the underlying concern documented "
+                f"elsewhere on its label. Try "
+                f"FDA_get_boxed_warning_info_by_drug_name or "
+                f"FDA_get_warnings_by_drug_name."
+            )
+        parts.append(hint)
+    parts.append(
+        "As a fallback, try searching label text fields (e.g., spl_product_data_elements) and then pivot to the desired section."
+    )
+    return " ".join(parts)
+
+
 def _build_section_note(sibling_map, extracted_results):
     """Explain a null safety section that a sibling section actually carries.
 
@@ -1248,11 +1374,7 @@ def _build_section_note(sibling_map, extracted_results):
     if not found:
         return None
     requested = list(sibling_map.keys())
-    tools = []
-    for sib in found:
-        tool = LABEL_SECTION_TOOLS.get(sib)
-        if tool and tool not in tools:
-            tools.append(tool)
+    tools = _tools_for_sections(found)
     return (
         f"The requested label section(s) ({', '.join(requested)}) are absent "
         f"from {affected} of the {len(extracted_results)} returned label(s). "

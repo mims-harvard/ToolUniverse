@@ -13952,7 +13952,8 @@
                 "type": "array",
                 "items": {
                   "type": "string"
-                }
+                },
+                "description": "SPL section 12.5 (PHARMACOGENOMICS) of the label. Only 524 of openFDA's 261,639 drug labels carry this section at all (measured 2026-08-11), so most drugs return no rows. An empty result means ONLY that this one section is absent -- it is NOT evidence that the drug has no pharmacogenomic concern. Codeine (CYP2D6 ultrarapid metabolisers) and abacavir (HLA-B*57:01) are the two textbook pharmacogenomics drugs, both carry FDA boxed warnings driven by genotype, and neither has a pharmacogenomics section; their genotype risk is in the boxed warning instead."
               },
               "spl_product_data_elements": {
                 "type": [
@@ -13978,6 +13979,10 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "suggestion": {
+          "type": "string",
+          "description": "Present only when nothing was returned. Distinguishes the two reasons that can happen, because they need opposite responses: either the drug name matched no label (check the spelling), or the name matched fine and it is the pharmacogenomics SECTION that no label for that drug carries. In the second case it reports how many labels the name matched, states that the absent section is not evidence of no pharmacogenomic concern, and names the sections those labels DO carry together with the ToolUniverse tool that returns each -- typically FDA_get_boxed_warning_info_by_drug_name or FDA_get_warnings_by_drug_name."
         }
       }
     }
