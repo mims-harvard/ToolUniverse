@@ -12,6 +12,7 @@ default ~40 req/min anonymous rate limit (https://open.fda.gov/apis/authenticati
 """
 
 import os
+import re
 import requests
 from typing import Any
 
@@ -19,6 +20,18 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 FDA_LABEL_URL = "https://api.fda.gov/drug/label.json"
+
+# Evidence for the vaccine sentence below, measured on the live API: both
+# `openfda.generic_name.exact:*VACCINE*` and `openfda.generic_name:vaccine`
+# return nothing, and YF-VAX, TYPHIM VI, FLUZONE, SHINGRIX and GARDASIL are all
+# absent as brand names.
+_NO_MATCH_SUGGESTION = (
+    "Nothing matched this as a brand or generic name. Check the spelling, try "
+    "the generic name instead of the brand (or vice versa), or drop dosage form "
+    "and strength qualifiers. Note that vaccines and most other biologics are "
+    "licensed under a BLA and are not published on the openFDA drug label "
+    "endpoint at all."
+)
 
 # Placeholder values users sometimes leave in FDA_API_KEY; treat as "unset".
 _API_KEY_PLACEHOLDERS = {"none", "null", "your_fda_key_here", "your_key_here"}
@@ -62,6 +75,53 @@ _SECTION_FIELDS = (
     "clinical_pharmacology",
     "mechanism_of_action",
 )
+
+
+def _phrase(field: str, text: str) -> str:
+    """Bind `text` to `field` as a single quoted phrase.
+
+    The escaping is the point: an unescaped quote in `text` closes the phrase
+    early and turns the remainder into free-text terms OR-ed across the whole
+    document. Measured on the live API, `indications_and_usage:"pain"` matches
+    24,135 labels while `indications_and_usage:"pain" OR "x"` matches 57,661.
+    Every query built from caller-supplied text goes through here.
+    """
+    escaped = text.strip().replace("\\", "\\\\").replace('"', '\\"')
+    return f'{field}:"{escaped}"'
+
+
+def _name_queries(field: str, drug_name: str) -> list[str]:
+    """Build openFDA queries for `drug_name`, most precise first.
+
+    Every term stays bound to `field`, which is what keeps a miss a miss.
+    openFDA speaks Elasticsearch query_string syntax, where a bare field prefix
+    binds to the FIRST token only: `openfda.generic_name:yellow fever vaccine`
+    searches generic_name for "yellow", then searches the WHOLE document for
+    "fever" and "vaccine" and OR-s the three together. Measured on the live API
+    that matches 87,153 of the 261,639 labels in the corpus -- a third of it --
+    and its top hit is naproxen, so an unbound query cannot be used to look up
+    a drug by name.
+
+    Two bound forms are tried:
+
+    1. Exact phrase. Because openFDA analyses these name fields, a phrase also
+       covers salt forms -- "tofacitinib" matches "TOFACITINIB CITRATE" (29
+       labels, identical to the unquoted form) and "mefloquine" matches
+       "MEFLOQUINE HYDROCHLORIDE".
+    2. Every token AND-ed, each still bound to `field`. This recovers names
+       written with different connectors or token order -- "amoxicillin
+       clavulanate" finds the 166 "AMOXICILLIN AND CLAVULANATE POTASSIUM"
+       labels that the phrase form misses -- while still guaranteeing that a
+       hit contains all the search terms in the name field it matched. It is
+       skipped for a single token, where it is identical to the phrase query.
+    """
+    queries = [_phrase(field, drug_name)]
+    # Tokens come out of an alphanumeric-only split, so they need no escaping.
+    tokens = [t for t in re.split(r"[^0-9A-Za-z]+", drug_name) if t]
+    if len(tokens) > 1:
+        anded = " AND ".join(f'"{t}"' for t in tokens)
+        queries.append(f"{field}:({anded})")
+    return queries
 
 
 def _valid_api_key(value: Any) -> bool:
@@ -232,15 +292,14 @@ class FDALabelTool(BaseTool):
     def _query_drug_fields(
         self, drug_name: str, limit: int, max_chars: int | None = None
     ) -> tuple[list[dict] | None, list[str]]:
-        """Search generic_name then brand_name with quoted then unquoted fallback.
+        """Search generic_name then brand_name, exact phrase then all-tokens.
 
         Returns (extracted label results, truncated section names) on the first
-        match, or (None, []) if no results found. Quoted search finds exact
-        matches; unquoted fallback catches salt forms (e.g., "tofacitinib"
-        matching "TOFACITINIB CITRATE").
+        match, or (None, []) if no results found. See `_name_queries` for the
+        query forms and why every term has to stay bound to the name field.
         """
         for field in ("openfda.generic_name", "openfda.brand_name"):
-            for q in (f'{field}:"{drug_name}"', f"{field}:{drug_name}"):
+            for q in _name_queries(field, drug_name):
                 resp = requests.get(
                     FDA_LABEL_URL,
                     params=self._params(search=q, limit=limit),
@@ -271,7 +330,7 @@ class FDALabelTool(BaseTool):
 
         if drug_name:
             labels, truncated = self._query_drug_fields(drug_name, limit, max_chars)
-            return _disclose_truncation(
+            response = _disclose_truncation(
                 _ok(
                     labels or [],
                     query=drug_name,
@@ -281,8 +340,11 @@ class FDALabelTool(BaseTool):
                 truncated,
                 max_chars,
             )
+            if not labels:
+                response["suggestion"] = _NO_MATCH_SUGGESTION
+            return response
 
-        q = f'indications_and_usage:"{indication}"'
+        q = _phrase("indications_and_usage", indication)
         resp = requests.get(
             FDA_LABEL_URL,
             params=self._params(search=q, limit=limit),
@@ -319,7 +381,11 @@ class FDALabelTool(BaseTool):
         # otherwise the disclosure would name sections from discarded matches.
         results, _ = self._query_drug_fields(drug_name, limit=10, max_chars=None)
         if not results:
-            return {"status": "error", "error": f"No FDA label found for '{drug_name}'"}
+            return {
+                "status": "error",
+                "error": f"No FDA label found for '{drug_name}'",
+                "suggestion": _NO_MATCH_SUGGESTION,
+            }
 
         dn_upper = drug_name.upper()
 
