@@ -260,13 +260,23 @@ def test_all_69_official_sdk_operations_are_configured():
 
 @pytest.mark.unit
 def test_all_configs_are_valid_and_sdk_derived():
-    for config in _configs():
+    configs = _configs()
+    assert (
+        sum(config.get("mcp_schema_mode") == "passthrough" for config in configs) == 23
+    )
+    assert sum("api_key_info" in config for config in configs) == 1
+
+    for config in configs:
         assert len(config["name"]) <= 55
         assert config["type"] == "BoltzAPITool"
         assert config["required_api_keys"] == ["BOLTZ_API_KEY"]
         assert config["required_packages"] == ["boltz_api"]
         assert config["fields"]["sdk_version"] == "0.46.0"
         assert config["parameter"].get("additionalProperties") is False
+        if "$defs" in config["parameter"]:
+            assert config["mcp_schema_mode"] == "passthrough"
+        else:
+            assert "mcp_schema_mode" not in config
         assert "oneOf" in config["return_schema"]
         Draft202012Validator.check_schema(config["parameter"])
         Draft202012Validator.check_schema(config["return_schema"])
@@ -523,6 +533,25 @@ async def test_all_boltz_tools_are_exposed_over_mcp_with_exact_schema(
         serialized_schema = json.dumps(mcp_schema)
         for entity_type in {"protein", "rna", "dna", "ligand_smiles"}:
             assert f'"const": "{entity_type}"' in serialized_schema
+
+        invalid_result = await start_tool.run(
+            {
+                "input": {
+                    "entities": [
+                        {
+                            "type": "unsupported_entity",
+                            "value": "MKTIIALSYIFCLVFA",
+                            "chain_ids": ["A"],
+                        }
+                    ],
+                    "num_samples": 1,
+                },
+                "idempotency_key": "invalid-nested-mcp-input-001",
+            }
+        )
+        invalid_payload = json.loads(invalid_result.content[0].text)
+        assert invalid_payload["status"] == "error"
+        assert "Parameter validation failed" in invalid_payload["error"]
 
         server.tooluniverse.run_one_function = lambda call, stream_callback=None: {
             "status": "success",

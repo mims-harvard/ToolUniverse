@@ -84,6 +84,18 @@
     ]
   },
   {
+    "name": "BOLTZ_API_KEY",
+    "requirement": "required",
+    "type": "api_key",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://api.boltz.bio/",
+    "purpose": "Authenticate to the official hosted Boltz prediction and administration API.",
+    "without": "Official hosted Boltz API tools are unavailable; the existing self-hosted Boltz MCP integration is unaffected.",
+    "used_by": [
+      "boltz_api_tools.json"
+    ]
+  },
+  {
     "name": "BOLTZ_MCP_SERVER_HOST",
     "requirement": "required",
     "type": "endpoint",

@@ -1049,6 +1049,16 @@
           }
         }
       ]
+    },
+    "mcp_schema_mode": "passthrough",
+    "api_key_info": {
+      "BOLTZ_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "api_key",
+        "register_url": "https://api.boltz.bio/",
+        "purpose": "Authenticate to the official hosted Boltz prediction and administration API.",
+        "without": "Official hosted Boltz API tools are unavailable; the existing self-hosted Boltz MCP integration is unaffected."
+      }
     }
   },
   {
@@ -2081,7 +2091,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_get_structure_binding",
@@ -2565,7 +2576,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_start_adme",
@@ -2719,7 +2731,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_get_adme",
@@ -4868,7 +4881,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_start_protein_design",
@@ -6687,7 +6701,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_get_protein_design",
@@ -8122,7 +8137,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_start_protein_sequence_redesign",
@@ -8866,7 +8882,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_get_protein_sequence_redesign",
@@ -10780,7 +10797,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_start_protein_library_screen",
@@ -12001,7 +12019,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_get_protein_library_screen",
@@ -13633,7 +13652,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_start_small_molecule_design",
@@ -14572,7 +14592,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_get_small_molecule_design",
@@ -16216,7 +16237,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_start_small_molecule_library_screen",
@@ -17167,7 +17189,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_get_small_molecule_library_screen",
@@ -18891,7 +18914,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_run_adme",
@@ -19037,7 +19061,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_run_protein_design",
@@ -20860,7 +20885,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_run_protein_library_screen",
@@ -22085,7 +22111,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_run_small_molecule_design",
@@ -23028,7 +23055,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_run_small_molecule_library_screen",
@@ -23983,7 +24011,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_create_workspace",
@@ -24150,7 +24179,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_get_workspace",
@@ -24386,7 +24416,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_list_workspaces",
@@ -24830,7 +24861,8 @@
           }
         }
       ]
-    }
+    },
+    "mcp_schema_mode": "passthrough"
   },
   {
     "name": "Boltz_create_api_key",

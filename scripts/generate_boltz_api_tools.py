@@ -186,6 +186,16 @@ ERROR_SCHEMA = {
     },
 }
 
+BOLTZ_API_KEY_INFO = {
+    "BOLTZ_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "api_key",
+        "register_url": "https://api.boltz.bio/",
+        "purpose": "Authenticate to the official hosted Boltz prediction and administration API.",
+        "without": "Official hosted Boltz API tools are unavailable; the existing self-hosted Boltz MCP integration is unaffected.",
+    }
+}
+
 
 def _camel(value: str) -> str:
     return "".join(part.capitalize() for part in value.split("_"))
@@ -523,7 +533,7 @@ def _product_tool(product: dict[str, Any], operation: str) -> dict[str, Any]:
     elif operation == "list":
         examples = [{"limit": 1}]
 
-    return {
+    tool = {
         "name": _tool_name(product["slug"], operation),
         "type": "BoltzAPITool",
         "fields": fields,
@@ -536,6 +546,9 @@ def _product_tool(product: dict[str, Any], operation: str) -> dict[str, Any]:
         "test_examples": examples,
         "return_schema": _return_schema(operation),
     }
+    if "$defs" in parameter:
+        tool["mcp_schema_mode"] = "passthrough"
+    return tool
 
 
 def _admin_specs() -> list[dict[str, Any]]:
@@ -671,7 +684,7 @@ def _admin_tool(spec: dict[str, Any]) -> dict[str, Any]:
     if spec.get("confirm"):
         fields["confirmation_message"] = spec["confirm"]
         _add_confirmation(parameter, spec["confirm"])
-    return {
+    tool = {
         "name": spec["name"],
         "type": "BoltzAPITool",
         "fields": fields,
@@ -684,6 +697,9 @@ def _admin_tool(spec: dict[str, Any]) -> dict[str, Any]:
         "test_examples": spec.get("examples", []),
         "return_schema": _return_schema(spec["kind"]),
     }
+    if "$defs" in parameter:
+        tool["mcp_schema_mode"] = "passthrough"
+    return tool
 
 
 def main() -> None:
@@ -696,6 +712,13 @@ def main() -> None:
         _product_tool(product, "run") for product in PRODUCTS if product.get("run")
     )
     tools.extend(_admin_tool(spec) for spec in _admin_specs())
+
+    api_key_info_tool = next(
+        tool
+        for tool in tools
+        if tool["name"] == "Boltz_estimate_structure_binding_cost"
+    )
+    api_key_info_tool["api_key_info"] = BOLTZ_API_KEY_INFO
 
     names = [tool["name"] for tool in tools]
     if len(tools) != 69 or len(set(names)) != 69:
