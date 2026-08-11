@@ -13,7 +13,13 @@ import argparse
 import zipfile
 from pathlib import Path
 
-DATA_DIR_DEFAULT = Path(__file__).resolve().parent.parent.parent.parent / "temp_docs_and_tests" / "bixbench" / "bixbench" / "data"
+DATA_DIR_DEFAULT = (
+    Path(__file__).resolve().parent.parent.parent.parent
+    / "temp_docs_and_tests"
+    / "bixbench"
+    / "bixbench"
+    / "data"
+)
 
 
 def main():

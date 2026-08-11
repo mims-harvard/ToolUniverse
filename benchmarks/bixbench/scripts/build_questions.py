@@ -24,6 +24,7 @@ rather than a bare tolerance -- a DVMC answer of 0.5396 fails a 5% tolerance
 against 0.57 by a third of a percent while the nearest wrong option is four
 times further away.
 """
+
 import argparse
 import json
 
@@ -39,18 +40,24 @@ def main():
     ds = load_dataset("futurehouse/BixBench", split=a.split)
     rows = []
     for r in ds:
-        for q in json.loads(r["questions"]) if isinstance(r.get("questions"), str) else (r.get("questions") or []):
-            rows.append({
-                "id": q.get("id"),
-                "question": q.get("question"),
-                "ideal": q.get("ideal"),
-                "distractors": q.get("distractors"),
-                "capsule_uuid": r.get("uuid"),
-                "short_id": r.get("short_id"),
-                "eval_mode": q.get("eval_mode") or r.get("eval_mode"),
-                "categories": r.get("categories"),
-                "data_folder": r.get("data_folder"),
-            })
+        for q in (
+            json.loads(r["questions"])
+            if isinstance(r.get("questions"), str)
+            else (r.get("questions") or [])
+        ):
+            rows.append(
+                {
+                    "id": q.get("id"),
+                    "question": q.get("question"),
+                    "ideal": q.get("ideal"),
+                    "distractors": q.get("distractors"),
+                    "capsule_uuid": r.get("uuid"),
+                    "short_id": r.get("short_id"),
+                    "eval_mode": q.get("eval_mode") or r.get("eval_mode"),
+                    "categories": r.get("categories"),
+                    "data_folder": r.get("data_folder"),
+                }
+            )
     with open(a.out, "w") as fh:
         json.dump(rows, fh, indent=1)
     print(f"wrote {a.out}: {len(rows)} questions")

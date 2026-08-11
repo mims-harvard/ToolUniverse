@@ -20,6 +20,7 @@ Expected output, with the convention each value depends on:
                                         COLUMNS containing a gap (3 genes
                                         qualify); by residue fraction none do
 """
+
 import argparse
 import glob
 from concurrent.futures import ThreadPoolExecutor
@@ -31,7 +32,9 @@ import zipfile
 
 
 def phykit(*args, timeout=180):
-    r = subprocess.run(["phykit", *args], capture_output=True, text=True, timeout=timeout)
+    r = subprocess.run(
+        ["phykit", *args], capture_output=True, text=True, timeout=timeout
+    )
     return r.stdout.strip() if r.returncode == 0 else None
 
 
@@ -55,7 +58,9 @@ def column_gap_fraction(path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--capsule", required=True, help="extracted CapsuleFolder-... directory")
+    ap.add_argument(
+        "--capsule", required=True, help="extracted CapsuleFolder-... directory"
+    )
     ap.add_argument("--workdir", default="/tmp/bixbench_ref")
     a = ap.parse_args()
 
@@ -82,11 +87,11 @@ def main():
         out = {}
         o = phykit("saturation", "-a", aln_t, "-t", tr)
         if o:
-            out["sat"] = float(o.split("\t")[1])         # 1-slope, not the first column
+            out["sat"] = float(o.split("\t")[1])  # 1-slope, not the first column
         o = phykit("treeness", tr)
         if o:
             out["tree"] = float(o.split("\t")[0])
-        o = phykit("toverr", "-a", aln_u, "-t", tr)      # untrimmed alignment
+        o = phykit("toverr", "-a", aln_u, "-t", tr)  # untrimmed alignment
         if o:
             out["tov"] = float(o.split("\t")[0])
         return s, out
@@ -110,15 +115,25 @@ def main():
     checks = [
         ("saturation median", st.median(sat) if sat else None, 0.6146),
         ("treeness median", st.median(tree) if tree else None, 0.0501),
-        ("treeness/RCV median (untrimmed)", st.median([v for _, v in tov]) if tov else None, 0.2683),
+        (
+            "treeness/RCV median (untrimmed)",
+            st.median([v for _, v in tov]) if tov else None,
+            0.2683,
+        ),
         (f">70%-gap max treeness/RCV ({len(gapped)} genes)", gap_max, 0.2572),
     ]
     bad = 0
     for name, got, want in checks:
         ok = got is not None and abs(got - want) < 0.005
         bad += not ok
-        print(f"  {'ok  ' if ok else 'FAIL'} {name:42s} {got if got is None else round(got, 4)}  (expected {want})")
-    print("\nreference values reproduced" if not bad else f"\n{bad} value(s) differ -- do not trust downstream results")
+        print(
+            f"  {'ok  ' if ok else 'FAIL'} {name:42s} {got if got is None else round(got, 4)}  (expected {want})"
+        )
+    print(
+        "\nreference values reproduced"
+        if not bad
+        else f"\n{bad} value(s) differ -- do not trust downstream results"
+    )
     return 1 if bad else 0
 
 

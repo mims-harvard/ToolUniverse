@@ -17,7 +17,11 @@ The value scored is the one the reply commits to -- the last bolded or
 answer-labelled number in its closing segment -- never a number that merely
 appears somewhere in a long explanation.
 """
-import argparse, json, re, sys
+
+import argparse
+import json
+import re
+import sys
 
 
 def options(q):
@@ -26,6 +30,7 @@ def options(q):
             return float(str(v).strip().rstrip("%"))
         except Exception:
             return None
+
     gold = num(q.get("ideal"))
     ds = [num(d) for d in (q.get("distractors") or [])]
     ds = [d for d in ds if d is not None]
@@ -69,7 +74,9 @@ def main():
 
     qs = {q["id"]: q for q in json.load(open(a.questions))}
     d = json.load(open(a.results))
-    recs = d if isinstance(d, list) else (d.get("with_plugin") or d.get("results") or [])
+    recs = (
+        d if isinstance(d, list) else (d.get("with_plugin") or d.get("results") or [])
+    )
 
     flipped, checked = [], 0
     for r in recs:
