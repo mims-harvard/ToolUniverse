@@ -1803,7 +1803,7 @@
             "string",
             "null"
           ],
-          "description": "Optional condition filter to restrict value counts to a specific disease area."
+          "description": "NOT SUPPORTED - passing this returns an error. ClinicalTrials.gov's field-value statistics endpoint counts values across the whole registry and accepts no condition, status or phase filter (it rejects any such parameter with HTTP 400). For counts restricted to a condition, use ClinicalTrials_search_studies with query_cond and tally the per-study 'status', 'phases', 'study_type' or 'sponsor' fields it returns."
         },
         "page_size": {
           "type": "integer",

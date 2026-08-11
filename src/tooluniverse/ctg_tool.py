@@ -684,10 +684,44 @@ class ClinicalTrialsTool(RESTfulTool):
         if not field:
             return {"status": "error", "error": "field is required"}
 
+        # Fix-R36-1: `query_cond` was forwarded as `query.cond` and made every
+        # such call a hard 400 -- the tool advertised a condition filter the
+        # endpoint has never had. ClinicalTrials.gov's field-value statistics
+        # endpoint takes exactly two parameters, `fields` and `types`; the
+        # OpenAPI description of `fieldValuesStats` lists no others, and the
+        # live API rejects each alternative spelling we probed:
+        #   ?fields=StdAge&query.cond=asthma            -> 400 "Invalid prefix in parameter name: query.cond"
+        #   ?fields=StdAge&filter.overallStatus=...     -> 400 "Invalid prefix in parameter name: filter.overallStatus"
+        #   ?fields=StdAge&filter.advanced=AREA[...]    -> 400 "Invalid prefix in parameter name: filter.advanced"
+        #   ?fields=StdAge&cond=asthma                  -> 400 "`cond` is unknown parameter"
+        #   ?fields=StdAge&query=asthma                 -> 400 "`query` is unknown parameter"
+        #   ?fields=StdAge&aggFilters=phase:3           -> 400 "`aggFilters` is unknown parameter"
+        # (identical on the /stats/field/values alias). There is therefore no
+        # filtered form to implement, so the argument is rejected before the
+        # request is built and the caller is pointed at the route that does
+        # work instead of getting an opaque upstream 400.
+        if arguments.get("query_cond"):
+            return {
+                "status": "error",
+                "error": (
+                    "ClinicalTrials.gov cannot filter field-value counts: the "
+                    "/stats/fieldValues endpoint counts values across the entire "
+                    "registry and accepts only 'fields' and 'types'. Any condition, "
+                    "status or phase filter is rejected upstream with HTTP 400 "
+                    "('Invalid prefix in parameter name: query.cond'), so 'query_cond' "
+                    f"cannot restrict counts for '{field}'. Either (1) re-run this tool "
+                    "without query_cond for registry-wide counts, or (2) for counts "
+                    "restricted to a condition, call ClinicalTrials_search_studies with "
+                    f"query_cond={arguments['query_cond']!r} and page_size up to 1000, "
+                    "then tally the per-study fields it returns (status, phases, "
+                    "study_type, sponsor, conditions). Fields outside that set (for "
+                    "example StdAge) are not returned per study by any ClinicalTrials "
+                    "tool and so cannot be counted per condition."
+                ),
+            }
+
         # CTG API v2: endpoint is /stats/fieldValues (camelCase), param is 'fields' (plural)
         params = {"fields": field}
-        if arguments.get("query_cond"):
-            params["query.cond"] = arguments["query_cond"]
 
         resp = requests.get(
             f"{self._BASE_URL}/stats/fieldValues", params=params, timeout=30
