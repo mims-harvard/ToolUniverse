@@ -217,7 +217,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_compare_drugs",
-    "description": "Compare safety signals for two drugs with the same adverse event. Returns ROR/PRR/IC for both drugs with comparative analysis. Example: compare fulvestrant vs tamoxifen for hepatotoxicity. Use for safety benchmarking.",
+    "description": "Compare safety signals for two drugs with the same adverse event. Returns ROR/PRR/IC for both drugs with comparative analysis. Example: compare fulvestrant vs tamoxifen for hepatotoxicity. Use for safety benchmarking. Each drug's arm also returns the 2x2 `contingency_table` its metrics were computed from -- `a_drug_and_event`, `b_drug_no_event`, `c_no_drug_event`, `d_no_drug_no_event`, the same keys FAERS_calculate_disproportionality uses -- so the case counts behind the verdict are visible without extra calls. This matters because a ratio of two ratios is uninterpretable on its own: \"similar-strength signals\" means something very different when both arms rest on thousands of co-reported cases than when one rests on a handful. When either arm's `a_drug_and_event` falls below 25, `comparison_caveat` names that arm and its count and warns that `comparison` is not an equal-confidence statement; it is null when both arms clear the threshold. 25 is where an arm's own 95% ROR interval becomes narrower than the 1.5x ratio this comparison uses to separate \"similar-strength\" from \"stronger\".",
     "parameter": {
       "type": "object",
       "required": [],
@@ -253,7 +253,103 @@
       }
     },
     "return_schema": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "adverse_event": {
+          "type": "string",
+          "description": "MedDRA Preferred Term both arms were computed for."
+        },
+        "drug1": {
+          "type": "object",
+          "description": "First drug's arm: its name, the 2x2 case counts, and the metrics and signal verdict derived from them.",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "contingency_table": {
+              "type": ["object", "null"],
+              "description": "The 2x2 case counts this arm's ROR/PRR/IC were computed from, using the same key names as FAERS_calculate_disproportionality. Null only if the underlying analysis omitted them.",
+              "properties": {
+                "a_drug_and_event": {
+                  "type": "integer",
+                  "description": "Reports naming both this drug and this adverse event."
+                },
+                "b_drug_no_event": {
+                  "type": "integer",
+                  "description": "Reports naming this drug but not this adverse event."
+                },
+                "c_no_drug_event": {
+                  "type": "integer",
+                  "description": "Reports naming this adverse event but not this drug."
+                },
+                "d_no_drug_no_event": {
+                  "type": "integer",
+                  "description": "Reports naming neither this drug nor this adverse event."
+                }
+              }
+            },
+            "metrics": {
+              "type": ["object", "null"],
+              "description": "ROR, PRR and IC with 95% confidence intervals."
+            },
+            "signal_detection": {
+              "type": ["object", "null"],
+              "description": "Whether this arm alone crosses the signal-detection threshold, and how strongly."
+            }
+          }
+        },
+        "drug2": {
+          "type": "object",
+          "description": "Second drug's arm, in the same shape as drug1.",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "contingency_table": {
+              "type": ["object", "null"],
+              "description": "The 2x2 case counts this arm's ROR/PRR/IC were computed from, using the same key names as FAERS_calculate_disproportionality. Null only if the underlying analysis omitted them.",
+              "properties": {
+                "a_drug_and_event": {
+                  "type": "integer",
+                  "description": "Reports naming both this drug and this adverse event."
+                },
+                "b_drug_no_event": {
+                  "type": "integer",
+                  "description": "Reports naming this drug but not this adverse event."
+                },
+                "c_no_drug_event": {
+                  "type": "integer",
+                  "description": "Reports naming this adverse event but not this drug."
+                },
+                "d_no_drug_no_event": {
+                  "type": "integer",
+                  "description": "Reports naming neither this drug nor this adverse event."
+                }
+              }
+            },
+            "metrics": {
+              "type": ["object", "null"],
+              "description": "ROR, PRR and IC with 95% confidence intervals."
+            },
+            "signal_detection": {
+              "type": ["object", "null"],
+              "description": "Whether this arm alone crosses the signal-detection threshold, and how strongly."
+            }
+          }
+        },
+        "comparison": {
+          "type": "string",
+          "description": "Plain-language verdict comparing the two arms. Always read alongside comparison_caveat."
+        },
+        "comparison_caveat": {
+          "type": ["string", "null"],
+          "description": "Set when either arm's a_drug_and_event is below 25, naming the arm and its count and warning that comparison is not an equal-confidence statement. Null when both arms clear the threshold, and also when an arm's count is unavailable -- check contingency_table to tell those two cases apart."
+        },
+        "note": {
+          "type": "string",
+          "description": "Standing caveat that both drugs may show signals from differing baseline risks."
+        }
+      }
     },
     "test_examples": [
       {

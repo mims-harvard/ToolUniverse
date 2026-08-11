@@ -10,6 +10,65 @@ from .tool_registry import register_tool
 
 FDA_BASE_URL = "https://api.fda.gov/drug/event.json"
 
+# How far apart two RORs must be before `_compare_drugs` calls one "stronger"
+# rather than "similar-strength".
+_SIMILAR_STRENGTH_RATIO = 1.5
+
+# Fix-R37: an arm only supports that call when its own 95% interval is narrower
+# than the band itself. On the log scale the ROR standard error is
+# sqrt(1/a + 1/b + 1/c + 1/d), and with b, c and d in the tens of thousands to
+# millions the 1/a term dominates outright, leaving SE ~= 1/sqrt(a). Requiring
+# exp(1.96 / sqrt(a)) < _SIMILAR_STRENGTH_RATIO gives
+# a > (1.96 / ln(1.5))^2 = 23.4, rounded up to a round 25. Kept as its own
+# literal rather than computed from the ratio, since ceil() of that expression
+# is 24 and would quietly move the threshold.
+_SMALL_CASE_COUNT_THRESHOLD = 25
+
+
+def _comparison_arm(name: str, result: Dict[str, Any]) -> Dict[str, Any]:
+    """One drug's side of a comparison, built from its disproportionality run.
+
+    Fix-R37: `contingency_table` is passed through verbatim rather than rebuilt,
+    so an arm can never disagree with FAERS_calculate_disproportionality about
+    the same drug/event pair, and both tools name the cells identically.
+    """
+    return {
+        "name": name,
+        "contingency_table": result.get("contingency_table"),
+        "metrics": result.get("metrics"),
+        "signal_detection": result.get("signal_detection"),
+    }
+
+
+def _small_count_caveat(arms: List[Dict[str, Any]]) -> Optional[str]:
+    """Qualify a two-drug verdict whose arms rest on too few co-reported cases.
+
+    Returns None when every arm clears `_SMALL_CASE_COUNT_THRESHOLD` -- and also
+    when an arm's count is simply unavailable, since there is then nothing to
+    qualify it with.
+    """
+    small = []
+    for arm in arms:
+        a = (arm.get("contingency_table") or {}).get("a_drug_and_event")
+        if isinstance(a, int) and a < _SMALL_CASE_COUNT_THRESHOLD:
+            small.append((arm.get("name"), a))
+
+    if not small:
+        return None
+
+    counts = "; ".join(
+        f"{name} rests on {a} co-reported case{'' if a == 1 else 's'}"
+        for name, a in small
+    )
+    return (
+        f"{counts} -- fewer than the {_SMALL_CASE_COUNT_THRESHOLD} needed for an "
+        "arm's own 95% ROR interval to be narrower than the "
+        f"{_SIMILAR_STRENGTH_RATIO}x ratio this comparison uses to separate "
+        "'similar-strength' from 'stronger'. Read `comparison` as provisional "
+        "rather than an equal-confidence statement, and check each arm's "
+        "`contingency_table` before acting on it."
+    )
+
 
 def _drug_clause(drug_name: str) -> str:
     """openFDA search clause matching a drug by generic OR brand name.
@@ -558,27 +617,31 @@ class FAERSAnalyticsTool(BaseTool):
                         f"{drug2} shows a detected safety signal for {adverse_event}; "
                         f"{drug1} does not."
                     )
-                elif ror1 > ror2 * 1.5:
+                elif ror1 > ror2 * _SIMILAR_STRENGTH_RATIO:
                     comparison = f"Both show a detected signal; {drug1}'s is stronger than {drug2}'s"
-                elif ror2 > ror1 * 1.5:
+                elif ror2 > ror1 * _SIMILAR_STRENGTH_RATIO:
                     comparison = f"Both show a detected signal; {drug2}'s is stronger than {drug1}'s"
                 else:
                     comparison = f"{drug1} and {drug2} show similar-strength detected signals"
 
+            # Fix-R37: each arm now carries the 2x2 case counts its metrics were
+            # computed from. _calculate_disproportionality had already built
+            # them above and this method discarded them, so a reader could not
+            # tell a verdict backed by thousands of co-reported cases from one
+            # backed by a handful without issuing two more calls -- and nothing
+            # in the output prompted them to.
+            arms = [
+                _comparison_arm(drug1, result1),
+                _comparison_arm(drug2, result2),
+            ]
+
             return {
                 "status": "success",
                 "adverse_event": adverse_event,
-                "drug1": {
-                    "name": drug1,
-                    "metrics": result1.get("metrics"),
-                    "signal_detection": result1.get("signal_detection"),
-                },
-                "drug2": {
-                    "name": drug2,
-                    "metrics": result2.get("metrics"),
-                    "signal_detection": result2.get("signal_detection"),
-                },
+                "drug1": arms[0],
+                "drug2": arms[1],
                 "comparison": comparison,
+                "comparison_caveat": _small_count_caveat(arms),
                 "note": "Direct comparison of safety signals. Both drugs may show signals due to different baseline risks.",
             }
 
