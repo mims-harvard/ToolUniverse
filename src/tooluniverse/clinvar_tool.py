@@ -1119,6 +1119,97 @@ class ClinVarGetClinicalSignificance(ClinVarRESTTool):
         return result
 
 
+# How many matching records one call fetches summaries for (500 ids = 3
+# esummary requests). Entrez returns ids in Variation-ID order and db=clinvar
+# has no sort field, so whatever falls off this cap is arbitrary with respect to
+# span -- hence the cap is disclosed rather than silently applied.
+_CANDIDATE_CAP = 500
+
+# Bases immediately upstream of the region searched with NO length filter.
+# Entrez's VLEN is "the difference between reference and alternate, except when
+# there is no length difference (then the length of the allele itself)" (einfo,
+# db=clinvar), so a 1 nt insertion recorded between two bases can be VLEN=1 even
+# though ClinVar's own start/stop span two. This pad keeps such records out of
+# the filtered part of the query, so the filter can never cost a real overlap.
+_EDGE_PAD = 10
+
+
+def _overlap_search_term(chrom, start, end, tag, margin):
+    """The Entrez term for records that could overlap [start, end].
+
+    One flat window widened by `margin` matches every record that merely STARTS
+    in it -- 15,327 for a 4 Mb window on chr11:47332696, ~97% single-base
+    substitutions that stop long before the region. A record starting upstream
+    can only reach the region by occupying more than one base, so the upstream
+    part of the window carries `NOT 1:1[VLEN]`, which drops the candidate set to
+    245 in the same single esearch request.
+
+    Written as a NOT rather than a positive `2:...[VLEN]` range on purpose:
+    records with no VLEN indexed at all exist, and this tool's flagship example
+    is one -- `1703527[VID] AND 0:1000000000[VLEN]` (the 1.5 Mb copy-number loss
+    over chr7:155593770) returns 0 hits. A positive range would drop exactly the
+    variant class this tool was built for.
+    """
+    edge_lo = max(1, int(start) - _EDGE_PAD)
+    parts = [f"{chrom}[chr] AND {edge_lo}:{int(end)}[{tag}]"]
+    upstream_lo = max(1, int(start) - int(margin))
+    upstream_hi = edge_lo - 1
+    if upstream_hi >= upstream_lo:
+        parts.append(
+            f"{chrom}[chr] AND {upstream_lo}:{upstream_hi}[{tag}] NOT 1:1[VLEN]"
+        )
+    return " OR ".join(f"({p})" for p in parts)
+
+
+_OVERLAP_NOTE = (
+    "Entrez matches a variant's START position, so this searches a window widened "
+    "upstream by `margin` and keeps only variants whose span actually overlaps the "
+    "region. Single-base records (VLEN=1) are excluded from the upstream part of "
+    "that window -- occupying one base, they cannot reach the region from outside "
+    "it -- which is what keeps widening `margin` cheap. Sorted smallest span first; "
+    "`variants` is capped at `max_results`, `n_overlapping` is how many were found."
+)
+
+_OVERLAP_REMEDY = (
+    "Narrow the region, or lower `margin`, to bring the match set under "
+    f"{_CANDIDATE_CAP}; widening either makes the truncation worse."
+)
+
+
+def _truncation_disclosure(total, inspected, how_to_get_more):
+    """The keys that tell a partial scan apart from a complete one.
+
+    A dict fragment the caller merges, like `_condition_filter_disclosure`
+    above, so any capped path here can disclose the same way. Field names follow
+    the repo-wide convention (`total_available` / `truncated` /
+    `truncation_note`; see cbioportal_tool._truncation_fields).
+    """
+    if total is None:
+        return {
+            "total_available": None,
+            "truncated": True,
+            "truncation_note": (
+                f"Only the first {inspected} matching records were fetched and "
+                "checked for overlap, and Entrez did not report how many matched "
+                f"in total, so this may be a partial answer. {how_to_get_more}"
+            ),
+        }
+    if inspected >= total:
+        return {"total_available": total, "truncated": False}
+    return {
+        "total_available": total,
+        "truncated": True,
+        "truncation_note": (
+            f"INCOMPLETE SCAN: {inspected} of {total} matching records "
+            f"({100.0 * inspected / total:.1f}%) were fetched and checked for "
+            "overlap. Entrez returns records in Variation-ID order and db=clinvar "
+            "has no sort field, so the rest are arbitrary with respect to span -- a "
+            "short or empty `variants` list is NOT evidence that nothing overlaps "
+            f"this region. {how_to_get_more}"
+        ),
+    }
+
+
 def clinvar_variants_overlapping(
     session,
     chrom,
@@ -1139,14 +1230,16 @@ def clinvar_variants_overlapping(
     1.5 Mb copy-number loss (Variation 1703527, chr7:154831466-156356088)
     covers it.
 
-    So: search a window widened by `margin` to catch variants that start
-    earlier, then keep only those whose [start, stop] genuinely overlaps the
-    requested region. `margin` bounds how large a spanning variant can be found.
+    So: search a window widened by `margin` (`_overlap_search_term` builds the
+    query), then keep only records whose [start, stop] genuinely overlaps.
+
+    Only the first `_CANDIDATE_CAP` matching records are inspected, so the
+    envelope reports `total_available` beside `n_candidates` and flags any
+    shortfall: a caller concluding "no pathogenic deletion overlaps this locus"
+    needs to know when that rests on a partial scan.
     """
     tag = "chrpos38" if str(assembly).upper() in ("GRCH38", "HG38") else "chrpos37"
-    lo = max(1, int(start) - int(margin))
-    hi = int(end) + int(margin)
-    term = f"{chrom}[chr] AND {lo}:{hi}[{tag}]"
+    term = _overlap_search_term(chrom, start, end, tag, margin)
     if significance:
         # [clinsig] is not a ClinVar eSearch field -- Entrez silently degraded
         # it to [All Fields] (confirmed live: chr17 BRCA1 window, 15508 hits
@@ -1162,16 +1255,26 @@ def clinvar_variants_overlapping(
         )
         clause = _clinsig_query_clause(components)
         if clause:
-            term += f" AND {clause}"
+            term = f"({term}) AND {clause}"
 
     es = session.get(
         "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
-        params={"db": "clinvar", "term": term, "retmax": 500, "retmode": "json"},
+        params={
+            "db": "clinvar",
+            "term": term,
+            "retmax": _CANDIDATE_CAP,
+            "retmode": "json",
+        },
         timeout=timeout,
     ).json()
-    ids = (es.get("esearchresult") or {}).get("idlist") or []
-    if not ids:
-        return {"term": term, "n_candidates": 0, "variants": []}
+    esearchresult = es.get("esearchresult") or {}
+    ids = esearchresult.get("idlist") or []
+    # esearch reports the size of the whole match set in `count` whatever retmax
+    # is, so the honest denominator costs no extra request.
+    try:
+        total_available = int(esearchresult.get("count"))
+    except (TypeError, ValueError):
+        total_available = None
 
     out = []
     for chunk_start in range(0, len(ids), 200):
@@ -1216,7 +1319,14 @@ def clinvar_variants_overlapping(
                     break
     # Smallest span first: the most specific variant covering the region.
     out.sort(key=lambda v: v["span"])
-    return {"term": term, "n_candidates": len(ids), "variants": out[:max_results]}
+    return {
+        "term": term,
+        **_truncation_disclosure(total_available, len(ids), _OVERLAP_REMEDY),
+        "n_candidates": len(ids),
+        "n_overlapping": len(out),
+        "variants": out[:max_results],
+        "note": _OVERLAP_NOTE,
+    }
 
 
 @register_tool("ClinVarSearchByRegion")
@@ -1282,10 +1392,4 @@ class ClinVarSearchByRegion(ClinVarRESTTool):
                 "status": "error",
                 "error": f"ClinVar region search failed: {str(e)[:200]}",
             }
-        result["note"] = (
-            "Entrez matches a variant's START position, so this searches a widened "
-            "window and keeps only variants whose span actually overlaps the region. "
-            "Sorted smallest span first; a large CNV can overlap while starting "
-            "megabases away. Raise `margin` to catch larger spanning variants."
-        )
         return {"status": "success", "data": result}
