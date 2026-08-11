@@ -75,15 +75,47 @@ def _make_tool():
     return ClinicalTrialsTool(_load_config())
 
 
+# Fix-R37-1 added two auxiliary lookups to the successful path: /stats/size for
+# the registry total (the denominator the facet lacks) and /stats/field/sizes
+# for whether the field is list-valued (and so whether the rows double-count
+# studies). Both are stubbed here so these R36-1 guards keep testing what they
+# were written to test -- that `query_cond` never reaches the network and that
+# the working call sends no query.* parameter -- rather than failing on the
+# extra traffic.
+_STATS_SIZE = {"totalStudies": 597913, "averageSizeBytes": 17275}
+_LIST_FIELD_SIZES = [
+    {"piece": "StdAge", "field": "protocolSection.eligibilityModule.stdAges"},
+]
+
+
 class _FakeResponse:
-    def __init__(self, payload):
+    def __init__(self, payload, status_code=200):
         self._payload = payload
+        self.status_code = status_code
 
     def raise_for_status(self):
         return None
 
     def json(self):
         return self._payload
+
+
+def _stub_get(seen=None):
+    """Serve the three stats endpoints the tool now calls, recording only the
+    /stats/fieldValues request -- the one these tests are about."""
+
+    def _fake_get(url, params=None, timeout=None, **kwargs):
+        if url.endswith("/stats/size"):
+            return _FakeResponse(_STATS_SIZE)
+        if url.endswith("/stats/field/sizes"):
+            return _FakeResponse(_LIST_FIELD_SIZES)
+        assert url.endswith("/stats/fieldValues"), url
+        if seen is not None:
+            seen["url"] = url
+            seen["params"] = params
+        return _FakeResponse(_LIVE_RESPONSE)
+
+    return _fake_get
 
 
 def test_query_cond_is_rejected_before_any_request(monkeypatch):
@@ -113,42 +145,43 @@ def test_unfiltered_call_is_unchanged(monkeypatch):
     """Fix-R36-1 is input-validation only: the working call must be untouched,
     including the absence of any query.* parameter on the outgoing request."""
     seen = {}
-
-    def _fake_get(url, params=None, timeout=None):
-        seen["url"] = url
-        seen["params"] = params
-        return _FakeResponse(_LIVE_RESPONSE)
-
-    monkeypatch.setattr("requests.get", _fake_get)
+    monkeypatch.setattr("requests.get", _stub_get(seen))
 
     result = _make_tool().run({"field": "StdAge"})
 
     assert seen["url"].endswith("/stats/fieldValues")
     assert seen["params"] == {"fields": "StdAge"}
     assert result["status"] == "success"
-    assert result["data"] == {
-        "field": "StdAge",
-        "values": [
-            {"value": "ADULT", "studies_count": 551190},
-            {"value": "OLDER_ADULT", "studies_count": 453760},
-            {"value": "CHILD", "studies_count": 115847},
-        ],
-        "total_count": 3,
-    }
+    assert result["data"]["field"] == "StdAge"
+    assert result["data"]["values"] == [
+        {"value": "ADULT", "studies_count": 551190},
+        {"value": "OLDER_ADULT", "studies_count": 453760},
+        {"value": "CHILD", "studies_count": 115847},
+    ]
+    # Fix-R37-1: this used to assert `"total_count": 3` as part of an exact
+    # dict comparison, which encoded the very collision R37-1 removes --
+    # `total_count` held the ROW count here and the matching-STUDY count in the
+    # sibling ClinicalTrials_search_studies. The row count is now
+    # `values_returned` and the facet's own cardinality is
+    # `unique_values_count`; the exact-dict form is dropped because it made an
+    # assertion about every future field of the response, which is not what
+    # this R36-1 guard is for. See tests/unit/test_ctg_field_values_coverage.py
+    # for the coverage fields themselves.
+    assert "total_count" not in result["data"]
+    assert result["data"]["values_returned"] == 3
+    assert result["data"]["unique_values_count"] == 3
+    assert result["data"]["missing_studies_count"] == 984
 
 
 def test_null_query_cond_still_runs(monkeypatch):
     """query_cond is declared nullable; an explicit null must behave as absent
     rather than tripping the new rejection."""
-
-    def _fake_get(url, params=None, timeout=None):
-        assert params == {"fields": "StdAge"}
-        return _FakeResponse(_LIVE_RESPONSE)
-
-    monkeypatch.setattr("requests.get", _fake_get)
+    seen = {}
+    monkeypatch.setattr("requests.get", _stub_get(seen))
 
     result = _make_tool().run({"field": "StdAge", "query_cond": None})
     assert result["status"] == "success"
+    assert seen["params"] == {"fields": "StdAge"}
 
 
 def test_config_no_longer_advertises_a_condition_filter():

@@ -1790,7 +1790,7 @@
   },
   {
     "name": "ClinicalTrials_get_field_values",
-    "description": "Get value distribution for a specific field across ClinicalTrials.gov studies. Returns all unique values with study counts. Use to see what status, phase, or study type options exist. Example: 'Phase' field returns counts for PHASE1, PHASE2, PHASE3, etc.",
+    "description": "Get the registry-wide value distribution for one ClinicalTrials.gov field: each distinct value with the number of studies recording it. Use to see what status, phase, or study type options exist. Example: 'Phase' returns counts for PHASE1, PHASE2, PHASE3, etc. IMPORTANT for any share or percentage: the rows are NOT a partition of the registry. Studies that record no value for the field are excluded from the rows entirely (for 'Phase', 141,728 of 597,913), and where the field is multi-valued a study recording several values is counted in several rows (for 'Phase', 24,529 studies), so the rows sum to neither the registry total nor a subset of it. Never use the sum of the rows as a denominator; use 'total_studies_in_registry' for a share of all studies or 'studies_with_value' for a share of those recording the field, and read 'coverage_note' before quoting any percentage.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1807,7 +1807,7 @@
         },
         "page_size": {
           "type": "integer",
-          "description": "Number of field values to return (default 50).",
+          "description": "Maximum number of value rows to return, highest study count first (default 50, minimum 1). Truncation is reported: when this cuts the list, 'truncated' is true and 'unique_values_count' still gives the true number of distinct values. The counts in 'missing_studies_count', 'studies_with_value' and 'coverage_note' always describe the whole facet, never just the returned rows.",
           "default": 50
         }
       },
@@ -1834,6 +1834,20 @@
             "field": {
               "type": "string"
             },
+            "field_path": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Dotted path of the field in the ClinicalTrials.gov study record."
+            },
+            "field_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Upstream field type, e.g. ENUM or STRING."
+            },
             "values": {
               "type": "array",
               "items": {
@@ -1849,16 +1863,74 @@
                     "type": [
                       "integer",
                       "null"
-                    ]
+                    ],
+                    "description": "Studies recording this value. Rows overlap when is_multi_valued is true, so they do not sum to a study count."
                   }
                 }
               }
             },
-            "total_count": {
+            "unique_values_count": {
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "True number of distinct values for this field across the registry, independent of page_size. Replaces the former 'total_count', which named the row count here but the matching-study count in ClinicalTrials_search_studies."
+            },
+            "values_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of value rows in this response."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the returned rows are fewer than unique_values_count, because page_size cut them or ClinicalTrials.gov itself capped the ranking."
+            },
+            "missing_studies_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Studies recording no value for this field. These are excluded from the rows entirely, not bucketed as unknown."
+            },
+            "total_studies_in_registry": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "All studies in ClinicalTrials.gov. Use as the denominator for a share of all registered studies. Null if the lookup failed."
+            },
+            "studies_with_value": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Studies recording at least one value for this field (total_studies_in_registry minus missing_studies_count). Use as the denominator for a share of studies that record the field."
+            },
+            "is_multi_valued": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when one study can appear in several rows because the field, or a list containing it, holds several values per study. Null if it could not be determined."
+            },
+            "duplicate_studies_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Studies counted in more than one row. Null when the returned ranking is capped upstream and the figure cannot be derived."
+            },
+            "coverage_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Prose stating how many studies are excluded from the facet, whether rows double-count studies, and which figure may be used as a denominator. Read before quoting any percentage."
             }
           }
         },
