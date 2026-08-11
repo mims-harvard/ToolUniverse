@@ -63,7 +63,11 @@ def _run(tool, arguments, studies=None, total=None):
     }
 
     def fake_query(endpoint_url, variables):
-        captured.update(variables)
+        # Only the first call is the search itself. Feature-R33-1 may follow it
+        # with a relaxed-wording probe, which must not overwrite the record of
+        # the query the tool actually executed for the caller.
+        if not captured:
+            captured.update(variables)
         return payload
 
     with patch("tooluniverse.ctg_tool.execute_RESTful_query", side_effect=fake_query):

@@ -1,18 +1,18 @@
 [
   {
     "name": "search_clinical_trials",
-    "description": "Search ClinicalTrials.gov for clinical trials by disease/condition, drug/intervention, or keywords. This is the PRIMARY tool for finding clinical trials \u2014 use it when you need to discover trials for a drug (e.g., 'olaparib', 'pembrolizumab'), a disease (e.g., 'lung cancer', 'diabetes'), or any study criteria. Accepts condition names, intervention/treatment names, and free-text queries. Returns NCT IDs and brief descriptions with pagination. Use the returned NCT IDs with 'get_clinical_trial_*' tools for detailed protocol info, or 'extract_clinical_trial_*' tools for efficacy/safety results. Limited to trials beyond phase 1.",
+    "description": "Search ClinicalTrials.gov for clinical trials by disease/condition, drug/intervention, or keywords. This is the PRIMARY tool for finding clinical trials \u2014 use it when you need to discover trials for a drug (e.g., 'olaparib', 'pembrolizumab'), a disease (e.g., 'lung cancer', 'diabetes'), or any study criteria. Accepts condition names, intervention/treatment names, and free-text queries. Returns NCT IDs and brief descriptions with pagination. Use the returned NCT IDs with 'get_clinical_trial_*' tools for detailed protocol info, or 'extract_clinical_trial_*' tools for efficacy/safety results. Limited to trials beyond phase 1. Query rewriting: multi-word `intervention` values are matched as an EXACT PHRASE against each study's registered intervention names/synonyms, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is returned in `executed_query` (detail in `query_rewrites`), and a zero-hit rewritten query reports in `relaxed_match_check` how many studies your original wording would have matched. Wrap a value in parentheses (e.g. '(cell therapy)') to send it verbatim.",
     "parameter": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "condition": {
           "type": "string",
-          "description": "Query for condition or disease using Essie expression syntax (e.g., 'lung cancer', '(head OR neck) AND pain AND NOT \"back pain\"'). "
+          "description": "Query for condition or disease using Essie expression syntax (e.g., 'lung cancer', '(head OR neck) AND pain AND NOT \"back pain\"'). Sent to ClinicalTrials.gov verbatim (this tool does not rewrite condition values); see `executed_query` in the response for what actually ran."
         },
         "intervention": {
           "type": "string",
-          "description": "Query for intervention/treatment using Essie expression syntax (e.g., 'chemotherapy', 'immunotherapy', 'olaparib', 'combination therapy'). Matched against each study's registered intervention names and synonyms (InterventionName/InterventionOtherName), not free text in study summaries, so prefer the generic/INN name: a brand name that no registrant recorded in either field can return zero results. Values that already contain Essie syntax (AREA[...]/AND/OR/NOT/quotes) are passed through unchanged."
+          "description": "Query for intervention/treatment using Essie expression syntax (e.g., 'chemotherapy', 'immunotherapy', 'olaparib', 'combination therapy'). Matched against each study's registered intervention names and synonyms (InterventionName/InterventionOtherName), not free text in study summaries, so prefer the generic/INN name: a brand name that no registrant recorded in either field can return zero results. Values that already contain Essie syntax (AREA[...]/AND/OR/NOT/quotes) are passed through unchanged. Matched against each study's registered intervention names and synonyms (InterventionName/InterventionOtherName), not free text in study summaries, and multi-word values are matched as an EXACT PHRASE -- so 'donor derived cell therapy' matches 0 studies even though 251 trials match the same words loosely. For looser matching, wrap the value in parentheses (e.g. '(donor derived cell therapy)') to send it verbatim, or use ClinicalTrials_search_studies with `query_term` for free text across all study fields. Prefer the generic/INN name over a brand name. See `executed_query` and `relaxed_match_check` in the response."
         },
         "query_term": {
           "type": "string",
@@ -130,6 +130,63 @@
             },
             "total_count": {
               "type": "integer"
+            },
+            "executed_query": {
+              "type": "object",
+              "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
+            },
+            "query_rewrites": {
+              "type": "array",
+              "description": "One entry per parameter whose value was rewritten before being sent. Empty when the query ran exactly as supplied.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "parameter": {
+                    "type": "string",
+                    "description": "The parameter name you passed."
+                  },
+                  "api_field": {
+                    "type": "string",
+                    "description": "The ClinicalTrials.gov query field it was sent as."
+                  },
+                  "submitted": {
+                    "type": "string",
+                    "description": "The value you supplied."
+                  },
+                  "executed": {
+                    "type": "string",
+                    "description": "The rewritten value that was actually sent."
+                  },
+                  "restricted_to_fields": {
+                    "type": "array",
+                    "description": "Registry fields the value was restricted to, if any.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "relaxed_match_check": {
+              "type": "object",
+              "description": "Present ONLY when a rewritten query returned zero studies. Reports whether your original wording would have matched, so an empty `studies` list can be told apart from a genuine absence of trials. The relaxed results are never substituted for the ones you asked for -- follow `note` to retrieve them.",
+              "properties": {
+                "relaxed_query": {
+                  "type": "object",
+                  "description": "The un-rewritten query used for the check."
+                },
+                "relaxed_total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Studies matching your original wording; null if the check request failed."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Plain-language reading of the check, naming the escape hatch when the zero is an artifact of the rewrite."
+                }
+              }
             }
           },
           "required": [
@@ -922,7 +979,7 @@
   },
   {
     "name": "ClinicalTrials_search_studies",
-    "description": "Search ClinicalTrials.gov for clinical trial studies by condition, intervention, sponsor, or other criteria. Returns NCT IDs, titles, status, phase, enrollment, and key trial metadata. Example: search for 'breast cancer' trials with 'pembrolizumab' that are RECRUITING in Phase 3.",
+    "description": "Search ClinicalTrials.gov for clinical trial studies by condition, intervention, sponsor, or other criteria. Returns NCT IDs, titles, status, phase, enrollment, and key trial metadata. Example: search for 'breast cancer' trials with 'pembrolizumab' that are RECRUITING in Phase 3. Query rewriting: multi-word intervention/condition/sponsor values are sent to ClinicalTrials.gov as an EXACT PHRASE, and intervention/sponsor values are further restricted to specific registry fields, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is always returned in `executed_query` (with per-parameter detail in `query_rewrites`); when a rewritten query matches nothing, `relaxed_match_check` reports how many studies your original wording would have matched and how to retrieve them. To opt out of the rewrite, wrap a value in parentheses (e.g. '(donor derived cell therapy)') and it is sent verbatim as a loose keyword match.",
     "parameter": {
       "type": "object",
       "additionalProperties": false,
@@ -940,14 +997,14 @@
             "string",
             "null"
           ],
-          "description": "Disease or condition to search for (e.g., 'breast cancer', 'type 2 diabetes', 'COVID-19'). Supports Boolean operators (AND, OR, NOT)."
+          "description": "Disease or condition to search for (e.g., 'breast cancer', 'type 2 diabetes', 'COVID-19'). Supports Boolean operators (AND, OR, NOT). Multi-word values are matched as an exact phrase (e.g. 'kidney transplantation' is sent as \"kidney transplantation\"), which is narrower than a loose keyword match. For looser matching, wrap the value in parentheses (e.g. '(kidney transplantation)') to send it verbatim. Values already containing Essie syntax (AND/OR/NOT/AREA[]/quotes) are passed through unchanged. See `executed_query` in the response for what actually ran."
         },
         "query_intr": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Intervention or drug to search for (e.g., 'pembrolizumab', 'metformin', 'chemotherapy')."
+          "description": "Intervention or drug to search for (e.g., 'pembrolizumab', 'metformin', 'chemotherapy'). Matched against each study's registered intervention names and synonyms (InterventionName/InterventionOtherName), not free text in study summaries, and multi-word values are matched as an EXACT PHRASE -- so 'donor derived cell therapy' matches 0 studies even though 251 trials match the same words loosely. For looser matching, wrap the value in parentheses (e.g. '(donor derived cell therapy)') to send it verbatim, or use ClinicalTrials_search_studies with `query_term` for free text across all study fields. Prefer the generic/INN name over a brand name. See `executed_query` and `relaxed_match_check` in the response."
         },
         "query_term": {
           "type": [
@@ -1003,7 +1060,7 @@
             "string",
             "null"
           ],
-          "description": "Disease or condition to search for. Alias for query_cond. E.g., \"acute myeloid leukemia\"."
+          "description": "Disease or condition to search for. Alias for query_cond. E.g., \"acute myeloid leukemia\". Multi-word values are matched as an exact phrase (e.g. 'kidney transplantation' is sent as \"kidney transplantation\"), which is narrower than a loose keyword match. For looser matching, wrap the value in parentheses (e.g. '(kidney transplantation)') to send it verbatim. Values already containing Essie syntax (AND/OR/NOT/AREA[]/quotes) are passed through unchanged. See `executed_query` in the response for what actually ran."
         },
         "status": {
           "type": [
@@ -1024,14 +1081,14 @@
             "string",
             "null"
           ],
-          "description": "Intervention or drug to search for. Alias for query_intr. E.g., \"pembrolizumab\", \"metformin\"."
+          "description": "Intervention or drug to search for. Alias for query_intr. E.g., \"pembrolizumab\", \"metformin\". Matched against each study's registered intervention names and synonyms (InterventionName/InterventionOtherName), not free text in study summaries, and multi-word values are matched as an EXACT PHRASE -- so 'donor derived cell therapy' matches 0 studies even though 251 trials match the same words loosely. For looser matching, wrap the value in parentheses (e.g. '(donor derived cell therapy)') to send it verbatim, or use ClinicalTrials_search_studies with `query_term` for free text across all study fields. Prefer the generic/INN name over a brand name. See `executed_query` and `relaxed_match_check` in the response."
         },
         "sponsor": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Lead sponsor or collaborator name to search for. E.g., \"National Cancer Institute\"."
+          "description": "Lead sponsor or collaborator name to search for. E.g., \"National Cancer Institute\". Matched against each study's registered lead-sponsor name (AREA[LeadSponsorName]) only, and multi-word values are matched as an EXACT PHRASE. For looser matching, wrap the value in parentheses (e.g. '(National Cancer Institute)') to send it verbatim. See `executed_query` and `relaxed_match_check` in the response."
         }
       },
       "required": []
@@ -1130,6 +1187,63 @@
                 "string",
                 "null"
               ]
+            },
+            "executed_query": {
+              "type": "object",
+              "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
+            },
+            "query_rewrites": {
+              "type": "array",
+              "description": "One entry per parameter whose value was rewritten before being sent. Empty when the query ran exactly as supplied.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "parameter": {
+                    "type": "string",
+                    "description": "The parameter name you passed."
+                  },
+                  "api_field": {
+                    "type": "string",
+                    "description": "The ClinicalTrials.gov query field it was sent as."
+                  },
+                  "submitted": {
+                    "type": "string",
+                    "description": "The value you supplied."
+                  },
+                  "executed": {
+                    "type": "string",
+                    "description": "The rewritten value that was actually sent."
+                  },
+                  "restricted_to_fields": {
+                    "type": "array",
+                    "description": "Registry fields the value was restricted to, if any.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "relaxed_match_check": {
+              "type": "object",
+              "description": "Present ONLY when a rewritten query returned zero studies. Reports whether your original wording would have matched, so an empty `studies` list can be told apart from a genuine absence of trials. The relaxed results are never substituted for the ones you asked for -- follow `note` to retrieve them.",
+              "properties": {
+                "relaxed_query": {
+                  "type": "object",
+                  "description": "The un-rewritten query used for the check."
+                },
+                "relaxed_total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Studies matching your original wording; null if the check request failed."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Plain-language reading of the check, naming the escape hatch when the zero is an artifact of the rewrite."
+                }
+              }
             }
           },
           "required": [
@@ -1281,20 +1395,20 @@
   },
   {
     "name": "ClinicalTrials_search_by_intervention",
-    "description": "Search ClinicalTrials.gov for all clinical trials testing a specific drug, biologic, device, or other intervention. Returns trial IDs, titles, phases, status, and conditions being studied. Ideal for finding all trials for a given drug (e.g., 'nivolumab') across all disease indications.",
+    "description": "Search ClinicalTrials.gov for all clinical trials testing a specific drug, biologic, device, or other intervention. Returns trial IDs, titles, phases, status, and conditions being studied. Ideal for finding all trials for a given drug (e.g., 'nivolumab') across all disease indications. Query rewriting: multi-word intervention/condition/sponsor values are sent to ClinicalTrials.gov as an EXACT PHRASE, and intervention/sponsor values are further restricted to specific registry fields, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is always returned in `executed_query` (with per-parameter detail in `query_rewrites`); when a rewritten query matches nothing, `relaxed_match_check` reports how many studies your original wording would have matched and how to retrieve them. To opt out of the rewrite, wrap a value in parentheses (e.g. '(donor derived cell therapy)') and it is sent verbatim as a loose keyword match.",
     "parameter": {
       "type": "object",
       "properties": {
         "intervention": {
           "type": "string",
-          "description": "Drug, biologic, device, or intervention name (e.g., 'nivolumab', 'CRISPR', 'CAR-T cells', 'metformin', 'osimertinib')."
+          "description": "Drug, biologic, device, or intervention name (e.g., 'nivolumab', 'CRISPR', 'CAR-T cells', 'metformin', 'osimertinib'). Matched against each study's registered intervention names and synonyms (InterventionName/InterventionOtherName), not free text in study summaries, and multi-word values are matched as an EXACT PHRASE -- so 'donor derived cell therapy' matches 0 studies even though 251 trials match the same words loosely. For looser matching, wrap the value in parentheses (e.g. '(donor derived cell therapy)') to send it verbatim, or use ClinicalTrials_search_studies with `query_term` for free text across all study fields. Prefer the generic/INN name over a brand name. See `executed_query` and `relaxed_match_check` in the response."
         },
         "condition": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Disease or condition to filter trials (e.g., 'HER2 breast cancer', 'NSCLC KRAS G12C'). Alias for query_cond."
+          "description": "Disease or condition to filter trials (e.g., 'HER2 breast cancer', 'NSCLC KRAS G12C'). Alias for query_cond. Multi-word values are matched as an exact phrase (e.g. 'kidney transplantation' is sent as \"kidney transplantation\"), which is narrower than a loose keyword match. For looser matching, wrap the value in parentheses (e.g. '(kidney transplantation)') to send it verbatim. Values already containing Essie syntax (AND/OR/NOT/AREA[]/quotes) are passed through unchanged. See `executed_query` in the response for what actually ran."
         },
         "status": {
           "type": [
@@ -1360,6 +1474,63 @@
                 "string",
                 "null"
               ]
+            },
+            "executed_query": {
+              "type": "object",
+              "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
+            },
+            "query_rewrites": {
+              "type": "array",
+              "description": "One entry per parameter whose value was rewritten before being sent. Empty when the query ran exactly as supplied.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "parameter": {
+                    "type": "string",
+                    "description": "The parameter name you passed."
+                  },
+                  "api_field": {
+                    "type": "string",
+                    "description": "The ClinicalTrials.gov query field it was sent as."
+                  },
+                  "submitted": {
+                    "type": "string",
+                    "description": "The value you supplied."
+                  },
+                  "executed": {
+                    "type": "string",
+                    "description": "The rewritten value that was actually sent."
+                  },
+                  "restricted_to_fields": {
+                    "type": "array",
+                    "description": "Registry fields the value was restricted to, if any.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "relaxed_match_check": {
+              "type": "object",
+              "description": "Present ONLY when a rewritten query returned zero studies. Reports whether your original wording would have matched, so an empty `studies` list can be told apart from a genuine absence of trials. The relaxed results are never substituted for the ones you asked for -- follow `note` to retrieve them.",
+              "properties": {
+                "relaxed_query": {
+                  "type": "object",
+                  "description": "The un-rewritten query used for the check."
+                },
+                "relaxed_total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Studies matching your original wording; null if the check request failed."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Plain-language reading of the check, naming the escape hatch when the zero is an artifact of the rewrite."
+                }
+              }
             }
           }
         },
@@ -1385,20 +1556,20 @@
   },
   {
     "name": "ClinicalTrials_search_by_sponsor",
-    "description": "Search ClinicalTrials.gov for clinical trials by sponsor or lead organization. Returns trials funded by pharmaceutical companies, academic institutions, or government agencies. Example: find all Phase 3 trials sponsored by 'National Cancer Institute' for cancer conditions.",
+    "description": "Search ClinicalTrials.gov for clinical trials by sponsor or lead organization. Returns trials funded by pharmaceutical companies, academic institutions, or government agencies. Example: find all Phase 3 trials sponsored by 'National Cancer Institute' for cancer conditions. Query rewriting: multi-word intervention/condition/sponsor values are sent to ClinicalTrials.gov as an EXACT PHRASE, and intervention/sponsor values are further restricted to specific registry fields, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is always returned in `executed_query` (with per-parameter detail in `query_rewrites`); when a rewritten query matches nothing, `relaxed_match_check` reports how many studies your original wording would have matched and how to retrieve them. To opt out of the rewrite, wrap a value in parentheses (e.g. '(donor derived cell therapy)') and it is sent verbatim as a loose keyword match.",
     "parameter": {
       "type": "object",
       "properties": {
         "sponsor": {
           "type": "string",
-          "description": "Sponsor or lead organization name (e.g., 'Pfizer', 'National Cancer Institute', 'Novartis', 'Johns Hopkins University', 'Merck')."
+          "description": "Sponsor or lead organization name (e.g., 'Pfizer', 'National Cancer Institute', 'Novartis', 'Johns Hopkins University', 'Merck'). Matched against each study's registered lead-sponsor name (AREA[LeadSponsorName]) only, and multi-word values are matched as an EXACT PHRASE. For looser matching, wrap the value in parentheses (e.g. '(National Cancer Institute)') to send it verbatim. See `executed_query` and `relaxed_match_check` in the response."
         },
         "query_cond": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Optional disease/condition filter (e.g., 'cancer', 'cardiovascular disease', 'alzheimer')."
+          "description": "Optional disease/condition filter (e.g., 'cancer', 'cardiovascular disease', 'alzheimer'). Multi-word values are matched as an exact phrase (e.g. 'kidney transplantation' is sent as \"kidney transplantation\"), which is narrower than a loose keyword match. For looser matching, wrap the value in parentheses (e.g. '(kidney transplantation)') to send it verbatim. Values already containing Essie syntax (AND/OR/NOT/AREA[]/quotes) are passed through unchanged. See `executed_query` in the response for what actually ran."
         },
         "filter_status": {
           "type": [
@@ -1457,6 +1628,63 @@
                 "string",
                 "null"
               ]
+            },
+            "executed_query": {
+              "type": "object",
+              "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
+            },
+            "query_rewrites": {
+              "type": "array",
+              "description": "One entry per parameter whose value was rewritten before being sent. Empty when the query ran exactly as supplied.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "parameter": {
+                    "type": "string",
+                    "description": "The parameter name you passed."
+                  },
+                  "api_field": {
+                    "type": "string",
+                    "description": "The ClinicalTrials.gov query field it was sent as."
+                  },
+                  "submitted": {
+                    "type": "string",
+                    "description": "The value you supplied."
+                  },
+                  "executed": {
+                    "type": "string",
+                    "description": "The rewritten value that was actually sent."
+                  },
+                  "restricted_to_fields": {
+                    "type": "array",
+                    "description": "Registry fields the value was restricted to, if any.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "relaxed_match_check": {
+              "type": "object",
+              "description": "Present ONLY when a rewritten query returned zero studies. Reports whether your original wording would have matched, so an empty `studies` list can be told apart from a genuine absence of trials. The relaxed results are never substituted for the ones you asked for -- follow `note` to retrieve them.",
+              "properties": {
+                "relaxed_query": {
+                  "type": "object",
+                  "description": "The un-rewritten query used for the check."
+                },
+                "relaxed_total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Studies matching your original wording; null if the check request failed."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Plain-language reading of the check, naming the escape hatch when the zero is an artifact of the rewrite."
+                }
+              }
             }
           }
         },

@@ -131,7 +131,10 @@ def test_condition_and_intervention_are_quoted_in_live_request():
             }
         )
 
-    params = mock_get.call_args.kwargs["params"]
+    # The first call is the search itself. Feature-R33-1 may follow it with a
+    # relaxed-wording probe (this mock answers 0 studies), which must not be
+    # mistaken for the query the tool executed on the caller's behalf.
+    params = mock_get.call_args_list[0].kwargs["params"]
     assert params["query.cond"] == '"cervical cancer"'
     assert params["query.intr"] == (
         '(AREA[InterventionName]"immunotherapy radiotherapy" OR '
@@ -144,7 +147,7 @@ def test_sponsor_alias_maps_to_query_spons():
     with patch("requests.get", return_value=_mock_response()) as mock_get:
         tool.run({"sponsor": "National Cancer Institute"})
 
-    params = mock_get.call_args.kwargs["params"]
+    params = mock_get.call_args_list[0].kwargs["params"]
     assert params["query.spons"] == 'AREA[LeadSponsorName]"National Cancer Institute"'
 
 

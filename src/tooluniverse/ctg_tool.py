@@ -62,6 +62,105 @@ def _restrict_to_area(value: str, areas: tuple) -> str:
     return "(" + " OR ".join(clauses) + ")"
 
 
+# Feature-R33-1: the two helpers above rewrite the caller's wording before it
+# is sent -- a plain multi-word value becomes an exact Essie phrase, and an
+# intervention/sponsor is further narrowed to specific AREA[] fields. Both
+# rewrites are deliberate and load-bearing (they are what keeps 'cervical
+# cancer' and 'vedolizumab' precise), but they create a hazard the caller
+# cannot see: the query that runs is not the query that was asked for, so a
+# rewrite that matches nothing comes back as an ordinary, successful "0
+# studies". Confirmed live: intervention='donor derived cell therapy' executes
+# as (AREA[InterventionName]"donor derived cell therapy" OR
+# AREA[InterventionOtherName]"donor derived cell therapy") with totalCount 0,
+# while the phrase the caller actually typed has 251 matches on a plain
+# query.intr; condition='kidney transplantation' executes quoted for 2436
+# against 2863 unquoted. The answer is disclosure, not removal -- removing the
+# quoting would just trade a silent false negative for the silent false
+# positives R9D-1/R13B-1/R23-1 were fixing. So every search reports the query
+# it really executed, and a zero that followed a rewrite is checked against the
+# caller's original wording and told apart from a genuine absence of trials.
+def _describe_rewrite(parameter, api_field, submitted, executed, areas=()):
+    """Record one query rewrite so the response can disclose it."""
+    return {
+        "parameter": parameter,
+        "api_field": api_field,
+        "submitted": submitted,
+        "executed": executed,
+        "restricted_to_fields": list(areas),
+    }
+
+
+def _relaxed_match_check(params, rewrites, fetch_total_count):
+    """Ask ClinicalTrials.gov whether the caller's original wording would have
+    matched, so an empty result set becomes self-diagnosing.
+
+    Issued only after a rewritten query returned nothing, so the common path
+    pays for no extra request. The relaxed result set is deliberately *not*
+    swapped in: the caller asked for the strict query and still gets exactly
+    the studies it matched. What changes is that a false negative now says so
+    and names the escape hatch instead of being discovered downstream.
+
+    A parenthesised value is that escape hatch: both rewrite helpers bail out
+    on any Essie syntax, so '(donor derived cell therapy)' reaches the API
+    verbatim and matches the same 251 studies as the loose form.
+    """
+    relaxed = {rw["api_field"]: rw["submitted"] for rw in rewrites}
+    probe = dict(params)
+    probe.update(relaxed)
+    # Every other filter is inherited from the real query so the two counts are
+    # comparable; only the count is read, so ask for the cheapest possible body
+    # (one study, one field: 167 bytes against 62 KB for the default full
+    # protocolSection).
+    probe["pageSize"] = 1
+    probe["countTotal"] = "true"
+    probe["fields"] = "NCTId"
+    probe.pop("pageToken", None)
+
+    try:
+        total = fetch_total_count(probe)
+        failure = None if total is not None else "it returned no usable response"
+    except Exception as exc:  # transport, HTTP or decode failure
+        total, failure = None, f"{type(exc).__name__}: {exc}"
+
+    check = {"relaxed_query": relaxed, "relaxed_total_count": total}
+    if failure:
+        # Degrade rather than turn a working call into an error: the studies
+        # above are still whatever the strict query matched.
+        check["note"] = (
+            "This search rewrote your wording (see query_rewrites) and matched "
+            "0 studies. Whether your original wording would have matched could "
+            f"not be checked ({failure}), so treat this 0 as unverified rather "
+            "than as evidence that no such trials exist."
+        )
+    elif total:
+        hints = "; ".join(
+            f'pass {rw["parameter"]}="({rw["submitted"]})" to send your '
+            "wording verbatim"
+            for rw in rewrites
+        )
+        check["note"] = (
+            "LIKELY FALSE NEGATIVE: the rewritten query matched 0 studies, but "
+            f"your original wording matches {total} on ClinicalTrials.gov. The "
+            "empty studies list above is a consequence of the rewrite, not "
+            f"evidence that no such trials exist. To retrieve those {total}: "
+            f"{hints} (parenthesised values are passed through unmodified). "
+            "For a free-text search across every study field instead, use "
+            "ClinicalTrials_search_studies with query_term."
+        )
+    else:
+        check["note"] = (
+            "Your original wording also matches 0 studies on "
+            "ClinicalTrials.gov, so this 0 reflects a genuine absence of "
+            "matching trials rather than an artifact of the query rewrite."
+        )
+    return check
+
+
+def _executed_query(params):
+    """The subset of the outgoing parameters that decides which studies match."""
+    return {k: v for k, v in params.items() if k.startswith(("query.", "filter."))}
+
+
 # Fix-R23-2: CTG API v2 rejects anything but its exact upper-snake enum
 # spellings, and it does so with a bare HTTP 400 whose remediation reads
 # "Retry the request / Check service status / Report issue if persistent" --
@@ -258,6 +357,32 @@ class ClinicalTrialsTool(RESTfulTool):
         "query.spons": ("LeadSponsorName",),
     }
 
+    def _fetch_total_count(self, probe_params):
+        """Count-only request used by the relaxed-wording check."""
+        import requests
+
+        probe = requests.get(
+            f"{self._BASE_URL}/studies", params=probe_params, timeout=30
+        )
+        probe.raise_for_status()
+        return probe.json().get("totalCount")
+
+    def _attach_disclosure(self, result_data, params, query_rewrites):
+        """Feature-R33-1: record what actually ran, and diagnose an empty result.
+
+        Shared by both search paths on purpose. Feature-27A-1 was caused by
+        exactly this kind of logic existing once per path and drifting; keeping
+        the trigger condition and the key names in one place is what stops the
+        two tools disagreeing about what they disclose.
+        """
+        result_data["executed_query"] = _executed_query(params)
+        result_data["query_rewrites"] = query_rewrites
+        if not result_data.get("studies") and query_rewrites:
+            result_data["relaxed_match_check"] = _relaxed_match_check(
+                params, query_rewrites, self._fetch_total_count
+            )
+        return result_data
+
     def _run_search(self, arguments):
         """Handle search operations (search_studies, search_by_intervention, search_by_sponsor)."""
         import requests
@@ -287,6 +412,10 @@ class ClinicalTrialsTool(RESTfulTool):
 
         # Build advanced filter clauses (filter.advanced for phase/studytype)
         advanced_clauses = []
+        # Feature-R33-1: every value the two helpers below alter is recorded so
+        # the response can show what actually ran, keyed by the name the caller
+        # used rather than the API's.
+        query_rewrites = []
 
         for key, value in arguments.items():
             if value is None:
@@ -350,13 +479,25 @@ class ClinicalTrialsTool(RESTfulTool):
                         continue
                     value = ",".join(statuses)
                 elif mapped_key == "query.cond" and isinstance(value, str):
-                    value = _phrase_quote_if_plain(value)
+                    rewritten = _phrase_quote_if_plain(value)
+                    if rewritten != value:
+                        query_rewrites.append(
+                            _describe_rewrite(key, mapped_key, value, rewritten)
+                        )
+                    value = rewritten
                 elif mapped_key in self._AREA_RESTRICTED_FIELDS and isinstance(
                     value, str
                 ):
-                    value = _restrict_to_area(
-                        value, self._AREA_RESTRICTED_FIELDS[mapped_key]
-                    )
+                    areas = self._AREA_RESTRICTED_FIELDS[mapped_key]
+                    rewritten = _restrict_to_area(value, areas)
+                    # An unchanged value means the caller supplied their own
+                    # Essie syntax, which both helpers deliberately leave
+                    # alone -- nothing was rewritten, so nothing to disclose.
+                    if rewritten != value:
+                        query_rewrites.append(
+                            _describe_rewrite(key, mapped_key, value, rewritten, areas)
+                        )
+                    value = rewritten
                 params[mapped_key] = value
 
         if advanced_clauses:
@@ -414,14 +555,17 @@ class ClinicalTrialsTool(RESTfulTool):
                 }
             )
 
+        result_data = {
+            "studies": studies,
+            # totalCount may be absent from API response; fallback to len(studies)
+            "total_count": data.get("totalCount") or len(studies),
+            "next_page_token": data.get("nextPageToken"),
+        }
+        self._attach_disclosure(result_data, params, query_rewrites)
+
         return {
             "status": "success",
-            "data": {
-                "studies": studies,
-                # totalCount may be absent from API response; fallback to len(studies)
-                "total_count": data.get("totalCount") or len(studies),
-                "next_page_token": data.get("nextPageToken"),
-            },
+            "data": result_data,
             "metadata": {"source": "ClinicalTrials.gov API v2", "operation": "search"},
         }
 
@@ -658,6 +802,18 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
         #     "required": false
         # },
 
+    def _fetch_total_count(self, probe_params):
+        """Same count-only check as the base class, over this tool's transport.
+
+        Each path probes through the transport it already uses for its primary
+        request, so the check fails the same way -- and mocks the same way -- as
+        the search it is explaining.
+        """
+        probe = execute_RESTful_query(
+            endpoint_url=self.endpoint_url, variables=probe_params
+        )
+        return (probe or {}).get("totalCount")
+
     def run(self, arguments):
         """
         Executes the search query for clinical trials.
@@ -669,6 +825,10 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
             dict or str: The JSON response from the API as a dictionary,
                          or raw text for non-JSON responses, or an error dictionary.
         """
+        # Feature-R33-1: keep the caller-facing spelling of each parameter, so a
+        # disclosed rewrite can be described with the name they actually typed
+        # rather than the API's mapped one.
+        caller_names = {self.param_name_mapper.get(k, k): k for k in arguments}
         arguments = self._map_param_names(arguments)
         query_params = deepcopy(self.query_schema)
         expected_param_names = self._map_param_names(
@@ -693,7 +853,7 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
         # applied here from the shared _AREA_RESTRICTED_FIELDS mapping (and
         # via the shared _restrict_to_area helper) so the two code paths
         # cannot drift apart again, which is what caused this.
-        area_restricted_params = set()
+        query_rewrites = []
         for mapped_key, areas in self._AREA_RESTRICTED_FIELDS.items():
             value = query_params.get(mapped_key)
             if not isinstance(value, str):
@@ -705,7 +865,15 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
             # is nothing to report about it below either.
             if restricted != value:
                 query_params[mapped_key] = restricted
-                area_restricted_params.add(mapped_key)
+                query_rewrites.append(
+                    _describe_rewrite(
+                        caller_names.get(mapped_key, mapped_key),
+                        mapped_key,
+                        value,
+                        restricted,
+                        areas,
+                    )
+                )
 
         # Add default parameters that are not shown in the schema.
         # filter.advanced used to be skipped whenever a status filter was set,
@@ -776,7 +944,9 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
         # vial must not read that zero as "no trials exist". This is a
         # different cause of zero from the phase gate above, so it is reported
         # as its own note and only when the restriction was actually applied.
-        intervention_restricted = "query.intr" in area_restricted_params
+        intervention_restricted = any(
+            rw["api_field"] == "query.intr" for rw in query_rewrites
+        )
         intervention_restriction_note = (
             "This search matched the intervention names and synonyms "
             "registered on each study (ClinicalTrials.gov "
@@ -806,9 +976,16 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
                 notes.append(nonempty_phase_filter_note)
             if notes:
                 metadata["note"] = " ".join(notes)
+
+            # Feature-R33-1: disclose what actually ran. The notes above name
+            # the *causes* of an empty result; these name the query itself, so
+            # "what I asked" and "what ran" can be compared directly.
+            result_data = self._attach_disclosure(
+                self._simplify_output(response), api_params, query_rewrites
+            )
             return {
                 "status": "success",
-                "data": self._simplify_output(response),
+                "data": result_data,
                 "metadata": metadata,
             }
 
