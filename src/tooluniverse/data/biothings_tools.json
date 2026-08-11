@@ -300,7 +300,7 @@
   },
   {
     "name": "MyVariant_query_variants",
-    "description": "Search for genetic variants by various criteria including rsID, gene, chromosome position, or clinical significance. Returns variant annotations from sources like dbSNP, ClinVar, gnomAD, and CADD.",
+    "description": "Search for genetic variants by various criteria including rsID, gene, chromosome position, or clinical significance. Returns variant annotations from sources like dbSNP, ClinVar, gnomAD, and CADD. Coordinates default to hg19/GRCh37 -- set assembly='hg38' for hg38/GRCh38 (e.g. rs4244285 is chr10:g.96541616G>C on hg19 and chr10:g.94781859G>C on hg38). Any HGVS coordinate in the query must be written in the assembly you request; an rsID works in either. The response reports the frame in a top-level 'coordinate_assembly' key.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -317,6 +317,15 @@
           "type": "integer",
           "description": "Maximum number of results (1-100).",
           "default": 10
+        },
+        "assembly": {
+          "type": "string",
+          "description": "Reference genome assembly for the coordinates in the query and in the results: 'hg19' (GRCh37, the default) or 'hg38' (GRCh38).",
+          "enum": [
+            "hg19",
+            "hg38"
+          ],
+          "default": "hg19"
         }
       },
       "required": [
@@ -388,18 +397,27 @@
   },
   {
     "name": "MyVariant_get_variant_annotation",
-    "description": "Get detailed annotations for a specific variant by its HGVS ID (e.g., 'chr1:g.2186318G>A'). Returns information from dbSNP, ClinVar, CADD, and other sources.",
+    "description": "Get detailed annotations for a specific variant by its HGVS ID (e.g., 'chr1:g.2186318G>A') or rsID. Returns information from dbSNP, ClinVar, CADD, and other sources. Coordinates default to hg19/GRCh37 -- set assembly='hg38' for hg38/GRCh38 (e.g. rs4244285 is chr10:g.96541616G>C on hg19 and chr10:g.94781859G>C on hg38). An HGVS variant_id must be written in the SAME assembly you request: this endpoint looks ids up verbatim and never lifts coordinates over, so an hg19 id with assembly='hg38' is a 404, not a translation. An rsID works in either assembly. The response reports the frame in a top-level 'coordinate_assembly' key. MyVariant sometimes files several records under one rsID and resolves the rsID to the highest-scoring one, which can be an identifier-only stub; when that happens the sibling records that do carry the requested fields are reported in the top-level 'sibling_records_with_requested_fields', 'sibling_variant_ids_with_requested_fields' and 'sibling_record_note' keys, and 'data' still holds the record MyVariant resolved.",
     "parameter": {
       "type": "object",
       "properties": {
         "variant_id": {
           "type": "string",
-          "description": "HGVS variant ID (e.g., 'chr1:g.2186318G>A' or 'rs123')."
+          "description": "HGVS variant ID (e.g., 'chr1:g.2186318G>A') or rsID (e.g., 'rs123'). An HGVS id must be expressed in the assembly given by the 'assembly' parameter."
         },
         "fields": {
           "type": "string",
           "description": "Fields to return. Useful fields: dbsnp, clinvar, cadd, gnomad_genome, gnomad_exome, dbnsfp (functional predictions).",
           "default": "dbsnp,clinvar,cadd,gnomad_genome,dbnsfp"
+        },
+        "assembly": {
+          "type": "string",
+          "description": "Reference genome assembly for both the HGVS variant_id and the returned coordinates: 'hg19' (GRCh37, the default) or 'hg38' (GRCh38).",
+          "enum": [
+            "hg19",
+            "hg38"
+          ],
+          "default": "hg19"
         }
       },
       "required": [
@@ -666,18 +684,27 @@
   },
   {
     "name": "MyVariant_get_pathogenicity_scores",
-    "description": "Get comprehensive pathogenicity prediction scores for a variant from dbNSFP. Returns REVEL, CADD, AlphaMissense, SIFT, PolyPhen-2, MetaRNN, GERP, PhyloP, and PhastCons scores in a single call. Use this when MyVariant_query_variants does not return dbnsfp data, or when you specifically need REVEL/AlphaMissense scores for ACMG PP3/BP4 classification.",
+    "description": "Get comprehensive pathogenicity prediction scores for a variant from dbNSFP. Returns REVEL, CADD, AlphaMissense, SIFT, PolyPhen-2, MetaRNN, GERP, PhyloP, and PhastCons scores in a single call. Use this when MyVariant_query_variants does not return dbnsfp data, or when you specifically need REVEL/AlphaMissense scores for ACMG PP3/BP4 classification. Coordinates default to hg19/GRCh37 -- set assembly='hg38' for hg38/GRCh38 (e.g. rs4244285 is chr10:g.96541616G>C on hg19 and chr10:g.94781859G>C on hg38). An HGVS variant_id must be written in the SAME assembly you request: this endpoint looks ids up verbatim and never lifts coordinates over, so an hg19 id with assembly='hg38' is a 404, not a translation. An rsID works in either assembly. The response reports the frame in a top-level 'coordinate_assembly' key. MyVariant sometimes files several records under one rsID and resolves the rsID to the highest-scoring one, which can be an identifier-only stub; when that happens the sibling records that do carry the requested fields are reported in the top-level 'sibling_records_with_requested_fields', 'sibling_variant_ids_with_requested_fields' and 'sibling_record_note' keys, and 'data' still holds the record MyVariant resolved.",
     "parameter": {
       "type": "object",
       "properties": {
         "variant_id": {
           "type": "string",
-          "description": "Variant ID: rsID (e.g., rs45478192) or HGVS genomic (e.g., chr16:g.23635348A>C). Both formats work."
+          "description": "Variant ID: rsID (e.g., rs45478192) or HGVS genomic (e.g., chr16:g.23635348A>C). Both formats work; an HGVS id must be expressed in the assembly given by the 'assembly' parameter."
         },
         "fields": {
           "type": "string",
           "description": "Fields to return (pre-configured for pathogenicity scores)",
           "default": "dbnsfp.revel.score,cadd.phred,dbnsfp.alphamissense.score,dbnsfp.alphamissense.pred,dbnsfp.sift.score,dbnsfp.sift.pred,dbnsfp.polyphen2.hdiv.score,dbnsfp.polyphen2.hdiv.pred,dbnsfp.metarnn.score,dbnsfp.metarnn.pred,cadd.gerp.rs,dbnsfp.phylop.100way_vertebrate.rankscore,dbnsfp.phastcons.100way_vertebrate.rankscore,dbnsfp.vest4.score,dbnsfp.mutationtaster.pred,clinvar.rcv.clinical_significance,dbsnp.rsid"
+        },
+        "assembly": {
+          "type": "string",
+          "description": "Reference genome assembly for both the HGVS variant_id and the returned coordinates: 'hg19' (GRCh37, the default) or 'hg38' (GRCh38).",
+          "enum": [
+            "hg19",
+            "hg38"
+          ],
+          "default": "hg19"
         }
       },
       "required": [
