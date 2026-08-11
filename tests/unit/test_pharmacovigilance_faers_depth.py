@@ -47,6 +47,22 @@ def _make_tool(tool_name):
     return FDADrugAdverseEventTool(_load_config(tool_name))
 
 
+@pytest.fixture(autouse=True)
+def _stub_denominator_probe():
+    """Keep the coverage-disclosure probe off the network.
+
+    All three tools now fetch their own denominator, and that request goes
+    through `request_with_retry` rather than `requests.get` -- so it slips past
+    the mocks in this file and would really call api.fda.gov. The disclosure is
+    pinned in test_faers_count_facet_coverage.py; stub it here.
+    """
+    probe = MagicMock()
+    probe.status_code = 200
+    probe.json.return_value = {"meta": {"results": {"total": 4741}}}
+    with patch("tooluniverse.openfda_adv_tool.request_with_retry", return_value=probe):
+        yield
+
+
 def _patched_get(results):
     """Return a MagicMock patching requests.get to yield the given results list."""
     resp = MagicMock()

@@ -47,6 +47,24 @@ def _load_config(tool_name):
     raise AssertionError(f"tool config not found: {tool_name}")
 
 
+@pytest.fixture(autouse=True)
+def _stub_denominator_probe():
+    """Keep the coverage-disclosure probe off the network.
+
+    Every FAERS count tool now fetches its own denominator, and that request
+    goes through `request_with_retry` rather than `requests.get` -- so it slips
+    past the `requests.get` mocks in this file and would really call
+    api.fda.gov. The disclosure itself is pinned in
+    test_faers_count_facet_coverage.py; here it is stubbed with a fixed total so
+    these truncation tests stay hermetic.
+    """
+    probe = MagicMock()
+    probe.status_code = 200
+    probe.json.return_value = {"meta": {"results": {"total": 4741}}}
+    with patch("tooluniverse.openfda_adv_tool.request_with_retry", return_value=probe):
+        yield
+
+
 def _make_tool(tool_name="FAERS_count_reactions_by_drug_event"):
     from tooluniverse.openfda_adv_tool import FDADrugAdverseEventTool
 

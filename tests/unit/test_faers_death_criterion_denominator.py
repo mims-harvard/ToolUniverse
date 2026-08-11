@@ -236,18 +236,26 @@ def test_return_schema_declares_the_new_keys():
     )
 
 
-# ---- the disclosure stays opt-in ----
+# ---- the rest of the count family discloses too (Fix-R36) ----
 
 
-def test_a_reaction_count_tool_makes_no_extra_request_and_gains_no_keys():
-    """A report can carry many reaction terms, so a coverage fraction there is
-    meaningless; the disclosure must not leak onto those tools."""
+def test_a_reaction_count_tool_discloses_as_well():
+    """This test used to assert the opposite, on the grounds that a coverage
+    fraction is meaningless for a field a report can carry many values of. The
+    fraction is indeed not a coverage share there -- but withholding the
+    denominator is what lets the reader invent a rate from the row sum, and a
+    multi-valued facet sums ABOVE the report total rather than below, which is
+    the more dangerous direction. Measured for vasopressin, 4,741 matching
+    reports: patient.reaction.reactionoutcome sums to 5,514 (116%) and
+    patient.drug.drugadministrationroute to 9,273 (196%). The wording for both
+    directions is pinned in test_faers_count_facet_coverage.py."""
     result, urls = _run(
         tool_name="FAERS_count_reactions_by_drug_event",
         facet=[{"term": "DYSPNOEA", "count": 448}],
     )
 
-    assert len(urls) == 1  # the facet only -- no denominator probe
-    assert "coverage_note" not in result
-    assert "stratified_report_count" not in result
-    assert "total_reports_matching_query" not in result
+    assert len(urls) == 2  # the facet plus the denominator probe
+    assert result["total_reports_matching_query"] == TRUE_TOTAL
+    assert result["stratified_report_count"] == 448
+    assert "multi-valued" in result["coverage_note"]
+    assert result["results"] == [{"term": "DYSPNOEA", "count": 448}]

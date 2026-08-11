@@ -29,6 +29,27 @@ COUNT_MAX_LIMIT = 1000
 # queries. Callers with FDA_API_KEY set may use the full documented maximum.
 COUNT_MAX_LIMIT_ANONYMOUS = 999
 
+# How many values of the counted field ONE report can carry, declared per tool as
+# "count_field_cardinality". openFDA's `count=` facet counts VALUES, not reports:
+# a field nested under patient.reaction[] or patient.drug[] is recorded once per
+# reaction / per drug, so a single report lands in several buckets and the rows
+# sum ABOVE the number of matching reports. A report-level field (occurcountry,
+# serious, seriousnessdeath) can only put a report in one bucket, so its rows sum
+# at or BELOW that number -- reports missing the field are dropped from the facet
+# rather than bucketed as unknown. Both distortions are invisible in the rows
+# themselves, and they run in opposite directions, so `coverage_note` has to name
+# which one applies. Measured live 2026-08 for
+# search=(patient.drug.medicinalproduct:"vasopressin" OR
+#         patient.drug.openfda.generic_name:"vasopressin"), 4,741 matching reports:
+#   patient.reaction.reactionoutcome            5,514  = 116% of the reports
+#   patient.drug.drugadministrationroute.exact  9,273  = 196%
+#   patient.drug.medicinalproduct.exact        71,874  = 1516%
+#   occurcountry.exact                          3,949  =  83%
+#   patient.patientagegroup                       906  =  19%
+# "per_report" is the default because it is the conservative claim: it promises
+# only that rows are a subset, never that they double-count.
+COUNT_FIELD_UNITS = {"per_reaction": "reaction", "per_drug": "drug"}
+
 
 def _is_error_payload(payload):
     """True when ``_search`` returned an error sentinel rather than count rows."""
@@ -179,20 +200,34 @@ class FDADrugAdverseEventTool(BaseTool):
                 "Either 'count_field' or 'return_fields' must be defined in tool_config."
             )
 
-        # Opt-in per tool. An openFDA `count=` facet is computed ONLY over
-        # records that populate the counted field, so the rows can sum to far
-        # less than the number of matching reports and a reader who divides one
-        # row by the row total gets a badly wrong rate. Disclosing the true
-        # denominator costs an extra request, and it is only meaningful when the
-        # counted field holds at most one value per report: a report carries a
-        # single `seriousnessdeath` flag, but many reaction terms, so a reaction
-        # facet legitimately sums ABOVE the report total and a coverage fraction
-        # there would be nonsense. Tools whose count_field is report-level set
-        # "disclose_denominator": true in their JSON config. Only this class's
-        # run() honours the flag; FDACountAdditiveReactionsTool builds its query
-        # differently and would need its own denominator probe, so setting the
-        # flag on one of its configs is currently a no-op.
+        # Opt-in per tool. An openFDA `count=` facet never sums to the number of
+        # matching reports, and the caller cannot tell from the rows which way it
+        # is off: a report-level field (seriousnessdeath) drops reports that do
+        # not record it, so the rows sum BELOW the total, while a field nested
+        # under patient.reaction[] or patient.drug[] is recorded once per
+        # reaction / per drug, so one report lands in several buckets and the
+        # rows sum ABOVE it -- measured 196% of the report total for
+        # `patient.drug.drugadministrationroute` on vasopressin. Either way the
+        # next step a reader takes ("case fatality = fatal / row sum") is wrong,
+        # so every count tool in this family sets "disclose_denominator": true
+        # and declares "count_field_cardinality" so `coverage_note` can name the
+        # direction. This was previously reserved for report-level fields on the
+        # grounds that a coverage fraction is meaningless for a multi-valued
+        # field; the fraction is indeed not a coverage share there, but stating
+        # the true denominator and the double-counting is exactly what stops the
+        # bogus rate, so the multi-valued tools need it more, not less.
+        #
+        # Disclosure costs one extra openFDA request per call and fails soft.
+        # Only this class's run() honours the flag; FDACountAdditiveReactionsTool
+        # builds its query differently and would need its own denominator probe,
+        # so setting the flag on one of its configs is currently a no-op.
         self.disclose_denominator = bool(tool_config.get("disclose_denominator", False))
+        # "per_report" (default), "per_reaction" or "per_drug" -- see
+        # COUNT_FIELD_UNITS. An unrecognized value degrades to the conservative
+        # "per_report" wording rather than raising.
+        self.count_field_cardinality = tool_config.get(
+            "count_field_cardinality", "per_report"
+        )
         # Optional per-tool sentence about what the counted field actually means,
         # prepended to `coverage_note`. Needed where the field name invites a
         # clinical misreading -- see the FAERS_count_death_related_by_drug config.
@@ -370,17 +405,171 @@ class FDADrugAdverseEventTool(BaseTool):
         except (requests.exceptions.RequestException, ValueError):
             return None
 
+    def _count_field_label(self):
+        """The counted field named as a caller should read it.
+
+        openFDA's `.exact` suffix selects the un-analysed variant of a string
+        field; it is a query detail, not part of the field's identity, and
+        naming "occurcountry.exact" in prose invites the reader to go looking
+        for a field of that name in the FAERS record layout.
+        """
+        field = self.count_field or ""
+        suffix = ".exact"
+        return field[: -len(suffix)] if field.endswith(suffix) else field
+
+    def _coverage_note(self, subset, query_total, truncated):
+        """Prose stating what the facet does and does NOT sum to, and which way.
+
+        The two distortions run in opposite directions (see COUNT_FIELD_UNITS),
+        so the note is built from the declared cardinality of the counted field
+        AND the measured direction -- a multi-valued field whose reports mostly
+        omit it can still land below the total, and saying only "reports are
+        excluded" there would hide the double-counting.
+        """
+        field = self._count_field_label()
+        unit = COUNT_FIELD_UNITS.get(self.count_field_cardinality)
+        parts = []
+
+        if query_total is None:
+            if unit:
+                parts.append(
+                    "The total number of reports matching this query could not "
+                    "be retrieved (the extra openFDA request failed, commonly "
+                    "HTTP 429 rate limiting on the anonymous tier), so "
+                    "total_reports_matching_query is null. "
+                    f"stratified_report_count ({subset:,}) is the sum of the "
+                    f"facet rows, and {field} is recorded once per {unit} rather "
+                    "than once per report, so a report with several "
+                    f"{unit}s is counted in several rows: that sum counts "
+                    f"recorded {field} values, NOT reports, and may exceed the "
+                    "number of matching reports. Do not use it as a "
+                    "denominator. Retry for the total, or set the FDA_API_KEY "
+                    "environment variable to raise the rate limit "
+                    "(https://open.fda.gov/apis/authentication/)."
+                )
+            else:
+                parts.append(
+                    "The total number of reports matching this query could not be "
+                    "retrieved (the extra openFDA request failed, commonly HTTP 429 "
+                    "rate limiting on the anonymous tier), so "
+                    "total_reports_matching_query is null. "
+                    f"stratified_report_count ({subset:,}) counts only reports where "
+                    f"{field} is recorded and is therefore a LOWER BOUND "
+                    "on the number of matching reports -- do not read it as the "
+                    "total, and do not divide a row by it to obtain a rate. Retry "
+                    "for the total, or set the FDA_API_KEY environment variable to "
+                    "raise the rate limit "
+                    "(https://open.fda.gov/apis/authentication/)."
+                )
+        elif query_total == 0 and subset == 0:
+            # openFDA answers a search with no matches with HTTP 404, which the
+            # probe reads as a true zero. There is no coverage to describe, and
+            # the usual prose ("0, 0.0% of 0") reads as a malfunction.
+            parts.append(
+                "No reports match this query (total_reports_matching_query is "
+                "0), so 'results' is empty and there is no facet coverage to "
+                "report."
+            )
+        else:
+            coverage = (subset / query_total * 100) if query_total else 0.0
+            if unit and subset > query_total:
+                # The dangerous direction: the rows sum to more reports than
+                # exist, so any rate computed off them is silently deflated.
+                parts.append(
+                    f"total_reports_matching_query ({query_total:,}) is every "
+                    "report matching this query, but the rows in 'results' sum "
+                    f"to {subset:,} -- {coverage:.1f}% of it, i.e. MORE than the "
+                    f"number of matching reports. {field} is multi-valued: it is "
+                    f"recorded once per {unit}, not once per report, so a report "
+                    f"with several {unit}s is counted in several rows. The rows "
+                    "therefore DOUBLE-COUNT reports and their sum "
+                    f"(stratified_report_count, {subset:,}) is a count of "
+                    f"recorded {field} values, NOT of reports: do NOT use it as "
+                    "a denominator and do NOT divide one row by it to obtain a "
+                    "rate. If you need a denominator, use "
+                    "total_reports_matching_query, and read each row as "
+                    f"'{unit}s recorded', not 'reports affected'. Reports that "
+                    f"record no {field} at all are separately EXCLUDED from the "
+                    "facet rather than bucketed as unknown."
+                )
+            elif unit:
+                # Multi-valued, yet still below the total: both distortions are
+                # present and they cancel to an unknowable degree. Only claim
+                # the exclusion is what pulled the sum under when the rows are
+                # the whole facet -- with a truncated ranking the missing tail
+                # explains it just as well, and the truncation sentence below
+                # says so.
+                why_below = (
+                    ""
+                    if truncated
+                    else ", which is why the sum still lands below the total"
+                )
+                parts.append(
+                    f"total_reports_matching_query ({query_total:,}) is every "
+                    "report matching this query; the rows in 'results' sum to "
+                    f"{subset:,} ({coverage:.1f}% of it). Two distortions apply "
+                    f"here and they pull in opposite directions: {field} is "
+                    f"multi-valued -- recorded once per {unit}, not once per "
+                    f"report -- so a report with several {unit}s is counted in "
+                    "several rows and the rows DOUBLE-COUNT reports; while "
+                    f"reports that record no {field} are EXCLUDED from the facet "
+                    f"entirely rather than bucketed as unknown{why_below}. "
+                    "stratified_report_count is "
+                    f"therefore a count of recorded {field} values, NOT of "
+                    "reports, and must not be used as a denominator; use "
+                    "total_reports_matching_query if you need one."
+                )
+            elif subset > query_total:
+                # Not expected for a report-level field: say so rather than
+                # asserting an explanation that the numbers contradict.
+                parts.append(
+                    f"total_reports_matching_query ({query_total:,}) is every "
+                    "report matching this query, yet the rows in 'results' sum "
+                    f"to {subset:,} ({coverage:.1f}% of it). {field} holds at "
+                    "most one value per report, so the rows were expected to sum "
+                    "at or below the total; treat both figures as approximate "
+                    "and do NOT divide a row by either to obtain a rate."
+                )
+            else:
+                parts.append(
+                    f"total_reports_matching_query ({query_total:,}) is every report "
+                    f"matching this query; stratified_report_count ({subset:,}, "
+                    f"{coverage:.1f}% of them) is the subset where {field} "
+                    "is recorded, and only that subset is counted in 'results'. "
+                    "openFDA computes a count facet solely over records that populate "
+                    "the counted field, so reports missing it are EXCLUDED from the "
+                    "rows entirely rather than bucketed as unknown. "
+                    f"{field} holds at most one value per report, so the rows do "
+                    "not double-count reports -- but neither figure is the "
+                    "population at risk, so dividing a row by either does not "
+                    "give a rate."
+                )
+
+        if truncated:
+            # 'results' is the top-N of a longer ranking, so the sum describes
+            # the rows shown rather than the whole facet.
+            parts.append(
+                "'results' is truncated (see 'truncation_note'), so "
+                "stratified_report_count sums only the rows shown, not the "
+                "whole facet -- the true facet sum is larger."
+            )
+        return " ".join(parts)
+
     def _add_coverage_disclosure(self, envelope, arguments, response):
         """Add the true denominator next to the facet, without changing it.
 
-        openFDA computes a count facet solely over records that populate the
-        counted field. Reports where the field is absent are dropped from the
-        facet rather than bucketed as unknown, so the rows do NOT sum to the
-        number of matching reports -- for `seriousnessdeath` roughly half of
-        FAERS reports carry no value at all. Dividing one row by the row sum
-        therefore overstates a fatality share several-fold, which is exactly the
-        number that ends up on a clinical slide. Report both figures under
-        self-describing names and say plainly that they do not support a rate.
+        An openFDA `count=` facet never sums to the number of matching reports,
+        and nothing in the rows says so. A report-level field such as
+        `seriousnessdeath` is missing from roughly half of FAERS reports, and
+        openFDA drops those reports from the facet rather than bucketing them,
+        so the rows sum BELOW the report total. A field nested under
+        patient.reaction[] or patient.drug[] is recorded once per reaction / per
+        drug, so one report lands in several buckets and the rows sum ABOVE it:
+        `patient.reaction.reactionoutcome` for vasopressin sums to 5,514 against
+        4,741 matching reports, and `patient.drug.drugadministrationroute` to
+        9,273. Either way the reader's next step -- case fatality = 1,477 / row
+        sum -- is a number that ends up on a clinical slide. Report both figures
+        under self-describing names and say which way the facet is off.
 
         Purely additive: `results`, `result_count`, `limit` and `truncated` are
         untouched, and a failed denominator request leaves a null rather than
@@ -400,33 +589,9 @@ class FDADrugAdverseEventTool(BaseTool):
         envelope["stratified_report_count"] = subset
         envelope["total_reports_matching_query"] = query_total
 
-        if query_total is None:
-            coverage_note = (
-                "The total number of reports matching this query could not be "
-                "retrieved (the extra openFDA request failed, commonly HTTP 429 "
-                "rate limiting on the anonymous tier), so "
-                "total_reports_matching_query is null. "
-                f"stratified_report_count ({subset:,}) counts only reports where "
-                f"{self.count_field} is recorded and is therefore a LOWER BOUND "
-                "on the number of matching reports -- do not read it as the "
-                "total, and do not divide a row by it to obtain a rate. Retry "
-                "for the total, or set the FDA_API_KEY environment variable to "
-                "raise the rate limit "
-                "(https://open.fda.gov/apis/authentication/)."
-            )
-        else:
-            coverage = (subset / query_total * 100) if query_total else 0.0
-            coverage_note = (
-                f"total_reports_matching_query ({query_total:,}) is every report "
-                f"matching this query; stratified_report_count ({subset:,}, "
-                f"{coverage:.1f}% of them) is the subset where {self.count_field} "
-                "is recorded, and only that subset is counted in 'results'. "
-                "openFDA computes a count facet solely over records that populate "
-                "the counted field, so reports missing it are absent from the "
-                "rows entirely rather than bucketed as unknown. These counts "
-                "therefore do NOT support a case-fatality rate: neither "
-                "denominator is the population at risk."
-            )
+        coverage_note = self._coverage_note(
+            subset, query_total, bool(envelope.get("truncated"))
+        )
         if self.count_field_note:
             coverage_note = f"{self.count_field_note} {coverage_note}"
         envelope["coverage_note"] = coverage_note
