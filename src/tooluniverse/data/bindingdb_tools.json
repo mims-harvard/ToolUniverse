@@ -396,7 +396,7 @@
   {
     "type": "BindingDBTool",
     "name": "BindingDB_get_targets_by_compound",
-    "description": "Find protein targets for a compound by SMILES structure. Returns proteins with binding affinity data for similar compounds. Essential for polypharmacology analysis and off-target prediction.",
+    "description": "Find protein targets for a compound by SMILES (Simplified Molecular Input Line Entry System) structure. Returns proteins with binding affinity data for compounds BindingDB considers similar; the breadth of that similarity set is fixed by BindingDB and is not caller-adjustable. Essential for polypharmacology analysis and off-target prediction.",
     "parameter": {
       "type": "object",
       "required": [
@@ -409,7 +409,7 @@
         },
         "similarity_cutoff": {
           "type": "number",
-          "description": "Similarity threshold 0-1 (default: 0.85)",
+          "description": "NOT APPLIED: BindingDB's getTargetByCompound endpoint ignores this threshold - every value tested from 0.4 to 1.0, and omitting it entirely, returns the identical result set (verified against four chemically diverse compounds). The value is accepted and forwarded for forward compatibility and echoed back as 'similarity' in the response, so do not rely on it to narrow results; filter the returned affinities yourself if you need a tighter match.",
           "default": 0.85
         }
       }
@@ -427,6 +427,10 @@
             },
             "similarity": {
               "type": "number"
+            },
+            "note": {
+              "type": "string",
+              "description": "Caveats about this result set. Always present for this tool, stating that the requested similarity threshold was not applied upstream; also reports when the result set is empty."
             },
             "affinities": {
               "type": "array",

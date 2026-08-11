@@ -138,6 +138,15 @@ _EMPTY_NOTE = (
 )
 
 
+_SIMILARITY_IGNORED_NOTE = (
+    "BindingDB's getTargetByCompound endpoint does not apply a similarity "
+    "threshold: probing four chemically diverse compounds with values from 0.4 "
+    "to 1.0 -- and with the parameter omitted -- returned byte-identical result "
+    "sets. The `similarity` field above only echoes the value you supplied; it "
+    "did not narrow these results, so do not treat them as filtered."
+)
+
+
 def _split_ids(raw: Any) -> List[str]:
     """Normalise a caller-supplied id list to a list of bare ids.
 
@@ -154,10 +163,22 @@ def _split_ids(raw: Any) -> List[str]:
     return [str(s).strip() for s in raw if str(s).strip()]
 
 
+def _add_note(data: Dict[str, Any], note: str) -> Dict[str, Any]:
+    """Attach a caller-facing note, appending to any note already present.
+
+    Several disclosures can apply to the same payload (an empty result set that
+    also came back from an endpoint that ignores its filter), so notes are
+    joined rather than overwriting one another.
+    """
+    existing = data.get("note")
+    data["note"] = f"{existing} {note}" if existing else note
+    return data
+
+
 def _with_empty_note(data: Dict[str, Any]) -> Dict[str, Any]:
     """Mark a successful-but-empty result so it reads as 'no data', not 'no query'."""
     if not data.get("affinities"):
-        data["note"] = _EMPTY_NOTE
+        _add_note(data, _EMPTY_NOTE)
     return data
 
 
@@ -292,7 +313,9 @@ class BindingDBTool(BaseTool):
         # every value tested (0.4 through 1.0 all return the same hits, as does
         # omitting it entirely), so the name here is not load-bearing and is left
         # as-is. Unlike the uniprot/pdb parameters below, renaming it would
-        # change no observable behaviour.
+        # change no observable behaviour. The value is still forwarded for
+        # forward compatibility, and _SIMILARITY_IGNORED_NOTE tells the caller
+        # not to read the echoed `similarity` as evidence of filtering.
         result = _http_get(
             "getTargetByCompound",
             {
@@ -306,12 +329,15 @@ class BindingDBTool(BaseTool):
             return {"status": "error", "error": result["_err"]}
         return {
             "status": "success",
-            "data": _with_empty_note(
-                {
-                    "smiles": smiles,
-                    "similarity": similarity,
-                    "affinities": _affinities(result),
-                }
+            "data": _add_note(
+                _with_empty_note(
+                    {
+                        "smiles": smiles,
+                        "similarity": similarity,
+                        "affinities": _affinities(result),
+                    }
+                ),
+                _SIMILARITY_IGNORED_NOTE,
             ),
             "metadata": {"source": "BindingDB REST"},
         }
