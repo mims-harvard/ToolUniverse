@@ -244,3 +244,145 @@ def test_config_declares_the_new_keys():
     description = config["description"]
     assert "truncated" in description
     assert "returned" in description
+
+
+# --------------------------------------------------------------------------
+# The disclosure is only half a disclosure if the return_schema does not admit
+# the keys exist. Every tool below was confirmed live to emit
+# ``<container>.returned``, ``<container>.truncated`` and, when a page is
+# short, ``metadata.truncation_note``; each one's description promises all
+# three by name. These tests fail if the emitted set and the declared set drift
+# apart again -- which is exactly what happened when the disclosure landed.
+# --------------------------------------------------------------------------
+
+# name -> (entity root in the payload, count+rows container, arguments)
+TRUNCATING_TOOLS = {
+    "OpenTargets_get_associated_targets_by_disease_efoId": (
+        "disease",
+        "associatedTargets",
+        {"efoId": "MONDO_0005011"},
+    ),
+    "OpenTargets_get_diseases_phenotypes_by_target_ensembl": (
+        "target",
+        "associatedDiseases",
+        {"ensemblId": "ENSG00000141510"},
+    ),
+    "OpenTargets_target_disease_evidence": (
+        "disease",
+        "evidences",
+        {"efoId": "MONDO_0005011", "ensemblId": "ENSG00000141510"},
+    ),
+    "OpenTargets_get_target_interactions_by_ensemblID": (
+        "target",
+        "interactions",
+        {"ensemblId": "ENSG00000141510"},
+    ),
+    "OpenTargets_get_publications_by_disease_efoId": (
+        "disease",
+        "literatureOcurrences",
+        {"entityId": "MONDO_0005011"},
+    ),
+    "OpenTargets_get_publications_by_target_ensemblID": (
+        "target",
+        "literatureOcurrences",
+        {"entityId": "ENSG00000141510"},
+    ),
+    "OpenTargets_get_publications_by_drug_chemblId": (
+        "drug",
+        "literatureOcurrences",
+        {"entityId": "CHEMBL521"},
+    ),
+    ADVERSE_EVENTS: ("drug", "adverseEvents", {"chemblId": "CHEMBL521"}),
+}
+
+
+def _find_declared(schema, name):
+    """Return the declared ``properties`` of the first schema object named
+    ``name``, wherever the tool nests it (under ``data``, at the top level, or
+    inside a ``oneOf`` branch)."""
+    if isinstance(schema, dict):
+        props = schema.get("properties")
+        if isinstance(props, dict) and name in props:
+            declared = props[name]
+            if isinstance(declared, dict):
+                return declared.get("properties", {})
+        for value in schema.values():
+            found = _find_declared(value, name)
+            if found is not None:
+                return found
+    elif isinstance(schema, list):
+        for item in schema:
+            found = _find_declared(item, name)
+            if found is not None:
+                return found
+    return None
+
+
+def _truncating_payload(root, container, count, n_rows):
+    return {
+        "data": {
+            root: {
+                "id": "ID",
+                "name": "name",
+                "approvedSymbol": "SYMBOL",
+                container: {
+                    "count": count,
+                    "rows": [{"id": f"row{i}"} for i in range(n_rows)],
+                },
+            }
+        }
+    }
+
+
+@pytest.mark.parametrize("name", sorted(TRUNCATING_TOOLS))
+def test_every_emitted_truncation_key_is_declared(name):
+    """Run the tool and diff what the disclosure emitted against what the
+    return_schema declares. A key the code adds but the schema omits is a
+    response the caller was told to expect and given no type for."""
+    root, container, arguments = TRUNCATING_TOOLS[name]
+    result = _run(name, _truncating_payload(root, container, 55, 25), arguments)
+
+    emitted = result["data"][root][container]
+    assert emitted["returned"] == 25
+    assert emitted["truncated"] is True
+    assert "truncation_note" in result["metadata"]
+
+    schema = _tool_config(name)["return_schema"]
+
+    declared = _find_declared(schema, container)
+    assert declared is not None, f"{name}: return_schema declares no `{container}`"
+    for key in ("returned", "truncated"):
+        assert key in declared, (
+            f"{name}: `{container}.{key}` is emitted on every response but the "
+            "return_schema does not declare it"
+        )
+    assert declared["returned"]["type"] == "integer"
+    assert declared["truncated"]["type"] == "boolean"
+
+    metadata = _find_declared(schema, "metadata")
+    assert metadata is not None, f"{name}: return_schema declares no `metadata`"
+    assert "truncation_note" in metadata, (
+        f"{name}: `metadata.truncation_note` is emitted whenever a page is "
+        "short but the return_schema does not declare it"
+    )
+    assert metadata["truncation_note"]["type"] == "string"
+
+
+@pytest.mark.parametrize("name", sorted(TRUNCATING_TOOLS))
+def test_description_and_schema_promise_the_same_keys(name):
+    """A description that names a key the schema does not declare is the gap
+    this file exists to close; catch it statically for every tool, without a
+    network call."""
+    config = _tool_config(name)
+    description = config["description"]
+    schema = config["return_schema"]
+    _, container, _ = TRUNCATING_TOOLS[name]
+
+    for key in ("returned", "truncated"):
+        assert f"{container}.{key}" in description
+        assert key in (_find_declared(schema, container) or {})
+
+    # Some descriptions write it as `metadata.truncation_note`, others as
+    # "a `truncation_note` ... is added to `metadata`"; both are a promise.
+    assert "truncation_note" in description
+    assert "truncation_note" in (_find_declared(schema, "metadata") or {})

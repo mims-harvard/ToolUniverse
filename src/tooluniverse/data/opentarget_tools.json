@@ -59,6 +59,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of associated targets actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. targets remain unfetched; `metadata.truncation_note` then names the `size`/`index` values to pass."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -84,6 +92,15 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
                         }
                     }
                 }
@@ -163,6 +180,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of associations actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. associations remain unfetched; `metadata.truncation_note` then names the exact `page` argument to pass."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -199,6 +224,15 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
                         }
                     }
                 }
@@ -266,10 +300,27 @@
                                     "properties": {
                                         "count": {
                                             "type": "integer"
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of evidence rows actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. evidence rows remain unfetched; `metadata.truncation_note` then says so. This tool exposes no pagination parameter, so use OpenTargets_get_evidence_by_datasource (which takes `size`) to reach the rest."
                                         }
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
                         }
                     }
                 }
@@ -362,6 +413,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of evidence rows actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. evidence rows remain unfetched; `metadata.truncation_note` then names the `size` value to pass."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -385,6 +444,19 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
+                        },
+                        "datasource_rename_note": {
+                            "type": "string",
+                            "description": "Present only when a retired datasource ID was remapped to its current name."
                         }
                     }
                 }
@@ -602,6 +674,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of drugs and clinical candidates actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. rows remain unfetched; `metadata.truncation_note` then names the exact argument that fetches the rest."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -660,6 +740,15 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
                         }
                     }
                 }
@@ -2264,6 +2353,125 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "interactions": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total number of interactions for this target across all pages — NOT the number of rows in this response."
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of interactions actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. interactions remain unfetched; `metadata.truncation_note` then names the exact `page` argument to pass."
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "intA": {
+                                                        "type": "string"
+                                                    },
+                                                    "targetA": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "approvedSymbol": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    },
+                                                    "intB": {
+                                                        "type": "string"
+                                                    },
+                                                    "targetB": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "approvedSymbol": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    },
+                                                    "score": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "sourceDatabase": {
+                                                        "type": "string"
+                                                    },
+                                                    "evidences": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "evidenceScore": {
+                                                                    "type": [
+                                                                        "number",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "pubmedId": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "interactionDetectionMethodShortName": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact `page` argument that fetches the rest."
+                        }
+                    }
+                },
                 "error": {
                     "type": "string"
                 },
@@ -2862,6 +3070,15 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact `page` argument that fetches the rest."
                         }
                     }
                 },
@@ -3851,6 +4068,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of drugs and clinical candidates actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. rows remain unfetched; `metadata.truncation_note` then names the exact argument that fetches the rest."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -3899,6 +4124,15 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
                         }
                     }
                 }
@@ -4506,6 +4740,78 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "disease": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "literatureOcurrences": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total number of publications for this disease — NOT the number of rows in this response."
+                                        },
+                                        "filteredCount": {
+                                            "type": "integer",
+                                            "description": "Total number of publications left after the startYear/startMonth/endYear/endMonth filter."
+                                        },
+                                        "earliestPubYear": {
+                                            "type": "integer"
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of publications actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. publications remain unfetched; `metadata.truncation_note` then says so. This tool exposes no pagination parameter, so narrow the query with startYear/endYear/additionalIds instead."
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "pmid": {
+                                                        "type": "string"
+                                                    },
+                                                    "pmcid": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "publicationDate": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
+                        }
+                    }
+                },
                 "error": {
                     "type": "string"
                 },
@@ -4703,6 +5009,78 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "literatureOcurrences": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total number of publications for this target — NOT the number of rows in this response."
+                                        },
+                                        "filteredCount": {
+                                            "type": "integer",
+                                            "description": "Total number of publications left after the startYear/startMonth/endYear/endMonth filter."
+                                        },
+                                        "earliestPubYear": {
+                                            "type": "integer"
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of publications actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. publications remain unfetched; `metadata.truncation_note` then says so. This tool exposes no pagination parameter, so narrow the query with startYear/endYear/additionalIds instead."
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "pmid": {
+                                                        "type": "string"
+                                                    },
+                                                    "pmcid": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "publicationDate": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
+                        }
+                    }
+                },
                 "error": {
                     "type": "string"
                 },
@@ -4900,6 +5278,78 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "drug": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "literatureOcurrences": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total number of publications for this drug — NOT the number of rows in this response."
+                                        },
+                                        "filteredCount": {
+                                            "type": "integer",
+                                            "description": "Total number of publications left after the startYear/startMonth/endYear/endMonth filter."
+                                        },
+                                        "earliestPubYear": {
+                                            "type": "integer"
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of publications actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. publications remain unfetched; `metadata.truncation_note` then says so. This tool exposes no pagination parameter, so narrow the query with startYear/endYear/additionalIds instead."
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "pmid": {
+                                                        "type": "string"
+                                                    },
+                                                    "pmcid": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "publicationDate": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
+                        }
+                    }
+                },
                 "error": {
                     "type": "string"
                 },
