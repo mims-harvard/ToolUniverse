@@ -19,9 +19,9 @@ _CPIC_API = "https://api.cpicpgx.org/v1"
 def _resolve_drug_to_guideline_id(
     drug_name: str,
 ) -> Optional[Tuple[int, Optional[str]]]:
-    """Look up CPIC guideline ID and RxNorm ID for a drug name via CPIC API.
+    """Look up CPIC guideline ID and CPIC drug identifier for a drug name.
 
-    Returns (guideline_id, rxnorm_id) tuple, or None if genuinely not found
+    Returns (guideline_id, drugid) tuple, or None if genuinely not found
     (the request succeeded but no matching drug/guideline exists). Raises
     requests.exceptions.RequestException on a request failure (network
     error, timeout, HTTP error) -- Fix-R56A-1: this used to swallow those
@@ -34,11 +34,19 @@ def _resolve_drug_to_guideline_id(
     file already distinguishes RequestException from a genuine empty result
     (see CPICGetRecommendationsTool.run's own /recommendation call below);
     this makes the /drug lookup consistent with that same pattern instead
-    of being the one place that still conflates them."""
+    of being the one place that still conflates them.
+
+    Fix-R81A-1: this used to select `rxnormid` and the caller then filtered
+    /recommendation with a hardcoded `eq.RxNorm:{rxnormid}`. CPIC's
+    /recommendation.drugid is a *namespaced* identifier that is NOT always
+    in the RxNorm namespace, so that assumption silently broke two ways
+    (see CPICGetRecommendationsTool.run). CPIC's /drug table already
+    publishes the authoritative `drugid` column -- select it directly
+    instead of reconstructing it from a different column."""
     r = requests.get(
         f"{_CPIC_API}/drug",
         params={
-            "select": "name,guidelineid,rxnormid",
+            "select": "name,guidelineid,drugid",
             "name": f"ilike.*{drug_name}*",
         },
         timeout=15,
@@ -63,7 +71,7 @@ def _resolve_drug_to_guideline_id(
     )
     row = exact or rows[0]
     if row.get("guidelineid"):
-        return row["guidelineid"], row.get("rxnormid")
+        return row["guidelineid"], row.get("drugid")
     return None
 
 
@@ -78,7 +86,11 @@ class CPICGetRecommendationsTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         guideline_id = arguments.get("guideline_id")
-        rxnorm_id: Optional[str] = None
+        # Fix-R81A-1: the CPIC drug identifier used by /recommendation.drugid.
+        # `drug` is defined here too so the note-building code below can never
+        # NameError when the caller passed guideline_id directly.
+        drug_id: Optional[str] = None
+        drug: Optional[str] = None
 
         if guideline_id is None:
             drug = arguments.get("drug") or arguments.get("drug_name")
@@ -113,7 +125,7 @@ class CPICGetRecommendationsTool(BaseTool):
                         "available guidelines."
                     ),
                 }
-            guideline_id, rxnorm_id = result
+            guideline_id, drug_id = result
 
         limit = arguments.get("limit", 50) or 50
         offset = arguments.get("offset", 0) or 0
@@ -149,8 +161,40 @@ class CPICGetRecommendationsTool(BaseTool):
             }
             # Filter by specific drug within multi-drug guidelines (e.g., CYP2D6/Opioids
             # covers codeine, tramadol, hydrocodone — filter to the requested drug).
-            if rxnorm_id:
-                params["drugid"] = f"eq.RxNorm:{rxnorm_id}"
+            #
+            # Fix-R81A-1: this used to build the filter as
+            # `eq.RxNorm:{rxnormid}`, hardcoding the RxNorm namespace. CPIC's
+            # drugid is namespaced and 3 of the 170 CPIC drugs that carry a
+            # guideline are NOT in the RxNorm namespace (census re-derived
+            # live from api.cpicpgx.org: 167 RxNorm, 2 ATC, 1 Drugbank), which
+            # broke in two opposite and equally silent directions:
+            #
+            #  (a) FALSE NEGATIVE -- gentamicin has an rxnormid (1596450) but
+            #      its drugid is `ATC:D06AX07`, so `eq.RxNorm:1596450` matched
+            #      0 of the 33 rows on the MT-RNR1 aminoglycoside guideline
+            #      (826283). The tool then emitted "...none specifically for
+            #      'gentamicin'", asserting an absence that is not real: the 3
+            #      rows exist and carry the "Avoid aminoglycoside antibiotics"
+            #      recommendation for the m.1555A>G high-risk genotype. An
+            #      audiologist checking before dosing got a confident no-data
+            #      answer for the archetypal ototoxic aminoglycoside.
+            #
+            #  (b) FALSE POSITIVE -- lumiracoxib and ramosetron have a NULL
+            #      rxnormid, so `if rxnorm_id:` was falsy and NO drug filter
+            #      was applied at all. `{"drug": "lumiracoxib"}` returned all
+            #      42 rows of NSAID guideline 110058 -- every one of which
+            #      belongs to celecoxib/ibuprofen/meloxicam/piroxicam/
+            #      flurbiprofen/lornoxicam/tenoxicam, and none to lumiracoxib
+            #      -- presented as that drug's own recommendations.
+            #
+            # Filtering on the drugid CPIC itself publishes fixes both. For
+            # every RxNorm-namespaced drug the built string is byte-identical
+            # to the old one (drugid == "RxNorm:" + rxnormid holds for all 167
+            # of them), so those queries are unchanged. All 324 CPIC drugids
+            # are alphanumerics plus ':' only, so no PostgREST quoting is
+            # needed for the eq. value.
+            if drug_id:
+                params["drugid"] = f"eq.{drug_id}"
             r = requests.get(url, params=params, timeout=30)
             r.raise_for_status()
             data = r.json()
@@ -213,9 +257,25 @@ class CPICGetRecommendationsTool(BaseTool):
             # checking whether the guideline has any rows once the drug
             # filter is dropped. Skip when a gene/phenotype filter caused the
             # emptiness -- the more specific note above already explains why.
+            # Fix-R81A-1: when a drug name was given but CPIC publishes no
+            # drugid for it, no drug filter could be applied, so these rows are
+            # the WHOLE guideline and may belong to other drugs it covers. Say
+            # so instead of letting the caller read them as this drug's own
+            # recommendations. (No CPIC drug currently hits this -- all 324
+            # have a drugid -- but the old code reached exactly this state via
+            # the null-rxnormid path, so the response must be honest about it
+            # rather than silently mislabeling another drug's guidance.)
+            if data and drug and not drug_id:
+                result["note"] = (
+                    f"CPIC publishes no drug identifier for '{drug}', so these "
+                    f"rows could NOT be filtered to it -- they are all "
+                    f"recommendation rows in guideline {guideline_id} and may "
+                    f"cover other drugs. Check each row's 'drug' field before "
+                    "applying any of this guidance."
+                )
             if not data and not filtering:
                 guideline_has_other_rows = False
-                if rxnorm_id:
+                if drug_id:
                     try:
                         check = requests.get(
                             url,
@@ -227,11 +287,19 @@ class CPICGetRecommendationsTool(BaseTool):
                     except requests.exceptions.RequestException:
                         pass
                 if guideline_has_other_rows:
+                    # Fix-R81A-1: name the identifier the absence was actually
+                    # established against. This claim is only trustworthy
+                    # because the filter now uses CPIC's own drugid; when it
+                    # was a reconstructed `RxNorm:{rxnormid}` guess the same
+                    # sentence asserted a false absence for gentamicin. Quoting
+                    # the drugid makes the assertion auditable against
+                    # /recommendation?drugid=eq.<id> rather than unfalsifiable.
                     result["note"] = (
                         f"Guideline {guideline_id} has recommendation rows for "
                         f"other drugs it covers, but none specifically for "
-                        f"'{drug}'. See https://cpicpgx.org/guidelines/ for the "
-                        "full guideline document."
+                        f"'{drug}' (CPIC drug identifier {drug_id}). See "
+                        "https://cpicpgx.org/guidelines/ for the full "
+                        "guideline document."
                     )
                 else:
                     result["note"] = (
