@@ -113,6 +113,7 @@
                 ]
               },
               "warnings_and_precautions": {
+                "description": "The label's warnings section, taken from whichever section name the label actually uses: the PLR 'warnings_and_cautions' when present, otherwise the pre-PLR 'warnings'.",
                 "type": [
                   "string",
                   "null"
@@ -259,6 +260,7 @@
               ]
             },
             "warnings_and_precautions": {
+              "description": "The label's warnings section, taken from whichever section name the label actually uses: the PLR 'warnings_and_cautions' when present, otherwise the pre-PLR 'warnings'. Only about 18% of openFDA labels are PLR-format, so for most drugs this is the pre-PLR WARNINGS text.",
               "type": [
                 "string",
                 "null"
@@ -277,6 +279,13 @@
               ]
             },
             "use_in_specific_populations": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "precautions": {
+              "description": "Pre-PLR PRECAUTIONS section. Older labels have no separate drug_interactions or use_in_specific_populations section -- that content is subheaded inside PRECAUTIONS instead. Null on PLR-format labels.",
               "type": [
                 "string",
                 "null"

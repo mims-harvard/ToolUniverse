@@ -62,6 +62,31 @@ _FALLBACK_SECTION_CHARS = 2000
 
 # Extracted record keys that hold free-text clinical prose and are therefore
 # subject to the per-section budget. Identifier/metadata keys are not.
+#
+# openFDA carries a label in whichever format it was submitted in, and the two
+# formats do not share section names. Partitioning the full drug/label corpus of
+# 261,646 records by which warnings section a label has, measured against the
+# live API (the same split `test_fda_label_plr_section_split` measures for the
+# openfda_tool family; its counts are 7 records older, the corpus grows):
+#
+#   has warnings_and_cautions (PLR)                      46,930
+#   has warnings only, no warnings_and_cautions         204,636
+#   has neither                                          10,080
+#
+# So the PLR name alone reaches under a fifth of the corpus. Reading only it
+# meant `warnings_and_precautions` came back null -- alongside
+# `truncated: false`, i.e. an explicit "nothing was cut" -- for 204,636 of the
+# 251,566 labels that do carry a warnings section, or 81% of them.
+#
+# This follows the label's vintage, not the drug: flumazenil is pre-PLR while
+# naloxone and pralidoxime are PLR, so it is not specific to any therapeutic
+# class. Flumazenil's WARNINGS ("Risk of Seizures ... not recommended in cases
+# of serious cyclic antidepressant poisoning") was retrievable by field query
+# the whole time; this extraction just never asked for it.
+#
+# `warnings_and_precautions` is NOT an openFDA field name -- it is the printed
+# heading. It is used here only as the response key, mapped from whichever
+# source section the label actually has.
 _SECTION_FIELDS = (
     "boxed_warning",
     "indications_and_usage",
@@ -72,6 +97,7 @@ _SECTION_FIELDS = (
     "adverse_reactions",
     "drug_interactions",
     "use_in_specific_populations",
+    "precautions",
     "clinical_pharmacology",
     "mechanism_of_action",
 )
@@ -220,11 +246,24 @@ def _extract_label(
         "dosage_and_administration": section("dosage_and_administration"),
         "dosage_forms_and_strengths": section("dosage_forms_and_strengths"),
         "contraindications": section("contraindications"),
-        "warnings_and_precautions": section("warnings_and_precautions")
-        or section("warnings_and_cautions"),
+        # PLR heading first, then the pre-PLR WARNINGS section; see the note on
+        # _SECTION_FIELDS for why the fallback is needed and how much it covers.
+        "warnings_and_precautions": section("warnings_and_cautions")
+        or section("warnings"),
         "adverse_reactions": section("adverse_reactions"),
         "drug_interactions": section("drug_interactions"),
         "use_in_specific_populations": section("use_in_specific_populations"),
+        # On a pre-PLR label the PRECAUTIONS section is where drug-interaction,
+        # pediatric- and geriatric-use guidance is subheaded when the label has
+        # no separate top-level section for it -- 18,821 labels have
+        # `precautions` and no `drug_interactions` at all. (Many pre-PLR labels
+        # do expose `drug_interactions` separately, and that is already read
+        # above; PRECAUTIONS is not a replacement for it, it is the fallback
+        # home for the same material.) Returned under its own name rather than
+        # folded into the PLR keys, so provenance stays exact.
+        # `general_precautions` is the same section under an alternate name on
+        # 25,729 labels, 725 of which have no `precautions` at all.
+        "precautions": section("precautions") or section("general_precautions"),
         "clinical_pharmacology": section("clinical_pharmacology"),
         "mechanism_of_action": section("mechanism_of_action"),
         "spl_id": result.get("id"),
