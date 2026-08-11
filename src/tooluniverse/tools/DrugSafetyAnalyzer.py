@@ -24,9 +24,9 @@ def DrugSafetyAnalyzer(
     ----------
     drug_name : str
         Name of the drug to analyze
-    patient_sex : Optional[str]
+    patient_sex : str
         Optional. Restricts the FAERS adverse-event counts to one sex. Omit it to ana...
-    serious_events_only : Optional[bool]
+    serious_events_only : bool
         Focus only on serious adverse events
     stream_callback : Callable, optional
         Callback for streaming output

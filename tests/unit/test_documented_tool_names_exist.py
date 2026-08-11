@@ -135,9 +135,7 @@ def _collect_tools_imports():
                 ):
                     for alias in node.names:
                         if alias.name != "*":
-                            refs.append(
-                                (str(path.relative_to(ROOT)), alias.name)
-                            )
+                            refs.append((str(path.relative_to(ROOT)), alias.name))
     return refs
 
 
