@@ -133,7 +133,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_search_genes",
-    "description": "Search for genes in gnomAD by free-text query (typically a gene symbol). Returns matching `ensembl_id` (Ensembl gene ID) and `symbol`. Use `ensembl_id` as `gene_id` for `gnomad_get_gene`.",
+    "description": "Search for genes in gnomAD by free-text query (typically a gene symbol). Returns matching `ensembl_id` (Ensembl gene ID) and `symbol`. Use `ensembl_id` as `gene_id` for `gnomad_get_gene`. The response reports `reference_genome`, the assembly the search ran against (GRCh38 unless `reference_genome` says otherwise); results are assembly-specific, e.g. BRCA2 resolves to `ensembl_version` 17 on GRCh38 and 10 on GRCh37.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -187,6 +187,10 @@
                   }
                 }
               }
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Assembly the search ran against ('GRCh38' or 'GRCh37'). gnomAD's GeneSearchResult type exposes no reference_genome field, so this echoes the assembly the request transmitted -- the default when the caller omitted it. Search results are assembly-specific."
             }
           },
           "required": [
@@ -216,7 +220,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_gene",
-    "description": "Get basic gene metadata from gnomAD by `gene_symbol` or `gene_id` (Ensembl gene ID). Use `gnomad_search_genes` to discover `gene_id`. Use the returned `canonical_transcript_id` with `gnomad_get_transcript`.",
+    "description": "Get basic gene metadata from gnomAD by `gene_symbol` or `gene_id` (Ensembl gene ID). Use `gnomad_search_genes` to discover `gene_id`. Use the returned `canonical_transcript_id` with `gnomad_get_transcript`. The returned `chrom`/`start`/`stop` are in the assembly named by `reference_genome`, which gnomAD reports itself on both the `gene` object and the top level of the response (GRCh38 unless the `reference_genome` argument says otherwise). Coordinates are not comparable across assemblies: BRCA2 is 13:32,315,086-32,400,268 on GRCh38 and 13:32,889,611-32,973,805 on GRCh37.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -254,7 +258,7 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($geneSymbol: String, $geneId: String, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, gene_id: $geneId, reference_genome: $referenceGenome) { gene_id symbol name chrom start stop strand canonical_transcript_id } }",
+      "query_schema": "query($geneSymbol: String, $geneId: String, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, gene_id: $geneId, reference_genome: $referenceGenome) { reference_genome gene_id symbol name chrom start stop strand canonical_transcript_id } }",
       "variable_map": {
         "gene_symbol": "geneSymbol",
         "gene_id": "geneId",
@@ -272,6 +276,10 @@
             "gene": {
               "type": "object",
               "properties": {
+                "reference_genome": {
+                  "type": "string",
+                  "description": "Assembly of this record's chrom/start/stop, as reported by gnomAD's own Gene.reference_genome field ('GRCh38' or 'GRCh37')."
+                },
                 "gene_id": {
                   "type": "string"
                 },
@@ -303,6 +311,10 @@
                   "type": "string"
                 }
               }
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Assembly the returned coordinates are in ('GRCh38' or 'GRCh37'), taken from gnomAD's own Gene.reference_genome field and surfaced at the top level to match the dataset-scoped gnomAD tools. Present even when the caller omitted reference_genome and received the GRCh38 default."
             }
           },
           "required": [
@@ -332,7 +344,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_transcript",
-    "description": "Get basic transcript metadata from gnomAD by Ensembl transcript ID (e.g., ENST...). The response includes the linked `gene` object (gene ID + symbol). Use `gnomad_get_gene` to find a gene's `canonical_transcript_id`.",
+    "description": "Get basic transcript metadata from gnomAD by Ensembl transcript ID (e.g., ENST...). The response includes the linked `gene` object (gene ID + symbol). Use `gnomad_get_gene` to find a gene's `canonical_transcript_id`. The returned `chrom`/`start`/`stop` are in the assembly named by `reference_genome`, which gnomAD reports itself on both the `transcript` object and the top level of the response (GRCh38 unless the `reference_genome` argument says otherwise). Coordinates are not comparable across assemblies.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -357,7 +369,7 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($transcriptId: String!, $referenceGenome: ReferenceGenomeId!) { transcript(transcript_id: $transcriptId, reference_genome: $referenceGenome) { transcript_id gene_id gene { gene_id symbol } chrom start stop strand } }",
+      "query_schema": "query($transcriptId: String!, $referenceGenome: ReferenceGenomeId!) { transcript(transcript_id: $transcriptId, reference_genome: $referenceGenome) { reference_genome transcript_id gene_id gene { gene_id symbol } chrom start stop strand } }",
       "variable_map": {
         "transcript_id": "transcriptId",
         "reference_genome": "referenceGenome"
@@ -374,6 +386,10 @@
             "transcript": {
               "type": "object",
               "properties": {
+                "reference_genome": {
+                  "type": "string",
+                  "description": "Assembly of this record's chrom/start/stop, as reported by gnomAD's own Transcript.reference_genome field ('GRCh38' or 'GRCh37')."
+                },
                 "transcript_id": {
                   "type": "string"
                 },
@@ -410,6 +426,10 @@
                   "type": "string"
                 }
               }
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Assembly the returned coordinates are in ('GRCh38' or 'GRCh37'), taken from gnomAD's own Transcript.reference_genome field and surfaced at the top level to match the dataset-scoped gnomAD tools. Present even when the caller omitted reference_genome and received the GRCh38 default."
             }
           },
           "required": [

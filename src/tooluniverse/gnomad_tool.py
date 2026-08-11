@@ -138,6 +138,30 @@ def describe_dataset(
     return block
 
 
+def payload_reference_genome(payload: Any) -> Optional[str]:
+    """Return gnomAD's own `reference_genome`, if the payload carries one.
+
+    The dataset-scoped queries infer the assembly from the callset id, but the
+    feature queries have no dataset at all -- they take a `reference_genome`
+    argument directly. For those, the assembly does not have to be inferred or
+    hard-coded: the API states it itself. Introspecting the live schema
+    (``{__type(name: "Gene"){fields{name}}}``) shows `reference_genome` as the
+    first field of both `Gene` and `Transcript`, so the query asks for it and
+    this reads it back. `GeneSearchResult` exposes only `ensembl_id`,
+    `ensembl_version` and `symbol`, so a gene search has to fall back to the
+    value the request transmitted -- still the value in play, not a guess.
+
+    gnomAD nests each record under its query field (``{"gene": {...}}``), so one
+    level down is all that is ever needed.
+    """
+    if not isinstance(payload, dict):
+        return None
+    for node in payload.values():
+        if isinstance(node, dict) and isinstance(node.get("reference_genome"), str):
+            return node["reference_genome"]
+    return None
+
+
 class gnomADGraphQLTool(BaseTool):
     """Base class for gnomAD GraphQL API tools."""
 
@@ -320,6 +344,22 @@ class gnomADGraphQLQueryTool(gnomADGraphQLTool):
             data.update(
                 describe_dataset(dataset, data, variables.get("referenceGenome"))
             )
+        elif isinstance(data, dict):
+            # `gnomad_get_gene`, `gnomad_get_transcript` and `gnomad_search_genes`
+            # are the family's only queries with no dataset, so the disclosure
+            # above never reached them -- yet they return `chrom`/`start`/`stop`
+            # and said nothing about the frame those are in. The gap is not
+            # cosmetic: BRCA2 comes back as 13:32,315,086-32,400,268 under the
+            # GRCh38 default and 13:32,889,611-32,973,805 under GRCh37, a 574 kb
+            # shift, and a gene search returns ensembl_version 17 vs 10 for the
+            # same accession. Reported here as `reference_genome`, the same key
+            # and the same top-of-`data` placement the dataset-scoped siblings
+            # use, so one reading habit works across the family.
+            assembly = payload_reference_genome(data) or variables.get(
+                "referenceGenome"
+            )
+            if assembly:
+                data["reference_genome"] = assembly
         return result
 
 

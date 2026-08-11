@@ -30,6 +30,11 @@ The dataset-to-assembly table was verified live against the API's own
 `variant.reference_genome` field for all fourteen dataset ids, on
 13-20189546-AC-A (GRCh38) and 13-20763685-AC-A (GRCh37).
 
+Extended afterwards to the three tools in this family that have no dataset at
+all -- `gnomad_get_gene`, `gnomad_get_transcript` and `gnomad_search_genes` --
+which returned coordinates in an unnamed frame for the same reason and are
+covered by `TestFeatureToolsDiscloseTheirAssembly` below.
+
 Fully offline: `requests.Session.post` is patched.
 """
 
@@ -359,26 +364,177 @@ class TestDerivedSvDatasetIsDisclosed:
         assert "dataset_note" not in data
 
 
-class TestToolsWithoutADatasetAreUnaffected:
-    """Tools whose query is not dataset-scoped must keep their exact shape."""
+class TestFeatureToolsDiscloseTheirAssembly:
+    """The three dataset-free tools returned coordinates in an unnamed frame.
+
+    `gnomad_get_gene`, `gnomad_get_transcript` and `gnomad_search_genes` are the
+    only queries in this family with no `dataset`, so the disclosure above never
+    reached them -- yet they all return `chrom`/`start`/`stop` (or
+    assembly-specific search hits) and named no assembly at all. Recorded live
+    before the fix, `gnomad_get_gene {"gene_symbol": "BRCA2"}` answered:
+
+        {"gene": {"gene_id": "ENSG00000139618", "symbol": "BRCA2",
+                  "chrom": "13", "start": 32315086, "stop": 32400268, ...}}
+
+    Nothing there says whether 32,315,086 should be compared against GRCh37 or
+    GRCh38 data. It matters by 574 kb -- the same call with
+    `reference_genome: GRCh37` returns 13:32,889,611-32,973,805 -- and a search
+    is assembly-specific too: BRCA2 resolves to `ensembl_version` 17 on GRCh38
+    and 10 on GRCh37.
+
+    The assembly is not inferred. Introspecting the live schema
+    (``{__type(name: "Gene"){fields{name}}}``) shows `reference_genome` on both
+    `Gene` and `Transcript`, so the query now asks gnomAD for it and reports
+    what gnomAD says. Confirmed live:
+
+        gene(gene_symbol:"BRCA2", reference_genome: GRCh38)
+            -> reference_genome "GRCh38", start 32315086
+        gene(gene_symbol:"BRCA2", reference_genome: GRCh37)
+            -> reference_genome "GRCh37", start 32889611
+        transcript(transcript_id:"ENST00000380152", reference_genome: GRCh38)
+            -> reference_genome "GRCh38", start 32315508
+
+    `GeneSearchResult` exposes only `ensembl_id`, `ensembl_version` and
+    `symbol`, so a gene search falls back to the assembly the request
+    transmitted -- still the value in play rather than a hard-coded constant.
+    """
+
+    _GENE_CONFIG = {
+        "name": "gnomad_get_gene",
+        "fields": {
+            "query_schema": "query { gene { reference_genome } }",
+            "variable_map": {"reference_genome": "referenceGenome"},
+            "default_variables": {"referenceGenome": "GRCh38"},
+        },
+    }
+    _SEARCH_CONFIG = {
+        "name": "gnomad_search_genes",
+        "fields": {
+            "query_schema": "query { gene_search }",
+            "variable_map": {"reference_genome": "referenceGenome"},
+            "default_variables": {"referenceGenome": "GRCh38"},
+        },
+    }
+    # gnomAD's real GRCh38 answers, including the reference_genome the API
+    # itself reports on the record.
+    _GENE_38 = {
+        "reference_genome": "GRCh38",
+        "gene_id": "ENSG00000139618",
+        "symbol": "BRCA2",
+        "chrom": "13",
+        "start": 32315086,
+        "stop": 32400268,
+        "strand": "+",
+        "canonical_transcript_id": "ENST00000380152",
+    }
+    _GENE_37 = {
+        **_GENE_38,
+        "reference_genome": "GRCh37",
+        "start": 32889611,
+        "stop": 32973805,
+        "canonical_transcript_id": "ENST00000544455",
+    }
+    _TRANSCRIPT_38 = {
+        "reference_genome": "GRCh38",
+        "transcript_id": "ENST00000380152",
+        "gene_id": "ENSG00000139618",
+        "gene": {"gene_id": "ENSG00000139618", "symbol": "BRCA2"},
+        "chrom": "13",
+        "start": 32315508,
+        "stop": 32400268,
+        "strand": "+",
+    }
+
+    @staticmethod
+    def _run_feature(config, payload, arguments):
+        responder = MagicMock(return_value=_resp({"data": payload}))
+        return _run(gnomADGraphQLQueryTool, config, arguments, responder)[0]
+
+    def test_gene_names_the_assembly_it_answered_in(self):
+        result = self._run_feature(
+            self._GENE_CONFIG, {"gene": self._GENE_38}, {"gene_symbol": "BRCA2"}
+        )
+        assert result["data"]["reference_genome"] == "GRCh38"
+        # The coordinates the disclosure applies to are untouched.
+        assert result["data"]["gene"]["start"] == 32315086
+
+    def test_gene_reports_the_api_value_not_the_default(self):
+        """gnomAD's own field wins, so the label can never drift from the frame
+        the record is actually in."""
+        result = self._run_feature(
+            self._GENE_CONFIG,
+            {"gene": self._GENE_37},
+            {"gene_symbol": "BRCA2", "reference_genome": "GRCh37"},
+        )
+        assert result["data"]["reference_genome"] == "GRCh37"
+        assert result["data"]["gene"]["start"] == 32889611
+
+    def test_transcript_names_the_assembly_it_answered_in(self):
+        config = dict(self._GENE_CONFIG, name="gnomad_get_transcript")
+        result = self._run_feature(
+            config,
+            {"transcript": self._TRANSCRIPT_38},
+            {"transcript_id": "ENST00000380152"},
+        )
+        assert result["data"]["reference_genome"] == "GRCh38"
+        assert result["data"]["transcript"]["start"] == 32315508
+
+    def test_gene_search_falls_back_to_the_assembly_it_requested(self):
+        """GeneSearchResult carries no reference_genome field, so the sent
+        value is the best available evidence -- and search hits really do
+        differ: ensembl_version 17 on GRCh38, 10 on GRCh37."""
+        result = self._run_feature(
+            self._SEARCH_CONFIG,
+            {
+                "gene_search": [
+                    {
+                        "ensembl_id": "ENSG00000139618",
+                        "ensembl_version": "10",
+                        "symbol": "BRCA2",
+                    }
+                ]
+            },
+            {"query": "BRCA2", "reference_genome": "GRCh37"},
+        )
+        assert result["data"]["reference_genome"] == "GRCh37"
+
+    def test_omitted_argument_still_reports_the_default_that_was_used(self):
+        """The silent default is the whole point: a caller who passed nothing
+        must still be told which frame they got."""
+        result = self._run_feature(
+            self._SEARCH_CONFIG,
+            {"gene_search": [{"ensembl_id": "ENSG00000139618", "symbol": "BRCA2"}]},
+            {"query": "BRCA2"},
+        )
+        assert result["data"]["reference_genome"] == "GRCh38"
 
     def test_no_dataset_keys_are_injected(self):
-        config = {
-            "name": "gnomad_get_gene",
-            "fields": {
-                "query_schema": "query { gene }",
-                "variable_map": {"reference_genome": "referenceGenome"},
-                "default_variables": {"referenceGenome": "GRCh38"},
-            },
-        }
-        responder = MagicMock(
-            return_value=_resp({"data": {"gene": {"symbol": "GJB2"}}})
+        """These queries are not dataset-scoped. Naming a callset that never
+        answered would be a fabrication, so only the assembly is added."""
+        result = self._run_feature(
+            self._GENE_CONFIG, {"gene": self._GENE_38}, {"gene_symbol": "BRCA2"}
         )
-        result = _run(
-            gnomADGraphQLQueryTool, config, {"gene_symbol": "GJB2"}, responder
-        )
+        assert "dataset" not in result["data"]
+        assert "dataset_note" not in result["data"]
 
-        assert result[0]["data"] == {"gene": {"symbol": "GJB2"}}
+    def test_disclosure_is_purely_additive(self):
+        """Every pre-existing key keeps its exact value; one key is added."""
+        payload_gene = dict(self._GENE_38)
+        result = self._run_feature(
+            self._GENE_CONFIG, {"gene": payload_gene}, {"gene_symbol": "BRCA2"}
+        )
+        assert result["data"]["gene"] == self._GENE_38
+        assert set(result["data"]) == {"gene", "reference_genome"}
+
+    def test_a_payload_with_no_assembly_anywhere_is_left_alone(self):
+        """No transmitted value and no API field means nothing to disclose --
+        inventing GRCh38 there would be exactly the guess this fix removes."""
+        config = {
+            "name": "gnomad_get_gene_constraints",
+            "fields": {"query_schema": "query { gene }"},
+        }
+        result = self._run_feature(config, {"gene": {"symbol": "BRCA2"}}, {})
+        assert result["data"] == {"gene": {"symbol": "BRCA2"}}
 
 
 class TestErrorsAreNotAnnotated:
