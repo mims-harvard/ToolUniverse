@@ -494,7 +494,7 @@
   {
     "type": "HPAGetCancerPrognosticsTool",
     "name": "HPA_get_cancer_prognostics_by_gene",
-    "description": "Retrieve prognostic value of a gene across various cancer types, indicating if its expression level correlates with patient survival outcomes.",
+    "description": "Retrieve prognostic value of a gene across various cancer types, indicating if its expression level correlates with patient survival outcomes. Reports both the significant results ('prognostic_summary') and the cancer types that were assessed but found NOT prognostic ('non_prognostic_summary'), plus 'cancers_assessed_count' as the denominator, so that a negative result can be distinguished from missing data.",
     "fields": {
       "endpoint": "https://www.proteinatlas.org/{ensembl_id}.json",
       "timeout": 30,
@@ -513,7 +513,7 @@
       ]
     },
     "input_description": "Input a single Ensembl Gene ID. The tool will use HPA's efficient JSON API to retrieve cancer prognostic data.",
-    "output_description": "Returns a list of cancers where the gene has significant prognostic value, including the prognostic type (favorable/unfavorable), p-value, and summary statistics. Explains whether high/low expression correlates with better/worse patient survival.",
+    "output_description": "Returns 'prognostic_summary' (cancers where the gene has SIGNIFICANT prognostic value, with prognostic type favorable/unfavorable and p-value), 'non_prognostic_summary' (cancers HPA assessed and found not prognostic, with p-values), and 'cancers_assessed_count' as the denominator for both. Use the denominator to tell 'HPA tested this cancer and found no signal' apart from 'HPA has no data for this cancer'.",
     "test_examples": [
       {
         "ensembl_id": "ENSG00000141510"
@@ -534,11 +534,21 @@
             "type": "string"
           }
         },
+        "cancers_assessed_count": {
+          "type": "integer",
+          "description": "Total number of cancer types HPA assessed for this gene (the denominator). Equals prognostic_cancers_count + non_prognostic_cancers_count. A cancer type absent from both summary arrays was not assessed by HPA for this gene."
+        },
         "prognostic_cancers_count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Number of assessed cancer types where expression significantly correlates with survival. This is a filtered subset of cancers_assessed_count, not a total."
+        },
+        "non_prognostic_cancers_count": {
+          "type": "integer",
+          "description": "Number of assessed cancer types where HPA found NO significant survival correlation."
         },
         "prognostic_summary": {
           "type": "array",
+          "description": "Cancer types with SIGNIFICANT prognostic value only. Compare its length against cancers_assessed_count before concluding a cancer type has no data — non-significant assessed cancers are in non_prognostic_summary.",
           "items": {
             "type": "object",
             "properties": {
@@ -547,6 +557,30 @@
               },
               "prognostic_type": {
                 "type": "string"
+              },
+              "p_value": {
+                "type": "string"
+              },
+              "is_prognostic": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "non_prognostic_summary": {
+          "type": "array",
+          "description": "Cancer types HPA assessed and found NOT prognostic, with their p-values. These are citable negative results and are distinct from cancer types HPA never assessed (absent from both arrays).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cancer_type": {
+                "type": "string"
+              },
+              "prognostic_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "p_value": {
                 "type": "string"

@@ -213,12 +213,17 @@ class PubMedRESTTool(BaseRESTTool):
             return {"status": "success", "data": []}
 
         def parse_article(pmid: str, article_data: Dict[str, Any]) -> Dict[str, Any]:
-            # Extract author list
-            authors = []
-            if "authors" in article_data:
-                authors = [
-                    author.get("name", "") for author in article_data["authors"]
-                ][:5]  # Limit to first 5 authors
+            # Extract author list. esummary returns the complete author list, so
+            # the full count is always known even though only the first 5 names
+            # are echoed back here (kept at 5 to bound the payload size). Report
+            # `author_count` / `authors_truncated` alongside so a caller building
+            # a bibliography can tell "this article really has 5 authors" apart
+            # from "we cut the list short" -- otherwise the two are
+            # byte-indistinguishable. Use PubMed_get_article for the full list.
+            all_authors = [
+                author.get("name", "") for author in article_data.get("authors", [])
+            ]
+            authors = all_authors[:5]  # Limit to first 5 authors
 
             # Extract article info
             pub_date = article_data.get("pubdate", "")
@@ -246,6 +251,8 @@ class PubMedRESTTool(BaseRESTTool):
                 "pmid": pmid,
                 "title": article_data.get("title", ""),
                 "authors": authors,
+                "author_count": len(all_authors),
+                "authors_truncated": len(all_authors) > 5,
                 "journal": journal,
                 "pub_date": pub_date,
                 "pub_year": pub_year,

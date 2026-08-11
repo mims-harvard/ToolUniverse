@@ -131,10 +131,16 @@ def test_totals_and_search_parameters_are_unchanged(tmp_path):
     assert data["query"] == "Aspirin"
     assert data["total_matches"] == 7  # every match still counted
     assert data["total_returned_results"] == 3
+    # Fix-R28B added `nested_contains`/`nested_offset` to the echoed search
+    # parameters. The three keys this test was written to pin are still
+    # present and unchanged; the two new ones carry the inert defaults that
+    # reproduce the previous behaviour.
     assert data["search_parameters"] == {
         "case_sensitive": False,
         "exact_match": False,
         "limit": 3,
+        "nested_contains": None,
+        "nested_offset": 0,
     }
     assert data["results"][0]["matched_fields"] == ["synonyms", "brand_names"]
     assert data["results"][0]["drugbank_id"] == "DB00945"

@@ -95,7 +95,35 @@ class XMLDatasetTool(BaseTool):
     # the untruncated list to build searchable text, so search matching
     # is unaffected) keeps responses usable; the true count is preserved
     # in a sibling `<field>_total_count` key so callers know more exist.
+    # Fix-R28B: the cap above bounds payload size, but on its own it produced a
+    # silently truncated list -- `interacting_drugs` came back with 25 of
+    # labetalol's 1855 interactions, in raw document order, with no flag saying
+    # the list was cut and no way to reach entry #71 (nifedipine). An empty or
+    # short list then reads as "no such interaction". The cap value is shared by
+    # every nested list field of every XMLTool and is deliberately left alone;
+    # what is added is (a) unconditional disclosure keys next to the list and
+    # (b) the optional `nested_contains` / `nested_offset` arguments below, whose
+    # defaults reproduce the previous output byte for byte.
     _NESTED_LIST_DISPLAY_CAP = 25
+
+    def _is_nested_mapping(self, xpath_expr: Any) -> bool:
+        """True when a field mapping describes a nested (structured list) field."""
+        return isinstance(xpath_expr, dict) and "parent_path" in xpath_expr
+
+    def _extract_nested_list(
+        self, record_element: ET.Element, xpath_expr: Dict[str, Any]
+    ) -> List[Dict[str, str]]:
+        """Extract the FULL, untruncated structured list for a nested field."""
+        parent_xpath = xpath_expr["parent_path"]
+        subfields = xpath_expr.get("subfields", {})
+        structured_list = []
+        for el in record_element.findall(parent_xpath, namespaces=self.namespaces):
+            entry = {}
+            for sf_name, sf_path in subfields.items():
+                entry[sf_name] = self._extract_field_value(el, sf_path)
+            if any(entry.values()):  # Only add entries with non-empty values
+                structured_list.append(entry)
+        return structured_list
 
     def _extract_record_data(self, record_element: ET.Element) -> Dict[str, Any]:
         """Extract data from a record element with caching."""
@@ -107,20 +135,10 @@ class XMLDatasetTool(BaseTool):
 
         for field_name, xpath_expr in self.field_mappings.items():
             # Extract mapped fields
-            if isinstance(xpath_expr, dict) and "parent_path" in xpath_expr:
+            if self._is_nested_mapping(xpath_expr):
                 # Handle nested structure
-                parent_xpath = xpath_expr["parent_path"]
                 subfields = xpath_expr.get("subfields", {})
-                elements = record_element.findall(
-                    parent_xpath, namespaces=self.namespaces
-                )
-                structured_list = []
-                for el in elements:
-                    entry = {}
-                    for sf_name, sf_path in subfields.items():
-                        entry[sf_name] = self._extract_field_value(el, sf_path)
-                    if any(entry.values()):  # Only add entries with non-empty values
-                        structured_list.append(entry)
+                structured_list = self._extract_nested_list(record_element, xpath_expr)
 
                 # Flatten for search using the full, untruncated list so
                 # matching behavior doesn't change based on the display cap.
@@ -136,15 +154,91 @@ class XMLDatasetTool(BaseTool):
 
                 total_count = len(structured_list)
                 max_items = xpath_expr.get("max_items", self._NESTED_LIST_DISPLAY_CAP)
-                if max_items and total_count > max_items:
-                    data[f"{field_name}_total_count"] = total_count
+                truncated = bool(max_items) and total_count > max_items
+                if truncated:
                     structured_list = structured_list[:max_items]
                 data[field_name] = structured_list
+                # Disclosure keys sit next to every nested list so a caller can
+                # always tell a complete list from a truncated window.
+                data[f"{field_name}_total_count"] = total_count
+                data[f"{field_name}_shown_count"] = len(structured_list)
+                data[f"{field_name}_offset"] = 0
+                data[f"{field_name}_truncated"] = truncated
             else:
                 # Regular flat field extraction
                 data[field_name] = self._extract_field_value(record_element, xpath_expr)
 
         return data
+
+    def _nested_view_args(self, arguments: Dict[str, Any]) -> tuple:
+        """Parse the optional nested-list view arguments.
+
+        Returns ``(contains, offset)``. ``(None, 0)`` -- the default -- means
+        "behave exactly as before": first page of every nested list, unfiltered.
+        """
+        contains = arguments.get("nested_contains")
+        if isinstance(contains, str):
+            contains = contains.strip() or None
+        else:
+            contains = None
+
+        offset = arguments.get("nested_offset", 0)
+        try:
+            offset = max(0, int(offset))
+        except (TypeError, ValueError):
+            offset = 0
+
+        return contains, offset
+
+    def _apply_nested_view(
+        self,
+        result_record: Dict[str, Any],
+        record_element: ET.Element,
+        contains: Optional[str],
+        offset: int,
+    ) -> None:
+        """Re-window every nested list field of one result record, in place.
+
+        Only called when the caller actually supplied `nested_contains` or
+        `nested_offset`; otherwise the cached first-page view is returned
+        untouched, so the default response is unchanged.
+        """
+        needle = contains.lower() if contains else None
+
+        for field_name, xpath_expr in self.field_mappings.items():
+            if not self._is_nested_mapping(xpath_expr):
+                continue
+
+            full_list = self._extract_nested_list(record_element, xpath_expr)
+            total_count = len(full_list)
+
+            if needle:
+                selected = [
+                    entry
+                    for entry in full_list
+                    if any(needle in str(v).lower() for v in entry.values())
+                ]
+            else:
+                selected = full_list
+
+            window = selected[offset:]
+            max_items = xpath_expr.get("max_items", self._NESTED_LIST_DISPLAY_CAP)
+            shown = window[:max_items] if max_items else window
+
+            result_record[field_name] = shown
+            result_record[f"{field_name}_total_count"] = total_count
+            if needle:
+                # Only meaningful under a filter; without one it would just
+                # duplicate `_total_count`. A 0 here is a searched-and-found-
+                # nothing answer, not a truncation artifact.
+                result_record[f"{field_name}_matching_count"] = len(selected)
+            result_record[f"{field_name}_shown_count"] = len(shown)
+            result_record[f"{field_name}_offset"] = offset
+            # More entries remain after this window -- raise `nested_offset` to
+            # reach them.
+            result_record[f"{field_name}_truncated"] = offset + len(shown) < len(
+                selected
+            )
 
     def _extract_field_value(self, element: ET.Element, xpath_expr: Any) -> str:
         """Extract field value using XPath expression.
@@ -328,11 +422,21 @@ class XMLDatasetTool(BaseTool):
         # tiebreaker among equally-ranked records.
         matched_records.sort(key=lambda item: (item[0], item[1]))
 
+        nested_contains, nested_offset = self._nested_view_args(arguments)
+        nested_view_requested = bool(nested_contains) or nested_offset > 0
+
         results = []
-        for _rank, _position, record_data, matched_fields in matched_records[:limit]:
+        for _rank, position, record_data, matched_fields in matched_records[:limit]:
             result_record = record_data.copy()
             for temp in self.temporary_record_fields:
                 result_record.pop(temp, None)
+            if nested_view_requested:
+                self._apply_nested_view(
+                    result_record,
+                    self.records[position],
+                    nested_contains,
+                    nested_offset,
+                )
             result_record["matched_fields"] = matched_fields
             results.append(result_record)
 
@@ -347,6 +451,8 @@ class XMLDatasetTool(BaseTool):
                     "case_sensitive": case_sensitive,
                     "exact_match": exact_match,
                     "limit": limit,
+                    "nested_contains": nested_contains,
+                    "nested_offset": nested_offset,
                 },
             },
         }
@@ -479,14 +585,24 @@ class XMLDatasetTool(BaseTool):
                 "error": f"Unknown condition '{condition}'. Supported: contains, starts_with, ends_with, exact, not_empty, has_attribute",
             }
 
+        nested_contains, nested_offset = self._nested_view_args(arguments)
+        nested_view_requested = bool(nested_contains) or nested_offset > 0
+
         total_matches = 0
-        for record_data in all_records:
+        for position, record_data in enumerate(all_records):
             if field in record_data and filter_func(record_data, field):
                 total_matches += 1
                 if len(filtered_records) < limit:
                     result_record = record_data.copy()
                     for temp in self.temporary_record_fields:
                         result_record.pop(temp, None)
+                    if nested_view_requested:
+                        self._apply_nested_view(
+                            result_record,
+                            self.records[position],
+                            nested_contains,
+                            nested_offset,
+                        )
                     filtered_records.append(result_record)
 
         return {
@@ -505,6 +621,8 @@ class XMLDatasetTool(BaseTool):
                         else None
                     ),
                     "limit": limit,
+                    "nested_contains": nested_contains,
+                    "nested_offset": nested_offset,
                 },
             },
         }

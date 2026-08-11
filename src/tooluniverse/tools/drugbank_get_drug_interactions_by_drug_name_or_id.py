@@ -1,7 +1,7 @@
 """
 drugbank_get_drug_interactions_by_drug_name_or_id
 
-Get drug interactions and contraindications by drug name or DrugBank ID.
+Get drug interactions and contraindications by drug name or DrugBank ID. The returned interacting...
 """
 
 from typing import Any, Optional, Callable
@@ -10,16 +10,18 @@ from ._shared_client import get_shared_client
 
 def drugbank_get_drug_interactions_by_drug_name_or_id(
     query: str,
-    case_sensitive: bool,
-    exact_match: bool,
-    limit: int,
+    case_sensitive: Optional[bool] = False,
+    exact_match: Optional[bool] = False,
+    limit: Optional[int] = 10,
+    nested_contains: Optional[str] = None,
+    nested_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get drug interactions and contraindications by drug name or DrugBank ID.
+    Get drug interactions and contraindications by drug name or DrugBank ID. The returned interacting...
 
     Parameters
     ----------
@@ -30,7 +32,11 @@ def drugbank_get_drug_interactions_by_drug_name_or_id(
     exact_match : bool
         Select True to require an exact match
     limit : int
-        Maximum number of results to return
+        Maximum number of matched DRUG RECORDS to return. This does NOT control how m...
+    nested_contains : str
+        Optional. Case-insensitive substring; keeps only the interacting-drug entries...
+    nested_offset : int
+        Optional. Number of interacting-drug entries to skip before the 25-entry disp...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def drugbank_get_drug_interactions_by_drug_name_or_id(
             "case_sensitive": case_sensitive,
             "exact_match": exact_match,
             "limit": limit,
+            "nested_contains": nested_contains,
+            "nested_offset": nested_offset,
         }.items()
         if v is not None
     }

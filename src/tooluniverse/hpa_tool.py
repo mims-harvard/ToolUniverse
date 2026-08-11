@@ -1602,11 +1602,23 @@ class HPAGetCancerPrognosticsTool(HPAJsonApiTool):
         if "error" in data:
             return data
 
+        # HPA assesses a fixed panel of cancer types per gene and reports a
+        # p-value for every one of them, including the ones where expression
+        # carries no survival signal. `prognostic_summary` only lists the
+        # significant ones, so on its own it cannot distinguish "HPA tested this
+        # cancer and found nothing" (a citable negative result) from "HPA has no
+        # data for this cancer at all". Collect both sets and report the
+        # denominator; the non-significant rows go in their own key so callers
+        # iterating `prognostic_summary` see exactly what they saw before.
         prognostics = []
+        non_prognostics = []
         for key, value in data.items():
             if key.startswith("Cancer prognostics") and isinstance(value, dict):
+                if not value:
+                    # Empty dict: cancer type not assessed for this gene.
+                    continue
                 cancer_type = key.replace("Cancer prognostics - ", "").strip()
-                if value and value.get("is_prognostic"):
+                if value.get("is_prognostic"):
                     prognostics.append(
                         {
                             "cancer_type": cancer_type,
@@ -1615,6 +1627,17 @@ class HPAGetCancerPrognosticsTool(HPAJsonApiTool):
                             "is_prognostic": value.get("is_prognostic", False),
                         }
                     )
+                else:
+                    non_prognostics.append(
+                        {
+                            "cancer_type": cancer_type,
+                            "prognostic_type": value.get("prognostic type", "") or None,
+                            "p_value": value.get("p_val", "N/A"),
+                            "is_prognostic": False,
+                        }
+                    )
+
+        cancers_assessed_count = len(prognostics) + len(non_prognostics)
 
         return {
             "status": "success",
@@ -1622,13 +1645,25 @@ class HPAGetCancerPrognosticsTool(HPAJsonApiTool):
                 "ensembl_id": ensembl_id,
                 "gene": data.get("Gene", "Unknown"),
                 "gene_synonym": data.get("Gene synonym", ""),
+                "cancers_assessed_count": cancers_assessed_count,
                 "prognostic_cancers_count": len(prognostics),
+                "non_prognostic_cancers_count": len(non_prognostics),
                 "prognostic_summary": (
                     prognostics
                     if prognostics
                     else "No significant prognostic value found in the analyzed cancers."
                 ),
-                "note": "Prognostic value indicates whether high/low expression of this gene correlates with patient survival in specific cancer types.",
+                "non_prognostic_summary": non_prognostics,
+                "note": (
+                    "Prognostic value indicates whether high/low expression of this gene "
+                    "correlates with patient survival in specific cancer types. "
+                    f"HPA assessed {cancers_assessed_count} cancer type(s) for this gene: "
+                    f"{len(prognostics)} were significant and are listed in "
+                    f"'prognostic_summary'; the remaining {len(non_prognostics)} were "
+                    "assessed and found NOT prognostic and are listed with their p-values "
+                    "in 'non_prognostic_summary'. A cancer type absent from BOTH lists was "
+                    "not assessed by HPA for this gene."
+                ),
             },
         }
 

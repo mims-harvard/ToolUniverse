@@ -70,10 +70,18 @@
               },
               "authors": {
                 "type": "array",
-                "description": "List of author names (up to 5 authors shown)",
+                "description": "List of author names, truncated to the first 5. Check authors_truncated/author_count before citing this list — an article with exactly 5 authors and an article whose 20 authors were cut to 5 look identical here. Call PubMed_get_article with the pmid for the complete author list with affiliations.",
                 "items": {
                   "type": "string"
                 }
+              },
+              "author_count": {
+                "type": "integer",
+                "description": "Total number of authors on the article, as reported by PubMed — not the length of the truncated `authors` array."
+              },
+              "authors_truncated": {
+                "type": "boolean",
+                "description": "True when the article has more than 5 authors and `authors` therefore lists only the first 5. False means `authors` is the complete author list."
               },
               "journal": {
                 "type": [
