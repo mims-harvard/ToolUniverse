@@ -96,7 +96,9 @@ jobs:
 
       - name: Run release script
         if: steps.level.outputs.level != ''
-        run: bash scripts/release-plugin.sh "${{ steps.level.outputs.level }}"
+        env:
+          RELEASE_LEVEL: ${{ steps.level.outputs.level }}
+        run: bash scripts/release-plugin.sh "$RELEASE_LEVEL"
 
       - name: Summary
         if: steps.level.outputs.level != ''
