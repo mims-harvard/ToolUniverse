@@ -962,7 +962,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_sv_by_gene",
-    "description": "Get structural variants (SVs) from gnomAD v4 for a gene. Returns deletions, duplications, inversions, translocations, and complex SVs with population allele frequencies, SV type, consequence, and homozygote counts. Essential for interpreting CNVs in clinical genomics.",
+    "description": "Get structural variants (SVs) from gnomAD for a gene. The SV callset follows the requested assembly: GRCh38 (default) uses the gnomAD v4 SV callset (gnomad_sv_r4), GRCh37 uses the gnomAD v2.1 SV callset (gnomad_sv_r2_1), so SV coordinates always match the gene coordinates returned. Returns deletions, duplications, inversions, translocations, and complex SVs with population allele frequencies, SV type, consequence, and homozygote counts (null for multi-allelic CNVs). Essential for interpreting CNVs in clinical genomics.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -987,13 +987,23 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id chrom start stop structural_variants(dataset: gnomad_sv_r4) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
+      "query_schema": "query($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!, $svDataset: StructuralVariantDatasetId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id chrom start stop structural_variants(dataset: $svDataset) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
       "variable_map": {
         "gene_symbol": "geneSymbol",
         "reference_genome": "referenceGenome"
       },
       "default_variables": {
         "referenceGenome": "GRCh38"
+      },
+      "derived_variables": {
+        "svDataset": {
+          "from": "reference_genome",
+          "map": {
+            "GRCh37": "gnomad_sv_r2_1",
+            "GRCh38": "gnomad_sv_r4"
+          },
+          "default": "gnomad_sv_r4"
+        }
       }
     },
     "return_schema": {
@@ -1075,11 +1085,15 @@
                       "homozygote_count": {
                         "type": [
                           "integer",
-                          "number"
+                          "number",
+                          "null"
                         ]
                       },
                       "major_consequence": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "filters": {
                         "type": "array",
@@ -1133,7 +1147,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_sv_by_region",
-    "description": "Get structural variants (SVs) from gnomAD v4 overlapping a genomic region. Returns DEL/DUP/INV/BND/CPX variants with allele frequencies and consequences. Use for CNV interpretation in specific chromosomal regions. Region should be < 5Mb.",
+    "description": "Get structural variants (SVs) from gnomAD overlapping a genomic region. The SV callset follows the requested assembly: GRCh38 (default) uses the gnomAD v4 SV callset (gnomad_sv_r4), GRCh37 uses the gnomAD v2.1 SV callset (gnomad_sv_r2_1), so SV coordinates are always in the same assembly as the requested region. Returns DEL/DUP/INV/BND/CPX variants with allele frequencies and consequences. Use for CNV interpretation in specific chromosomal regions. Region should be < 5Mb.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1168,12 +1182,22 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($chrom: String!, $start: Int!, $stop: Int!, $referenceGenome: ReferenceGenomeId!) { region(chrom: $chrom, start: $start, stop: $stop, reference_genome: $referenceGenome) { chrom start stop genes { gene_id symbol } structural_variants(dataset: gnomad_sv_r4) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
+      "query_schema": "query($chrom: String!, $start: Int!, $stop: Int!, $referenceGenome: ReferenceGenomeId!, $svDataset: StructuralVariantDatasetId!) { region(chrom: $chrom, start: $start, stop: $stop, reference_genome: $referenceGenome) { chrom start stop genes { gene_id symbol } structural_variants(dataset: $svDataset) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
       "variable_map": {
         "reference_genome": "referenceGenome"
       },
       "default_variables": {
         "referenceGenome": "GRCh38"
+      },
+      "derived_variables": {
+        "svDataset": {
+          "from": "reference_genome",
+          "map": {
+            "GRCh37": "gnomad_sv_r2_1",
+            "GRCh38": "gnomad_sv_r4"
+          },
+          "default": "gnomad_sv_r4"
+        }
       }
     },
     "return_schema": {
@@ -1263,11 +1287,15 @@
                       "homozygote_count": {
                         "type": [
                           "integer",
-                          "number"
+                          "number",
+                          "null"
                         ]
                       },
                       "major_consequence": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "filters": {
                         "type": "array",
@@ -1321,13 +1349,23 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_sv_detail",
-    "description": "Get detailed information for a specific gnomAD structural variant by its ID (e.g., DEL_chr17_24e4872b). Returns SV coordinates, type, length, population allele frequency, consequence, and filter status. Use gnomad_get_sv_by_gene or gnomad_get_sv_by_region to discover variant IDs first.",
+    "description": "Get detailed information for a specific gnomAD structural variant by its ID. Resolves IDs from both SV callsets, selected automatically from the ID format: GRCh38 IDs such as 'DEL_chr17_24e4872b' resolve against the gnomAD v4 SV callset (gnomad_sv_r4), while GRCh37 IDs such as 'DEL_1_1937' resolve against the gnomAD v2.1 SV callset (gnomad_sv_r2_1). Returns SV coordinates, type, length, population allele frequency, consequence, and filter status (consequence and homozygote/hemizygote counts are null for multi-allelic CNVs and intergenic SVs). Use gnomad_get_sv_by_gene or gnomad_get_sv_by_region to discover variant IDs first.",
     "parameter": {
       "type": "object",
       "properties": {
         "variant_id": {
           "type": "string",
-          "description": "gnomAD structural variant ID (e.g., 'DEL_chr17_24e4872b', 'DUP_chr22_abc12345')."
+          "description": "gnomAD structural variant ID. GRCh38/v4 IDs look like 'DEL_chr17_24e4872b'; GRCh37/v2.1 IDs look like 'DEL_1_1937'."
+        },
+        "dataset": {
+          "type": "string",
+          "enum": [
+            "gnomad_sv_r2_1",
+            "gnomad_sv_r2_1_controls",
+            "gnomad_sv_r2_1_non_neuro",
+            "gnomad_sv_r4"
+          ],
+          "description": "Optional SV callset override. Defaults to the callset auto-detected from the variant ID format (gnomad_sv_r2_1 for GRCh37-style IDs, gnomad_sv_r4 otherwise). Set explicitly only to query a v2.1 subset such as gnomad_sv_r2_1_controls."
         }
       },
       "required": [
@@ -1337,9 +1375,22 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($variantId: String!) { structural_variant(dataset: gnomad_sv_r4, variantId: $variantId) { variant_id chrom pos end type length ac an af homozygote_count hemizygote_count major_consequence consequence reference_genome filters chrom2 pos2 end2 ac_hom ac_hemi } }",
+      "query_schema": "query($variantId: String!, $svDataset: StructuralVariantDatasetId!) { structural_variant(dataset: $svDataset, variantId: $variantId) { variant_id chrom pos end type length ac an af homozygote_count hemizygote_count major_consequence consequence reference_genome filters chrom2 pos2 end2 ac_hom ac_hemi } }",
       "variable_map": {
-        "variant_id": "variantId"
+        "variant_id": "variantId",
+        "dataset": "svDataset"
+      },
+      "derived_variables": {
+        "svDataset": {
+          "from": "variant_id",
+          "patterns": [
+            {
+              "match": "^[A-Za-z]+_(?:[0-9]{1,2}|X|Y|MT?)_[0-9]+$",
+              "value": "gnomad_sv_r2_1"
+            }
+          ],
+          "default": "gnomad_sv_r4"
+        }
       }
     },
     "return_schema": {
@@ -1395,20 +1446,28 @@
                 "homozygote_count": {
                   "type": [
                     "integer",
-                    "number"
+                    "number",
+                    "null"
                   ]
                 },
                 "hemizygote_count": {
                   "type": [
                     "integer",
-                    "number"
+                    "number",
+                    "null"
                   ]
                 },
                 "major_consequence": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "consequence": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "reference_genome": {
                   "type": "string"
@@ -1420,24 +1479,37 @@
                   }
                 },
                 "chrom2": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "pos2": {
-                  "type": "null"
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ]
                 },
                 "end2": {
-                  "type": "null"
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ]
                 },
                 "ac_hom": {
                   "type": [
                     "integer",
-                    "number"
+                    "number",
+                    "null"
                   ]
                 },
                 "ac_hemi": {
                   "type": [
                     "integer",
-                    "number"
+                    "number",
+                    "null"
                   ]
                 }
               }
@@ -1463,6 +1535,9 @@
     "test_examples": [
       {
         "variant_id": "DEL_chr17_24e4872b"
+      },
+      {
+        "variant_id": "DEL_1_1937"
       }
     ],
     "metadata": {

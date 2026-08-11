@@ -6,6 +6,7 @@ population genetics data, variant frequencies, and gene constraint metrics
 using GraphQL.
 """
 
+import re
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -118,6 +119,23 @@ class gnomADGraphQLQueryTool(gnomADGraphQLTool):
     - fields.query_schema: GraphQL query string
     - fields.variable_map: map tool argument names -> GraphQL variable names
     - fields.default_variables: default GraphQL variable values
+    - fields.derived_variables: GraphQL variables computed from another
+      variable via a lookup table, e.g.::
+
+          {"svDataset": {"from": "reference_genome",
+                         "map": {"GRCh37": "gnomad_sv_r2_1",
+                                 "GRCh38": "gnomad_sv_r4"},
+                         "default": "gnomad_sv_r4"}}
+
+      When the source value is free-form rather than an enum, `patterns`
+      matches it against regular expressions in order instead, e.g.::
+
+          {"svDataset": {"from": "variant_id",
+                         "patterns": [{"match": "^[A-Za-z]+_[0-9XY]+_[0-9]+$",
+                                       "value": "gnomad_sv_r2_1"}],
+                         "default": "gnomad_sv_r4"}}
+
+      `map` is consulted first, then `patterns`, then `default`.
     """
 
     def __init__(self, tool_config):
@@ -125,6 +143,39 @@ class gnomADGraphQLQueryTool(gnomADGraphQLTool):
         fields_cfg = tool_config.get("fields", {}) or {}
         self.variable_map = fields_cfg.get("variable_map", {}) or {}
         self.default_variables = fields_cfg.get("default_variables", {}) or {}
+        self.derived_variables = fields_cfg.get("derived_variables", {}) or {}
+
+    @staticmethod
+    def _match_patterns(patterns: Any, source_value: Any) -> Any:
+        """Return the value of the first regex rule matching `source_value`."""
+        if not isinstance(patterns, list) or not isinstance(source_value, str):
+            return None
+        for rule in patterns:
+            if not isinstance(rule, dict):
+                continue
+            expression = rule.get("match")
+            if expression and re.search(expression, source_value):
+                return rule.get("value")
+        return None
+
+    def _apply_derived_variables(self, variables: Dict[str, Any]) -> None:
+        """Fill in variables computed from another variable's value.
+
+        A derived variable is only applied when the caller did not supply it
+        explicitly, so an explicit value always wins over the lookup table.
+        """
+        for name, rule in self.derived_variables.items():
+            if name in variables or not isinstance(rule, dict):
+                continue
+            source = rule.get("from")
+            source_value = variables.get(self.variable_map.get(source, source))
+            value = (rule.get("map") or {}).get(source_value)
+            if value is None:
+                value = self._match_patterns(rule.get("patterns"), source_value)
+            if value is None:
+                value = rule.get("default")
+            if value is not None:
+                variables[name] = value
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         # Merge defaults + map argument names to GraphQL variables
@@ -133,6 +184,7 @@ class gnomADGraphQLQueryTool(gnomADGraphQLTool):
             if v is None:
                 continue
             variables[self.variable_map.get(k, k)] = v
+        self._apply_derived_variables(variables)
         return super().run(variables)
 
 
