@@ -675,7 +675,7 @@
       ]
     },
     "input_description": "Input an Ensembl Gene ID and a list of tissue names. The tool will perform intelligent tissue name matching.",
-    "output_description": "Returns a dictionary mapping each queried tissue name to its expression data: the HPA tissue the value actually came from (matched_tissue), the expression value, its unit read from the HPA column header (expression_unit), a categorized expression level (Very high/High/Medium/Low/Very low), the HPA column header used (source_field), and a 'note' when the queried name resolved to a differently-named HPA column or matched nothing. Also lists the tissues HPA classifies the gene as enriched in.",
+    "output_description": "Returns a dictionary mapping each queried tissue name to its expression data: the HPA tissue the value actually came from (matched_tissue), the expression value, its unit read from the HPA column header (expression_unit), an expression_level band (Very high/High/Medium/Low/Very low), the HPA column header used (source_field), and a 'note' when the queried name resolved to a differently-named HPA column or matched nothing. expression_level is computed by ToolUniverse from expression_value, NOT a classification published by HPA -- HPA supplies only the number. The exact cut-offs (>50 Very high, >10 High, >1 Medium, >0.1 Low, <=0.1 Very low) are stated once per response in the top-level 'expression_level_basis' field rather than repeated on every tissue row, so the banding can be reproduced or ignored. Also lists the tissues HPA classifies the gene as enriched in.",
     "test_examples": [
       {
         "ensembl_id": "ENSG00000254647",
@@ -726,7 +726,7 @@
       ]
     },
     "input_description": "Input a gene name and a context (tissue or cell line name). This composite tool will perform multi-step analysis combining biological processes and expression data.",
-    "output_description": "Returns a comprehensive contextual analysis including: gene's biological processes, expression level in the specified context, contextual conclusion about functional relevance, and intelligent interpretation of whether the gene's roles are likely important in the given tissue/cell line context.",
+    "output_description": "Returns a comprehensive contextual analysis including: gene's biological processes, expression level in the specified context, contextual conclusion about functional relevance, and an interpretation of whether the gene's roles are likely important in the given tissue/cell line context. 'expression_level' is computed by ToolUniverse from the nTPM value, NOT a classification published by HPA -- HPA supplies only the number. This tool uses its own cut-offs (>10 highly expressed, >1 moderately expressed, >0.1 expressed at low level, <=0.1 not expressed or very low), which differ from the bands returned by HPA_get_rna_expression_by_source and HPA_get_rna_expression_in_specific_tissues; the 'expression_level_basis' field states them. 'functional_relevance' and 'contextual_conclusion' are derived from that band, so they inherit the same tool-computed cut-offs and are not HPA assertions.",
     "test_examples": [
       {
         "gene_name": "TP53",
@@ -774,7 +774,7 @@
       ]
     },
     "input_description": "Input gene name (e.g., GFAP), source type (tissue/blood/brain/single_cell), and specific source name (e.g., liver). The tool will directly query the specific column for highly efficient data retrieval.",
-    "output_description": "Returns the expression value, its unit taken from HPA's column header (nTPM, or nCPM for single_cell), a categorized expression level, the exact HPA column header the number came from (column_queried), and a 'note' whenever the requested source name resolved to a differently-named HPA column.",
+    "output_description": "Returns the expression value, its unit taken from HPA's column header (nTPM, or nCPM for single_cell), an expression_level band, the exact HPA column header the number came from (column_queried), and a 'note' whenever the requested source name resolved to a differently-named HPA column. expression_level is computed by ToolUniverse from expression_value, NOT a classification published by HPA -- HPA supplies only the number. The accompanying 'expression_level_basis' field spells out the exact cut-offs applied (>50 very high, >10 high, >1 medium, >0.1 low, <=0.1 very low) so the banding can be reproduced or ignored.",
     "test_examples": [
       {
         "gene_name": "TP53",

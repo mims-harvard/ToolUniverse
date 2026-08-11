@@ -3,7 +3,7 @@
 import re
 import requests
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, List
+from typing import Dict, Any, List, NamedTuple, Optional, Tuple
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -462,6 +462,106 @@ def hpa_unit_from_column_label(label: Any, default: str = "") -> str:
     return match.group(1).strip() if match else default
 
 
+# ---------------------------------------------------------------------------
+# expression_level banding -- ToolUniverse's, NOT HPA's
+# ---------------------------------------------------------------------------
+# HPA's columns publish a bare nTPM/nCPM number and nothing else, so every
+# `expression_level` this module emits is our own coarse banding of that
+# number. It lands next to keys that ARE genuine HPA provenance (`source_field`
+# names an actual HPA column, `expression_unit` comes from its header), where an
+# unmarked "Very high" reads as HPA's verdict. So every response carrying
+# `expression_level` also carries `expression_level_basis` naming ToolUniverse
+# and quoting the exact cut-offs -- same disclosure voice as the `note` written
+# when HPA's tissue name differs from the caller's -- and a reader can reproduce
+# the banding from `expression_value` or disregard it. Deliberately says nothing
+# about HPA's own published classification, which is not established here.
+#
+# Every banding in this file is defined below, so the disclosed cut-offs cannot
+# drift from the code applying them. (`HPA_get_comprehensive_gene_details...`
+# is the one tool whose expression_level is genuinely HPA's -- it reads the
+# <level> element out of HPA's XML -- and it does not use these.)
+
+
+class ExpressionBanding(NamedTuple):
+    """A coarse expression banding ToolUniverse applies to HPA's raw number.
+
+    `bands` is ordered high-to-low; a value falling under all of them gets
+    `floor`, and a non-numeric value (None, 'N/A') gets `unknown`.
+    """
+
+    bands: Tuple[Tuple[float, str], ...]
+    floor: str
+    unknown: str
+
+    def categorize(self, value: Any) -> str:
+        try:
+            val = float(value)
+        except (ValueError, TypeError):
+            return self.unknown
+        for cutoff, name in self.bands:
+            if val > cutoff:
+                return name
+        return self.floor
+
+    def basis(self, unit: str) -> str:
+        """The disclosure string emitted as `expression_level_basis`."""
+        cutoffs = ", ".join(f">{cutoff} = {name}" for cutoff, name in self.bands)
+        return (
+            "expression_level is computed by ToolUniverse from expression_value; "
+            "it is not a classification reported by HPA. Cut-offs applied to the "
+            f"{unit} value: {cutoffs}, <={self.bands[-1][0]} = {self.floor}. HPA "
+            "publishes the number only, so recompute or ignore this banding as "
+            "your analysis requires."
+        )
+
+    def basis_for(self, level: Any, unit: str) -> Optional[str]:
+        """The disclosure for `level`, or None when no band was ever applied.
+
+        Tested by membership rather than against a sentinel, so it is also
+        correct for the levels callers write literally without consulting a
+        banding at all ('No data', 'Unknown') -- those rows are already honest
+        and need no cut-offs.
+        """
+        banded = {name for _, name in self.bands} | {self.floor}
+        return self.basis(unit) if level in banded else None
+
+    def titled(self) -> "ExpressionBanding":
+        """The 'Very high' spelling some tools already emit.
+
+        Derived rather than written out, so the cut-offs and the label wording
+        stay single-sourced across both casings.
+        """
+        return ExpressionBanding(
+            tuple((cutoff, name.capitalize()) for cutoff, name in self.bands),
+            self.floor.capitalize(),
+            self.unknown.capitalize(),
+        )
+
+
+HPA_EXPRESSION_BANDING = ExpressionBanding(
+    ((50, "very high"), (10, "high"), (1, "medium"), (0.1, "low")),
+    floor="very low",
+    unknown="unknown",
+)
+HPA_EXPRESSION_BANDING_TITLE = HPA_EXPRESSION_BANDING.titled()
+
+# HPAGetContextualBiologicalProcessTool bands the same kind of nTPM number, but
+# with its own vocabulary and no >50 tier -- and it feeds the result into a
+# prose `contextual_conclusion` and a `functional_relevance` verdict, so the
+# invented cut-offs travel further there than anywhere else in this file. Kept
+# verbatim (changing them would change that tool's answers); disclosed like the
+# rest.
+HPA_CONTEXTUAL_EXPRESSION_BANDING = ExpressionBanding(
+    (
+        (10, "highly expressed"),
+        (1, "moderately expressed"),
+        (0.1, "expressed at low level"),
+    ),
+    floor="not expressed or very low",
+    unknown="expression level unclear",
+)
+
+
 # --- Base Tool Classes ---
 
 
@@ -763,21 +863,7 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
     @staticmethod
     def _categorize_expression(expression_value):
         """Bucket an nTPM/nCPM value into a coarse expression level."""
-        if expression_value in (None, "N/A"):
-            return "unknown"
-        try:
-            val = float(expression_value)
-        except (ValueError, TypeError):
-            return "unknown"
-        if val > 50:
-            return "very high"
-        if val > 10:
-            return "high"
-        if val > 1:
-            return "medium"
-        if val > 0.1:
-            return "low"
-        return "very low"
+        return HPA_EXPRESSION_BANDING.categorize(expression_value)
 
     def _query_source_column(self, gene_name, source_type, candidate_names):
         """Fetch a source's value from its dedicated HPA column.
@@ -957,20 +1043,27 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                 gene_name, source_type, candidates
             )
             if direct_value is not None:
+                # Unit comes from HPA's own column header, never a hard-coded
+                # default: sc_RNA_* columns are [nCPM].
+                unit = hpa_unit_from_column_label(
+                    direct_label, self.source_units.get(source_type, "nTPM")
+                )
+                direct_level = self._categorize_expression(direct_value)
                 data = {
                     "gene_name": gene_name,
                     "source_type": source_type,
                     "source_name": source_name,
                     "expression_value": direct_value,
-                    "expression_level": self._categorize_expression(direct_value),
-                    # Unit comes from HPA's own column header, never a
-                    # hard-coded default: sc_RNA_* columns are [nCPM].
-                    "expression_unit": hpa_unit_from_column_label(
-                        direct_label, self.source_units.get(source_type, "nTPM")
-                    ),
+                    "expression_level": direct_level,
+                    "expression_unit": unit,
                     "column_queried": direct_label,
                     "status": "ok",
                 }
+                # Every other key here is genuine HPA provenance; mark the one
+                # that is not.
+                basis = HPA_EXPRESSION_BANDING.basis_for(direct_level, unit)
+                if basis:
+                    data["expression_level_basis"] = basis
                 # If the request resolved to a differently-named HPA column
                 # (an alias, or a subset standing in for an aggregate HPA does
                 # not publish), say which column the number actually is.
@@ -1055,6 +1148,9 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                             break
 
             expression_level = self._categorize_expression(expression_value)
+            # Per-source-family unit, not a blanket "nTPM": HPA's single cell
+            # columns are nCPM.
+            unit = self.source_units.get(source_type, "nTPM")
 
             result = {
                 "gene_name": gene_data.get("Gene", gene_name),
@@ -1063,9 +1159,7 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                 "source_name": source_name,
                 "expression_value": expression_value,
                 "expression_level": expression_level,
-                # Per-source-family unit, not a blanket "nTPM": HPA's single
-                # cell columns are nCPM.
-                "expression_unit": self.source_units.get(source_type, "nTPM"),
+                "expression_unit": unit,
                 "column_queried": api_column,
                 "available_sources": (
                     available_sources[:10]
@@ -1079,6 +1173,9 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                     else "no_expression_data_for_source"
                 ),
             }
+            basis = HPA_EXPRESSION_BANDING.basis_for(expression_level, unit)
+            if basis:
+                result["expression_level_basis"] = basis
             if expression_value == "N/A":
                 result["note"] = (
                     f"HPA's per-source column for '{source_name}' returned no value "
@@ -1817,18 +1914,37 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
                     ),
                 }
 
-        return {
-            "status": "success",
-            "data": {
-                "ensembl_id": ensembl_id,
-                "gene": data.get("Gene", "Unknown"),
-                "gene_synonym": data.get("Gene synonym", ""),
-                "expression_unit": "nTPM (normalized Transcripts Per Million)",
-                "queried_tissues": tissue_names,
-                "tissue_expression": expression_results,
-                "enriched_tissues": available_tissues,
-            },
+        result = {
+            "ensembl_id": ensembl_id,
+            "gene": data.get("Gene", "Unknown"),
+            "gene_synonym": data.get("Gene synonym", ""),
+            "expression_unit": "nTPM (normalized Transcripts Per Million)",
+            "queried_tissues": tissue_names,
+            "tissue_expression": expression_results,
+            "enriched_tissues": available_tissues,
         }
+        # Each row surrounds `expression_level` with real HPA provenance
+        # (`source_field` is a literal HPA column name), so the band needs
+        # marking -- but there is one row per queried tissue, so state the
+        # cut-offs once here rather than repeating them on every row. Omitted
+        # when no row was banded at all ("No data" rows are already honest).
+        basis = next(
+            (
+                b
+                for b in (
+                    HPA_EXPRESSION_BANDING_TITLE.basis_for(
+                        row.get("expression_level"), "nTPM"
+                    )
+                    for row in expression_results.values()
+                )
+                if b
+            ),
+            None,
+        )
+        if basis:
+            result["expression_level_basis"] = basis
+
+        return {"status": "success", "data": result}
 
     @staticmethod
     def _tissue_column_suffix(tissue: str) -> str:
@@ -1902,21 +2018,8 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
         return panel
 
     def _categorize_expression(self, expr_value) -> str:
-        """Categorize expression level"""
-        try:
-            val = float(expr_value)
-            if val > 50:
-                return "Very high"
-            elif val > 10:
-                return "High"
-            elif val > 1:
-                return "Medium"
-            elif val > 0.1:
-                return "Low"
-            else:
-                return "Very low"
-        except (ValueError, TypeError):
-            return "Unknown"
+        """Categorize expression level."""
+        return HPA_EXPRESSION_BANDING_TITLE.categorize(expr_value)
 
 
 @register_tool("HPAGetContextualBiologicalProcessTool")
@@ -2122,19 +2225,13 @@ class HPAGetContextualBiologicalProcessTool(BaseTool):
                         if "error" not in cell_result and cell_result:
                             expression_value = cell_result[0].get(cell_column, "N/A")
 
-            # Categorize expression level
-            try:
-                expr_val = float(expression_value) if expression_value != "N/A" else 0
-                if expr_val > 10:
-                    expression_level = "highly expressed"
-                elif expr_val > 1:
-                    expression_level = "moderately expressed"
-                elif expr_val > 0.1:
-                    expression_level = "expressed at low level"
-                else:
-                    expression_level = "not expressed or very low"
-            except (ValueError, TypeError):
-                expression_level = "expression level unclear"
+            # Categorize expression level. Bands live in
+            # HPA_CONTEXTUAL_EXPRESSION_BANDING so the cut-offs disclosed below
+            # cannot drift from the ones applied here. A missing value still
+            # bands as 0 rather than as 'unclear', which is what it did before.
+            expression_level = HPA_CONTEXTUAL_EXPRESSION_BANDING.categorize(
+                0 if expression_value == "N/A" else expression_value
+            )
 
             # Generate contextual conclusion
             relevance = (
@@ -2145,27 +2242,32 @@ class HPAGetContextualBiologicalProcessTool(BaseTool):
 
             conclusion = f"Gene {gene_name} is involved in {len(processes_list)} biological processes. It is {expression_level} in {context_name} ({expression_value} nTPM), suggesting its functional roles {relevance} in this {context_type} context."
 
-            return {
-                "status": "success",
-                "data": {
-                    "gene": gene_data.get("Gene", gene_name),
-                    "gene_synonym": gene_data.get("Gene synonym", ""),
-                    "ensembl_id": ensembl_id,
-                    "context": context_name,
-                    "context_type": context_type,
-                    "context_category": validation["category"],
-                    "expression_in_context": f"{expression_value} nTPM",
-                    "expression_level": expression_level,
-                    "total_biological_processes": len(processes_list),
-                    "biological_processes": (
-                        processes_list[:10]
-                        if len(processes_list) > 10
-                        else processes_list
-                    ),
-                    "contextual_conclusion": conclusion,
-                    "functional_relevance": relevance,
-                },
+            result = {
+                "gene": gene_data.get("Gene", gene_name),
+                "gene_synonym": gene_data.get("Gene synonym", ""),
+                "ensembl_id": ensembl_id,
+                "context": context_name,
+                "context_type": context_type,
+                "context_category": validation["category"],
+                "expression_in_context": f"{expression_value} nTPM",
+                "expression_level": expression_level,
+                "total_biological_processes": len(processes_list),
+                "biological_processes": (
+                    processes_list[:10] if len(processes_list) > 10 else processes_list
+                ),
+                "contextual_conclusion": conclusion,
+                "functional_relevance": relevance,
             }
+            # `expression_in_context` and `biological_processes` are HPA's;
+            # `expression_level` is ours, and here it also drives
+            # `functional_relevance` and the `contextual_conclusion` sentence,
+            # so the cut-offs behind that verdict have to travel with it.
+            basis = HPA_CONTEXTUAL_EXPRESSION_BANDING.basis_for(
+                expression_level, "nTPM"
+            )
+            if basis:
+                result["expression_level_basis"] = basis
+            return {"status": "success", "data": result}
 
         except Exception as e:
             return {

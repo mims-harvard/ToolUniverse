@@ -1,7 +1,7 @@
 [
   {
     "name": "EnsemblVar_get_population_frequencies",
-    "description": "Get allele frequency data for a variant (SNP/indel) across global populations from gnomAD and 1000 Genomes via Ensembl. Returns allele frequencies broken down by population (e.g., gnomADe:ALL, gnomADe:nfe, 1000GENOMES:phase_3:CEU, etc.). Essential for assessing variant rarity in different ethnic groups, interpreting clinical significance, and population genetics studies. Example: rs429358 (APOE epsilon-4 allele) shows C allele frequency of 14.8% globally (gnomAD), 22.7% in African populations, 9.8% in East Asian populations.",
+    "description": "Get allele frequency data for a variant (SNP/indel) across global populations from gnomAD and 1000 Genomes via Ensembl. Returns allele frequencies broken down by population (e.g., gnomADe:ALL, gnomADe:nfe, 1000GENOMES:phase_3:CEU, etc.). Essential for assessing variant rarity in different ethnic groups, interpreting clinical significance, and population genetics studies. Example: rs429358 (APOE epsilon-4 allele) shows C allele frequency of 14.8% globally (gnomAD), 22.7% in African populations, 9.8% in East Asian populations. Each population entry carries population, allele, frequency and (where the source reports it) allele_count; Ensembl publishes no sample size or allele-number denominator, so none is returned.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -89,13 +89,8 @@
                     "type": [
                       "integer",
                       "null"
-                    ]
-                  },
-                  "count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
+                    ],
+                    "description": "Number of observed copies of this allele in this population, as reported by Ensembl. Null when the reporting source omits it (e.g. TOPMed entries carry only a frequency). Ensembl does not publish a total sample size or an allele number alongside it, so no denominator is returned."
                   }
                 }
               },
