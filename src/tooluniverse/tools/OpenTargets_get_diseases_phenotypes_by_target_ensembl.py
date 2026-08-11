@@ -1,7 +1,7 @@
 """
 OpenTargets_get_diseases_phenotypes_by_target_ensembl
 
-Find diseases or phenotypes associated with a specific target using ensemblId.
+Find diseases or phenotypes associated with a specific target using ensemblId. `associatedDisease...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def OpenTargets_get_diseases_phenotypes_by_target_ensembl(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Find diseases or phenotypes associated with a specific target using ensemblId.
+    Find diseases or phenotypes associated with a specific target using ensemblId. `associatedDisease...
 
     Parameters
     ----------
