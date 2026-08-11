@@ -16,6 +16,94 @@ import urllib.parse
 _OPENTARGETS_DRUG_NAMES_QUERY = None
 _OPENTARGETS_ENDPOINT = "https://api.platform.opentargets.org/api/v4/graphql"
 
+# ===== PLR vs legacy label-section siblings =====
+#
+# An FDA label carries its safety content under DIFFERENT section names depending
+# on the format it was written in:
+#
+#   * "PLR" (Physician Labeling Rule, 2006-) labels use `warnings_and_cautions`
+#     (rendered as "5 WARNINGS AND PRECAUTIONS") and usually have NO `warnings`
+#     section at all.
+#   * Legacy / OTC-monograph labels use `warnings` (and `precautions`) and
+#     usually have NO `warnings_and_cautions` section.
+#
+# Measured against openFDA drug/label on 2026-08-11 (`search=_exists_:<field>&limit=0`):
+#
+#   total labels (_exists_:effective_time)            261,639
+#   _exists_:warnings                                 208,073
+#   _exists_:warnings_and_cautions                     46,925
+#   _exists_:boxed_warning                             33,054
+#   _exists_:precautions                               47,085
+#   warnings AND warnings_and_cautions                  3,439
+#   warnings_and_cautions AND NOT warnings             43,486  <-- PLR-only
+#   warnings AND NOT warnings_and_cautions            204,634  <-- legacy-only
+#   warnings_and_cautions AND NOT warnings
+#                          AND NOT boxed_warning       25,874
+#
+# Cross-checked against `dosage_forms_and_strengths`, a section that only exists
+# in the PLR format (43,402 labels): 42,055 of those (96.9%) carry
+# `warnings_and_cautions` and only 1,447 (3.3%) carry `warnings`; conversely, of
+# the 218,237 non-PLR labels, 206,626 carry `warnings` and only 4,870 carry
+# `warnings_and_cautions`. The split is the label format, not the drug.
+#
+# Consequence for a tool that queries exactly one of these names: for every label
+# of the other vintage it returns `<section>: None` and reports `status: success`.
+# Read literally that says "this drug has no warnings". Live example --
+# GIAPREZA (angiotensin II), a vasopressor whose defining safety issue is
+# thrombosis, has `warnings: None` and `boxed_warning: None` but a populated
+# `warnings_and_cautions` reading "5. WARNINGS AND PRECAUTIONS There is a
+# potential for venous and arterial thrombotic and thromboembolic events in
+# patients who receive GIAPREZA. Use concurrent venous thromboembolism (VTE)
+# prophylaxis. ... (13% vs. 5%) ...".
+#
+# The maps below let `search_openfda` notice that situation and say so, instead
+# of returning a structurally-null answer that reads as an all-clear. They are
+# used for annotation only -- the requested section keys are always left exactly
+# as openFDA reported them (usually `None`), and sibling content is added under
+# the sibling's OWN name so provenance is never misrepresented.
+#
+# NOTE: `warnings_and_precautions` is deliberately absent -- it is the human
+# heading text, not an openFDA field. It does not appear in openFDA's searchable
+# field list for drug/label and `search=_exists_:warnings_and_precautions`
+# returns NOT_FOUND.
+LABEL_SECTION_SIBLINGS = {
+    "warnings": [
+        "warnings_and_cautions",
+        "boxed_warning",
+        "precautions",
+        "general_precautions",
+    ],
+    "warnings_and_cautions": [
+        "warnings",
+        "boxed_warning",
+        "precautions",
+        "general_precautions",
+    ],
+    "boxed_warning": ["warnings_and_cautions", "warnings"],
+    "precautions": ["warnings_and_cautions", "warnings", "general_precautions"],
+    "general_precautions": ["precautions", "warnings_and_cautions", "warnings"],
+    "adverse_reactions": ["warnings_and_cautions", "warnings", "boxed_warning"],
+    "contraindications": ["warnings_and_cautions", "warnings"],
+    "drug_interactions": ["warnings_and_cautions", "warnings", "precautions"],
+    "other_safety_information": ["warnings_and_cautions", "warnings"],
+    "user_safety_warnings": ["warnings", "warnings_and_cautions"],
+}
+
+# Which ToolUniverse tool returns each label section, so the note can name a
+# concrete next call instead of an openFDA field name the caller cannot use.
+LABEL_SECTION_TOOLS = {
+    "warnings": "FDA_get_warnings_by_drug_name",
+    "warnings_and_cautions": "FDA_get_warnings_and_cautions_by_drug_name",
+    "boxed_warning": "FDA_get_boxed_warning_info_by_drug_name",
+    "precautions": "FDA_get_precautions_by_drug_name",
+    "general_precautions": "FDA_get_general_precautions_by_drug_name",
+    "adverse_reactions": "FDA_get_adverse_reactions_by_drug_name",
+    "contraindications": "FDA_get_contraindications_by_drug_name",
+    "drug_interactions": "FDA_get_drug_interactions_by_drug_name",
+    "other_safety_information": "FDA_get_other_safety_info_by_drug_name",
+    "user_safety_warnings": "FDA_get_user_safety_warning_by_drug_names",
+}
+
 
 def _get_drug_names_query():
     """Get the GraphQL query for drug names (cached)"""
@@ -74,7 +162,9 @@ def check_keys_present(api_capabilities_dict, keys):
     return key_present
 
 
-def extract_nested_fields(records, fields, keywords=None, identity_fields=None):
+def extract_nested_fields(
+    records, fields, keywords=None, identity_fields=None, sibling_sections=None
+):
     """
     Recursively extracts nested fields from a list of dictionaries.
 
@@ -87,6 +177,15 @@ def extract_nested_fields(records, fields, keywords=None, identity_fields=None):
         product when the ``openfda`` block is empty. They deliberately do NOT
         take part in the "did we extract anything at all?" test below, so adding
         one can never resurrect a record that would otherwise have been dropped.
+    :param sibling_sections: Optional ``{requested_section: [sibling, ...]}`` map
+        (see ``LABEL_SECTION_SIBLINGS``). When every requested section listed in
+        the map came back empty for a record but the raw label carries one of the
+        siblings, the sibling is copied onto the record under its OWN key and its
+        name is listed in ``related_sections_present``. This is what stops a
+        PLR-format label from being reported as ``warnings: None`` with nothing
+        else said. Like ``identity_fields`` it runs AFTER the keep test, so it
+        can never resurrect a record that would otherwise have been dropped, and
+        it never overwrites a key that extraction already populated.
 
     :return: List of dictionaries containing only the specified fields
     """
@@ -120,6 +219,27 @@ def extract_nested_fields(records, fields, keywords=None, identity_fields=None):
                 extracted_record[field] = value
             except (KeyError, TypeError):
                 extracted_record[field] = None
+        if sibling_sections and isinstance(record, dict):
+            requested = [f for f in fields if f in sibling_sections]
+            if requested and not any(extracted_record.get(f) for f in requested):
+                present = []
+                for f in requested:
+                    for sib in sibling_sections[f]:
+                        if sib in requested or sib in present:
+                            continue
+                        if sib in extracted_record:
+                            continue
+                        value = record.get(sib)
+                        # Trim the sibling the same way the requested section
+                        # would have been trimmed, so a keyword-filtered tool
+                        # does not get an untrimmed wall of text back.
+                        if value and keywords:
+                            value = extract_sentences_with_keywords(value, keywords)
+                        if value:
+                            present.append(sib)
+                            extracted_record[sib] = value
+                if present:
+                    extracted_record["related_sections_present"] = present
         if keep:
             extracted_records.append(extracted_record)
     return extracted_records
@@ -611,6 +731,52 @@ def search_openfda(
                 if used_generic_fallback:
                     break
 
+        # Sibling-section stage (PLR vs legacy):
+        #
+        # Runs only if the mapping above did not already rescue the query, so
+        # every tool that has a RETURN_FIELD_FALLBACKS entry keeps its exact
+        # previous behaviour. It fires when the ONLY thing standing between the
+        # caller and their drug is the `_exists_:<section>` guard: the drug is
+        # named exactly right, the label exists, but it is written in the other
+        # format. Live example -- KEYTRUDA has neither `warnings` nor
+        # `boxed_warning`, so `FDA_get_warnings_by_drug_name` returned
+        # "No matches found!" for a drug with pages of warnings under
+        # `warnings_and_cautions`.
+        #
+        # Unlike RETURN_FIELD_FALLBACKS this does NOT rewrite the sibling's
+        # content into the requested key. `requested_return_fields` is left
+        # alone, so the requested sections still come back exactly as openFDA
+        # reports them (null) and the sibling arrives under its own name via
+        # `extract_nested_fields(sibling_sections=...)`, with `section_note`
+        # explaining the split.
+        if (
+            not used_generic_fallback
+            and isinstance(requested_return_fields, list)
+            and isinstance(params.get("search"), str)
+        ):
+            primaries = [
+                f for f in requested_return_fields if f in LABEL_SECTION_SIBLINGS
+            ]
+            if primaries:
+                exists_group = (
+                    "(" + "+OR+".join(f"_exists_:{p}" for p in primaries) + ")"
+                )
+                siblings = []
+                for p in primaries:
+                    for sib in LABEL_SECTION_SIBLINGS[p]:
+                        if sib not in primaries and sib not in siblings:
+                            siblings.append(sib)
+                if siblings and exists_group in params["search"]:
+                    sibling_group = (
+                        "(" + "+OR+".join(f"_exists_:{s}" for s in siblings) + ")"
+                    )
+                    tmp = _run_search(
+                        params["search"].replace(exists_group, sibling_group)
+                    )
+                    if isinstance(tmp, dict) and "error" not in tmp:
+                        response_data = tmp
+                        used_generic_fallback = True
+
         # Stage A: phrase -> terms within the same search field(s)
         if (
             not used_generic_fallback
@@ -812,9 +978,29 @@ def search_openfda(
                     "Try removing punctuation/hyphens, checking spelling, or using a longer drug name."
                 )
             if section:
-                suggestion_parts.append(
-                    f"This label section ('{section}') may be missing for that product; try a related section like 'contraindications' or 'warnings_and_precautions'."
+                # `warnings_and_precautions` used to be suggested here. It is the
+                # printed heading, not an openFDA field -- it is not in openFDA's
+                # searchable-field list for drug/label and
+                # `search=_exists_:warnings_and_precautions` returns NOT_FOUND, so
+                # the suggestion could never work. Name the real sibling sections
+                # and the tools that return them instead.
+                siblings = LABEL_SECTION_SIBLINGS.get(section) or [
+                    "contraindications",
+                    "warnings_and_cautions",
+                ]
+                sibling_tools = [
+                    LABEL_SECTION_TOOLS[s] for s in siblings if s in LABEL_SECTION_TOOLS
+                ]
+                hint = (
+                    f"This label section ('{section}') may be missing for that "
+                    f"product -- FDA labels split this content by format, with "
+                    f"modern PLR labels using 'warnings_and_cautions' and legacy/"
+                    f"OTC labels using 'warnings'/'precautions'. Try a related "
+                    f"section: {', '.join(siblings)}."
                 )
+                if sibling_tools:
+                    hint += f" Corresponding tools: {', '.join(sibling_tools)}."
+                suggestion_parts.append(hint)
             suggestion_parts.append(
                 "As a fallback, try searching label text fields (e.g., spl_product_data_elements) and then pivot to the desired section."
             )
@@ -903,8 +1089,24 @@ def search_openfda(
         and "spl_product_data_elements" not in required_fields
     ):
         identity_fields.append("spl_product_data_elements")
+    # PLR-vs-legacy sibling annotation. Only armed when the tool actually asks
+    # for one of the interchangeable safety sections, so no other FDADrugLabel
+    # tool changes shape.
+    sibling_map = (
+        {
+            f: LABEL_SECTION_SIBLINGS[f]
+            for f in requested_return_fields
+            if f in LABEL_SECTION_SIBLINGS
+        }
+        if isinstance(requested_return_fields, list)
+        else {}
+    )
     extracted_results = extract_nested_fields(
-        results, required_fields, keywords_list, identity_fields=identity_fields
+        results,
+        required_fields,
+        keywords_list,
+        identity_fields=identity_fields,
+        sibling_sections=sibling_map or None,
     )
 
     # Apply return-field mapping after extraction (generic)
@@ -1015,7 +1217,54 @@ def search_openfda(
             f"'skip' deduplicates each page independently and consecutive pages "
             f"may overlap or omit records; do not sum result_count across pages."
         )
+    section_note = _build_section_note(sibling_map, extracted_results)
+    if section_note:
+        out["section_note"] = section_note
     return out
+
+
+def _build_section_note(sibling_map, extracted_results):
+    """Explain a null safety section that a sibling section actually carries.
+
+    Returns ``None`` unless at least one returned row was annotated by
+    ``extract_nested_fields`` with ``related_sections_present`` -- i.e. unless
+    the requested section(s) really did come back empty while the same label
+    demonstrably documents the content elsewhere. This is emitted under its own
+    key (``section_note``) rather than reusing ``note``, so the existing
+    fallback note is never overwritten.
+    """
+    if not sibling_map or not extracted_results:
+        return None
+    found = []
+    affected = 0
+    for r in extracted_results:
+        present = r.get("related_sections_present")
+        if not present:
+            continue
+        affected += 1
+        for sib in present:
+            if sib not in found:
+                found.append(sib)
+    if not found:
+        return None
+    requested = list(sibling_map.keys())
+    tools = []
+    for sib in found:
+        tool = LABEL_SECTION_TOOLS.get(sib)
+        if tool and tool not in tools:
+            tools.append(tool)
+    return (
+        f"The requested label section(s) ({', '.join(requested)}) are absent "
+        f"from {affected} of the {len(extracted_results)} returned label(s). "
+        f"That is a label-FORMAT difference, NOT evidence that the drug lacks "
+        f"this content: modern PLR-format labels (2006-) file it under "
+        f"'warnings_and_cautions' and carry no 'warnings' section, while "
+        f"legacy/OTC labels do the reverse. Those label(s) DO carry: "
+        f"{', '.join(found)}. That content has been added to each affected row "
+        f"under its own section key, and is also retrievable via "
+        f"{', '.join(tools) if tools else 'the matching FDA section tool'}. "
+        f"Do not read a null section as 'this drug has no warnings'."
+    )
 
 
 @register_tool("FDATool")

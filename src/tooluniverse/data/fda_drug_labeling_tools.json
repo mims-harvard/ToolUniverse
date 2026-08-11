@@ -1406,7 +1406,7 @@
   },
   {
     "name": "FDA_get_adverse_reactions_by_drug_name",
-    "description": "Retrieve adverse reactions information based on the drug name.",
+    "description": "Retrieve adverse reactions information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings, boxed_warning, precautions, general_precautions (tools: FDA_get_warnings_by_drug_name, FDA_get_boxed_warning_info_by_drug_name, FDA_get_precautions_by_drug_name, FDA_get_general_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1522,6 +1522,56 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_by_drug_name."
+              },
+              "boxed_warning": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_boxed_warning_info_by_drug_name."
+              },
+              "precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_precautions_by_drug_name."
+              },
+              "general_precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_general_precautions_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -1537,6 +1587,14 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
@@ -3025,7 +3083,7 @@
   },
   {
     "name": "FDA_get_boxed_warning_info_by_drug_name",
-    "description": "Retrieve boxed warning and adverse effects information for a specific drug.",
+    "description": "Retrieve boxed warning and adverse effects information for a specific drug. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -3132,6 +3190,36 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "warnings_and_cautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_and_cautions_by_drug_name."
+              },
+              "warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -3147,6 +3235,14 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
@@ -4273,7 +4369,7 @@
   },
   {
     "name": "FDA_get_contraindications_by_drug_name",
-    "description": "Retrieve contraindications information based on the drug name.",
+    "description": "Retrieve contraindications information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -4380,6 +4476,36 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "warnings_and_cautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_and_cautions_by_drug_name."
+              },
+              "warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -4395,6 +4521,14 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
@@ -6258,7 +6392,7 @@
   },
   {
     "name": "FDA_get_drug_interactions_by_drug_name",
-    "description": "Retrieve drug interactions based on the specified drug name.",
+    "description": "Retrieve drug interactions based on the specified drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings, precautions (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name, FDA_get_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -6365,6 +6499,46 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "warnings_and_cautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_and_cautions_by_drug_name."
+              },
+              "warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_by_drug_name."
+              },
+              "precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_precautions_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -6380,6 +6554,14 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
@@ -7212,7 +7394,7 @@
   },
   {
     "name": "FDA_get_general_precautions_by_drug_name",
-    "description": "Retrieve general precautions information based on the drug name.",
+    "description": "Retrieve general precautions information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: precautions, warnings_and_cautions, warnings (tools: FDA_get_precautions_by_drug_name, FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -7318,6 +7500,46 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_precautions_by_drug_name."
+              },
+              "warnings_and_cautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_and_cautions_by_drug_name."
+              },
+              "warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -7333,6 +7555,14 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
@@ -12059,7 +12289,7 @@
   },
   {
     "name": "FDA_get_other_safety_info_by_drug_name",
-    "description": "Retrieve safety information that may not be specified in other fields based on the provided drug name.",
+    "description": "Retrieve safety information that may not be specified in other fields based on the provided drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12163,6 +12393,36 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "warnings_and_cautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_and_cautions_by_drug_name."
+              },
+              "warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -12178,6 +12438,14 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
@@ -14117,7 +14385,7 @@
   },
   {
     "name": "FDA_get_precautions_by_drug_name",
-    "description": "Retrieve precautions information based on the drug name.",
+    "description": "Retrieve precautions information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings, general_precautions (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name, FDA_get_general_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14223,6 +14491,46 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "warnings_and_cautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_and_cautions_by_drug_name."
+              },
+              "warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_by_drug_name."
+              },
+              "general_precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_general_precautions_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -14238,6 +14546,14 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
@@ -18836,7 +19152,7 @@
   },
   {
     "name": "FDA_get_user_safety_warning_by_drug_names",
-    "description": "Retrieve specific user safety warnings based on drug names.",
+    "description": "Retrieve specific user safety warnings based on drug names. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings, warnings_and_cautions (tools: FDA_get_warnings_by_drug_name, FDA_get_warnings_and_cautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18940,6 +19256,36 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_by_drug_name."
+              },
+              "warnings_and_cautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_and_cautions_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -18955,6 +19301,14 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
@@ -19228,7 +19582,7 @@
   },
   {
     "name": "FDA_get_warnings_by_drug_name",
-    "description": "Retrieve warning information based on the drug name.",
+    "description": "Retrieve warning information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, precautions, general_precautions (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_precautions_by_drug_name, FDA_get_general_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19347,6 +19701,46 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "warnings_and_cautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_and_cautions_by_drug_name."
+              },
+              "precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_precautions_by_drug_name."
+              },
+              "general_precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_general_precautions_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -19362,13 +19756,21 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
   },
   {
     "name": "FDA_get_warnings_and_cautions_by_drug_name",
-    "description": "Retrieve warnings and cautions information for a specific drug based on its name.",
+    "description": "Retrieve warnings and cautions information for a specific drug based on its name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings, boxed_warning, precautions, general_precautions (tools: FDA_get_warnings_by_drug_name, FDA_get_boxed_warning_info_by_drug_name, FDA_get_precautions_by_drug_name, FDA_get_general_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19475,6 +19877,56 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_warnings_by_drug_name."
+              },
+              "boxed_warning": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_boxed_warning_info_by_drug_name."
+              },
+              "precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_precautions_by_drug_name."
+              },
+              "general_precautions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related label section, included only when every requested section came back null for this label and this section is populated instead. Content is verbatim from that section under its own name, so provenance is never misrepresented. See 'section_note' and 'related_sections_present'. Retrievable directly via FDA_get_general_precautions_by_drug_name."
+              },
+              "related_sections_present": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Names of related label sections that ARE populated on this label. Present only when every requested section came back null for this row. Each named section is also attached to this row under its own key. Its presence means 'the requested section is missing from this label FORMAT', not 'the drug has no such content'."
               }
             }
           }
@@ -19490,6 +19942,14 @@
         "dedup_note": {
           "type": "string",
           "description": "Present only when local deduplication ran. Explains how meta.total, 'result_count' and 'duplicates_removed' relate, and warns that paging with 'skip' deduplicates each page independently, so consecutive pages may overlap or omit records and 'result_count' must not be summed across pages."
+        },
+        "section_note": {
+          "type": "string",
+          "description": "Present only when at least one returned label lacks every requested section while carrying a related one. Explains that FDA splits this content by label format (PLR labels use 'warnings_and_cautions'; legacy/OTC labels use 'warnings'/'precautions'), names the sections actually present, and names the sibling tool that returns them. Never read a null section as 'this drug has no warnings' without checking this field."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when the query had to be broadened to return anything -- closest-spelling candidate, term-based match, or full-label-text match. Describes exactly how the match was weakened; verify the returned openfda.brand_name / openfda.generic_name is the product you intended."
         }
       }
     }
