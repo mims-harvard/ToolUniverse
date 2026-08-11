@@ -50,6 +50,79 @@ COUNT_MAX_LIMIT_ANONYMOUS = 999
 # only that rows are a subset, never that they double-count.
 COUNT_FIELD_UNITS = {"per_reaction": "reaction", "per_drug": "drug"}
 
+# ---- The one field list every FAERS drug-name lookup searches ----
+#
+# A FAERS report names its drug in up to three places and openFDA indexes them
+# separately: `patient.drug.medicinalproduct` is the free text the reporter
+# typed, while `patient.drug.openfda.generic_name` and
+# `patient.drug.openfda.brand_name` are added only when openFDA managed to
+# resolve that text against an SPL. NONE of the three is a superset of the
+# others, so any subset silently undercounts -- and which subset loses depends
+# on the drug, so there is no "best two" to settle on. Measured live against
+# https://api.fda.gov/drug/event.json?search=<clause>&limit=0 on 2026-08-11
+# (`meta.results.total`):
+#
+#   drug          MP only   MP+GN     GN+BN     union of all three
+#   TOFACITINIB    13,075   186,783   186,746   186,783   <- MP alone is 14.3x low
+#   MEFLOQUINE        751       751       156       751   <- GN+BN is 4.8x low
+#   SEROQUEL       87,960    87,960   164,138   165,010   <- union beats all three
+#   XELJANZ       178,937   178,937   183,405   183,467   <- union beats all three
+#
+# The last two rows are the reason this is a UNION and not a choice: 165,010 >
+# 164,138 and 183,467 > 183,405, i.e. some reports name the drug in
+# medicinalproduct and in neither openFDA field, so dropping medicinalproduct
+# loses real reports even for a brand name. Symmetrically, MEFLOQUINE and
+# YELLOW FEVER VACCINE (GN+BN = 0) show the openFDA fields are empty for whole
+# classes of products, so they cannot stand alone either.
+#
+# Widening is safe here, checked rather than assumed: SODIUM CHLORIDE counts
+# 353,707 under the union, nowhere near the 779,180 that the old
+# double-encoding defect produced by collapsing the name to the bare token
+# "SODIUM", and YELLOW FEVER VACCINE counts 111 under the union -- exactly its
+# medicinalproduct-only total, so the extra fields add no spurious matches.
+#
+# THE BUG THIS CONSTANT PREVENTS IS DRIFT, not any one wrong number. Four
+# families of FAERS tools each grew their own field list (medicinalproduct
+# only; medicinalproduct + generic_name; generic_name + brand_name), so the
+# same question about the same drug returned three different totals depending
+# on which tool a caller happened to pick, with nothing in any response saying
+# the totals were not comparable. Every FAERS drug-name lookup -- Python
+# builders and `fields.search_fields` in the JSON configs alike -- must resolve
+# to exactly this list; tests/unit/test_faers_drug_name_field_union.py fails if
+# one of them wanders off again.
+FAERS_DRUG_NAME_FIELDS = [
+    "patient.drug.medicinalproduct",
+    "patient.drug.openfda.generic_name",
+    "patient.drug.openfda.brand_name",
+]
+
+
+def faers_drug_name_clause(drug_name, joiner="+OR+"):
+    """Parenthesized OR group matching `drug_name` in every FAERS name field.
+
+    For the callers that build their openFDA query as a plain string rather than
+    through this module's config-driven builders (faers_analytics_tool and
+    openfda_tool). Shared so those two cannot drift from FAERS_DRUG_NAME_FIELDS
+    or from each other.
+
+    Two deliberate differences from `_render_field_group`, which is why this is
+    a separate entry point rather than a call to it:
+
+    * the value is ALWAYS quoted, whereas `_render_clause` quotes only when it
+      contains a space. That exemption exists so a Lucene range
+      ("[20141001 TO 20141231]") stays unquoted, and no drug name is ever a
+      range -- while an unquoted name containing a Lucene operator character
+      (the hyphen in "CO-TRIMOXAZOLE") would be reparsed rather than matched.
+    * `joiner` is configurable because openfda_tool hands its finished query to
+      `requests` as a `params` value, where a literal "+" is percent-encoded to
+      %2B and reaches openFDA as a plus sign instead of a separator; that caller
+      passes " OR ".
+
+    The parentheses are not optional in either caller: both AND a reaction
+    filter onto this clause, and Lucene binds AND tighter than OR.
+    """
+    return "(" + joiner.join(f'{f}:"{drug_name}"' for f in FAERS_DRUG_NAME_FIELDS) + ")"
+
 
 def _is_error_payload(payload):
     """True when ``_search`` returned an error sentinel rather than count rows."""
@@ -767,12 +840,13 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
 
     def _build_search_query(self, arguments):
         # Read the FDA field(s) from the config's own search-field map, the same
-        # source the parent uses for every other parameter, so a config can widen
-        # the union to a second field (e.g. openfda.generic_name) without a code
-        # change here.
-        fda_fields = self.search_fields.get(self.DRUG_PARAMETER) or [
-            "patient.drug.medicinalproduct"
-        ]
+        # source the parent uses for every other parameter. The fallback is the
+        # canonical union rather than medicinalproduct alone, so a config that
+        # forgets the map still asks the same question as every other FAERS tool
+        # (see FAERS_DRUG_NAME_FIELDS).
+        fda_fields = (
+            self.search_fields.get(self.DRUG_PARAMETER) or FAERS_DRUG_NAME_FIELDS
+        )
 
         # Each name goes through the shared renderer for the same reason every
         # other value does: a multi-word name needs Lucene quotes, several FDA
@@ -1224,9 +1298,22 @@ class FDADrugInteractionDetailTool(BaseTool):
         # below -- encoding it here too widened each clause to the name's first
         # token (see the matching note in
         # FDACountAdditiveReactionsTool._build_search_query).
-        drug_parts = [
-            _render_clause("patient.drug.medicinalproduct", drug) for drug in drugs
-        ]
+        #
+        # Each drug searches the full FAERS_DRUG_NAME_FIELDS union, read from the
+        # config's own search-field map like every other parameter so the
+        # declared spec and the query cannot disagree.
+        #
+        # The per-drug group MUST stay parenthesized: these clauses are AND-ed (a
+        # co-occurrence question -- was every named drug on the SAME report), and
+        # Lucene binds AND tighter than OR, so an unwrapped group would parse as
+        # "a:X OR (b:X AND a:Y) OR b:Y" and answer "either drug" instead.
+        # _render_field_group does the wrapping; the query below reads
+        # (a:X+OR+b:X+OR+c:X)+AND+(a:Y+OR+b:Y+OR+c:Y), with a multi-word name
+        # additionally Lucene-quoted.
+        fda_fields = self.search_fields.get("medicinalproducts") or (
+            FAERS_DRUG_NAME_FIELDS
+        )
+        drug_parts = [_render_field_group(fda_fields, drug) for drug in drugs]
 
         # Build additional filters
         filter_parts = []

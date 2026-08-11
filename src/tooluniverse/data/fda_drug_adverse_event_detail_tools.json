@@ -72,7 +72,8 @@
       "search_fields": {
         "medicinalproduct": [
           "patient.drug.medicinalproduct",
-          "patient.drug.openfda.generic_name"
+          "patient.drug.openfda.generic_name",
+          "patient.drug.openfda.brand_name"
         ],
         "patientsex": [
           "patient.patientsex"
@@ -316,7 +317,8 @@
       "search_fields": {
         "medicinalproduct": [
           "patient.drug.medicinalproduct",
-          "patient.drug.openfda.generic_name"
+          "patient.drug.openfda.generic_name",
+          "patient.drug.openfda.brand_name"
         ],
         "reactionmeddrapt": [
           "patient.reaction.reactionmeddrapt"
@@ -448,7 +450,8 @@
       "search_fields": {
         "medicinalproduct": [
           "patient.drug.medicinalproduct",
-          "patient.drug.openfda.generic_name"
+          "patient.drug.openfda.generic_name",
+          "patient.drug.openfda.brand_name"
         ],
         "seriousnessdeath": [
           "seriousnessdeath"
@@ -582,7 +585,8 @@
       "search_fields": {
         "medicinalproduct": [
           "patient.drug.medicinalproduct",
-          "patient.drug.openfda.generic_name"
+          "patient.drug.openfda.generic_name",
+          "patient.drug.openfda.brand_name"
         ],
         "drugindication": [
           "patient.drug.drugindication"
@@ -701,7 +705,8 @@
       "search_fields": {
         "medicinalproduct": [
           "patient.drug.medicinalproduct",
-          "patient.drug.openfda.generic_name"
+          "patient.drug.openfda.generic_name",
+          "patient.drug.openfda.brand_name"
         ],
         "reactionoutcome": [
           "patient.reaction.reactionoutcome"
@@ -821,6 +826,11 @@
     },
     "fields": {
       "search_fields": {
+        "medicinalproducts": [
+          "patient.drug.medicinalproduct",
+          "patient.drug.openfda.generic_name",
+          "patient.drug.openfda.brand_name"
+        ],
         "patientsex": [
           "patient.patientsex"
         ],

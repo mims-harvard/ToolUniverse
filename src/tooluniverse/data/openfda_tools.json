@@ -215,7 +215,7 @@
             "properties": {
                 "search": {
                     "type": "string",
-                    "description": "Lucene query for adverse event reports. Use AND/OR with spaces (not +AND+). Examples: 'patient.drug.medicinalproduct:aspirin', 'patient.reaction.reactionmeddrapt:\"myocardial infarction\"', 'serious:1 AND patient.drug.medicinalproduct:warfarin'. Combine drugs: 'patient.drug.medicinalproduct:metformin AND patient.drug.medicinalproduct:atorvastatin'."
+                    "description": "Lucene query for adverse event reports. Use AND/OR with spaces (not +AND+). A FAERS report names its drug in up to three fields and none is a superset of the others, so a drug clause must OR all three inside parentheses or it undercounts (measured 2026-08-11: tofacitinib has 13,075 reports under patient.drug.medicinalproduct alone against 186,783 across all three). Prefer the 'drug_name' parameter, which builds that clause for you. Examples: '(patient.drug.medicinalproduct:aspirin OR patient.drug.openfda.generic_name:aspirin OR patient.drug.openfda.brand_name:aspirin)', 'patient.reaction.reactionmeddrapt:\"myocardial infarction\"', 'serious:1 AND (patient.drug.medicinalproduct:warfarin OR patient.drug.openfda.generic_name:warfarin OR patient.drug.openfda.brand_name:warfarin)'. Combine drugs by AND-ing one parenthesized group per drug."
                 },
                 "limit": {
                     "type": [
@@ -236,7 +236,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Drug name to search for adverse events (e.g., 'warfarin', 'metformin'). Alternative to writing a full Lucene 'search' query."
+                    "description": "Drug name to search for adverse events (e.g., 'warfarin', 'metformin'). Brand or generic: the name is matched against patient.drug.medicinalproduct, patient.drug.openfda.generic_name and patient.drug.openfda.brand_name, the same three fields every FAERS_* tool searches. Alternative to writing a full Lucene 'search' query, and preferred over it."
                 },
                 "reaction": {
                     "type": [
@@ -265,11 +265,11 @@
         "type": "OpenFDADrugEventsTool",
         "test_examples": [
             {
-                "search": "patient.drug.medicinalproduct:aspirin",
+                "drug_name": "aspirin",
                 "limit": 2
             },
             {
-                "search": "patient.drug.medicinalproduct:warfarin",
+                "search": "(patient.drug.medicinalproduct:warfarin OR patient.drug.openfda.generic_name:warfarin OR patient.drug.openfda.brand_name:warfarin)",
                 "count": "patient.reaction.reactionmeddrapt.exact"
             }
         ],

@@ -6,9 +6,46 @@ import math
 from typing import Dict, Any, List, Tuple, Optional
 from .base_tool import BaseTool
 from .http_utils import request_with_retry
+from .openfda_adv_tool import (
+    COUNT_MAX_LIMIT,
+    COUNT_MAX_LIMIT_ANONYMOUS,
+    faers_drug_name_clause,
+)
 from .tool_registry import register_tool
 
 FDA_BASE_URL = "https://api.fda.gov/drug/event.json"
+
+# The openFDA facet every reaction rollup in this module counts over.
+#
+# Fix-R38: `_rollup_meddra_hierarchy` sent this facet with no `limit`, took the
+# first 50 rows of openFDA's 100-row default page, and published
+# `len(that slice)` under the key `total_unique_PTs`. That number was therefore
+# the constant 50 for every drug -- measured live 2026-08-11, HYDROMORPHONE and
+# ONDANSETRON both reported `total_unique_PTs: 50` -- with no `truncated` flag
+# and no note, so a stable, plausible-looking page size was being read as "this
+# drug has 50 distinct reported reactions".
+#
+# How far off: the same query at the anonymous ceiling
+#   count=patient.reaction.reactionmeddrapt.exact&limit=999
+# returns 999 distinct PT buckets for HYDROMORPHONE and the 999th still carries
+# `count: 69`, i.e. the ranking is nowhere near exhausted and the true number of
+# distinct PTs is strictly greater than 999. The published figure understated it
+# by more than 20x.
+#
+# There is no honest total to publish instead: an openFDA `count=` response
+# carries NO grand total -- its `meta` block holds only
+# disclaimer/terms/license/last_updated -- so the number of distinct values is
+# genuinely unknowable from the response (same constraint documented at
+# openfda_adv_tool.COUNT_DEFAULT_LIMIT). The fix is to report what was returned
+# under a name that says so, flag truncation, and say plainly that a term's
+# absence from the list is not evidence it was never reported.
+PT_COUNT_FIELD = "patient.reaction.reactionmeddrapt.exact"
+
+# How many rows `_filter_serious_events` publishes under
+# "top_serious_reactions". Named because it also sizes that method's request:
+# it asks openFDA for exactly one row more than this, so the extra row's
+# presence proves the ranking continues past what is shown.
+_TOP_SERIOUS_REACTIONS = 20
 
 # How far apart two RORs must be before `_compare_drugs` calls one "stronger"
 # rather than "similar-strength".
@@ -71,7 +108,7 @@ def _small_count_caveat(arms: List[Dict[str, Any]]) -> Optional[str]:
 
 
 def _drug_clause(drug_name: str) -> str:
-    """openFDA search clause matching a drug by generic OR brand name.
+    """openFDA search clause matching a drug across every field that names it.
 
     Matching only `generic_name` makes every brand name look like a drug with
     zero reports, which for the disproportionality math is indistinguishable
@@ -80,10 +117,60 @@ def _drug_clause(drug_name: str) -> str:
     returned a real ROR; the generic-or-brand form returns 183,405 reports for
     the same brand name). Brand names are what prescribers and labels use, so
     they must resolve to the same reports as the generic.
+
+    `patient.drug.medicinalproduct` is required for the same reason in the
+    opposite direction. The openFDA name fields are populated only when the
+    reporter's free text resolved to an SPL, so for anything that did not
+    resolve they are sparse or empty and generic-or-brand alone silently shrinks
+    the contingency table. Measured live 2026-08-11 (`limit=0`,
+    `meta.results.total`): MEFLOQUINE has 751 reports under medicinalproduct but
+    only 156 under generic-or-brand, so this tool was computing ROR/PRR from 21%
+    of the drug's reports; YELLOW FEVER VACCINE has 111 under medicinalproduct
+    and 0 under generic-or-brand, making vaccines entirely invisible to
+    disproportionality analysis while looking like a legitimate "no reports"
+    answer.
+
+    The field list and the rendering both live in openfda_adv_tool so this
+    tool's numerator stays comparable with the FAERS count/detail tools' -- see
+    FAERS_DRUG_NAME_FIELDS there for the full measured table.
     """
+    return faers_drug_name_clause(drug_name)
+
+
+def _ranked_terms_truncation_note(label: str, returned: int, observed: bool) -> str:
+    """Disclosure for a ranked `count=` list that does not show every term.
+
+    Deliberately mirrors openfda_adv_tool._build_count_envelope's
+    `truncation_note` so both FAERS families make the same promise about the
+    same openFDA behaviour: the rows are the most-reported terms in descending
+    order, the size of the remainder is unknowable, and absence from the list is
+    not absence from FAERS.
+
+    `observed` is True when a row beyond the published list actually came back,
+    which proves more terms exist; False when the page merely filled exactly,
+    which only makes it likely. The distinction is the same one
+    `_build_count_envelope` draws with its `probed` flag.
+
+    Takes only the count actually published, never the page size that produced
+    it. The two differ whenever a caller fetches a probe row it does not show,
+    and quoting the request's `limit` here would then describe a page the reader
+    never received; callers that want to expose the page size publish it as its
+    own key instead.
+    """
+    certainty = (
+        "more terms exist beyond it"
+        if observed
+        else "openFDA filled the page exactly, so more terms may exist beyond it"
+    )
     return (
-        f'(patient.drug.openfda.generic_name:"{drug_name}"'
-        f'+OR+patient.drug.openfda.brand_name:"{drug_name}")'
+        f"openFDA returned only the {returned} most-reported {label} for this "
+        f"query, ranked by descending report count; {certainty}. "
+        "openFDA's count endpoint does not report how many distinct terms there "
+        "are in total -- its `meta` block carries only "
+        "disclaimer/terms/license/last_updated -- so the size of the remainder is "
+        f"unknown and no total number of distinct {label} can be given. A term "
+        "missing from this list is NOT evidence that it was never reported for "
+        "this query -- query the term directly to check."
     )
 
 
@@ -179,6 +266,19 @@ class FAERSAnalyticsTool(BaseTool):
             separator = "&" if "?" in url else "?"
             return f"{url}{separator}api_key={self.api_key}"
         return url
+
+    def _count_limit(self) -> int:
+        """Highest `limit` this caller may send to an openFDA `count=` query.
+
+        Measured live 2026-08-11 against
+        `count=patient.reaction.reactionmeddrapt.exact` for HYDROMORPHONE:
+        limit=1000 answers HTTP 403 {"code": "API_KEY_MISSING"} for an anonymous
+        caller while limit=999 succeeds, so the anonymous ceiling sits one below
+        openFDA's documented maximum of 1000. The constants live in
+        openfda_adv_tool and are imported rather than restated so this module's
+        facets cannot page differently from the FAERS count tools there.
+        """
+        return COUNT_MAX_LIMIT if self.api_key else COUNT_MAX_LIMIT_ANONYMOUS
 
     def _with_data_payload(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Ensure successful operation responses include a standardized data wrapper."""
@@ -343,20 +443,42 @@ class FAERSAnalyticsTool(BaseTool):
                     "error": "stratify_by must be 'sex', 'age', or 'country'",
                 }
 
-            # Map stratification to FAERS fields
+            # Map stratification to FAERS fields.
+            #
+            # Fix-R38: "country" counted the analysed `occurcountry` field, which
+            # openFDA cannot aggregate at all -- measured live 2026-08-11, that
+            # request answers HTTP 500 "[illegal_argument_exception] Text fields
+            # are not optimised for operations that require per-document field
+            # data", so stratify_by="country" failed for every drug and surfaced
+            # only as "API request failed: 500 Server Error". The `.exact`
+            # (un-analysed) variant aggregates normally: 43 country buckets for
+            # HYDROMORPHONE. The two numeric fields need no `.exact` because they
+            # are not text.
             field_map = {
                 "sex": "patient.patientsex",
                 "age": "patient.patientagegroup",
-                "country": "occurcountry",
+                "country": "occurcountry.exact",
             }
 
             count_field = field_map[stratify_by]
+            # `.exact` selects openFDA's un-analysed index variant; it is a query
+            # detail, not part of the field's name in the FAERS record layout, so
+            # it is stripped everywhere the field is named in prose.
+            field_label = count_field.removesuffix(".exact")
 
             # Feature-121A-003: adverse_event is optional — filter by drug alone if omitted
             base_query = _faers_search_query(drug_name, adverse_event)
 
+            # Ask for the full page this caller is entitled to. These facets are
+            # short -- 3 sex buckets, 6 age-group buckets and 43 country buckets
+            # for HYDROMORPHONE, against ~250 ISO country codes in the worst case
+            # -- so the ceiling guarantees the facet is exhausted and the
+            # percentages below really are shares of the whole stratifiable
+            # subset. openFDA's 100-row default would not guarantee that for
+            # country.
+            limit = self._count_limit()
             url = self._with_api_key(
-                f"{FDA_BASE_URL}?search={base_query}&count={count_field}"
+                f"{FDA_BASE_URL}?search={base_query}&count={count_field}&limit={limit}"
             )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
@@ -419,7 +541,7 @@ class FAERSAnalyticsTool(BaseTool):
                     "rate limiting on the anonymous tier), so "
                     "total_reports_matching_query is null. "
                     f"stratified_report_count ({total_count:,}) counts only reports "
-                    f"where {count_field} is recorded and is therefore a LOWER BOUND "
+                    f"where {field_label} is recorded and is therefore a LOWER BOUND "
                     "on the drug's report count -- do not read it as the total. "
                     "Retry for the total, or set the FDA_API_KEY environment "
                     "variable to raise the rate limit "
@@ -430,7 +552,7 @@ class FAERSAnalyticsTool(BaseTool):
                 coverage_note = (
                     f"total_reports_matching_query ({query_total:,}) is every report "
                     f"matching this query; stratified_report_count ({total_count:,}, "
-                    f"{coverage:.1f}% of them) is the subset where {count_field} is "
+                    f"{coverage:.1f}% of them) is the subset where {field_label} is "
                     "recorded, and only that subset is stratified below. openFDA "
                     "computes a count facet solely over records that populate the "
                     "counted field, so reports missing this demographic are absent "
@@ -440,6 +562,12 @@ class FAERSAnalyticsTool(BaseTool):
                     "backward compatibility -- it is NOT the drug's report count."
                 )
 
+            # No truncation disclosure is owed here, unlike the PT facets in this
+            # module: requesting the ceiling makes these facets provably whole.
+            # Their value sets are bounded and tiny -- 3 sex codes, 6 age-group
+            # codes, and ~250 ISO country codes against a 999-row page -- so
+            # `results` always holds every bucket and every percentage above
+            # really is a share of the complete stratifiable subset.
             return {
                 "status": "success",
                 "drug_name": drug_name,
@@ -497,9 +625,16 @@ class FAERSAnalyticsTool(BaseTool):
 
             search_query = base_query + seriousness_map[seriousness_type]
 
-            # Get top reactions for serious events
+            # Get top reactions for serious events. Ask for exactly one row past
+            # what gets published: the probe row's presence settles truncation as
+            # a fact rather than an inference, and anything beyond it would be
+            # parsed only to be discarded. Same idiom as
+            # openfda_adv_tool._fetch_limit. Without this the request fell back
+            # to openFDA's 100-row default page and threw 80 rows away.
+            facet_limit = min(_TOP_SERIOUS_REACTIONS + 1, self._count_limit())
             url = self._with_api_key(
-                f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+                f"{FDA_BASE_URL}?search={search_query}"
+                f"&count={PT_COUNT_FIELD}&limit={facet_limit}"
             )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
@@ -509,7 +644,9 @@ class FAERSAnalyticsTool(BaseTool):
             results = data.get("results", [])
 
             # Get total serious event count
-            total_url = self._with_api_key(f"{FDA_BASE_URL}?search={search_query}&limit=1")
+            total_url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}&limit=1"
+            )
             total_response = request_with_retry(requests, "GET", total_url, timeout=30)
             total_data = total_response.json()
             total_serious = (
@@ -517,19 +654,36 @@ class FAERSAnalyticsTool(BaseTool):
             )
 
             # Format results
-            serious_reactions = []
-            for result in results[:20]:  # Top 20
-                serious_reactions.append(
-                    {"reaction": result.get("term"), "count": result.get("count")}
-                )
+            serious_reactions = [
+                {"reaction": r.get("term"), "count": r.get("count")}
+                for r in results[:_TOP_SERIOUS_REACTIONS]
+            ]
+
+            # Fix-R38: `total_serious_events` is honest -- it is
+            # `meta.results.total` from a plain search, which openFDA does
+            # report. `top_serious_reactions` is not a total of anything and is
+            # named accordingly, but it silently dropped the rest of a ranking
+            # whose length is unknowable (the same facet returns 999 rows and is
+            # still not exhausted for HYDROMORPHONE + serious:1, the 999th
+            # bucket carrying count 69). Rows beyond the slice were directly
+            # observed in `results`, so the truncation is a fact here rather than
+            # an inference.
+            truncated = len(results) > len(serious_reactions)
 
             result: Dict[str, Any] = {
                 "drug_name": drug_name,
                 "seriousness_type": seriousness_type,
                 "total_serious_events": total_serious,
                 "top_serious_reactions": serious_reactions,
+                "top_serious_reactions_truncated": truncated,
                 "note": f"Serious events: {'All' if seriousness_type == 'all' else seriousness_type.replace('_', ' ')}",
             }
+            if truncated:
+                result["top_serious_reactions_truncation_note"] = (
+                    _ranked_terms_truncation_note(
+                        "serious reactions", len(serious_reactions), observed=True
+                    )
+                )
             if adverse_event:
                 result["adverse_event_filter"] = adverse_event.upper()
             return {"status": "success", "data": result}
@@ -543,7 +697,14 @@ class FAERSAnalyticsTool(BaseTool):
             }
 
     def _compare_drugs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Compare safety profiles of two drugs for the same adverse event."""
+        """Compare safety profiles of two drugs for the same adverse event.
+
+        Fix-R38 audit: this method issues no `count=` facet of its own. Both arms
+        come from `_calculate_disproportionality`, whose counts are
+        `meta.results.total` on plain `limit=1` searches -- a figure openFDA does
+        report -- so there is no page size here that could be mistaken for a
+        total.
+        """
         try:
             drug1 = arguments.get("drug1")
             drug2 = arguments.get("drug2")
@@ -622,7 +783,9 @@ class FAERSAnalyticsTool(BaseTool):
                 elif ror2 > ror1 * _SIMILAR_STRENGTH_RATIO:
                     comparison = f"Both show a detected signal; {drug2}'s is stronger than {drug1}'s"
                 else:
-                    comparison = f"{drug1} and {drug2} show similar-strength detected signals"
+                    comparison = (
+                        f"{drug1} and {drug2} show similar-strength detected signals"
+                    )
 
             # Fix-R37: each arm now carries the 2x2 case counts its metrics were
             # computed from. _calculate_disproportionality had already built
@@ -663,8 +826,18 @@ class FAERSAnalyticsTool(BaseTool):
             else:
                 search_query = _drug_clause(drug_name)
 
-            # Get counts by receive date (year)
-            url = self._with_api_key(f"{FDA_BASE_URL}?search={search_query}&count=receivedate")
+            # Get counts by receive date (year).
+            #
+            # Fix-R38 audit: unlike a term facet, a DATE facet is not paged --
+            # openFDA returns the whole series and ignores `limit`. Measured live
+            # 2026-08-11 for HYDROMORPHONE: count=receivedate returns 6,557 daily
+            # buckets with no `limit` and the identical 6,557 with `limit=999`.
+            # So no truncation disclosure is owed here and the year totals below
+            # are complete. Do NOT "fix" this by adding a limit -- that would cap
+            # the series rather than extend it.
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}&count=receivedate"
+            )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
@@ -732,10 +905,16 @@ class FAERSAnalyticsTool(BaseTool):
             if not drug_name:
                 return {"status": "error", "error": "Must provide drug_name"}
 
-            # Get preferred term (PT) level reactions
+            # Get preferred term (PT) level reactions. Ask for the whole page
+            # this caller is entitled to rather than openFDA's 100-row default:
+            # the ranking is far longer than either (>999 distinct PTs for
+            # HYDROMORPHONE, see PT_COUNT_FIELD), so every extra row is a real
+            # reaction that would otherwise be silently absent.
             search_query = _drug_clause(drug_name)
+            limit = self._count_limit()
             url = self._with_api_key(
-                f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+                f"{FDA_BASE_URL}?search={search_query}"
+                f"&count={PT_COUNT_FIELD}&limit={limit}"
             )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
@@ -744,23 +923,40 @@ class FAERSAnalyticsTool(BaseTool):
             data = response.json()
             pt_results = data.get("results", [])
 
-            # Format PT level
+            # Format PT level. Every returned row is kept -- slicing here is what
+            # produced the constant "total" this fix removes.
             pt_level = [
                 {"preferred_term": r.get("term"), "count": r.get("count")}
-                for r in pt_results[:50]  # Top 50 PTs
+                for r in pt_results
             ]
 
-            # Note: Full MedDRA hierarchy requires MedDRA license
-            # FAERS API doesn't provide HLT/SOC directly
+            # `limit` is already the ceiling, so there is no row past it to probe
+            # with: a full page is all that can be observed and the honest reading
+            # is "possibly incomplete", never "complete". A short page, by
+            # contrast, exhausted the facet, so unique_PTs_returned is then the
+            # true number of distinct PTs.
+            truncated = len(pt_level) >= limit
+
+            # Note: Full MedDRA hierarchy requires MedDRA license and the FAERS
+            # API doesn't provide HLT/SOC directly, so nothing here is rolled up
+            # above PT -- there is no derived SOC/HLT total that could inherit
+            # the truncation described above.
+            hierarchy: Dict[str, Any] = {
+                "PT_level": pt_level,
+                "unique_PTs_returned": len(pt_level),
+                "limit": limit,
+                "truncated": truncated,
+            }
+            if truncated:
+                hierarchy["truncation_note"] = _ranked_terms_truncation_note(
+                    "preferred terms (PTs)", len(pt_level), observed=False
+                )
 
             return {
                 "status": "success",
                 "data": {
                     "drug_name": drug_name,
-                    "meddra_hierarchy": {
-                        "PT_level": pt_level,
-                        "total_unique_PTs": len(pt_level),
-                    },
+                    "meddra_hierarchy": hierarchy,
                     "note": "Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level only.",
                     "recommendation": "Use MedDRA dictionary to map PTs to higher-level terms for system organ class analysis",
                 },

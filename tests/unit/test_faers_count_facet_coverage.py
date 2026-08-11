@@ -58,6 +58,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 import tooluniverse  # noqa: E402
 from tooluniverse.openfda_adv_tool import (  # noqa: E402
     COUNT_FIELD_UNITS,
+    FAERS_DRUG_NAME_FIELDS,
     FDACountAdditiveReactionsTool,
     FDADrugAdverseEventTool,
 )
@@ -93,9 +94,13 @@ COUNTRY_FACET = [
 COUNTRY_SUM = 3458
 
 # The multi-drug tools build their own search -- `medicinalproducts` is a LIST
-# OR-ed into one clause -- and it does NOT include the generic_name field the
-# single-drug tools also search, so it has its own denominator. Measured live
-# 2026-08 for search=(patient.drug.medicinalproduct:VASOPRESSIN):
+# OR-ed into one clause -- so they have their own denominator. The figures below
+# were measured live 2026-08 when that clause searched `medicinalproduct` alone;
+# every FAERS drug-name lookup now searches all of FAERS_DRUG_NAME_FIELDS, which
+# only makes the real totals larger. They are kept verbatim because these tests
+# serve them from a stub: what is under test is the RATIO between the facet rows
+# and the denominator (and that both requests carry the same search), never the
+# absolute numbers. Measured for search=(patient.drug.medicinalproduct:VASOPRESSIN):
 #   meta.results.total                          4,676 matching reports
 #   patient.reaction.reactionmeddrapt.exact    28,818 = 616% (first 999 rows)
 #   patient.reaction.reactionoutcome            5,430 = 116%
@@ -407,10 +412,16 @@ def test_the_multi_drug_denominator_searches_the_same_or_clause_as_the_facet():
     )
 
     facet_url, _ = _assert_same_search(urls)
-    assert (
-        "%28patient.drug.medicinalproduct:VASOPRESSIN"
-        "+OR+patient.drug.medicinalproduct:ASPIRIN%29" in facet_url
-    )
+    # Each drug is its own parenthesized group over FAERS_DRUG_NAME_FIELDS, and
+    # the groups are OR-ed together (a union of the named products).
+    for drug in ("VASOPRESSIN", "ASPIRIN"):
+        assert (
+            "%28"
+            + "+OR+".join(f"{field}:{drug}" for field in FAERS_DRUG_NAME_FIELDS)
+            + "%29"
+            in facet_url
+        )
+    assert "%29+OR+%28" in facet_url
 
 
 def test_a_multi_drug_filter_is_and_ed_onto_the_or_clause_in_both_requests():

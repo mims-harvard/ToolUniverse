@@ -8,6 +8,7 @@ import requests
 
 from .base_rest_tool import BaseRESTTool
 from .base_tool import BaseTool
+from .openfda_adv_tool import faers_drug_name_clause
 from .tool_registry import register_tool
 import os
 import urllib.parse
@@ -2375,7 +2376,15 @@ class OpenFDADrugEventsTool(BaseRESTTool):
                         "Note: MedDRA terms use British spelling (haemorrhage, haematoma, etc.)."
                     ),
                 }
-            parts = [f'patient.drug.medicinalproduct:"{drug_name}"']
+            # Shared with the FAERS_* count/detail/analytics tools so this tool
+            # cannot disagree with them about how many reports name a drug --
+            # see FAERS_DRUG_NAME_FIELDS for the measurements.
+            #
+            # joiner=" OR " rather than the default "+OR+": this path hands the
+            # finished query to requests as a `params` value, and a literal "+"
+            # there is percent-encoded to %2B and reaches openFDA as a plus sign
+            # instead of a separator. That is also why the AND below is " AND ".
+            parts = [faers_drug_name_clause(drug_name, joiner=" OR ")]
             if reaction:
                 parts.append(f'patient.reaction.reactionmeddrapt:"{reaction}"')
             args["search"] = " AND ".join(parts)

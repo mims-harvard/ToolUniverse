@@ -409,7 +409,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_rollup_meddra_hierarchy",
-    "description": "Aggregate adverse events by MedDRA hierarchy (Preferred Term level). Returns top 50 PTs with counts. Note: Full HLT/SOC hierarchy requires MedDRA license. Use for adverse event profile overview.",
+    "description": "Aggregate adverse events by MedDRA hierarchy (Preferred Term level). Returns the most-reported preferred terms with counts, ranked by descending report count, up to openFDA's per-request maximum (999 anonymous, 1000 with FDA_API_KEY set). openFDA does not report how many distinct terms exist, so 'unique_PTs_returned' is the number of rows returned, NOT a total: check 'truncated' and read 'truncation_note' before treating the list as the drug's full reaction profile. A PT absent from the list is not evidence it was never reported. Note: Full HLT/SOC hierarchy requires MedDRA license. Use for adverse event profile overview.",
     "parameter": {
       "type": "object",
       "required": [],
