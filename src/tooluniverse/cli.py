@@ -1336,6 +1336,31 @@ def cmd_status(args: argparse.Namespace) -> None:
     _print_result(status, args, _render_status)
 
 
+def _tool_error_message(result: Any) -> str | None:
+    """The error text when ``run()`` returned an error payload, else ``None``.
+
+    Tools signal upstream failure in two shapes: the usual ``{"status":
+    "error", "error": ...}`` dict, and a list-shaped sentinel ``[{"error":
+    ...}]``. A row carrying ``"term"`` alongside ``"error"`` is an openFDA
+    count row rather than a sentinel — same rule as
+    ``openfda_adv_tool._is_error_payload``, restated here so the CLI need not
+    import a tool module.
+    """
+    if isinstance(result, dict):
+        if "error" in result and result.get("status") != "success":
+            return str(result.get("error", ""))
+        return None
+    if (
+        isinstance(result, list)
+        and result
+        and isinstance(result[0], dict)
+        and "error" in result[0]
+        and "term" not in result[0]
+    ):
+        return str(result[0].get("error", ""))
+    return None
+
+
 def cmd_test(args: argparse.Namespace) -> None:
     """Test a tool against example inputs and report pass/fail."""
     import time
@@ -1501,6 +1526,9 @@ def cmd_test(args: argparse.Namespace) -> None:
 
         elapsed = time.time() - t0
         failures = []
+        is_success_envelope = (
+            isinstance(result, dict) and result.get("status") == "success"
+        )
 
         if t["expect_status"] and isinstance(result, dict):
             got = result.get("status")
@@ -1509,14 +1537,10 @@ def cmd_test(args: argparse.Namespace) -> None:
                 failures.append(
                     f"status: expected '{t['expect_status']}', got {got_display}"
                 )
-        elif (
-            isinstance(result, dict)
-            and "error" in result
-            and result.get("status") != "success"
-        ):
-            # Implicit failure: tool returned an error without explicit expect_status check
-            err_msg = result.get("error", "")
-            failures.append(f"tool returned error: {str(err_msg)[:200]}")
+        elif (err_msg := _tool_error_message(result)) is not None:
+            # Implicit failure: tool returned an error without explicit expect_status
+            # check. Covers both the dict and the list-shaped error payload.
+            failures.append(f"tool returned error: {err_msg[:200]}")
 
         for key in t["expect_keys"]:
             if isinstance(result, dict) and key not in result:
@@ -1524,23 +1548,26 @@ def cmd_test(args: argparse.Namespace) -> None:
 
         if result is None:
             failures.append("result is None")
-        elif isinstance(result, dict) and not result:
-            failures.append("result is an empty dict")
+        elif isinstance(result, (dict, list)) and not result:
+            failures.append(f"result is an empty {type(result).__name__}")
 
-        # return_schema validation (auto, from tool definition)
-        if (
-            not failures
-            and isinstance(result, dict)
-            and result.get("status") == "success"
-        ):
+        # return_schema validation (auto, from tool definition).
+        # For the {"status", "data"} envelope the schema describes the inner
+        # `data` payload, not the envelope (issue #246). Tools returning a bare
+        # list from run() have no envelope and their configs declare the list
+        # itself (top-level {"type": "array"}, e.g. CORE_search_papers), so the
+        # whole result is the payload there. Reaching here with a list also
+        # means it is non-empty and not an error payload.
+        if not failures and (is_success_envelope or isinstance(result, list)):
             return_schema = (
                 tool_def.get("return_schema") if isinstance(tool_def, dict) else None
             )
             if return_schema:
+                payload = result.get("data") if is_success_envelope else result
                 try:
                     import jsonschema
 
-                    jsonschema.validate(result.get("data"), return_schema)
+                    jsonschema.validate(payload, return_schema)
                 except ImportError:
                     pass  # jsonschema not installed — skip silently
                 except jsonschema.ValidationError as exc:
@@ -1550,11 +1577,7 @@ def cmd_test(args: argparse.Namespace) -> None:
 
         # Feature-25B-01: warn when data is empty on success — test example may be stale
         warnings = []
-        if (
-            not failures
-            and isinstance(result, dict)
-            and result.get("status") == "success"
-        ):
+        if not failures and is_success_envelope:
             data_val = result.get("data")
             if (
                 data_val is not None
