@@ -1,4 +1,6 @@
 import copy
+import hashlib
+import json
 import re
 from typing import Any, Dict
 
@@ -72,12 +74,19 @@ def check_keys_present(api_capabilities_dict, keys):
     return key_present
 
 
-def extract_nested_fields(records, fields, keywords=None):
+def extract_nested_fields(records, fields, keywords=None, identity_fields=None):
     """
     Recursively extracts nested fields from a list of dictionaries.
 
     :param records: List of dictionaries from which to extract fields
     :param fields: List of nested fields to extract, each specified with dot notation (e.g., 'openfda.brand_name')
+    :param keywords: Optional keyword list used to trim long sections down to
+        matching sentences.
+    :param identity_fields: Optional extra fields copied verbatim (never keyword
+        trimmed) onto every kept record. They exist so a caller can identify the
+        product when the ``openfda`` block is empty. They deliberately do NOT
+        take part in the "did we extract anything at all?" test below, so adding
+        one can never resurrect a record that would otherwise have been dropped.
 
     :return: List of dictionaries containing only the specified fields
     """
@@ -100,7 +109,18 @@ def extract_nested_fields(records, fields, keywords=None):
                 extracted_record[field] = value
             except KeyError:
                 extracted_record[field] = None
-        if any(extracted_record.values()):
+        keep = any(extracted_record.values())
+        for field in identity_fields or []:
+            if field in extracted_record:
+                continue
+            value = record
+            try:
+                for key in field.split("."):
+                    value = value[key]
+                extracted_record[field] = value
+            except (KeyError, TypeError):
+                extracted_record[field] = None
+        if keep:
             extracted_records.append(extracted_record)
     return extracted_records
 
@@ -809,6 +829,8 @@ def search_openfda(
                     "total": 0,
                 },
                 "results": [],
+                "result_count": 0,
+                "duplicates_removed": 0,
             }
         return None
 
@@ -831,13 +853,23 @@ def search_openfda(
     # Extract results and return only the specified return fields
     results = response_data.get("results", [])
     if return_fields == "ALL":
-        out = {"meta": meta_info, "results": results}
+        out = {
+            "meta": meta_info,
+            "results": results,
+            "result_count": len(results),
+            "duplicates_removed": 0,
+        }
         if fallback_note:
             out["note"] = fallback_note
         return out
     # If count parameter is used, return results directly (count API format)
     if params.get("count") or count:
-        out = {"meta": meta_info, "results": results}
+        out = {
+            "meta": meta_info,
+            "results": results,
+            "result_count": len(results),
+            "duplicates_removed": 0,
+        }
         if fallback_note:
             out["note"] = fallback_note
         return out
@@ -856,13 +888,37 @@ def search_openfda(
         for x in requested_return_fields
     ):
         required_fields.extend(["set_id", "id"])
-    extracted_results = extract_nested_fields(results, required_fields, keywords_list)
+    # Identity fallback: many SPL records carry an empty `openfda` block, so
+    # `openfda.brand_name` / `openfda.generic_name` come back null -- yet the
+    # fallback notes tell the caller to check exactly those fields to confirm
+    # which product a row describes. `spl_product_data_elements` is populated on
+    # those records (e.g. "Ethyol amifostine AMIFOSTINE AMIFOSTINE") and makes
+    # that check possible. It is added as an identity field so it can never
+    # change which records are kept.
+    identity_fields = []
+    if (
+        any(
+            x in {"openfda.brand_name", "openfda.generic_name"} for x in required_fields
+        )
+        and "spl_product_data_elements" not in required_fields
+    ):
+        identity_fields.append("spl_product_data_elements")
+    extracted_results = extract_nested_fields(
+        results, required_fields, keywords_list, identity_fields=identity_fields
+    )
 
     # Apply return-field mapping after extraction (generic)
     if applied_return_field_mapping:
         for r in extracted_results:
             for primary, fb in applied_return_field_mapping.items():
                 r[primary] = r.pop(fb, None)
+
+    # `meta` mirrors openFDA's own numbers and is left untouched, so `meta.total`
+    # is the UPSTREAM pre-deduplication hit count and does not describe the list
+    # below it. `result_count` / `duplicates_removed` are added so the two can be
+    # reconciled.
+    duplicates_removed = 0
+    deduplicated = False
 
     # General dedupe + rank (helps any fallback avoid garbage top-N).
     if extracted_results and fallback_terms:
@@ -895,6 +951,24 @@ def search_openfda(
                 score += 3
             return score
 
+        def _content_fingerprint(r):
+            """Stable hash of everything a record actually carries.
+
+            The previous fallback key was `brand_name + "|" + generic_name`.
+            These tools request neither `set_id` nor `id`, and many SPL records
+            have an empty `openfda` block, so every such record hashed to the
+            single key "|" and genuinely distinct labels were destroyed (e.g.
+            'amifostine' collapsed four distinct labels -- including the branded
+            Ethyol one -- into one row while meta.total still said 4).
+            Hashing the returned content instead means byte-identical records
+            still collapse but different ones survive. `set_id` / `id` are
+            excluded because they are used as the primary key above; including
+            them here would make every record unique.
+            """
+            payload = {k: v for k, v in r.items() if k not in ("set_id", "id")}
+            blob = json.dumps(payload, sort_keys=True, default=str)
+            return hashlib.md5(blob.encode("utf-8")).hexdigest()
+
         dedup = {}
         for r in extracted_results:
             key = (
@@ -904,6 +978,8 @@ def search_openfda(
                     (_first_str(r.get("openfda.brand_name")) or "")
                     + "|"
                     + (_first_str(r.get("openfda.generic_name")) or "")
+                    + "|"
+                    + _content_fingerprint(r)
                 )
             )
             s = _score(r)
@@ -911,6 +987,8 @@ def search_openfda(
             if prev is None or s > prev[0]:
                 dedup[key] = (s, r)
         ranked = sorted(dedup.values(), key=lambda x: x[0], reverse=True)
+        duplicates_removed = len(extracted_results) - len(ranked)
+        deduplicated = True
         extracted_results = [r for _, r in ranked]
         try:
             user_limit_final = int(params.get("limit") or 0)
@@ -919,9 +997,24 @@ def search_openfda(
         if user_limit_final:
             extracted_results = extracted_results[:user_limit_final]
 
-    out = {"meta": meta_info, "results": extracted_results}
+    out = {
+        "meta": meta_info,
+        "results": extracted_results,
+        "result_count": len(extracted_results),
+        "duplicates_removed": duplicates_removed,
+    }
     if fallback_note:
         out["note"] = fallback_note
+    if deduplicated:
+        out["dedup_note"] = (
+            f"meta.total ({meta_info.get('total')}) is openFDA's upstream hit "
+            f"count before local processing; 'results' holds {len(extracted_results)} "
+            f"row(s) after {duplicates_removed} byte-identical duplicate label(s) "
+            f"were dropped and the caller's limit was applied. Deduplication runs "
+            f"per request on the records fetched for that request, so paging with "
+            f"'skip' deduplicates each page independently and consecutive pages "
+            f"may overlap or omit records; do not sum result_count across pages."
+        )
     return out
 
 
