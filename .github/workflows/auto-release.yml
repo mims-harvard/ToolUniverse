@@ -57,10 +57,13 @@ jobs:
             echo "level=${{ inputs.level }}" >> "$GITHUB_OUTPUT"
             echo "Triggered manually with level=${{ inputs.level }}"
           else
-            MSG=$(git -C "$GITHUB_WORKSPACE" log -1 --format=%B 2>/dev/null || echo "${{ github.event.head_commit.message }}")
-            if   echo "$MSG" | grep -q '\[release:major\]'; then echo "level=major" >> "$GITHUB_OUTPUT"
-            elif echo "$MSG" | grep -q '\[release:minor\]'; then echo "level=minor" >> "$GITHUB_OUTPUT"
-            elif echo "$MSG" | grep -q '\[release:patch\]'; then echo "level=patch" >> "$GITHUB_OUTPUT"
+            # Read untrusted commit text as data instead of interpolating it
+            # into this shell script. The checkout step intentionally runs only
+            # when a release marker is present.
+            MSG=$(jq -r '.head_commit.message // ""' "$GITHUB_EVENT_PATH")
+            if   printf '%s\n' "$MSG" | grep -Fq '[release:major]'; then echo "level=major" >> "$GITHUB_OUTPUT"
+            elif printf '%s\n' "$MSG" | grep -Fq '[release:minor]'; then echo "level=minor" >> "$GITHUB_OUTPUT"
+            elif printf '%s\n' "$MSG" | grep -Fq '[release:patch]'; then echo "level=patch" >> "$GITHUB_OUTPUT"
             else
               echo "level=" >> "$GITHUB_OUTPUT"
               echo "No [release:X] marker in commit message; skipping."
