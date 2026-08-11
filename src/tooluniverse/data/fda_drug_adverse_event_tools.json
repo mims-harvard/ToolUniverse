@@ -1381,7 +1381,7 @@
   {
     "type": "FDADrugAdverseEventTool",
     "name": "FAERS_count_death_related_by_drug",
-    "description": "Count adverse events associated with patient death for a given drug. Only medicinalproduct is required. Data source: FDA Adverse Event Reporting System (FAERS). Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported.",
+    "description": "Count reports for a given drug by the FAERS 'seriousnessdeath' seriousness criterion. Only medicinalproduct is required. Data source: FDA Adverse Event Reporting System (FAERS). IMPORTANT: 'seriousnessdeath' is a report-level seriousness criterion, NOT a patient-status field -- rows are labelled 'death criterion met' (openFDA: 'This value is `1` if the adverse event resulted in death, and absent otherwise') and 'death criterion not met'; openFDA publishes no meaning for the value 2 its data returns, so that label follows the ICH E2B(R2) convention (1=Yes, 2=No). Neither term states that a patient survived; for patient outcome use patient.reaction.reactionoutcome, where 5 = 'Fatal'. THESE COUNTS DO NOT SUPPORT A CASE-FATALITY RATE: an openFDA count facet is computed only over reports that populate the field, so reports without the flag (about half of FAERS) are absent rather than bucketed. The response therefore also carries 'total_reports_matching_query' (every report matching this query), 'stratified_report_count' (the flagged subset that 'results' sums to) and a 'coverage_note' naming both figures. Returns an object with 'results' (term/count rows ranked by descending report count), 'result_count', the applied 'limit' (default 100, maximum 1000) and a 'truncated' flag; when 'truncated' is true a 'truncation_note' explains that more terms exist and how to request them. openFDA does not report how many distinct terms exist in total, so a term missing from a truncated list is not evidence it was never reported.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1416,11 +1416,13 @@
       ],
       "return_fields_mapping": {
         "seriousnessdeath": {
-          "1": "death",
-          "2": "alive"
+          "1": "death criterion met",
+          "2": "death criterion not met"
         }
       }
     },
+    "disclose_denominator": true,
+    "count_field_note": "'seriousnessdeath' is a report-level seriousness criterion, not a patient-status field: openFDA documents only that 'This value is `1` if the adverse event resulted in death, and absent otherwise' (https://open.fda.gov/fields/drugevent.yaml), and publishes no meaning at all for the value 2 that its data nonetheless returns -- 'death criterion not met' reads 2 by the ICH E2B(R2) seriousness convention (1=Yes, 2=No). Neither term reports whether a patient survived; FAERS records patient outcome in patient.reaction.reactionoutcome, where 5 = 'Fatal'.",
     "test_examples": [
       {
         "medicinalproduct": "Aspirin"
@@ -1437,14 +1439,15 @@
                 "type": "object",
                 "properties": {
                   "term": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The seriousness-criterion bucket: 'death criterion met' (seriousnessdeath=1, the adverse event resulted in death) or 'death criterion not met' (seriousnessdeath=2). This is a report-level criterion flag, not patient status -- neither value states that a patient survived."
                   },
                   "count": {
                     "type": "integer"
                   }
                 }
               },
-              "description": "Term/count rows ordered by descending report count. Empty when no reports match."
+              "description": "Term/count rows ordered by descending report count. Empty when no reports match. Covers only reports where seriousnessdeath is recorded -- see 'coverage_note'."
             },
             "result_count": {
               "type": "integer",
@@ -1461,13 +1464,31 @@
             "truncation_note": {
               "type": "string",
               "description": "Present only when 'truncated' is true; states the applied limit and how to retrieve more terms."
+            },
+            "total_reports_matching_query": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this query, from a separate openFDA request on the same search. Null when that request failed (commonly HTTP 429 rate limiting on the anonymous tier), in which case 'coverage_note' says so."
+            },
+            "stratified_report_count": {
+              "type": "integer",
+              "description": "The subset of matching reports where seriousnessdeath is recorded; the counts in 'results' sum to exactly this. It is NOT the number of reports for the drug -- reports missing the flag are absent from 'results' entirely rather than bucketed as unknown."
+            },
+            "coverage_note": {
+              "type": "string",
+              "description": "Names both figures and the coverage fraction, explains that openFDA computes a count facet only over records that populate the counted field, and states that these counts do not support a case-fatality rate."
             }
           },
           "required": [
             "results",
             "result_count",
             "limit",
-            "truncated"
+            "truncated",
+            "total_reports_matching_query",
+            "stratified_report_count",
+            "coverage_note"
           ]
         },
         {

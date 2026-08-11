@@ -4,6 +4,7 @@ import copy
 import requests
 import urllib.parse
 from .base_tool import BaseTool
+from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
 
@@ -50,6 +51,46 @@ def _is_range(value):
         isinstance(value, str)
         and re.match(r"^\s*[\[\{].+\sTO\s.+[\]\}]\s*$", value, re.IGNORECASE)
     )
+
+
+def _render_clause(fda_field_name, value):
+    """Render a single ``field:value`` Lucene clause for an openFDA search.
+
+    This is the ONE place that decides whether a mapped parameter value gets
+    quoted. A multi-word term ("ACUTE KIDNEY INJURY") must be quoted, otherwise
+    Lucene splits it and the trailing words become free-text clauses; a Lucene
+    range ("[20141001 TO 20141231]") also contains spaces but must NOT be quoted,
+    because quoting makes openFDA match it as a literal string and return
+    nothing.
+
+    The rule used to be spelled out separately in each builder's multi-field and
+    single-field branches, and they drifted: the range exemption was added to the
+    multi-field branches only, so `receivedate` -- which maps to a single field --
+    kept being quoted and a date-bounded query such as
+    ``FAERS_count_reactions_by_drug_event(receivedate="[20141001 TO 20141231]")``
+    silently returned zero rows. Keep this logic here so the paths cannot drift
+    again.
+    """
+    if isinstance(value, str) and " " in value and not _is_range(value):
+        return f'{fda_field_name}:"{value}"'
+    return f"{fda_field_name}:{value}"
+
+
+def _render_field_group(fda_fields, value):
+    """Render the clause for one parameter across every FDA field it maps to.
+
+    Several fields for one parameter are OR-ed, and the group MUST be
+    parenthesized: openFDA/Lucene binds AND tighter than OR, so an un-grouped
+    "a:x OR b:x AND c:y OR d:y" parses as "a:x OR (b:x AND c:y) OR d:y" --
+    wrong. That silently broke every filtered multi-field query, e.g. FAERS
+    colistin + reaction "acute kidney injury" returned 0 (HTTP 404) even though
+    the unfiltered count shows ACUTE KIDNEY INJURY = 151. Wrapping keeps
+    "(a OR b) AND (c OR d)".
+    """
+    clauses = [_render_clause(name, value) for name in fda_fields]
+    if len(clauses) == 1:
+        return clauses[0]
+    return "(" + "+OR+".join(clauses) + ")"
 
 
 # ---- Helper: human readable -> openFDA code mapping ----
@@ -138,6 +179,25 @@ class FDADrugAdverseEventTool(BaseTool):
                 "Either 'count_field' or 'return_fields' must be defined in tool_config."
             )
 
+        # Opt-in per tool. An openFDA `count=` facet is computed ONLY over
+        # records that populate the counted field, so the rows can sum to far
+        # less than the number of matching reports and a reader who divides one
+        # row by the row total gets a badly wrong rate. Disclosing the true
+        # denominator costs an extra request, and it is only meaningful when the
+        # counted field holds at most one value per report: a report carries a
+        # single `seriousnessdeath` flag, but many reaction terms, so a reaction
+        # facet legitimately sums ABOVE the report total and a coverage fraction
+        # there would be nonsense. Tools whose count_field is report-level set
+        # "disclose_denominator": true in their JSON config. Only this class's
+        # run() honours the flag; FDACountAdditiveReactionsTool builds its query
+        # differently and would need its own denominator probe, so setting the
+        # flag on one of its configs is currently a no-op.
+        self.disclose_denominator = bool(tool_config.get("disclose_denominator", False))
+        # Optional per-tool sentence about what the counted field actually means,
+        # prepended to `coverage_note`. Needed where the field name invites a
+        # clinical misreading -- see the FAERS_count_death_related_by_drug config.
+        self.count_field_note = tool_config.get("count_field_note", "")
+
         # Store allowed enum values
         self.parameter_enums = {}
         if "parameter" in tool_config and "properties" in tool_config["parameter"]:
@@ -163,9 +223,12 @@ class FDADrugAdverseEventTool(BaseTool):
         response = self._search(arguments, limit=self._fetch_limit(limit))
         if _is_error_payload(response):
             return response
-        return self._build_count_envelope(
+        envelope = self._build_count_envelope(
             response, limit, reaction_filter=reaction_filter
         )
+        if self.disclose_denominator:
+            self._add_coverage_disclosure(envelope, arguments, response)
+        return envelope
 
     # ---- count paging / truncation disclosure ----
 
@@ -258,6 +321,116 @@ class FDADrugAdverseEventTool(BaseTool):
             )
         return envelope
 
+    # ---- openFDA `count=` facet coverage disclosure ----
+
+    def _fetch_query_total(self, arguments):
+        """Reports matching this tool's own search, or ``None`` if unavailable.
+
+        A `count=` response carries no grand total -- openFDA reports the size of
+        a search only in `meta.results.total` of a plain (non-count) request, so
+        the denominator needs a second call. It is built from the SAME
+        ``_build_search_query`` as the facet, otherwise the two figures would not
+        be comparable.
+
+        `limit=0` asks for the size without any report bodies: it returns the
+        same `meta.results.total` in ~0.5 KB where `limit=1` ships a whole FAERS
+        report (~120 KB, mostly `openfda` arrays) only to discard it. A search
+        with no matches still answers HTTP 404 either way.
+        """
+        query_error, search_query = self._build_search_query(arguments)
+        if query_error:
+            return None
+        search_encoded = urllib.parse.quote(search_query, safe='+:"')
+        key = f"api_key={self.api_key}&" if self.api_key else ""
+        url = f"{self.endpoint_url}?{key}search={search_encoded}&limit=0"
+        try:
+            # request_with_retry backs off on 429, which this probe makes more
+            # likely by doubling the tool's request rate -- one retry is cheaper
+            # than degrading to a null denominator. Every budget here is kept
+            # well under the facet's 30s: this request fails soft by design, so
+            # it must not dominate the caller's worst case. Note the Retry-After
+            # sleep happens OUTSIDE the per-request timeout, hence capping it
+            # too -- worst case is 10 + 5 + 10 = 25s rather than the default
+            # helper's 90s.
+            response = request_with_retry(
+                requests,
+                "GET",
+                url,
+                timeout=10,
+                max_attempts=2,
+                max_retry_after_seconds=5,
+            )
+            # openFDA answers a search with no matches with HTTP 404, which here
+            # means a genuine zero rather than a failure to measure.
+            if response.status_code == 404:
+                return 0
+            response.raise_for_status()
+            total = response.json().get("meta", {}).get("results", {}).get("total")
+            return total if isinstance(total, int) else None
+        except (requests.exceptions.RequestException, ValueError):
+            return None
+
+    def _add_coverage_disclosure(self, envelope, arguments, response):
+        """Add the true denominator next to the facet, without changing it.
+
+        openFDA computes a count facet solely over records that populate the
+        counted field. Reports where the field is absent are dropped from the
+        facet rather than bucketed as unknown, so the rows do NOT sum to the
+        number of matching reports -- for `seriousnessdeath` roughly half of
+        FAERS reports carry no value at all. Dividing one row by the row sum
+        therefore overstates a fatality share several-fold, which is exactly the
+        number that ends up on a clinical slide. Report both figures under
+        self-describing names and say plainly that they do not support a rate.
+
+        Purely additive: `results`, `result_count`, `limit` and `truncated` are
+        untouched, and a failed denominator request leaves a null rather than
+        turning a working call into an error.
+        """
+        # Sum the RAW facet rows rather than envelope["results"]: a client-side
+        # reaction_filter subsets 'results' to one term, and the facet coverage
+        # being described here is a property of the whole facet, not of the rows
+        # that survived filtering.
+        subset = sum(
+            row["count"]
+            for row in response[: envelope["limit"]]
+            if isinstance(row, dict) and isinstance(row.get("count"), int)
+        )
+        query_total = self._fetch_query_total(arguments)
+
+        envelope["stratified_report_count"] = subset
+        envelope["total_reports_matching_query"] = query_total
+
+        if query_total is None:
+            coverage_note = (
+                "The total number of reports matching this query could not be "
+                "retrieved (the extra openFDA request failed, commonly HTTP 429 "
+                "rate limiting on the anonymous tier), so "
+                "total_reports_matching_query is null. "
+                f"stratified_report_count ({subset:,}) counts only reports where "
+                f"{self.count_field} is recorded and is therefore a LOWER BOUND "
+                "on the number of matching reports -- do not read it as the "
+                "total, and do not divide a row by it to obtain a rate. Retry "
+                "for the total, or set the FDA_API_KEY environment variable to "
+                "raise the rate limit "
+                "(https://open.fda.gov/apis/authentication/)."
+            )
+        else:
+            coverage = (subset / query_total * 100) if query_total else 0.0
+            coverage_note = (
+                f"total_reports_matching_query ({query_total:,}) is every report "
+                f"matching this query; stratified_report_count ({subset:,}, "
+                f"{coverage:.1f}% of them) is the subset where {self.count_field} "
+                "is recorded, and only that subset is counted in 'results'. "
+                "openFDA computes a count facet solely over records that populate "
+                "the counted field, so reports missing it are absent from the "
+                "rows entirely rather than bucketed as unknown. These counts "
+                "therefore do NOT support a case-fatality rate: neither "
+                "denominator is the population at risk."
+            )
+        if self.count_field_note:
+            coverage_note = f"{self.count_field_note} {coverage_note}"
+        envelope["coverage_note"] = coverage_note
+
     def validate_enum_arguments(self, arguments):
         """Validate that enum-based arguments match the allowed values"""
         for param_name, value in arguments.items():
@@ -312,7 +485,12 @@ class FDADrugAdverseEventTool(BaseTool):
 
         return mapped_results
 
-    def _search(self, arguments, limit=None):
+    def _build_search_query(self, arguments):
+        """Build the Lucene `search=` expression, returning ``(error, query)``.
+
+        Kept separate from the request so the same query can also be reused for
+        the denominator probe in ``_fetch_query_total``.
+        """
         search_parts = []
         for param_name, value in arguments.items():
             # Only forward parameters defined in the search-field map; an
@@ -323,50 +501,27 @@ class FDADrugAdverseEventTool(BaseTool):
             if not fda_fields:
                 continue
             # Use the first field name for value mapping
-            fda_field = fda_fields[0] if fda_fields else param_name
+            fda_field = fda_fields[0]
 
             # Apply value mapping using FDA field name
             # (for proper enum mapping)
             mapping_error, mapped_value = self._map_value(fda_field, value)
             if mapping_error:
-                return [{"error": mapping_error}]
+                return mapping_error, None
             if mapped_value is None:
                 continue  # Skip this field if instructed
 
-            # Build search parts using FDA field name(s)
-            # If multiple fields for same param, use OR logic within the param
-            if len(fda_fields) > 1:
-                # Multiple fields for same parameter - use OR
-                field_parts = []
-                for fda_field_name in fda_fields:
-                    if _is_range(mapped_value):
-                        # A Lucene range ("[20141001 TO 20141231]") contains
-                        # spaces but must NOT be quoted -- quoting makes openFDA
-                        # match it as a literal string and return nothing, so a
-                        # date-bounded query silently came back empty.
-                        field_parts.append(f"{fda_field_name}:{mapped_value}")
-                    elif isinstance(mapped_value, str) and " " in mapped_value:
-                        field_parts.append(f'{fda_field_name}:"{mapped_value}"')
-                    else:
-                        field_parts.append(f"{fda_field_name}:{mapped_value}")
-                # Join multiple fields with OR. The group MUST be parenthesized:
-                # openFDA/Lucene binds AND tighter than OR, so an un-grouped
-                # "a:x OR b:x AND c:y OR d:y" parses as "a:x OR (b:x AND c:y) OR
-                # d:y" -- wrong. That silently broke every filtered multi-field
-                # query, e.g. FAERS colistin + reaction "acute kidney injury"
-                # returned 0 (HTTP 404) even though the unfiltered count shows
-                # ACUTE KIDNEY INJURY = 151. Wrapping keeps "(a OR b) AND (c OR d)".
-                search_parts.append("(" + "+OR+".join(field_parts) + ")")
-            else:
-                # Single field - normal behavior
-                fda_field_name = fda_fields[0]
-                if isinstance(mapped_value, str) and " " in mapped_value:
-                    search_parts.append(f'{fda_field_name}:"{mapped_value}"')
-                else:
-                    search_parts.append(f"{fda_field_name}:{mapped_value}")
+            # Build search parts using FDA field name(s). Multiple fields for the
+            # same parameter are OR-ed inside a parenthesized group.
+            search_parts.append(_render_field_group(fda_fields, mapped_value))
 
         # Final search query - join different parameters with AND
-        search_query = "+AND+".join(search_parts)
+        return None, "+AND+".join(search_parts)
+
+    def _search(self, arguments, limit=None):
+        query_error, search_query = self._build_search_query(arguments)
+        if query_error:
+            return [{"error": query_error}]
         search_encoded = urllib.parse.quote(search_query, safe='+:"')
 
         # Build URL. `limit` is appended after `count` so it is never mistaken
@@ -488,7 +643,7 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
             if not fda_fields:
                 continue
             # Use the first field name for value mapping
-            fda_field = fda_fields[0] if fda_fields else k
+            fda_field = fda_fields[0]
 
             # Map value using FDA field name (for proper enum mapping)
             mapping_error, mapped = self._map_value(fda_field, v)
@@ -497,12 +652,14 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
             if mapped is None:
                 continue  # Skip this field if instructed
 
-            # Use FDA field name(s) in the query
-            for fda_field_name in fda_fields:
-                if isinstance(mapped, str) and " " in mapped:
-                    filters.append(f'{fda_field_name}:"{mapped}"')
-                else:
-                    filters.append(f"{fda_field_name}:{mapped}")
+            # Use FDA field name(s) in the query via the shared renderer, so both
+            # the quoting rule (a Lucene range stays unquoted) and the grouping
+            # rule (several fields for one parameter are OR-ed inside parens)
+            # have exactly one home. Every config for this tool type maps each
+            # parameter to a single field today, so this is currently a plain
+            # clause -- routing it through the helper anyway keeps a future
+            # multi-field config from silently AND-ing what should be OR-ed.
+            filters.append(_render_field_group(fda_fields, mapped))
 
         filter_str = "+AND+".join(filters) if filters else ""
         search_query = f"({or_clause})" + (f"+AND+{filter_str}" if filter_str else "")
@@ -611,7 +768,7 @@ class FDADrugAdverseEventDetailTool(BaseTool):
             if not fda_fields:
                 continue
             # Use the first field name for value mapping
-            fda_field = fda_fields[0] if fda_fields else param_name
+            fda_field = fda_fields[0]
 
             # Apply value mapping using FDA field name
             # (for proper enum mapping)
@@ -621,37 +778,9 @@ class FDADrugAdverseEventDetailTool(BaseTool):
             if mapped_value is None:
                 continue  # Skip this field if instructed
 
-            # Build search parts using FDA field name(s)
-            # If multiple fields for same param, use OR logic within the param
-            if len(fda_fields) > 1:
-                # Multiple fields for same parameter - use OR
-                field_parts = []
-                for fda_field_name in fda_fields:
-                    if _is_range(mapped_value):
-                        # A Lucene range ("[20141001 TO 20141231]") contains
-                        # spaces but must NOT be quoted -- quoting makes openFDA
-                        # match it as a literal string and return nothing, so a
-                        # date-bounded query silently came back empty.
-                        field_parts.append(f"{fda_field_name}:{mapped_value}")
-                    elif isinstance(mapped_value, str) and " " in mapped_value:
-                        field_parts.append(f'{fda_field_name}:"{mapped_value}"')
-                    else:
-                        field_parts.append(f"{fda_field_name}:{mapped_value}")
-                # Join multiple fields with OR. The group MUST be parenthesized:
-                # openFDA/Lucene binds AND tighter than OR, so an un-grouped
-                # "a:x OR b:x AND c:y OR d:y" parses as "a:x OR (b:x AND c:y) OR
-                # d:y" -- wrong. That silently broke every filtered multi-field
-                # query, e.g. FAERS colistin + reaction "acute kidney injury"
-                # returned 0 (HTTP 404) even though the unfiltered count shows
-                # ACUTE KIDNEY INJURY = 151. Wrapping keeps "(a OR b) AND (c OR d)".
-                search_parts.append("(" + "+OR+".join(field_parts) + ")")
-            else:
-                # Single field - normal behavior
-                fda_field_name = fda_fields[0]
-                if isinstance(mapped_value, str) and " " in mapped_value:
-                    search_parts.append(f'{fda_field_name}:"{mapped_value}"')
-                else:
-                    search_parts.append(f"{fda_field_name}:{mapped_value}")
+            # Build search parts using FDA field name(s). Multiple fields for the
+            # same parameter are OR-ed inside a parenthesized group.
+            search_parts.append(_render_field_group(fda_fields, mapped_value))
 
         # Final search query - join different parameters with AND
         search_query = "+AND+".join(search_parts)
@@ -978,7 +1107,7 @@ class FDADrugInteractionDetailTool(BaseTool):
             if not fda_fields:
                 continue
             # Use the first field name for value mapping
-            fda_field = fda_fields[0] if fda_fields else param_name
+            fda_field = fda_fields[0]
 
             # Apply value mapping using FDA field name
             mapping_error, mapped_value = self._map_value(fda_field, value)
@@ -987,12 +1116,10 @@ class FDADrugInteractionDetailTool(BaseTool):
             if mapped_value is None:
                 continue  # Skip this field if instructed
 
-            # Build filter parts using FDA field name(s)
-            for fda_field_name in fda_fields:
-                if isinstance(mapped_value, str) and " " in mapped_value:
-                    filter_parts.append(f'{fda_field_name}:"{mapped_value}"')
-                else:
-                    filter_parts.append(f"{fda_field_name}:{mapped_value}")
+            # Build filter parts through the shared renderer, so the quoting rule
+            # (a Lucene range stays unquoted) and the grouping rule (several
+            # fields for one parameter are OR-ed inside parens) have one home.
+            filter_parts.append(_render_field_group(fda_fields, mapped_value))
 
         # Combine drug parts (AND) with additional filters (AND)
         all_parts = drug_parts + filter_parts
