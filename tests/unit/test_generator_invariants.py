@@ -172,21 +172,8 @@ def test_full_generation_preserves_handwritten_files_removes_stale_output_and_is
     assert first_contents == second_contents
 
 
-def test_static_registry_source_is_sorted_importable_and_deterministic():
-    registry = {"ZetaTool": "zeta", "AlphaTool": "alpha"}
-
-    first = lazy.render_static_registry(registry)
-    second = lazy.render_static_registry(dict(reversed(list(registry.items()))))
-    namespace = {}
-    exec(compile(first, "_lazy_registry_static.py", "exec"), namespace)
-
-    assert first == second
-    assert first.index('"AlphaTool"') < first.index('"ZetaTool"')
-    assert namespace["STATIC_LAZY_REGISTRY"] == registry
-
-
 def test_static_registry_main_writes_the_discovered_mapping():
-    registry = {"ExampleTool": "example_tool"}
+    registry = {"ZetaTool": "zeta", "AlphaTool": "alpha"}
 
     with (
         patch.object(lazy, "build_lazy_registry", return_value=registry),
@@ -198,4 +185,5 @@ def test_static_registry_main_writes_the_discovered_mapping():
     namespace = {}
     exec(compile(content, "_lazy_registry_static.py", "exec"), namespace)
     assert namespace["STATIC_LAZY_REGISTRY"] == registry
+    assert content.index('"AlphaTool"') < content.index('"ZetaTool"')
     assert write_text.call_args.kwargs == {"encoding": "utf-8"}

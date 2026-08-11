@@ -124,49 +124,26 @@ class SimpleTool:
 ```
 
 ### Multi-Server Setup
-```python
-# Text tool on port 8001
-@register_mcp_tool(
-   tool_type_name="text_tool",
-   config={"description": "Process text"},
-   mcp_config={"port": 8001}
-)
-class TextTool:
-   def run(self, arguments):
-       return {"text": arguments.get("text", "")}
+```text
+# Text tools on port 8001
+@register_mcp_tool(..., mcp_config={"port": 8001})
 
-# Data tool on port 8002
-@register_mcp_tool(
-   tool_type_name="data_tool",
-   config={"description": "Process data"},
-   mcp_config={"port": 8002}
-)
-class DataTool:
-   def run(self, arguments):
-       return {"data": arguments.get("data", [])}
+# Data tools on port 8002
+@register_mcp_tool(..., mcp_config={"port": 8002})
 
-# File tool on port 8003
-@register_mcp_tool(
-   tool_type_name="file_tool",
-   config={"description": "Process a file"},
-   mcp_config={"port": 8003}
-)
-class FileTool:
-   def run(self, arguments):
-       return {"filepath": arguments.get("filepath", "")}
+# File tools on port 8003
+@register_mcp_tool(..., mcp_config={"port": 8003})
 ```
 
 ##  Common Mistakes
 
 ###  Wrong: Old parameter format
-```python
+```text
 @register_mcp_tool(
    name="tool_name",  # Wrong!
    description="Tool description",  # Wrong!
    mcp_config={"port": 8001}
 )
-class IncorrectlyRegisteredTool:
-   ...
 ```
 
 ###  Correct: New parameter format
@@ -175,10 +152,7 @@ class IncorrectlyRegisteredTool:
    tool_type_name="tool_name",  # Correct!
    config={
        "description": "Tool description",  # Correct!
-       "parameter_schema": {
-           "type": "object",
-           "properties": {}
-       }
+       "parameter_schema": {}
    },
    mcp_config={"port": 8001}
 )

@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Validate Python examples embedded in the ToolUniverse documentation."""
 
-from __future__ import annotations
-
 import argparse
 import ast
 import json
