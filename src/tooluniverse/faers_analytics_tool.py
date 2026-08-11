@@ -380,6 +380,32 @@ class FAERSAnalyticsTool(BaseTool):
                     else:
                         signal_strength = "Weak signal"
 
+            # The note must agree with signal_detection above. It used to assert a
+            # potential signal unconditionally, so a result whose own verdict was
+            # "No signal" still read as though a signal had been found.
+            if signal_detected:
+                verdict = (
+                    "Disproportionality analysis indicates a potential safety signal "
+                    f"({signal_strength})."
+                )
+            elif ror_ci and ror_ci["upper"] < 1.0:
+                verdict = (
+                    "No safety signal: this event is reported disproportionately LESS "
+                    "often for this drug than across all other drugs. This is not "
+                    "evidence of a protective effect."
+                )
+            else:
+                verdict = (
+                    "No safety signal by the stated criteria (ROR lower CI > 1.0 and "
+                    "case count >= 3). Absence of a signal does NOT establish absence "
+                    "of risk, particularly where case counts are small."
+                )
+
+            note = (
+                f"{verdict} Disproportionality measures reporting patterns, not risk, "
+                "and does NOT prove causation. Requires clinical evaluation."
+            )
+
             return {
                 "status": "success",
                 "drug_name": drug_name,
@@ -415,7 +441,7 @@ class FAERSAnalyticsTool(BaseTool):
                     "signal_strength": signal_strength,
                     "criteria": "ROR lower CI > 1.0 and case count >= 3",
                 },
-                "note": "Disproportionality analysis indicates potential safety signal. Does NOT prove causation. Requires clinical evaluation.",
+                "note": note,
             }
 
         except Exception as e:

@@ -225,6 +225,13 @@ class ComposeTool(BaseTool):
         if not self.composition_code:
             return {"status": "error", "error": "No composition code provided"}
 
+        # Tools that could not be made available, so the degradation is visible in the
+        # returned payload rather than only on stdout. Collected from the pre-flight
+        # check below and, in _call_tool, from calls that actually missed -- dependency
+        # discovery is a regex over literal names, so a tool invoked through a variable
+        # is only ever seen at call time.
+        self._missing_during_run = set()
+
         # Check for missing dependencies
         all_dependencies = self.discovered_dependencies.union(set(self.required_tools))
         missing_tools = set()
@@ -256,6 +263,7 @@ class ComposeTool(BaseTool):
                             "auto_loaded": list(successfully_loaded),
                         }
                     else:
+                        self._missing_during_run.update(still_missing)
                         print(
                             f"⚠️  Continuing execution despite missing tools: {', '.join(still_missing)}"
                         )
@@ -268,6 +276,7 @@ class ComposeTool(BaseTool):
                         "auto_load_disabled": True,
                     }
                 else:
+                    self._missing_during_run.update(missing_tools)
                     print(
                         f"⚠️  ComposeTool '{self.name}' has missing dependencies but continuing: {', '.join(missing_tools)}"
                     )
@@ -275,10 +284,12 @@ class ComposeTool(BaseTool):
         try:
             if self.composition_file:
                 # Execute function from external file
-                return self._execute_from_file(arguments, stream_callback)
+                result = self._execute_from_file(arguments, stream_callback)
             else:
                 # Execute inline code (existing behavior)
-                return self._execute_inline_code(arguments, stream_callback)
+                result = self._execute_inline_code(arguments, stream_callback)
+
+            return self._annotate_missing_tools(result, self._missing_during_run)
 
         except Exception as e:
             error_msg = f"Error in ComposeTool '{self.name}': {str(e)}"
@@ -290,6 +301,28 @@ class ComposeTool(BaseTool):
                 "error": error_msg,
                 "traceback": traceback.format_exc(),
             }
+
+    @staticmethod
+    def _annotate_missing_tools(result, missing_tools):
+        """
+        Record tools that could not be loaded onto the result payload.
+
+        When ``fail_on_missing_tools`` is false the composition still runs, but the
+        caller has no machine-readable way to tell a fully-sourced answer from a
+        degraded one -- the warning only ever reached stdout. Uses the same
+        ``missing_tools`` key the error payloads above already carry, so callers
+        check one field on both paths.
+
+        A non-dict result is wrapped rather than dropped: ``_call_tool`` returns a
+        bare string exactly when a tool was unavailable, which is precisely the case
+        this annotation exists to report.
+        """
+        if not missing_tools:
+            return result
+        if not isinstance(result, dict):
+            result = {"result": result}
+        result.setdefault("missing_tools", sorted(missing_tools))
+        return result
 
     def _emit_stream_chunk(self, chunk, stream_callback):
         """
@@ -436,8 +469,10 @@ class ComposeTool(BaseTool):
                     tool_name in still_missing
                     and tool_name not in self.tooluniverse.all_tool_dict
                 ):
+                    self._missing_during_run.add(tool_name)
                     return f"Invalid function call: Function name {tool_name} not found in loaded tools."
             else:
+                self._missing_during_run.add(tool_name)
                 return f"Invalid function call: Function name {tool_name} not found in loaded tools."
 
         function_call = {"name": tool_name, "arguments": arguments}

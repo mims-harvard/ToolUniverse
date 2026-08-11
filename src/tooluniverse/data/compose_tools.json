@@ -275,6 +275,21 @@
         "result": {
           "type": "string"
         },
+        "error": {
+          "type": "string",
+          "description": "Present only when success is false. Explains which step could not run."
+        },
+        "literature": {
+          "type": "object",
+          "description": "Raw per-source search results keyed by source (pmc, openalex, pubtator). Returned when the AI summarization step is unavailable so the retrieved literature is not lost."
+        },
+        "missing_tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tools this composition needed but could not load. Present only when the result is degraded."
+        },
         "metadata": {
           "type": "object",
           "properties": {

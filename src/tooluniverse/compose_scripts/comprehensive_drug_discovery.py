@@ -3,6 +3,8 @@ Comprehensive Drug Discovery Pipeline
 Complete end-to-end drug discovery workflow from disease to optimized candidates
 """
 
+from tooluniverse.compose_scripts import payload
+
 
 def compose(arguments, tooluniverse, call_tool):
     """End-to-end drug discovery: Target → Lead → Optimization → Validation"""
@@ -82,9 +84,11 @@ def compose(arguments, tooluniverse, call_tool):
                         if drug_name:
                             try:
                                 # Get CID from drug name
-                                cid_result = call_tool(
-                                    "PubChem_get_CID_by_compound_name",
-                                    {"name": drug_name},
+                                cid_result = payload(
+                                    call_tool(
+                                        "PubChem_get_CID_by_compound_name",
+                                        {"name": drug_name},
+                                    )
                                 )
 
                                 if (
@@ -95,9 +99,11 @@ def compose(arguments, tooluniverse, call_tool):
                                     cids = cid_result["IdentifierList"]["CID"]
                                     if cids:
                                         # Get SMILES from first CID
-                                        smiles_result = call_tool(
-                                            "PubChem_get_compound_properties_by_CID",
-                                            {"cid": cids[0]},
+                                        smiles_result = payload(
+                                            call_tool(
+                                                "PubChem_get_compound_properties_by_CID",
+                                                {"cid": cids[0]},
+                                            )
                                         )
 
                                         if (
