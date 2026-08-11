@@ -66,6 +66,28 @@ def test_missing_tool_is_recorded_at_call_time():
     assert tool._missing_during_run == {"NoSuchTool"}
 
 
+def test_missing_tools_survive_a_raising_composition():
+    """A composition often raises *because* a dependency was unavailable."""
+    universe = SimpleNamespace(callable_functions={}, all_tool_dict={})
+    tool = ComposeTool(
+        {
+            "name": "T",
+            "type": "ComposeTool",
+            "auto_load_dependencies": False,
+            "required_tools": [],
+            "composition_code": (
+                "call_tool('NoSuchTool', {})\nraise RuntimeError('boom')"
+            ),
+        },
+        tooluniverse=universe,
+    )
+
+    result = tool.run({})
+
+    assert result["status"] == "error"
+    assert result["missing_tools"] == ["NoSuchTool"]
+
+
 class TestLiteratureSearchDegradation:
     """An unavailable summariser must be an error, not a success-shaped string."""
 

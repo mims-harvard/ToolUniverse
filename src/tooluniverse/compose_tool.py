@@ -43,6 +43,9 @@ class ComposeTool(BaseTool):
         )  # Explicitly specified dependencies
         self.fail_on_missing_tools = tool_config.get("fail_on_missing_tools", False)
 
+        # Tools that could not be loaded during the current run(). Reset per run.
+        self._missing_during_run = set()
+
         # Check if using external file or inline code
         self.composition_file = tool_config.get("composition_file")
         self.composition_function = tool_config.get("composition_function", "compose")
@@ -296,11 +299,16 @@ class ComposeTool(BaseTool):
             traceback.print_exc()  # Print full stack trace
             print(f"\033[91m{error_msg}\033[0m")
 
-            return {
-                "status": "error",
-                "error": error_msg,
-                "traceback": traceback.format_exc(),
-            }
+            # A composition often raises *because* a dependency was unavailable, so
+            # the recorded misses are most useful on this path.
+            return self._annotate_missing_tools(
+                {
+                    "status": "error",
+                    "error": error_msg,
+                    "traceback": traceback.format_exc(),
+                },
+                self._missing_during_run,
+            )
 
     @staticmethod
     def _annotate_missing_tools(result, missing_tools):
