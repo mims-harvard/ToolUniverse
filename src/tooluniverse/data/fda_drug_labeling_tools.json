@@ -33,7 +33,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -162,7 +163,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -438,7 +440,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -710,7 +713,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -982,7 +986,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -1431,7 +1436,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -1766,7 +1772,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -2036,7 +2043,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -2294,7 +2302,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -2570,7 +2579,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -2837,7 +2847,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -3108,7 +3119,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -3419,7 +3431,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -3848,7 +3861,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -4121,7 +4135,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -4394,7 +4409,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -4708,7 +4724,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -4964,7 +4981,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -5231,7 +5249,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -5624,7 +5643,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -5880,7 +5900,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -6147,7 +6168,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -6417,7 +6439,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -6732,7 +6755,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -6976,7 +7000,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -7419,7 +7444,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -7739,7 +7765,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -7870,7 +7897,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -8275,7 +8303,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -8519,7 +8548,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -8768,7 +8798,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -9022,7 +9053,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -9294,7 +9326,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -9421,7 +9454,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -9686,7 +9720,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -9932,7 +9967,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -10203,7 +10239,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -10459,7 +10496,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -10731,7 +10769,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -10858,7 +10897,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -11259,7 +11299,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -11530,7 +11571,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -11795,7 +11837,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -12064,7 +12107,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -12314,7 +12358,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -12621,7 +12666,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -12871,7 +12917,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -13119,7 +13166,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -13386,7 +13434,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -13636,7 +13685,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -13884,7 +13934,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -14159,7 +14210,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -14415,7 +14467,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -14735,7 +14788,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -14990,7 +15044,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -15129,7 +15184,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -15257,7 +15313,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -15507,7 +15564,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -15916,7 +15974,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -16188,7 +16247,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -16464,7 +16524,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -16849,7 +16910,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -17118,7 +17180,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -17372,7 +17435,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -17632,7 +17696,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -17750,7 +17815,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -18004,7 +18070,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -18257,7 +18324,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -18522,7 +18590,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -18782,7 +18851,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -19054,7 +19124,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -19182,7 +19253,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -19612,7 +19684,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -19800,7 +19873,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -20131,7 +20205,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -20373,7 +20448,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
@@ -20500,7 +20576,8 @@
       "search_fields": {
         "drug_name": [
           "openfda.brand_name",
-          "openfda.generic_name"
+          "openfda.generic_name",
+          "spl_product_data_elements"
         ]
       },
       "return_fields": [
