@@ -1,13 +1,13 @@
 name: Auto-release plugin
 #
 # Auto-bump version + tag + release when plugin files change AND the commit
-# message contains a release marker. This keeps regular plugin merges (typo
+# message subject contains a release marker. This keeps regular plugin merges (typo
 # fixes, doc updates, refactors) from auto-releasing — only deliberate
 # releases fire.
 #
 # How to trigger:
 #
-#   A) Commit-message marker (preferred — automatic on push to main):
+#   A) Commit-subject marker (preferred — automatic on push to main):
 #        git commit -m "Add tooluniverse-foo skill [release:minor]"
 #        git push origin main
 #      This workflow runs scripts/release-plugin.sh minor, which creates a
@@ -54,22 +54,28 @@ jobs:
       - name: Determine release level
         id: level
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "level=${{ inputs.level }}" >> "$GITHUB_OUTPUT"
-            echo "Triggered manually with level=${{ inputs.level }}"
+          LEVEL=""
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            LEVEL=$(jq -r '.inputs.level // ""' "$GITHUB_EVENT_PATH")
+            case "$LEVEL" in
+              major|minor|patch) ;;
+              *) echo "::error::Invalid release level: $LEVEL"; exit 1 ;;
+            esac
+            echo "Triggered manually with level=$LEVEL"
           else
             # Read untrusted commit text as data instead of interpolating it
             # into this shell script. The checkout step intentionally runs only
             # when a release marker is present.
             MSG=$(jq -r '.head_commit.message // ""' "$GITHUB_EVENT_PATH")
-            if   printf '%s\n' "$MSG" | grep -Fq '[release:major]'; then echo "level=major" >> "$GITHUB_OUTPUT"
-            elif printf '%s\n' "$MSG" | grep -Fq '[release:minor]'; then echo "level=minor" >> "$GITHUB_OUTPUT"
-            elif printf '%s\n' "$MSG" | grep -Fq '[release:patch]'; then echo "level=patch" >> "$GITHUB_OUTPUT"
-            else
-              echo "level=" >> "$GITHUB_OUTPUT"
-              echo "No [release:X] marker in commit message; skipping."
-            fi
+            SUBJECT=${MSG%%$'\n'*}
+            case "$SUBJECT" in
+              *'[release:major]'*) LEVEL=major ;;
+              *'[release:minor]'*) LEVEL=minor ;;
+              *'[release:patch]'*) LEVEL=patch ;;
+              *) echo "No [release:X] marker in commit subject; skipping." ;;
+            esac
           fi
+          echo "level=$LEVEL" >> "$GITHUB_OUTPUT"
 
       - name: Stop if no release level
         if: steps.level.outputs.level == ''
