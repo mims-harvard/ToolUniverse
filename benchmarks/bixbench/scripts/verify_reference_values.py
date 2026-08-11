@@ -22,6 +22,7 @@ Expected output, with the convention each value depends on:
 """
 import argparse
 import glob
+from concurrent.futures import ThreadPoolExecutor
 import os
 import statistics as st
 import subprocess
@@ -73,22 +74,35 @@ def main():
     )
     print(f"{len(stems)} ortholog alignment/tree pairs\n")
 
-    sat, tree, tov = [], [], []
-    for s in stems:
-        aln_t, aln_u, tr = (
-            f"{s}.faa.mafft.clipkit",
-            f"{s}.faa.mafft",
-            f"{s}.faa.mafft.clipkit.treefile",
-        )
+    def measure(s):
+        """The three values for one ortholog, with the column each needs."""
+        aln_t = f"{s}.faa.mafft.clipkit"
+        aln_u = f"{s}.faa.mafft"
+        tr = f"{s}.faa.mafft.clipkit.treefile"
+        out = {}
         o = phykit("saturation", "-a", aln_t, "-t", tr)
         if o:
-            sat.append(float(o.split("\t")[1]))          # 1-slope, NOT the first column
+            out["sat"] = float(o.split("\t")[1])         # 1-slope, not the first column
         o = phykit("treeness", tr)
         if o:
-            tree.append(float(o.split("\t")[0]))
-        o = phykit("toverr", "-a", aln_u, "-t", tr)      # UNTRIMMED alignment
+            out["tree"] = float(o.split("\t")[0])
+        o = phykit("toverr", "-a", aln_u, "-t", tr)      # untrimmed alignment
         if o:
-            tov.append((s, float(o.split("\t")[0])))
+            out["tov"] = float(o.split("\t")[0])
+        return s, out
+
+    # Each ortholog is independent and the work is subprocess wall time, so a
+    # thread pool turns ~20 minutes of serial phykit calls into a couple.
+    sat, tree, tov = [], [], []
+    workers = min(16, (os.cpu_count() or 4))
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for s, out in pool.map(measure, stems):
+            if "sat" in out:
+                sat.append(out["sat"])
+            if "tree" in out:
+                tree.append(out["tree"])
+            if "tov" in out:
+                tov.append((s, out["tov"]))
 
     gapped = [s for s in stems if column_gap_fraction(f"{s}.faa.mafft") > 0.70]
     gap_max = max((v for s, v in tov if s in gapped), default=None)
