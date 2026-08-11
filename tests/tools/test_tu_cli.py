@@ -92,6 +92,22 @@ def _run(monkeypatch, fn, ns, tu_fixture, capsys):
     return cap.out, cap.err
 
 
+def _stub_generators(monkeypatch):
+    """
+    Stub both generator entry points so `tu build` tests never write into the
+    package or the CWD. Returns the dict recording what each step was called with.
+    """
+    import tooluniverse.generate_lazy_registry as glr
+    import tooluniverse.generate_tools as gt
+
+    calls = {}
+    monkeypatch.setattr(glr, "main", lambda: calls.__setitem__("lazy_registry", True))
+    monkeypatch.setattr(
+        gt, "main", lambda output_dir=None: calls.__setitem__("tools", output_dir)
+    )
+    return calls
+
+
 def _j(s: str):
     """Parse JSON; raise AssertionError with context on failure."""
     try:
@@ -1331,16 +1347,48 @@ class TestBuild:
     """Tests for the `tu build` subcommand."""
 
     @pytest.mark.unit
-    def test_build_prints_both_step_labels(self, capsys):
+    def test_build_prints_both_step_labels(self, monkeypatch, capsys, tmp_path):
         """tu build runs both steps and prints their labels to stderr."""
         from tooluniverse.cli import cmd_build
 
+        calls = _stub_generators(monkeypatch)
+        out_dir = tmp_path / "coding_api"
+
+        cmd_build(_args(output=str(out_dir)))
+
+        captured = capsys.readouterr()
+        # Both steps actually ran…
+        assert calls["lazy_registry"] is True
+        assert calls["tools"] == out_dir
+        # …and each announced itself on stderr, so stdout stays clean for scripts.
+        assert "Regenerating lazy registry" in captured.err
+        assert "Regenerating coding-API wrappers" in captured.err
+        assert captured.out == ""
+
+    @pytest.mark.unit
+    def test_build_defaults_output_to_local_workspace(self, monkeypatch, tmp_workdir):
+        """Without --output, wrappers go to .tooluniverse/coding_api under the CWD."""
+        from tooluniverse.cli import cmd_build
+
+        calls = _stub_generators(monkeypatch)
+
         cmd_build(_args())
-        err = capsys.readouterr().err
-        # cmd_build prints "Regenerating lazy registry…" and "Regenerating coding-API wrappers…"
-        # to stderr (so stdout stays clean for scripts)
-        assert "Regenerating lazy registry" in err
-        assert "Regenerating coding-API wrappers" in err
+
+        assert calls["tools"] == tmp_workdir / ".tooluniverse" / "coding_api"
+
+    @pytest.mark.unit
+    def test_lazy_registry_generator_writes_to_given_path(self, tmp_path):
+        """generate_lazy_registry.main() honours output_path instead of the package."""
+        from tooluniverse.generate_lazy_registry import main
+
+        out = tmp_path / "_lazy_registry_static.py"
+        main(output_path=out)
+
+        namespace = {}
+        exec(compile(out.read_text(encoding="utf-8"), str(out), "exec"), namespace)
+        registry = namespace["STATIC_LAZY_REGISTRY"]
+        assert registry, "expected a non-empty tool_name -> module_name mapping"
+        assert all(isinstance(v, str) for v in registry.values())
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
