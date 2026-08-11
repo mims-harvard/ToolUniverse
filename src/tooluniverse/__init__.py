@@ -1,41 +1,13 @@
 from importlib.metadata import version, PackageNotFoundError
 import importlib
 import os
-import sys
 from typing import Any, Optional, List
 
-# Force CPU before torch is imported anywhere — prevents MPS (Metal) segfaults
-# in forked subprocesses (uvx MCP server, tu CLI, Claude Code plugin).
+# Configure MPS safeguards before torch is imported anywhere. Individual tools
+# select their own explicit device; changing PyTorch's process-wide default here
+# can break unrelated CPU/GPU tools sharing the same process.
 os.environ.setdefault("PYTORCH_MPS_HIGH_WATERMARK_RATIO", "0.0")
 os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
-
-
-def configure_torch_cpu():
-    """Pin torch to CPU, if and only if torch is already imported.
-
-    Importing torch eagerly here cost ~4 s on *every* process that touches
-    tooluniverse -- the MCP server, each `tu` CLI call, every SDK import --
-    though most never run a model. That start-up cost is what pushed the MCP
-    server past the client's connection timeout, so the server was dropped and
-    the agent silently ran with no ToolUniverse tools at all.
-
-    The MPS protection that actually matters is the two environment variables
-    above, set before anything can import torch. This keeps the remaining
-    `set_default_device("cpu")` guarantee without paying for the import: the
-    modules that genuinely need torch call this right after importing it.
-    """
-    torch_module = sys.modules.get("torch")
-    if torch_module is None:
-        return False
-    try:
-        if hasattr(torch_module, "set_default_device"):
-            torch_module.set_default_device("cpu")
-    except Exception:
-        pass
-    return True
-
-
-configure_torch_cpu()  # no-op unless something upstream already imported torch
 
 
 # Allow installed sub-packages (e.g. tooluniverse-circuit) to contribute

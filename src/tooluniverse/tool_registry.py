@@ -593,31 +593,41 @@ def _auto_import_subpackages(package_name: str = "tooluniverse"):
     Import all installed sub-packages of ``package_name`` so their
     ``__init__.py`` files run and can self-register configs/tools.
 
-    Only packages that have their own ``__init__.py`` are imported; plain
-    directories (like ``data/``, ``cache/``) are skipped automatically.
-    Errors are logged but never propagated — a broken sub-package must not
-    prevent the main package from starting.
+    The package's own source directory is skipped: importing built-in package
+    initializers defeats lazy discovery and can load optional native libraries
+    such as FAISS during a basic ``import tooluniverse``. Additional namespace
+    paths contributed by separately installed packages are still scanned.
+    Errors are logged but never propagated — a broken external sub-package
+    must not prevent the main package from starting.
     """
     try:
         pkg = importlib.import_module(package_name)
     except ImportError:
         return
 
+    package_file = getattr(pkg, "__file__", None)
+    main_package_dir = (
+        Path(package_file).resolve().parent if package_file is not None else None
+    )
+
     for pkg_dir in pkg.__path__:
         try:
-            base = Path(pkg_dir)
+            base = Path(pkg_dir).resolve()
         except Exception:
+            continue
+        is_main_source = (
+            main_package_dir is not None and base == main_package_dir
+        ) or (
+            (base / "execute_function.py").is_file()
+            and (base / "tool_registry.py").is_file()
+        )
+        if is_main_source:
             continue
         for subpkg in sorted(base.iterdir()):
             if not subpkg.is_dir():
                 continue
             if not (subpkg / "__init__.py").exists():
                 continue
-            # Skip the built-in sub-packages that are part of the main repo
-            # (they register themselves via the standard decorator path).
-            # We only want EXTERNALLY installed sub-packages.
-            # Heuristic: skip directories that are inside the main package dir
-            # that lives in the editable-install source tree.
             full_mod = f"{package_name}.{subpkg.name}"
             if full_mod in sys.modules:
                 continue
