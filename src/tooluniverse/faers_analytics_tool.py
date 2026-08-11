@@ -28,6 +28,24 @@ def _drug_clause(drug_name: str) -> str:
     )
 
 
+def _faers_search_query(
+    drug_name: Optional[str] = None, adverse_event: Optional[str] = None
+) -> str:
+    """openFDA `search=` clause for a drug, optionally narrowed to one reaction.
+
+    Shared so a `count=` facet and the `meta.results.total` request that supplies
+    its denominator cannot drift apart -- the two numbers are only comparable if
+    they came from the identical query. Returns "" when neither is given, which
+    callers use to mean "the whole database".
+    """
+    parts = []
+    if drug_name:
+        parts.append(_drug_clause(drug_name))
+    if adverse_event:
+        parts.append(f'patient.reaction.reactionmeddrapt:"{adverse_event}"')
+    return "+AND+".join(parts)
+
+
 @register_tool("FAERSAnalyticsTool")
 class FAERSAnalyticsTool(BaseTool):
     """
@@ -276,12 +294,11 @@ class FAERSAnalyticsTool(BaseTool):
             count_field = field_map[stratify_by]
 
             # Feature-121A-003: adverse_event is optional — filter by drug alone if omitted
-            if adverse_event:
-                base_query = f'{_drug_clause(drug_name)}+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
-            else:
-                base_query = _drug_clause(drug_name)
+            base_query = _faers_search_query(drug_name, adverse_event)
 
-            url = self._with_api_key(f"{FDA_BASE_URL}?search={base_query}&count={count_field}")
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={base_query}&count={count_field}"
+            )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
@@ -289,9 +306,26 @@ class FAERSAnalyticsTool(BaseTool):
             data = response.json()
             results = data.get("results", [])
 
-            # Format stratified data
+            # Format stratified data.
+            #
+            # Fix-R33: this sum is the STRATIFIABLE SUBSET, not the total number
+            # of reports. An openFDA `count=` facet is computed only over records
+            # where the counted field is populated -- records missing
+            # patient.patientagegroup / patient.patientsex / occurcountry are
+            # silently dropped from the facet rather than bucketed as unknown.
+            # Demographic coverage in FAERS is partial (age group is recorded on
+            # well under a fifth of ondansetron reports), so emitting this sum as
+            # "total_reports" understated the drug's report count more than
+            # fivefold. The percentages below are still correct -- a share of the
+            # stratifiable subset is the right denominator for a stratification --
+            # but the true total has to be fetched separately and reported next
+            # to it so neither number can be mistaken for the other.
+            #
+            # _get_faers_count builds its URL from the same _faers_search_query,
+            # so the total is always the total for the query the facet ran on.
             stratified_data = []
             total_count = sum(r.get("count", 0) for r in results)
+            query_total = self._get_faers_count(drug_name, adverse_event)
 
             for result in results:
                 term = result.get("term", "Unknown")
@@ -319,15 +353,46 @@ class FAERSAnalyticsTool(BaseTool):
                     {"group": term, "count": count, "percentage": round(percentage, 2)}
                 )
 
+            if query_total is None:
+                coverage_note = (
+                    "The total number of reports matching this query could not be "
+                    "retrieved (the extra openFDA request failed, commonly HTTP 429 "
+                    "rate limiting on the anonymous tier), so "
+                    "total_reports_matching_query is null. "
+                    f"stratified_report_count ({total_count:,}) counts only reports "
+                    f"where {count_field} is recorded and is therefore a LOWER BOUND "
+                    "on the drug's report count -- do not read it as the total. "
+                    "Retry for the total, or set the FDA_API_KEY environment "
+                    "variable to raise the rate limit "
+                    "(https://open.fda.gov/apis/authentication/)."
+                )
+            else:
+                coverage = (total_count / query_total * 100) if query_total else 0.0
+                coverage_note = (
+                    f"total_reports_matching_query ({query_total:,}) is every report "
+                    f"matching this query; stratified_report_count ({total_count:,}, "
+                    f"{coverage:.1f}% of them) is the subset where {count_field} is "
+                    "recorded, and only that subset is stratified below. openFDA "
+                    "computes a count facet solely over records that populate the "
+                    "counted field, so reports missing this demographic are absent "
+                    "from the groups entirely rather than bucketed as unknown. Each "
+                    "percentage is a share of stratified_report_count, not of the "
+                    "full total. total_reports repeats stratified_report_count for "
+                    "backward compatibility -- it is NOT the drug's report count."
+                )
+
             return {
                 "status": "success",
                 "drug_name": drug_name,
                 "adverse_event": adverse_event,
                 "stratified_by": stratify_by,
                 "total_reports": total_count,
+                "stratified_report_count": total_count,
+                "total_reports_matching_query": query_total,
                 "stratification": sorted(
                     stratified_data, key=lambda x: x["count"], reverse=True
                 ),
+                "coverage_note": coverage_note,
             }
 
         except requests.exceptions.RequestException as e:
@@ -662,20 +727,12 @@ class FAERSAnalyticsTool(BaseTool):
         for None before doing arithmetic.
         """
         try:
-            query_parts = []
-            if drug_name:
-                query_parts.append(_drug_clause(drug_name))
-            if adverse_event:
-                query_parts.append(
-                    f'patient.reaction.reactionmeddrapt:"{adverse_event}"'
-                )
-
-            if not query_parts:
-                # Get total count
-                url = f"{FDA_BASE_URL}?limit=1"
-            else:
-                search_query = "+AND+".join(query_parts)
+            search_query = _faers_search_query(drug_name, adverse_event)
+            if search_query:
                 url = f"{FDA_BASE_URL}?search={search_query}&limit=1"
+            else:
+                # No filters: the whole-database total.
+                url = f"{FDA_BASE_URL}?limit=1"
 
             url = self._with_api_key(url)
 

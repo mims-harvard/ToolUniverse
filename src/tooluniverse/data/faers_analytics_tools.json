@@ -46,7 +46,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_stratify_by_demographics",
-    "description": "Stratify adverse event reports by demographics (sex, age group, country). Returns counts and percentages by demographic group. Example: ibuprofen + GI bleeding stratified by sex \u2192 Female: 60%, Male: 40%. Use for subpopulation risk assessment.",
+    "description": "Stratify adverse event reports by demographics (sex, age group, country). Returns counts and percentages by demographic group. Example: ibuprofen + GI bleeding stratified by sex \u2192 Female: 60%, Male: 40%. Use for subpopulation risk assessment. IMPORTANT -- the stratification covers only a SUBSET of the matching reports: FAERS records demographics inconsistently, and openFDA computes a count facet solely over records that populate the counted field, so reports missing the demographic are absent from the groups entirely rather than bucketed as unknown. The response therefore reports two figures side by side: `total_reports_matching_query` (every report matching the drug/event query, from openFDA's own meta.results.total) and `stratified_report_count` (the subset where the demographic is recorded, which the groups sum to) -- for ondansetron stratified by age these are ~136,000 and ~25,000 respectively. A `coverage_note` names both figures and the coverage fraction. Each group `percentage` is a share of `stratified_report_count`, which is the correct denominator for a stratification. The legacy `total_reports` key repeats `stratified_report_count` for backward compatibility and is NOT the drug's report count -- read `total_reports_matching_query` for that. If the extra total request fails, `total_reports_matching_query` is null and `coverage_note` says so; everything else is still returned.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -94,7 +94,58 @@
       }
     },
     "return_schema": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": "string",
+          "description": "Drug the reports were matched on."
+        },
+        "adverse_event": {
+          "type": ["string", "null"],
+          "description": "MedDRA Preferred Term the query was narrowed to, or null when the drug alone was queried."
+        },
+        "stratified_by": {
+          "type": "string",
+          "description": "Demographic dimension used: sex, age, or country."
+        },
+        "total_reports_matching_query": {
+          "type": ["integer", "null"],
+          "description": "Every report matching the drug/event query, from openFDA's meta.results.total. This is the drug's report count. Null when the extra total request failed -- coverage_note then says the total was unavailable."
+        },
+        "stratified_report_count": {
+          "type": "integer",
+          "description": "Reports where the demographic field is recorded -- the subset the groups below sum to, and the denominator of every percentage. Always <= total_reports_matching_query, often far below it."
+        },
+        "total_reports": {
+          "type": "integer",
+          "description": "Legacy alias of stratified_report_count, kept for backward compatibility. NOT the drug's report count; read total_reports_matching_query for that."
+        },
+        "stratification": {
+          "type": "array",
+          "description": "Demographic groups ranked by descending report count.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "group": {
+                "type": ["string", "integer"],
+                "description": "Demographic group label (sex and age codes are decoded; country stays an ISO code)."
+              },
+              "count": {
+                "type": "integer",
+                "description": "Reports in this group."
+              },
+              "percentage": {
+                "type": "number",
+                "description": "Share of stratified_report_count, not of total_reports_matching_query."
+              }
+            }
+          }
+        },
+        "coverage_note": {
+          "type": "string",
+          "description": "Explains that the stratification covers only reports where the demographic is recorded, naming stratified_report_count, total_reports_matching_query and the coverage fraction."
+        }
+      }
     },
     "test_examples": [
       {
