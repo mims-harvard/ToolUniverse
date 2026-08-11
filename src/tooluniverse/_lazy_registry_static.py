@@ -526,6 +526,7 @@ STATIC_LAZY_REGISTRY = {
     "OpenAlexGuidelinesTool": "unified_guideline_tools",
     "OpenAlexRESTTool": "openalex_tool",
     "OpenAlexTool": "openalex_tool",
+    "OpenNIHTool": "opennih_tool",
     "OpenCRAVATTool": "opencravat_tool",
     "OpenFDAApprovalTool": "openfda_approval_tool",
     "OpenFDADrugEventsTool": "openfda_tool",

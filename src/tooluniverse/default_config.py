@@ -40,6 +40,7 @@ default_tool_files = {
     "enrichr_ext": os.path.join(current_dir, "data", "enrichr_ext_tools.json"),
     "HumanBase": os.path.join(current_dir, "data", "humanbase_tools.json"),
     "OpenAlex": os.path.join(current_dir, "data", "openalex_tools.json"),
+    "opennih": os.path.join(current_dir, "data", "opennih_tools.json"),
     # BGPT - structured full-text study evidence (methods, sample size,
     # limitations, conflicts, how_to_falsify). Free for 50 results, then
     # BGPT_API_KEY. Requested in issue #204.
