@@ -317,8 +317,6 @@ class BaseTool:
                 k: v for k, v in arguments.items() if k not in internal_params
             }
 
-            jsonschema.validate(filtered_arguments, schema)
-
             # Feature-26A-8: ToolUniverse fills `operation` into `arguments`
             # from the tool's own config before validation, for the tool
             # classes that read it from there. The caller never sent it, so
@@ -334,12 +332,28 @@ class BaseTool:
             # must not pad the "recognized" side for the 348 configs that do
             # declare `operation`, nor pad the "unknown" side for the 235 that
             # do not. jsonschema itself still sees the full argument set.
+            #
+            # Feature-34A-1: this must be computed *before* the
+            # `jsonschema.validate` call below, not after it. The caller-blame
+            # reporting in the `except jsonschema.ValidationError` handler
+            # needs `checked_arguments` too, and that handler runs precisely
+            # when `validate` raised -- so a binding created after the call
+            # would not exist there, and the handler fell back to the raw
+            # `filtered_arguments`, re-introducing the exact blame this drop
+            # exists to prevent: `ARCHS4_get_gene_expression
+            # {"gene_symbol": "ATM"}` was answered with "'gene' is a required
+            # property (unrecognized parameter(s): 'gene_symbol',
+            # 'operation')". Keep passing the *full* `filtered_arguments` to
+            # `jsonschema.validate` itself -- only the blame reporting uses
+            # the filtered view, so no accept/reject outcome changes.
             checked_arguments = filtered_arguments
             auto_operation = resolve_configured_operation(self.tool_config)
             if auto_operation and filtered_arguments.get("operation") == auto_operation:
                 checked_arguments = {
                     k: v for k, v in filtered_arguments.items() if k != "operation"
                 }
+
+            jsonschema.validate(filtered_arguments, schema)
 
             # Feature-14A-01 / Feature-14B-01: jsonschema only rejects an
             # unknown key when it causes a *required* property to end up
@@ -440,7 +454,7 @@ class BaseTool:
                     missing_prop = _m.group(1)
                     wrong_key = self._find_misspelled_key(
                         missing_prop,
-                        filtered_arguments,
+                        checked_arguments,
                         properties=schema.get("properties", {}),
                     )
                     if wrong_key is not None:
@@ -450,7 +464,7 @@ class BaseTool:
                         )
                     else:
                         unknown = self._unknown_keys(
-                            filtered_arguments, schema.get("properties", {})
+                            checked_arguments, schema.get("properties", {})
                         )
                         if unknown:
                             error_msg += (
@@ -482,7 +496,7 @@ class BaseTool:
                         continue
                     wrong_key = self._find_misspelled_key(
                         alt_prop,
-                        filtered_arguments,
+                        checked_arguments,
                         properties=schema.get("properties", {}),
                     )
                     if wrong_key is not None:
@@ -492,7 +506,7 @@ class BaseTool:
                         break
                 else:
                     unknown = self._unknown_keys(
-                        filtered_arguments, schema.get("properties", {})
+                        checked_arguments, schema.get("properties", {})
                     )
                     if unknown:
                         error_msg += (
