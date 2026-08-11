@@ -1505,19 +1505,36 @@
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "Total number of studies registered on ClinicalTrials.gov (upstream 'totalStudies')"
             },
             "average_byte_size": {
               "type": [
                 "number",
                 "null"
-              ]
+              ],
+              "description": "Mean size in bytes of a study record (upstream 'averageSizeBytes')"
+            },
+            "byte_size_percentiles": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Study record size in bytes at each percentile, keyed '5%' through '99%'"
+            },
+            "size_ranges": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Histogram of study record sizes as {sizeRange, studiesCount} buckets"
             },
             "largest_studies": {
               "type": [
                 "array",
                 "null"
-              ]
+              ],
+              "description": "Largest study records as {id, sizeBytes}"
             }
           },
           "required": [

@@ -500,11 +500,30 @@ class ClinicalTrialsTool(RESTfulTool):
         resp.raise_for_status()
         data = resp.json()
 
+        # Fix-R19-2: this read `totalStudiesCount` and `averageByteSize`, neither
+        # of which ClinicalTrials.gov has ever returned. The real keys on
+        # /api/v2/stats/size are `totalStudies` and `averageSizeBytes` (confirmed
+        # live: keys are totalStudies, averageSizeBytes, percentiles, ranges,
+        # largestStudies). Both fields therefore came back null on every call
+        # while `largest_studies` populated from the correctly-named
+        # `largestStudies`, so the tool looked healthy and served nulls as data.
+        # The legacy names are kept only as fallbacks; they are never expected
+        # to hit. `percentiles`/`ranges` were parsed and discarded even though
+        # the tool advertises "size distribution" -- surface them too.
+        total_studies = data.get("totalStudies")
+        if total_studies is None:
+            total_studies = data.get("totalStudiesCount") or data.get("studiesCount")
+        average_byte_size = data.get("averageSizeBytes")
+        if average_byte_size is None:
+            average_byte_size = data.get("averageByteSize")
+
         return {
             "status": "success",
             "data": {
-                "total_studies": data.get("totalStudiesCount"),
-                "average_byte_size": data.get("averageByteSize"),
+                "total_studies": total_studies,
+                "average_byte_size": average_byte_size,
+                "byte_size_percentiles": data.get("percentiles", {}),
+                "size_ranges": data.get("ranges", []),
                 "largest_studies": data.get("largestStudies"),
             },
             "metadata": {
