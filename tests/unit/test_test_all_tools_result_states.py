@@ -2,6 +2,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+import textwrap
 from pathlib import Path
 from unittest.mock import patch
 
@@ -150,12 +151,8 @@ def test_sweep_fingerprint_changes_with_relevant_inputs(tmp_path):
     (tmp_path / "scripts").mkdir()
     (tmp_path / "src" / "tooluniverse" / "data").mkdir(parents=True)
     (tmp_path / "pyproject.toml").write_text("[project]\n", encoding="utf-8")
-    (tmp_path / "scripts" / "test_all_tools.py").write_text(
-        "runner", encoding="utf-8"
-    )
-    (tmp_path / "scripts" / "test_new_tools.py").write_text(
-        "harness", encoding="utf-8"
-    )
+    (tmp_path / "scripts" / "test_all_tools.py").write_text("runner", encoding="utf-8")
+    (tmp_path / "scripts" / "test_new_tools.py").write_text("harness", encoding="utf-8")
     (tmp_path / "src" / "tooluniverse" / "base.py").write_text(
         "BASE = 1\n", encoding="utf-8"
     )
@@ -231,3 +228,59 @@ def test_markdown_report_identifies_categories_without_tests(tmp_path):
     assert "### NO_TESTS - empty" in report
     assert "Categories Without Executable Tests" in report
     assert "### PASSED - empty" not in report
+
+
+def test_weekly_workflow_consumes_the_checkpoint_contract(
+    tmp_path, monkeypatch, capsys
+):
+    workflow = (
+        Path(__file__).parents[2]
+        / ".github"
+        / "workflows"
+        / "weekly-tool-healthcheck.yml"
+    ).read_text(encoding="utf-8")
+
+    assert "--json-output TOOL_TEST_RESULTS.json" in workflow
+    assert 'pathlib.Path("TOOL_TEST_RESULTS.json")' in workflow
+    assert "json.loads" in workflow
+    assert "TOOL_TEST_RESULTS.json\n" in workflow
+    assert "✅\\s+\\d+\\s+tests passed" not in workflow
+    assert "###\\s+(❌" not in workflow
+
+    summary_script = textwrap.dedent(
+        workflow.split("          python - <<'PY' >> \"$GITHUB_STEP_SUMMARY\"\n", 1)[
+            1
+        ].split("\n          PY\n", 1)[0]
+    )
+    checkpoint = {
+        "complete": False,
+        "expected_patterns": ["passed_category", "failed_category", "unfinished"],
+        "completed_patterns": 2,
+        "status_counts": {"passed": 1, "failed": 1},
+        "results": {
+            "passed_category": {
+                "state": "passed",
+                "tests_run": 2,
+                "passed": 2,
+                "failed": 0,
+            },
+            "failed_category": {
+                "state": "failed",
+                "tests_run": 1,
+                "passed": 0,
+                "failed": 1,
+            },
+        },
+    }
+    (tmp_path / "TOOL_TEST_RESULTS.json").write_text(
+        json.dumps(checkpoint), encoding="utf-8"
+    )
+    monkeypatch.chdir(tmp_path)
+
+    exec(compile(summary_script, "weekly-tool-healthcheck.yml", "exec"), {})
+
+    output = capsys.readouterr().out
+    assert "Categories completed: **2/3**" in output
+    assert "`unfinished`" in output
+    assert "`failed_category`" in output
+    assert "All categories passed" not in output

@@ -836,7 +836,7 @@ return {
   ```python
   import sys
   sys.path.append('/path/to/tooluniverse/src')
-  from tooluniverse.your_tool import YourTool
+  from tooluniverse import YourTool
   ```
 
 ### Configuration Issues

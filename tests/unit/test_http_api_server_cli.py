@@ -77,18 +77,20 @@ def test_multiple_workers_use_import_string_and_require_remote_token(monkeypatch
     assert cli.os.environ["TOOLUNIVERSE_THREAD_POOL_SIZE"] == "8"
 
 
-def test_reload_uses_app_object_and_one_worker(monkeypatch):
-    server_module = _fake_server_module()
+def test_reload_uses_import_string_and_one_worker(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["tooluniverse-http-api", "--reload"])
 
-    with (
-        patch.dict(sys.modules, {"tooluniverse.http_api_server": server_module}),
-        patch("uvicorn.run") as run,
-    ):
+    with patch("uvicorn.run") as run:
         cli.run_http_api_server()
 
-    assert run.call_args.kwargs["reload"] is True
-    assert run.call_args.kwargs["workers"] == 1
+    run.assert_called_once_with(
+        "tooluniverse.http_api_server:app",
+        host="127.0.0.1",
+        port=8080,
+        workers=1,
+        reload=True,
+        log_level="info",
+    )
 
 
 @pytest.mark.parametrize(

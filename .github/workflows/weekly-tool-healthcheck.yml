@@ -74,70 +74,72 @@ jobs:
           if [ -n "${{ github.event.inputs.pattern }}" ]; then
             PATTERN_ARG="--pattern ${{ github.event.inputs.pattern }}"
           fi
-          # Tee stdout to a log. test_all_tools.py only writes the .md report
-          # at the very end, so if the job is killed mid-run (timeout, runner
-          # eviction) no report exists — but the live progress log still shows
-          # every category's pass/fail and is used as a fallback below.
+          # Keep the human-readable log and report, plus an atomic JSON
+          # checkpoint that is updated after every completed category.
           set -o pipefail
           python scripts/test_all_tools.py \
             --skip-remote --skip-mcp --parallel \
+            --json-output TOOL_TEST_RESULTS.json \
             --output TOOL_TEST_REPORT.md $PATTERN_ARG 2>&1 | tee sweep_output.log
 
       - name: Build job summary
         if: always()
         run: |
           python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
-          import re, pathlib
+          import json
+          import pathlib
 
-          report = pathlib.Path("TOOL_TEST_REPORT.md")
-          log = pathlib.Path("sweep_output.log")
+          checkpoint = pathlib.Path("TOOL_TEST_RESULTS.json")
           print("# Weekly Tool Health Check\n")
 
-          if not report.exists():
-              # The sweep did not finish (no .md report). Fall back to the live
-              # progress log so the run still reports something useful.
-              print(
-                  "Sweep did not complete — no final report (likely hit the job "
-                  "time limit or the runner was evicted). Falling back to the "
-                  "progress log.\n"
-              )
-              if not log.exists():
-                  print("No progress log either; check the run logs.")
-                  raise SystemExit(0)
-              logtext = log.read_text(errors="replace")
-              done = len(re.findall(r"\]\s+Testing\b", logtext))
-              ok = len(re.findall(r"✅\s+\d+\s+tests passed", logtext))
-              bad = sorted(set(re.findall(r"Testing (\S+)\.\.\..*?(?:❌|🔥)", logtext)))
-              print(f"- Categories started: **{done}**")
-              print(f"- Categories fully passed: **{ok}**")
-              if bad:
-                  print(f"\n## Categories with failures so far ({len(bad)})\n")
-                  print(", ".join(f"`{c}`" for c in bad))
+          if not checkpoint.exists():
+              print("No JSON checkpoint was produced; inspect `sweep_output.log`.")
               raise SystemExit(0)
 
-          text = report.read_text(errors="replace")
+          try:
+              payload = json.loads(checkpoint.read_text(encoding="utf-8"))
+          except (OSError, json.JSONDecodeError) as exc:
+              print(f"Could not read the JSON checkpoint: {exc}")
+              raise SystemExit(0)
 
-          # Headline numbers. Total is an executive-summary bullet; Passed/Failed
-          # are emoji-prefixed rows in the Overall Statistics table (the first
-          # such row is the overall one, before the per-category tables).
-          def grab_bullet(label):
-              m = re.search(rf"\*\*{re.escape(label)}\*\*:\s*([\d,]+)", text)
-              return m.group(1).replace(",", "") if m else "?"
-
-          def grab_table(label):
-              m = re.search(rf"\|[^|\n]*{re.escape(label)}[^|\n]*\|\s*([\d,]+)", text)
-              return m.group(1).replace(",", "") if m else "?"
-
-          total = grab_bullet("Total Test Examples")
-          passed = grab_table("Passed")
-          failed = grab_table("Failed")
+          results = payload.get("results", {})
+          expected = payload.get("expected_patterns", [])
+          completed = payload.get("completed_patterns", len(results))
+          complete = payload.get("complete", False)
+          counts = payload.get("status_counts", {})
+          total = sum(result.get("tests_run", 0) for result in results.values())
+          passed = sum(result.get("passed", 0) for result in results.values())
+          failed = sum(result.get("failed", 0) for result in results.values())
+          print(f"- Sweep complete: **{'yes' if complete else 'no'}**")
+          print(f"- Categories completed: **{completed}/{len(expected)}**")
           print(f"- Total tests: **{total}**")
           print(f"- Passed: **{passed}**")
-          print(f"- Failed: **{failed}**\n")
+          print(f"- Failed: **{failed}**")
+          print(
+              "- Category states: "
+              + ", ".join(f"**{state}**={count}" for state, count in counts.items())
+              + "\n"
+          )
 
-          # List failing categories (### ❌ / 🔥 <name>, single trailing token).
-          fail_re = re.compile(r"^###\s+(❌|\U0001f525)\s+(\S+)\s*$", re.MULTILINE)
-          cats = sorted({m.group(2) for m in fail_re.finditer(text)})
+          failure_states = {"failed", "schema_error", "timeout", "error"}
+          cats = sorted(
+              name
+              for name, result in results.items()
+              if result.get("state") in failure_states
+          )
+          no_tests = sorted(
+              name for name, result in results.items()
+              if result.get("state") == "no_tests"
+          )
+          missing = sorted(set(expected) - set(results))
+
+          if missing:
+              print(f"## Incomplete categories ({len(missing)})\n")
+              print(", ".join(f"`{name}`" for name in missing))
+
+          if no_tests:
+              print(f"\n## Categories without executable tests ({len(no_tests)})\n")
+              print(", ".join(f"`{name}`" for name in no_tests))
 
           # Diff against the known-failing baseline so the report highlights the
           # one thing worth acting on: a category that failed but is NOT already
@@ -165,7 +167,7 @@ jobs:
           if cats:
               print(f"\n<details><summary>All failing categories ({len(cats)})</summary>\n")
               print(", ".join(f"`{c}`" for c in cats))
-              recovered = sorted(baseline - set(cats))
+              recovered = sorted(baseline - set(cats)) if complete else []
               if recovered:
                   print(
                       f"\nBaseline entries that PASSED this week ({len(recovered)}, "
@@ -173,8 +175,10 @@ jobs:
                       + ", ".join(f"`{c}`" for c in recovered)
                   )
               print("\n</details>")
-          else:
+          elif complete and not no_tests:
               print("All categories passed. ✅")
+          elif not cats:
+              print("No failures were recorded in the completed categories.")
           PY
 
       - name: Upload report and log
@@ -184,6 +188,7 @@ jobs:
           name: tool-test-report
           path: |
             TOOL_TEST_REPORT.md
+            TOOL_TEST_RESULTS.json
             sweep_output.log
           if-no-files-found: warn
           retention-days: 90

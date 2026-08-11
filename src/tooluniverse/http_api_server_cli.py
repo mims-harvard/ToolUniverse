@@ -170,8 +170,17 @@ Note:
     try:
         import uvicorn
 
-        # Use import string when workers > 1 (required by uvicorn)
-        if args.workers > 1 and not args.reload:
+        # Uvicorn requires an import string for reload and multiple workers.
+        if args.reload:
+            uvicorn.run(
+                "tooluniverse.http_api_server:app",
+                host=args.host,
+                port=args.port,
+                workers=1,
+                reload=True,
+                log_level=args.log_level,
+            )
+        elif args.workers > 1:
             app_import = "tooluniverse.http_api_server:app"
             uvicorn.run(
                 app_import,
@@ -181,15 +190,15 @@ Note:
                 log_level=args.log_level,
             )
         else:
-            # Single worker or reload mode: import app directly
+            # A direct app object is supported for an ordinary single process.
             from .http_api_server import app
 
             uvicorn.run(
                 app,
                 host=args.host,
                 port=args.port,
-                workers=1,  # reload requires workers=1
-                reload=args.reload,
+                workers=1,
+                reload=False,
                 log_level=args.log_level,
             )
 

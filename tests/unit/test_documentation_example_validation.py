@@ -148,3 +148,15 @@ def test_json_output_is_machine_readable(tmp_path, capsys):
         "issues": [],
         "valid": True,
     }
+
+
+def test_repository_documentation_has_valid_python_examples_and_imports():
+    summary = validate_examples.validate_documentation(
+        SCRIPT.parent, check_imports=True
+    )
+
+    issues = "\n".join(
+        f"{issue.path}:{issue.line}: {issue.kind}: {issue.message}"
+        for issue in summary.issues
+    )
+    assert summary.valid, issues
