@@ -117,3 +117,75 @@ class TestMCPCompatibility:
         
         # SMCP should automatically enable name shortening
         assert server.tooluniverse.name_mapper is not None
+
+
+class TestShortenedNameResolution:
+    """Round-tripping a shortened name back to the registered tool.
+
+    MCP clients only ever see the shortened name -- it is what the server
+    advertises -- and call back with it. `ToolNameMapper.resolve()` covers
+    alias->primary and original->short but never short->original, and its
+    short->original index is only populated for names the *same process* has
+    shortened. A client talking to a separately-started server therefore sent a
+    name the mapper had never seen, and every such call failed with
+    "not found even after loading tools".
+    """
+
+    @staticmethod
+    def _universe(names):
+        """A ToolUniverse with a fake registry and no tool loading."""
+        from tooluniverse.execute_function import ToolUniverse
+
+        tu = ToolUniverse.__new__(ToolUniverse)
+        from tooluniverse.tool_name_utils import ToolNameMapper
+
+        tu.name_mapper = ToolNameMapper()
+        tu._name_mapper_primed = False
+        tu.MAX_TOOL_NAME_LENGTH = 45
+        tu.all_tool_dict = {n: {"name": n} for n in names}
+        return tu
+
+    LONG = "OpenTargets_get_diseases_phenotypes_by_target_ensembl"
+
+    def test_shortened_name_resolves_to_registered_name(self):
+        tu = self._universe([self.LONG])
+        short = shorten_tool_name(self.LONG, 45)
+        assert short != self.LONG
+        assert tu._resolve_tool_name(short) == self.LONG
+
+    def test_priming_happens_before_speculative_shortening(self):
+        """resolve() caches a short name as its own original on a miss; if that
+        runs before priming, the real original collides and is pushed to a _2
+        suffix, silently breaking exactly the names that need the round trip."""
+        tu = self._universe([self.LONG])
+        short = shorten_tool_name(self.LONG, 45)
+        tu._resolve_tool_name(short)  # first call must not poison the cache
+        assert tu._resolve_tool_name(short) == self.LONG
+
+    def test_registered_name_is_returned_unchanged(self):
+        tu = self._universe([self.LONG, "ChEMBL_search_mechanisms"])
+        assert tu._resolve_tool_name("ChEMBL_search_mechanisms") == "ChEMBL_search_mechanisms"
+        assert tu._resolve_tool_name(self.LONG) == self.LONG
+
+    def test_unknown_name_is_returned_unchanged(self):
+        tu = self._universe([self.LONG])
+        assert tu._resolve_tool_name("NoSuchToolAtAll") == "NoSuchToolAtAll"
+
+    def test_empty_name_is_returned_unchanged(self):
+        assert self._universe([self.LONG])._resolve_tool_name("") == ""
+
+    def test_priming_is_skipped_for_a_direct_hit(self):
+        """The fast path must not pay for priming."""
+        tu = self._universe(["ChEMBL_search_mechanisms"])
+        tu._resolve_tool_name("ChEMBL_search_mechanisms")
+        assert tu._name_mapper_primed is False
+
+    def test_priming_runs_once(self):
+        tu = self._universe([self.LONG])
+        tu._resolve_tool_name("miss_one")
+        assert tu._name_mapper_primed is True
+        calls = []
+        original = tu.name_mapper.get_shortened
+        tu.name_mapper.get_shortened = lambda *a, **k: (calls.append(1), original(*a, **k))[1]
+        tu._resolve_tool_name("miss_two")
+        assert len(calls) <= 1  # resolve()'s own lookup only, no re-priming

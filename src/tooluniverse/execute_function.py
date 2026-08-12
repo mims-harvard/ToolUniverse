@@ -376,6 +376,11 @@ class ToolUniverse:
 
         self.name_mapper = ToolNameMapper()
         self.enable_name_shortening = enable_name_shortening
+        # The mapper only learns short->original for names it has shortened
+        # itself. A client that received shortened names from a *different*
+        # process calls back with names this mapper has never seen, so the
+        # reverse index is primed from the registry on the first miss.
+        self._name_mapper_primed = False
 
         if enable_name_shortening:
             self.logger.debug("Name shortening enabled for MCP compatibility")
@@ -3007,6 +3012,13 @@ class ToolUniverse:
             str: Resolved tool name (primary identifier in all_tool_dict)
         """
         if function_name:
+            # Prime before resolving, not after. `resolve()` calls
+            # `get_shortened(name)` on a miss, which caches a short name as its
+            # own original; the real original then collides on priming and is
+            # pushed to a `_2` suffix, so the round trip silently breaks for
+            # exactly the names that need it.
+            if function_name not in self.all_tool_dict:
+                self._prime_name_mapper()
             # Let the mapper handle all resolution (aliases, original->short, etc.)
             resolved = self.name_mapper.resolve(
                 function_name, max_length=self.MAX_TOOL_NAME_LENGTH
@@ -3014,7 +3026,42 @@ class ToolUniverse:
             # Only return resolved name if it exists in all_tool_dict
             if resolved in self.all_tool_dict:
                 return resolved
+            # Shortened -> original. `resolve()` covers alias->primary and
+            # original->short but never the reverse, and MCP clients only ever
+            # see the shortened name, so calling back with it failed with
+            # "not found even after loading tools" -- confirmed live for
+            # OpenTargets_get_dise_phen_by_targ_ense (shortened form of
+            # OpenTargets_get_diseases_phenotypes_by_target_ensembl).
+            original = self._resolve_shortened_name(function_name)
+            if original:
+                return original
         return function_name
+
+    def _prime_name_mapper(self) -> None:
+        """Populate the mapper's short->original index from the registry.
+
+        Idempotent and cheap (pure string work, once per instance). Skipped
+        entirely until a lookup actually misses.
+        """
+        if self._name_mapper_primed:
+            return
+        for name in list(self.all_tool_dict.keys()):
+            self.name_mapper.get_shortened(name, self.MAX_TOOL_NAME_LENGTH)
+        self._name_mapper_primed = True
+
+    def _resolve_shortened_name(self, function_name: str) -> str | None:
+        """Map a shortened tool name back to the registered name, or None.
+
+        Collision suffixes (`_2`, `_3`) are assigned in registry iteration
+        order, so a colliding pair could in principle resolve to the other
+        member. Names that do not collide -- the overwhelming majority -- round
+        trip exactly, and the alternative is the current total failure.
+        """
+        self._prime_name_mapper()
+        original = self.name_mapper.get_original(function_name)
+        if original != function_name and original in self.all_tool_dict:
+            return original
+        return None
 
     def run_one_function(
         self, function_call_json, stream_callback=None, use_cache=False, validate=True
