@@ -582,3 +582,125 @@ def test_every_disclosing_description_states_the_direction():
             assert "absent rather than bucketed" in description
         else:
             assert "at most one value per report" in description, cfg["name"]
+
+
+# ---- 7. a narrowed reaction facet describes the row it kept, not the page ----
+#
+# `FAERS_count_reactions_by_drug_event` accepts `reactionmeddraverse` and
+# applies it CLIENT-SIDE: openFDA ranks every reaction term on the matching
+# reports, then the tool keeps only the row whose term equals the one asked for.
+# `stratified_report_count` was summed from the ranking page instead, BEFORE
+# that narrowing, so it described neither the row shown nor the whole facet --
+# and it moved with `limit` while `results` did not. Measured live 2026-08 on
+# the anonymous tier; all three round-42 personas hit it independently:
+#
+#   {"medicinalproduct": "PROMETHAZINE", "reactionmeddraverse": "somnolence"}
+#     results = [{"term": "SOMNOLENCE", "count": 1438}] at every limit, but
+#     stratified_report_count = 1,438 / 2,630 / 6,492 at limit 1 / 5 / 50
+#   {"medicinalproduct": "MODAFINIL", "reactionmeddraverse": "tachycardia",
+#    "limit": 20}
+#     results = [{"term": "TACHYCARDIA", "count": 200}], total = 322, yet
+#     stratified_report_count = 946 and the note read "946 -- 293.8% of it,
+#     i.e. MORE than the number of matching reports"
+#   {"medicinalproduct": "LISDEXAMFETAMINE", "patientagegroup": "Adolescent",
+#    "reactionmeddraverse": "Suicidal ideation", "limit": 10}
+#     results = [{"term": "SUICIDAL IDEATION", "count": 8}], total = 8, yet
+#     stratified_report_count = 35 and the note read "437.5% of it"
+#
+# The MODAFINIL case is the damaging one: the single row (200) is BELOW the 322
+# reports, so the response inverted the direction of its own warning and told a
+# reader to discount a near-1:1 signal as threefold double-counted. The
+# LISDEXAMFETAMINE case put a 35 next to an adolescent suicidality signal whose
+# true count is 8.
+
+REACTION_TOOL = "FAERS_count_reactions_by_drug_event"
+
+# Shaped after the live MODAFINIL + tachycardia facet: the requested term tops
+# the ranking (openFDA's search already restricted to reports carrying it) but
+# falls well short of the report total, because reports also match through the
+# MedDRA-version field and through longer preferred terms.
+NARROW_FACET = [
+    {"term": "TACHYCARDIA", "count": 200},
+    {"term": "DYSPNOEA", "count": 180},
+    {"term": "PALPITATIONS", "count": 166},
+    {"term": "HEADACHE", "count": 150},
+    {"term": "NAUSEA", "count": 130},
+    {"term": "ANXIETY", "count": 120},
+]
+NARROW_PAGE_SUM = 946  # what the pre-fix code reported
+NARROW_KEPT_ROW = 200  # what 'results' actually sums to
+NARROW_TOTAL = 322
+
+# No term here IS "arrest" -- openFDA matched it inside longer preferred terms.
+ARREST_FACET = [
+    {"term": "CARDIAC ARREST", "count": 96},
+    {"term": "RESPIRATORY ARREST", "count": 54},
+    {"term": "CARDIO-RESPIRATORY ARREST", "count": 26},
+]
+ARREST_TOTAL = 176
+
+
+def _narrowed(**arguments):
+    result, _ = _run(REACTION_TOOL, NARROW_FACET, total=NARROW_TOTAL, **arguments)
+    return result
+
+
+def test_narrowed_sum_is_the_kept_row_not_the_ranking_page():
+    result = _narrowed(reactionmeddraverse="tachycardia", limit=6)
+
+    assert result["results"] == [{"term": "TACHYCARDIA", "count": NARROW_KEPT_ROW}]
+    assert result["stratified_report_count"] == NARROW_KEPT_ROW
+    # The pre-fix value, asserted explicitly so this cannot pass by accident on
+    # a build that reinstates the ranking-page sum.
+    assert result["stratified_report_count"] != NARROW_PAGE_SUM
+
+
+def test_narrowed_sum_does_not_move_with_limit():
+    """'results' is identical at every limit, so its sum must be too."""
+    seen = {}
+    for limit in (1, 3, 6):
+        result = _narrowed(reactionmeddraverse="tachycardia", limit=limit)
+        assert result["results"] == [{"term": "TACHYCARDIA", "count": NARROW_KEPT_ROW}]
+        seen[limit] = result["stratified_report_count"]
+    assert set(seen.values()) == {NARROW_KEPT_ROW}, seen
+
+
+def test_narrowed_note_does_not_invert_the_direction():
+    note = _narrowed(reactionmeddraverse="tachycardia", limit=6)["coverage_note"]
+
+    # 200 of 322 is BELOW the report total; the old note said "MORE than".
+    assert "MORE than the number of matching reports" not in note
+    assert "the rows in 'results' sum to" not in note
+    assert "narrowed to the single reaction term" in note
+    assert f"({NARROW_KEPT_ROW:,})" in note and f"({NARROW_TOTAL:,})" in note
+
+
+def test_empty_narrowing_says_the_term_still_matched_reports():
+    """No row equals 'arrest', but 176 reports matched it -- say so."""
+    result, _ = _run(
+        REACTION_TOOL,
+        ARREST_FACET,
+        total=ARREST_TOTAL,
+        reactionmeddraverse="arrest",
+        limit=3,
+    )
+
+    assert result["results"] == []
+    assert result["stratified_report_count"] == 0
+    assert result["total_reports_matching_query"] == ARREST_TOTAL
+    note = result["coverage_note"]
+    assert "NOT evidence the term was never reported" in note
+    assert f"{ARREST_TOTAL:,} report(s) match this query" in note
+
+
+def test_the_same_facet_unnarrowed_is_untouched():
+    """The regression guard: without narrowing, neither the arithmetic nor the
+    wording of the general case may move."""
+    result = _narrowed(limit=6)
+
+    assert result["stratified_report_count"] == NARROW_PAGE_SUM
+    assert sum(r["count"] for r in result["results"]) == NARROW_PAGE_SUM
+    note = result["coverage_note"]
+    assert "the rows in 'results' sum to" in note
+    assert "MORE than the number of matching reports" in note
+    assert "narrowed to the single reaction term" not in note

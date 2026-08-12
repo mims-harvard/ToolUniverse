@@ -333,7 +333,7 @@ class FDADrugAdverseEventTool(BaseTool):
             response, limit, reaction_filter=reaction_filter
         )
         if self.disclose_denominator:
-            self._add_coverage_disclosure(envelope, arguments, response)
+            self._add_coverage_disclosure(envelope, arguments)
         return envelope
 
     # ---- count paging / truncation disclosure ----
@@ -488,7 +488,7 @@ class FDADrugAdverseEventTool(BaseTool):
         suffix = ".exact"
         return field[: -len(suffix)] if field.endswith(suffix) else field
 
-    def _coverage_note(self, subset, query_total, truncated):
+    def _coverage_note(self, subset, query_total, truncated, narrowed=False):
         """Prose stating what the facet does and does NOT sum to, and which way.
 
         The two distortions run in opposite directions (see COUNT_FIELD_UNITS),
@@ -496,9 +496,16 @@ class FDADrugAdverseEventTool(BaseTool):
         AND the measured direction -- a multi-valued field whose reports mostly
         omit it can still land below the total, and saying only "reports are
         excluded" there would hide the double-counting.
+
+        `narrowed` says a reaction-term filter cut 'results' down to the single
+        requested term after openFDA ranked the facet. The multi-row prose does
+        not apply there -- one term cannot double-count against other rows that
+        are no longer present -- so that case gets its own branch rather than
+        being described by wording written for a full ranking.
         """
         field = self._count_field_label()
         unit = COUNT_FIELD_UNITS.get(self.count_field_cardinality)
+        coverage = (subset / query_total * 100) if query_total else 0.0
         parts = []
 
         if query_total is None:
@@ -541,8 +548,42 @@ class FDADrugAdverseEventTool(BaseTool):
                 "0), so 'results' is empty and there is no facet coverage to "
                 "report."
             )
+        elif narrowed:
+            if subset == 0:
+                # openFDA matched the term, so query_total counts real reports,
+                # but the client-side narrowing keeps only rows whose term is
+                # string-equal to it and kept none. Two causes, and the response
+                # cannot tell them apart, so name both: measured for MODAFINIL +
+                # "arrest", 176 reports match while no preferred term IS
+                # "arrest" (they are CARDIAC ARREST, RESPIRATORY ARREST...).
+                # Returning the empty list unexplained reads as "never
+                # reported", which is the opposite of what the data says.
+                parts.append(
+                    f"'results' is empty, yet {query_total:,} report(s) match this "
+                    "query including the reaction term you asked for, so this is "
+                    "NOT evidence the term was never reported. 'results' keeps only "
+                    "rows whose MedDRA term is exactly the term you asked for, and "
+                    "none was: either it falls outside the top-'limit' slice of the "
+                    "ranking (raise 'limit', maximum 1,000), or openFDA matched your "
+                    "text inside longer preferred terms rather than as a term in its "
+                    "own right (e.g. 'arrest' matches CARDIAC ARREST and RESPIRATORY "
+                    "ARREST). Omit the reaction term to see which terms actually "
+                    "matched."
+                )
+            else:
+                parts.append(
+                    "'results' has been narrowed to the single reaction term you "
+                    f"requested, so stratified_report_count ({subset:,}) is that "
+                    "term's own count and total_reports_matching_query "
+                    f"({query_total:,}) is every report matching the same search "
+                    f"({coverage:.1f}%). One term cannot double-count against rows "
+                    "that are no longer present, so unlike a full ranking this "
+                    f"percentage is meaningful -- but openFDA counts recorded "
+                    f"{field} values rather than reports, so it is a close upper "
+                    "bound on the share of reports affected, not exactly that "
+                    "share."
+                )
         else:
-            coverage = (subset / query_total * 100) if query_total else 0.0
             if unit and subset > query_total:
                 # The dangerous direction: the rows sum to more reports than
                 # exist, so any rate computed off them is silently deflated.
@@ -616,7 +657,11 @@ class FDADrugAdverseEventTool(BaseTool):
                     "give a rate."
                 )
 
-        if truncated:
+        # Not when narrowed: the truncation is then of the ranking the narrowing
+        # was applied to rather than of 'results', so this sentence would be
+        # describing a sum that is no longer on screen. `truncation_note` already
+        # spells that distinction out for the narrowed case.
+        if truncated and not narrowed:
             # 'results' is the top-N of a longer ranking, so the sum describes
             # the rows shown rather than the whole facet.
             parts.append(
@@ -626,7 +671,7 @@ class FDADrugAdverseEventTool(BaseTool):
             )
         return " ".join(parts)
 
-    def _add_coverage_disclosure(self, envelope, arguments, response):
+    def _add_coverage_disclosure(self, envelope, arguments):
         """Add the true denominator next to the facet, without changing it.
 
         An openFDA `count=` facet never sums to the number of matching reports,
@@ -646,13 +691,30 @@ class FDADrugAdverseEventTool(BaseTool):
         untouched, and a failed denominator request leaves a null rather than
         turning a working call into an error.
         """
-        # Sum the RAW facet rows rather than envelope["results"]: a client-side
-        # reaction_filter subsets 'results' to one term, and the facet coverage
-        # being described here is a property of the whole facet, not of the rows
-        # that survived filtering.
+        # stratified_report_count is documented as what the counts in 'results'
+        # sum to, so sum 'results'. This previously summed the RAW facet page on
+        # the grounds that facet coverage is a property of the whole facet --
+        # but a client-side reaction filter subsets 'results' to the one
+        # requested term, and the number then described neither the rows shown
+        # nor the whole facet: it was the sum of the top-`limit` ranking page, so
+        # it moved with `limit` while 'results' did not. Measured for
+        # PROMETHAZINE + somnolence, 'results' was the single row SOMNOLENCE
+        # 1,438 at every limit while stratified_report_count read 1,438 / 2,630 /
+        # 6,492 at limit 1 / 5 / 50, and the coverage prose asserted "the rows in
+        # 'results' sum to 6,492". Worse, the comparison inverted: for MODAFINIL
+        # + tachycardia the single row is 200 against 322 matching reports --
+        # BELOW the total -- yet the note read "946 -- 293.8% of it, i.e. MORE
+        # than the number of matching reports", telling a reader to discount a
+        # near-1:1 signal as threefold double-counted.
+        #
+        # Read the narrowing off `arguments` rather than taking it as a flag:
+        # the only thing that can subset 'results' is the same key `_post_process`
+        # filters on, so deriving it here keeps the prose and the filtering from
+        # drifting apart.
+        narrowed = arguments.get("reactionmeddraverse") is not None
         subset = sum(
             row["count"]
-            for row in response[: envelope["limit"]]
+            for row in envelope["results"]
             if isinstance(row, dict) and isinstance(row.get("count"), int)
         )
         query_total = self._fetch_query_total(arguments)
@@ -661,7 +723,7 @@ class FDADrugAdverseEventTool(BaseTool):
         envelope["total_reports_matching_query"] = query_total
 
         coverage_note = self._coverage_note(
-            subset, query_total, bool(envelope.get("truncated"))
+            subset, query_total, bool(envelope.get("truncated")), narrowed=narrowed
         )
         if self.count_field_note:
             coverage_note = f"{self.count_field_note} {coverage_note}"
