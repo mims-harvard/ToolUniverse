@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tooluniverse-mcpb-native"
-version = "1.4.0"
+version = "1.4.1"
 description = "ToolUniverse MCP Server (Native MCPB bundle)"
 requires-python = ">=3.10,<3.14"
 
@@ -25,14 +25,14 @@ dependencies = [
     "openai>=1.107.0",
     "pyyaml>=6.0.0",
     "google-genai>=1.36.0",
-    "mcp[cli]>=1.9.3",
-    "fastmcp>=2.12.3,<4.0.0",
+    "mcp[cli]>=1.29.0,<2.0.0",
+    "fastmcp>=3.4.5,<4.0.0",
     "xmltodict>=1.0.0",
     "lxml>=6.0.0",
     "huggingface_hub>=0.34.0",
     "jsonpath-ng>=1.6.0",
     "rcsb-api>=1.4.0",
-    "fitz>=0.0.1.dev2",
+    "scipy>=1.7.0",
     "pandas>=2.2.3",
     "setuptools>=70.0.0",
     "pdfplumber>=0.11.0",

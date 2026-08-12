@@ -27,7 +27,7 @@ except Exception:
     MarkItDown = None
 
 try:
-    import fitz  # PyMuPDF
+    import pymupdf as fitz
 
     FITZ_AVAILABLE = True
 except Exception:
@@ -272,7 +272,11 @@ class CorePDFSnippetsTool(BaseTool):
         if extractor == "fitz" and not FITZ_AVAILABLE:
             return {
                 "status": "error",
-                "error": "PyMuPDF (fitz) not available. Install with: pip install pymupdf",
+                "error": (
+                    "PyMuPDF backend not available. Install the opt-in backend "
+                    "with: pip install 'tooluniverse[pdf]'. PyMuPDF is licensed "
+                    "under AGPL-3.0 or a commercial Artifex license."
+                ),
                 "retryable": False,
             }
         if extractor == "pypdf" and not PYPDF_AVAILABLE:

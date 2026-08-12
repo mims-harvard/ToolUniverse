@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tooluniverse"
-version = "1.4.0"
+version = "1.4.1"
 description = "A comprehensive collection of scientific tools for Agentic AI, offering integration with the ToolUniverse SDK and MCP Server to support advanced scientific workflows."
 authors = [
     { name = "Shanghua Gao", email = "shanghuagao@gmail.com" }
@@ -29,7 +29,12 @@ dependencies = [
     "huggingface_hub>=0.34.0",
     "jsonpath-ng>=1.6.0",
     "rcsb-api>=1.4.0",
-    "fitz>=0.0.1.dev2",
+    # Imported by dose_response, survival, nca, drug_synergy, metaboanalyst,
+    # timer and two remote tools. It was previously reaching installs only as a
+    # transitive of that `fitz` placeholder (which required nibabel, nipype,
+    # pyxnat, scipy and more), so removing it left these modules without their
+    # dependency. It stays listed in the graph/visualization extras as well.
+    "scipy>=1.7.0",
     "pandas>=2.2.3",
     "openpyxl>=3.1.0", # Read .xlsx bulk downloads (CellMarker, dataset tools)
     "setuptools>=70.0.0", # Fix pkg_resources deprecation warnings
@@ -57,6 +62,12 @@ requires-python = ">=3.10"
 readme = "README.md"
 
 [project.optional-dependencies]
+pdf = [
+    # PyMuPDF is AGPL-3.0 or commercially licensed. Keep it opt-in and out of
+    # the aggregate `all` extra so default Apache-2.0 installations do not pull
+    # it in implicitly.
+    "pymupdf>=1.24.3",
+]
 client = [
     "requests>=2.32.0",
     "pydantic>=2.11.0",

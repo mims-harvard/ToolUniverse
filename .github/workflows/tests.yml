@@ -70,6 +70,11 @@ jobs:
         run: |
           python -m src.tooluniverse.doctor
 
+      - name: Test opt-in PyMuPDF backend
+        run: |
+          uv pip install -e '.[pdf]' --system
+          pytest tests/integration/test_core_pdf_pymupdf_backend.py -q --no-cov
+
       - name: Run tools, examples, and api tests (optional, requires network)
         if: github.event.inputs.run_tools_tests == 'true' || github.event_name == 'workflow_dispatch'
         run: |

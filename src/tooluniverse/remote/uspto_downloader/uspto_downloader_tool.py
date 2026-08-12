@@ -1,5 +1,5 @@
 import requests
-import fitz
+import pymupdf as fitz
 import easyocr
 from io import BytesIO
 from docx import Document
