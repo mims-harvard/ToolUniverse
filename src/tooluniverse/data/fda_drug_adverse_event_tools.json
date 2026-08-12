@@ -315,6 +315,10 @@
     "count_field_cardinality": "per_drug",
     "test_examples": [
       {
+        "medicinalproduct": "INTRALIPID",
+        "limit": 5
+      },
+      {
         "patientsex": "Male",
         "patientagegroup": "Neonate",
         "occurcountry": "US",
