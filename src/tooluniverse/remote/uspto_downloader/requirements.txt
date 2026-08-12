@@ -1,0 +1,10 @@
+# Dependencies for the separately deployed USPTO downloader MCP server.
+# EasyOCR installs PyTorch, but production GPU deployments should select the
+# CUDA-compatible PyTorch build for their driver before installing this file.
+easyocr>=1.7.2,<2
+fastmcp>=3.4.5,<4
+pillow>=10
+# PyMuPDF is AGPL-3.0 or commercially licensed.
+pymupdf>=1.24.3
+python-docx>=1.2,<2
+requests>=2.32

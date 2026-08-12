@@ -324,7 +324,7 @@ Choose the method that best fits your use case:
          EXPERT_FEEDBACK_MCP_SERVER_URL=http://localhost:9877
          TXAGENT_MCP_SERVER_HOST=http://localhost:8001
          BOLTZ_MCP_SERVER_HOST=http://localhost:8002
-         USPTO_MCP_SERVER_HOST=http://localhost:8003
+         USPTO_MCP_SERVER_HOST=localhost
 
          # Data Path Configurations
          COMPASS_MODEL_PATH=/path/to/compass/models

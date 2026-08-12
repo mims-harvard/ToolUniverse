@@ -529,8 +529,8 @@
     "requirement": "required",
     "type": "endpoint",
     "domain": "Models & Infrastructure",
-    "register_url": "https://developer.uspto.gov/",
-    "purpose": "URL of a self-hosted USPTO MCP server.",
+    "register_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/uspto_downloader",
+    "purpose": "Hostname or IP address of a self-hosted USPTO MCP server, without a URL scheme or port.",
     "without": "Leave blank unless you run your own USPTO server.",
     "used_by": [
       "uspto_downloader_tools.json"
