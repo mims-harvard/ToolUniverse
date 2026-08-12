@@ -1,107 +1,31 @@
-Uspto Downloader Tools
+USPTO Downloader Tools
 ======================
 
-**Configuration File**: ``remote_tools/uspto_downloader_tools.json``
-**Tool Type**: Remote
-**Tools Count**: 3
+**Configuration File**: ``uspto_downloader_tools.json``
+**Tool Type**: MCP Auto Loader
+**Tools Count**: 1 loader
 
-This page contains all tools defined in the ``uspto_downloader_tools.json`` configuration file.
+This configuration connects ToolUniverse to the separately deployed USPTO
+downloader MCP service. The loader discovers the service's abstract, claims,
+and full-text tools at startup; it does not run the GPU OCR service locally.
 
 Available Tools
 ---------------
 
-**get_abstract_from_patent_app_number** (Type: RemoteTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**mcp_auto_loader_uspto_downloader** (Type: MCPAutoLoaderTool)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Returns the abstract (ABST) text for a given patent application number.
+Connects to ``USPTO_MCP_SERVER_HOST`` and discovers the following remote tools:
 
-.. dropdown:: get_abstract_from_patent_app_number tool specification
+* ``get_abstract_from_patent_app_number``
+* ``get_claims_from_patent_app_number``
+* ``get_full_text_from_patent_app_number``
 
-   **Tool Information:**
+Set ``USPTO_MCP_SERVER_HOST`` to the service host (for example,
+``uspto-mcp.internal``). If the service enables Bearer authentication, set
+the same ``TOOLUNIVERSE_API_TOKEN`` value in the client environment.
 
-   * **Name**: ``get_abstract_from_patent_app_number``
-   * **Type**: ``RemoteTool``
-   * **Description**: Returns the abstract (ABST) text for a given patent application number.
-
-   **Parameters:**
-
-   * ``applicationNumberText`` (string) (required)
-     The USPTO application number (e.g. "19113417").
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "get_abstract_from_patent_app_number",
-          "arguments": {
-              "applicationNumberText": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**get_claims_from_patent_app_number** (Type: RemoteTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Returns the claims (CLM) text for a given patent application number.
-
-.. dropdown:: get_claims_from_patent_app_number tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``get_claims_from_patent_app_number``
-   * **Type**: ``RemoteTool``
-   * **Description**: Returns the claims (CLM) text for a given patent application number.
-
-   **Parameters:**
-
-   * ``applicationNumberText`` (string) (required)
-     The USPTO application number (e.g. "19113417").
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "get_claims_from_patent_app_number",
-          "arguments": {
-              "applicationNumberText": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**get_full_text_from_patent_app_number** (Type: RemoteTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Returns the full application text for a given patent application number.
-
-.. dropdown:: get_full_text_from_patent_app_number tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``get_full_text_from_patent_app_number``
-   * **Type**: ``RemoteTool``
-   * **Description**: Returns the full application text for a given patent application number.
-
-   **Parameters:**
-
-   * ``applicationNumberText`` (string) (required)
-     The USPTO application number (e.g. "19113417").
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "get_full_text_from_patent_app_number",
-          "arguments": {
-              "applicationNumberText": "example_value"
-          }
-      }
-      result = tu.run(query)
-
+See :doc:`remote/uspto_downloader` for deployment and usage instructions.
 
 Navigation
 ----------

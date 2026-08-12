@@ -56,6 +56,21 @@ Set the USPTO API key on the **GPU server** before starting the MCP service:
 export USPTO_API_KEY="your-uspto-api-key"
 ```
 
+For a deployment on a trusted private network, set a shared Bearer token on
+both the server and the ToolUniverse client. The USPTO loader sends this token
+only to its configured MCP server:
+
+```bash
+export TOOLUNIVERSE_API_TOKEN="a-long-random-token"
+```
+
+When this variable is unset, the server remains unauthenticated for backward
+compatibility.
+
+The built-in loader uses plain HTTP, so do not expose port 8081 directly to the
+public internet. Use a private network or a secure tunnel that provides a local
+endpoint.
+
 Set the server hostname on the **ToolUniverse client**. Supply only a hostname or IP address; the ToolUniverse configuration adds `http://`, port `8081`, and `/mcp`:
 
 ```bash
@@ -88,4 +103,4 @@ When `USPTO_MCP_SERVER_HOST` is set, `mcp_auto_loader_uspto_downloader` discover
 python scripts/test_new_tools.py uspto_downloader -v
 ```
 
-The repository test suite covers server import, Word extraction, searchable-PDF extraction, and selection of the OCR fallback. The OCR result itself must still be validated on the target GPU deployment.
+The repository test suite covers server import, Word extraction, searchable-PDF extraction, per-page OCR fallback selection, authentication, and retrying alternative document versions. The OCR result itself must still be validated on the target GPU deployment.

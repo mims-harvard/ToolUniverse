@@ -27,7 +27,13 @@ class BaseMCPClient:
     Provides session management, request handling, and async cleanup patterns.
     """
 
-    def __init__(self, server_url: str, transport: str = "http", timeout: int = 30):
+    def __init__(
+        self,
+        server_url: str,
+        transport: str = "http",
+        timeout: int = 30,
+        bearer_token_env: Optional[str] = None,
+    ):
         self.server_url = os.path.expandvars(server_url)
         # Normalize transport for backward compatibility: treat 'stdio' as HTTP
         normalized_transport = (
@@ -38,6 +44,12 @@ class BaseMCPClient:
         self.transport = normalized_transport
         self.timeout = timeout
         self.session = None
+        self.bearer_token_env = bearer_token_env
+        self.http_headers = {}
+        if bearer_token_env:
+            bearer_token = os.getenv(bearer_token_env)
+            if bearer_token:
+                self.http_headers["Authorization"] = f"Bearer {bearer_token}"
 
         # Validate transport (accept 'stdio' via normalization above)
         supported_transports = ["http", "websocket"]
@@ -68,7 +80,11 @@ class BaseMCPClient:
         """Make an MCP JSON-RPC request"""
         if self.transport == "http":
             endpoint = self._get_mcp_endpoint("")
-            async with streamablehttp_client(endpoint, timeout=self.timeout) as (
+            async with streamablehttp_client(
+                endpoint,
+                headers=self.http_headers or None,
+                timeout=self.timeout,
+            ) as (
                 read_stream,
                 write_stream,
                 _,
@@ -157,6 +173,7 @@ class MCPClientTool(BaseTool, BaseMCPClient):
             server_url=tool_config.get("server_url", "http://localhost:8000"),
             transport=tool_config.get("transport", "http"),
             timeout=tool_config.get("timeout", 600),
+            bearer_token_env=tool_config.get("bearer_token_env"),
         )
 
         # Debug logging for transport configuration
@@ -492,6 +509,7 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             server_url=tool_config.get("server_url", "http://localhost:8000"),
             transport=tool_config.get("transport", "http"),
             timeout=tool_config.get("timeout", 5),
+            bearer_token_env=tool_config.get("bearer_token_env"),
         )
 
         self.auto_register = tool_config.get("auto_register", True)
@@ -566,6 +584,8 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                     "inputSchema", {"type": "object", "properties": {}, "required": []}
                 ),
             }
+            if self.bearer_token_env:
+                config["bearer_token_env"] = self.bearer_token_env
 
             configs.append(config)
 

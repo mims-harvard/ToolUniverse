@@ -27,6 +27,8 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
     documents for a given patent application number.
     """
 
+    MIN_PAGE_TEXT_CHARACTERS = 32
+
     def __init__(self, tool_config):
         super().__init__(tool_config=tool_config)
         self._ocr_reader = None
@@ -42,16 +44,15 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
         )
 
     @staticmethod
-    def _extract_pdf_text(pdf_bytes):
+    def _extract_pdf_pages(pdf_bytes):
         fitz = _import_server_dependency("pymupdf", "PyMuPDF")
         document = fitz.open(stream=pdf_bytes, filetype="pdf")
         try:
-            pages = [page.get_text().strip() for page in document]
-            return "\n\n".join(page for page in pages if page)
+            return [page.get_text().strip() for page in document]
         finally:
             document.close()
 
-    def _ocr_pdf_bytes(self, pdf_bytes, dpi=300):
+    def _ocr_pdf_pages(self, pdf_bytes, page_indexes=None, dpi=300):
         fitz = _import_server_dependency("pymupdf", "PyMuPDF")
         easyocr = _import_server_dependency("easyocr", "EasyOCR")
         image_module = _import_server_dependency("PIL.Image", "Pillow")
@@ -61,8 +62,13 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
 
         document = fitz.open(stream=pdf_bytes, filetype="pdf")
         try:
-            pages_text = []
-            for page in document:
+            selected_pages = (
+                set(range(len(document))) if page_indexes is None else set(page_indexes)
+            )
+            pages_text = {}
+            for page_index, page in enumerate(document):
+                if page_index not in selected_pages:
+                    continue
                 pixmap = page.get_pixmap(dpi=dpi)
                 image = image_module.frombytes(
                     "RGB", [pixmap.width, pixmap.height], pixmap.samples
@@ -70,10 +76,32 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
                 image_bytes = BytesIO()
                 image.save(image_bytes, format="PNG")
                 results = self._ocr_reader.readtext(image_bytes.getvalue(), detail=0)
-                pages_text.append("\n".join(results).strip())
-            return "\n\n".join(page for page in pages_text if page)
+                pages_text[page_index] = "\n".join(results).strip()
+            return pages_text
         finally:
             document.close()
+
+    def _ocr_pdf_bytes(self, pdf_bytes, dpi=300):
+        pages = self._ocr_pdf_pages(pdf_bytes, dpi=dpi)
+        return "\n\n".join(pages[index] for index in sorted(pages) if pages[index])
+
+    def _extract_pdf_text(self, pdf_bytes):
+        pages = self._extract_pdf_pages(pdf_bytes)
+        pages_needing_ocr = [
+            page_index
+            for page_index, page_text in enumerate(pages)
+            if len("".join(page_text.split())) < self.MIN_PAGE_TEXT_CHARACTERS
+        ]
+
+        if pages_needing_ocr:
+            ocr_pages = self._ocr_pdf_pages(pdf_bytes, pages_needing_ocr)
+            for page_index, ocr_text in ocr_pages.items():
+                if len("".join(ocr_text.split())) > len(
+                    "".join(pages[page_index].split())
+                ):
+                    pages[page_index] = ocr_text
+
+        return "\n\n".join(page for page in pages if page)
 
     @staticmethod
     def _metadata_error(response):
@@ -109,6 +137,7 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
 
         result = None
         all_doc_codes = set()
+        matching_document_errors = []
         for doc in docs:
             code = doc.get("documentCode")
             if code:
@@ -155,9 +184,6 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
                     response.raise_for_status()
                     pdf_bytes = response.content
                     plain_text = self._extract_pdf_text(pdf_bytes)
-
-                    if not plain_text:
-                        plain_text = self._ocr_pdf_bytes(pdf_bytes)
                 except (
                     requests.RequestException,
                     RuntimeError,
@@ -167,11 +193,17 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
                 ) as exc:
                     processing_errors.append(f"PDF: {exc}")
 
+            if not word_opt and not pdf_opt:
+                processing_errors.append("no supported MS_WORD or PDF download option")
+
+            if not plain_text and not processing_errors:
+                processing_errors.append("no text could be extracted")
+
             if not plain_text and processing_errors:
-                return {
-                    "error": f"Failed to download or parse USPTO document "
-                    f"{desired}: {'; '.join(processing_errors)}"
-                }
+                document_identifier = doc.get("documentIdentifier") or "unknown"
+                matching_document_errors.append(
+                    f"document {document_identifier}: {'; '.join(processing_errors)}"
+                )
 
             if plain_text:
                 # if plain text is longer than current result, it is probably a better text extraction
@@ -179,6 +211,11 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
                     result = plain_text
 
         if result is None:
+            if matching_document_errors:
+                return {
+                    "error": f"Failed to download or parse every USPTO document "
+                    f"with code {desired}: {'; '.join(matching_document_errors)}"
+                }
             available = ", ".join(sorted(all_doc_codes)) or "none"
             return {
                 "error": f"Could not parse document with code {desired}. "

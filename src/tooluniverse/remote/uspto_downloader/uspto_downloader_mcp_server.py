@@ -31,14 +31,11 @@ def _optional_token_auth():
     token = os.getenv("TOOLUNIVERSE_API_TOKEN")
     if not token:
         return None
-    try:
-        from fastmcp.server.auth import StaticTokenVerifier
+    from fastmcp.server.auth import StaticTokenVerifier
 
-        return StaticTokenVerifier(
-            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
-        )
-    except Exception:
-        return None
+    return StaticTokenVerifier(
+        tokens={token: {"client_id": "tooluniverse", "scopes": []}}
+    )
 
 
 server = FastMCP("USPTO Patent Document Downloader", auth=_optional_token_auth())

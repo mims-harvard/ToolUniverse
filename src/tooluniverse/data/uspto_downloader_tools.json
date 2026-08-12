@@ -4,6 +4,7 @@
     "description": "Download USPTO patent documents (abstract, claims, and full application text) using MCP protocol",
     "type": "MCPAutoLoaderTool",
     "server_url": "http://${USPTO_MCP_SERVER_HOST}:8081/mcp",
+    "bearer_token_env": "TOOLUNIVERSE_API_TOKEN",
     "required_api_keys": [
       "USPTO_MCP_SERVER_HOST"
     ],

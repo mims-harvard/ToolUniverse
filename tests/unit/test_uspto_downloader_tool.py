@@ -79,19 +79,51 @@ def test_extracts_searchable_pdf_text_and_closes_document(monkeypatch):
 
     fake_pdf = FakePdf(
         [
-            SimpleNamespace(get_text=Mock(return_value="Page one ")),
-            SimpleNamespace(get_text=Mock(return_value="  ")),
-            SimpleNamespace(get_text=Mock(return_value="Page three")),
+            SimpleNamespace(
+                get_text=Mock(
+                    return_value="Page one contains enough searchable patent text. "
+                )
+            ),
+            SimpleNamespace(
+                get_text=Mock(
+                    return_value="Page two also contains enough searchable patent text."
+                )
+            ),
         ]
     )
     fake_pdf.close = Mock()
     fake_fitz = SimpleNamespace(open=Mock(return_value=fake_pdf))
     monkeypatch.setattr(module, "_import_server_dependency", lambda *_: fake_fitz)
 
-    result = module.USPTOPatentDocumentDownloader._extract_pdf_text(b"pdf")
+    result = _downloader()._extract_pdf_text(b"pdf")
 
-    assert result == "Page one\n\nPage three"
+    assert result == (
+        "Page one contains enough searchable patent text.\n\n"
+        "Page two also contains enough searchable patent text."
+    )
     fake_pdf.close.assert_called_once_with()
+
+
+def test_extract_pdf_uses_ocr_only_for_pages_with_too_little_text():
+    downloader = _downloader()
+    downloader._extract_pdf_pages = Mock(
+        return_value=[
+            "This page already has enough searchable patent text to keep.",
+            "2",
+            "",
+        ]
+    )
+    downloader._ocr_pdf_pages = Mock(
+        return_value={1: "OCR text for page two", 2: "OCR text for page three"}
+    )
+
+    result = downloader._extract_pdf_text(b"pdf")
+
+    assert result == (
+        "This page already has enough searchable patent text to keep.\n\n"
+        "OCR text for page two\n\nOCR text for page three"
+    )
+    downloader._ocr_pdf_pages.assert_called_once_with(b"pdf", [1, 2])
 
 
 def test_ocr_uses_gpu_reader_once_and_closes_documents(monkeypatch):
@@ -155,12 +187,11 @@ def test_run_unwraps_metadata_and_extracts_word_document():
     )
 
 
-def test_run_uses_ocr_only_when_pdf_has_no_text():
+def test_run_uses_text_returned_by_the_pdf_extractor():
     downloader = _downloader("CLM")
     response = SimpleNamespace(content=b"pdf", raise_for_status=Mock())
     downloader.session.get.return_value = response
-    downloader._extract_pdf_text = Mock(return_value="")
-    downloader._ocr_pdf_bytes = Mock(return_value="OCR claims")
+    downloader._extract_pdf_text = Mock(return_value="OCR claims")
 
     with patch.object(
         USPTOOpenDataPortalTool,
@@ -170,7 +201,7 @@ def test_run_uses_ocr_only_when_pdf_has_no_text():
         result = downloader.run({"applicationNumberText": "19053071"})
 
     assert result == {"result": "OCR claims"}
-    downloader._ocr_pdf_bytes.assert_called_once_with(b"pdf")
+    downloader._extract_pdf_text.assert_called_once_with(b"pdf")
 
 
 def test_run_falls_back_to_pdf_when_word_processing_fails():
@@ -243,6 +274,110 @@ def test_run_returns_download_errors_instead_of_crashing():
         result = downloader.run({"applicationNumberText": "19053071"})
 
     assert "offline" in result["error"]
+
+
+def test_run_reports_an_empty_extraction_as_a_document_failure():
+    downloader = _downloader()
+    response = SimpleNamespace(content=b"pdf", raise_for_status=Mock())
+    downloader.session.get.return_value = response
+    downloader._extract_pdf_text = Mock(return_value="")
+
+    with patch.object(
+        USPTOOpenDataPortalTool,
+        "run",
+        return_value=_metadata(
+            {
+                **_document("ABST", _download_option("PDF")),
+                "documentIdentifier": "empty-document",
+            }
+        ),
+    ):
+        result = downloader.run({"applicationNumberText": "19053071"})
+
+    assert result == {
+        "error": "Failed to download or parse every USPTO document with code ABST: "
+        "document empty-document: no text could be extracted"
+    }
+
+
+def test_run_tries_later_matching_documents_after_a_download_failure():
+    downloader = _downloader()
+    good_response = SimpleNamespace(content=b"pdf", raise_for_status=Mock())
+    downloader.session.get.side_effect = [
+        requests.ConnectionError("first document unavailable"),
+        good_response,
+    ]
+    downloader._extract_pdf_text = Mock(return_value="Valid later abstract")
+
+    with patch.object(
+        USPTOOpenDataPortalTool,
+        "run",
+        return_value=_metadata(
+            {
+                **_document(
+                    "ABST",
+                    _download_option("PDF", "https://example.test/first"),
+                ),
+                "documentIdentifier": "first",
+            },
+            {
+                **_document(
+                    "ABST",
+                    _download_option("PDF", "https://example.test/second"),
+                ),
+                "documentIdentifier": "second",
+            },
+        ),
+    ):
+        result = downloader.run({"applicationNumberText": "19053071"})
+
+    assert result == {"result": "Valid later abstract"}
+    assert downloader.session.get.call_count == 2
+
+
+def test_run_reports_all_matching_document_failures():
+    downloader = _downloader()
+    downloader.session.get.side_effect = [
+        requests.ConnectionError("first unavailable"),
+        requests.ConnectionError("second unavailable"),
+    ]
+
+    with patch.object(
+        USPTOOpenDataPortalTool,
+        "run",
+        return_value=_metadata(
+            {
+                **_document(
+                    "ABST",
+                    _download_option("PDF", "https://example.test/first"),
+                ),
+                "documentIdentifier": "first",
+            },
+            {
+                **_document(
+                    "ABST",
+                    _download_option("PDF", "https://example.test/second"),
+                ),
+                "documentIdentifier": "second",
+            },
+        ),
+    ):
+        result = downloader.run({"applicationNumberText": "19053071"})
+
+    assert "document first" in result["error"]
+    assert "document second" in result["error"]
+
+
+def test_server_builds_auth_when_token_is_configured(monkeypatch):
+    import importlib
+
+    monkeypatch.setenv("TOOLUNIVERSE_API_TOKEN", "test-token")
+    with patch.object(USPTOOpenDataPortalTool, "__init__", return_value=None):
+        server_module = importlib.import_module(
+            "tooluniverse.remote.uspto_downloader.uspto_downloader_mcp_server"
+        )
+
+    assert type(server_module._optional_token_auth()).__name__ == "StaticTokenVerifier"
 
 
 def test_server_exposes_the_document_tools_with_the_public_schema():
