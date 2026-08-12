@@ -484,10 +484,15 @@ def test_boltz_api_tools_register_without_network(monkeypatch, tmp_path):
     tu = ToolUniverse()
     tu.load_tools(tool_type=["boltz_api"])
 
-    assert len(tu.all_tool_dict) == 69
-    for config in _configs():
-        assert config["name"] in tu.all_tool_dict
-        assert hasattr(tu.tools, config["name"])
+    expected_names = {config["name"] for config in _configs()}
+    registered_names = {
+        name
+        for name, config in tu.all_tool_dict.items()
+        if config.get("type") == "BoltzAPITool"
+    }
+    assert registered_names == expected_names
+    for name in expected_names:
+        assert hasattr(tu.tools, name)
 
 
 @pytest.mark.unit
