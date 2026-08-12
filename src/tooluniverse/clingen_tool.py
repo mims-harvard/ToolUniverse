@@ -379,6 +379,9 @@ class ClinGenTool(BaseTool):
                 ("Pediatric", ACTIONABILITY_PEDIATRIC_URL),
             ]
             results = {"Adult": [], "Pediatric": []}
+            # Fix-R43-1: a failed context must not read as a genuine zero, so
+            # record which ones failed rather than swallowing the exception.
+            failures: Dict[str, str] = {}
             with ThreadPoolExecutor(max_workers=len(contexts)) as executor:
                 futures = {
                     executor.submit(
@@ -390,18 +393,38 @@ class ClinGenTool(BaseTool):
                     context = futures[future]
                     try:
                         results[context] = future.result()
-                    except Exception:
-                        # Continue with other context if one fails
-                        pass
+                    except Exception as exc:
+                        failures[context] = f"{type(exc).__name__}: {exc}"
 
-            return {
-                "status": "success",
-                "data": results,
+            response: Dict[str, Any] = {
                 "gene_searched": gene,
-                "adult_count": len(results["Adult"]),
-                "pediatric_count": len(results["Pediatric"]),
                 "source": "ClinGen Clinical Actionability",
             }
+            if failures:
+                response["failed_contexts"] = failures
+            if len(failures) == len(contexts):
+                # Both counts would be a fabricated zero. proteins_api_tool
+                # likewise reports error when nothing at all was retrieved.
+                response["status"] = "error"
+                response["error"] = (
+                    f"All ClinGen actionability contexts failed to fetch for "
+                    f"{gene}; see failed_contexts. No count can be reported."
+                )
+                return response
+
+            response.update(
+                status="success",
+                data=results,
+                adult_count=len(results["Adult"]),
+                pediatric_count=len(results["Pediatric"]),
+            )
+            if failures:
+                response["note"] = (
+                    f"Partial result: {', '.join(sorted(failures))} could not be "
+                    "fetched, so its count of 0 means 'not retrieved', not "
+                    "'no curation exists'. Retry for a complete answer."
+                )
+            return response
         except Exception as e:
             return {"status": "error", "error": str(e)}
 

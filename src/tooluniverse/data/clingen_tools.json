@@ -283,6 +283,14 @@
         "gene_searched": {"type": "string"},
         "adult_count": {"type": "integer"},
         "pediatric_count": {"type": "integer"},
+        "failed_contexts": {
+          "type": "object",
+          "description": "Maps context name (Adult/Pediatric) to the fetch error. Present only on partial or total failure."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present when some but not all contexts failed: warns that the failed context's count of 0 means 'not retrieved', not 'no curation exists'."
+        },
         "source": {"type": "string"}
       }
     },
