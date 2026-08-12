@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch: {}
 
 jobs:
   test:
@@ -56,10 +57,10 @@ jobs:
       - name: Generate SDK
         run: python scripts/build_tools.py
 
-      - name: Run core tests (unit + integration)
+      - name: Run core tests (unit + integration + Boltz API)
         timeout-minutes: 15
         run: |
-          pytest tests/unit/ tests/integration/ -v \
+          pytest tests/unit/ tests/integration/ tests/tools/test_boltz_api_tool.py -v \
             --cov=tooluniverse \
             --cov-report=xml \
             --cov-report=term \
