@@ -141,6 +141,8 @@ def _minimal_arguments(config: dict) -> dict:
 def _success_payload(config: dict):
     name = config["name"]
     operation = config["fields"]["operation"]
+    if config["fields"]["resource"] == "experiments":
+        return "/tmp/boltz-experiments/tooluniverse-resumed-test"
     if operation == "estimate_cost":
         return {
             "estimated_cost_usd": "0.0250",
@@ -246,7 +248,7 @@ def test_legacy_self_hosted_boltz_tools_are_preserved():
 
 
 @pytest.mark.unit
-def test_all_69_official_sdk_operations_are_configured():
+def test_all_72_official_sdk_operations_are_configured():
     configs = _configs()
     expected = {
         (resource, operation)
@@ -258,14 +260,19 @@ def test_all_69_official_sdk_operations_are_configured():
         for config in configs
     }
 
-    assert len(configs) == 69
-    assert len(expected) == 69
+    assert len(configs) == 72
+    assert len(expected) == 72
     assert actual == expected
-    assert len({config["name"] for config in configs}) == 69
+    assert len({config["name"] for config in configs}) == 72
     assert {
         "Boltz_estimate_structure_binding_cost",
         "Boltz_start_structure_binding",
         "Boltz_get_structure_binding",
+    }.issubset({config["name"] for config in configs})
+    assert {
+        "Boltz_download_experiment_results",
+        "Boltz_wait_and_download_experiment",
+        "Boltz_stop_experiment",
     }.issubset({config["name"] for config in configs})
     assert {
         "Boltz_run_structure_binding",
@@ -281,7 +288,7 @@ def test_all_69_official_sdk_operations_are_configured():
 def test_all_configs_are_valid_and_sdk_derived():
     configs = _configs()
     assert (
-        sum(config.get("mcp_schema_mode") == "passthrough" for config in configs) == 23
+        sum(config.get("mcp_schema_mode") == "passthrough" for config in configs) == 26
     )
     assert sum("api_key_info" in config for config in configs) == 1
 
@@ -292,7 +299,7 @@ def test_all_configs_are_valid_and_sdk_derived():
         assert config["required_packages"] == ["boltz_api"]
         assert config["fields"]["sdk_version"] == "0.46.0"
         assert config["parameter"].get("additionalProperties") is False
-        if "$defs" in config["parameter"]:
+        if "$defs" in config["parameter"] or config["fields"]["resource"] == "experiments":
             assert config["mcp_schema_mode"] == "passthrough"
         else:
             assert "mcp_schema_mode" not in config
@@ -317,7 +324,12 @@ def test_configs_map_to_real_official_sdk_methods():
             and name not in {"with_raw_response", "with_streaming_response"}
             and callable(getattr(resource, name))
         }
-        assert public_operations == expected_operations, resource_path
+        if resource_path == "experiments":
+            # Experiments also publishes aliases and local-only start helpers.
+            # The non-duplicative recovery lifecycle is the ToolUniverse surface.
+            assert expected_operations <= public_operations
+        else:
+            assert public_operations == expected_operations, resource_path
 
     for config in _configs():
         resource = client
@@ -379,11 +391,26 @@ def test_every_paid_start_requires_idempotency_key():
 
 
 @pytest.mark.unit
+def test_every_paid_run_requires_a_stable_experiment_name():
+    run_configs = [
+        config for config in _configs() if config["fields"]["operation"] == "run"
+    ]
+    assert len(run_configs) == 6
+
+    for config in run_configs:
+        assert "name" in config["parameter"]["required"]
+        name_schema = config["parameter"]["properties"]["name"]
+        assert name_schema["type"] == "string"
+        assert name_schema["minLength"] == 1
+        assert "duplicate paid" in config["description"]
+
+
+@pytest.mark.unit
 def test_mutating_operations_require_and_strip_confirmation():
     protected = [
         config for config in _configs() if config["fields"].get("confirmation_message")
     ]
-    assert len(protected) == 23
+    assert len(protected) == 24
 
     for config in protected:
         assert "confirm" in config["parameter"]["required"]
@@ -466,6 +493,30 @@ def test_official_schema_preserves_complex_supported_inputs():
                 "idempotency_key": "stable-invalid-redesign-test-key",
             }
         )
+
+
+@pytest.mark.unit
+def test_experiment_recovery_addressing_matches_official_sdk():
+    download = _config("Boltz_download_experiment_results")["parameter"]
+    download_validator = Draft202012Validator(download)
+    for valid in ({"id": "sab_pred_123"}, {"run_dir": "/tmp/run"}, {"name": "run"}):
+        download_validator.validate(valid)
+    for invalid in ({}, {"id": None}, {"run_dir": "/tmp/run", "name": "run"}):
+        with pytest.raises(ValidationError):
+            download_validator.validate(invalid)
+
+    wait = _config("Boltz_wait_and_download_experiment")["parameter"]
+    wait_validator = Draft202012Validator(wait)
+    wait_validator.validate({"run_dir": "/tmp/run"})
+    wait_validator.validate({"name": "run", "root_dir": "/tmp/experiments"})
+    for invalid in (
+        {},
+        {"run_dir": None},
+        {"run_dir": "/tmp/run", "name": "run"},
+        {"run_dir": "/tmp/run", "root_dir": "/tmp/experiments"},
+    ):
+        with pytest.raises(ValidationError):
+            wait_validator.validate(invalid)
 
 
 @pytest.mark.unit

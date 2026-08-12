@@ -18358,7 +18358,7 @@
       "operation": "run",
       "sdk_version": "0.46.0"
     },
-    "description": "Run an official Boltz structure-and-binding prediction end to end: submit the job, poll until completion, and persist downloaded results in a local experiment directory. Returns that directory path.",
+    "description": "Run an official Boltz structure-and-binding prediction end to end: submit the job, poll until completion, and persist downloaded results in a named local experiment directory. Reuse the required stable name when retrying to prevent duplicate paid submissions. Returns that directory path.",
     "required_api_keys": [
       "BOLTZ_API_KEY"
     ],
@@ -19307,11 +19307,9 @@
           "description": "Local directory where the official SDK creates the experiment folder and persists downloaded results."
         },
         "name": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Optional human-readable experiment directory name."
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable experiment directory name. Reuse the same name when retrying this request so the SDK reuses its persisted idempotency key instead of submitting duplicate paid work."
         },
         "quiet": {
           "type": "boolean",
@@ -19327,7 +19325,8 @@
       },
       "required": [
         "input",
-        "model"
+        "model",
+        "name"
       ],
       "type": "object",
       "additionalProperties": false
@@ -19387,7 +19386,7 @@
       "operation": "run",
       "sdk_version": "0.46.0"
     },
-    "description": "Run an official Boltz ADME prediction end to end: submit the job, poll until completion, and persist downloaded results in a local experiment directory. Returns that directory path.",
+    "description": "Run an official Boltz ADME prediction end to end: submit the job, poll until completion, and persist downloaded results in a named local experiment directory. Reuse the required stable name when retrying to prevent duplicate paid submissions. Returns that directory path.",
     "required_api_keys": [
       "BOLTZ_API_KEY"
     ],
@@ -19458,11 +19457,9 @@
           "description": "Local directory where the official SDK creates the experiment folder and persists downloaded results."
         },
         "name": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Optional human-readable experiment directory name."
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable experiment directory name. Reuse the same name when retrying this request so the SDK reuses its persisted idempotency key instead of submitting duplicate paid work."
         },
         "quiet": {
           "type": "boolean",
@@ -19478,7 +19475,8 @@
       },
       "required": [
         "input",
-        "model"
+        "model",
+        "name"
       ],
       "type": "object",
       "additionalProperties": false
@@ -19538,7 +19536,7 @@
       "operation": "run",
       "sdk_version": "0.46.0"
     },
-    "description": "Run an official Boltz protein-design pipeline end to end: submit the job, poll until completion, and persist downloaded results in a local experiment directory. Returns that directory path.",
+    "description": "Run an official Boltz protein-design pipeline end to end: submit the job, poll until completion, and persist downloaded results in a named local experiment directory. Reuse the required stable name when retrying to prevent duplicate paid submissions. Returns that directory path.",
     "required_api_keys": [
       "BOLTZ_API_KEY"
     ],
@@ -21273,11 +21271,9 @@
           "description": "Local directory where the official SDK creates the experiment folder and persists downloaded results."
         },
         "name": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Optional human-readable experiment directory name."
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable experiment directory name. Reuse the same name when retrying this request so the SDK reuses its persisted idempotency key instead of submitting duplicate paid work."
         },
         "quiet": {
           "type": "boolean",
@@ -21306,7 +21302,8 @@
       "required": [
         "binder_specification",
         "num_proteins",
-        "target"
+        "target",
+        "name"
       ],
       "type": "object",
       "additionalProperties": false
@@ -21366,7 +21363,7 @@
       "operation": "run",
       "sdk_version": "0.46.0"
     },
-    "description": "Run an official Boltz protein-library screen end to end: submit the job, poll until completion, and persist downloaded results in a local experiment directory. Returns that directory path.",
+    "description": "Run an official Boltz protein-library screen end to end: submit the job, poll until completion, and persist downloaded results in a named local experiment directory. Reuse the required stable name when retrying to prevent duplicate paid submissions. Returns that directory path.",
     "required_api_keys": [
       "BOLTZ_API_KEY"
     ],
@@ -22504,11 +22501,9 @@
           "description": "Local directory where the official SDK creates the experiment folder and persists downloaded results."
         },
         "name": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Optional human-readable experiment directory name."
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable experiment directory name. Reuse the same name when retrying this request so the SDK reuses its persisted idempotency key instead of submitting duplicate paid work."
         },
         "quiet": {
           "type": "boolean",
@@ -22536,7 +22531,8 @@
       },
       "required": [
         "proteins",
-        "target"
+        "target",
+        "name"
       ],
       "type": "object",
       "additionalProperties": false
@@ -22596,7 +22592,7 @@
       "operation": "run",
       "sdk_version": "0.46.0"
     },
-    "description": "Run an official Boltz small-molecule design pipeline end to end: submit the job, poll until completion, and persist downloaded results in a local experiment directory. Returns that directory path.",
+    "description": "Run an official Boltz small-molecule design pipeline end to end: submit the job, poll until completion, and persist downloaded results in a named local experiment directory. Reuse the required stable name when retrying to prevent duplicate paid submissions. Returns that directory path.",
     "required_api_keys": [
       "BOLTZ_API_KEY"
     ],
@@ -23452,11 +23448,9 @@
           "description": "Local directory where the official SDK creates the experiment folder and persists downloaded results."
         },
         "name": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Optional human-readable experiment directory name."
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable experiment directory name. Reuse the same name when retrying this request so the SDK reuses its persisted idempotency key instead of submitting duplicate paid work."
         },
         "quiet": {
           "type": "boolean",
@@ -23484,7 +23478,8 @@
       },
       "required": [
         "num_molecules",
-        "target"
+        "target",
+        "name"
       ],
       "type": "object",
       "additionalProperties": false
@@ -23544,7 +23539,7 @@
       "operation": "run",
       "sdk_version": "0.46.0"
     },
-    "description": "Run an official Boltz small-molecule library screen end to end: submit the job, poll until completion, and persist downloaded results in a local experiment directory. Returns that directory path.",
+    "description": "Run an official Boltz small-molecule library screen end to end: submit the job, poll until completion, and persist downloaded results in a named local experiment directory. Reuse the required stable name when retrying to prevent duplicate paid submissions. Returns that directory path.",
     "required_api_keys": [
       "BOLTZ_API_KEY"
     ],
@@ -24412,11 +24407,9 @@
           "description": "Local directory where the official SDK creates the experiment folder and persists downloaded results."
         },
         "name": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Optional human-readable experiment directory name."
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable experiment directory name. Reuse the same name when retrying this request so the SDK reuses its persisted idempotency key instead of submitting duplicate paid work."
         },
         "quiet": {
           "type": "boolean",
@@ -24444,10 +24437,425 @@
       },
       "required": [
         "molecules",
-        "target"
+        "target",
+        "name"
       ],
       "type": "object",
       "additionalProperties": false
+    },
+    "test_examples": [],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "data"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "string",
+              "description": "Local experiment directory created by the official Boltz SDK."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            },
+            "status_code": {
+              "type": "integer"
+            },
+            "code": {
+              "type": "string"
+            },
+            "details": {}
+          }
+        }
+      ]
+    },
+    "mcp_schema_mode": "passthrough"
+  },
+  {
+    "name": "Boltz_download_experiment_results",
+    "type": "BoltzAPITool",
+    "fields": {
+      "resource": "experiments",
+      "operation": "download_results",
+      "sdk_version": "0.46.0"
+    },
+    "description": "Resume polling and download results for an existing official Boltz job ID or local experiment directory. This is the recovery path after an interrupted start/run call and returns the local experiment directory.",
+    "required_api_keys": [
+      "BOLTZ_API_KEY"
+    ],
+    "required_packages": [
+      "boltz_api"
+    ],
+    "timeout": 60,
+    "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Account-scoped job or prediction ID returned by the matching start or list tool."
+        },
+        "run_dir": {
+          "type": "string",
+          "description": "Existing local experiment directory created by an official Boltz run or start helper."
+        },
+        "name": {
+          "type": "string",
+          "description": "Experiment directory name under root_dir."
+        },
+        "root_dir": {
+          "type": "string",
+          "description": "Local directory where the official SDK creates the experiment folder and persists downloaded results."
+        },
+        "quiet": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress official SDK progress output while waiting for the run to finish."
+        },
+        "download_mode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "everything",
+            "metadata_only",
+            null
+          ],
+          "description": "Result download mode for design and screening runs: everything or metadata_only."
+        },
+        "poll_interval_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 5.0,
+          "description": "Seconds between official SDK status polls while waiting for completion; must be greater than zero."
+        },
+        "workspace_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Workspace ID. Required as a path identifier for workspace operations; otherwise only needed with an admin key."
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "id"
+          ]
+        },
+        {
+          "required": [
+            "run_dir"
+          ]
+        },
+        {
+          "required": [
+            "name"
+          ]
+        }
+      ],
+      "not": {
+        "required": [
+          "run_dir",
+          "name"
+        ]
+      },
+      "additionalProperties": false
+    },
+    "test_examples": [],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "data"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "string",
+              "description": "Local experiment directory created by the official Boltz SDK."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            },
+            "status_code": {
+              "type": "integer"
+            },
+            "code": {
+              "type": "string"
+            },
+            "details": {}
+          }
+        }
+      ]
+    },
+    "mcp_schema_mode": "passthrough"
+  },
+  {
+    "name": "Boltz_wait_and_download_experiment",
+    "type": "BoltzAPITool",
+    "fields": {
+      "resource": "experiments",
+      "operation": "wait_and_download",
+      "sdk_version": "0.46.0"
+    },
+    "description": "Resume an existing local official Boltz experiment, poll its remote job to a terminal state, and download pending results. Identify the experiment with run_dir or with name plus optional root_dir.",
+    "required_api_keys": [
+      "BOLTZ_API_KEY"
+    ],
+    "required_packages": [
+      "boltz_api"
+    ],
+    "timeout": 60,
+    "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "run_dir": {
+          "type": "string",
+          "description": "Existing local experiment directory created by an official Boltz run or start helper."
+        },
+        "name": {
+          "type": "string",
+          "description": "Experiment directory name under root_dir."
+        },
+        "root_dir": {
+          "type": "string",
+          "description": "Local directory where the official SDK creates the experiment folder and persists downloaded results."
+        },
+        "quiet": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress official SDK progress output while waiting for the run to finish."
+        },
+        "download_mode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "everything",
+            "metadata_only",
+            null
+          ],
+          "description": "Result download mode for design and screening runs: everything or metadata_only."
+        },
+        "poll_interval_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 5.0,
+          "description": "Seconds between official SDK status polls while waiting for completion; must be greater than zero."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "run_dir"
+          ],
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "name"
+                ]
+              },
+              {
+                "required": [
+                  "root_dir"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "name"
+          ],
+          "not": {
+            "required": [
+              "run_dir"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "test_examples": [],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "data"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "string",
+              "description": "Local experiment directory created by the official Boltz SDK."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            },
+            "status_code": {
+              "type": "integer"
+            },
+            "code": {
+              "type": "string"
+            },
+            "details": {}
+          }
+        }
+      ]
+    },
+    "mcp_schema_mode": "passthrough"
+  },
+  {
+    "name": "Boltz_stop_experiment",
+    "type": "BoltzAPITool",
+    "fields": {
+      "resource": "experiments",
+      "operation": "stop",
+      "sdk_version": "0.46.0",
+      "confirmation_message": "confirm=true is required because stopping the local experiment changes remote compute state"
+    },
+    "description": "Stop the remote pipeline recorded in an existing local official Boltz experiment directory. This changes remote compute state and requires explicit confirmation.",
+    "required_api_keys": [
+      "BOLTZ_API_KEY"
+    ],
+    "required_packages": [
+      "boltz_api"
+    ],
+    "timeout": 60,
+    "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "run_dir": {
+          "type": "string",
+          "description": "Existing local experiment directory created by an official Boltz run or start helper."
+        },
+        "name": {
+          "type": "string",
+          "description": "Experiment directory name under root_dir."
+        },
+        "root_dir": {
+          "type": "string",
+          "description": "Local directory where the official SDK creates the experiment folder and persists downloaded results."
+        },
+        "quiet": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress official SDK progress output while waiting for the run to finish."
+        },
+        "confirm": {
+          "type": "boolean",
+          "const": true,
+          "description": "confirm=true is required because stopping the local experiment changes remote compute state"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "run_dir"
+          ],
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "name"
+                ]
+              },
+              {
+                "required": [
+                  "root_dir"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "name"
+          ],
+          "not": {
+            "required": [
+              "run_dir"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false,
+      "required": [
+        "confirm"
+      ]
     },
     "test_examples": [],
     "return_schema": {

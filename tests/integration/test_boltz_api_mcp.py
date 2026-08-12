@@ -49,7 +49,7 @@ async def test_all_boltz_tools_are_exposed_with_exact_schema(monkeypatch, tmp_pa
         boltz_tools = {
             name: tool for name, tool in tools.items() if name.startswith("Boltz_")
         }
-        assert len(boltz_tools) == 69
+        assert len(boltz_tools) == 72
 
         estimate_tool = boltz_tools["Boltz_estimate_structure_binding_cost"]
         start_tool = boltz_tools["Boltz_start_structure_binding"]
@@ -60,6 +60,13 @@ async def test_all_boltz_tools_are_exposed_with_exact_schema(monkeypatch, tmp_pa
         assert start_tool.annotations.destructiveHint is False
         assert delete_tool.annotations.readOnlyHint is False
         assert delete_tool.annotations.destructiveHint is True
+
+        download_tool = boltz_tools["Boltz_download_experiment_results"]
+        assert download_tool.parameters["anyOf"] == [
+            {"required": ["id"]},
+            {"required": ["run_dir"]},
+            {"required": ["name"]},
+        ]
 
         mcp_schema = start_tool.parameters
         Draft202012Validator.check_schema(mcp_schema)

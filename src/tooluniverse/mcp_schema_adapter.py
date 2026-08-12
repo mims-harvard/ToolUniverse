@@ -86,7 +86,9 @@ def register_schema_passthrough_tool(
     Draft202012Validator.check_schema(schema)
     _validate_local_refs(schema)
 
-    from fastmcp.tools.function_tool import FunctionTool
+    # Import from FastMCP's public tools namespace.  The concrete module path is
+    # an implementation detail and may move within the supported 3.x range.
+    from fastmcp.tools import FunctionTool
 
     async def schema_passthrough_function(**kwargs: Any) -> str:
         return await fn(**kwargs)

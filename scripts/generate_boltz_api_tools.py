@@ -174,6 +174,7 @@ PARAMETER_DESCRIPTIONS = {
     "quiet": "Suppress official SDK progress output while waiting for the run to finish.",
     "poll_interval_seconds": "Seconds between official SDK status polls while waiting for completion; must be greater than zero.",
     "download_mode": "Result download mode for design and screening runs: everything or metadata_only.",
+    "run_dir": "Existing local experiment directory created by an official Boltz run or start helper.",
 }
 
 ERROR_SCHEMA = {
@@ -244,8 +245,9 @@ def _run_params_schema(product: dict[str, Any]) -> dict[str, Any]:
                 "description": PARAMETER_DESCRIPTIONS["root_dir"],
             },
             "name": {
-                "type": ["string", "null"],
-                "description": "Optional human-readable experiment directory name.",
+                "type": "string",
+                "minLength": 1,
+                "description": "Stable experiment directory name. Reuse the same name when retrying this request so the SDK reuses its persisted idempotency key instead of submitting duplicate paid work.",
             },
             "quiet": {
                 "type": "boolean",
@@ -269,6 +271,8 @@ def _run_params_schema(product: dict[str, Any]) -> dict[str, Any]:
             "enum": ["everything", "metadata_only", None],
             "description": PARAMETER_DESCRIPTIONS["download_mode"],
         }
+    if "name" not in required:
+        required.append("name")
     if not required:
         schema.pop("required", None)
     return schema
@@ -454,7 +458,7 @@ def _description(label: str, operation: str) -> str:
         "resume": f"Resume a stopped official Boltz {label} job. This changes remote compute state and may continue billable work, so explicit confirmation is required.",
         "stop": f"Stop an active official Boltz {label} job. This changes remote compute state and requires explicit confirmation; already generated results remain queryable when supported.",
         "delete_data": f"Permanently delete retained input and output data for one official Boltz {label} job while preserving its metadata record. This is irreversible and requires explicit confirmation.",
-        "run": f"Run an official Boltz {label} end to end: submit the job, poll until completion, and persist downloaded results in a local experiment directory. Returns that directory path.",
+        "run": f"Run an official Boltz {label} end to end: submit the job, poll until completion, and persist downloaded results in a named local experiment directory. Reuse the required stable name when retrying to prevent duplicate paid submissions. Returns that directory path.",
     }
     return descriptions[operation]
 
@@ -676,6 +680,137 @@ def _admin_specs() -> list[dict[str, Any]]:
     ]
 
 
+def _experiment_specs() -> list[dict[str, Any]]:
+    """Describe the SDK's non-duplicative local experiment lifecycle helpers."""
+
+    common_properties = {
+        "run_dir": {"type": "string", "description": PARAMETER_DESCRIPTIONS["run_dir"]},
+        "name": {
+            "type": "string",
+            "description": "Experiment directory name under root_dir.",
+        },
+        "root_dir": {
+            "type": "string",
+            "description": PARAMETER_DESCRIPTIONS["root_dir"],
+        },
+        "quiet": {
+            "type": "boolean",
+            "default": False,
+            "description": PARAMETER_DESCRIPTIONS["quiet"],
+        },
+    }
+    wait_properties = {
+        **common_properties,
+        "download_mode": {
+            "type": ["string", "null"],
+            "enum": ["everything", "metadata_only", None],
+            "description": PARAMETER_DESCRIPTIONS["download_mode"],
+        },
+        "poll_interval_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 5.0,
+            "description": PARAMETER_DESCRIPTIONS["poll_interval_seconds"],
+        },
+    }
+    existing_directory_requirement = {
+        "oneOf": [
+            {
+                "required": ["run_dir"],
+                "not": {
+                    "anyOf": [
+                        {"required": ["name"]},
+                        {"required": ["root_dir"]},
+                    ]
+                },
+            },
+            {"required": ["name"], "not": {"required": ["run_dir"]}},
+        ]
+    }
+    return [
+        {
+            "name": "Boltz_download_experiment_results",
+            "operation": "download_results",
+            "parameter": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": PARAMETER_DESCRIPTIONS["id"],
+                    },
+                    **wait_properties,
+                    "workspace_id": {
+                        "type": ["string", "null"],
+                        "description": PARAMETER_DESCRIPTIONS["workspace_id"],
+                    },
+                },
+                "anyOf": [
+                    {"required": ["id"]},
+                    {"required": ["run_dir"]},
+                    {"required": ["name"]},
+                ],
+                "not": {"required": ["run_dir", "name"]},
+                "additionalProperties": False,
+            },
+            "description": "Resume polling and download results for an existing official Boltz job ID or local experiment directory. This is the recovery path after an interrupted start/run call and returns the local experiment directory.",
+        },
+        {
+            "name": "Boltz_wait_and_download_experiment",
+            "operation": "wait_and_download",
+            "parameter": {
+                "type": "object",
+                "properties": wait_properties,
+                **existing_directory_requirement,
+                "additionalProperties": False,
+            },
+            "description": "Resume an existing local official Boltz experiment, poll its remote job to a terminal state, and download pending results. Identify the experiment with run_dir or with name plus optional root_dir.",
+        },
+        {
+            "name": "Boltz_stop_experiment",
+            "operation": "stop",
+            "parameter": {
+                "type": "object",
+                "properties": common_properties,
+                **existing_directory_requirement,
+                "additionalProperties": False,
+            },
+            "confirm": "confirm=true is required because stopping the local experiment changes remote compute state",
+            "description": "Stop the remote pipeline recorded in an existing local official Boltz experiment directory. This changes remote compute state and requires explicit confirmation.",
+        },
+    ]
+
+
+def _experiment_tool(spec: dict[str, Any]) -> dict[str, Any]:
+    parameter = spec["parameter"]
+    fields: dict[str, Any] = {
+        "resource": "experiments",
+        "operation": spec["operation"],
+        "sdk_version": "0.46.0",
+    }
+    if spec.get("confirm"):
+        fields["confirmation_message"] = spec["confirm"]
+        _add_confirmation(parameter, spec["confirm"])
+    tool = {
+        "name": spec["name"],
+        "type": "BoltzAPITool",
+        "fields": fields,
+        "description": spec["description"],
+        "required_api_keys": ["BOLTZ_API_KEY"],
+        "required_packages": ["boltz_api"],
+        "timeout": 60,
+        "max_retries": 2,
+        "mcp_annotations": _mcp_annotations(spec["operation"]),
+        "parameter": parameter,
+        "test_examples": [],
+        "return_schema": _return_schema("run"),
+    }
+    # These schemas have root-level alternatives (for example, id OR
+    # run_dir OR name).  A Python **kwargs signature cannot advertise that
+    # constraint, so preserve the authoritative schema for MCP clients.
+    tool["mcp_schema_mode"] = "passthrough"
+    return tool
+
+
 def _admin_tool(spec: dict[str, Any]) -> dict[str, Any]:
     positional = spec.get("positional", [])
     parameter = _params_schema(spec.get("params"), positional)
@@ -719,6 +854,7 @@ def build_tools() -> list[dict[str, Any]]:
     tools.extend(
         _product_tool(product, "run") for product in PRODUCTS if product.get("run")
     )
+    tools.extend(_experiment_tool(spec) for spec in _experiment_specs())
     tools.extend(_admin_tool(spec) for spec in _admin_specs())
 
     api_key_info_tool = next(
@@ -729,9 +865,9 @@ def build_tools() -> list[dict[str, Any]]:
     api_key_info_tool["api_key_info"] = BOLTZ_API_KEY_INFO
 
     names = [tool["name"] for tool in tools]
-    if len(tools) != 69 or len(set(names)) != 69:
+    if len(tools) != 72 or len(set(names)) != 72:
         raise RuntimeError(
-            f"Expected 69 unique tools, found {len(tools)} / {len(set(names))}"
+            f"Expected 72 unique tools, found {len(tools)} / {len(set(names))}"
         )
     too_long = [name for name in names if len(name) > 55]
     if too_long:

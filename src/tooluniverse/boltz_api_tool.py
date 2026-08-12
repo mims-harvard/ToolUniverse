@@ -84,6 +84,7 @@ class BoltzAPITool(BaseTool):
             "stop",
             "run",
         },
+        "experiments": {"download_results", "wait_and_download", "stop"},
         "admin.workspaces": {
             "create",
             "retrieve",
