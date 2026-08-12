@@ -14,6 +14,7 @@ requires-python = ">=3.10,<3.14"
 # with the root pyproject.toml `dependencies` section.
 dependencies = [
     "requests>=2.32.0",
+    "boltz-api>=0.46.0,<0.47.0",
     "numpy>=2.2.0",
     "sympy>=1.12.0",
     "graphql-core>=3.2.0",
