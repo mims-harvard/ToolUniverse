@@ -16,6 +16,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Input": {
@@ -1079,6 +1083,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Input": {
@@ -2114,6 +2122,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "workspace_id": {
@@ -2220,6 +2232,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -2353,6 +2369,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -2448,6 +2468,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Input": {
@@ -2597,6 +2621,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Input": {
@@ -2754,6 +2782,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "workspace_id": {
@@ -2860,6 +2892,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -2993,6 +3029,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -3088,6 +3128,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "BinderSpecificationBoltzCuratedBinderSpec": {
@@ -4902,6 +4946,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "BinderSpecificationBoltzCuratedBinderSpec": {
@@ -6724,6 +6772,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "workspace_id": {
@@ -6830,6 +6882,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -6962,6 +7018,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -7104,6 +7164,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -7215,6 +7279,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -7326,6 +7394,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -7421,6 +7493,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "BinderProteinSequenceRedesignRunInput": {
@@ -8071,8 +8147,138 @@
           "$ref": "#/$defs/GenericProteinSequenceRedesignRunInput"
         }
       ],
-      "additionalProperties": false,
-      "properties": {}
+      "type": "object",
+      "properties": {
+        "entities": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputEntityBinderSequenceRedesignTargetEntity"
+                  },
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputEntityBinderSequenceRedesignBinderEntity"
+                  }
+                ]
+              },
+              "title": "Entities",
+              "type": "array"
+            },
+            {
+              "items": {
+                "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputEntity"
+              },
+              "title": "Entities",
+              "type": "array"
+            }
+          ],
+          "description": "Protein sequence-redesign entities and their designable motifs, following the selected binder or generic request type."
+        },
+        "num_proteins": {
+          "title": "Num Proteins",
+          "type": "integer",
+          "description": "Number of protein candidates to generate or price, within the endpoint's official limits."
+        },
+        "structure": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputStructureURLSource"
+                },
+                {
+                  "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputStructureCifBase64Source"
+                }
+              ],
+              "title": "Structure"
+            },
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputStructureURLSource"
+                },
+                {
+                  "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputStructureCifBase64Source"
+                }
+              ],
+              "title": "Structure"
+            }
+          ],
+          "description": "URL or base64 structure input used for protein sequence redesign."
+        },
+        "type": {
+          "anyOf": [
+            {
+              "const": "binder",
+              "title": "Type",
+              "type": "string"
+            },
+            {
+              "const": "generic",
+              "title": "Type",
+              "type": "string"
+            }
+          ],
+          "description": "Official request discriminator; its allowed literal values determine the matching nested input shape."
+        },
+        "global_design_filters": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputGlobalDesignFilterExcludedAminoAcidsDesignFilter"
+                  },
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputGlobalDesignFilterMaxHydrophobicFractionDesignFilter"
+                  },
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputGlobalDesignFilterExcludedSequenceMotifsDesignFilter"
+                  }
+                ]
+              },
+              "title": "Global Design Filters",
+              "type": "array"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputGlobalDesignFilterExcludedAminoAcidsDesignFilter"
+                  },
+                  {
+                    "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputGlobalDesignFilterMaxHydrophobicFractionDesignFilter"
+                  },
+                  {
+                    "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputGlobalDesignFilterExcludedSequenceMotifsDesignFilter"
+                  }
+                ]
+              },
+              "title": "Global Design Filters",
+              "type": "array"
+            }
+          ],
+          "description": "Optional global amino-acid, motif, or hydrophobicity filters applied to generated proteins."
+        },
+        "idempotency_key": {
+          "title": "Idempotency Key",
+          "type": "string",
+          "description": "Stable caller-generated key used to prevent duplicate submissions and duplicate billing."
+        },
+        "workspace_id": {
+          "title": "Workspace Id",
+          "type": "string",
+          "description": "Workspace ID. Required as a path identifier for workspace operations; otherwise only needed with an admin key."
+        }
+      },
+      "required": [
+        "entities",
+        "num_proteins",
+        "structure",
+        "type"
+      ],
+      "additionalProperties": false
     },
     "test_examples": [],
     "return_schema": {
@@ -8158,6 +8364,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "BinderProteinSequenceRedesignRunInput": {
@@ -8808,11 +9018,139 @@
           "$ref": "#/$defs/GenericProteinSequenceRedesignRunInput"
         }
       ],
-      "additionalProperties": false,
-      "properties": {},
+      "type": "object",
+      "properties": {
+        "entities": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputEntityBinderSequenceRedesignTargetEntity"
+                  },
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputEntityBinderSequenceRedesignBinderEntity"
+                  }
+                ]
+              },
+              "title": "Entities",
+              "type": "array"
+            },
+            {
+              "items": {
+                "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputEntity"
+              },
+              "title": "Entities",
+              "type": "array"
+            }
+          ],
+          "description": "Protein sequence-redesign entities and their designable motifs, following the selected binder or generic request type."
+        },
+        "num_proteins": {
+          "title": "Num Proteins",
+          "type": "integer",
+          "description": "Number of protein candidates to generate or price, within the endpoint's official limits."
+        },
+        "structure": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputStructureURLSource"
+                },
+                {
+                  "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputStructureCifBase64Source"
+                }
+              ],
+              "title": "Structure"
+            },
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputStructureURLSource"
+                },
+                {
+                  "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputStructureCifBase64Source"
+                }
+              ],
+              "title": "Structure"
+            }
+          ],
+          "description": "URL or base64 structure input used for protein sequence redesign."
+        },
+        "type": {
+          "anyOf": [
+            {
+              "const": "binder",
+              "title": "Type",
+              "type": "string"
+            },
+            {
+              "const": "generic",
+              "title": "Type",
+              "type": "string"
+            }
+          ],
+          "description": "Official request discriminator; its allowed literal values determine the matching nested input shape."
+        },
+        "global_design_filters": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputGlobalDesignFilterExcludedAminoAcidsDesignFilter"
+                  },
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputGlobalDesignFilterMaxHydrophobicFractionDesignFilter"
+                  },
+                  {
+                    "$ref": "#/$defs/BinderProteinSequenceRedesignRunInputGlobalDesignFilterExcludedSequenceMotifsDesignFilter"
+                  }
+                ]
+              },
+              "title": "Global Design Filters",
+              "type": "array"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputGlobalDesignFilterExcludedAminoAcidsDesignFilter"
+                  },
+                  {
+                    "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputGlobalDesignFilterMaxHydrophobicFractionDesignFilter"
+                  },
+                  {
+                    "$ref": "#/$defs/GenericProteinSequenceRedesignRunInputGlobalDesignFilterExcludedSequenceMotifsDesignFilter"
+                  }
+                ]
+              },
+              "title": "Global Design Filters",
+              "type": "array"
+            }
+          ],
+          "description": "Optional global amino-acid, motif, or hydrophobicity filters applied to generated proteins."
+        },
+        "idempotency_key": {
+          "title": "Idempotency Key",
+          "type": "string",
+          "description": "Stable caller-generated key used to prevent duplicate submissions and duplicate billing."
+        },
+        "workspace_id": {
+          "title": "Workspace Id",
+          "type": "string",
+          "description": "Workspace ID. Required as a path identifier for workspace operations; otherwise only needed with an admin key."
+        }
+      },
       "required": [
+        "entities",
+        "num_proteins",
+        "structure",
+        "type",
         "idempotency_key"
-      ]
+      ],
+      "additionalProperties": false
     },
     "test_examples": [],
     "return_schema": {
@@ -8905,6 +9243,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "workspace_id": {
@@ -9011,6 +9353,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -9143,6 +9489,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -9285,6 +9635,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -9396,6 +9750,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -9507,6 +9865,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -9602,6 +9964,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Protein": {
@@ -10818,6 +11184,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Protein": {
@@ -12042,6 +12412,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "workspace_id": {
@@ -12148,6 +12522,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -12280,6 +12658,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -12422,6 +12804,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -12533,6 +12919,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -12644,6 +13034,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -12739,6 +13133,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "MoleculeFilters": {
@@ -13673,6 +14071,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "MoleculeFilters": {
@@ -14615,6 +15017,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "workspace_id": {
@@ -14721,6 +15127,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -14853,6 +15263,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -14995,6 +15409,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -15106,6 +15524,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -15217,6 +15639,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -15312,6 +15738,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Molecule": {
@@ -16258,6 +16688,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Molecule": {
@@ -17212,6 +17646,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "workspace_id": {
@@ -17318,6 +17756,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -17450,6 +17892,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -17592,6 +18038,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -17703,6 +18153,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -17814,6 +18268,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -17909,6 +18367,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Input": {
@@ -18934,6 +19396,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Input": {
@@ -19081,6 +19547,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "BinderSpecificationBoltzCuratedBinderSpec": {
@@ -20905,6 +21375,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Protein": {
@@ -22131,6 +22605,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "MoleculeFilters": {
@@ -23075,6 +23553,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Molecule": {
@@ -24032,6 +24514,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "DataRetention": {
@@ -24202,6 +24688,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -24297,6 +24787,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "DataRetention": {
@@ -24436,6 +24930,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -24569,6 +25067,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -24669,6 +25171,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -24757,6 +25263,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "$defs": {
         "Limit": {
@@ -24882,6 +25392,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "name": {
@@ -25005,6 +25519,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "after_id": {
@@ -25138,6 +25656,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -25221,6 +25743,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "ending_at": {
@@ -25447,6 +25973,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "type": "object",
       "properties": {},
@@ -25528,6 +26058,10 @@
     ],
     "timeout": 60,
     "max_retries": 2,
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "parameter": {
       "properties": {
         "current": {

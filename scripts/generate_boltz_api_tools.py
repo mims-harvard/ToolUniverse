@@ -404,6 +404,25 @@ def _return_schema(kind: str) -> dict[str, Any]:
     }
 
 
+def _mcp_annotations(operation: str) -> dict[str, bool]:
+    """Describe remote side effects accurately to MCP clients."""
+
+    read_only = {
+        "estimate_cost",
+        "retrieve",
+        "list",
+        "list_results",
+        "retrieve_spending_limit",
+        "me",
+        "version",
+    }
+    destructive = {"delete_data", "stop", "archive", "revoke"}
+    return {
+        "readOnlyHint": operation in read_only,
+        "destructiveHint": operation in destructive,
+    }
+
+
 def _tool_name(slug: str, operation: str) -> str:
     prefixes = {
         "estimate_cost": "estimate",
@@ -527,6 +546,7 @@ def _product_tool(product: dict[str, Any], operation: str) -> dict[str, Any]:
         "required_packages": ["boltz_api"],
         "timeout": 60,
         "max_retries": 2,
+        "mcp_annotations": _mcp_annotations(operation),
         "parameter": parameter,
         "test_examples": examples,
         "return_schema": _return_schema(operation),
@@ -678,6 +698,7 @@ def _admin_tool(spec: dict[str, Any]) -> dict[str, Any]:
         "required_packages": ["boltz_api"],
         "timeout": 60,
         "max_retries": 2,
+        "mcp_annotations": _mcp_annotations(spec["operation"]),
         "parameter": parameter,
         "test_examples": spec.get("examples", []),
         "return_schema": _return_schema(spec["kind"]),

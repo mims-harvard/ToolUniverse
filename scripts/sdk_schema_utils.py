@@ -3,9 +3,75 @@
 from __future__ import annotations
 
 import importlib
+import json
+from copy import deepcopy
 from typing import Any, Mapping, Sequence
 
 from pydantic import TypeAdapter
+
+
+def _resolve_local_ref(schema: dict[str, Any], ref: str) -> Any:
+    """Resolve a local JSON Pointer emitted by Pydantic."""
+
+    if not ref.startswith("#/"):
+        raise ValueError(f"Expected a local JSON Pointer, got {ref!r}")
+    target: Any = schema
+    for raw_token in ref[2:].split("/"):
+        token = raw_token.replace("~1", "/").replace("~0", "~")
+        target = target[token]
+    return target
+
+
+def _expose_root_union_properties(schema: dict[str, Any]) -> None:
+    """Expose object fields when an SDK params alias is a root-level union.
+
+    Pydantic represents ``Union[TypedDict, TypedDict]`` as root ``anyOf`` refs.
+    ToolUniverse also needs a top-level ``properties`` map to build callable
+    signatures and discovery metadata. The original union remains authoritative
+    and the merged properties are an additional common interface constraint.
+    """
+
+    choices = schema.get("anyOf") or schema.get("oneOf")
+    if not isinstance(choices, list):
+        return
+
+    branches: list[dict[str, Any]] = []
+    for choice in choices:
+        if not isinstance(choice, dict):
+            return
+        branch = choice
+        if set(choice) == {"$ref"}:
+            branch = _resolve_local_ref(schema, choice["$ref"])
+        if not isinstance(branch, dict) or branch.get("type") != "object":
+            return
+        branches.append(branch)
+
+    candidates: dict[str, list[dict[str, Any]]] = {}
+    for branch in branches:
+        for name, property_schema in branch.get("properties", {}).items():
+            candidates.setdefault(name, []).append(property_schema)
+
+    properties: dict[str, Any] = {}
+    for name, variants in candidates.items():
+        unique: list[dict[str, Any]] = []
+        fingerprints: set[str] = set()
+        for variant in variants:
+            fingerprint = json.dumps(variant, sort_keys=True)
+            if fingerprint not in fingerprints:
+                fingerprints.add(fingerprint)
+                unique.append(deepcopy(variant))
+        properties[name] = unique[0] if len(unique) == 1 else {"anyOf": unique}
+
+    common_required = set(branches[0].get("required", []))
+    for branch in branches[1:]:
+        common_required.intersection_update(branch.get("required", []))
+
+    schema["type"] = "object"
+    schema["properties"] = properties
+    if common_required:
+        schema["required"] = [
+            name for name in branches[0].get("required", []) if name in common_required
+        ]
 
 
 def typed_dict_params_schema(
@@ -34,6 +100,7 @@ def typed_dict_params_schema(
         schema = {"type": "object", "properties": {}}
 
     schema.pop("title", None)
+    _expose_root_union_properties(schema)
     schema["additionalProperties"] = False
     properties = schema.setdefault("properties", {})
     required = schema.setdefault("required", [])

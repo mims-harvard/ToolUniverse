@@ -10,7 +10,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, ValidationError
 
 from tooluniverse import ToolUniverse
 from tooluniverse._lazy_registry_static import STATIC_LAZY_REGISTRY
@@ -306,6 +306,19 @@ def test_configs_map_to_real_official_sdk_methods():
     boltz_api = pytest.importorskip("boltz_api")
     client = boltz_api.Boltz(api_key="test-signature-inspection-only")
 
+    for resource_path, expected_operations in BoltzAPITool.SUPPORTED_RESOURCES.items():
+        resource = client
+        for component in resource_path.split("."):
+            resource = getattr(resource, component)
+        public_operations = {
+            name
+            for name in dir(resource)
+            if not name.startswith("_")
+            and name not in {"with_raw_response", "with_streaming_response"}
+            and callable(getattr(resource, name))
+        }
+        assert public_operations == expected_operations, resource_path
+
     for config in _configs():
         resource = client
         for component in config["fields"]["resource"].split("."):
@@ -313,8 +326,14 @@ def test_configs_map_to_real_official_sdk_methods():
         method = getattr(resource, config["fields"]["operation"])
         signature = inspect.signature(method)
         exposed = set(config["parameter"].get("properties", {})) - {"confirm"}
+        sdk_parameters = set(signature.parameters) - {
+            "extra_headers",
+            "extra_query",
+            "extra_body",
+            "timeout",
+        }
 
-        assert exposed <= set(signature.parameters), config["name"]
+        assert exposed == sdk_parameters, config["name"]
         for name in config["fields"].get("positional_parameters", []):
             assert signature.parameters[name].kind in {
                 inspect.Parameter.POSITIONAL_ONLY,
@@ -395,6 +414,79 @@ def test_official_schema_preserves_complex_supported_inputs():
 
     small_molecule = _config("Boltz_start_small_molecule_design")["parameter"]
     assert "MoleculeFiltersCustomFilterRdkitDescriptorFilter" in small_molecule["$defs"]
+
+    sequence_redesign = _config("Boltz_start_protein_sequence_redesign")["parameter"]
+    assert set(sequence_redesign["properties"]) == {
+        "entities",
+        "num_proteins",
+        "structure",
+        "type",
+        "global_design_filters",
+        "idempotency_key",
+        "workspace_id",
+    }
+    assert set(sequence_redesign["required"]) == {
+        "entities",
+        "num_proteins",
+        "structure",
+        "type",
+        "idempotency_key",
+    }
+    Draft202012Validator(sequence_redesign).validate(
+        {
+            "entities": [
+                {"chain_id": "A", "role": "target", "type": "from_template"},
+                {"chain_id": "B", "role": "binder", "type": "from_template"},
+            ],
+            "num_proteins": 1,
+            "structure": {"type": "url", "url": "https://example.org/input.cif"},
+            "type": "binder",
+            "idempotency_key": "stable-sequence-redesign-test-key",
+        }
+    )
+    Draft202012Validator(sequence_redesign).validate(
+        {
+            "entities": [{"chain_id": "A", "type": "from_template"}],
+            "num_proteins": 1,
+            "structure": {"type": "url", "url": "https://example.org/input.cif"},
+            "type": "generic",
+            "idempotency_key": "stable-generic-redesign-test-key",
+        }
+    )
+    with pytest.raises(ValidationError):
+        Draft202012Validator(sequence_redesign).validate(
+            {
+                "entities": [{"chain_id": "A", "type": "from_template"}],
+                "num_proteins": 1,
+                "structure": {
+                    "type": "url",
+                    "url": "https://example.org/input.cif",
+                },
+                "type": "unsupported",
+                "idempotency_key": "stable-invalid-redesign-test-key",
+            }
+        )
+
+
+@pytest.mark.unit
+def test_mcp_annotations_match_remote_side_effects():
+    read_only = {
+        "estimate_cost",
+        "retrieve",
+        "list",
+        "list_results",
+        "retrieve_spending_limit",
+        "me",
+        "version",
+    }
+    destructive = {"delete_data", "stop", "archive", "revoke"}
+
+    for config in _configs():
+        operation = config["fields"]["operation"]
+        assert config["mcp_annotations"] == {
+            "readOnlyHint": operation in read_only,
+            "destructiveHint": operation in destructive,
+        }, config["name"]
 
 
 @pytest.mark.unit
