@@ -2,7 +2,7 @@
   {
     "type": "CompoundGeneDiseaseAssociationTool",
     "name": "gather_gene_disease_associations",
-    "description": "Query multiple gene-disease databases (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar) in a single call. Returns a cross-referenced comparison table showing which sources agree on each association, with concordance scores. Use when you need to compare gene-disease evidence across databases or find associations unique to one source.",
+    "description": "Query multiple gene-disease databases (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar) in a single call. Returns a cross-referenced comparison table showing which sources agree on each association, with concordance scores. Use when you need to compare gene-disease evidence across databases or find associations unique to one source. Each association carries 'concordance' (how many sources named it) with two denominators: 'total_sources_queried' (all five, including any that failed) and 'total_sources_with_data' (those that actually contributed) -- use the latter, since a source with no API key configured otherwise looks like a source that disagreed. 'associations' is capped at 50 and 'per_source_results' at 10 rows per source; 'num_associations', 'truncated' and 'per_source_result_counts' give the untruncated figures and 'notes' names any truncation that applied.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -57,7 +57,8 @@
           }
         },
         "num_associations": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Size of the full concordance table, counted before the 50-row cap on 'associations'. Compare with the length of 'associations', or read 'truncated'."
         },
         "associations": {
           "type": "array",
@@ -77,11 +78,16 @@
                 "type": "integer"
               },
               "total_sources_queried": {
-                "type": "integer"
+                "type": "integer",
+                "description": "Every source this tool attempts, including ones that failed or returned nothing. NOT a fair denominator for 'concordance' -- use 'total_sources_with_data'."
               },
               "scores": {
                 "type": "object",
                 "description": "Association score keyed by source name; sources without a numeric score are omitted."
+              },
+              "total_sources_with_data": {
+                "type": "integer",
+                "description": "Sources that contributed at least one entity to this query, i.e. the number that could possibly have named this entity. Use as the denominator for 'concordance'."
               }
             },
             "required": [
@@ -89,13 +95,14 @@
               "sources",
               "concordance",
               "total_sources_queried",
+              "total_sources_with_data",
               "scores"
             ]
           }
         },
         "per_source_results": {
           "type": "object",
-          "description": "Up to 10 raw extracted items per source, keyed by source name (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar).",
+          "description": "Up to 10 raw extracted items per source, keyed by source name (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar). Truncated at 10 without altering 'per_source_result_counts', which gives the real count.",
           "additionalProperties": {
             "type": "array",
             "items": {
@@ -131,7 +138,15 @@
           "items": {
             "type": "string"
           },
-          "description": "Present only when a source's contribution needs explanation beyond a plain empty result (e.g. it lacks the data shape this tool extracts from, distinct from genuinely having no data for the query)."
+          "description": "Present only when the response needs explanation a reader could not derive from the numbers: a source that cannot contribute the data shape being compared, a truncation of 'associations' or 'per_source_results', or a 'total_sources_queried' denominator inflated by sources that contributed nothing."
+        },
+        "per_source_result_counts": {
+          "type": "object",
+          "description": "Untruncated number of entities each source returned, keyed by source name. 'per_source_results' shows at most 10 of them per source, so compare against this before reading a source's visible row count as how much data it has."
+        },
+        "truncated": {
+          "type": "boolean",
+          "description": "True when the concordance table was cut to 50 rows, i.e. when 'num_associations' exceeds the length of 'associations'. Follows the repo-wide truncated / truncation-disclosure convention; 'notes' carries the prose."
         }
       },
       "required": [
@@ -140,7 +155,9 @@
         "sources_failed",
         "num_associations",
         "associations",
-        "per_source_results"
+        "truncated",
+        "per_source_results",
+        "per_source_result_counts"
       ]
     },
     "test_examples": [
