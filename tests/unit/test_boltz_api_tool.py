@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import inspect
+import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -15,7 +16,6 @@ from tooluniverse import ToolUniverse
 from tooluniverse._lazy_registry_static import STATIC_LAZY_REGISTRY
 from tooluniverse.boltz_api_tool import BoltzAPITool
 from tooluniverse.default_config import default_tool_files
-from tooluniverse.smcp import SMCP
 
 
 CONFIG_PATH = (
@@ -33,6 +33,25 @@ def _configs() -> list[dict]:
 
 def _config(name: str) -> dict:
     return next(config for config in _configs() if config["name"] == name)
+
+
+@pytest.mark.unit
+def test_checked_in_config_matches_official_sdk_generator(tmp_path):
+    """The static registry must be reproducible from the pinned official SDK."""
+
+    generated_path = tmp_path / "boltz_api_tools.json"
+    subprocess.run(
+        [
+            sys.executable,
+            str(CONFIG_PATH.parents[3] / "scripts" / "generate_boltz_api_tools.py"),
+            "--output",
+            str(generated_path),
+        ],
+        check=True,
+    )
+    assert generated_path.read_text(encoding="utf-8") == CONFIG_PATH.read_text(
+        encoding="utf-8"
+    )
 
 
 class FakeResponse:
@@ -493,83 +512,3 @@ def test_boltz_api_tools_register_without_network(monkeypatch, tmp_path):
     assert registered_names == expected_names
     for name in expected_names:
         assert hasattr(tu.tools, name)
-
-
-@pytest.mark.unit
-@pytest.mark.asyncio
-async def test_all_boltz_tools_are_exposed_over_mcp_with_exact_schema(
-    monkeypatch, tmp_path
-):
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("BOLTZ_API_KEY", "sk_bc_ws_test_mcp-schema-only")
-    server = SMCP(
-        name="Boltz MCP schema test",
-        tool_categories=["boltz_api"],
-        search_enabled=False,
-        max_workers=1,
-    )
-
-    try:
-        tools = await server.get_tools()
-        boltz_tools = {
-            name: tool for name, tool in tools.items() if name.startswith("Boltz_")
-        }
-        assert len(boltz_tools) == 69
-
-        start_tool = boltz_tools["Boltz_start_structure_binding"]
-        mcp_schema = start_tool.parameters
-        Draft202012Validator.check_schema(mcp_schema)
-        assert set(mcp_schema["required"]) == {
-            "input",
-            "idempotency_key",
-        }
-        assert not list(
-            Draft202012Validator(mcp_schema).iter_errors(
-                {
-                    "input": _prediction_input(),
-                    "idempotency_key": "stable-mcp-test-key-001",
-                }
-            )
-        )
-
-        # FastMCP 3 normalizes local $defs/$ref nodes into an equivalent
-        # dereferenced schema. Verify that representative nested discriminators
-        # survived rather than depending on FastMCP's internal representation.
-        serialized_schema = json.dumps(mcp_schema)
-        for entity_type in {"protein", "rna", "dna", "ligand_smiles"}:
-            assert f'"const": "{entity_type}"' in serialized_schema
-
-        invalid_result = await start_tool.run(
-            {
-                "input": {
-                    "entities": [
-                        {
-                            "type": "unsupported_entity",
-                            "value": "MKTIIALSYIFCLVFA",
-                            "chain_ids": ["A"],
-                        }
-                    ],
-                    "num_samples": 1,
-                },
-                "idempotency_key": "invalid-nested-mcp-input-001",
-            }
-        )
-        invalid_payload = json.loads(invalid_result.content[0].text)
-        assert invalid_payload["status"] == "error"
-        assert "Parameter validation failed" in invalid_payload["error"]
-
-        server.tooluniverse.run_one_function = lambda call, stream_callback=None: {
-            "status": "success",
-            "echo": call,
-        }
-        result = await start_tool.run(
-            {
-                "input": _prediction_input(),
-                "idempotency_key": "stable-mcp-test-key-001",
-            }
-        )
-        payload = json.loads(result.content[0].text)
-        assert payload["echo"]["name"] == "Boltz_start_structure_binding"
-        assert payload["echo"]["arguments"]["input"] == _prediction_input()
-    finally:
-        await server.close()

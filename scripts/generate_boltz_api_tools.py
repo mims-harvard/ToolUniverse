@@ -3,12 +3,15 @@
 
 from __future__ import annotations
 
-import importlib
+import argparse
 import json
 from pathlib import Path
 from typing import Any
 
-from pydantic import TypeAdapter
+if __package__:
+    from .sdk_schema_utils import typed_dict_params_schema
+else:
+    from sdk_schema_utils import typed_dict_params_schema
 
 
 OUTPUT = (
@@ -202,29 +205,11 @@ def _camel(value: str) -> str:
 
 
 def _params_schema(module_name: str | None, positional: list[str]) -> dict[str, Any]:
-    if module_name:
-        module = importlib.import_module(module_name)
-        params_name = next(name for name in module.__all__ if name.endswith("Params"))
-        schema = TypeAdapter(getattr(module, params_name)).json_schema()
-    else:
-        schema = {"type": "object", "properties": {}}
-
-    schema.pop("title", None)
-    schema["additionalProperties"] = False
-    properties = schema.setdefault("properties", {})
-    required = schema.setdefault("required", [])
-    for name in reversed(positional):
-        if name not in properties:
-            properties[name] = {"type": "string", "minLength": 1}
-        if name not in required:
-            required.insert(0, name)
-
-    for name, property_schema in properties.items():
-        if name in PARAMETER_DESCRIPTIONS:
-            property_schema.setdefault("description", PARAMETER_DESCRIPTIONS[name])
-    if not required:
-        schema.pop("required", None)
-    return schema
+    return typed_dict_params_schema(
+        module_name,
+        positional=positional,
+        descriptions=PARAMETER_DESCRIPTIONS,
+    )
 
 
 def _add_confirmation(schema: dict[str, Any], message: str) -> None:
@@ -702,7 +687,9 @@ def _admin_tool(spec: dict[str, Any]) -> dict[str, Any]:
     return tool
 
 
-def main() -> None:
+def build_tools() -> list[dict[str, Any]]:
+    """Build all official Boltz configs without writing to the repository."""
+
     tools = [
         _product_tool(product, operation)
         for product in PRODUCTS
@@ -729,8 +716,28 @@ def main() -> None:
     if too_long:
         raise RuntimeError(f"Tool names exceed 55 characters: {too_long}")
 
-    OUTPUT.write_text(json.dumps(tools, indent=2) + "\n", encoding="utf-8")
-    print(f"Generated {len(tools)} Boltz API tools at {OUTPUT}")
+    return tools
+
+
+def render_tools(tools: list[dict[str, Any]] | None = None) -> str:
+    """Render deterministic JSON suitable for the checked-in config file."""
+
+    return json.dumps(tools if tools is not None else build_tools(), indent=2) + "\n"
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=OUTPUT,
+        help="Destination JSON path (defaults to the checked-in Boltz config)",
+    )
+    args = parser.parse_args(argv)
+
+    tools = build_tools()
+    args.output.write_text(render_tools(tools), encoding="utf-8")
+    print(f"Generated {len(tools)} Boltz API tools at {args.output}")
 
 
 if __name__ == "__main__":
