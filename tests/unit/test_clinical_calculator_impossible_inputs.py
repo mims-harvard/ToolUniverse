@@ -180,6 +180,33 @@ IMPOSSIBLY_LARGE = [
 ]
 
 
+def test_the_worst_real_hyponatremia_is_not_refused():
+    """The sodium floor is the one bound near the edge of real values.
+
+    Survivable hyponatremia is reported into the high 70s mmol/L, so a floor
+    of 80 -- the first value tried -- sat on top of patients who exist.
+    """
+    result = _run(
+        "ClinicalCalc_MELD_Na",
+        {"creatinine": 2.0, "bilirubin": 5.0, "inr": 2.0, "sodium": 78},
+    )
+    assert result["status"] == "success"
+    assert result["data"]["components"]["sodium_used"] == 125.0
+
+
+def test_a_refusal_never_reports_the_bound_as_the_offending_value():
+    """`%g` rounds to 6 significant digits, so it read as a contradiction.
+
+    "'sodium' must be at least 50, got 50." for a value of 49.999999999.
+    """
+    result = _run(
+        "ClinicalCalc_MELD_Na",
+        dict(VALID["ClinicalCalc_MELD_Na"], sodium=49.999999999),
+    )
+    assert result["status"] == "error"
+    assert "got 49.999999999" in result["error"], result["error"]
+
+
 @pytest.mark.parametrize("tool,param,bad", IMPOSSIBLY_LARGE)
 def test_value_outside_the_plausible_range_is_refused_and_names_it(tool, param, bad):
     result = _run(tool, dict(VALID[tool], **{param: bad}))

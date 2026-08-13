@@ -58,6 +58,15 @@ def _truthy(v: Any) -> bool:
 # is not a floor at all, and sodium 5 mmol/L was being clamped into the MELD-Na
 # formula and reported as a confident risk band.
 #
+# Its floor is the one bound not an order of magnitude clear of reality --
+# survivable hyponatremia is reported into the high 70s mmol/L, so an 80 floor
+# sat on top of real values and would have refused a patient who exists. 50 is
+# below any case report while still refusing the arithmetic nonsense this is
+# for. Sodium is also the one quantity whose clamp MELD-Na now discloses, so
+# unlike albumin it had a second line of defence; the floor is kept because
+# disclosure of a clamp is not the same as refusing an impossible input, and a
+# sodium of 5 clamped to 125 is a fabricated score either way.
+#
 # `creatinine` is deliberately absent. Refusal is the right protection only
 # where the calculator has no way to disclose, and both calculators that take
 # a creatinine already disclose an implausible one: Fix-R46 gave CKD-EPI a
@@ -73,7 +82,7 @@ _PHYSIOLOGIC_BOUNDS: Dict[str, "tuple[Optional[float], float]"] = {
     "bilirubin": (None, 1000.0),  # mg/dL
     "hdl_cholesterol": (None, 500.0),  # mg/dL
     "inr": (None, 100.0),
-    "sodium": (80.0, 250.0),  # mmol/L
+    "sodium": (50.0, 250.0),  # mmol/L
     "systolic_bp": (None, 400.0),  # mmHg
     "total_cholesterol": (None, 3000.0),  # mg/dL
 }
@@ -128,20 +137,24 @@ def _req_number(
     except (TypeError, ValueError):
         raise ValueError(f"'{key}' must be a number, got {val!r}")
 
+    # The bound is formatted with %g because it is a round number written here;
+    # the offending value is not, and %g rounds it to 6 significant digits. A
+    # sodium of 79.999999999 formatted that way produced "'sodium' must be at
+    # least 80, got 80." -- a refusal that reads as a contradiction, and the
+    # opposite of the actionable message these bounds exist to give.
     if must_exceed is not None and value <= must_exceed:
         raise ValueError(
-            f"'{key}' must be greater than {must_exceed:g}, got {value:g}. "
-            + _IMPOSSIBLE
+            f"'{key}' must be greater than {must_exceed:g}, got {value}. " + _IMPOSSIBLE
         )
 
     minimum, maximum = _PHYSIOLOGIC_BOUNDS.get(key, (None, None))
     if minimum is not None and value < minimum:
         raise ValueError(
-            f"'{key}' must be at least {minimum:g}, got {value:g}. " + _IMPOSSIBLE
+            f"'{key}' must be at least {minimum:g}, got {value}. " + _IMPOSSIBLE
         )
     if maximum is not None and value > maximum:
         raise ValueError(
-            f"'{key}' must be at most {maximum:g}, got {value:g}. " + _IMPOSSIBLE
+            f"'{key}' must be at most {maximum:g}, got {value}. " + _IMPOSSIBLE
         )
     return value
 

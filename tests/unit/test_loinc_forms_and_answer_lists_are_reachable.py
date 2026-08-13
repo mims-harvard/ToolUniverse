@@ -200,6 +200,37 @@ def test_a_code_that_publishes_no_answer_list_says_so_rather_than_implying_one()
     assert "datatype" in result["note"]
 
 
+def test_the_note_does_not_point_at_a_datatype_that_is_not_there():
+    """Upstream sometimes sends no `ef` block at all (slot 2 null).
+
+    The note then referred the caller to `datatype` for the explanation while
+    no row carried one.
+    """
+    result = _tool([1, ["11502-2"], None, [["11502-2", "Laboratory report", "", ""]]])
+    result = result._get_answer_list({"loinc_code": "11502-2"})
+    assert result["answer_lists_found"] == 0
+    assert all("datatype" not in row for row in result["results"])
+    assert "datatype" not in result["note"]
+
+
+def test_rows_beyond_a_short_extra_field_list_are_left_alone():
+    """Slot 2 lists can be shorter than slot 1; no row may borrow another's."""
+    response = [
+        2,
+        ["883-9", "11502-2"],
+        {"AnswerLists": [[{"AnswerListId": "LL2419-1", "answers": []}]]},
+        [
+            ["883-9", "ABO group [Type] in Blood", "ABO group", ""],
+            ["11502-2", "Laboratory report", "Laboratory report", ""],
+        ],
+    ]
+    result = _tool(response)._get_answer_list({"loinc_code": "ABO"})
+    by_code = {row["code"]: row for row in result["results"]}
+    assert by_code["883-9"]["AnswerLists"][0]["AnswerListId"] == "LL2419-1"
+    assert "AnswerLists" not in by_code["11502-2"]
+    assert result["answer_lists_found"] == 1
+
+
 def test_extra_fields_are_only_attached_when_the_operation_asked_for_them():
     """Control: the plain test search must not sprout `ef` keys."""
     tool = _tool(_FORMS_RESPONSE)
@@ -224,15 +255,37 @@ def test_extra_fields_are_only_attached_when_the_operation_asked_for_them():
 
 
 def test_a_populated_field_is_never_declared_unavailable():
-    """The bite: the claim is checked against the rows, not just asserted."""
-    disclosure = LOINCTool._unavailable_fields_disclosure(
-        ["LOINC_NUM", "SYSTEM", "METHOD_TYP"],
-        [{"LOINC_NUM": "62807-3", "SYSTEM": "", "METHOD_TYP": "PhenX"}],
+    """The bite: the claim is checked against the rows, not just asserted.
+
+    Probed with SYSTEM, which IS in `_FIELDS_ABSENT_FROM_V3_INDEX`, so the
+    static list alone would name it and only the row check can withhold it.
+    An earlier version of this test probed with METHOD_TYP, which the same
+    commit had just removed from that list -- so the static list excluded it
+    unaided, deleting the row check left every assertion green, and the test
+    that documented itself as proving the check did not reach it.
+    """
+    assert "SYSTEM" in LOINCTool._FIELDS_ABSENT_FROM_V3_INDEX, (
+        "this test is only meaningful for a field the static list would name"
     )
-    assert "METHOD_TYP" not in disclosure["fields_unavailable"]
-    assert "METHOD_TYP" not in disclosure["fields_unavailable_note"]
-    # SYSTEM really is empty in that row and really is absent from the index.
-    assert disclosure["fields_unavailable"] == ["SYSTEM"]
+    assert (
+        LOINCTool._unavailable_fields_disclosure(
+            ["LOINC_NUM", "SYSTEM"],
+            [{"LOINC_NUM": "2823-3", "SYSTEM": "Ser/Plas"}],
+        )
+        == {}
+    )
+
+
+def test_one_populated_row_is_enough_to_withhold_the_claim():
+    """The claim is index-wide, so a single counter-example must retract it."""
+    disclosure = LOINCTool._unavailable_fields_disclosure(
+        ["LOINC_NUM", "SYSTEM", "CLASS"],
+        [
+            {"LOINC_NUM": "1", "SYSTEM": "", "CLASS": ""},
+            {"LOINC_NUM": "2", "SYSTEM": "Ser/Plas", "CLASS": ""},
+        ],
+    )
+    assert disclosure["fields_unavailable"] == ["CLASS"]
 
 
 def test_method_typ_is_no_longer_claimed_absent_at_all():
@@ -250,6 +303,51 @@ def test_the_disclosure_still_fires_for_fields_that_really_are_absent():
     assert "carries no information" in disclosure["fields_unavailable_note"]
 
 
+def test_the_details_operation_cross_checks_its_row_too():
+    """It rebuilds the disclosure from the row, so it needs the row.
+
+    This path returns the row itself rather than the envelope, and originally
+    recomputed the disclosure from the field list alone -- so it was the one
+    operation where a populated value and a note calling that field always
+    empty could still be returned in the same dict.
+    """
+    populated = [
+        1,
+        ["2093-3"],
+        None,
+        # LOINC_NUM, LONG_COMMON_NAME, SHORTNAME, COMPONENT, PROPERTY,
+        # TIME_ASPCT, SYSTEM, SCALE_TYP, METHOD_TYP, CLASS, STATUS,
+        # COMMON_TEST_RANK
+        [
+            [
+                "2093-3",
+                "Cholesterol [Mass/volume] in Serum or Plasma",
+                "Cholest SerPl-mCnc",
+                "Cholesterol",
+                "MCnc",
+                "Pt",
+                "Ser/Plas",
+                "Qn",
+                "",
+                "CHEM",
+                "ACTIVE",
+                # COMMON_TEST_RANK left empty, so the same response carries a
+                # field that must be withheld and one that must still be named.
+                "",
+            ]
+        ],
+    ]
+    result = _tool(populated)._get_code_details({"loinc_code": "2093-3"})
+    assert result["SYSTEM"] == "Ser/Plas"
+    named = result.get("fields_unavailable", [])
+    for field in ("SYSTEM", "SCALE_TYP", "CLASS", "STATUS", "TIME_ASPCT"):
+        assert field not in named, (
+            f"{field} carries a value in this row but was declared unavailable"
+        )
+    # COMMON_TEST_RANK is genuinely empty here, so it may still be named.
+    assert "COMMON_TEST_RANK" in named
+
+
 def test_a_zero_result_response_carries_no_per_code_field_note():
     """It would describe the fields of no codes at all."""
     result = _tool([0, [], None, []])._search_loinc_items({"terms": "LC/MS/MS"})
@@ -264,18 +362,31 @@ def test_every_field_still_named_absent_is_empty_in_practice():
     Each entry is a claim about the whole index. This pins the measurement
     that justifies it, so adding an entry means producing rows that support it.
     """
-    measured_nonempty_rate = {
-        "SYSTEM": 0.0,
-        "SCALE_TYP": 0.0,
-        "CLASS": 0.0,
-        "STATUS": 0.0,
-        "TIME_ASPCT": 0.0,
-        "COMMON_TEST_RANK": 0.0,
+    # Two independent samples, each ~550 rows over 19 unrelated search terms.
+    # The six zeroes agree exactly. METHOD_TYP does not -- 45.6% in one sample
+    # against 26.7% in the other -- because which codes a term matches varies,
+    # so no single rate is reproducible. That disagreement is recorded rather
+    # than averaged away: the claim these entries make is "never populated",
+    # and the only sound evidence for it is that no sample has ever found a
+    # value. A field measured at two different non-zero rates is emphatically
+    # not absent, which is all METHOD_TYP's presence here needs to disprove.
+    measured_nonempty_rates = {
+        "SYSTEM": (0.0, 0.0),
+        "SCALE_TYP": (0.0, 0.0),
+        "CLASS": (0.0, 0.0),
+        "STATUS": (0.0, 0.0),
+        "TIME_ASPCT": (0.0, 0.0),
+        "COMMON_TEST_RANK": (0.0, 0.0),
         # Removed from the list this round; kept here as the counter-example.
-        "METHOD_TYP": 0.456,
+        "METHOD_TYP": (0.456, 0.267),
     }
     for field in LOINCTool._FIELDS_ABSENT_FROM_V3_INDEX:
-        assert measured_nonempty_rate.get(field) == 0.0, (
+        rates = measured_nonempty_rates.get(field)
+        assert rates is not None, (
+            f"{field} is declared absent from the index with no measurement "
+            "behind it -- sample it before adding it here"
+        )
+        assert set(rates) == {0.0}, (
             f"{field} is declared absent from the index but was measured "
-            f"populated in {measured_nonempty_rate.get(field)} of sampled rows"
+            f"populated at rates {rates} of sampled rows"
         )

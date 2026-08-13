@@ -57,7 +57,7 @@ class LOINCTool(BaseTool):
     # METHOD_TYP "PhenX", "ISE", "LC/MS/MS", "Confirm". Re-measured over 570
     # rows drawn from 19 unrelated search terms:
     #
-    #   METHOD_TYP        260/570 populated (45.6%)  <- not absent at all
+    #   METHOD_TYP        260/570 populated  <- not absent at all
     #   SYSTEM              0/570
     #   SCALE_TYP           0/570
     #   CLASS               0/570
@@ -65,7 +65,12 @@ class LOINCTool(BaseTool):
     #   TIME_ASPCT          0/570
     #   COMMON_TEST_RANK    0/570
     #
-    # so the other six survive the wider sample and METHOD_TYP is removed. It
+    # An independent re-measure of ~550 rows put METHOD_TYP at 147, so the rate
+    # itself is not reproducible -- it depends on which codes the search terms
+    # happen to match -- while the six zeroes reproduced exactly. Only the
+    # zeroes are load-bearing: these entries claim a field is *never*
+    # populated, and the evidence for that is that no sample has found a value.
+    # So the other six survive the wider sample and METHOD_TYP is removed. It
     # is a costly field to disclaim: it is what separates a presumptive
     # immunoassay screen from a confirmatory LC/MS/MS quantitation, and the
     # note was telling callers to disregard it.
@@ -270,7 +275,12 @@ class LOINCTool(BaseTool):
         # Return the first (and should be only) result
         result = parsed["results"][0] if parsed["results"] else {}
         result["loinc_code"] = loinc_code
-        result.update(self._unavailable_fields_disclosure(fields))
+        # The row is passed, not just the field list: this operation returns the
+        # row itself rather than the envelope, so it recomputes the disclosure
+        # and would otherwise be the one path where the cross-check against the
+        # returned values is skipped -- which is exactly the blind spot that let
+        # METHOD_TYP be declared absent while rows carried a value for it.
+        result.update(self._unavailable_fields_disclosure(fields, [result]))
 
         return result
 
@@ -290,9 +300,16 @@ class LOINCTool(BaseTool):
 
     _NO_ANSWER_LIST_NOTE = (
         "These LOINC codes were found but none of them publishes an answer "
-        "list, so there are no permissible coded values to return. `datatype` "
-        "says why: only CNE and CWE codes answer from a list, whereas REAL, "
-        "ST, DT, TM and Ratio codes take a free value."
+        "list, so there are no permissible coded values to return."
+    )
+
+    # Appended only when the rows actually carry `datatype`. Pointing at a
+    # field that is absent from every row is worse than saying nothing: on a
+    # response where the upstream sent no `ef` block at all, the note referred
+    # the caller to an explanation that was not there.
+    _DATATYPE_EXPLAINS_IT = (
+        " `datatype` says why: only CNE and CWE codes answer from a list, "
+        "whereas REAL, ST, DT, TM and Ratio codes take a free value."
     )
 
     def _get_answer_list(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -326,10 +343,14 @@ class LOINCTool(BaseTool):
 
         # Separated from `count` so that "20 codes matched, none of them has an
         # answer list" cannot read as twenty answer lists.
-        found = sum(1 for item in parsed["results"] if item.get("AnswerLists"))
+        results = parsed["results"]
+        found = sum(1 for item in results if item.get("AnswerLists"))
         parsed["answer_lists_found"] = found
         if not found:
-            parsed["note"] = self._NO_ANSWER_LIST_NOTE
+            note = self._NO_ANSWER_LIST_NOTE
+            if any("datatype" in item for item in results):
+                note += self._DATATYPE_EXPLAINS_IT
+            parsed["note"] = note
 
         parsed["query"] = loinc_code
         return parsed
