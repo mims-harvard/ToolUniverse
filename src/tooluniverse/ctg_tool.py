@@ -1196,17 +1196,34 @@ class ClinicalTrialsTool(RESTfulTool):
         # told the caller that zero rows "partition the studies that record it"
         # and that "the rows sum to 0", in the same breath as reporting 598,509
         # studies represented. Say what actually happened and stop.
-        if not upstream_values and value_summary is not None:
-            printable = ", ".join(f"{k}={v!r}" for k, v in value_summary.items())
-            parts.append(
+        #
+        # Guarded on `unique_values_count is None` rather than on
+        # `value_summary`: those two coincide for the INTEGER and DATE fields
+        # this was written for, but not for the residual case of no rows, no
+        # count and no summary either (a BOOLEAN whose trueCount/falseCount
+        # were absent). Keying on the summary would send that case into the
+        # completeness prose below -- the same false sentences, for a payload
+        # one step further from what upstream normally sends. It is also the
+        # guard that keeps `{unique_values_count:,}` in sections 3 and 4 from
+        # formatting None, which is stated in those branches too rather than
+        # left resting on this one.
+        if not upstream_values and unique_values_count is None:
+            sentence = (
                 f"ClinicalTrials.gov publishes NO per-value ranking for {field} "
                 f"({field_type}): for numeric and date fields it returns a range "
                 "summary instead. `values` is empty because none were offered, "
                 "NOT because no study records a value, and unique_values_count is "
                 "null because the number of distinct values is not published -- do "
-                "not infer it from the empty list. What the API does report is in "
-                f"value_summary: {printable}. To count studies per value, bucket "
-                "them yourself from ClinicalTrials_search_studies."
+                "not infer it from the empty list."
+            )
+            if value_summary:
+                printable = ", ".join(f"{k}={v!r}" for k, v in value_summary.items())
+                sentence += (
+                    f" What the API does report is in value_summary: {printable}."
+                )
+            parts.append(
+                sentence + " To count studies per value, bucket them yourself "
+                "from ClinicalTrials_search_studies."
             )
             return " ".join(parts)
 
@@ -1249,7 +1266,10 @@ class ClinicalTrialsTool(RESTfulTool):
             if page_truncated
             else f"The rows sum to {rows_sum:,}"
         )
-        if upstream_truncated:
+        # `isinstance` rather than relying on the early return above to have
+        # caught every null count: this branch formats `unique_values_count`,
+        # and a branch that can format None should say so itself.
+        if upstream_truncated and isinstance(unique_values_count, int):
             parts.append(
                 f"The {upstream_values:,} rows ClinicalTrials.gov returned are "
                 f"only the most common of {unique_values_count:,} distinct "
@@ -1292,13 +1312,20 @@ class ClinicalTrialsTool(RESTfulTool):
                 "no share of all registered studies can be computed here."
             )
 
-        # 4. Whether the caller is looking at the whole list.
+        # 4. Whether the caller is looking at the whole list. Same reason for
+        # the `isinstance` as in section 3: page_truncated implies rows exist,
+        # which today implies a real count, but the branch formats the count.
         if page_truncated:
+            true_number = (
+                f"unique_values_count ({unique_values_count:,}) is the true "
+                "number of distinct values, and the "
+                if isinstance(unique_values_count, int)
+                else "The "
+            )
             parts.append(
                 f"Only the top {values_returned:,} of {upstream_values:,} "
                 f"returned values are shown (page_size={page_size}); "
-                f"unique_values_count ({unique_values_count:,}) is the true "
-                "number of distinct values, and the omitted rows are still "
+                f"{true_number}omitted rows are still "
                 "included in every total above."
             )
 

@@ -549,8 +549,6 @@ class PubMedRESTTool(BaseRESTTool):
             warning_list = {}
         if not isinstance(error_list, dict):
             error_list = {}
-        if not (warning_list or error_list):
-            return {}
 
         def _as_list(value: Any) -> list:
             if isinstance(value, str):

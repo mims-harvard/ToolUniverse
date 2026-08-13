@@ -82,11 +82,18 @@ def facets(monkeypatch):
 
     def fake_request(_module, _method, url, **kwargs):
         if "count=receivedate" in url:
+            # The two buckets sum to DRUG_TOTAL_UNION deliberately:
+            # `_analyze_temporal_trends` takes its split denominator from this
+            # facet rather than paying for a separate total, because the facet
+            # IS the set of reports the trend was computed over. Measured live
+            # 2026-08-13, the two agree exactly -- `receivedate` is populated on
+            # every report (CYANOKIT 4,119/4,119, HYDROMORPHONE
+            # 130,429/130,429), so the fixture reflects that.
             return _FakeResponse(
                 {
                     "results": [
-                        {"time": "20240101", "count": 100},
-                        {"time": "20250101", "count": 200},
+                        {"time": "20240101", "count": 1500},
+                        {"time": "20250101", "count": DRUG_TOTAL_UNION - 1500},
                     ]
                 }
             )
@@ -163,6 +170,71 @@ def test_the_trend_verdict_is_named_as_what_the_split_qualifies(facets):
     note = payload["cohort_scope"]["note"]
     assert "The series and trend above describe" in note
     assert "is not the trend for 'CYANOKIT'" in note
+
+
+def test_temporal_takes_its_denominator_from_the_facet_it_already_has(facets):
+    """No second request for a number the receivedate facet already answers.
+
+    The facet is unpaged and complete, so its sum is both free and the more
+    faithful denominator: it is exactly the reports the trend was computed
+    over. Asserted by counting the union-total probes -- there must be none.
+    """
+    tool = _tool()
+    asked = []
+
+    def counting(drug_name=None, adverse_event=None, reported_name_only=False):
+        asked.append(reported_name_only)
+        return NAMED_TOTAL if reported_name_only else DRUG_TOTAL_UNION
+
+    with patch.object(tool, "_get_faers_count", side_effect=counting):
+        payload = tool._analyze_temporal_trends({"drug_name": "CYANOKIT"})
+
+    assert asked == [True], asked
+    series_total = sum(row["count"] for row in payload["temporal_data"])
+    assert f"Of the {series_total:,} reports" in payload["cohort_scope"]["note"]
+
+
+def test_a_missing_denominator_is_null_at_every_site_not_absent(facets):
+    """The guard lives in the helper, so no caller can omit the key instead.
+
+    Four call sites each carrying their own truthiness check had already
+    drifted into two shapes -- three emitting `null`, one omitting the key.
+    """
+    tool = _tool()
+
+    def no_reports(drug_name=None, adverse_event=None, reported_name_only=False):
+        return 0
+
+    # `_analyze_temporal_trends` is excluded here and covered below: its
+    # denominator is the receivedate facet, not a `_get_faers_count` probe, so
+    # zeroing the probe does not zero its cohort.
+    for operation, arguments in _OPERATIONS:
+        if operation == "_analyze_temporal_trends":
+            continue
+        with patch.object(tool, "_get_faers_count", side_effect=no_reports):
+            result = getattr(tool, operation)(arguments)
+        payload = result.get("data", result)
+        assert "cohort_scope" in payload, operation
+        assert payload["cohort_scope"] is None, operation
+
+
+def test_an_empty_series_gets_a_null_scope_rather_than_a_zero_denominator(
+    monkeypatch,
+):
+    """Temporal's denominator is the facet, so an empty facet is its zero."""
+
+    def empty_facet(_module, _method, url, **kwargs):
+        return _FakeResponse({"results": []})
+
+    monkeypatch.setattr(
+        "tooluniverse.faers_analytics_tool.request_with_retry", empty_facet
+    )
+    tool = _tool()
+    with patch.object(tool, "_get_faers_count", side_effect=_counts()):
+        payload = tool._analyze_temporal_trends({"drug_name": "CYANOKIT"})
+
+    assert payload["temporal_data"] == []
+    assert payload["cohort_scope"] is None
 
 
 def test_serious_events_says_which_cohort_it_measured(facets):
