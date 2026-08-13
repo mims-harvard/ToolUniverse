@@ -135,9 +135,10 @@ def _relaxed_match_check(params, rewrites, fetch_total_count):
     # that 0 "a genuine absence of matching trials". Measured live 2026-08-13,
     # query_intr="levetiracetam" + query_term="subcutaneous palliative"
     # published `{"query.intr": "levetiracetam"}` next to
-    # `relaxed_total_count: 0`, while that displayed query matches 253 studies
-    # on its own. Publishing the query that was actually counted keeps the
-    # comment above true of the output as well as of the request.
+    # `relaxed_total_count: 0` -- while sending exactly that displayed query to
+    # /studies returns totalCount 306. Publishing the query that was actually
+    # counted keeps the comment above true of the output as well as of the
+    # request.
     check = {
         "relaxed_query": _executed_query(probe),
         "relaxed_total_count": total,
@@ -964,10 +965,17 @@ class ClinicalTrialsTool(RESTfulTool):
                 # conflated are below under names that say which they are.
                 "unique_values_count": unique_values_count,
                 "values_returned": len(values),
-                # `upstream_truncated` is tri-state, so `or` would coerce an
-                # unknown facet size to False -- exactly the "reports itself
-                # complete" failure being removed. Unknown stays unknown.
-                "truncated": True if page_truncated else upstream_truncated,
+                # `upstream_truncated` is now tri-state and this expression is
+                # unchanged, because `or` already does the right thing with it:
+                # it returns its SECOND operand when the first is falsy, so
+                # `False or None` is None, not False. An unknown facet size
+                # therefore stays unknown here without any help. Checked over
+                # all six inputs before leaving it alone -- an earlier version
+                # of this round rewrote it to `True if page_truncated else
+                # upstream_truncated` on the belief that `or` would coerce the
+                # None to False. That is not what Python does, the rewrite was
+                # a no-op, and no test could have caught it either way.
+                "truncated": page_truncated or upstream_truncated,
                 "missing_studies_count": missing_studies_count,
                 "total_studies_in_registry": total_studies,
                 "studies_with_value": studies_with_value,

@@ -240,10 +240,14 @@ def test_an_empty_series_gets_a_null_scope_rather_than_a_zero_denominator(
 def test_serious_events_says_which_cohort_it_measured(facets):
     """It measures the pre-seriousness cohort, so it must not imply otherwise.
 
-    `serious:1` is orthogonal to which product a report named, so probing the
-    narrower cohort would spend a request to answer the same question -- but a
-    reader comparing 4,119 here against total_serious_events (312) above needs
-    to be told they are different cohorts, not a contradiction.
+    `serious:1` is orthogonal to which product a report named, so the split is
+    the same either way and the wider cohort is chosen for memo reuse across
+    the sibling operations -- NOT because it is cheaper. It is not: measuring
+    over the serious subset would cost one added request (the numerator;
+    `total_serious_events` is already its denominator) against the two spent
+    here. A reader comparing 4,119 here against total_serious_events (312)
+    above therefore needs to be told they are different cohorts, not a
+    contradiction.
     """
     note = _scope("_filter_serious_events", {"drug_name": "CYANOKIT"})["note"]
 

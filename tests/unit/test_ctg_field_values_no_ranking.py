@@ -135,8 +135,22 @@ _LIST_FIELD_SIZES = [
 
 _STATS_SIZE = {"totalStudies": _REGISTRY_TOTAL, "averageSizeBytes": 17275}
 
+# Not a shape ClinicalTrials.gov has been observed to send -- all 28 live
+# BOOLEAN fields carry both counts. It is the residual case the tri-state
+# `truncated` and the coverage note's null-count guard exist to handle: a field
+# object with no rows, no uniqueValuesCount and no range summary either.
+_EMPTY_BOOLEAN_VALUES = [
+    {
+        "type": "BOOLEAN",
+        "piece": "EmptyBoolean",
+        "field": "someBooleanField",
+        "missingStudiesCount": 1000,
+    }
+]
+
 _VALUES_BY_FIELD = {
     "HasResults": _HAS_RESULTS_VALUES,
+    "EmptyBoolean": _EMPTY_BOOLEAN_VALUES,
     "EnrollmentCount": _ENROLLMENT_VALUES,
     "StartDate": _START_DATE_VALUES,
     "StudyType": _STUDY_TYPE_VALUES,
@@ -341,12 +355,46 @@ def test_a_field_with_a_real_ranking_is_unaffected(tool):
     assert data["values_returned"] == 3
 
 
-def test_page_size_truncation_still_wins_over_an_unknown_facet_size(tool):
-    """page_truncated is decidable even when the facet size is not."""
+def test_page_size_truncation_is_still_reported_on_a_known_facet(tool):
+    """The ordinary page-truncation path, unchanged by the tri-state.
+
+    Named for what it does. It was briefly called "...wins over an unknown
+    facet size", which it cannot test: this fixture's StudyType carries
+    `uniqueValuesCount: 3`, so the size is known -- and the combination the old
+    name described is unreachable anyway, since an unknown size implies zero
+    rows and zero rows cannot be page-truncated. The genuinely reachable
+    unknown-size case is below.
+    """
     data = _data(tool, field="StudyType", page_size=1)
 
     assert data["truncated"] is True
     assert data["values_returned"] == 1
+
+
+def test_an_unmeasurable_facet_reports_truncation_as_unknown_not_false(tool):
+    """No rows, no count, and no range either: `truncated` must be null.
+
+    Reachable when ClinicalTrials.gov sends a BOOLEAN field without its
+    trueCount/falseCount -- nothing to synthesize rows from and no range
+    summary to fall back on, so neither the facet size nor whether it was
+    truncated can be established. This is the case the tri-state exists for,
+    and the one the coverage note's `unique_values_count is None` guard was
+    widened to catch: keyed on `value_summary` instead, this payload would have
+    fallen through into prose telling the caller that zero rows "partition the
+    studies that record it".
+    """
+    data = _data(tool, field="EmptyBoolean")
+
+    assert data["values"] == []
+    assert data["unique_values_count"] is None
+    assert data["value_summary"] is None
+    assert data["truncated"] is None
+    note = data["coverage_note"]
+    assert "publishes NO per-value ranking" in note
+    assert "partition the studies that record it" not in note
+    assert "The rows sum to 0" not in note
+    # No range was sent, so none may be quoted.
+    assert "value_summary:" not in note
 
 
 # --------------------------------------------------------------------------

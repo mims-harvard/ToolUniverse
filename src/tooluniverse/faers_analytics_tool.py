@@ -874,11 +874,16 @@ class FAERSAnalyticsTool(BaseTool):
             _calculate_disproportionality/_compare_drugs
                                         +0  (unchanged: they already probed)
 
-        Both the union and the reported-name totals are memoised by
-        `_get_faers_count`, so across a sequential workup on one drug the seven
-        nominal additions collapse to three, and a second operation on the same
-        drug and reaction pays nothing. The memo is not single-flight, so
-        concurrent calls do not get that saving.
+        Six added requests in total, and both the union and the reported-name
+        totals are memoised by `_get_faers_count`, so a sequential workup pays
+        for far fewer. Measured live 2026-08-13 by counting requests across all
+        six operations in one process: on CYANOKIT + DEATH, HEAD issues 11 and
+        the unchanged code 11 -- the four descriptive operations add 3 between
+        them, and disproportionality then drops from 6 to 2 because they have
+        already answered its probes. On a drug-only workup the net is +1 (7 vs
+        6). Three is the worst case, not the typical one, and a second call to
+        any of these on the same drug and reaction pays nothing. The memo is
+        not single-flight, so concurrent calls do not get that saving.
 
         Fails soft throughout: any probe returning None leaves the operation's
         own output intact and says the split is unknown rather than zero. A
