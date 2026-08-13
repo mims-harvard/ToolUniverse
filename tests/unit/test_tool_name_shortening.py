@@ -189,3 +189,35 @@ class TestShortenedNameResolution:
         tu.name_mapper.get_shortened = lambda *a, **k: (calls.append(1), original(*a, **k))[1]
         tu._resolve_tool_name("miss_two")
         assert len(calls) <= 1  # resolve()'s own lookup only, no re-priming
+
+
+class TestWholeCatalogueRoundTrip:
+    """Every tool whose MCP name differs from its registered name must resolve.
+
+    96 of 2,602 registered tools (3.7%) are shortened for MCP -- 37 OpenTargets,
+    29 FDA, 12 drugbank. Each was intermittently unreachable: the round trip
+    only worked when the resolving process happened to be the one that did the
+    shortening, which is why 3 of 7 observed calls succeeded and 12 of 15
+    failed.
+    """
+
+    @pytest.mark.slow
+    def test_every_shortened_name_resolves_to_its_registered_name(self):
+        pytest.importorskip("tooluniverse.execute_function")
+        from tooluniverse.execute_function import ToolUniverse
+
+        tu = ToolUniverse()
+        tu.load_tools()
+        if not tu.all_tool_dict:
+            pytest.skip("No tools loaded")
+
+        limit = tu.MAX_TOOL_NAME_LENGTH
+        broken = []
+        for full in tu.all_tool_dict:
+            short = shorten_tool_name(full, limit)
+            if short == full:
+                continue
+            if tu._resolve_tool_name(short) != full:
+                broken.append((short, full))
+
+        assert not broken, f"{len(broken)} shortened names do not resolve: {broken[:5]}"
