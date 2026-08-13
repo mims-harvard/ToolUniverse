@@ -184,6 +184,11 @@ class TestUpstreamValidationBodyIsNotSuccess(unittest.TestCase):
 
         self.assertEqual(result["status"], "error")
         self.assertIn("less than or equal to 500", result["error"])
+        # The raw body must not come back: it echoes "input": "501", the
+        # internally-inflated limit, not the 167 the caller supplied.
+        blob = json.dumps(result)
+        self.assertNotIn("501", blob)
+        self.assertNotIn("upstream_response", blob)
 
     def test_detail_key_alongside_real_data_is_not_treated_as_an_error(self):
         from tooluniverse.restful_tool import _validation_error_detail

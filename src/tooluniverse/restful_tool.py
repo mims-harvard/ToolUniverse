@@ -207,7 +207,12 @@ class MonarchTool(RESTfulTool):
                 f"Upstream rejected the request: {validation_detail}. "
                 f"This tool requests up to {_MONARCH_MAX_LIMIT} records per "
                 "call; lower 'limit' or page with 'offset'.",
-                details={"upstream_response": response},
+                # Only the upstream messages, never the raw body. The body
+                # echoes the value that was actually sent, and this tool sends
+                # an internally-inflated limit -- a caller who asked for 167
+                # was shown "input": "501". Nothing the caller did not supply
+                # should come back to them as though they had.
+                details={"upstream_messages": validation_detail},
             )
             return {
                 "status": "error",
