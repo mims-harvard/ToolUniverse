@@ -33,14 +33,17 @@ from .tool_registry import register_tool
 # exists solely to strip api_key= out of error text), so a URL key would put
 # that secret in a process-global dict key.
 #
-# faers_analytics_tool writes here too, but the two do NOT generally share
-# entries, and the key is not what stops them: they spell the same question
-# differently, because faers_drug_name_clause always quotes the drug name while
-# _render_clause below quotes only when the value contains a space. Verified --
-# "SODIUM CHLORIDE" collapses to one entry, CYANOKIT does not. That divergence
-# is deliberate on both sides and must not be papered over in the key: quoted
-# and unquoted are different openFDA queries for a hyphenated name, so they can
-# return different totals and must stay separate.
+# faers_analytics_tool writes here too. The two used to spell the same question
+# differently -- faers_drug_name_clause always quoted the drug name while
+# _render_clause quoted only when the value contained a space -- and an earlier
+# comment here called that divergence deliberate on both sides. It was not:
+# Fix-54B-1 established that the unquoted spelling is simply wrong for a
+# hyphenated name (the hyphen is a Lucene operator, so the name is reparsed
+# into a union of different drugs), and _render_clause now quotes too. Both
+# paths therefore render the same clause for the same drug and share entries.
+# Quoting still remains the property that makes the key correct: a quoted and
+# an unquoted name really are different openFDA queries, so if a caller ever
+# reintroduces an unquoted spelling the key must keep the two apart.
 #
 # LRUCache is the package's own thread-safe, size-bounded cache; it stores a
 # timestamp but does not expire on it, so the TTL is applied here. Bounded on
@@ -230,23 +233,32 @@ def faers_drug_name_clause(drug_name, joiner="+OR+"):
     openfda_tool). Shared so those two cannot drift from FAERS_DRUG_NAME_FIELDS
     or from each other.
 
-    Two deliberate differences from `_render_field_group`, which is why this is
-    a separate entry point rather than a call to it:
+    This used to spell the quoting rule out for itself, justified as a
+    "deliberate difference" from `_render_clause`: it always quoted, while
+    `_render_clause` quoted only when the value contained a space. Fix-54B-1
+    established that the space-gated rule was simply wrong for a hyphenated
+    name, so `_render_clause` now quotes by default and the two rules are the
+    same rule. It is called rather than restated here, because a divergence
+    between these two spellings is exactly what Fix-54B-1 had to repair.
 
-    * the value is ALWAYS quoted, whereas `_render_clause` quotes only when it
-      contains a space. That exemption exists so a Lucene range
-      ("[20141001 TO 20141231]") stays unquoted, and no drug name is ever a
-      range -- while an unquoted name containing a Lucene operator character
-      (the hyphen in "CO-TRIMOXAZOLE") would be reparsed rather than matched.
+    Two differences from `_render_field_group` remain, which is why this joins
+    the clauses itself rather than calling it:
+
     * `joiner` is configurable because openfda_tool hands its finished query to
       `requests` as a `params` value, where a literal "+" is percent-encoded to
-      %2B and reaches openFDA as a plus sign instead of a separator; that caller
-      passes " OR ".
-
-    The parentheses are not optional in either caller: both AND a reaction
-    filter onto this clause, and Lucene binds AND tighter than OR.
+      %2B and reaches openFDA as a plus sign instead of a separator; that
+      caller passes " OR ".
+    * the parentheses are unconditional. They are not optional in either
+      caller: both AND a reaction filter onto this clause, and Lucene binds AND
+      tighter than OR. `_render_field_group` drops them for a single field,
+      which is safe for its own callers but would silently lose the grouping
+      here if FAERS_DRUG_NAME_FIELDS ever held one entry.
     """
-    return "(" + joiner.join(f'{f}:"{drug_name}"' for f in FAERS_DRUG_NAME_FIELDS) + ")"
+    return (
+        "("
+        + joiner.join(_render_clause(f, drug_name) for f in FAERS_DRUG_NAME_FIELDS)
+        + ")"
+    )
 
 
 def _is_error_payload(payload):
@@ -289,8 +301,47 @@ def _render_clause(fda_field_name, value):
     ``FAERS_count_reactions_by_drug_event(receivedate="[20141001 TO 20141231]")``
     silently returned zero rows. Keep this logic here so the paths cannot drift
     again.
+
+    Fix-54B-1: the test used to be "contains a space", which sent a
+    single-token HYPHENATED name unquoted -- and a hyphen is a Lucene operator,
+    so the name was reparsed into its parts and the query silently became a
+    union of different drugs. `faers_drug_name_clause` always quotes for
+    exactly this reason and its docstring names this exact case
+    ("CO-TRIMOXAZOLE"), so the two paths disagreed on the input each was
+    written about. Measured against api.fda.gov on 2026-08-13, unquoted vs
+    quoted total for the same field:value::
+
+        patient.drug.medicinalproduct:sumatriptan-naproxen  124792  vs      13
+        patient.drug.medicinalproduct:CO-TRIMOXAZOLE         24806  vs    1416
+
+    FAERS_count_reactions_by_drug_event(medicinalproduct="sumatriptan-naproxen")
+    reported 219,048 matching reports -- the union of sumatriptan (51,295) and
+    naproxen (172,094) across the three name fields, for a combination product
+    with 1,438 reports under its actual brand name. A combination product
+    outnumbering its own components is the tell; the same held for
+    metoprolol-hydrochlorothiazide (595,912) vs metoprolol alone (371,421).
+
+    Quoting is now the default and the range exemption is the only carve-out.
+    The cost of widening it was measured over every other value shape these
+    builders send -- single-token drug names, generic_name, brand_name, single
+    and multi-word reaction terms, all eight HUMAN_TO_FDA_MAP coded values
+    ("1", "2", "048", "800", ...), occurcountry and a numeric patientonsetage.
+    Quoted and unquoted returned IDENTICAL totals for all of them, so no query
+    changes except the ones that were wrong. The range carve-out is load-
+    bearing and was re-confirmed the same way: ``receivedate:[20141001 TO
+    20141231]`` returns 197,676 unquoted and HTTP 404 NOT_FOUND quoted.
+
+    ``receivedate`` is documented as accepting a single ``YYYYMMDD`` date as
+    well as a range, and that form is NOT a range, so it is now quoted. It was
+    measured separately for the same reason: ``receivedate:20141001`` returns
+    2,415 quoted and unquoted, and ``receiptdate:20141001`` returns 2,375
+    either way.
+
+    One shape is knowingly outside the measured set: a caller-supplied Lucene
+    wildcard (``aspirin*``) is now matched literally. No parameter here
+    documents wildcards as supported.
     """
-    if isinstance(value, str) and " " in value and not _is_range(value):
+    if isinstance(value, str) and not _is_range(value):
         return f'{fda_field_name}:"{value}"'
     return f"{fda_field_name}:{value}"
 

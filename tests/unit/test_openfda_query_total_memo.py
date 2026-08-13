@@ -203,16 +203,24 @@ class TestTheAnalyticsToolUsesTheMemo:
             assert tool._get_faers_count("CYANOKIT") is None
         assert len(calls) == 2
 
-    def test_it_does_not_share_single_word_names_with_the_count_tools(self):
-        """Pins the limitation rather than the aspiration.
+    def test_it_shares_every_drug_name_with_the_count_tools(self):
+        """Both modules must spell the same question the same way.
 
-        Both modules write to this memo, but they spell the same question
-        differently: `faers_drug_name_clause` always quotes the drug name and
-        the count tools' `_render_clause` quotes only when it contains a space.
-        The keys therefore coincide only for multi-word names. Asserted so the
-        code and its comments cannot drift back into claiming otherwise --
-        normalising the quoting would be wrong, because quoted and unquoted are
-        different openFDA queries for a hyphenated name.
+        This test used to pin the OPPOSITE, asserting that a single-word name
+        produced different keys in the two modules, and justified it thus:
+        "normalising the quoting would be wrong, because quoted and unquoted
+        are different openFDA queries for a hyphenated name."
+
+        Fix-54B-1: quoted and unquoted really are different queries for a
+        hyphenated name -- and the unquoted one is simply WRONG, because the
+        hyphen is a Lucene operator, so the name is reparsed and the query
+        silently becomes a union of different drugs. Measured against
+        api.fda.gov: patient.drug.medicinalproduct:CO-TRIMOXAZOLE returns
+        24,806 unquoted and 1,416 quoted. `_render_clause` now quotes too, so
+        the two paths agree and the keys coincide for every name, not just
+        multi-word ones. Quoting is not merely cosmetic here, so the keys
+        would legitimately diverge again if either path stopped quoting --
+        which is what these assertions now guard.
         """
         from tooluniverse.faers_analytics_tool import FDA_BASE_URL, _faers_search_query
         from tooluniverse.openfda_adv_tool import (
@@ -233,5 +241,8 @@ class TestTheAnalyticsToolUsesTheMemo:
                 FDA_BASE_URL, _faers_search_query(drug, reported_name_only=True)
             )
 
-        assert count_key("CYANOKIT") != analytics_key("CYANOKIT")
+        assert count_key("CYANOKIT") == analytics_key("CYANOKIT")
         assert count_key("SODIUM CHLORIDE") == analytics_key("SODIUM CHLORIDE")
+        # The case that motivated the change: a hyphenated name must be spelled
+        # the one correct (quoted) way by both paths.
+        assert count_key("CO-TRIMOXAZOLE") == analytics_key("CO-TRIMOXAZOLE")

@@ -436,7 +436,7 @@ def test_the_multi_drug_denominator_searches_the_same_or_clause_as_the_facet():
     for drug in ("VASOPRESSIN", "ASPIRIN"):
         assert (
             "%28"
-            + "+OR+".join(f"{field}:{drug}" for field in FAERS_DRUG_NAME_FIELDS)
+            + "+OR+".join(f'{field}:"{drug}"' for field in FAERS_DRUG_NAME_FIELDS)
             + "%29"
             in facet_url
         )
@@ -452,7 +452,7 @@ def test_a_multi_drug_filter_is_and_ed_onto_the_or_clause_in_both_requests():
     )
 
     for url in urls:
-        assert "%29+AND+patient.patientsex:2" in url
+        assert '%29+AND+patient.patientsex:"2"' in url
 
 
 def test_a_multi_drug_query_matching_nothing_stays_an_empty_untruncated_envelope():

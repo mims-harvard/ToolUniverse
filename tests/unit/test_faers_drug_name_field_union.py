@@ -222,7 +222,7 @@ def test_interaction_tool_keeps_each_drug_group_parenthesized_under_the_and():
     for drug in ("WARFARIN", "ASPIRIN"):
         group = (
             "%28"
-            + "+OR+".join(f"{field}:{drug}" for field in FAERS_DRUG_NAME_FIELDS)
+            + "+OR+".join(f'{field}:"{drug}"' for field in FAERS_DRUG_NAME_FIELDS)
             + "%29"
         )
         assert group in url, f"{drug} group not parenthesized in {url}"

@@ -47,14 +47,6 @@ _TERMS_DROPPED = {
     "warninglist": None,
     "querytranslation": '"benzene"[All Fields] AND "NQO1"[All Fields]',
 }
-_TWO_TERMS_DROPPED = {
-    "count": "1477",
-    "errorlist": {
-        "phrasesnotfound": ["zzzqqqxyz", "nonexistentterm12345"],
-        "fieldsnotfound": [],
-    },
-    "warninglist": None,
-}
 _QUOTED_PHRASE_ZERO_HITS = {
     "count": "0",
     "errorlist": None,
@@ -64,50 +56,33 @@ _QUOTED_PHRASE_ZERO_HITS = {
         "outputmessages": ["No items found."],
     },
 }
-_FIELD_DROPPED = {
-    "count": "812",
-    "errorlist": {"phrasesnotfound": [], "fieldsnotfound": ["Notafield"]},
-    "warninglist": None,
-}
-_CLEAN = {"count": "56", "errorlist": None, "warninglist": None}
 
 
-def test_a_dropped_term_is_reported_when_results_still_come_back():
-    """The silent case. Pre-fix this returned `{}` -- no disclosure at all."""
-    metadata = _surface(_TERMS_DROPPED)
+def test_pubmed_routes_through_the_shared_formatter_and_names_itself():
+    """PubMed's entry point must produce PubMed's label, not a generic one.
 
-    assert metadata["terms_not_found"] == ["rs180056600"]
-    assert metadata["query_not_executed_as_submitted"] is True
-
-
-def test_the_warning_says_the_articles_need_not_mention_the_dropped_term():
-    """A caller reading only `warning` must learn what they are looking at."""
+    Fix-54A-1 moved the formatting into
+    `tooluniverse.ncbi_eutils_tool.esearch_query_disclosure`, shared with six
+    other eutils modules, each passing its own database label. The formatter's
+    own behaviour is covered once in
+    `tests/unit/test_eutils_dropped_terms_disclosed.py`; what is PubMed-specific
+    -- and what breaks if the entry point is rewired to the wrong label or
+    bypassed -- is asserted here.
+    """
     warning = _surface(_TERMS_DROPPED)["warning"]
 
+    assert "PubMed" in warning
     assert "rs180056600" in warning
     assert "REMAINING terms" in warning
     assert "need not mention the dropped ones" in warning
 
 
-def test_every_dropped_term_is_listed_not_just_the_first():
-    metadata = _surface(_TWO_TERMS_DROPPED)
-
-    assert metadata["terms_not_found"] == ["zzzqqqxyz", "nonexistentterm12345"]
-
-
-def test_an_unrecognised_search_field_is_reported_as_an_ignored_restriction():
-    """A dropped `[field]` tag widens the search silently, like a dropped term."""
-    metadata = _surface(_FIELD_DROPPED)
-
-    assert metadata["search_fields_not_found"] == ["Notafield"]
-    assert "NOT limited to that field" in metadata["warning"]
-
-
 def test_the_zero_hit_container_still_works():
     """The half that already worked must keep working -- this is the guard.
 
-    `warninglist` handling was correct; the fix adds a second container rather
-    than replacing the first.
+    `warninglist` handling was correct; the round-53 fix added a second
+    container rather than replacing the first. This fixture is the only one in
+    the suite exercising `quotedphrasesnotfound`, so it stays here.
     """
     metadata = _surface(_QUOTED_PHRASE_ZERO_HITS)
 
@@ -116,19 +91,3 @@ def test_the_zero_hit_container_still_works():
     ]
     assert metadata["ncbi_messages"] == ["No items found."]
     assert "BROADER query" in metadata["warning"]
-
-
-def test_the_executed_query_is_surfaced_for_the_errorlist_path_too():
-    """Knowing a term was dropped is less use than seeing what ran instead."""
-    assert _surface(_TERMS_DROPPED)["executed_query"].startswith('"benzene"')
-
-
-def test_an_empty_errorlist_is_not_a_warning():
-    """NCBI sends `fieldsnotfound: []` on healthy queries; it must stay quiet."""
-    assert _surface({"count": "4", "errorlist": {"fieldsnotfound": []}}) == {}
-
-
-def test_a_clean_query_keeps_its_existing_metadata_shape():
-    assert _surface(_CLEAN) == {}
-    assert _surface({}) == {}
-    assert _surface(None) == {}

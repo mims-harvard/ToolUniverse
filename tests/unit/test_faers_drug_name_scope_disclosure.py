@@ -234,7 +234,8 @@ def test_the_scope_probe_keeps_every_other_filter_identical():
     assert "openfda.brand_name" not in scope
     # Same non-name filter on both sides, or the two counts would not be
     # measuring the same population.
-    assert "patient.patientsex:2" in scope and "patient.patientsex:2" in union
+    assert 'patient.patientsex:"2"' in scope
+    assert 'patient.patientsex:"2"' in union
 
 
 # ---- 4. the keys are declared, not just emitted ----

@@ -1930,17 +1930,24 @@ class FAERSAnalyticsTool(BaseTool):
             # total are all already answered. The whole-database probe is the
             # same request on every call in the process.
             #
-            # It does NOT generally share with the count tools, despite both
-            # writing here. They spell the same question differently:
-            # `faers_drug_name_clause` always quotes the drug name, while the
-            # count tools' `_render_clause` quotes only when the value contains
-            # a space. So the keys coincide only for multi-word names --
-            # verified: "SODIUM CHLORIDE" collapses to one entry, CYANOKIT and
-            # OZEMPIC do not. Normalising the quoting in the key would be
-            # wrong, not merely cosmetic: quoted and unquoted are different
-            # openFDA queries for a hyphenated name (a bare hyphen is a Lucene
-            # operator, which is why faers_drug_name_clause quotes), so the two
-            # spellings can return different totals and must not share an entry.
+            # It now shares with the count tools, which also write here. This
+            # comment used to say the opposite -- that the keys "coincide only
+            # for multi-word names" because `faers_drug_name_clause` always
+            # quotes the drug name while the count tools' `_render_clause`
+            # quoted only when the value contained a space, and that
+            # "normalising the quoting in the key would be wrong".
+            #
+            # Fix-54B-1: normalising was right. Quoted and unquoted really are
+            # different openFDA queries for a hyphenated name -- a bare hyphen
+            # is a Lucene operator -- and the unquoted spelling was simply
+            # WRONG, silently querying a union of different drugs.
+            # `_render_clause` now quotes too, so both modules spell the same
+            # question identically and a single-token name costs one memo entry
+            # and one probe across the process instead of two of each.
+            #
+            # Quoting still has to stay in the key: it changes the query, so if
+            # either path ever stopped quoting the two spellings would again
+            # return different totals and must not share an entry.
             memo_key = faers_report_total_key(FDA_BASE_URL, search_query)
             cached = _memoized_report_total(memo_key)
             if cached is not None:
