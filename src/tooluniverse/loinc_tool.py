@@ -4,7 +4,7 @@ API: https://clinicaltables.nlm.nih.gov/api/loinc_items/v3/
 """
 
 import requests
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Sequence
 from urllib.parse import urljoin
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -106,7 +106,10 @@ class LOINCTool(BaseTool):
         return isinstance(api_response, dict) and "error" in api_response
 
     def _parse_search_results(
-        self, api_response: Any, fields: List[str]
+        self,
+        api_response: Any,
+        fields: List[str],
+        extra_fields: Sequence[str] = (),
     ) -> Dict[str, Any]:
         """Parse the Clinical Tables response: [total_count, codes, extra_info, data]."""
         if not isinstance(api_response, list) or len(api_response) < 4:
@@ -118,6 +121,9 @@ class LOINCTool(BaseTool):
 
         total_count = api_response[0]
         codes = api_response[1] if len(api_response) > 1 else []
+        # `ef` fields arrive in slot 2 as {field: [value_per_row]}, parallel to
+        # the row order of slot 1, rather than inline with the `df` row data.
+        extra_info = api_response[2] if isinstance(api_response[2], dict) else {}
         data_arrays = api_response[3] if len(api_response) > 3 else []
 
         results = []
@@ -126,6 +132,10 @@ class LOINCTool(BaseTool):
             if i < len(data_arrays) and data_arrays[i]:
                 for field_name, value in zip(fields, data_arrays[i]):
                     result_item[field_name] = value
+            for field_name in extra_fields:
+                values = extra_info.get(field_name)
+                if isinstance(values, list) and i < len(values):
+                    result_item[field_name] = values[i]
             results.append(result_item)
 
         parsed = {
@@ -231,8 +241,28 @@ class LOINCTool(BaseTool):
 
         return result
 
+    # Fix-R49: this operation used to pass `type: "answer"`, which the API does
+    # not implement -- the documented values are "question", "form" and "panel"
+    # only. Unrecognised values are silently dropped rather than rejected, so
+    # the request degraded into a plain keyword search whose rows were then
+    # presented as "answer-type codes". Proven by totals being identical for
+    # `type=answer` and for an invented `type=zzzgarbage` on every term tried
+    # (PHQ-9 58/58, potassium 145/145, hemoglobin 526/526), and by the index
+    # holding no answer codes at all: `terms=LA6568-5` -> [0,[],null,[]].
+    # Answer lists are published as an `ef` field instead, which really does
+    # carry them: `terms=883-9&ef=AnswerLists` returns answer list LL2419-1
+    # with Group A / B / O / AB.
+    _ANSWER_LIST_EXTRA_FIELDS = ["AnswerLists", "datatype"]
+
+    _NO_ANSWER_LIST_NOTE = (
+        "These LOINC codes were found but none of them publishes an answer "
+        "list, so there are no permissible coded values to return. `datatype` "
+        "says why: only CNE and CWE codes answer from a list, whereas REAL, "
+        "ST, DT, TM and Ratio codes take a free value."
+    )
+
     def _get_answer_list(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search for LOINC answer-type codes matching a search term."""
+        """Get the permissible answer lists published for a LOINC code."""
         loinc_code = arguments.get("loinc_code", "").strip()
         if not loinc_code:
             return {"status": "error", "error": "loinc_code parameter is required"}
@@ -243,7 +273,73 @@ class LOINCTool(BaseTool):
             "terms": loinc_code,
             "df": ",".join(fields),
             "maxList": 20,
-            "type": "answer",
+            "ef": ",".join(self._ANSWER_LIST_EXTRA_FIELDS),
+        }
+
+        api_response = self._make_request("loinc_items/v3/search", params)
+
+        if self._is_api_error(api_response):
+            return api_response
+
+        parsed = self._parse_search_results(
+            api_response, fields, self._ANSWER_LIST_EXTRA_FIELDS
+        )
+
+        if parsed.get("count", 0) == 0:
+            return {
+                "status": "error",
+                "error": f"No LOINC code found for: {loinc_code}",
+                "loinc_code": loinc_code,
+            }
+
+        # Separated from `count` so that "20 codes matched, none of them has an
+        # answer list" cannot read as twenty answer lists.
+        found = sum(1 for item in parsed["results"] if item.get("AnswerLists"))
+        parsed["answer_lists_found"] = found
+        if not found:
+            parsed["note"] = self._NO_ANSWER_LIST_NOTE
+
+        parsed["query"] = loinc_code
+        return parsed
+
+    _NO_FORM_MATCH_NOTE = (
+        "No LOINC form or panel matched these terms. This operation searches "
+        "whole instruments only, so an individual question or lab test will "
+        "not appear here even when its wording matches -- use "
+        "LOINC_search_tests for those."
+    )
+
+    def _search_forms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search LOINC forms and survey instruments (e.g., PHQ-9, GAD-7)."""
+        terms = arguments.get("terms", "").strip()
+        if not terms:
+            return {"status": "error", "error": "terms parameter is required"}
+
+        max_results = min(arguments.get("max_results", 20), 200)
+
+        fields = ["LOINC_NUM", "LONG_COMMON_NAME", "CLASS", "STATUS"]
+
+        params = {
+            "terms": terms,
+            "df": ",".join(fields),
+            "maxList": max_results,
+            # Fix-R49: this used to be `sf: "CLASS"` plus a post-filter keeping
+            # rows whose CLASS contained "survey"/"panel"/"form", which made the
+            # operation incapable of returning anything. CLASS is not one of the
+            # index's searchable fields -- the API documents sf as "text,
+            # COMPONENT, CONSUMER_NAME, RELATEDNAMES2, METHOD_TYP, SHORTNAME,
+            # LONG_COMMON_NAME, SURVEY_QUEST_TEXT, LOINC_NUM" -- so the query
+            # matched nothing (`terms=PHQ-9&sf=CLASS` -> [0,[],null,[]] against
+            # 58 hits unfiltered), and CLASS is also empty in this index, so the
+            # post-filter would have discarded every row even had the search
+            # returned some. Both halves had to hold for the tool to answer, and
+            # neither did: every shipped test_example reported count 0 as
+            # success. `type` is the documented way to restrict to instruments;
+            # "form" is the value that works (`terms=PHQ-9&type=form` -> the 2
+            # real PHQ-9 panels). The documented "panel" value is inert upstream
+            # -- it returns totals identical to no `type` at all and to an
+            # invented value, across every term tried -- so do not reach for it.
+            "type": "form",
         }
 
         api_response = self._make_request("loinc_items/v3/search", params)
@@ -254,54 +350,7 @@ class LOINCTool(BaseTool):
         parsed = self._parse_search_results(api_response, fields)
 
         if parsed.get("count", 0) == 0:
-            return {
-                "status": "error",
-                "error": f"No LOINC answer codes found for: {loinc_code}",
-                "loinc_code": loinc_code,
-            }
-
-        parsed["query"] = loinc_code
-        return parsed
-
-    def _search_forms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search LOINC forms and survey instruments (e.g., PHQ-9, GAD-7)."""
-        terms = arguments.get("terms", "").strip()
-        if not terms:
-            return {"status": "error", "error": "terms parameter is required"}
-
-        max_results = min(arguments.get("max_results", 20), 200)
-
-        # Search in LOINC forms/panels
-        fields = ["LOINC_NUM", "LONG_COMMON_NAME", "CLASS", "STATUS"]
-
-        params = {
-            "terms": terms,
-            "df": ",".join(fields),
-            "maxList": max_results,
-            "sf": "CLASS",  # Search in CLASS field
-        }
-
-        api_response = self._make_request("loinc_items/v3/search", params)
-
-        if self._is_api_error(api_response):
-            return api_response
-
-        parsed = self._parse_search_results(api_response, fields)
-
-        # Filter for forms/panels (CLASS typically contains "Survey" or "Panel")
-        if "results" in parsed:
-            forms = []
-            for item in parsed["results"]:
-                class_field = item.get("CLASS", "").lower()
-                if (
-                    "survey" in class_field
-                    or "panel" in class_field
-                    or "form" in class_field
-                ):
-                    forms.append(item)
-
-            parsed["results"] = forms
-            parsed["count"] = len(forms)
+            parsed["note"] = self._NO_FORM_MATCH_NOTE
 
         parsed["search_terms"] = terms
 
