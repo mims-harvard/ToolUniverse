@@ -1119,6 +1119,18 @@ class FAERSAnalyticsTool(BaseTool):
             # an inference.
             truncated = len(results) > len(serious_reactions)
 
+            # Fix-R50: the two numbers below count different things, and read
+            # side by side without saying so they look like a contradiction.
+            # `total_serious_events` counts REPORTS; each row of
+            # `top_serious_reactions` counts a reaction TERM, and one report
+            # carries several -- confirmed live that a single warfarin death
+            # report (10037626) lists four. So the rows routinely sum past the
+            # total, and PRUSSIAN BLUE + death publishes `total: 1` above four
+            # rows of count 1, which reads as four fatalities instead of one
+            # report with four reactions. The sibling stratification operation
+            # in this module already spells this out; saying nothing here left
+            # the identical hazard undisclosed in the same family, and readers
+            # have repeatedly filed the arithmetic as a defect in the count.
             result: Dict[str, Any] = {
                 "drug_name": drug_name,
                 "seriousness_type": seriousness_type,
@@ -1126,6 +1138,15 @@ class FAERSAnalyticsTool(BaseTool):
                 "top_serious_reactions": serious_reactions,
                 "top_serious_reactions_truncated": truncated,
                 "note": f"Serious events: {'All' if seriousness_type == 'all' else seriousness_type.replace('_', ' ')}",
+                "coverage_note": (
+                    f"total_serious_events ({total_serious:,}) counts REPORTS. "
+                    "Each row of top_serious_reactions counts how many reports "
+                    "list that reaction term, and one report usually lists "
+                    "several, so the row counts overlap and will often sum to "
+                    "more than total_serious_events. Do NOT read the rows as a "
+                    "breakdown of the total or use their sum as a denominator; "
+                    "a term's count is its own report count, nothing more."
+                ),
             }
             if truncated:
                 result["top_serious_reactions_truncation_note"] = (

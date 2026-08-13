@@ -258,6 +258,41 @@ def test_serious_events_discloses_its_own_truncated_ranking(monkeypatch, stub_op
     assert len(calls) == 2
 
 
+def test_serious_events_says_reactions_are_not_a_breakdown_of_the_total(
+    monkeypatch, stub_openfda
+):
+    """Fix-R50: reports and reaction terms count different things.
+
+    `total_serious_events` counts reports; each `top_serious_reactions` row
+    counts reports mentioning one term, and a single report lists several --
+    confirmed live that warfarin death report 10037626 carries four. The rows
+    therefore overlap and routinely sum past the total. Left unstated, PRUSSIAN
+    BLUE + death publishes `total: 1` above four rows of count 1, which reads
+    as four fatalities rather than one report with four reactions; it has been
+    filed as a defect in the count more than once.
+    """
+    stub_openfda(
+        {"results": _pt_rows(4)},
+        {"meta": {"results": {"total": 1}}},
+    )
+    tool = _make_tool(monkeypatch, _config("filter_serious_events"))
+    result = tool.run(
+        {"operation": "filter_serious_events", "drug_name": "PRUSSIAN BLUE"}
+    )
+
+    data = result["data"]
+    # The shape that reads as a contradiction: 4 rows against a total of 1.
+    assert data["total_serious_events"] == 1
+    assert len(data["top_serious_reactions"]) == 4
+
+    note = data["coverage_note"]
+    assert "counts REPORTS" in note
+    assert "denominator" in note
+    # It must name the total it is reconciling, not speak in the abstract.
+    assert "total_serious_events" in note
+    assert "top_serious_reactions" in note
+
+
 def test_serious_events_short_ranking_is_not_flagged_truncated(
     monkeypatch, stub_openfda
 ):
