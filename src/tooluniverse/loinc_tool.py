@@ -41,33 +41,41 @@ class LOINCTool(BaseTool):
                 "endpoint": endpoint,
             }
 
-    # Fields the loinc_items/v3 index does NOT carry, probed field-by-field
-    # against the live API on 2026-08-13 with
-    # `search?terms=2823-3&df=<FIELD>`:
+    # Fields the loinc_items/v3 index does NOT carry.
     #
-    #   COMPONENT           -> "Potassium"
-    #   PROPERTY            -> "SCnc"
-    #   LONG_COMMON_NAME    -> "Potassium [Moles/volume] in Serum or Plasma"
-    #   SHORTNAME           -> "Potassium SerPl-sCnc"
-    #   SYSTEM, SCALE_TYP, CLASS, STATUS, TIME_ASPCT, METHOD_TYP,
-    #   COMMON_TEST_RANK  -> "" for every one
+    # Fix-R48 established this by probing field-by-field against the live API
+    # with `search?terms=2823-3&df=<FIELD>` -- one code, serum potassium. Those
+    # fields were being requested anyway and emitted as empty strings, so a
+    # rule author choosing a code was shown a blank exactly where the
+    # discriminating value belongs, with nothing saying the index simply does
+    # not publish it. An unavailable field was presented as a valid empty
+    # answer.
     #
-    # (CLASSTYPE and ORDER_OBS are equally empty upstream but this module never
-    # requests them, so they are not listed below -- the tuple describes fields
-    # this tool actually asks for.)
+    # Fix-R49: one code was not enough, and METHOD_TYP was wrong. Three
+    # independent personas hit the same contradiction -- a response that names
+    # METHOD_TYP as "returned empty for every code" directly above rows reading
+    # METHOD_TYP "PhenX", "ISE", "LC/MS/MS", "Confirm". Re-measured over 570
+    # rows drawn from 19 unrelated search terms:
     #
-    # Fix-R48: these were requested anyway and emitted as empty strings, so
-    # LOINC 2823-3 -- serum potassium, about the most-ordered test there is --
-    # came back with SYSTEM "", SCALE_TYP "" and CLASS "". Those are exactly
-    # the fields that separate serum potassium from urine potassium or a
-    # potassium clearance, so a rule author choosing a code was shown a blank
-    # where the discriminating value should be, with nothing saying the index
-    # simply does not publish it. An unavailable field was presented as a valid
-    # empty answer.
+    #   METHOD_TYP        260/570 populated (45.6%)  <- not absent at all
+    #   SYSTEM              0/570
+    #   SCALE_TYP           0/570
+    #   CLASS               0/570
+    #   STATUS              0/570
+    #   TIME_ASPCT          0/570
+    #   COMMON_TEST_RANK    0/570
+    #
+    # so the other six survive the wider sample and METHOD_TYP is removed. It
+    # is a costly field to disclaim: it is what separates a presumptive
+    # immunoassay screen from a confirmatory LC/MS/MS quantitation, and the
+    # note was telling callers to disregard it.
+    #
+    # (CLASSTYPE, ORDER_OBS and CONSUMER_NAME are equally empty upstream --
+    # 0/570 each -- but this module never requests them, so they are not listed
+    # here: the tuple describes fields this tool actually asks for.)
     _FIELDS_ABSENT_FROM_V3_INDEX = (
         "SYSTEM",
         "SCALE_TYP",
-        "METHOD_TYP",
         "CLASS",
         "STATUS",
         "TIME_ASPCT",
@@ -90,9 +98,24 @@ class LOINCTool(BaseTool):
     )
 
     @classmethod
-    def _unavailable_fields_disclosure(cls, fields: List[str]) -> Dict[str, Any]:
-        """Name the requested fields this index cannot answer, or {} if none."""
-        absent = [f for f in fields if f in cls._FIELDS_ABSENT_FROM_V3_INDEX]
+    def _unavailable_fields_disclosure(
+        cls, fields: List[str], results: Sequence[Dict[str, Any]] = ()
+    ) -> Dict[str, Any]:
+        """Name the requested fields this index cannot answer, or {} if none.
+
+        Fix-R49: `results` is checked so that the claim cannot contradict the
+        rows it is attached to. The static list above is knowledge about the
+        index and is what catches a field that is empty in *this* response but
+        meaningful in general; the check is the cheap invariant that would have
+        caught the METHOD_TYP error at runtime rather than three rounds later,
+        and it keeps any future entry honest by construction.
+        """
+        absent = [
+            field
+            for field in fields
+            if field in cls._FIELDS_ABSENT_FROM_V3_INDEX
+            and not any(row.get(field) for row in results)
+        ]
         if not absent:
             return {}
         note = cls._UNAVAILABLE_FIELDS_NOTE.format(fields=", ".join(absent))
@@ -106,10 +129,7 @@ class LOINCTool(BaseTool):
         return isinstance(api_response, dict) and "error" in api_response
 
     def _parse_search_results(
-        self,
-        api_response: Any,
-        fields: List[str],
-        extra_fields: Sequence[str] = (),
+        self, api_response: Any, fields: List[str]
     ) -> Dict[str, Any]:
         """Parse the Clinical Tables response: [total_count, codes, extra_info, data]."""
         if not isinstance(api_response, list) or len(api_response) < 4:
@@ -120,11 +140,19 @@ class LOINCTool(BaseTool):
             }
 
         total_count = api_response[0]
-        codes = api_response[1] if len(api_response) > 1 else []
+        # `or []` rather than a length check: the length is already guaranteed
+        # above, and this API really does send null in these slots (slot 2 is
+        # null on every response that requests no `ef` field). The sibling
+        # client for the same service, ClinicalTablesTool._parse, hardens the
+        # same way.
+        codes = api_response[1] or []
         # `ef` fields arrive in slot 2 as {field: [value_per_row]}, parallel to
         # the row order of slot 1, rather than inline with the `df` row data.
+        # Nothing but the requested `ef` fields lands there, so they are read
+        # off the response rather than passed in again: naming the field list
+        # twice at a call site is a way for `ef` values to vanish silently.
         extra_info = api_response[2] if isinstance(api_response[2], dict) else {}
-        data_arrays = api_response[3] if len(api_response) > 3 else []
+        data_arrays = api_response[3] or []
 
         results = []
         for i, code in enumerate(codes):
@@ -132,8 +160,7 @@ class LOINCTool(BaseTool):
             if i < len(data_arrays) and data_arrays[i]:
                 for field_name, value in zip(fields, data_arrays[i]):
                     result_item[field_name] = value
-            for field_name in extra_fields:
-                values = extra_info.get(field_name)
+            for field_name, values in extra_info.items():
                 if isinstance(values, list) and i < len(values):
                     result_item[field_name] = values[i]
             results.append(result_item)
@@ -146,7 +173,13 @@ class LOINCTool(BaseTool):
         # Attached here rather than per operation: every operation funnels
         # through this method with the field list it requested, so all four are
         # covered and none can be added later without the disclosure.
-        parsed.update(self._unavailable_fields_disclosure(fields))
+        #
+        # Fix-R49: only when there are rows. The note describes per-code field
+        # emptiness, so on a zero-result response it explains the fields of no
+        # codes at all -- noise attached to the one answer that most needs to
+        # be read plainly.
+        if results:
+            parsed.update(self._unavailable_fields_disclosure(fields, results))
         return parsed
 
     def _search_loinc_items(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -242,8 +275,9 @@ class LOINCTool(BaseTool):
         return result
 
     # Fix-R49: this operation used to pass `type: "answer"`, which the API does
-    # not implement -- the documented values are "question", "form" and "panel"
-    # only. Unrecognised values are silently dropped rather than rejected, so
+    # not implement -- the values it recognises are "question", "form" and
+    # "form_and_section" (the documented "panel" is inert; see `_search_forms`).
+    # Unrecognised values are silently dropped rather than rejected, so
     # the request degraded into a plain keyword search whose rows were then
     # presented as "answer-type codes". Proven by totals being identical for
     # `type=answer` and for an invented `type=zzzgarbage` on every term tried
@@ -281,9 +315,7 @@ class LOINCTool(BaseTool):
         if self._is_api_error(api_response):
             return api_response
 
-        parsed = self._parse_search_results(
-            api_response, fields, self._ANSWER_LIST_EXTRA_FIELDS
-        )
+        parsed = self._parse_search_results(api_response, fields)
 
         if parsed.get("count", 0) == 0:
             return {

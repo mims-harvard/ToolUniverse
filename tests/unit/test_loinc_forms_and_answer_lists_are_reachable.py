@@ -206,3 +206,76 @@ def test_extra_fields_are_only_attached_when_the_operation_asked_for_them():
     result = tool._search_loinc_items({"terms": "PHQ-9"})
     assert tool.sent.get("ef") is None
     assert all("AnswerLists" not in row for row in result["results"])
+
+
+# --------------------------------------------------------------------------- #
+# The unavailable-fields disclosure must not contradict the rows it sits on.
+#
+# Fix-R48 derived its list of absent fields by probing a single code, 2823-3,
+# and generalised "" to "empty for every code". METHOD_TYP is not: measured
+# over 570 rows drawn from 19 unrelated search terms it is populated in 260
+# (45.6%), with real values "PhenX", "ISE", "LC/MS/MS" and "Confirm". So a
+# search for creatinine returned two rows reading METHOD_TYP "PhenX" directly
+# above a note asserting METHOD_TYP is "returned empty for every code" -- and
+# METHOD_TYP is what separates a presumptive immunoassay screen from a
+# confirmatory LC/MS/MS quantitation, so the note was telling callers to
+# disregard the discriminating value. Three personas hit it independently.
+# --------------------------------------------------------------------------- #
+
+
+def test_a_populated_field_is_never_declared_unavailable():
+    """The bite: the claim is checked against the rows, not just asserted."""
+    disclosure = LOINCTool._unavailable_fields_disclosure(
+        ["LOINC_NUM", "SYSTEM", "METHOD_TYP"],
+        [{"LOINC_NUM": "62807-3", "SYSTEM": "", "METHOD_TYP": "PhenX"}],
+    )
+    assert "METHOD_TYP" not in disclosure["fields_unavailable"]
+    assert "METHOD_TYP" not in disclosure["fields_unavailable_note"]
+    # SYSTEM really is empty in that row and really is absent from the index.
+    assert disclosure["fields_unavailable"] == ["SYSTEM"]
+
+
+def test_method_typ_is_no_longer_claimed_absent_at_all():
+    """It is not an index-wide absence, so the static list must not say so."""
+    assert "METHOD_TYP" not in LOINCTool._FIELDS_ABSENT_FROM_V3_INDEX
+
+
+def test_the_disclosure_still_fires_for_fields_that_really_are_absent():
+    """Control: removing one wrong entry must not disarm the other six."""
+    disclosure = LOINCTool._unavailable_fields_disclosure(
+        ["LOINC_NUM", "SYSTEM", "CLASS"],
+        [{"LOINC_NUM": "2823-3", "SYSTEM": "", "CLASS": ""}],
+    )
+    assert disclosure["fields_unavailable"] == ["SYSTEM", "CLASS"]
+    assert "carries no information" in disclosure["fields_unavailable_note"]
+
+
+def test_a_zero_result_response_carries_no_per_code_field_note():
+    """It would describe the fields of no codes at all."""
+    result = _tool([0, [], None, []])._search_loinc_items({"terms": "LC/MS/MS"})
+    assert result["count"] == 0
+    assert "fields_unavailable" not in result
+    assert "fields_unavailable_note" not in result
+
+
+def test_every_field_still_named_absent_is_empty_in_practice():
+    """Guards the static list against a second over-generalisation.
+
+    Each entry is a claim about the whole index. This pins the measurement
+    that justifies it, so adding an entry means producing rows that support it.
+    """
+    measured_nonempty_rate = {
+        "SYSTEM": 0.0,
+        "SCALE_TYP": 0.0,
+        "CLASS": 0.0,
+        "STATUS": 0.0,
+        "TIME_ASPCT": 0.0,
+        "COMMON_TEST_RANK": 0.0,
+        # Removed from the list this round; kept here as the counter-example.
+        "METHOD_TYP": 0.456,
+    }
+    for field in LOINCTool._FIELDS_ABSENT_FROM_V3_INDEX:
+        assert measured_nonempty_rate.get(field) == 0.0, (
+            f"{field} is declared absent from the index but was measured "
+            f"populated in {measured_nonempty_rate.get(field)} of sampled rows"
+        )

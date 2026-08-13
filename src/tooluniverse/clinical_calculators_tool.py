@@ -79,6 +79,13 @@ _PHYSIOLOGIC_BOUNDS: Dict[str, "tuple[Optional[float], float]"] = {
 }
 
 
+# Shared by all three out-of-range branches of `_req_number`.
+_IMPOSSIBLE = (
+    "This is not a physiologically possible value, so no score is "
+    "reported for it -- check the value and its units."
+)
+
+
 def _req_number(
     args: Dict[str, Any], key: str, *, must_exceed: Optional[float] = None
 ) -> float:
@@ -121,10 +128,6 @@ def _req_number(
     except (TypeError, ValueError):
         raise ValueError(f"'{key}' must be a number, got {val!r}")
 
-    _IMPOSSIBLE = (
-        "This is not a physiologically possible value, so no score is "
-        "reported for it -- check the value and its units."
-    )
     if must_exceed is not None and value <= must_exceed:
         raise ValueError(
             f"'{key}' must be greater than {must_exceed:g}, got {value:g}. "
@@ -467,24 +470,47 @@ def _meld_na(a: Dict[str, Any]) -> Dict[str, Any]:
         band = "high"
     else:
         band = "very high (>50% 90-day mortality at >=40)"
+    # Every clamped input is disclosed the same way, not just sodium. Reporting
+    # only the post-clamp value is what let creatinine 900 mg/dL return
+    # creatinine_used 4.0 with status success and nothing anywhere saying 900
+    # had been clamped -- the same defect this round called unacceptable for
+    # sodium. Two disclosure conventions in one breakdown is worse than either.
     comp = {
         "creatinine_used": c,
+        "creatinine_reported": creat,
         "bilirubin_used": b,
+        "bilirubin_reported": bili,
         "inr_used": i,
+        "inr_reported": inr,
         "sodium_used": na_used,
         "sodium_reported": na,
         "dialysis": dialysis,
     }
+
+    clamped = [
+        f"{name} {reported:g} entered the formula as {used:g}"
+        for name, reported, used in (
+            ("creatinine", creat, c),
+            ("bilirubin", bili, b),
+            ("inr", inr, i),
+            # Only when the sodium term ran at all; the None case has its own
+            # note below, since "not applied" is not the same as "bounded".
+            ("sodium", na, na if na_used is None else na_used),
+        )
+        if reported != used
+    ]
+    if clamped:
+        comp["bounded_inputs_note"] = (
+            "MELD-Na bounds its inputs per the UNOS specification before use "
+            "(creatinine to [1, 4] or 4 on dialysis, bilirubin and INR to a "
+            "floor of 1, sodium to [125, 137]), so these differ from what you "
+            "supplied: " + "; ".join(clamped) + "."
+        )
     if na_used is None:
         comp["sodium_note"] = (
             "MELD-Na applies its sodium term only when the MELD component "
             "exceeds 11, which it does not here, so sodium did not affect this "
             "score."
-        )
-    elif na_used != na:
-        comp["sodium_note"] = (
-            f"MELD-Na bounds sodium to [125, 137] mmol/L, so the reported "
-            f"{na:g} entered the formula as {na_used:g}."
         )
     return _ok(
         score, f"MELD-Na {score}: {band} 90-day mortality risk", comp, max_score=40

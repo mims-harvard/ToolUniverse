@@ -189,8 +189,12 @@ def test_value_outside_the_plausible_range_is_refused_and_names_it(tool, param, 
     assert param in result.get("error", ""), (
         f"{tool} rejected {param}={bad} without naming it: {result}"
     )
-    # No band, class or score may survive alongside the refusal.
-    assert "score" not in result.get("data", {})
+    # No score, band or class may survive alongside the refusal. Asserted as
+    # the absence of `data` itself rather than as `"score" not in
+    # result.get("data", {})`, which is true by construction on the error path
+    # and could never fail. (Not `"score" not in json.dumps(result)` either --
+    # the refusal message contains the word "score".)
+    assert "data" not in result
 
 
 # A patient in genuine crisis, at values a clinician really does see. The cost
@@ -229,22 +233,58 @@ def test_creatinine_is_disclosed_rather_than_refused():
     """Deliberately outside the bounds table, in both directions of the family.
 
     Refusal is the right protection only where the calculator cannot disclose.
-    Both calculators taking a creatinine already do: CKD-EPI caveats the units
-    (Fix-R46) and MELD-Na reports the UNOS-bounded value it used. An upper
-    bound here would have reversed a shipped decision from another round.
+    Both calculators taking a creatinine do: CKD-EPI caveats the units
+    (Fix-R46) and MELD-Na names the value it clamped away. An upper bound here
+    would have reversed a shipped decision from another round.
+
+    The MELD-Na half of that claim was not true when it was first written --
+    `creatinine_used: 4.0` was the whole of the "disclosure", and 900 appeared
+    nowhere -- so this asserts the caller is actually told, not merely that a
+    clamped number is present.
     """
     meld = _run(
         "ClinicalCalc_MELD_Na",
         dict(VALID["ClinicalCalc_MELD_Na"], creatinine=900),
     )
     assert meld["status"] == "success"
-    assert meld["data"]["components"]["creatinine_used"] == 4.0
+    comp = meld["data"]["components"]
+    assert comp["creatinine_used"] == 4.0
+    assert comp["creatinine_reported"] == 900.0
+    assert "900" in comp["bounded_inputs_note"]
 
     egfr = ClinicalCalculatorTool(_config("ClinicalCalc_eGFR_CKD_EPI")).run(
         {"creatinine": 1000, "age": 40, "sex": "female"}
     )
     assert egfr["status"] == "success"
     assert any("units" in caveat for caveat in egfr["data"]["caveats"])
+
+
+def test_every_bounded_input_is_disclosed_the_same_way_not_just_sodium():
+    """Three floors fire at once; none of them may be silent.
+
+    Reporting only the post-clamp value is what let creatinine 900 read as
+    `creatinine_used: 4.0` with nothing saying 900 had been clamped. Sodium
+    was given a `_reported` twin and a note first; a breakdown with two
+    disclosure conventions in it is worse than either alone.
+    """
+    result = _run(
+        "ClinicalCalc_MELD_Na",
+        {"creatinine": 0.4, "bilirubin": 0.3, "inr": 0.8, "sodium": 134},
+    )
+    comp = result["data"]["components"]
+    for name, reported in (("creatinine", 0.4), ("bilirubin", 0.3), ("inr", 0.8)):
+        assert comp[f"{name}_used"] == 1.0
+        assert comp[f"{name}_reported"] == reported
+        assert name in comp["bounded_inputs_note"]
+
+
+def test_no_bounded_inputs_note_when_nothing_was_clamped():
+    """Control: a note that fires on ordinary input would be worse than none."""
+    result = _run(
+        "ClinicalCalc_MELD_Na",
+        {"creatinine": 2.0, "bilirubin": 5.0, "inr": 2.0, "sodium": 130},
+    )
+    assert "bounded_inputs_note" not in result["data"]["components"]
 
 
 def test_meld_na_reports_the_sodium_the_formula_actually_used():
@@ -261,7 +301,7 @@ def test_meld_na_reports_the_sodium_the_formula_actually_used():
     comp = result["data"]["components"]
     assert comp["sodium_used"] == 125.0
     assert comp["sodium_reported"] == 118.0
-    assert "125" in comp["sodium_note"]
+    assert "sodium 118 entered the formula as 125" in comp["bounded_inputs_note"]
 
 
 def test_meld_na_does_not_claim_a_sodium_it_never_applied():
@@ -287,3 +327,4 @@ def test_an_in_range_sodium_above_the_threshold_is_used_verbatim():
     assert result["data"]["score"] > 11
     assert comp["sodium_used"] == 130.0 == comp["sodium_reported"]
     assert "sodium_note" not in comp
+    assert "bounded_inputs_note" not in comp
