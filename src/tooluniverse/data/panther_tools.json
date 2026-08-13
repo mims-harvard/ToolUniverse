@@ -317,6 +317,44 @@
                   ]
                 }
               }
+            },
+            "mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source_gene": {
+                    "type": "string"
+                  },
+                  "target_gene": {
+                    "type": "string"
+                  },
+                  "target_gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ortholog_type": {
+                    "type": "string"
+                  },
+                  "persistent_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "target_persistent_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_mappings": {
+              "type": "integer"
             }
           }
         },

@@ -14,6 +14,7 @@ gene-disease relationships for use in clinical genomics.
 import requests
 import csv
 import io
+import re
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
@@ -26,6 +27,44 @@ ACTIONABILITY_PEDIATRIC_URL = (
     "https://actionability.clinicalgenome.org/ac/Pediatric/api"
 )
 EREPO_BASE_URL = "https://erepo.clinicalgenome.org/evrepo/api"
+
+# Confirmed live against the Evidence Repository's `classifications` endpoint:
+#   * `gene`, `caid`, `hgvs` and `variationId` are real server-side filters
+#   * `variant` is not a parameter at all -- it is accepted and ignored, so the
+#     request degrades to an unfiltered listing of the whole repository. A
+#     deliberately bogus `variant=ZZZNOTAVARIANT` returned the same first rows
+#     as sending no filter whatsoever.
+#   * the response carries no total, and an unspecified `matchLimit` pages at 25
+# Those two facts together understated PAH by 32x -- `total: 25` reported for a
+# gene with 817 curated classifications -- and reported curated variants as
+# absent, because the old client-side narrowing ran over an arbitrary 25-row
+# page: CAID CA16020993 (PAH c.1315+1G>T) is row 401 of PAH's 817, so it was
+# answered "No variant classifications found ... Not all genes have active
+# VCEPs" when in fact the Phenylketonuria VCEP had classified it.
+#
+# The largest single gene is RUNX1 at 1,648 rows and the entire repository is
+# 13,084 rows, so this cap covers any gene-scoped query outright.
+_EREPO_MATCH_LIMIT = 5000
+
+# `data` stays capped so a gene query cannot return tens of MB; `total` now
+# reports the real count beside it and the gap is disclosed explicitly.
+_EREPO_MAX_PUBLISHED = 100
+
+
+def _variant_query_param(variant: Any) -> tuple:
+    """Map a variant identifier onto the erepo parameter that filters on it.
+
+    Returns an (endpoint parameter name, value) pair. `hgvs` is the fallback
+    because it matches protein-change strings as well as full HGVS -- confirmed
+    live that `hgvs=p.Arg408Trp` resolves to a single classification.
+    """
+    value = str(variant).strip()
+    caid = value.upper().removeprefix("CAR:")
+    if re.fullmatch(r"CA\d+", caid):
+        return "caid", caid
+    if value.isdigit():
+        return "variationId", value
+    return "hgvs", value
 
 
 @register_tool("ClinGenTool")
@@ -460,12 +499,18 @@ class ClinGenTool(BaseTool):
         with no server-side filter and filters client-side -- confirmed live
         this routinely took 2-5+ minutes (and sometimes hung past a 300s
         client timeout) even for a gene with zero curated variants. The
-        classifications endpoint (no /all) supports server-side gene=/
-        variant= filtering and returns in ~1s -- confirmed live for both a
-        curated gene (PAH) and an uncurated one (empty result, still ~1s).
-        Calling it with neither gene nor variant set is just as unbounded as
-        classifications/all (confirmed live: also hangs past 30s with no
-        params), so require at least one.
+        classifications endpoint (no /all) supports real server-side filtering
+        and returns in ~1s -- confirmed live for both a curated gene (PAH) and
+        an uncurated one (empty result, still ~1s). Calling it with neither
+        gene nor variant set is just as unbounded as classifications/all
+        (confirmed live: also hangs past 30s with no params), so require at
+        least one.
+
+        Every filter is applied by the server: `gene` directly, and `variant`
+        via whichever of `caid`/`variationId`/`hgvs` matches the identifier
+        supplied. See `_variant_query_param` and `_EREPO_MATCH_LIMIT` for why
+        the tool must name the parameter the endpoint actually implements and
+        must state its own page size.
         """
         gene = arguments.get("gene")
         variant = arguments.get("variant")
@@ -481,11 +526,12 @@ class ClinGenTool(BaseTool):
                 ),
             }
         try:
-            params = {}
+            params: Dict[str, Any] = {"matchLimit": _EREPO_MATCH_LIMIT}
             if gene:
                 params["gene"] = gene
             if variant:
-                params["variant"] = variant
+                variant_key, variant_value = _variant_query_param(variant)
+                params[variant_key] = variant_value
 
             response = requests.get(
                 f"{EREPO_BASE_URL}/classifications", params=params, timeout=self.timeout
@@ -494,39 +540,50 @@ class ClinGenTool(BaseTool):
             payload = response.json()
             items = payload.get("variantInterpretations", [])
 
-            # The upstream `variant=` param resolves to that variant's gene
-            # and returns every variant for the gene, not just the one
-            # requested (confirmed live: variant=CA114360 returns 25 PAH
-            # rows, not 1) -- narrow back down to an exact match on the
-            # variant's own identifiers/HGVS forms.
-            if variant:
-                variant_str = str(variant).upper()
-                items = [
-                    item
-                    for item in items
-                    if variant_str in str(item.get("caid", "")).upper()
-                    or variant_str == str(item.get("variationId", "")).upper()
-                    or any(variant_str in h.upper() for h in item.get("hgvs") or [])
-                ]
-
             data = [self._flatten_classification(item) for item in items]
+            published = data[:_EREPO_MAX_PUBLISHED]
 
             result = {
                 "status": "success",
-                "data": data[:100],
+                "data": published,
                 "total": len(data),
+                "returned": len(published),
                 "source": "ClinGen Evidence Repository",
             }
-            if not data:
-                queried = f"gene '{gene}'" if gene else f"variant '{variant}'"
-                result["note"] = (
-                    f"No variant classifications found for {queried}. "
-                    "The ClinGen Evidence Repository only contains variants "
-                    "curated by Variant Curation Expert Panels (VCEPs). "
-                    "Not all genes have active VCEPs. Try ClinGen_get_gene_validity "
-                    "for gene-disease validity or clinvar_search_variants for "
-                    "ClinVar variant classifications."
+            if len(published) < len(data):
+                result["data_truncated"] = True
+                result["data_truncation_note"] = (
+                    f"`total` is the full count ClinGen returned for this query; "
+                    f"`data` carries only the first {len(published)} of them. "
+                    "Pass `variant` (a ClinGen CAID, a ClinVar VariationID or an "
+                    "HGVS/protein-change string) to retrieve a specific row."
                 )
+            if len(data) >= _EREPO_MATCH_LIMIT:
+                result["total_is_a_lower_bound"] = True
+                result["total_note"] = (
+                    f"The query filled the {_EREPO_MATCH_LIMIT}-row request cap, "
+                    "so `total` is a lower bound rather than the true count."
+                )
+            if not data:
+                if gene:
+                    result["note"] = (
+                        f"No variant classifications found for gene '{gene}'. "
+                        "The ClinGen Evidence Repository only contains variants "
+                        "curated by Variant Curation Expert Panels (VCEPs), and "
+                        "not all genes have an active VCEP. Try "
+                        "ClinGen_get_gene_validity for gene-disease validity or "
+                        "clinvar_search_variants for ClinVar classifications."
+                    )
+                else:
+                    result["note"] = (
+                        f"No variant classification found for variant '{variant}', "
+                        f"queried as `{variant_key}`. This was an exact "
+                        "server-side lookup over the whole Evidence Repository, so "
+                        "the variant is genuinely uncurated rather than merely "
+                        "missing from a page of results. Supply `gene` to list "
+                        "every curated variant for its gene, or use "
+                        "clinvar_search_variants for ClinVar classifications."
+                    )
             return result
         except requests.exceptions.Timeout:
             return {"status": "error", "error": f"Timeout after {self.timeout}s"}

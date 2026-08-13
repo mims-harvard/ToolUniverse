@@ -292,27 +292,35 @@ class PANTHERTool(BaseTool):
         mapping_data = search.get("mapping", {})
         mapped = mapping_data.get("mapped", {})
 
-        mapping = None
-        if mapped:
-            # Handle single mapping (dict) or multiple (list)
-            if isinstance(mapped, list):
-                mapped = mapped[0] if mapped else {}
-
-            mapping = {
-                "source_gene": mapped.get("gene", ""),
-                "target_gene": mapped.get("target_gene", ""),
-                "target_gene_symbol": mapped.get("target_gene_symbol", None),
-                "ortholog_type": mapped.get("ortholog", ""),
-                "persistent_id": mapped.get("persistent_id", None),
-                "target_persistent_id": mapped.get("target_persistent_id", None),
+        # PANTHER returns a bare object when one ortholog matches and a list
+        # when several do. Keeping only `mapped[0]` silently discarded every
+        # ortholog past the first, including under `ortholog_type='O'`, whose
+        # own parameter description promises "all orthologs" -- confirmed live
+        # that human ABCB1 -> mouse returns two rows (Abcb1b as O, Abcb1a as
+        # LDO) and the tool published only Abcb1b. Publish all of them.
+        mappings = [
+            {
+                "source_gene": item.get("gene", ""),
+                "target_gene": item.get("target_gene", ""),
+                "target_gene_symbol": item.get("target_gene_symbol", None),
+                "ortholog_type": item.get("ortholog", ""),
+                "persistent_id": item.get("persistent_id", None),
+                "target_persistent_id": item.get("target_persistent_id", None),
             }
+            for item in (mapped if isinstance(mapped, list) else [mapped])
+            if item
+        ]
 
         result = {
             "gene_id": gene_id,
             "source_organism": organism,
             "target_organism": target_organism,
             "ortholog_type": ortholog_type,
-            "mapping": mapping,
+            # `mapping` predates `mappings` and stays as the first match so
+            # existing callers keep working; it is not the whole answer.
+            "mapping": mappings[0] if mappings else None,
+            "mappings": mappings,
+            "total_mappings": len(mappings),
         }
 
         return {
