@@ -579,6 +579,8 @@ default_tool_files = {
     "mgnify_expanded": os.path.join(current_dir, "data", "mgnify_expanded_tools.json"),
     # EBI Job Dispatcher - pairwise alignment, translation, Pfam, Phobius, profile search
     "ebi_sequence": os.path.join(current_dir, "data", "ebi_sequence_tools.json"),
+    # SKEMPI - measured protein-protein binding affinity changes on mutation
+    "skempi": os.path.join(current_dir, "data", "skempi_tools.json"),
     # REBASE - full restriction enzyme catalogue (~6000 enzymes)
     "rebase": os.path.join(current_dir, "data", "rebase_tools.json"),
     # BioThings gateway - uniform access to ~50 BioThings-hosted biomedical APIs
