@@ -35,6 +35,36 @@ def _numeric_organism_as_taxid(args: dict[str, Any]) -> str | None:
     return value if value.isdigit() else None
 
 
+def _entry_gene_names(entry: Any) -> set:
+    """Every gene label an entry carries, upper-cased.
+
+    Covers the primary name plus synonyms and ORF/ordered-locus names, because
+    a gene symbol is often recorded as a synonym on one species' entry and as
+    the primary name on another's.
+    """
+    names = set()
+    if not isinstance(entry, dict):
+        return names
+    for gene in entry.get("gene") or []:
+        if not isinstance(gene, dict):
+            continue
+        for key in ("name", "olnNames", "orfNames", "synonyms"):
+            value = gene.get(key)
+            items = value if isinstance(value, list) else [value]
+            for item in items:
+                if isinstance(item, dict) and item.get("value"):
+                    names.add(str(item["value"]).strip().upper())
+    return names
+
+
+def _has_exact_gene_match(entries: Any, query: str) -> bool:
+    """True when some entry's gene symbol is exactly ``query``."""
+    wanted = str(query or "").strip().upper()
+    if not wanted or not isinstance(entries, list):
+        return False
+    return any(wanted in _entry_gene_names(entry) for entry in entries)
+
+
 @register_tool("ProteinsAPIRESTTool")
 class ProteinsAPIRESTTool(BaseTool):
     """
@@ -532,9 +562,10 @@ class ProteinsAPIRESTTool(BaseTool):
                         p.pop("taxid", None)
                     return p
 
-                # Order: swap field but keep the caller's scoping; then drop the
-                # human filter (same field, then swapped field) so any-organism
-                # hits surface.
+                # Each candidate is (params, require_exact_gene_match). Order:
+                # same field widened (gated on an exact gene match); swap field
+                # keeping the caller's scoping; then drop the human filter, same
+                # field then swapped field, so any-organism hits surface.
                 #
                 # The field swap must be symmetric. The _build_params routing
                 # heuristic sends anything longer than 10 characters to
@@ -545,31 +576,51 @@ class ProteinsAPIRESTTool(BaseTool):
                 # when the caller also supplied organism/taxid the auto_human
                 # branch below was skipped too -- leaving no retry at all and a
                 # silent empty success for data that exists upstream.
+                #
+                # The first candidate keeps the field the query was routed to and
+                # drops only the human default this tool added itself, and is
+                # accepted ONLY if some hit's gene symbol is exactly the query.
+                # Without it, a gene symbol with no human ortholog was answered
+                # with a different entity entirely -- 'ben-1' returned
+                # BANP_HUMAN. The gate is what stops it over-firing on a genuine
+                # protein-name query. Full upstream evidence for both halves:
+                # tests/unit/test_proteins_api_gene_symbol_not_swapped_to_free_text.py
                 candidates = []
+                if auto_human and (used_gene or used_protein):
+                    candidates.append(
+                        (_retry_params(use_gene=used_gene, keep_human=False), True)
+                    )
                 if used_gene or used_protein:
                     candidates.append(
-                        _retry_params(use_gene=not used_gene, keep_human=True)
+                        (_retry_params(use_gene=not used_gene, keep_human=True), False)
                     )
                 if auto_human:
                     candidates.append(
-                        _retry_params(use_gene=used_gene, keep_human=False)
+                        (_retry_params(use_gene=used_gene, keep_human=False), False)
                     )
                     candidates.append(
-                        _retry_params(use_gene=not used_gene, keep_human=False)
+                        (_retry_params(use_gene=not used_gene, keep_human=False), False)
                     )
 
-                for cand in candidates:
-                    retry_resp = self.session.get(
-                        url, params=cand, timeout=self.timeout
-                    )
-                    if retry_resp.status_code != 200:
+                # Candidate 1 and candidate 3 are the same param set with and
+                # without the gate, so memoise by params: one GET, and one JSON
+                # parse, for a body that can run to megabytes at size=100.
+                seen: Dict[tuple, Any] = {}
+                for cand, require_exact in candidates:
+                    key = tuple(sorted(cand.items()))
+                    if key not in seen:
+                        resp = self.session.get(url, params=cand, timeout=self.timeout)
+                        parsed = resp.json() if resp.status_code == 200 else None
+                        seen[key] = (resp, parsed)
+                    retry_resp, retry_data = seen[key]
+                    if not isinstance(retry_data, list) or not retry_data:
                         continue
-                    retry_data = retry_resp.json()
-                    if isinstance(retry_data, list) and len(retry_data) > 0:
-                        data = retry_data
-                        response = retry_resp
-                        widened_organism = auto_human and "taxid" not in cand
-                        break
+                    if require_exact and not _has_exact_gene_match(retry_data, query):
+                        continue
+                    data = retry_data
+                    response = retry_resp
+                    widened_organism = auto_human and "taxid" not in cand
+                    break
 
             # Cap features per entry to avoid 25MB+ responses for heavily-annotated proteins
             if tool_name == "proteins_api_get_variants" and isinstance(data, list):
@@ -582,7 +633,10 @@ class ProteinsAPIRESTTool(BaseTool):
                             entry["features_truncated"] = True
                             entry["total_features"] = len(features)
 
-            # For gene-name searches, sort exact gene matches to the top
+            # For gene-name searches, sort exact gene matches to the top.
+            # Deliberately narrower than _has_exact_gene_match: ranking uses the
+            # primary gene name only, so an entry that merely lists the query as
+            # a synonym does not outrank one whose primary name it is.
             if (
                 tool_name == "proteins_api_search"
                 and isinstance(data, list)

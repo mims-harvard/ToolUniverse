@@ -239,6 +239,7 @@ class CIViCTool(BaseTool):
         PAGINATED_QUERY = (
             "query GetVariantsByGene($gene_id: Int!, $page_size: Int, $after: String) { "
             "gene(id: $gene_id) { id name variants(first: $page_size, after: $after) { "
+            "totalCount "
             "nodes { id name ... on GeneVariant { feature { id name } } } "
             "pageInfo { hasNextPage endCursor } } } }"
         )
@@ -246,6 +247,7 @@ class CIViCTool(BaseTool):
         all_nodes: list = []
         cursor = None
         gene_meta: Dict[str, Any] = {}
+        total_count: Optional[int] = None
         try:
             while len(all_nodes) < limit:
                 fetch = min(PAGE_SIZE, limit - len(all_nodes))
@@ -276,6 +278,8 @@ class CIViCTool(BaseTool):
                         "name": gene_data.get("name"),
                     }
                 variants_block = gene_data.get("variants", {})
+                if total_count is None:
+                    total_count = variants_block.get("totalCount")
                 nodes = variants_block.get("nodes", [])
                 all_nodes.extend(nodes)
                 page_info = variants_block.get("pageInfo", {})
@@ -301,11 +305,21 @@ class CIViCTool(BaseTool):
             all_nodes = deduped
             # Flag variant names that appear multiple times (distinct CIViC records)
             duplicate_names = [n for n, c in name_count.items() if c > 1]
-            # Reassemble in the original single-request structure
+            # Reassemble in the original single-request structure.
+            # totalCount is how many variants the gene has in CIViC; len(nodes)
+            # is only how many `limit` allowed through. Dropping it left callers
+            # reporting the page size as if it were the gene's variant count.
+            returned = all_nodes[:limit]
+            variants_out: Dict[str, Any] = {"nodes": returned}
+            if total_count is not None:
+                variants_out.update(
+                    totalCount=total_count,
+                    pageInfo={"hasNextPage": len(returned) < total_count},
+                )
             data = {
                 "gene": {
                     **gene_meta,
-                    "variants": {"nodes": all_nodes[:limit]},
+                    "variants": variants_out,
                 }
             }
             metadata: Dict[str, Any] = {"source": "CIViC", "format": "GraphQL"}

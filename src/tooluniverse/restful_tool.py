@@ -2,6 +2,7 @@ from .graphql_tool import GraphQLTool, remove_none_and_empty_values
 import re
 import requests
 import copy
+from .exceptions import ToolValidationError
 from .tool_registry import register_tool
 
 _UNDERSCORE_CURIE_RE = re.compile(r"^([A-Za-z]+)_(\d+)$")
@@ -19,6 +20,42 @@ def _normalize_curie(value):
     stripped = value.strip()
     m = _UNDERSCORE_CURIE_RE.match(stripped)
     return f"{m.group(1)}:{m.group(2)}" if m else stripped
+
+
+# Monarch's API rejects limit > 500 with HTTP 422 (verified live against
+# https://api-v3.monarchinitiative.org/v3/api/search?q=seizure&limit=501).
+_MONARCH_MAX_LIMIT = 500
+# Page budget per phenotype when intersecting multiple phenotypes. 20 pages
+# covers 10,000 associations -- comfortably above the most heavily annotated
+# HPO terms (Seizure, the largest seen, has 5331).
+_MONARCH_MAX_PAGES = 20
+
+
+def _validation_error_detail(payload):
+    """Return an upstream FastAPI 422 body's messages, or None.
+
+    ``execute_RESTful_query`` hands back whatever JSON came off the wire
+    regardless of HTTP status, and a FastAPI validation body carries "detail"
+    rather than "error" -- so it sailed past the "error" check and was wrapped
+    as a successful result. A caller branching on status then consumed the
+    validation payload as if it were data.
+    """
+    if not isinstance(payload, dict):
+        return None
+    detail = payload.get("detail")
+    if not detail or set(payload) - {"detail"}:
+        return None
+    if isinstance(detail, str):
+        return detail
+    if isinstance(detail, list):
+        messages = [
+            str(item.get("msg"))
+            for item in detail
+            if isinstance(item, dict) and item.get("msg")
+        ]
+        if messages:
+            return "; ".join(messages)
+    return None
 
 
 def execute_RESTful_query(endpoint_url, variables=None):
@@ -123,7 +160,14 @@ class MonarchTool(RESTfulTool):
             # cross-ontology matches; still truncated back to
             # requested_limit after filtering so the returned count
             # matches what the caller asked for.
-            query_schema_runtime["limit"] = requested_limit * 3
+            #
+            # Clamp to Monarch's own ceiling. Unclamped, the x3 turned any
+            # requested limit above 166 into limit=501+, which Monarch rejects
+            # with HTTP 422; that validation body was then returned to the
+            # caller as status:"success" quoting an "input" value of 501 that
+            # the caller never supplied -- an internal over-fetch factor
+            # leaking out as if it were the user's own argument.
+            query_schema_runtime["limit"] = min(requested_limit * 3, _MONARCH_MAX_LIMIT)
         response = execute_RESTful_query(
             endpoint_url=formatted_endpoint_url, variables=query_schema_runtime
         )
@@ -157,6 +201,19 @@ class MonarchTool(RESTfulTool):
             if isinstance(requested_limit, int):
                 filtered = filtered[:requested_limit]
             response["items"] = filtered
+        validation_detail = _validation_error_detail(response)
+        if validation_detail:
+            error = ToolValidationError(
+                f"Upstream rejected the request: {validation_detail}. "
+                f"This tool requests up to {_MONARCH_MAX_LIMIT} records per "
+                "call; lower 'limit' or page with 'offset'.",
+                details={"upstream_response": response},
+            )
+            return {
+                "status": "error",
+                "error": str(error),
+                "error_details": error.to_dict(),
+            }
         if isinstance(response, dict) and "status" not in response:
             return {"status": "success", "data": response}
         return response
@@ -175,15 +232,43 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
                 query_schema_runtime[key] = arguments[key]
         all_diseases = []
         uninformative_ids = []
+        truncated_ids = []
         for HPOID in arguments["HPO_ID_list"]:
             each_query_schema_runtime = copy.deepcopy(query_schema_runtime)
             each_query_schema_runtime["object"] = HPOID
-            each_query_schema_runtime["limit"] = 500
-            each_output = execute_RESTful_query(
-                endpoint_url=self.endpoint_url, variables=each_query_schema_runtime
-            )
-            each_output = each_output["items"]
-            each_output_names = [disease["subject_label"] for disease in each_output]
+            # One page of 500 was ANDed into the intersection as if it were the
+            # phenotype's whole disease set. HP:0001250 (Seizure) has 5331
+            # associations upstream, so the leg carried 9% of its diseases and
+            # the intersection dropped every disease outside that slice --
+            # Seizure + Cataplexy lost Niemann-Pick type C, the one treatable
+            # secondary cataplexy. Page through instead, and say so when the
+            # budget still runs out rather than returning a short list that
+            # looks definitive.
+            each_output_names = []
+            offset, total = 0, None
+            for _ in range(_MONARCH_MAX_PAGES):
+                each_query_schema_runtime["limit"] = _MONARCH_MAX_LIMIT
+                each_query_schema_runtime["offset"] = offset
+                page = execute_RESTful_query(
+                    endpoint_url=self.endpoint_url,
+                    variables=each_query_schema_runtime,
+                )
+                if not isinstance(page, dict):
+                    break
+                items = page.get("items") or []
+                each_output_names.extend(
+                    disease["subject_label"]
+                    for disease in items
+                    if isinstance(disease, dict) and disease.get("subject_label")
+                )
+                total = page.get("total", total)
+                offset += _MONARCH_MAX_LIMIT
+                if len(items) < _MONARCH_MAX_LIMIT or (
+                    isinstance(total, int) and offset >= total
+                ):
+                    break
+            if isinstance(total, int) and len(each_output_names) < total:
+                truncated_ids.append(f"{HPOID} ({len(each_output_names)} of {total})")
             # Fix-R8B-9: A single unrecognized/obsolete HPO ID (typo, stale ID)
             # returns zero diseases from Monarch. Previously that empty set
             # was ANDed into the running intersection, silently collapsing
@@ -203,22 +288,44 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
             # not a single bad ID nuking a good intersection.
             return []
 
-        intersection = set(all_diseases[0])
-        for element in all_diseases[1:]:
-            intersection &= set(element)
-        intersection = list(intersection)
-        if query_schema_runtime["limit"] < len(intersection):
-            intersection = intersection[: query_schema_runtime["limit"]]
+        # Intersect in the first phenotype's upstream (relevance-ranked) order.
+        # Slicing an unordered set to `limit` made the tool nondeterministic:
+        # three identical calls for HP:0002524 returned three different
+        # 5-disease differentials, so whether Niemann-Pick type C appeared at
+        # all depended on the process hash seed.
+        other_sets = [set(element) for element in all_diseases[1:]]
+        seen = set()
+        intersection = []
+        for name in all_diseases[0]:
+            if name in seen or not all(name in other for other in other_sets):
+                continue
+            seen.add(name)
+            intersection.append(name)
+        matched_total = len(intersection)
+        limit = query_schema_runtime["limit"]
+        if isinstance(limit, int) and limit < matched_total:
+            intersection = intersection[:limit]
+
+        warnings = []
         if uninformative_ids:
-            return {
-                "diseases": intersection,
-                "warning": (
-                    f"No disease associations found for HPO ID(s) "
-                    f"{uninformative_ids} (invalid/obsolete ID or a phenotype "
-                    "with no known disease association) -- excluded from the "
-                    "intersection below, which is based only on the "
-                    f"remaining {len(all_diseases)} of "
-                    f"{len(arguments['HPO_ID_list'])} input HPO ID(s)."
-                ),
-            }
+            warnings.append(
+                f"No disease associations found for HPO ID(s) "
+                f"{uninformative_ids} (invalid/obsolete ID or a phenotype "
+                "with no known disease association) -- excluded from the "
+                "intersection below, which is based only on the "
+                f"remaining {len(all_diseases)} of "
+                f"{len(arguments['HPO_ID_list'])} input HPO ID(s)."
+            )
+        if truncated_ids:
+            warnings.append(
+                f"Disease associations were truncated for HPO ID(s) "
+                f"{truncated_ids}, so this intersection may omit diseases that "
+                "do carry every requested phenotype. Treat it as a partial "
+                "differential, not an exhaustive one."
+            )
+        if warnings or matched_total > len(intersection):
+            result = {"diseases": intersection, "total_matched": matched_total}
+            if warnings:
+                result["warning"] = " ".join(warnings)
+            return result
         return intersection

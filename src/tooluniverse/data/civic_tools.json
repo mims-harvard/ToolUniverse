@@ -27,7 +27,7 @@
       "required": []
     },
     "fields": {
-      "query": "query GetGenes($limit: Int, $entrezSymbols: [String!]) { genes(first: $limit, entrezSymbols: $entrezSymbols) { nodes { id name description entrezId } } }",
+      "query": "query GetGenes($limit: Int, $entrezSymbols: [String!]) { genes(first: $limit, entrezSymbols: $entrezSymbols) { totalCount pageInfo { hasNextPage } nodes { id name description entrezId } } }",
       "operation_name": "GetGenes",
       "array_wrap": {
         "name": "entrezSymbols",
@@ -44,6 +44,20 @@
             "genes": {
               "type": "object",
               "properties": {
+                "totalCount": {
+                  "type": "integer",
+                  "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                },
+                "pageInfo": {
+                  "type": "object",
+                  "description": "Pagination state for this connection.",
+                  "properties": {
+                    "hasNextPage": {
+                      "type": "boolean",
+                      "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    }
+                  }
+                },
                 "nodes": {
                   "type": "array",
                   "items": {
@@ -133,7 +147,7 @@
       "required": []
     },
     "fields": {
-      "query": "query GetVariantsByGene($gene_id: Int!, $page_size: Int, $after: String) { gene(id: $gene_id) { id name variants(first: $page_size, after: $after) { nodes { id name ... on GeneVariant { feature { id name } } } pageInfo { hasNextPage endCursor } } } }",
+      "query": "query GetVariantsByGene($gene_id: Int!, $page_size: Int, $after: String) { gene(id: $gene_id) { id name variants(first: $page_size, after: $after) { totalCount nodes { id name ... on GeneVariant { feature { id name } } } pageInfo { hasNextPage endCursor } } } }",
       "operation_name": "GetVariantsByGene"
     },
     "return_schema": {
@@ -154,6 +168,20 @@
                 "variants": {
                   "type": "object",
                   "properties": {
+                    "totalCount": {
+                      "type": "integer",
+                      "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                    },
+                    "pageInfo": {
+                      "type": "object",
+                      "description": "Pagination state for this connection.",
+                      "properties": {
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                        }
+                      }
+                    },
                     "nodes": {
                       "type": "array",
                       "items": {
@@ -234,7 +262,7 @@
       ]
     },
     "fields": {
-      "query": "query GetVariant($variant_id: Int!) { variant(id: $variant_id) { id name variantAliases variantTypes { id name soid } molecularProfiles(first: 5) { nodes { id name molecularProfileScore } } ... on GeneVariant { clinvarIds hgvsDescriptions } } }",
+      "query": "query GetVariant($variant_id: Int!) { variant(id: $variant_id) { id name variantAliases variantTypes { id name soid } molecularProfiles(first: 5) { totalCount pageInfo { hasNextPage } nodes { id name molecularProfileScore } } ... on GeneVariant { clinvarIds hgvsDescriptions } } }",
       "operation_name": "GetVariant"
     },
     "return_schema": {
@@ -298,7 +326,7 @@
       "required": []
     },
     "fields": {
-      "query": "query SearchVariants($query: String, $limit: Int) { variants(name: $query, first: $limit) { nodes { id name ... on GeneVariant { feature { id name } } } } }",
+      "query": "query SearchVariants($query: String, $limit: Int) { variants(name: $query, first: $limit) { totalCount pageInfo { hasNextPage } nodes { id name ... on GeneVariant { feature { id name } } } } }",
       "operation_name": "SearchVariants"
     },
     "return_schema": {
@@ -310,6 +338,20 @@
             "variants": {
               "type": "object",
               "properties": {
+                "totalCount": {
+                  "type": "integer",
+                  "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                },
+                "pageInfo": {
+                  "type": "object",
+                  "description": "Pagination state for this connection.",
+                  "properties": {
+                    "hasNextPage": {
+                      "type": "boolean",
+                      "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    }
+                  }
+                },
                 "nodes": {
                   "type": "array",
                   "items": {
@@ -455,7 +497,7 @@
       "required": []
     },
     "fields": {
-      "query": "query SearchEvidenceItems($limit: Int, $status: EvidenceStatusFilter, $therapyName: String, $diseaseName: String, $molecularProfileName: String, $evidenceType: EvidenceType, $significance: EvidenceSignificance) { evidenceItems(first: $limit, status: $status, therapyName: $therapyName, diseaseName: $diseaseName, molecularProfileName: $molecularProfileName, evidenceType: $evidenceType, significance: $significance) { nodes { id description evidenceLevel evidenceType evidenceDirection significance status disease { name } therapies { name } molecularProfile { id name } source { citation } } } }",
+      "query": "query SearchEvidenceItems($limit: Int, $status: EvidenceStatusFilter, $therapyName: String, $diseaseName: String, $molecularProfileName: String, $evidenceType: EvidenceType, $significance: EvidenceSignificance) { evidenceItems(first: $limit, status: $status, therapyName: $therapyName, diseaseName: $diseaseName, molecularProfileName: $molecularProfileName, evidenceType: $evidenceType, significance: $significance) { totalCount pageInfo { hasNextPage } nodes { id description evidenceLevel evidenceType evidenceDirection significance status disease { name } therapies { name } molecularProfile { id name } source { citation } } } }",
       "operation_name": "SearchEvidenceItems",
       "param_map": {
         "therapy": "therapyName",
@@ -478,6 +520,20 @@
             "evidenceItems": {
               "type": "object",
               "properties": {
+                "totalCount": {
+                  "type": "integer",
+                  "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                },
+                "pageInfo": {
+                  "type": "object",
+                  "description": "Pagination state for this connection.",
+                  "properties": {
+                    "hasNextPage": {
+                      "type": "boolean",
+                      "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    }
+                  }
+                },
                 "nodes": {
                   "type": "array",
                   "items": {
@@ -599,7 +655,7 @@
       "required": []
     },
     "fields": {
-      "query": "query SearchAssertions($limit: Int, $therapyName: String, $diseaseName: String, $variantName: String) { assertions(first: $limit, therapyName: $therapyName, diseaseName: $diseaseName, variantName: $variantName) { nodes { id description status } } }",
+      "query": "query SearchAssertions($limit: Int, $therapyName: String, $diseaseName: String, $variantName: String) { assertions(first: $limit, therapyName: $therapyName, diseaseName: $diseaseName, variantName: $variantName) { totalCount pageInfo { hasNextPage } nodes { id description status } } }",
       "operation_name": "SearchAssertions",
       "param_map": {
         "therapy": "therapyName",
@@ -618,6 +674,20 @@
             "assertions": {
               "type": "object",
               "properties": {
+                "totalCount": {
+                  "type": "integer",
+                  "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                },
+                "pageInfo": {
+                  "type": "object",
+                  "description": "Pagination state for this connection.",
+                  "properties": {
+                    "hasNextPage": {
+                      "type": "boolean",
+                      "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    }
+                  }
+                },
                 "nodes": {
                   "type": "array",
                   "items": {
@@ -671,7 +741,7 @@
       ]
     },
     "fields": {
-      "query": "query GetMolecularProfile($molecular_profile_id: Int!, $evidence_limit: Int) { molecularProfile(id: $molecular_profile_id) { id name molecularProfileScore description evidenceItems(first: $evidence_limit) { nodes { id name evidenceLevel evidenceDirection significance status disease { name } therapies { name } } } } }",
+      "query": "query GetMolecularProfile($molecular_profile_id: Int!, $evidence_limit: Int) { molecularProfile(id: $molecular_profile_id) { id name molecularProfileScore description evidenceItems(first: $evidence_limit) { totalCount pageInfo { hasNextPage } nodes { id name evidenceLevel evidenceDirection significance status disease { name } therapies { name } } } } }",
       "operation_name": "GetMolecularProfile"
     },
     "return_schema": {
@@ -700,6 +770,20 @@
                 "evidenceItems": {
                   "type": "object",
                   "properties": {
+                    "totalCount": {
+                      "type": "integer",
+                      "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                    },
+                    "pageInfo": {
+                      "type": "object",
+                      "description": "Pagination state for this connection.",
+                      "properties": {
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                        }
+                      }
+                    },
                     "nodes": {
                       "type": "array",
                       "items": {
@@ -785,7 +869,7 @@
       "required": []
     },
     "fields": {
-      "query": "query SearchMolecularProfiles($limit: Int, $query: String) { molecularProfiles(first: $limit, name: $query) { nodes { id name } } }",
+      "query": "query SearchMolecularProfiles($limit: Int, $query: String) { molecularProfiles(first: $limit, name: $query) { totalCount pageInfo { hasNextPage } nodes { id name } } }",
       "operation_name": "SearchMolecularProfiles",
       "param_map": {
         "name": "query"
@@ -800,6 +884,20 @@
             "molecularProfiles": {
               "type": "object",
               "properties": {
+                "totalCount": {
+                  "type": "integer",
+                  "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                },
+                "pageInfo": {
+                  "type": "object",
+                  "description": "Pagination state for this connection.",
+                  "properties": {
+                    "hasNextPage": {
+                      "type": "boolean",
+                      "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    }
+                  }
+                },
                 "nodes": {
                   "type": "array",
                   "items": {
@@ -854,7 +952,7 @@
       "required": []
     },
     "fields": {
-      "query": "query SearchDiseases($limit: Int, $name: String) { browseDiseases(first: $limit, name: $name) { nodes { id name } } }",
+      "query": "query SearchDiseases($limit: Int, $name: String) { browseDiseases(first: $limit, name: $name) { totalCount pageInfo { hasNextPage } nodes { id name } } }",
       "operation_name": "SearchDiseases",
       "param_map": {
         "query": "name"
@@ -869,6 +967,20 @@
             "browseDiseases": {
               "type": "object",
               "properties": {
+                "totalCount": {
+                  "type": "integer",
+                  "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                },
+                "pageInfo": {
+                  "type": "object",
+                  "description": "Pagination state for this connection.",
+                  "properties": {
+                    "hasNextPage": {
+                      "type": "boolean",
+                      "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    }
+                  }
+                },
                 "nodes": {
                   "type": "array",
                   "items": {
@@ -920,7 +1032,7 @@
       "required": []
     },
     "fields": {
-      "query": "query SearchTherapies($limit: Int, $name: String) { browseTherapies(first: $limit, name: $name) { nodes { id name } } }",
+      "query": "query SearchTherapies($limit: Int, $name: String) { browseTherapies(first: $limit, name: $name) { totalCount pageInfo { hasNextPage } nodes { id name } } }",
       "operation_name": "SearchTherapies",
       "param_map": {
         "query": "name"
@@ -935,6 +1047,20 @@
             "browseTherapies": {
               "type": "object",
               "properties": {
+                "totalCount": {
+                  "type": "integer",
+                  "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                },
+                "pageInfo": {
+                  "type": "object",
+                  "description": "Pagination state for this connection.",
+                  "properties": {
+                    "hasNextPage": {
+                      "type": "boolean",
+                      "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    }
+                  }
+                },
                 "nodes": {
                   "type": "array",
                   "items": {
