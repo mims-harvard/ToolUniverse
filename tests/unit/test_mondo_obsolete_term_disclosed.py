@@ -11,8 +11,8 @@ back ``disease_curie: MONDO:0014978`` for PADI6, which feeds straight
 into this tool.
 
 Root cause is that the Monarch payload already answers the question and
-the tool discarded it. Confirmed live against
-``api-v3.monarchinitiative.org/v3/api/entity/MONDO:0014978``:
+the tool discarded it. Confirmed live against the host the tool calls,
+``api.monarchinitiative.org/v3/api/entity/MONDO:0014978``:
 ``deprecated: True``; the live replacement MONDO:1010200 returns
 ``deprecated: None``. The same field is present, and was equally
 discarded, on the /search items.

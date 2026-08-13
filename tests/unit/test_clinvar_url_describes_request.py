@@ -9,6 +9,11 @@ pre-request URL string; ``response.url`` is the URL actually sent.
 
 Confirmed live after the fix: variant 977673 and 393995 now yield
 distinct, replayable URLs ending ``?db=clinvar&id=<variant>&retmode=json``.
+
+Scope: the success and rate-limited paths, which are the two that hold a
+response object. The two exception paths (request failed after retries,
+max retries exceeded) have no response and still report the pre-request
+URL, since there is nothing better to report there.
 """
 
 from unittest.mock import MagicMock, patch
