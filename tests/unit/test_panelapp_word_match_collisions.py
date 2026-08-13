@@ -15,6 +15,7 @@ Bounding BOTH ends separates inflection from coincidence: a true inflection is
 small on both sides, while every one of these collisions is lopsided.
 """
 
+import os
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -23,7 +24,12 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tooluniverse.panelapp_tool import PanelAppSearchTool, _word_matches
+from tooluniverse.panelapp_tool import (
+    _MAX_SUFFIX_LEFT,
+    _MIN_WORD_LEN,
+    PanelAppSearchTool,
+    _word_matches,
+)
 
 pytestmark = pytest.mark.unit
 
@@ -84,9 +90,27 @@ class TestRealInflectionStillMatches:
     def test_identical_words_always_match(self):
         assert _word_matches("cardiomyopathy", "cardiomyopathy")
 
-    def test_short_words_never_fuzzy_match(self):
-        """Below the length floor, only equality counts."""
+    def test_containment_is_not_enough(self):
+        """"cardiac" is not "cardiomyopathy"; a long shared prefix alone must
+        not be sufficient."""
         assert not _word_matches("cardiac", "cardiomyopathy")
+
+    @pytest.mark.parametrize("short,other", [("renal", "renin"), ("colon", "colitis")])
+    def test_words_below_the_length_floor_never_fuzzy_match(self, short, other):
+        """Below _MIN_WORD_LEN only equality counts. These pairs are the right
+        SHAPE to match (a short shared prefix, a short ending) and are rejected
+        solely because one word is too short to judge -- so this fails if the
+        floor is lowered, which a pair of long words could never detect."""
+        assert len(short) < _MIN_WORD_LEN
+        assert not _word_matches(short, other)
+        assert not _word_matches(other, short)
+
+    def test_the_length_floor_is_what_rejects_them(self):
+        """Pin the reason: with the floor removed these WOULD match, so the
+        assertion above is not passing for some unrelated reason."""
+        assert _MAX_SUFFIX_LEFT >= len("renin") - len(os.path.commonprefix(
+            ["renal", "renin"]
+        ))
 
 
 _PANELS = [

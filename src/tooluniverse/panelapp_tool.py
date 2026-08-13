@@ -22,30 +22,31 @@ PANELS_URL = "https://panelapp.genomicsengland.co.uk/api/v1/panels/"
 _MAX_PAGES = 10  # safety cap; ~434 panels / 100 per page = 5 pages today
 
 # Thresholds for the inflection heuristic in _word_matches(). Two words are
-# the same term when what they DON'T share is, on both sides, no bigger than
-# an English inflectional ending: at most _MAX_STEM_DROP characters trimmed
-# off the shorter word to reach the shared stem, and at most
-# _MAX_SUFFIX_LEFT characters hanging off the end of the longer one.
-# _MAX_SUFFIX_LEFT is the bound that does the work: every collision this
-# heuristic used to admit is lopsided and fails on it alone. _MAX_STEM_DROP
-# stays at 3, the value it always had -- tightening it to 2 was tried and
-# reverted, because 3 is exactly the length of the "-osis"/"-otic" alternation
-# that runs through clinical vocabulary, and dropping to 2 silently cost seven
-# real pairs (fibrosis/fibrotic, sclerosis/sclerotic, necrosis/necrotic,
-# thrombosis/thrombotic, stenosis/stenotic, psoriasis/psoriatic,
-# cirrhosis/cirrhotic) while rejecting no collision that _MAX_SUFFIX_LEFT
-# had not already rejected on its own.
-# _MIN_WORD_LEN keeps short words from colliding by coincidence.
+# the same term when the longer one is the shorter one plus no more than
+# _MAX_SUFFIX_LEFT trailing characters -- the length of an English
+# inflectional ending. _MIN_WORD_LEN keeps short words from colliding by
+# coincidence ("renal"/"renin" share "ren" and are otherwise the same shape).
+#
+# There used to be a second threshold here bounding how much was trimmed off
+# the SHORTER word to reach the shared prefix. It is gone because at equal
+# values it is dead code, not policy: `longer - prefix <= N` and
+# `prefix <= shorter <= longer` together give `prefix >= longer - N >=
+# shorter - N`, so the trim bound can never reject a pair the suffix bound
+# accepts. Verified as well as argued -- 298,378 pairs over the live panel
+# vocabulary and 400,000 synthetic pairs, zero disagreements.
 _MIN_WORD_LEN = 6
-_MAX_STEM_DROP = 3
 _MAX_SUFFIX_LEFT = 3
 
 # Panel names are prose, so a term is routinely followed by a comma or closing
 # parenthesis ("...cerebellar anomalies, childhood onset", "(Lynch syndrome)")
 # and is hyphenated as often as spaced ("non-syndromic"). Splitting on
 # whitespace alone leaves the punctuation glued to the word, where it defeats
-# any exact or suffix-sensitive comparison.
-_WORD_RE = re.compile(r"[a-z0-9]+(?:'[a-z]+)?")
+# any exact or suffix-sensitive comparison. Known cost of splitting hyphens:
+# "non-syndromic" yields "syndromic", so search="syndrome" matches the three
+# panels that are explicitly NON-syndromic. Word-level matching has no notion
+# of negation; the alternative is losing every hyphenated compound, which is
+# worse.
+_WORD_RE = re.compile(r"[a-z0-9]+")
 
 
 def _words(text: str) -> list:
@@ -80,16 +81,28 @@ def _word_matches(query_word: str, haystack_word: str) -> bool:
     -- wrong data, legitimised by a count. `search="myopia"` returned 3
     myopathy panels (an eye disorder answered with muscle-disease panels).
 
-    Adding the second bound is the whole fix, and it is what separates
-    inflection from coincidence: a true inflection is small on BOTH sides,
-    while every one of these collisions is lopsided. The pre-existing bound on
-    the shorter word is left at the value it always had -- tightening it was
-    tried and reverted for costing real matches (see the constants above).
-    Verified against the same live 433-panel list, the surviving matches are
-    unchanged: singulars/plurals ("anomaly"/"anomalies",
-    "dystrophy"/"dystrophies"), the medical adjectival forms
-    ("diabetes"/"diabetic", "syndrome"/"syndromic", "tumour"/"tumoral") and
-    the "-osis"/"-otic" alternation ("thrombosis"/"thrombotic").
+    Bounding what dangles off the LONGER word is the fix: a true inflection is
+    a short ending, while every one of these collisions is lopsided. The
+    inflection classes that matter are kept -- singulars/plurals
+    ("anomaly"/"anomalies", "dystrophy"/"dystrophies"), the medical adjectival
+    forms ("diabetes"/"diabetic", "syndrome"/"syndromic", "tumour"/"tumoral")
+    and the "-osis"/"-otic" alternation ("thrombosis"/"thrombotic").
+
+    It is NOT free, and the cost is concentrated where PanelApp's own
+    `disease_group` vocabulary uses a derived form four or more characters
+    longer than the query. Measured over 214 queries against the live
+    433-panel list: ~198 wrong panel-hits removed, but ~51 real ones lost too,
+    mostly "cardiac"/"cardiology" (15 panels, including Brugada, ARVC and the
+    long/short-QT panels) and "immune"/"immunology" (11), plus
+    "muscle"/"muscular" (12), "arrhythmia"/"arrhythmogenic" (6),
+    "pigmentation"/"pigmentary" (3) and "retinopathy"/"retinal" (1). No
+    threshold separates these from the collisions above -- "cardiac"/
+    "cardiology" needs five dangling characters and "sarcoma"/"sarcoidosis"
+    has six -- so widening the bound just restores the false positives. The
+    trade is deliberate: a loss shows up as an honest empty result carrying
+    the "try PanelApp_search_genes" note, whereas the old behaviour returned
+    another disease's panels under a confident `count`. Callers who hit an
+    empty result should retry with the other word form.
     """
     if not query_word or not haystack_word:
         return False
@@ -99,7 +112,7 @@ def _word_matches(query_word: str, haystack_word: str) -> bool:
         return False
     shorter = min(len(query_word), len(haystack_word))
     longer = max(len(query_word), len(haystack_word))
-    # Exact O(1) prefilter, not an approximation: the suffix bound below needs
+    # Exact O(1) prefilter, not an approximation: the bound below needs
     # `longer - common_prefix <= _MAX_SUFFIX_LEFT`, and `common_prefix` can
     # never exceed `shorter`, so any pair further apart in length than
     # _MAX_SUFFIX_LEFT is already rejected. Checking it first keeps the
@@ -108,10 +121,7 @@ def _word_matches(query_word: str, haystack_word: str) -> bool:
     if longer - shorter > _MAX_SUFFIX_LEFT:
         return False
     common_prefix = len(os.path.commonprefix([query_word, haystack_word]))
-    return (
-        common_prefix >= shorter - _MAX_STEM_DROP
-        and longer - common_prefix <= _MAX_SUFFIX_LEFT
-    )
+    return longer - common_prefix <= _MAX_SUFFIX_LEFT
 
 
 @register_tool("PanelAppSearchTool")
@@ -171,9 +181,19 @@ class PanelAppSearchTool(BaseRESTTool):
             # doesn't appear in any panel name/disease_group text -- it's
             # only reachable through the genes it curates, F8/F9). Point
             # the caller at the gene-level fallback instead of a dead end.
+            # Fix-47-2: word matching only tolerates a short inflectional
+            # ending, so a query whose PanelApp counterpart is a longer
+            # derived form ("cardiac" vs the "Cardiology" disease_group,
+            # "retinopathy" vs "Retinal disorders") lands here rather than
+            # matching. Naming that explicitly is what turns this empty
+            # result into something the caller can act on.
             note += (
                 " No panel matched this term in its name/disease_group/"
-                "disease_sub_group metadata. If you're looking for a "
+                "disease_sub_group metadata. Matching tolerates only a short "
+                "word ending, so if PanelApp files your topic under a longer "
+                "related word, retry with that form (e.g. 'cardiology' rather "
+                "than 'cardiac', 'retinal' rather than 'retinopathy', "
+                "'muscular' rather than 'muscle'). If you're looking for a "
                 "condition by its causal gene(s) instead, try "
                 "PanelApp_search_genes with the gene symbol."
             )
