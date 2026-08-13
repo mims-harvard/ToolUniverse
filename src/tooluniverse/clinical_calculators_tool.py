@@ -27,6 +27,58 @@ def _truthy(v: Any) -> bool:
     return str(v).strip().lower() in ("true", "yes", "y", "1", "present", "positive")
 
 
+# Fix-R49: Fix-R48 (below) closed the bottom of the range and left the top
+# open, so the same class survived at the other end -- MELD-Na with sodium
+# 134000 mmol/L answered "moderate 90-day mortality risk", and Child-Pugh with
+# albumin 1000 g/dL answered "Class A (score 5): well-compensated disease".
+# Both are roughly two hundred times a living value, both were reported with
+# status success and no qualification.
+#
+# The bound belongs to the quantity rather than to the call site: `bilirubin`
+# means the same thing in Child-Pugh and in MELD-Na, and four of the nine
+# entries here are read by more than one calculator, so a per-call argument
+# would have to be repeated identically and would drift. Looking the bound up
+# by parameter name also means a calculator added later inherits it by naming
+# its input, which is how Fix-R48's own reasoning about the shared helper runs.
+#
+# Each maximum is set an order of magnitude beyond the most extreme value
+# reported in a living patient, so it refuses arithmetic nonsense without
+# refusing a real crisis: the highest recorded total bilirubin is around
+# 80 mg/dL against a 1000 mg/dL bound here, and the oldest verified human age
+# is 122 years against 200. The cost of the choice is the mirror of Fix-R48's:
+# a value beyond the bound now hard-errors instead of being scored, so a
+# genuine unit mix-up (albumin in g/L rather than g/dL, say) is refused rather
+# than silently mis-scored -- which is the intent -- but so is any future
+# quantity whose real range exceeds these numbers, and that would show up as a
+# refusal rather than as a wrong answer.
+#
+# `minimum` is None wherever Fix-R48's "must be greater than zero" is already
+# the tightest honest floor. Sodium is the exception: it is a concentration
+# with a narrow window either side of which the patient is not alive, so zero
+# is not a floor at all, and sodium 5 mmol/L was being clamped into the MELD-Na
+# formula and reported as a confident risk band.
+#
+# `creatinine` is deliberately absent. Refusal is the right protection only
+# where the calculator has no way to disclose, and both calculators that take
+# a creatinine already disclose an implausible one: Fix-R46 gave CKD-EPI a
+# caveat naming units (creatinine 1000 mg/dL is what a value handed over in
+# umol/L looks like, and the caveat says so, which is more use to the caller
+# than a refusal), and MELD-Na bounds creatinine to [1, 4] per UNOS and reports
+# the bounded value in `creatinine_used`. Adding a maximum here would have
+# silently reversed a shipped, tested decision from another round -- its test
+# is what caught this -- for no gain.
+_PHYSIOLOGIC_BOUNDS: Dict[str, "tuple[Optional[float], float]"] = {
+    "age": (None, 200),  # years
+    "albumin": (None, 30.0),  # g/dL
+    "bilirubin": (None, 1000.0),  # mg/dL
+    "hdl_cholesterol": (None, 500.0),  # mg/dL
+    "inr": (None, 100.0),
+    "sodium": (80.0, 250.0),  # mmol/L
+    "systolic_bp": (None, 400.0),  # mmHg
+    "total_cholesterol": (None, 3000.0),  # mg/dL
+}
+
+
 def _req_number(
     args: Dict[str, Any], key: str, *, must_exceed: Optional[float] = None
 ) -> float:
@@ -57,6 +109,9 @@ def _req_number(
 
     Bound is exclusive: these are quantities for which zero is as impossible as
     a negative, so `must_exceed=0` is the common case rather than a minimum.
+
+    Fix-R49: the plausible range for `key` is additionally enforced from
+    `_PHYSIOLOGIC_BOUNDS`, so no call site has to remember to ask for it.
     """
     val = args.get(key)
     if val is None or val == "":
@@ -65,11 +120,25 @@ def _req_number(
         value = float(val)
     except (TypeError, ValueError):
         raise ValueError(f"'{key}' must be a number, got {val!r}")
+
+    _IMPOSSIBLE = (
+        "This is not a physiologically possible value, so no score is "
+        "reported for it -- check the value and its units."
+    )
     if must_exceed is not None and value <= must_exceed:
         raise ValueError(
             f"'{key}' must be greater than {must_exceed:g}, got {value:g}. "
-            "This is not a physiologically possible value, so no score is "
-            "reported for it -- check the value and its units."
+            + _IMPOSSIBLE
+        )
+
+    minimum, maximum = _PHYSIOLOGIC_BOUNDS.get(key, (None, None))
+    if minimum is not None and value < minimum:
+        raise ValueError(
+            f"'{key}' must be at least {minimum:g}, got {value:g}. " + _IMPOSSIBLE
+        )
+    if maximum is not None and value > maximum:
+        raise ValueError(
+            f"'{key}' must be at most {maximum:g}, got {value:g}. " + _IMPOSSIBLE
         )
     return value
 
@@ -378,9 +447,17 @@ def _meld_na(a: Dict[str, Any]) -> Dict[str, Any]:
 
     meld = 0.957 * math.log(c) + 0.378 * math.log(b) + 1.120 * math.log(i) + 0.643
     meld = round(meld * 10)
+    # Fix-R49: the sodium term applies only above 11, and the value it applies
+    # is bounded to [125, 137]. `sodium_used` reported the raw argument in both
+    # cases, so a patient with sodium 118 was told the score used 118 when the
+    # formula used 125 -- and a patient below the 11 threshold was told a
+    # sodium was used when none was. Its three siblings already report the
+    # bounded value they used, and the component breakdown exists to make the
+    # score auditable, which this one entry defeated.
+    na_used = None
     if meld > 11:
-        na_b = min(max(na, 125.0), 137.0)
-        meld = meld + 1.32 * (137 - na_b) - (0.033 * meld * (137 - na_b))
+        na_used = min(max(na, 125.0), 137.0)
+        meld = meld + 1.32 * (137 - na_used) - (0.033 * meld * (137 - na_used))
     score = int(min(round(meld), 40))
     if score <= 9:
         band = "low (~1.9% 90-day mortality)"
@@ -394,9 +471,21 @@ def _meld_na(a: Dict[str, Any]) -> Dict[str, Any]:
         "creatinine_used": c,
         "bilirubin_used": b,
         "inr_used": i,
-        "sodium_used": na,
+        "sodium_used": na_used,
+        "sodium_reported": na,
         "dialysis": dialysis,
     }
+    if na_used is None:
+        comp["sodium_note"] = (
+            "MELD-Na applies its sodium term only when the MELD component "
+            "exceeds 11, which it does not here, so sodium did not affect this "
+            "score."
+        )
+    elif na_used != na:
+        comp["sodium_note"] = (
+            f"MELD-Na bounds sodium to [125, 137] mmol/L, so the reported "
+            f"{na:g} entered the formula as {na_used:g}."
+        )
     return _ok(
         score, f"MELD-Na {score}: {band} 90-day mortality risk", comp, max_score=40
     )

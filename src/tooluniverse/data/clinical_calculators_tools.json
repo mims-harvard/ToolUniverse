@@ -377,7 +377,7 @@
       "creatinine": {"type": "number", "description": "Serum creatinine in mg/dL (bounded 1.0-4.0; set to 4.0 if on dialysis)"},
       "bilirubin": {"type": "number", "description": "Total bilirubin in mg/dL (lower-bounded at 1.0)"},
       "inr": {"type": "number", "description": "INR (lower-bounded at 1.0)"},
-      "sodium": {"type": "number", "description": "Serum sodium in mmol/L (bounded 125-137)"},
+      "sodium": {"type": "number", "description": "Serum sodium in mmol/L. The formula bounds it to 125-137 before use and applies its sodium term only when the MELD component exceeds 11, so components report 'sodium_reported' (your value) alongside 'sodium_used' (what entered the formula, null when the term did not apply). Values outside 80-250 mmol/L are refused as physiologically impossible rather than scored."},
       "dialysis": {"type": "boolean", "description": "Two or more dialysis sessions in the past week (forces creatinine to 4.0)"}
     }, "required": ["creatinine", "bilirubin", "inr", "sodium"]},
     "fields": {"calculator": "meld_na"},

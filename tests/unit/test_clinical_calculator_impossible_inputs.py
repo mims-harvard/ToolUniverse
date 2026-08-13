@@ -144,3 +144,146 @@ def test_ascvd_no_longer_leaks_a_bare_math_domain_error():
     assert result.get("status") == "error"
     assert result.get("error") != "math domain error"
     assert "total_cholesterol" in result["error"]
+
+
+# --------------------------------------------------------------------------- #
+# Fix Round 49: the same class at the other end of the range.
+#
+# Round 48 closed the bottom and left the top open, so an impossible value was
+# still scored confidently as long as it was impossibly large. Reproduced
+# through the CLI before this change:
+#
+#     ClinicalCalc_MELD_Na {"bilirubin": 1.0, "creatinine": 1.0, "inr": 1.0,
+#         "sodium": 134000}
+#       -> status success, "MELD-Na 6: low (~1.9% 90-day mortality)"
+#
+#     ClinicalCalc_Child_Pugh {"bilirubin": 1.0, "albumin": 1000, "inr": 1.0}
+#       -> status success, "Class A (score 5): well-compensated disease"
+#
+# and sodium 5 mmol/L, which is not compatible with life, was clamped into the
+# MELD-Na formula and reported as a risk band rather than refused.
+# --------------------------------------------------------------------------- #
+
+IMPOSSIBLY_LARGE = [
+    ("ClinicalCalc_MELD_Na", "sodium", 134000),
+    ("ClinicalCalc_MELD_Na", "bilirubin", 5000),
+    ("ClinicalCalc_Child_Pugh", "albumin", 1000),
+    ("ClinicalCalc_Child_Pugh", "inr", 750),
+    ("ClinicalCalc_ASCVD_risk", "total_cholesterol", 21300),
+    ("ClinicalCalc_ASCVD_risk", "systolic_bp", 1200),
+    ("ClinicalCalc_ASCVD_risk", "hdl_cholesterol", 5000),
+    ("ClinicalCalc_CHA2DS2_VASc", "age", 700),
+    # Not merely large: 5 mmol/L is below the bottom of the survivable window,
+    # and `must_exceed=0` let it through because zero is not a floor for a
+    # concentration.
+    ("ClinicalCalc_MELD_Na", "sodium", 5),
+]
+
+
+@pytest.mark.parametrize("tool,param,bad", IMPOSSIBLY_LARGE)
+def test_value_outside_the_plausible_range_is_refused_and_names_it(tool, param, bad):
+    result = _run(tool, dict(VALID[tool], **{param: bad}))
+    assert result.get("status") == "error", (
+        f"{tool} accepted {param}={bad} and returned a score: {result}"
+    )
+    assert param in result.get("error", ""), (
+        f"{tool} rejected {param}={bad} without naming it: {result}"
+    )
+    # No band, class or score may survive alongside the refusal.
+    assert "score" not in result.get("data", {})
+
+
+# A patient in genuine crisis, at values a clinician really does see. The cost
+# of an upper bound is that it can refuse a real reading, so this is the
+# control that keeps the bounds honest rather than merely strict.
+EXTREME_BUT_REAL = [
+    (
+        "ClinicalCalc_MELD_Na",
+        {"creatinine": 8.0, "bilirubin": 45.0, "inr": 6.5, "sodium": 118},
+    ),
+    ("ClinicalCalc_Child_Pugh", {"bilirubin": 38.0, "albumin": 1.4, "inr": 4.2}),
+    ("ClinicalCalc_CHA2DS2_VASc", {"age": 104, "sex": "female"}),
+    (
+        "ClinicalCalc_ASCVD_risk",
+        {
+            "age": 79,
+            "sex": "male",
+            "race": "white",
+            "total_cholesterol": 480,
+            "hdl_cholesterol": 22,
+            "systolic_bp": 220,
+        },
+    ),
+]
+
+
+@pytest.mark.parametrize("tool,args", EXTREME_BUT_REAL)
+def test_extreme_but_genuine_values_still_score(tool, args):
+    result = _run(tool, args)
+    assert result.get("status") == "success", (
+        f"{tool} refused a value a clinician really sees: {result}"
+    )
+
+
+def test_creatinine_is_disclosed_rather_than_refused():
+    """Deliberately outside the bounds table, in both directions of the family.
+
+    Refusal is the right protection only where the calculator cannot disclose.
+    Both calculators taking a creatinine already do: CKD-EPI caveats the units
+    (Fix-R46) and MELD-Na reports the UNOS-bounded value it used. An upper
+    bound here would have reversed a shipped decision from another round.
+    """
+    meld = _run(
+        "ClinicalCalc_MELD_Na",
+        dict(VALID["ClinicalCalc_MELD_Na"], creatinine=900),
+    )
+    assert meld["status"] == "success"
+    assert meld["data"]["components"]["creatinine_used"] == 4.0
+
+    egfr = ClinicalCalculatorTool(_config("ClinicalCalc_eGFR_CKD_EPI")).run(
+        {"creatinine": 1000, "age": 40, "sex": "female"}
+    )
+    assert egfr["status"] == "success"
+    assert any("units" in caveat for caveat in egfr["data"]["caveats"])
+
+
+def test_meld_na_reports_the_sodium_the_formula_actually_used():
+    """`sodium_used` named the raw argument, not the bounded value.
+
+    MELD-Na bounds sodium to [125, 137]. A patient with sodium 118 was told the
+    score used 118. The three sibling components already reported the bounded
+    value they used, and the breakdown exists to make the score auditable.
+    """
+    result = _run(
+        "ClinicalCalc_MELD_Na",
+        {"creatinine": 2.0, "bilirubin": 5.0, "inr": 2.0, "sodium": 118},
+    )
+    comp = result["data"]["components"]
+    assert comp["sodium_used"] == 125.0
+    assert comp["sodium_reported"] == 118.0
+    assert "125" in comp["sodium_note"]
+
+
+def test_meld_na_does_not_claim_a_sodium_it_never_applied():
+    """Below the MELD>11 threshold the sodium term is not evaluated at all."""
+    result = _run(
+        "ClinicalCalc_MELD_Na",
+        {"creatinine": 1.0, "bilirubin": 1.0, "inr": 1.0, "sodium": 140},
+    )
+    comp = result["data"]["components"]
+    assert result["data"]["score"] <= 11
+    assert comp["sodium_used"] is None
+    assert comp["sodium_reported"] == 140.0
+    assert "did not affect" in comp["sodium_note"]
+
+
+def test_an_in_range_sodium_above_the_threshold_is_used_verbatim():
+    """Control: no note, and no discrepancy, when nothing was bounded away."""
+    result = _run(
+        "ClinicalCalc_MELD_Na",
+        {"creatinine": 2.0, "bilirubin": 5.0, "inr": 2.0, "sodium": 130},
+    )
+    comp = result["data"]["components"]
+    assert result["data"]["score"] > 11
+    assert comp["sodium_used"] == 130.0 == comp["sodium_reported"]
+    assert "sodium_note" not in comp

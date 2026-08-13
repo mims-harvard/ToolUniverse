@@ -31,7 +31,7 @@ def ClinicalCalc_MELD_Na(
     inr : float
         INR (lower-bounded at 1.0)
     sodium : float
-        Serum sodium in mmol/L (bounded 125-137)
+        Serum sodium in mmol/L. The formula bounds it to 125-137 before use and appli...
     dialysis : bool
         Two or more dialysis sessions in the past week (forces creatinine to 4.0)
     stream_callback : Callable, optional
