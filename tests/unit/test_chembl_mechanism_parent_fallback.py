@@ -6,6 +6,7 @@ parent CHEMBL1229211). A mechanism query on the child matched nothing and
 returned a silent empty ("no mechanism on file") -- breaking the common
 search->mechanism chain. The tool now resolves the parent and retries once.
 """
+
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -64,18 +65,13 @@ def test_empty_child_result_retries_with_parent():
     # First mechanism query (child) -> empty; retry (parent) -> one mechanism.
     responses = [
         _Resp({"mechanisms": [], "page_meta": {"total_count": 0}}),
-        _Resp(
-            {
-                "mechanisms": [
-                    {"mechanism_of_action": "HIV-1 integrase inhibitor"}
-                ]
-            }
-        ),
+        _Resp({"mechanisms": [{"mechanism_of_action": "HIV-1 integrase inhibitor"}]}),
     ]
-    with patch(
-        "tooluniverse.chem_tool.request_with_retry", side_effect=responses
-    ), patch.object(
-        ChEMBLRESTTool, "_fetch_parent_chembl_id", return_value="CHEMBL1229211"
+    with (
+        patch("tooluniverse.chem_tool.request_with_retry", side_effect=responses),
+        patch.object(
+            ChEMBLRESTTool, "_fetch_parent_chembl_id", return_value="CHEMBL1229211"
+        ),
     ):
         result = tool.run({"chembl_id": "CHEMBL1213165"})
 
@@ -91,9 +87,10 @@ def test_non_empty_result_does_not_retry():
     tool = _tool()
     resp = _Resp({"mechanisms": [{"mechanism_of_action": "x"}]})
     fetch_parent = MagicMock()
-    with patch(
-        "tooluniverse.chem_tool.request_with_retry", return_value=resp
-    ), patch.object(ChEMBLRESTTool, "_fetch_parent_chembl_id", fetch_parent):
+    with (
+        patch("tooluniverse.chem_tool.request_with_retry", return_value=resp),
+        patch.object(ChEMBLRESTTool, "_fetch_parent_chembl_id", fetch_parent),
+    ):
         result = tool.run({"chembl_id": "CHEMBL1229211"})
     # Already had mechanisms -> no parent lookup, no note.
     fetch_parent.assert_not_called()
@@ -104,8 +101,9 @@ def test_non_empty_result_does_not_retry():
 def test_no_parent_leaves_empty_result_unchanged():
     tool = _tool()
     resp = _Resp({"mechanisms": []})
-    with patch(
-        "tooluniverse.chem_tool.request_with_retry", return_value=resp
-    ), patch.object(ChEMBLRESTTool, "_fetch_parent_chembl_id", return_value=None):
+    with (
+        patch("tooluniverse.chem_tool.request_with_retry", return_value=resp),
+        patch.object(ChEMBLRESTTool, "_fetch_parent_chembl_id", return_value=None),
+    ):
         result = tool.run({"chembl_id": "CHEMBL25"})
     assert result["data"]["mechanisms"] == []

@@ -355,8 +355,7 @@ class ChEMBLRESTTool(BaseTool):
         candidates = [
             key
             for key in params
-            if key not in _CHEMBL_QUERY_CONTROLS
-            and key.split("__")[0] not in path_keys
+            if key not in _CHEMBL_QUERY_CONTROLS and key.split("__")[0] not in path_keys
         ]
         # Decided before the schema is fetched: a get-by-ID call carries nothing
         # but controls and path segments, so there is provably nothing to report
@@ -366,9 +365,7 @@ class ChEMBLRESTTool(BaseTool):
         filterable = self._upstream_filter_fields(url)
         if not filterable:
             return []
-        return sorted(
-            key for key in candidates if key.split("__")[0] not in filterable
-        )
+        return sorted(key for key in candidates if key.split("__")[0] not in filterable)
 
     def _extract_parent_chembl_id(self, mol: dict) -> Optional[str]:
         """Extract the parent ChEMBL ID from a molecule record."""
@@ -454,12 +451,20 @@ class ChEMBLRESTTool(BaseTool):
                 if mol_id and not arguments.get("drug_chembl_id"):
                     arguments = dict(arguments)
                     arguments["drug_chembl_id"] = mol_id
-                    # The alias also has to be dropped, not just superseded:
-                    # `drug_chembl_id__exact` is not a /mechanism filter, so
-                    # rebuilding while it is still in `arguments` sends it
-                    # alongside the correct parent_molecule_chembl_id and leaves
-                    # the request carrying a parameter ChEMBL discards.
+                    # Both `__exact` aliases have to be dropped, not just
+                    # superseded: rebuilding while either is still in
+                    # `arguments` sends it alongside the correct
+                    # parent_molecule_chembl_id. `drug_chembl_id__exact` is not
+                    # a /mechanism filter so it is merely discarded, but
+                    # `molecule_chembl_id__exact` IS one, and ANDing it with the
+                    # parent filter drops the mechanisms recorded against other
+                    # salt forms: CHEMBL20 answers 8 mechanisms via
+                    # drug_chembl_id and 4 via molecule_chembl_id__exact, same
+                    # drug, both status:success. Verified upstream --
+                    # parent_molecule_chembl_id=CHEMBL1382 returns 2 rows,
+                    # adding molecule_chembl_id__exact=CHEMBL1382 returns 0.
                     arguments.pop("drug_chembl_id__exact", None)
+                    arguments.pop("molecule_chembl_id__exact", None)
                     params = self._build_params(arguments)
 
                 if not mol_id:

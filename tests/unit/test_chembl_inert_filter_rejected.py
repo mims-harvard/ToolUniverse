@@ -289,7 +289,9 @@ def test_nothing_the_tools_advertise_builds_an_inert_query_live():
         tool = ChEMBLRESTTool(cfg)
         probes = list(cfg.get("test_examples", []))
         for name, spec in cfg.get("parameter", {}).get("properties", {}).items():
-            probes.append({name: 1 if spec.get("type") in ("integer", "number") else "x"})
+            probes.append(
+                {name: 1 if spec.get("type") in ("integer", "number") else "x"}
+            )
         for probe in probes:
             url = tool._build_url(probe)
             bad = tool._inert_filters(tool._build_params(probe), url)

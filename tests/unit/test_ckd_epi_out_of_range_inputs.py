@@ -44,7 +44,9 @@ def _config():
         for cfg in json.load(fh):
             if cfg["name"] == "ClinicalCalc_eGFR_CKD_EPI":
                 return cfg
-    raise AssertionError("ClinicalCalc_eGFR_CKD_EPI not in clinical_calculators_tools.json")
+    raise AssertionError(
+        "ClinicalCalc_eGFR_CKD_EPI not in clinical_calculators_tools.json"
+    )
 
 
 def _run(args):
@@ -93,6 +95,31 @@ def test_paediatric_and_extreme_ages_are_disclosed():
     assert any("beyond the ages" in c for c in old["data"]["caveats"])
 
 
+def test_non_positive_age_is_rejected_rather_than_staged():
+    """age=-5 returned "CKD stage G1 (normal)" under a paediatric caveat.
+
+    An age that cannot exist must not produce a confident stage, for the same
+    reason an impossible creatinine must not -- and "not valid in paediatrics"
+    is a category error for a negative number.
+    """
+    result = _run({"creatinine": 1.0, "age": -5, "sex": "female"})
+    assert result["status"] == "error"
+    assert "age" in result["error"]
+    assert "greater than 0" in result["error"]
+    assert _run({"creatinine": 1.0, "age": 0, "sex": "female"})["status"] == "error"
+
+
+def test_impossible_high_creatinine_is_disclosed_too():
+    """creatinine 1000 returned "CKD stage G5 (kidney failure)" with no caveat.
+
+    The low end was disclosed and the high end was not, so the same silence
+    remained in the other direction.
+    """
+    result = _run({"creatinine": 1000, "age": 40, "sex": "female"})
+    assert result["status"] == "success"
+    assert any("units" in c for c in result["data"]["caveats"])
+
+
 def test_ordinary_adult_result_is_unchanged_and_carries_no_caveats():
     """Control: the shipped test_examples must not gain a caveat or move.
 
@@ -106,8 +133,12 @@ def test_ordinary_adult_result_is_unchanged_and_carries_no_caveats():
     # Exact values, read off the tool before the change, so an alteration to the
     # equation itself cannot hide behind the new branches.
     assert _run({"creatinine": 0.9, "age": 60, "female": True})["data"]["score"] == 73.2
-    assert _run({"creatinine": 1.3, "age": 60, "female": False})["data"]["score"] == 62.9
-    assert _run({"creatinine": 1.2, "age": 55, "sex": "female"})["data"]["score"] == 53.5
+    assert (
+        _run({"creatinine": 1.3, "age": 60, "female": False})["data"]["score"] == 62.9
+    )
+    assert (
+        _run({"creatinine": 1.2, "age": 55, "sex": "female"})["data"]["score"] == 53.5
+    )
 
 
 def test_caveats_is_declared_in_the_return_schema():

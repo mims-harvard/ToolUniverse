@@ -377,6 +377,15 @@ def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
             f"'creatinine' must be greater than 0 mg/dL, got {scr}. "
             "CKD-EPI is undefined at or below zero."
         )
+    # Same principle as the creatinine floor: an age that cannot exist must not
+    # produce a confident stage. age=-5 returned "eGFR 96.6 -- CKD stage G1
+    # (normal)" under a caveat about paediatrics, which is a category error for
+    # a negative number as well as the wrong answer.
+    if age <= 0:
+        raise ValueError(
+            f"'age' must be greater than 0 years, got {age}. "
+            "CKD-EPI's age term has no meaning at or below zero."
+        )
     female, sex_note = _resolve_sex(a)
     kappa = 0.7 if female else 0.9
     alpha = -0.241 if female else -0.302
@@ -435,6 +444,15 @@ def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
             f"Serum creatinine {scr:g} mg/dL is below the lower limit of "
             "quantitation of routine assays; the result is driven by a value "
             "no laboratory reports."
+        )
+    elif scr > 20:
+        # The low end was disclosed and the high end was not, so an impossible
+        # creatinine came back as a confident "kidney failure" stage with
+        # nothing said -- the same silence, in the other direction.
+        caveats.append(
+            f"Serum creatinine {scr:g} mg/dL is far above the range seen even "
+            "in dialysis-dependent kidney failure; check the value and its "
+            "units (umol/L is ~88x mg/dL)."
         )
     elif scr < 0.6 and age >= 65:
         caveats.append(
