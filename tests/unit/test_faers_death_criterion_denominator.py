@@ -23,7 +23,7 @@ Regression for Fix-R33, two problems in one response.
 2. NO DENOMINATOR. Verified live before the fix:
      FAERS_count_death_related_by_drug {"medicinalproduct": "ACETAMINOPHEN"}
        -> [{"term": "alive", "count": 288391}, {"term": "death", "count": 125240}]
-     https://api.fda.gov/drug/event.json?search=<same query>&limit=1
+     https://api.fda.gov/drug/event.json?search=<same query>&limit=0
        -> meta.results.total = 799284
    The rows sum to 413,631 of 799,284 matching reports -- openFDA computes a
    `count=` facet only over records that populate the counted field, so the 48%

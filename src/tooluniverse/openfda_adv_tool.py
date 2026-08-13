@@ -25,15 +25,22 @@ from .tool_registry import register_tool
 # fetched 4 times. Only the four `count=` facets genuinely differ. Memoised, the
 # same workup makes 6 requests and repeats nothing.
 #
-# Keyed on (endpoint, search query) rather than on the built URL. Three reasons,
-# all of which the URL form gets wrong: `limit=0` and `limit=1` are the same
-# question and must share an answer, which is what lets faers_analytics_tool
-# reuse entries the count tools put here; the api_key is part of the URL but not
-# part of the question, so keying on it fragments the map and stops keyed and
-# anonymous callers sharing; and this module already treats a built URL as
-# secret-bearing (faers_analytics_tool._api_request_failed_error exists solely to
-# strip api_key= out of error text), so a URL key would put that secret in a
-# process-global dict key.
+# Keyed on (endpoint, search query) rather than on the built URL. `limit=0` and
+# `limit=1` are the same question and must share an answer; the api_key is part
+# of the URL but not part of the question, so keying on it fragments the map and
+# stops keyed and anonymous callers sharing; and this module already treats a
+# built URL as secret-bearing (faers_analytics_tool._api_request_failed_error
+# exists solely to strip api_key= out of error text), so a URL key would put
+# that secret in a process-global dict key.
+#
+# faers_analytics_tool writes here too, but the two do NOT generally share
+# entries, and the key is not what stops them: they spell the same question
+# differently, because faers_drug_name_clause always quotes the drug name while
+# _render_clause below quotes only when the value contains a space. Verified --
+# "SODIUM CHLORIDE" collapses to one entry, CYANOKIT does not. That divergence
+# is deliberate on both sides and must not be papered over in the key: quoted
+# and unquoted are different openFDA queries for a hyphenated name, so they can
+# return different totals and must stay separate.
 #
 # LRUCache is the package's own thread-safe, size-bounded cache; it stores a
 # timestamp but does not expire on it, so the TTL is applied here. Bounded on

@@ -793,13 +793,14 @@ class FAERSAnalyticsTool(BaseTool):
         Cost: ONE extra openFDA request when the cohorts turn out identical
         (OZEMPIC, MEFLOQUINE, YELLOW FEVER VACCINE all measured at 0.0%
         non-naming, so they stop after the first probe), TWO when they differ.
-        Against a base of four, that is 5-6 requests per analysis, and it is
-        paid for two ways in this same change: `_get_faers_count` now shares the
-        count tools' memo, so a drug's own total and the whole-database total
-        are usually already answered, and it asks with `limit=0`, which cut the
-        bytes one analysis moves from 212,426 to ~2,100 (measured live
-        2026-08-13 on CYANOKIT/DEATH). The two probes added here cost ~1 KB
-        between them.
+        Against a base of four, that is 5-6 requests per analysis. What pays
+        for them, measured live 2026-08-13 on CYANOKIT/DEATH: asking with
+        `limit=0` instead of `limit=1` cut the bytes one analysis moves from
+        212,426 to 3,157 even at six requests, and the two probes added here
+        account for 1,049 of that. A repeat analysis of the same drug then
+        costs 3 requests rather than 6, because `_get_faers_count` memoises.
+        The request COUNT does go up for a first call, and that is the honest
+        cost; the payload and every subsequent call go down.
 
         Fails soft throughout: every probe returning None leaves the existing
         output untouched rather than failing the analysis.
@@ -1742,14 +1743,27 @@ class FAERSAnalyticsTool(BaseTool):
             search_query = _faers_search_query(
                 drug_name, adverse_event, reported_name_only=reported_name_only
             )
-            # Shared with the FAERS count tools' own denominator probe, which
-            # asks openFDA the identical question. The key is the search, not
-            # the URL, precisely so the two modules' spellings of that question
-            # collapse to one entry -- see the memo's note in openfda_adv_tool.
-            # This is what pays for the extra probes `_cohort_scope` adds: the
-            # whole-database total is the same request on every call in the
-            # process, and a drug's own total is the same request the count
-            # tools already made.
+            # The memo the FAERS count tools use, keyed on the search rather
+            # than the built URL so `limit` and the api_key cannot fragment it.
+            #
+            # What this actually buys, measured rather than assumed: repeat
+            # calls WITHIN this module. A second disproportionality analysis of
+            # the same drug costs 3 openFDA requests instead of 6, because the
+            # drug's own total, its reported-name total and the whole-database
+            # total are all already answered. The whole-database probe is the
+            # same request on every call in the process.
+            #
+            # It does NOT generally share with the count tools, despite both
+            # writing here. They spell the same question differently:
+            # `faers_drug_name_clause` always quotes the drug name, while the
+            # count tools' `_render_clause` quotes only when the value contains
+            # a space. So the keys coincide only for multi-word names --
+            # verified: "SODIUM CHLORIDE" collapses to one entry, CYANOKIT and
+            # OZEMPIC do not. Normalising the quoting in the key would be
+            # wrong, not merely cosmetic: quoted and unquoted are different
+            # openFDA queries for a hyphenated name (a bare hyphen is a Lucene
+            # operator, which is why faers_drug_name_clause quotes), so the two
+            # spellings can return different totals and must not share an entry.
             memo_key = faers_report_total_key(FDA_BASE_URL, search_query)
             cached = _memoized_report_total(memo_key)
             if cached is not None:
@@ -1781,7 +1795,15 @@ class FAERSAnalyticsTool(BaseTool):
             response.raise_for_status()
 
             data = response.json()
-            total = data.get("meta", {}).get("results", {}).get("total", 0)
+            total = data.get("meta", {}).get("results", {}).get("total")
+            if not isinstance(total, int):
+                # A 200 whose body carries no `meta.results.total` is a failure
+                # to measure, not a count of zero. This used to default to 0,
+                # which was already wrong; memoising it would have made the
+                # fabricated zero sticky for the TTL and shared it with every
+                # later caller. Returning None routes it into the same
+                # "count query failed" path as a transport error.
+                return None
             _memoize_report_total(memo_key, total)
             return total
 

@@ -159,33 +159,79 @@ class TestBoundedness:
         assert len(openfda_adv_tool._query_total_memo) == cap
 
 
-class TestSharedWithTheAnalyticsTool:
-    def test_the_analytics_probe_reuses_a_count_tools_answer(self):
-        """The two modules ask openFDA the same question in different words.
+def _analytics():
+    from tooluniverse.faers_analytics_tool import FAERSAnalyticsTool
 
-        `openfda_adv_tool` spells it `limit=0` with the api_key first;
-        `faers_analytics_tool` spelled it `limit=1` with the api_key last. Keyed
-        on the built URL those never collide, so the memo could not repay the
-        extra probes the cohort disclosure adds. Keyed on the search, they do.
+    return FAERSAnalyticsTool({"name": "t", "type": "FAERSAnalyticsTool"})
+
+
+class TestTheAnalyticsToolUsesTheMemo:
+    def test_a_repeat_probe_makes_no_request(self):
+        """This is what actually pays for the cohort disclosure's extra probes.
+
+        A second disproportionality analysis of the same drug re-asks the
+        drug's own total, its reported-name total and the whole-database
+        total. Those are the same three questions, so they must cost nothing
+        the second time.
         """
-        from tooluniverse.faers_analytics_tool import (
-            FDA_BASE_URL,
-            FAERSAnalyticsTool,
-            _faers_search_query,
-        )
+        tool, calls = _analytics(), []
+
+        def spy(*args, **kwargs):
+            calls.append(kwargs.get("url") or args[2])
+            return _Response(4119)
+
+        with patch(
+            "tooluniverse.faers_analytics_tool.request_with_retry", side_effect=spy
+        ):
+            assert tool._get_faers_count("CYANOKIT") == 4119
+            assert len(calls) == 1
+            assert tool._get_faers_count("CYANOKIT") == 4119
+        assert len(calls) == 1
+
+    def test_a_body_with_no_total_is_a_failure_not_a_zero(self):
+        """And must not be memoised, or the fabricated zero becomes sticky."""
+        tool, calls = _analytics(), []
+
+        def spy(*args, **kwargs):
+            calls.append(1)
+            return _Response(total=None)
+
+        with patch(
+            "tooluniverse.faers_analytics_tool.request_with_retry", side_effect=spy
+        ):
+            assert tool._get_faers_count("CYANOKIT") is None
+            assert tool._get_faers_count("CYANOKIT") is None
+        assert len(calls) == 2
+
+    def test_it_does_not_share_single_word_names_with_the_count_tools(self):
+        """Pins the limitation rather than the aspiration.
+
+        Both modules write to this memo, but they spell the same question
+        differently: `faers_drug_name_clause` always quotes the drug name and
+        the count tools' `_render_clause` quotes only when it contains a space.
+        The keys therefore coincide only for multi-word names. Asserted so the
+        code and its comments cannot drift back into claiming otherwise --
+        normalising the quoting would be wrong, because quoted and unquoted are
+        different openFDA queries for a hyphenated name.
+        """
+        from tooluniverse.faers_analytics_tool import FDA_BASE_URL, _faers_search_query
         from tooluniverse.openfda_adv_tool import (
-            _memoize_report_total,
+            FAERS_REPORTED_NAME_FIELD,
             faers_report_total_key,
         )
 
-        search = _faers_search_query("CYANOKIT", reported_name_only=True)
-        _memoize_report_total(faers_report_total_key(FDA_BASE_URL, search), 238)
+        count_tool = _tool()
 
-        analytics = FAERSAnalyticsTool({"name": "t", "type": "FAERSAnalyticsTool"})
-        with patch(
-            "tooluniverse.faers_analytics_tool.request_with_retry",
-            side_effect=AssertionError("the analytics probe bypassed the memo"),
-        ):
-            assert (
-                analytics._get_faers_count("CYANOKIT", reported_name_only=True) == 238
+        def count_key(drug):
+            _, q = count_tool._build_search_query(
+                {"medicinalproduct": drug}, drug_fields=[FAERS_REPORTED_NAME_FIELD]
             )
+            return faers_report_total_key(count_tool.endpoint_url, q)
+
+        def analytics_key(drug):
+            return faers_report_total_key(
+                FDA_BASE_URL, _faers_search_query(drug, reported_name_only=True)
+            )
+
+        assert count_key("CYANOKIT") != analytics_key("CYANOKIT")
+        assert count_key("SODIUM CHLORIDE") == analytics_key("SODIUM CHLORIDE")
