@@ -577,6 +577,8 @@ default_tool_files = {
     "glygen": os.path.join(current_dir, "data", "glygen_tools.json"),
     # MGnify Expanded - Metagenomics genome catalog, biomes, study details
     "mgnify_expanded": os.path.join(current_dir, "data", "mgnify_expanded_tools.json"),
+    # EBI Job Dispatcher - pairwise alignment, translation, Pfam, Phobius, profile search
+    "ebi_sequence": os.path.join(current_dir, "data", "ebi_sequence_tools.json"),
     # BioThings gateway - uniform access to ~50 BioThings-hosted biomedical APIs
     "biothings_gateway": os.path.join(
         current_dir, "data", "biothings_gateway_tools.json"
