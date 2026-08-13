@@ -1,11 +1,90 @@
 import re
 import os
 import copy
+import time
 import requests
 import urllib.parse
 from .base_tool import BaseTool
+from .cache.memory_cache import LRUCache
 from .http_utils import request_with_retry
 from .tool_registry import register_tool
+
+
+# ---- FAERS report-total memo ----
+#
+# Every FAERS count tool asks openFDA the same two questions before it can
+# describe its own facet: how many reports match the search at all, and how many
+# of them named the queried drug. Neither depends on which field the tool is
+# counting, so a workup that asks several questions about one drug re-sends them
+# verbatim once per tool.
+#
+# Measured live 2026-08-13 on a four-tool CYANOKIT workup
+# (FAERS_count_reactions_by_drug_event, FAERS_count_patient_age_distribution,
+# FAERS_count_seriousness_by_drug_event, FAERS_count_outcomes_by_drug_event):
+# 12 HTTP requests, 6 distinct URLs, so 6 of the 12 were re-asks -- each probe
+# fetched 4 times. Only the four `count=` facets genuinely differ. Memoised, the
+# same workup makes 6 requests and repeats nothing.
+#
+# Keyed on (endpoint, search query) rather than on the built URL. Three reasons,
+# all of which the URL form gets wrong: `limit=0` and `limit=1` are the same
+# question and must share an answer, which is what lets faers_analytics_tool
+# reuse entries the count tools put here; the api_key is part of the URL but not
+# part of the question, so keying on it fragments the map and stops keyed and
+# anonymous callers sharing; and this module already treats a built URL as
+# secret-bearing (faers_analytics_tool._api_request_failed_error exists solely to
+# strip api_key= out of error text), so a URL key would put that secret in a
+# process-global dict key.
+#
+# LRUCache is the package's own thread-safe, size-bounded cache; it stores a
+# timestamp but does not expire on it, so the TTL is applied here. Bounded on
+# both axes because tool processes are long-lived: entries expire so a refreshed
+# FAERS snapshot cannot be served indefinitely, and the map is capped so a
+# session querying thousands of drugs cannot grow it without limit.
+#
+# Deliberately NOT single-flight. Threads that miss concurrently -- the normal
+# shape when an agent dispatches a workup in parallel -- will each issue the
+# request, so the 12->6 figure above is measured for sequential calls and is the
+# best case. cache.memory_cache.SingleFlight is the tool for closing that, at
+# the cost of making one openFDA probe block on another; not taken here.
+_QUERY_TOTAL_TTL_SECONDS = 300.0
+_query_total_memo = LRUCache(max_size=256)
+
+
+def _memoized_report_total(key):
+    """A cached total for this (endpoint, search), or None if there is not one.
+
+    None is also what a genuine miss looks like, which is safe because the only
+    value ever stored is an int -- failures are deliberately not cached (see
+    `_memoize_report_total`), so "no entry" and "measured and failed" both
+    correctly mean "go ask openFDA".
+    """
+    entry = _query_total_memo.get(key)
+    if entry is None:
+        return None
+    stored_at, total = entry
+    if time.monotonic() - stored_at > _QUERY_TOTAL_TTL_SECONDS:
+        _query_total_memo.delete(key)
+        return None
+    return total
+
+
+def _memoize_report_total(key, total):
+    """Remember a successful probe result.
+
+    Rejects anything that is not an int, which is what keeps a transient failure
+    from becoming sticky: a rate-limited probe returns None, and caching that
+    None would make every later caller in the process inherit one unlucky moment
+    for the whole TTL. Callers generally check this themselves to decide their
+    own return value; the guard is repeated here because poisoning a shared
+    cache is the more expensive mistake.
+    """
+    if isinstance(total, int):
+        _query_total_memo.set(key, (time.monotonic(), total))
+
+
+def faers_report_total_key(endpoint_url, search_query):
+    """The memo key two modules must agree on to share an answer."""
+    return f"{endpoint_url}|{search_query or ''}"
 
 
 # ---- openFDA `count=` aggregation paging ----
@@ -514,6 +593,10 @@ class FDADrugAdverseEventTool(BaseTool):
         search_encoded = urllib.parse.quote(search_query, safe='+:"')
         key = f"api_key={self.api_key}&" if self.api_key else ""
         url = f"{self.endpoint_url}?{key}search={search_encoded}&limit=0"
+        memo_key = faers_report_total_key(self.endpoint_url, search_query)
+        cached = _memoized_report_total(memo_key)
+        if cached is not None:
+            return cached
         try:
             # request_with_retry backs off on 429, which these probes make more
             # likely by raising the tool's request rate -- one retry is cheaper
@@ -540,10 +623,14 @@ class FDADrugAdverseEventTool(BaseTool):
             # openFDA answers a search with no matches with HTTP 404, which here
             # means a genuine zero rather than a failure to measure.
             if response.status_code == 404:
+                _memoize_report_total(memo_key, 0)
                 return 0
             response.raise_for_status()
             total = response.json().get("meta", {}).get("results", {}).get("total")
-            return total if isinstance(total, int) else None
+            if not isinstance(total, int):
+                return None
+            _memoize_report_total(memo_key, total)
+            return total
         except (requests.exceptions.RequestException, ValueError):
             return None
 

@@ -566,12 +566,34 @@ class ClinicalTrialsTool(RESTfulTool):
                 }
             )
 
+        # ClinicalTrials.gov v2 returns `totalCount` on a first page and OMITS it
+        # on every subsequent page, i.e. exactly when `pageToken` was supplied.
+        # Falling back to `len(studies)` therefore published the PAGE SIZE under
+        # the name `total_count`. Measured live 2026-08-13, query_cond
+        # "silicosis" with page_size 3: page 1 reported total_count 20 (correct),
+        # page 2 reported total_count 3. Reproduced on mesothelioma: 64 then 5.
+        # Nothing in the response distinguished the invented figure from the real
+        # one, so paging a query to the end left the caller with a denominator
+        # equal to their last page.
+        #
+        # `None` rather than a guess: the count genuinely is not knowable from a
+        # paged response, and the sibling ClinicalTrialsSearchTool already omits
+        # the key in this situation rather than inventing one. Note the guard is
+        # `is None`, not falsiness -- a real `totalCount` of 0 is a true answer
+        # and must survive, which the old `or` could not express.
+        total_count = data.get("totalCount")
         result_data = {
             "studies": studies,
-            # totalCount may be absent from API response; fallback to len(studies)
-            "total_count": data.get("totalCount") or len(studies),
+            "total_count": total_count,
             "next_page_token": data.get("nextPageToken"),
         }
+        if total_count is None:
+            result_data["total_count_note"] = (
+                "ClinicalTrials.gov does not report the number of matching "
+                "studies on a paged response, so total_count is null here. The "
+                "figure from the FIRST page of this same query is still the "
+                "total; re-run without next_page_token to read it."
+            )
         self._attach_disclosure(result_data, params, query_rewrites)
 
         return {

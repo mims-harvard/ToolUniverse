@@ -1180,7 +1180,12 @@
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "Studies matching the query, independent of page_size. NULL on any page fetched with next_page_token: ClinicalTrials.gov reports this figure only on a first page, and a page's row count is not a substitute for it. Read the total from the first page of the same query. When null, total_count_note says so."
+            },
+            "total_count_note": {
+              "type": "string",
+              "description": "Present only when total_count is null, explaining that the registry does not report a matching-study count on a paged response and where to read the real total."
             },
             "next_page_token": {
               "type": [
@@ -1467,7 +1472,12 @@
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "Studies matching the query, independent of page_size. NULL on any page fetched with next_page_token: ClinicalTrials.gov reports this figure only on a first page, and a page's row count is not a substitute for it. Read the total from the first page of the same query. When null, total_count_note says so."
+            },
+            "total_count_note": {
+              "type": "string",
+              "description": "Present only when total_count is null, explaining that the registry does not report a matching-study count on a paged response and where to read the real total."
             },
             "next_page_token": {
               "type": [
@@ -1621,7 +1631,12 @@
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "Studies matching the query, independent of page_size. NULL on any page fetched with next_page_token: ClinicalTrials.gov reports this figure only on a first page, and a page's row count is not a substitute for it. Read the total from the first page of the same query. When null, total_count_note says so."
+            },
+            "total_count_note": {
+              "type": "string",
+              "description": "Present only when total_count is null, explaining that the registry does not report a matching-study count on a paged response and where to read the real total."
             },
             "next_page_token": {
               "type": [

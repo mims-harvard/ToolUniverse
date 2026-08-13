@@ -2,7 +2,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_calculate_disproportionality",
-    "description": "Calculate statistical disproportionality measures (ROR, PRR, IC) with 95% CI for drug-event pairs. Returns signal strength classification. Example: drug='ibuprofen', event='hepatotoxicity' \u2192 ROR=2.3 [1.8-2.9]. Use for pharmacovigilance signal detection.",
+    "description": "Calculate statistical disproportionality measures (ROR, PRR, IC) with 95% CI for drug-event pairs. Returns signal strength classification. Example: drug='ibuprofen', event='hepatotoxicity' \u2192 ROR=2.3 [1.8-2.9]. Use for pharmacovigilance signal detection. WHICH REPORTS THE STATISTIC IS COMPUTED OVER: the drug arm of the 2x2 table searches the reported product name AND openFDA's SPL annotation, which tags a report with EVERY brand and generic name registered for the active ingredient of a product the report named. A query therefore collects the whole active-ingredient population, not one product. That is correct for a generic name (TOFACITINIB's 186,783 reports include the 173,708 that named XELJANZ, which are genuinely tofacitinib exposure) and wrong for a brand name whose ingredient has unrelated products (CYANOKIT, a cyanide antidote, has 4,119 reports of which only 238 named it; the rest are vitamin B12 supplementation). The share does NOT distinguish the two -- both examples are ~93% -- so the response measures it per call rather than guessing. Read `cohort_scope` before acting on the headline metrics: it carries `reports_naming_queried_drug`, `reports_matched_by_name_resolution_only`, `percent_matched_by_name_resolution_only` and a `note`. When those differ it also carries `reported_name_only_analysis`, the same 2x2 and ROR restricted to reports that named the drug -- consult it, because the two can reach OPPOSITE verdicts: for CYANOKIT + DEATH the headline ROR is 0.287 [0.217-0.379], entirely below 1 and reported as 'disproportionately LESS often', while restricted to the 238 reports naming CYANOKIT it is 1.24 [0.694-2.216], i.e. inconclusive. `cohort_scope` is null when the split could not be established, including when the two measurements straddled an openFDA refresh and disagreed; null means unknown, never zero.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -297,6 +297,10 @@
             "signal_detection": {
               "type": ["object", "null"],
               "description": "Whether this arm alone crosses the signal-detection threshold, and how strongly."
+            },
+            "cohort_scope": {
+              "type": ["object", "null"],
+              "description": "How much of THIS arm's cohort actually named this drug. The drug arm searches openFDA's SPL annotation as well as the reported product name, so it collects every product sharing the active ingredient -- right for a generic name, wrong for a brand whose ingredient has unrelated products. Carries reports_naming_queried_drug, reports_matched_by_name_resolution_only, percent_matched_by_name_resolution_only and a note, plus reported_name_only_analysis (the same 2x2 and ROR restricted to reports that named the drug) when the two differ. Same keys and meaning as FAERS_calculate_disproportionality's. This matters MORE in a comparison than in a single analysis: the verdict is a ratio of the two arms, so one arm describing an active-ingredient population while the other describes a single product moves the comparison itself. Check both arms before reading `comparison`. Null when the split could not be established; null means unknown, never zero."
             }
           }
         },
@@ -336,6 +340,10 @@
             "signal_detection": {
               "type": ["object", "null"],
               "description": "Whether this arm alone crosses the signal-detection threshold, and how strongly."
+            },
+            "cohort_scope": {
+              "type": ["object", "null"],
+              "description": "How much of THIS arm's cohort actually named this drug. The drug arm searches openFDA's SPL annotation as well as the reported product name, so it collects every product sharing the active ingredient -- right for a generic name, wrong for a brand whose ingredient has unrelated products. Carries reports_naming_queried_drug, reports_matched_by_name_resolution_only, percent_matched_by_name_resolution_only and a note, plus reported_name_only_analysis (the same 2x2 and ROR restricted to reports that named the drug) when the two differ. Same keys and meaning as FAERS_calculate_disproportionality's. This matters MORE in a comparison than in a single analysis: the verdict is a ratio of the two arms, so one arm describing an active-ingredient population while the other describes a single product moves the comparison itself. Check both arms before reading `comparison`. Null when the split could not be established; null means unknown, never zero."
             }
           }
         },
