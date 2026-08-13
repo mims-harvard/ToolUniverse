@@ -190,16 +190,29 @@ def _run(
 
 
 def _assert_same_search(urls):
-    """Both requests searched the same query; only the count/limit differ.
+    """The facet and its denominator searched the same query.
+
+    Three requests go out for a drug-name query: the facet, the denominator
+    probe over the full name union, and the drug-name-scope probe that re-asks
+    the same question with the name narrowed to ``patient.drug.medicinalproduct``
+    (see ``FAERS_REPORTED_NAME_FIELD``). The two probes are told apart by that
+    narrowing rather than by order.
 
     Returns ``(facet_url, total_url)`` so a caller can add its own assertions.
-    A different search on either side would make the two figures incomparable.
+    A different search on the denominator side would make the two figures
+    incomparable.
     """
-    assert len(urls) == 2
+    assert len(urls) == 3
     facet_url = next(u for u in urls if "&count=" in u)
-    total_url = next(u for u in urls if "&count=" not in u)
+    probes = [u for u in urls if "&count=" not in u]
+    total_url = next(u for u in probes if "openfda.brand_name" in u)
+    named_url = next(u for u in probes if u != total_url)
     assert facet_url.split("&count=")[0] == total_url.split("&limit=0")[0]
-    assert total_url.endswith("&limit=0")
+    assert all(u.endswith("&limit=0") for u in probes)
+    # The scope probe narrows ONLY the drug name; keeping every other filter
+    # identical is what makes the two report counts comparable.
+    assert "openfda.generic_name" not in named_url
+    assert "patient.drug.medicinalproduct" in named_url
     return facet_url, total_url
 
 
@@ -339,6 +352,12 @@ def test_rows_counts_limit_and_truncated_are_identical_with_and_without_disclosu
         "stratified_report_count",
         "total_reports_matching_query",
         "coverage_note",
+        # The drug-name-scope figures ride along on the same disclosure. The
+        # stub answers both probes with the same total, so every matched report
+        # named the drug and no `drug_name_scope_note` is warranted -- that
+        # asymmetry is pinned in test_faers_drug_name_scope_disclosure.py.
+        "reports_naming_queried_drug",
+        "reports_matched_by_name_resolution_only",
     }
 
 

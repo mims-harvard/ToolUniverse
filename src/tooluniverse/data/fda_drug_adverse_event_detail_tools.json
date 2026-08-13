@@ -372,7 +372,7 @@
   {
     "type": "FDADrugAdverseEventDetailTool",
     "name": "FAERS_search_serious_reports_by_drug",
-    "description": "Search and retrieve detailed reports of serious adverse events for a specific drug. Returns individual case reports with patient information, adverse event details, drug information, and report metadata. Only medicinalproduct is required; all other parameters (limit, skip, seriousnessdeath, seriousnesshospitalization, seriousnesslifethreatening, seriousnessdisabling, patientsex, patientagegroup) are optional. Data source: FDA Adverse Event Reporting System (FAERS).",
+    "description": "Search and retrieve detailed FAERS case reports for a specific drug. Returns individual case reports with patient information, adverse event details, drug information, and report metadata. IMPORTANT: despite the tool name, results are NOT restricted to serious reports unless you pass a seriousness filter -- pass serious='Yes' for the serious subset. Unfiltered, the mix varies by drug: measured 2026-08 over the first 100 reports, non-serious (serious='2') was 12% for acamprosate, 24% for levetiracetam, 39% for ibuprofen and 79% for gadobutrol. Only medicinalproduct is required; all other parameters (serious, limit, skip, seriousnessdeath, seriousnesshospitalization, seriousnesslifethreatening, seriousnessdisabling, patientsex, patientagegroup) are optional. The seriousness* parameters select a specific serious CRITERION and each implies serious='Yes'. Data source: FDA Adverse Event Reporting System (FAERS).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -440,6 +440,14 @@
             "Elderly"
           ],
           "description": "Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age."
+        },
+        "serious": {
+          "type": "string",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "description": "Optional: 'Yes' returns only reports FAERS flags as serious (openFDA serious=1), 'No' only non-serious ones (serious=2). Omit to return both, which is this tool's default despite its name."
         }
       },
       "required": [
@@ -470,13 +478,16 @@
         ],
         "patientagegroup": [
           "patient.patientagegroup"
+        ],
+        "serious": [
+          "serious"
         ]
       },
       "extract_essential": true
     },
     "return_schema": {
       "type": "array",
-      "description": "List of detailed serious adverse event reports",
+      "description": "List of detailed FAERS case reports. Serious and non-serious reports alike unless serious='Yes' or a seriousness* criterion was passed.",
       "items": {
         "type": "object",
         "properties": {
@@ -516,6 +527,11 @@
       {
         "medicinalproduct": "Donanemab",
         "seriousnesshospitalization": "Yes",
+        "limit": 3
+      },
+      {
+        "medicinalproduct": "gadobutrol",
+        "serious": "Yes",
         "limit": 3
       }
     ]

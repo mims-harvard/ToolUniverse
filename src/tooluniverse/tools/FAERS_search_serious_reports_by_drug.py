@@ -1,7 +1,7 @@
 """
 FAERS_search_serious_reports_by_drug
 
-Search and retrieve detailed reports of serious adverse events for a specific drug. Returns indiv...
+Search and retrieve detailed FAERS case reports for a specific drug. Returns individual case repo...
 """
 
 from typing import Any, Optional, Callable
@@ -18,13 +18,14 @@ def FAERS_search_serious_reports_by_drug(
     skip: Optional[int] = 0,
     patientsex: Optional[str] = None,
     patientagegroup: Optional[str] = None,
+    serious: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search and retrieve detailed reports of serious adverse events for a specific drug. Returns indiv...
+    Search and retrieve detailed FAERS case reports for a specific drug. Returns individual case repo...
 
     Parameters
     ----------
@@ -46,6 +47,8 @@ def FAERS_search_serious_reports_by_drug(
         Optional: Filter by patient sex. Omit this parameter if you don't want to fil...
     patientagegroup : str
         Optional: Filter by patient age group. Omit this parameter if you don't want ...
+    serious : str
+        Optional: 'Yes' returns only reports FAERS flags as serious (openFDA serious=...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -72,6 +75,7 @@ def FAERS_search_serious_reports_by_drug(
             "skip": skip,
             "patientsex": patientsex,
             "patientagegroup": patientagegroup,
+            "serious": serious,
         }.items()
         if v is not None
     }

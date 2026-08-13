@@ -96,6 +96,45 @@ FAERS_DRUG_NAME_FIELDS = [
     "patient.drug.openfda.brand_name",
 ]
 
+# ---- What the union costs, and why it has to be disclosed ----
+#
+# The union above is right (see the table) but it is not free: the two openFDA
+# fields are ANNOTATIONS, not what the reporter wrote. openFDA resolves the
+# reported product text against an SPL and then attaches EVERY brand and generic
+# name registered for that product's active ingredient. So a report that named
+# plain "HYDROXOCOBALAMIN" carries openfda.brand_name = ["CYANOKIT",
+# "HYDROXOCOBALAMIN"], and a search for CYANOKIT matches it.
+#
+# That is usually harmless -- XELJANZ and TOFACITINIB really are the same
+# product -- and occasionally dangerous, because a brand and its ingredient can
+# serve different populations entirely. Measured live 2026-08-12 against
+# `meta.results.total`, "named" = medicinalproduct alone, "matched" = the union:
+#
+#   query          named    matched   matched-only   share
+#   IOSAT              6      1,395          1,389   99.6%
+#   CYANOKIT         238      4,119          3,881   94.2%
+#   SUBLOCADE      5,134     28,481         23,347   82.0%
+#   ADVIL         67,159    264,100        196,941   74.6%
+#   XGEVA         36,039     51,441         15,402   29.9%
+#   OZEMPIC       66,161     66,161              0    0.0%
+#   MAKENA        22,729     22,729              0    0.0%
+#
+# CYANOKIT is the cyanide-poisoning antidote; hydroxocobalamin is also a routine
+# vitamin B12 supplement, and 3,881 of the 4,119 "CYANOKIT" reports are B12
+# reports -- sampled directly, e.g. safetyreportid 10016092, medicinalproduct
+# HYDROXOCOBALAMIN, drugindication MICROCYTIC ANAEMIA. Before this disclosure
+# FAERS_count_reactions_by_drug_event{"medicinalproduct": "CYANOKIT"} answered
+# ACUTE KIDNEY INJURY 211 against total_reports_matching_query 4,119 with
+# nothing saying the denominator was mostly vitamin recipients. IOSAT is the
+# same shape for a radiation countermeasure vs potassium iodide the supplement.
+#
+# The OZEMPIC and MAKENA rows are why a static warning would be wrong and a
+# measured one is right: the share is a property of the drug rather than of the
+# query, and for some drugs it is exactly zero, so a fixed caveat would fire
+# where there is nothing to caveat. The seven rows above were chosen to span the
+# range, so they say nothing about how common either end is.
+FAERS_REPORTED_NAME_FIELD = FAERS_DRUG_NAME_FIELDS[0]
+
 
 def faers_drug_name_clause(drug_name, joiner="+OR+"):
     """Parenthesized OR group matching `drug_name` in every FAERS name field.
@@ -250,6 +289,30 @@ HUMAN_TO_FDA_MAP = {
 # ---- Base Tool Class ----
 @register_tool("FDADrugAdverseEventTool")
 class FDADrugAdverseEventTool(BaseTool):
+    # The argument carrying the drug name, overridden by the multi-drug
+    # subclass. Named here so `_add_name_scope_disclosure` can find it without
+    # guessing.
+    DRUG_PARAMETER = "medicinalproduct"
+
+    def _drug_name_fields(self, override=None):
+        """FDA fields this tool's drug-name parameter searches.
+
+        One home for the lookup, because its FALLBACK is load-bearing and used
+        to be spelled differently at each site: a config that forgets the map
+        must still ask the same question as every other FAERS tool, which means
+        the canonical union rather than medicinalproduct alone. Reading it as
+        `... or []` instead -- as the scope disclosure first did -- silently
+        skipped the disclosure for exactly that config, the one whose query is
+        the most widened.
+
+        `override` is the single degree of freedom any caller needs: the scope
+        probe re-asks the same query with the name narrowed to
+        FAERS_REPORTED_NAME_FIELD.
+        """
+        if override is not None:
+            return override
+        return self.search_fields.get(self.DRUG_PARAMETER) or FAERS_DRUG_NAME_FIELDS
+
     def __init__(
         self,
         tool_config,
@@ -429,7 +492,7 @@ class FDADrugAdverseEventTool(BaseTool):
 
     # ---- openFDA `count=` facet coverage disclosure ----
 
-    def _fetch_query_total(self, arguments):
+    def _fetch_query_total(self, arguments, drug_fields=None):
         """Reports matching this tool's own search, or ``None`` if unavailable.
 
         A `count=` response carries no grand total -- openFDA reports the size of
@@ -443,21 +506,29 @@ class FDADrugAdverseEventTool(BaseTool):
         report (~120 KB, mostly `openfda` arrays) only to discard it. A search
         with no matches still answers HTTP 404 either way.
         """
-        query_error, search_query = self._build_search_query(arguments)
+        query_error, search_query = self._build_search_query(
+            arguments, drug_fields=drug_fields
+        )
         if query_error:
             return None
         search_encoded = urllib.parse.quote(search_query, safe='+:"')
         key = f"api_key={self.api_key}&" if self.api_key else ""
         url = f"{self.endpoint_url}?{key}search={search_encoded}&limit=0"
         try:
-            # request_with_retry backs off on 429, which this probe makes more
-            # likely by doubling the tool's request rate -- one retry is cheaper
-            # than degrading to a null denominator. Every budget here is kept
-            # well under the facet's 30s: this request fails soft by design, so
-            # it must not dominate the caller's worst case. Note the Retry-After
-            # sleep happens OUTSIDE the per-request timeout, hence capping it
-            # too -- worst case is 10 + 5 + 10 = 25s rather than the default
-            # helper's 90s.
+            # request_with_retry backs off on 429, which these probes make more
+            # likely by raising the tool's request rate -- one retry is cheaper
+            # than degrading to a null denominator. Note the Retry-After sleep
+            # happens OUTSIDE the per-request timeout, hence capping it too:
+            # 10 + 5 + 10 = 25s per probe rather than the default helper's 90s.
+            #
+            # This method now serves TWO probes per call -- the denominator and
+            # the drug-name scope measurement -- so a drug-name query issues
+            # three requests, not two, and the caller's worst case is the facet's
+            # 30s plus 25s per probe = 80s. The probes are therefore the majority
+            # of that worst case, which the earlier "must not dominate" framing
+            # got wrong; what keeps it bounded is that both probes fail soft, and
+            # that a null denominator suppresses the scope probe rather than
+            # piling a second retry onto an API that is already rate-limiting.
             response = request_with_retry(
                 requests,
                 "GET",
@@ -729,6 +800,74 @@ class FDADrugAdverseEventTool(BaseTool):
             coverage_note = f"{self.count_field_note} {coverage_note}"
         envelope["coverage_note"] = coverage_note
 
+        self._add_name_scope_disclosure(envelope, arguments, query_total)
+
+    # ---- drug-name scope disclosure ----
+
+    def _add_name_scope_disclosure(self, envelope, arguments, query_total):
+        """Say how many matched reports actually NAMED the drug that was asked for.
+
+        The drug-name search is a union over FAERS_DRUG_NAME_FIELDS, two thirds
+        of which are openFDA's ingredient-level annotation rather than the
+        reported product text, so a brand-name query returns every product
+        sharing that brand's active ingredient. The share is a property of the
+        drug, not of the query, so it is measured per call -- see the table on
+        FAERS_REPORTED_NAME_FIELD for what it ranges over.
+
+        Costs ONE extra openFDA request, re-asking the same query with only the
+        drug name narrowed. Purely additive and fails soft: existing keys are
+        untouched and a failed probe leaves a null. It is skipped -- and so
+        costs nothing -- when no drug name was passed, when the name searches a
+        single field and so cannot widen, when the facet came back empty, and
+        when the denominator is unavailable or zero (which also keeps a
+        rate-limited call from spending a second retry).
+
+        Rides on `disclose_denominator` because it reuses that denominator as
+        its own numerator; every tool in this family sets the flag.
+        """
+        drug_value = arguments.get(self.DRUG_PARAMETER)
+        fda_fields = self._drug_name_fields()
+        if not drug_value or len(set(fda_fields)) < 2:
+            return
+        if not query_total or query_total < 0 or not envelope.get("results"):
+            return
+
+        named_total = self._fetch_query_total(
+            arguments, drug_fields=[FAERS_REPORTED_NAME_FIELD]
+        )
+        envelope["reports_naming_queried_drug"] = named_total
+        if named_total is None:
+            return
+
+        matched_only = query_total - named_total
+        if matched_only < 0:
+            # The reported-name set is a strict subset of the union, so this can
+            # only be the two probes landing either side of openFDA's daily
+            # refresh. Publish nothing rather than a figure that cannot be true.
+            return
+        envelope["reports_matched_by_name_resolution_only"] = matched_only
+        if matched_only == 0:
+            return
+
+        names = (
+            ", ".join(f"'{d}'" for d in drug_value)
+            if isinstance(drug_value, list)
+            else f"'{drug_value}'"
+        )
+        envelope["drug_name_scope_note"] = (
+            f"{query_total:,} report(s) match this query, but only "
+            f"{named_total:,} of them named {names} as the product. The other "
+            f"{matched_only:,} ({100.0 * matched_only / query_total:.1f}%) "
+            "matched through openFDA's SPL annotation, which tags a report with "
+            "EVERY brand and generic name registered for the active ingredient "
+            "of a product the report did name. The counts in 'results' "
+            "therefore describe that whole active-ingredient population, not "
+            f"{names} specifically. This tool searched "
+            f"{', '.join(fda_fields)}, and the rows cannot be narrowed to the "
+            "reported name: reports_naming_queried_drug is the only figure "
+            "here restricted to it."
+        )
+
     def validate_enum_arguments(self, arguments):
         """Validate that enum-based arguments match the allowed values"""
         for param_name, value in arguments.items():
@@ -783,11 +922,18 @@ class FDADrugAdverseEventTool(BaseTool):
 
         return mapped_results
 
-    def _build_search_query(self, arguments):
+    def _build_search_query(self, arguments, drug_fields=None):
         """Build the Lucene `search=` expression, returning ``(error, query)``.
 
         Kept separate from the request so the same query can also be reused for
         the denominator probe in ``_fetch_query_total``.
+
+        ``drug_fields`` narrows the fields the DRUG-NAME parameter searches, and
+        nothing else: the scope probe has to re-ask this exact query with only
+        the name restricted, or the two report counts would not be comparable.
+        It is deliberately not a whole-map override -- an override forgotten by
+        a future subclass then degrades to "no narrowing", which reads as a
+        measured 0% rather than as a failure to measure.
         """
         search_parts = []
         for param_name, value in arguments.items():
@@ -795,7 +941,10 @@ class FDADrugAdverseEventTool(BaseTool):
             # unrecognized argument (e.g. a stray 'limit') must NOT become a
             # bogus FDA filter like 'limit:2', which matches nothing and yields
             # a silent empty result.
-            fda_fields = self.search_fields.get(param_name)
+            if param_name == self.DRUG_PARAMETER and drug_fields is not None:
+                fda_fields = drug_fields
+            else:
+                fda_fields = self.search_fields.get(param_name)
             if not fda_fields:
                 continue
             # Use the first field name for value mapping
@@ -900,15 +1049,11 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
 
     DRUG_PARAMETER = "medicinalproducts"
 
-    def _build_search_query(self, arguments):
-        # Read the FDA field(s) from the config's own search-field map, the same
-        # source the parent uses for every other parameter. The fallback is the
-        # canonical union rather than medicinalproduct alone, so a config that
-        # forgets the map still asks the same question as every other FAERS tool
-        # (see FAERS_DRUG_NAME_FIELDS).
-        fda_fields = (
-            self.search_fields.get(self.DRUG_PARAMETER) or FAERS_DRUG_NAME_FIELDS
-        )
+    def _build_search_query(self, arguments, drug_fields=None):
+        # Read the FDA field(s) through the shared accessor, which carries the
+        # fallback: a config that forgets the map still asks the same question
+        # as every other FAERS tool (see FAERS_DRUG_NAME_FIELDS).
+        fda_fields = self._drug_name_fields(drug_fields)
 
         # Each name goes through the shared renderer for the same reason every
         # other value does: a multi-word name needs Lucene quotes, several FDA

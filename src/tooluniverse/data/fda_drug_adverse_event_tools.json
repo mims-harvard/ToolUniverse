@@ -174,6 +174,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -375,6 +390,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -566,6 +596,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures and the coverage fraction, and explains that reports not recording occurcountry are excluded from the facet rather than bucketed as unknown."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -757,6 +802,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures and the coverage fraction, and explains that reports not recording primarysource.reportercountry are excluded from the facet rather than bucketed as unknown."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -951,6 +1011,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures and the coverage fraction, and explains that reports not recording serious are excluded from the facet rather than bucketed as unknown."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -1146,6 +1221,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -1366,6 +1456,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -1513,6 +1618,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures and the coverage fraction, and explains that reports not recording patient.patientagegroup are excluded from the facet rather than bucketed as unknown."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -1660,6 +1780,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures and the coverage fraction, explains that openFDA computes a count facet only over records that populate the counted field, and states that these counts do not support a case-fatality rate."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -1877,6 +2012,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -2073,6 +2223,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures and the coverage fraction, and explains that reports not recording occurcountry are excluded from the facet rather than bucketed as unknown."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -2269,6 +2434,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures and the coverage fraction, and explains that reports not recording primarysource.reportercountry are excluded from the facet rather than bucketed as unknown."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -2468,6 +2648,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures and the coverage fraction, and explains that reports not recording serious are excluded from the facet rather than bucketed as unknown."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -2668,6 +2863,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -2893,6 +3103,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -3043,6 +3268,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -3200,6 +3440,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures, states that the counted field is multi-valued per report and therefore double-counts reports, and says the row sum must not be used as a denominator."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [
@@ -3359,6 +3614,21 @@
             "coverage_note": {
               "type": "string",
               "description": "Names both figures and the coverage fraction, and explains that reports not recording primarysource.qualification are excluded from the facet rather than bucketed as unknown."
+            },
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "'total_reports_matching_query' minus 'reports_naming_queried_drug': reports that matched only through openFDA's SPL annotation, which tags a report with every brand and generic name registered for the active ingredient of a product it did name. These reports are about a DIFFERENT product that shares the queried drug's ingredient. 0 when every matched report named the drug you asked for."
+            },
+            "drug_name_scope_note": {
+              "type": "string",
+              "description": "Present only when 'reports_matched_by_name_resolution_only' is above 0. States what share of the matched reports named a different product, and that the rows in 'results' therefore describe the whole active-ingredient population rather than the drug named in the query. Measured live, 94.2% of reports matching the cyanide antidote CYANOKIT are vitamin B12 hydroxocobalamin reports."
             }
           },
           "required": [

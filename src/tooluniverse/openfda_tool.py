@@ -2997,18 +2997,22 @@ class OpenFDADrugEventsTool(BaseRESTTool):
         # Strip params unknown to openFDA to avoid HTTP 400 "Invalid parameter".
         args = {k: v for k, v in args.items() if k in self._VALID_API_PARAMS}
 
-        # Build Lucene query from convenience params when
-        # 'search' is not provided directly.
-        if not args.get("search"):
-            if not drug_name:
-                return {
-                    "status": "error",
-                    "error": (
-                        "Provide either 'search' (Lucene query) or 'drug_name'. "
-                        "Example: drug_name='warfarin', reaction='haemorrhage'. "
-                        "Note: MedDRA terms use British spelling (haemorrhage, haematoma, etc.)."
-                    ),
-                }
+        # Build the Lucene query from whichever of the three inputs were given.
+        #
+        # 'drug_name'/'reaction' used to be honoured ONLY when 'search' was
+        # absent, and were silently dropped otherwise -- so
+        # {"drug_name": X, "search": "serious:1", "count": <reaction facet>}
+        # counted the WHOLE of FAERS and reported it as X's. Measured
+        # 2026-08-12, that call returned a byte-identical payload topped by
+        # DEATH 846,360 for levetiracetam, for lacosamide and for the
+        # nonexistent drug "ZZZ_NOT_A_DRUG_XYZ", every one of them
+        # "status": "success". The drug-name-only path answers SEIZURE 16,336
+        # for levetiracetam, so the data was never the problem.
+        #
+        # AND-ing can only narrow the result set, never widen it, so no caller
+        # can lose reports that were genuinely theirs.
+        parts = []
+        if drug_name:
             # Shared with the FAERS_* count/detail/analytics tools so this tool
             # cannot disagree with them about how many reports name a drug --
             # see FAERS_DRUG_NAME_FIELDS for the measurements.
@@ -3017,10 +3021,27 @@ class OpenFDADrugEventsTool(BaseRESTTool):
             # finished query to requests as a `params` value, and a literal "+"
             # there is percent-encoded to %2B and reaches openFDA as a plus sign
             # instead of a separator. That is also why the AND below is " AND ".
-            parts = [faers_drug_name_clause(drug_name, joiner=" OR ")]
-            if reaction:
-                parts.append(f'patient.reaction.reactionmeddrapt:"{reaction}"')
-            args["search"] = " AND ".join(parts)
+            parts.append(faers_drug_name_clause(drug_name, joiner=" OR "))
+        if reaction:
+            parts.append(f'patient.reaction.reactionmeddrapt:"{reaction}"')
+        raw_search = args.get("search")
+        if raw_search:
+            # Parenthesized only when it is about to be AND-ed with something:
+            # the caller's clause may contain a top-level OR, and Lucene binds
+            # AND tighter than OR -- the same trap _render_field_group
+            # documents for the multi-field name group. A raw search on its own
+            # is passed through byte-for-byte as the caller wrote it.
+            parts.append(f"({raw_search})" if parts else raw_search)
+        if not parts:
+            return {
+                "status": "error",
+                "error": (
+                    "Provide either 'search' (Lucene query) or 'drug_name'. "
+                    "Example: drug_name='warfarin', reaction='haemorrhage'. "
+                    "Note: MedDRA terms use British spelling (haemorrhage, haematoma, etc.)."
+                ),
+            }
+        args["search"] = " AND ".join(parts)
 
         result = super().run(args)
         # OpenFDA returns 404 when no records match the query (not a server error).
