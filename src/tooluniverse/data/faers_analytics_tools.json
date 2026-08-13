@@ -172,6 +172,34 @@
         "coverage_note": {
           "type": "string",
           "description": "Explains that the stratification covers only reports where the demographic is recorded, naming stratified_report_count, total_reports_matching_query and the coverage fraction."
+        },
+        "cohort_scope": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "How much of the cohort these groups were computed over actually named the queried drug. openFDA's SPL annotation tags a report with every brand and generic name registered for the active ingredient of a product the report named, so a query collects the whole active-ingredient population. That is correct for a generic name and wrong for a brand whose ingredient has unrelated products (CYANOKIT, a cyanide antidote, has 4,119 reports of which 238 named it; the rest are vitamin B12 supplementation). Null means the split could not be established - unknown, never zero.",
+          "properties": {
+            "reports_naming_queried_drug": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Reports whose reported product name was the queried drug. Null when the measurement failed."
+            },
+            "reports_matched_by_name_resolution_only": {
+              "type": "integer",
+              "description": "Reports that matched only through openFDA's SPL active-ingredient annotation, i.e. that named some other product sharing the ingredient."
+            },
+            "percent_matched_by_name_resolution_only": {
+              "type": "number",
+              "description": "The above as a percentage of the measured cohort. Absent when it is zero."
+            },
+            "note": {
+              "type": "string",
+              "description": "Which cohort was measured and what the split means for these groups, in prose."
+            }
+          }
         }
       }
     },

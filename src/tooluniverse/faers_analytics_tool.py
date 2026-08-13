@@ -805,7 +805,70 @@ class FAERSAnalyticsTool(BaseTool):
         Fails soft throughout: every probe returning None leaves the existing
         output untouched rather than failing the analysis.
         """
-        named_total = self._get_faers_count(drug_name, reported_name_only=True)
+        scope = self._cohort_split(
+            drug_name,
+            drug_total,
+            metrics_phrase="The ROR/PRR/IC above therefore describe",
+            cohort_label="the metrics above were computed from",
+            closing=(
+                "The percentage alone cannot tell those apart -- compare "
+                "'reported_name_only_analysis' below, which repeats the "
+                "analysis over the reports that named the drug."
+            ),
+        )
+        named_total = (scope or {}).get("reports_naming_queried_drug")
+        # No second arm when the probe failed, when the split is impossible, or
+        # when the two cohorts are identical -- in the last case the restricted
+        # analysis would be a copy of the headline. `is None` rather than
+        # falsiness: a drug that NO report named is 100% resolution-matched and
+        # is exactly the case the restricted arm exists to expose.
+        if named_total is None or (
+            "percent_matched_by_name_resolution_only" not in scope
+        ):
+            return scope
+
+        restricted = self._reported_name_analysis(
+            drug_name, adverse_event, named_total, event_total, total
+        )
+        if restricted is not None:
+            scope["reported_name_only_analysis"] = restricted
+        return scope
+
+    def _cohort_split(
+        self,
+        drug_name: str,
+        cohort_total: int,
+        metrics_phrase: str,
+        closing: str,
+        adverse_event: Optional[str] = None,
+        cohort_label: str = "in this analysis",
+    ) -> Optional[Dict[str, Any]]:
+        """The naming split alone, for any operation that builds a drug cohort.
+
+        Fix-R53-2: this was `_cohort_scope`'s private first half, reachable only
+        from the two inferential operations. Every operation in this module
+        builds its cohort from the same `_drug_clause`, so every one of them
+        carries the same contamination -- but `_stratify_by_demographics`,
+        `_filter_serious_events`, `_analyze_temporal_trends` and
+        `_rollup_meddra_hierarchy` published their results with no disclosure at
+        all. `_analyze_temporal_trends` is the sharpest case: it emits a verdict
+        ("Increasing" / "Decreasing") with a percent change, so for CYANOKIT it
+        was reporting the trend in vitamin B12 supplementation reports under the
+        name of a cyanide antidote.
+
+        `metrics_phrase` and `closing` name what the caller is actually looking
+        at, so the same measurement does not tell a stratification that its
+        ROR is in question.
+
+        Cost: ONE extra openFDA request per operation, `limit=0` (~500 bytes,
+        no report bodies), memoised per process by `_get_faers_count` -- so a
+        second operation on the same drug within a session pays nothing. Fails
+        soft: a probe returning None leaves the operation's own output intact
+        and says the split is unknown.
+        """
+        named_total = self._get_faers_count(
+            drug_name, adverse_event, reported_name_only=True
+        )
         if named_total is None:
             return {
                 "reports_naming_queried_drug": None,
@@ -815,7 +878,7 @@ class FAERSAnalyticsTool(BaseTool):
                     "the split as unknown, not as zero."
                 ),
             }
-        if named_total > drug_total:
+        if named_total > cohort_total:
             # A strict subset cannot exceed its superset, so this can only be
             # the two counts landing either side of an openFDA refresh. Return
             # BEFORE any key is set: publishing named_total here would ship
@@ -823,42 +886,34 @@ class FAERSAnalyticsTool(BaseTool):
             # it is drawn from -- that this guard exists to suppress.
             return None
 
-        matched_only = drug_total - named_total
+        matched_only = cohort_total - named_total
         scope: Dict[str, Any] = {
             "reports_naming_queried_drug": named_total,
             "reports_matched_by_name_resolution_only": matched_only,
         }
         if matched_only == 0:
             scope["note"] = (
-                f"All {drug_total:,} reports in this analysis named "
+                f"All {cohort_total:,} reports {cohort_label} named "
                 f"'{drug_name}' as the product, so the metrics above are "
                 "specific to it."
             )
             return scope
 
-        share = 100.0 * matched_only / drug_total
+        share = 100.0 * matched_only / cohort_total
         scope["percent_matched_by_name_resolution_only"] = round(share, 1)
         scope["note"] = (
-            f"Of the {drug_total:,} reports the metrics above were computed "
-            f"from, only {named_total:,} named '{drug_name}' as the product. "
+            f"Of the {cohort_total:,} reports {cohort_label}, only "
+            f"{named_total:,} named '{drug_name}' as the product. "
             f"The other {matched_only:,} ({share:.1f}%) matched through "
             "openFDA's SPL annotation, which tags a report with every brand and "
             "generic name registered for the active ingredient of a product the "
-            "report did name. The ROR/PRR/IC above therefore describe that "
+            f"report did name. {metrics_phrase} that "
             f"whole active-ingredient population, not '{drug_name}' "
             "specifically. That is the right cohort when the query is a generic "
             "name and the extra reports are its own brands; it is the wrong one "
             "when the query is a brand whose ingredient has unrelated products. "
-            "The percentage alone cannot tell those apart -- compare "
-            "'reported_name_only_analysis' below, which repeats the analysis "
-            "over the reports that named the drug."
+            f"{closing}"
         )
-
-        restricted = self._reported_name_analysis(
-            drug_name, adverse_event, named_total, event_total, total
-        )
-        if restricted is not None:
-            scope["reported_name_only_analysis"] = restricted
         return scope
 
     def _reported_name_analysis(
@@ -1277,6 +1332,25 @@ class FAERSAnalyticsTool(BaseTool):
                     stratified_data, key=lambda x: x["count"], reverse=True
                 ),
                 "coverage_note": coverage_note,
+                # Fix-R53-2: `query_total` is the union cohort, so every
+                # percentage above is a share of it. Which product the reports
+                # named is not knowable from the stratification itself.
+                "cohort_scope": (
+                    self._cohort_split(
+                        drug_name,
+                        query_total,
+                        metrics_phrase=("The stratification above therefore describes"),
+                        closing=(
+                            "For a demographic profile of the product alone, "
+                            "there is no restricted form of this operation -- "
+                            "read the split above as the limit on how "
+                            "product-specific these groups are."
+                        ),
+                        adverse_event=adverse_event,
+                    )
+                    if query_total
+                    else None
+                ),
             }
 
         except requests.exceptions.RequestException as e:
@@ -1403,6 +1477,32 @@ class FAERSAnalyticsTool(BaseTool):
                     _ranked_terms_truncation_note(
                         "serious reactions", len(serious_reactions), observed=True
                     )
+                )
+            # Fix-R53-2: measured over the drug (and reaction) cohort this
+            # operation filters, NOT over the serious subset -- `serious:1` is
+            # orthogonal to which product a report named, and probing the
+            # narrower cohort would cost a request to answer the same question.
+            # The note says which cohort it measured so the two totals here
+            # cannot be mistaken for one another.
+            cohort_total = self._get_faers_count(drug_name, adverse_event)
+            if cohort_total:
+                result["cohort_scope"] = self._cohort_split(
+                    drug_name,
+                    cohort_total,
+                    metrics_phrase=(
+                        "The serious-event counts above therefore describe"
+                    ),
+                    closing=(
+                        "The seriousness filter is orthogonal to which product "
+                        "a report named, so this split describes the serious "
+                        "subset as well as the cohort it was measured over."
+                    ),
+                    adverse_event=adverse_event,
+                    cohort_label=(
+                        "matching the drug"
+                        f"{' and reaction' if adverse_event else ''} before the "
+                        "seriousness filter"
+                    ),
                 )
             if adverse_event:
                 result["adverse_event_filter"] = adverse_event.upper()
@@ -1606,6 +1706,8 @@ class FAERSAnalyticsTool(BaseTool):
                     count = result.get("count", 0)
                     yearly_counts[year] = yearly_counts.get(year, 0) + count
 
+            cohort_total = self._get_faers_count(drug_name, adverse_event)
+
             # Format temporal data
             temporal_data = [
                 {"year": year, "count": count}
@@ -1641,6 +1743,24 @@ class FAERSAnalyticsTool(BaseTool):
                     "years_analyzed": len(temporal_data),
                 },
                 "note": "Temporal trends may reflect increased awareness, reporting, or actual incidence changes",
+                # Fix-R53-2: `trend` is a verdict, and it is the verdict most
+                # exposed to a contaminated cohort in this module -- for a brand
+                # whose ingredient has unrelated products the series being
+                # trended is mostly the other products'.
+                "cohort_scope": (
+                    self._cohort_split(
+                        drug_name,
+                        cohort_total,
+                        metrics_phrase="The series and trend above describe",
+                        closing=(
+                            "A trend over that population is not the trend for "
+                            f"'{drug_name}' unless the two cohorts coincide."
+                        ),
+                        adverse_event=adverse_event,
+                    )
+                    if cohort_total
+                    else None
+                ),
             }
 
         except requests.exceptions.RequestException as e:
@@ -1673,6 +1793,7 @@ class FAERSAnalyticsTool(BaseTool):
 
             data = response.json()
             pt_results = data.get("results", [])
+            cohort_total = self._get_faers_count(drug_name)
 
             # Format PT level. Every returned row is kept -- slicing here is what
             # produced the constant "total" this fix removes.
@@ -1710,6 +1831,24 @@ class FAERSAnalyticsTool(BaseTool):
                     "meddra_hierarchy": hierarchy,
                     "note": "Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level only.",
                     "recommendation": "Use MedDRA dictionary to map PTs to higher-level terms for system organ class analysis",
+                    # Fix-R53-2: the PT ranking is a safety profile, read as
+                    # "what this drug does". For a brand whose ingredient has
+                    # unrelated products, the top terms can belong to those.
+                    "cohort_scope": (
+                        self._cohort_split(
+                            drug_name,
+                            cohort_total,
+                            metrics_phrase=(
+                                "The reaction ranking above therefore describes"
+                            ),
+                            closing=(
+                                "Terms driven by the other products cannot be "
+                                "separated out from this ranking."
+                            ),
+                        )
+                        if cohort_total
+                        else None
+                    ),
                 },
             }
 

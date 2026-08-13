@@ -504,19 +504,52 @@ class PubMedRESTTool(BaseRESTTool):
     def _search_warning_metadata(esearch_result: dict) -> dict:
         """Surface NCBI's own report that it did not run the query as asked.
 
-        esearch silently drops quoted phrases it cannot match and then answers
-        a broader query. NCBI discloses this in ``esearchresult.warninglist``;
-        without propagating it a caller cannot tell that the returned articles
-        answer a different question than the one they submitted.
+        esearch silently drops terms it cannot match and then answers a broader
+        query. It discloses this in TWO different containers, and reading only
+        one of them left the dangerous half silent.
 
-        Returns an empty dict when NCBI reported no warnings, so unaffected
-        queries keep their existing metadata shape.
+        Fix-53B-1: esearch uses ``warninglist`` when the search ends with zero
+        hits and ``errorlist`` when terms were dropped but hits remain. Only
+        ``warninglist`` was read, so the disclosure fired exactly when the
+        caller could not be misled (nothing came back) and stayed silent
+        exactly when they could (articles came back, answering a query they did
+        not submit). Measured live against eutils on 2026-08-13:
+
+            term  "benzene hematotoxicity NQO1 GSTT1 rs180056600"
+              -> count 4
+                 errorlist   {"phrasesnotfound": ["rs180056600"], ...}
+                 warninglist null
+
+            term  "zzzqqqxyz toluene diisocyanate nonexistentterm12345"
+              -> count 1477
+                 errorlist   {"phrasesnotfound": ["zzzqqqxyz",
+                                                  "nonexistentterm12345"]}
+                 warninglist null
+
+            term  '"a nonexistent quoted phrase xyzzy"'
+              -> count 0
+                 errorlist   null
+                 warninglist {"quotedphrasesnotfound": [...],
+                              "outputmessages": ["No items found."]}
+
+        Asking for one specific variant and receiving 4 papers that do not
+        mention it, with nothing in the response saying so, is the failure this
+        closes. ``fieldsnotfound`` is surfaced from the same container for the
+        same reason: an unrecognised ``[field]`` tag is dropped, not honoured.
+
+        Returns an empty dict when NCBI reported nothing, so unaffected queries
+        keep their existing metadata shape.
         """
         if not isinstance(esearch_result, dict):
             return {}
 
         warning_list = esearch_result.get("warninglist")
+        error_list = esearch_result.get("errorlist")
         if not isinstance(warning_list, dict):
+            warning_list = {}
+        if not isinstance(error_list, dict):
+            error_list = {}
+        if not (warning_list or error_list):
             return {}
 
         def _as_list(value: Any) -> list:
@@ -529,8 +562,10 @@ class PubMedRESTTool(BaseRESTTool):
         not_found = _as_list(warning_list.get("quotedphrasesnotfound"))
         ignored = _as_list(warning_list.get("phrasesignored"))
         messages = _as_list(warning_list.get("outputmessages"))
+        terms_dropped = _as_list(error_list.get("phrasesnotfound"))
+        fields_dropped = _as_list(error_list.get("fieldsnotfound"))
 
-        if not (not_found or ignored or messages):
+        if not (not_found or ignored or messages or terms_dropped or fields_dropped):
             return {}
 
         metadata: dict = {}
@@ -540,6 +575,10 @@ class PubMedRESTTool(BaseRESTTool):
             metadata["phrases_ignored"] = ignored
         if messages:
             metadata["ncbi_messages"] = messages
+        if terms_dropped:
+            metadata["terms_not_found"] = terms_dropped
+        if fields_dropped:
+            metadata["search_fields_not_found"] = fields_dropped
 
         translation = esearch_result.get("querytranslation")
         if isinstance(translation, str) and translation.strip():
@@ -556,6 +595,18 @@ class PubMedRESTTool(BaseRESTTool):
             )
         if ignored:
             notes.append(f"PubMed ignored the phrase(s) {ignored}.")
+        if terms_dropped:
+            notes.append(
+                f"PubMed found no match for the term(s) {terms_dropped} and "
+                "dropped them; the articles returned were retrieved by the "
+                "REMAINING terms and need not mention the dropped ones at all."
+            )
+        if fields_dropped:
+            notes.append(
+                f"PubMed did not recognise the search field(s) {fields_dropped} "
+                "and ignored the restriction, so the results are NOT limited to "
+                "that field."
+            )
         if messages:
             notes.append("; ".join(str(m) for m in messages))
         if notes:
