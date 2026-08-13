@@ -579,6 +579,18 @@ default_tool_files = {
     "mgnify_expanded": os.path.join(current_dir, "data", "mgnify_expanded_tools.json"),
     # SCXA - EBI Single Cell Expression Atlas (scRNA-seq experiments, gene expression)
     "scxa": os.path.join(current_dir, "data", "scxa_tools.json"),
+    # Single Cell Portal - Broad Institute single-cell study catalog (1000+ studies)
+    "single_cell_portal": os.path.join(
+        current_dir, "data", "single_cell_portal_tools.json"
+    ),
+    # UCSC Cell Browser - curated single-cell datasets with organism/tissue/disease facets
+    "ucsc_cell_browser": os.path.join(
+        current_dir, "data", "ucsc_cell_browser_tools.json"
+    ),
+    # CellTypist - pre-trained model catalog for automated cell type annotation
+    "celltypist_catalog": os.path.join(
+        current_dir, "data", "celltypist_catalog_tools.json"
+    ),
     # SGD - Saccharomyces Genome Database (yeast genes, phenotypes, interactions)
     "sgd": os.path.join(current_dir, "data", "sgd_tools.json"),
     # NCBI Datasets API v2 - Gene info, orthologs, taxonomy, genome metadata
