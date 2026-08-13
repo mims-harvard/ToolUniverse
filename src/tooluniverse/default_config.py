@@ -577,6 +577,12 @@ default_tool_files = {
     "glygen": os.path.join(current_dir, "data", "glygen_tools.json"),
     # MGnify Expanded - Metagenomics genome catalog, biomes, study details
     "mgnify_expanded": os.path.join(current_dir, "data", "mgnify_expanded_tools.json"),
+    # DDBJ - DNA Data Bank of Japan, third INSDC member (BioProject/BioSample/DRA/JGA)
+    "ddbj": os.path.join(current_dir, "data", "ddbj_tools.json"),
+    # BacDive - DSMZ bacterial strain phenotype and growth conditions
+    "bacdive": os.path.join(current_dir, "data", "bacdive_tools.json"),
+    # Orphadata - Orphanet rare disease cross-references, epidemiology, phenotypes
+    "orphadata": os.path.join(current_dir, "data", "orphadata_tools.json"),
     # SCXA - EBI Single Cell Expression Atlas (scRNA-seq experiments, gene expression)
     "scxa": os.path.join(current_dir, "data", "scxa_tools.json"),
     # Single Cell Portal - Broad Institute single-cell study catalog (1000+ studies)
