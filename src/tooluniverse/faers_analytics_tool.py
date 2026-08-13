@@ -39,7 +39,50 @@ FDA_BASE_URL = "https://api.fda.gov/drug/event.json"
 # openfda_adv_tool.COUNT_DEFAULT_LIMIT). The fix is to report what was returned
 # under a name that says so, flag truncation, and say plainly that a term's
 # absence from the list is not evidence it was never reported.
-PT_COUNT_FIELD = "patient.reaction.reactionmeddrapt.exact"
+PT_ANALYSED_FIELD = "patient.reaction.reactionmeddrapt"
+PT_COUNT_FIELD = PT_ANALYSED_FIELD + ".exact"
+
+# The openFDA field every reaction FILTER in this module searches on.
+#
+# Fix-R44: this module used to filter on `patient.reaction.reactionmeddrapt`,
+# openFDA's ANALYSED variant of the field, whose tokenizer splits on whitespace
+# and hyphens. A search for one Preferred Term therefore also matched every
+# other PT containing it as a token, and the swept-in reports were counted into
+# the 2x2 table as though they were reports of the requested PT.
+#
+# Measured live 2026-08-12 (`limit=1`, `meta.results.total`), reaction
+# "Thrombocytopenia":
+#
+#   drug         analysed field   .exact field   inflation
+#   heparin               6,805          2,778        2.45x
+#   bivalirudin             111             27        4.11x
+#
+# and `count=patient.reaction.reactionmeddrapt.exact` over heparin's analysed
+# match set names the contaminant outright: HEPARIN-INDUCED THROMBOCYTOPENIA,
+# 3,968 reports, against THROMBOCYTOPENIA's 2,778.
+#
+# The inflation is DIFFERENTIAL, which is what makes it a wrong answer rather
+# than a conservative one: the factor depends on which compound PTs happen to
+# contain the term, so `_compare_drugs` divided two differently-inflated RORs
+# and the verdict itself moved. Worse, the term swept into bivalirudin's arm is
+# heparin-induced thrombocytopenia -- bivalirudin's INDICATION, the thing it is
+# given to treat -- so the contamination inflates the comparator on the strength
+# of reports where the drug was the response to the event, not its suspected
+# cause.
+#
+# `.exact` is openFDA's un-analysed index variant and is what disproportionality
+# needs: a numerator that contains the PT the arm claims and nothing else. It
+# is case-insensitive on the query side (verified live: "Thrombocytopenia",
+# "THROMBOCYTOPENIA", "thrombocytopenia" and "ThRoMbOcYtOpEnIa" all return the
+# identical 110,034), so callers who send a PT in any capitalisation keep
+# working. Its one behavioural edge is that a string which is not a PT at all
+# 404s instead of silently matching a union of PTs -- `_not_a_preferred_term_error`
+# below turns that into a named error with real PTs to retry with.
+#
+# Retrieval tools are deliberately NOT changed to match. For "show me the
+# reports", a token match returns a superset and the caller can see what came
+# back; for a 2x2 table it corrupts a number nobody can inspect.
+PT_SEARCH_FIELD = PT_COUNT_FIELD
 
 # How many rows `_filter_serious_events` publishes under
 # "top_serious_reactions". Named because it also sizes that method's request:
@@ -188,8 +231,100 @@ def _faers_search_query(
     if drug_name:
         parts.append(_drug_clause(drug_name))
     if adverse_event:
-        parts.append(f'patient.reaction.reactionmeddrapt:"{adverse_event}"')
+        parts.append(f'{PT_SEARCH_FIELD}:"{adverse_event}"')
     return "+AND+".join(parts)
+
+
+def _api_request_failed_error(exc: Exception) -> Dict[str, Any]:
+    """An openFDA transport failure, with the request URL stripped out.
+
+    `requests` renders an HTTP error as "<status> ... for url: <full URL>", and
+    every URL this module builds has been through `_with_api_key`, which appends
+    `&api_key=<FDA_API_KEY>`. Returning `str(e)` therefore puts the caller's
+    secret into a value that gets logged, cached and shown to an agent.
+    Reproduced with FDA_API_KEY set:
+
+        API request failed: 403 Client Error: Forbidden for url:
+        https://api.fda.gov/drug/event.json?search=(...)&count=patient.patientsex
+        &limit=1000&api_key=SECRETKEY123
+
+    The status and reason are the actionable part and are kept; the URL is not,
+    since the caller supplied the parameters that built it. Truncating at
+    " for url:" rather than regex-scrubbing `api_key=` keeps this correct if a
+    future URL gains another sensitive parameter.
+    """
+    message = str(exc)
+    marker = " for url:"
+    if marker in message:
+        message = message.split(marker, 1)[0].rstrip()
+    return {
+        "status": "error",
+        "error": (
+            f"openFDA request failed: {message}. Retry in a moment; if this "
+            f"persists, set the FDA_API_KEY environment variable to raise the "
+            f"rate limit (https://open.fda.gov/apis/authentication/)."
+        ),
+    }
+
+
+def _count_query_failed_error() -> Dict[str, Any]:
+    """A failed count request is not a zero count -- see `_get_faers_count`."""
+    return {
+        "status": "error",
+        "error": (
+            "One or more openFDA FAERS count queries failed "
+            "(commonly HTTP 429 rate limiting on the anonymous "
+            "tier), so a disproportionality analysis cannot be "
+            "computed right now. Retry in a moment, or set the "
+            "FDA_API_KEY environment variable to raise the rate "
+            "limit (https://open.fda.gov/apis/authentication/)."
+        ),
+    }
+
+
+def _not_a_preferred_term_error(
+    adverse_event: str, suggestions: List[Tuple[str, int]]
+) -> Dict[str, Any]:
+    """Error for a reaction string that is not a MedDRA PT as stored in FAERS.
+
+    This is the one caller-visible edge of searching `.exact` rather than the
+    analysed reaction field (see PT_SEARCH_FIELD). The analysed field answered
+    a colloquial term like "bleeding" with 34,436 reports -- the union of every
+    PT containing that token, from GINGIVAL BLEEDING to BLEEDING TIME PROLONGED
+    -- and fed that union into the 2x2 table as if it were one event. The
+    `.exact` field 404s instead, which is the honest answer but a useless one on
+    its own.
+
+    So the miss is reported as what it is, a term that is not a Preferred Term,
+    and carries the real PTs to retry with rather than leaving the caller to
+    guess MedDRA's spelling. Separating "your query names nothing" from "this
+    combination genuinely has no reports" is the whole point: both used to
+    surface as an "Insufficient data: a=0" arithmetic complaint.
+    """
+    if suggestions:
+        listed = "; ".join(
+            f'"{term}" ({count:,} reports)' for term, count in suggestions
+        )
+        guidance = (
+            f" FAERS records these Preferred Terms containing it: {listed}. "
+            "Re-run with one of them."
+        )
+    else:
+        guidance = (
+            " No FAERS Preferred Term contains it either, so check the spelling "
+            "against MedDRA -- FAERS uses British spellings for many terms "
+            '(e.g. "Haemorrhage", not "Hemorrhage").'
+        )
+    return {
+        "status": "error",
+        "error": (
+            f'"{adverse_event}" is not a MedDRA Preferred Term in FAERS, so no '
+            f"report can match it and this query cannot be answered."
+            f"{guidance}"
+        ),
+        "adverse_event": adverse_event,
+        "suggested_preferred_terms": [term for term, _ in suggestions],
+    }
 
 
 @register_tool("FAERSAnalyticsTool")
@@ -229,6 +364,28 @@ class FAERSAnalyticsTool(BaseTool):
         if arguments.get("drugs") and not arguments.get("drug1"):
             drugs_list = arguments["drugs"]
             if isinstance(drugs_list, list) and len(drugs_list) >= 2:
+                # Fix-R44: this used to take drugs[0] and drugs[1] and drop the
+                # rest without a word. `{"drugs": ["heparin", "argatroban",
+                # "bivalirudin"]}` returned status "success", a confident
+                # two-drug verdict and comparison_caveat null, with "bivalirudin"
+                # appearing nowhere in the response -- so the answer looked like
+                # an answer to the question that was asked. The analysis is 2x2
+                # by construction and cannot be widened here, so the extra input
+                # is refused rather than discarded.
+                if len(drugs_list) > 2:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"`drugs` takes exactly two drug names; received "
+                            f"{len(drugs_list)} ({', '.join(map(str, drugs_list))}). "
+                            "This comparison is pairwise -- it builds one 2x2 "
+                            "contingency table per drug and compares the two. "
+                            "Issue one call per pair (e.g. "
+                            f'["{drugs_list[0]}", "{drugs_list[1]}"] then '
+                            f'["{drugs_list[0]}", "{drugs_list[2]}"]) and compare '
+                            "the resulting RORs across calls."
+                        ),
+                    }
                 arguments = dict(arguments, drug1=drugs_list[0], drug2=drugs_list[1])
         # Normalize stratify_by: 'age_group' → 'age'
         if arguments.get("stratify_by") == "age_group":
@@ -280,6 +437,87 @@ class FAERSAnalyticsTool(BaseTool):
         """
         return COUNT_MAX_LIMIT if self.api_key else COUNT_MAX_LIMIT_ANONYMOUS
 
+    def _reaction_query_missed(
+        self, adverse_event: Optional[str], drug_name: Optional[str]
+    ) -> Dict[str, Any]:
+        """Explain an openFDA 404 on a query that filtered by reaction.
+
+        openFDA answers a query with no matches with a 404 rather than an empty
+        200, so every operation filtering on a reaction has to tell two
+        different things apart, and they need opposite advice:
+
+        * the string is not a MedDRA Preferred Term at all -- fixable by
+          spelling it the way MedDRA does, and worth naming real terms for;
+        * it IS a Preferred Term, and this drug simply has no reports of it --
+          nothing to fix, and suggesting alternative spellings would be wrong.
+
+        The distinguishing question is whether the term matches anything
+        anywhere in FAERS, which is one count query.
+
+        Before Fix-R44 these operations searched openFDA's ANALYSED reaction
+        field, which matched loosely enough that a colloquial term still hit
+        something, so the 404 was rare and `raise_for_status()` was survivable.
+        Searching `.exact` makes the miss routine, and a raw
+        "404 Client Error ... for url: <full openFDA URL>" is both unhelpful and
+        a place an FDA_API_KEY can end up in a returned string.
+        """
+        if adverse_event and self._get_faers_count(None, adverse_event) == 0:
+            return _not_a_preferred_term_error(
+                adverse_event, self._suggest_preferred_terms(adverse_event)
+            )
+        return {
+            "status": "error",
+            "error": (
+                f"No FAERS reports match drug '{drug_name}' with reaction "
+                f"'{adverse_event}'. '{adverse_event}' is a recognised MedDRA "
+                f"Preferred Term, so this is a genuine absence of reports for "
+                f"this drug/event pair rather than a naming problem -- check "
+                f"the drug name, or query the drug without a reaction filter "
+                f"to see which reactions it does have."
+            ),
+        }
+
+    def _suggest_preferred_terms(
+        self, adverse_event: str, limit: int = 5
+    ) -> List[Tuple[str, int]]:
+        """Real FAERS Preferred Terms containing `adverse_event`, most-reported first.
+
+        Runs only on the failure path, so the happy path costs no extra request.
+        Uses the ANALYSED reaction field on purpose -- the loose token matching
+        that makes it wrong for counting is exactly what makes it right for
+        "what did you mean?" -- and rolls the matched reports up over the
+        `.exact` facet to recover the true PT spellings. The facet counts every
+        reaction on a matched report, including co-reported ones that have
+        nothing to do with the query, so rows are kept only when they contain
+        all of the query's tokens.
+
+        Returns [] on any failure: this decorates an error message and must
+        never replace one.
+        """
+        tokens = [t for t in adverse_event.lower().replace("-", " ").split() if t]
+        if not tokens:
+            return []
+
+        try:
+            url = self._with_api_key(
+                f'{FDA_BASE_URL}?search={PT_ANALYSED_FIELD}:"{adverse_event}"'
+                f"&count={PT_COUNT_FIELD}&limit={min(50, self._count_limit())}"
+            )
+            response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code != 200:
+                return []
+            rows = response.json().get("results", [])
+        except Exception:
+            return []
+
+        matched = [
+            (row["term"], row.get("count", 0))
+            for row in rows
+            if isinstance(row.get("term"), str)
+            and all(tok in row["term"].lower() for tok in tokens)
+        ]
+        return matched[:limit]
+
     def _with_data_payload(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Ensure successful operation responses include a standardized data wrapper."""
         if not isinstance(result, dict):
@@ -324,20 +562,30 @@ class FAERSAnalyticsTool(BaseTool):
             a = self._get_faers_count(drug_name, adverse_event)
             drug_total = self._get_faers_count(drug_name, None)
             event_total = self._get_faers_count(None, adverse_event)
-            total = self._get_faers_total_count()
 
-            if None in (a, drug_total, event_total, total):
-                return {
-                    "status": "error",
-                    "error": (
-                        "One or more openFDA FAERS count queries failed "
-                        "(commonly HTTP 429 rate limiting on the anonymous "
-                        "tier), so a disproportionality analysis cannot be "
-                        "computed right now. Retry in a moment, or set the "
-                        "FDA_API_KEY environment variable to raise the rate "
-                        "limit (https://open.fda.gov/apis/authentication/)."
-                    ),
-                }
+            if None in (a, drug_total, event_total):
+                return _count_query_failed_error()
+
+            # A reaction string that matches no report ANYWHERE in FAERS is not
+            # a rare drug/event pair, it is a query that names nothing -- the
+            # `.exact` field only matches whole Preferred Terms (see
+            # PT_SEARCH_FIELD). Caught here rather than in the a/b/c/d guard
+            # below because the two failures need different answers: this one is
+            # fixed by spelling the PT the way MedDRA does, and the caller
+            # cannot infer that from "Insufficient data: a=0, b=0, c=0".
+            #
+            # Checked BEFORE the whole-database total is fetched: that request
+            # only feeds `d`, which this path never computes. Switching to
+            # `.exact` made a rejected term a routine outcome rather than a rare
+            # one, so paying for a request nobody uses is now a per-call cost.
+            if event_total == 0:
+                return _not_a_preferred_term_error(
+                    adverse_event, self._suggest_preferred_terms(adverse_event)
+                )
+
+            total = self._get_faers_total_count()
+            if total is None:
+                return _count_query_failed_error()
 
             # b = drug + no event (all drug reports - drug+event)
             b = drug_total - a
@@ -508,6 +756,8 @@ class FAERSAnalyticsTool(BaseTool):
             )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code == 404 and adverse_event:
+                return self._reaction_query_missed(adverse_event, drug_name)
             response.raise_for_status()
 
             data = response.json()
@@ -609,7 +859,7 @@ class FAERSAnalyticsTool(BaseTool):
             }
 
         except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"API request failed: {str(e)}"}
+            return _api_request_failed_error(e)
         except Exception as e:
             return {"status": "error", "error": f"Stratification failed: {str(e)}"}
 
@@ -625,14 +875,11 @@ class FAERSAnalyticsTool(BaseTool):
             if not drug_name:
                 return {"status": "error", "error": "Must provide drug_name"}
 
-            # Build query for serious events
-            base_query = _drug_clause(drug_name)
-
-            # Add specific reaction filter if provided
-            if adverse_event:
-                base_query += (
-                    f'+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
-                )
+            # Build query for serious events. Shared with every other reaction
+            # filter in this module so no operation can search a different
+            # variant of the reaction field than its siblings (see
+            # PT_SEARCH_FIELD).
+            base_query = _faers_search_query(drug_name, adverse_event)
 
             # Add seriousness filter
             seriousness_map = {
@@ -664,6 +911,8 @@ class FAERSAnalyticsTool(BaseTool):
             )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code == 404 and adverse_event:
+                return self._reaction_query_missed(adverse_event, drug_name)
             response.raise_for_status()
 
             data = response.json()
@@ -715,7 +964,7 @@ class FAERSAnalyticsTool(BaseTool):
             return {"status": "success", "data": result}
 
         except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"API request failed: {str(e)}"}
+            return _api_request_failed_error(e)
         except Exception as e:
             return {
                 "status": "error",
@@ -751,6 +1000,34 @@ class FAERSAnalyticsTool(BaseTool):
                 }
             )
 
+            # Arm 2 is only worth fetching if arm 1 succeeded. Both arms share
+            # one `adverse_event`, so the most common failure -- a reaction
+            # string that is not a Preferred Term -- is guaranteed to fail both
+            # identically; running the second arm anyway spent five further
+            # openFDA requests (four counts plus the suggestion facet) to
+            # rediscover the same thing and then discard it. `.exact` matching
+            # makes that failure routine rather than rare, so the second arm now
+            # waits until the first has earned it.
+            if result1.get("status") != "success":
+                # Carry the arm's own explanation up to the top level. A caller
+                # reading `error` -- which is all the CLI prints -- otherwise saw
+                # "Failed to calculate metrics for heparin" while the actual
+                # reason, and the Preferred Terms to retry with, sat nested in
+                # `drug1_result.error`. The tool's description promises the
+                # naming, so it has to be where the caller looks.
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Cannot compare: {result1.get('error')} "
+                        f"({drug2} was not queried.)"
+                    ),
+                    "suggested_preferred_terms": result1.get(
+                        "suggested_preferred_terms"
+                    ),
+                    "drug1_result": result1,
+                    "drug2_result": None,
+                }
+
             result2 = self._calculate_disproportionality(
                 {
                     "operation": "calculate_disproportionality",
@@ -759,10 +1036,13 @@ class FAERSAnalyticsTool(BaseTool):
                 }
             )
 
-            if result1.get("status") != "success" or result2.get("status") != "success":
+            if result2.get("status") != "success":
                 return {
                     "status": "error",
-                    "error": "Failed to calculate metrics for one or both drugs",
+                    "error": f"Cannot compare: {result2.get('error')}",
+                    "suggested_preferred_terms": result2.get(
+                        "suggested_preferred_terms"
+                    ),
                     "drug1_result": result1,
                     "drug2_result": result2,
                 }
@@ -846,11 +1126,9 @@ class FAERSAnalyticsTool(BaseTool):
             if not drug_name:
                 return {"status": "error", "error": "Must provide drug_name"}
 
-            # Build base query
-            if adverse_event:
-                search_query = f'{_drug_clause(drug_name)}+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
-            else:
-                search_query = _drug_clause(drug_name)
+            # Build base query (see PT_SEARCH_FIELD for why the reaction clause
+            # is shared rather than restated).
+            search_query = _faers_search_query(drug_name, adverse_event)
 
             # Get counts by receive date (year).
             #
@@ -866,6 +1144,8 @@ class FAERSAnalyticsTool(BaseTool):
             )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code == 404 and adverse_event:
+                return self._reaction_query_missed(adverse_event, drug_name)
             response.raise_for_status()
 
             data = response.json()
@@ -919,7 +1199,7 @@ class FAERSAnalyticsTool(BaseTool):
             }
 
         except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"API request failed: {str(e)}"}
+            return _api_request_failed_error(e)
         except Exception as e:
             return {"status": "error", "error": f"Temporal analysis failed: {str(e)}"}
 
@@ -989,7 +1269,7 @@ class FAERSAnalyticsTool(BaseTool):
             }
 
         except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"API request failed: {str(e)}"}
+            return _api_request_failed_error(e)
         except Exception as e:
             return {"status": "error", "error": f"MedDRA rollup failed: {str(e)}"}
 

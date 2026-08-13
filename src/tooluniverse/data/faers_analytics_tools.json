@@ -18,11 +18,11 @@
         },
         "adverse_event": {
           "type": "string",
-          "description": "MedDRA Preferred Term (e.g., 'Hepatotoxicity', 'Myopathy'). Use exact MedDRA Preferred Term capitalization (e.g., \"Haemorrhage\" not \"hemorrhage\")."
+          "description": "MedDRA Preferred Term (e.g., 'Hepatotoxicity', 'Myopathy'). Must be a WHOLE MedDRA Preferred Term: it is matched against the complete term, not as a substring, so a term that is not a Preferred Term (e.g. \"bleeding\") is rejected, naming real Preferred Terms to retry with, rather than silently matched against every Preferred Term containing the word. Capitalization does not matter; spelling does -- FAERS uses British forms (\"Haemorrhage\", not \"Hemorrhage\")."
         },
         "reaction": {
           "type": "string",
-          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction."
+          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction, matched as a whole term (see adverse_event)."
         },
         "drug": {
           "type": "string",
@@ -62,7 +62,7 @@
         },
         "adverse_event": {
           "type": "string",
-          "description": "MedDRA Preferred Term. Use exact MedDRA Preferred Term capitalization (e.g., \"Haemorrhage\" not \"hemorrhage\")."
+          "description": "MedDRA Preferred Term. Must be a WHOLE MedDRA Preferred Term: it is matched against the complete term, not as a substring, so a term that is not a Preferred Term (e.g. \"bleeding\") matches nothing, rather than silently matching every Preferred Term containing the word. Capitalization does not matter; spelling does -- FAERS uses British forms (\"Haemorrhage\", not \"Hemorrhage\")."
         },
         "stratify_by": {
           "type": "string",
@@ -76,7 +76,7 @@
         },
         "reaction": {
           "type": "string",
-          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction (e.g., \"hemorrhage\", \"nausea\")."
+          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction, matched as a whole term (see adverse_event)."
         },
         "demographic": {
           "type": "string",
@@ -197,7 +197,7 @@
         },
         "adverse_event": {
           "type": "string",
-          "description": "Specific adverse event MedDRA term to filter within serious events (e.g., MYOCARDIAL INFARCTION, DEATH). Use uppercase MedDRA PT terms."
+          "description": "Specific adverse event to filter within serious events (e.g., 'Myocardial infarction', 'Death'). Must be a WHOLE MedDRA Preferred Term: it is matched against the complete term, not as a substring, so a term that is not a Preferred Term (e.g. \"bleeding\") matches nothing, rather than silently matching every Preferred Term containing the word. Capitalization does not matter; spelling does -- FAERS uses British forms (\"Haemorrhage\", not \"Hemorrhage\")."
         }
       }
     },
@@ -217,7 +217,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_compare_drugs",
-    "description": "Compare safety signals for two drugs with the same adverse event. Returns ROR/PRR/IC for both drugs with comparative analysis. Example: compare fulvestrant vs tamoxifen for hepatotoxicity. Use for safety benchmarking. Each drug's arm also returns the 2x2 `contingency_table` its metrics were computed from -- `a_drug_and_event`, `b_drug_no_event`, `c_no_drug_event`, `d_no_drug_no_event`, the same keys FAERS_calculate_disproportionality uses -- so the case counts behind the verdict are visible without extra calls. This matters because a ratio of two ratios is uninterpretable on its own: \"similar-strength signals\" means something very different when both arms rest on thousands of co-reported cases than when one rests on a handful. When either arm's `a_drug_and_event` falls below 25, `comparison_caveat` names that arm and its count and warns that `comparison` is not an equal-confidence statement; it is null when both arms clear the threshold. 25 is where an arm's own 95% ROR interval becomes narrower than the 1.5x ratio this comparison uses to separate \"similar-strength\" from \"stronger\".",
+    "description": "Compare safety signals for two drugs with the same adverse event. Returns ROR/PRR/IC for both drugs with comparative analysis. Example: compare fulvestrant vs tamoxifen for hepatotoxicity. Use for safety benchmarking. The adverse event is matched against whole MedDRA Preferred Terms, so each arm's counts contain the requested Preferred Term and nothing else. This matters for a COMPARISON specifically: a substring match sweeps in every compound term containing it, by a factor that differs per drug, so the ratio of the two arms -- and with it the verdict -- moves. Comparing heparin and bivalirudin on \"Thrombocytopenia\" is the worked case: a substring match adds HEPARIN-INDUCED THROMBOCYTOPENIA, which is bivalirudin's INDICATION rather than its adverse effect, inflating heparin 2.45x and bivalirudin 4.11x and turning a real 1.6x difference into \"similar-strength\". Each drug's arm also returns the 2x2 `contingency_table` its metrics were computed from -- `a_drug_and_event`, `b_drug_no_event`, `c_no_drug_event`, `d_no_drug_no_event`, the same keys FAERS_calculate_disproportionality uses -- so the case counts behind the verdict are visible without extra calls. This matters because a ratio of two ratios is uninterpretable on its own: \"similar-strength signals\" means something very different when both arms rest on thousands of co-reported cases than when one rests on a handful. When either arm's `a_drug_and_event` falls below 25, `comparison_caveat` names that arm and its count and warns that `comparison` is not an equal-confidence statement; it is null when both arms clear the threshold. 25 is where an arm's own 95% ROR interval becomes narrower than the 1.5x ratio this comparison uses to separate \"similar-strength\" from \"stronger\".",
     "parameter": {
       "type": "object",
       "required": [],
@@ -237,18 +237,20 @@
         },
         "adverse_event": {
           "type": "string",
-          "description": "MedDRA Preferred Term to compare. Use exact MedDRA Preferred Term capitalization (e.g., \"Haemorrhage\" not \"hemorrhage\")."
+          "description": "MedDRA Preferred Term to compare. Must be a WHOLE MedDRA Preferred Term: it is matched against the complete term, not as a substring, so a term that is not a Preferred Term (e.g. \"bleeding\") is rejected, naming real Preferred Terms to retry with, rather than silently matched against every Preferred Term containing the word. Capitalization does not matter; spelling does -- FAERS uses British forms (\"Haemorrhage\", not \"Hemorrhage\")."
         },
         "reaction": {
           "type": "string",
-          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction."
+          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction, matched as a whole term (see adverse_event)."
         },
         "drugs": {
           "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
           "items": {
             "type": "string"
           },
-          "description": "Alias for drug1/drug2. List of two drug names to compare, e.g., [\"tofacitinib\", \"baricitinib\"]."
+          "description": "Alias for drug1/drug2. EXACTLY two drug names, e.g. [\"tofacitinib\", \"baricitinib\"]. A list of three or more is rejected rather than truncated: the analysis is pairwise (one 2x2 contingency table per drug), so extra names cannot be compared in a single call -- issue one call per pair."
         }
       }
     },
@@ -381,11 +383,11 @@
         },
         "adverse_event": {
           "type": "string",
-          "description": "MedDRA Preferred Term (optional, omit for all events). Use exact MedDRA Preferred Term capitalization (e.g., \"Haemorrhage\" not \"hemorrhage\")."
+          "description": "MedDRA Preferred Term (optional, omit for all events). Must be a WHOLE MedDRA Preferred Term: it is matched against the complete term, not as a substring, so a term that is not a Preferred Term (e.g. \"bleeding\") matches nothing, rather than silently matching every Preferred Term containing the word. Capitalization does not matter; spelling does -- FAERS uses British forms (\"Haemorrhage\", not \"Hemorrhage\")."
         },
         "reaction": {
           "type": "string",
-          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction."
+          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction, matched as a whole term (see adverse_event)."
         },
         "drug": {
           "type": "string",

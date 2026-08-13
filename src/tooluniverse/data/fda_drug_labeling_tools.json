@@ -2948,25 +2948,25 @@
   },
   {
     "name": "FDA_get_drug_names_by_boxed_warning",
-    "description": "Retrieve drug names that have specific boxed warnings and adverse effects.",
+    "description": "Find drugs whose FDA label carries a boxed warning matching a phrase you supply. IMPORTANT -- `warning_text` is matched as a CONTIGUOUS PHRASE against the boxed_warning field, not as a set of keywords, so assembling concepts into one string silently under-matches: measured live 2026-08-12, \"torsades de pointes\" matches 273 labels while \"QT prolongation torsades de pointes\" matches 15, and methadone -- whose boxed warning states both concepts in different words -- is absent from the second. A small `total` here is evidence about your phrase, NOT evidence that no drug carries the warning; search one short phrase that would appear verbatim in the label, and run several narrow searches rather than one broad one. Two further limits on `meta.total`: it counts LABEL RECORDS, not drugs, and one drug commonly has dozens (the 104 records for \"torsades de pointes\" are just 11 distinct generic names, 39 of them loperamide and 35 methadone), so it must not be read as a drug count; and results are restricted to labels carrying an openfda brand or generic name, since this tool returns those fields -- that drops 273 matching labels to 104, so labels whose openfda block is empty are not represented. To check one known drug use FDA_get_boxed_warning_info_by_drug_name instead, which is exact rather than phrase-matched.",
     "parameter": {
       "type": "object",
       "properties": {
         "warning_text": {
           "type": "string",
-          "description": "The text of the boxed warning to search for."
+          "description": "Phrase to find within the boxed_warning field, matched CONTIGUOUSLY and in order -- not as keywords. Use a short phrase that would appear verbatim on a label (e.g. \"torsades de pointes\", \"hepatotoxicity\"), not an assembled description of a concept. Longer strings match monotonically fewer labels, and a near-empty result usually means the phrase is wrong rather than that no such drug exists."
         },
         "indication": {
           "type": "string",
-          "description": "The indication or usage of the drug."
+          "description": "Optional additional phrase, matched the same contiguous way against indications_and_usage. ANDed with warning_text, so it can only narrow the result -- omit it unless you specifically need it."
         },
         "limit": {
           "type": "integer",
-          "description": "The number of records to return."
+          "description": "Number of LABEL RECORDS to return (not distinct drugs)."
         },
         "skip": {
           "type": "integer",
-          "description": "The number of records to skip."
+          "description": "Number of label records to skip before this page. Deduplication runs per page, so pages may overlap or omit records."
         }
       },
       "required": [
@@ -2997,9 +2997,8 @@
     ],
     "test_examples": [
       {
-        "warning_text": "The quick brown fox jumps over the lazy dog.",
-        "indication": "Hypertension",
-        "limit": 1,
+        "warning_text": "torsades de pointes",
+        "limit": 5,
         "skip": 0
       }
     ],
