@@ -12,9 +12,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "numpy",
     "local_info": {
@@ -150,6 +148,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -159,9 +158,7 @@
           "description": "Type of information to retrieve about SciPy"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "scipy",
     "local_info": {
@@ -302,9 +299,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "pandas",
     "local_info": {
@@ -444,9 +439,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "h5py",
     "local_info": {
@@ -586,9 +579,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "tqdm",
     "local_info": {
@@ -724,6 +715,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -733,9 +725,7 @@
           "description": "Type of information to retrieve about FlowUtils"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "FlowUtils",
     "local_info": {
@@ -876,9 +866,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "cooler",
     "local_info": {
@@ -1014,6 +1002,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1023,9 +1012,7 @@
           "description": "Type of information to retrieve about TileDB"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "tiledb",
     "local_info": {
@@ -1162,6 +1149,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1171,9 +1159,7 @@
           "description": "Type of information to retrieve about SymPy"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "sympy",
     "local_info": {
@@ -1310,6 +1296,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1319,9 +1306,7 @@
           "description": "Type of information to retrieve about optlang"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "optlang",
     "local_info": {

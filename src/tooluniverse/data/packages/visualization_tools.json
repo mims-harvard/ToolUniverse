@@ -12,9 +12,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "matplotlib",
     "local_info": {
@@ -154,9 +152,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "seaborn",
     "local_info": {
@@ -296,9 +292,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "opencv-python",
     "local_info": {
@@ -434,6 +428,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -443,9 +438,7 @@
           "description": "Type of information to retrieve about scikit-image"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "scikit-image",
     "local_info": {
@@ -585,9 +578,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "cellpose",
     "local_info": {
@@ -727,9 +718,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "igraph",
     "local_info": {
@@ -865,6 +854,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -874,9 +864,7 @@
           "description": "Type of information to retrieve about PlantCV"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "plantcv",
     "local_info": {
