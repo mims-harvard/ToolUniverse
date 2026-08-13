@@ -1090,6 +1090,12 @@ class TRIPDatabaseTool(BaseTool):
             }
 
 
+def _dc_value(metadata, field):
+    """First value of a Dublin Core field in a DSpace metadata block."""
+    values = metadata.get(field) or []
+    return values[0].get("value") if values else None
+
+
 @register_tool()
 class WHOGuidelinesTool(BaseTool):
     """
@@ -1108,13 +1114,21 @@ class WHOGuidelinesTool(BaseTool):
     generic fallback listing: returning WHO's most recent publications
     for a query they do not match presents unrelated documents as
     search results.
+
+    Both backends emit results through ``_result``, so ``is_guideline``
+    means the same thing whichever one answered. Neither WHO topic pages
+    nor IRIS have a "guideline" document type -- topic pages list fact
+    sheets and technical reports alongside guidelines -- so the flag is
+    derived from the record rather than asserted for every hit.
     """
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
         self.base_url = "https://www.who.int"
         self.iris_base_url = "https://iris.who.int"
-        self.iris_search_url = f"{self.iris_base_url}/server/api/discover/search/objects"
+        self.iris_search_url = (
+            f"{self.iris_base_url}/server/api/discover/search/objects"
+        )
         self.session = requests.Session()
         self.session.headers.update(
             {
@@ -1189,21 +1203,42 @@ class WHOGuidelinesTool(BaseTool):
                     seen.add(href)
                     full_url = href if href.startswith("http") else self.base_url + href
                     results.append(
-                        {
-                            "title": text,
-                            "url": full_url,
-                            "description": None,
-                            "content": None,
-                            "source": "WHO",
-                            "organization": "World Health Organization",
-                            "is_guideline": True,
-                            "official": True,
-                            "matched_via": f"health_topic:{topic_slug}",
-                        }
+                        self._result(
+                            title=text,
+                            url=full_url,
+                            matched_via=f"health_topic:{topic_slug}",
+                        )
                     )
             return results
         except Exception:
             return []
+
+    @staticmethod
+    def _result(
+        *,
+        title,
+        url,
+        matched_via,
+        description=None,
+        document_type=None,
+        date_issued=None,
+    ):
+        """Shape one result, whichever backend produced it."""
+        return {
+            "title": title,
+            "url": url,
+            "description": description,
+            "content": None,
+            "source": "WHO",
+            "organization": "World Health Organization",
+            # Neither backend exposes a "guideline" document type, so this
+            # is read off the record instead of asserted for every hit.
+            "is_guideline": "guideline" in f"{title} {document_type or ''}".lower(),
+            "official": True,
+            "document_type": document_type,
+            "date_issued": date_issued,
+            "matched_via": matched_via,
+        }
 
     def _search_iris(self, query, limit):
         """Search WHO IRIS, WHO's official publication repository.
@@ -1212,13 +1247,10 @@ class WHOGuidelinesTool(BaseTool):
         topic pages this is a real text search, so a term WHO has no
         documents for returns nothing rather than something unrelated.
         """
+        size = max(1, min(int(limit), 100))
         response = self.session.get(
             self.iris_search_url,
-            params={
-                "query": query,
-                "size": max(1, min(int(limit), 100)),
-                "dsoType": "item",
-            },
+            params={"query": query, "size": size, "dsoType": "item"},
             headers={"Accept": "application/json"},
             timeout=30,
         )
@@ -1227,50 +1259,38 @@ class WHOGuidelinesTool(BaseTool):
         objects = search_result.get("_embedded", {}).get("objects", [])
 
         results = []
-        for obj in objects[:limit]:
+        for obj in objects[:size]:
             item = obj.get("_embedded", {}).get("indexableObject", {})
             metadata = item.get("metadata", {})
-
-            def first(field):
-                values = metadata.get(field) or []
-                return values[0].get("value") if values else None
-
-            title = item.get("name") or first("dc.title")
+            title = item.get("name") or _dc_value(metadata, "dc.title")
             if not title:
                 continue
             handle = item.get("handle")
-            document_type = first("dc.type")
-            # IRIS has no "guideline" document type, so this is asserted
-            # only where the record itself says so rather than by default.
-            haystack = f"{title} {document_type or ''}".lower()
             results.append(
-                {
-                    "title": title,
-                    "url": (
+                self._result(
+                    title=title,
+                    url=(
                         f"{self.iris_base_url}/handle/{handle}"
                         if handle
-                        else first("dc.identifier.uri")
+                        else _dc_value(metadata, "dc.identifier.uri")
                     ),
-                    "description": first("dc.description.abstract"),
-                    "content": None,
-                    "source": "WHO",
-                    "organization": "World Health Organization",
-                    "is_guideline": "guideline" in haystack,
-                    "official": True,
-                    "document_type": document_type,
-                    "date_issued": first("dc.date.issued"),
-                    "matched_via": "iris_search",
-                }
+                    description=_dc_value(metadata, "dc.description.abstract"),
+                    document_type=_dc_value(metadata, "dc.type"),
+                    date_issued=_dc_value(metadata, "dc.date.issued"),
+                    matched_via="iris_search",
+                )
             )
         return results
 
     def _search_who_guidelines(self, query, limit):
         """Search WHO health-topic pages, then WHO IRIS."""
         try:
-            time.sleep(0.5)
-
             # WHO's curated topic pages, where the query names a health topic.
-            for slug in self._topic_slug(query):
+            for attempt, slug in enumerate(self._topic_slug(query)):
+                if attempt:
+                    # Space out repeat hits on who.int, not the first request
+                    # of the call, which has no predecessor to be polite to.
+                    time.sleep(0.5)
                 guidelines = self._scrape_topic_publications(slug)
                 if guidelines:
                     return guidelines[:limit]

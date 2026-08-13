@@ -16,7 +16,6 @@ genuinely query-responsive: methadone 1027 hits, clozapine 324,
 trachoma 3964, "zzqqxxwubble" 0.
 """
 
-import json
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -109,7 +108,7 @@ class TestQuerySpecificResults:
 
         urls = [u for u, _ in requested]
         assert not any("who-guidelines" in u for u in urls), (
-            "generic recent-guidelines listing was scraped again: " f"{urls}"
+            f"generic recent-guidelines listing was scraped again: {urls}"
         )
         iris_calls = [(u, p) for u, p in requested if "iris.who.int" in u]
         assert len(iris_calls) == 1
@@ -154,7 +153,7 @@ class TestQuerySpecificResults:
             first = tool.run({"query": "methadone", "limit": 3})
             second = tool.run({"query": "clozapine", "limit": 3})
 
-        assert json.dumps(first) != json.dumps(second)
+        assert first != second
 
     def test_iris_results_do_not_claim_to_be_guidelines_by_default(self):
         """IRIS has no 'guideline' document type, so the flag must come
@@ -177,6 +176,31 @@ class TestQuerySpecificResults:
         assert results[0]["is_guideline"] is False
         assert results[1]["is_guideline"] is True
         assert results[0]["document_type"] == "Journal articles"
+
+    def test_is_guideline_means_the_same_thing_on_both_backends(self):
+        """Contract change: topic-page rows used to be is_guideline: True
+        unconditionally, while IRIS rows derived it -- one field with two
+        meanings in one result list. WHO topic pages list handbooks,
+        toolkits and epidemiological updates alongside guidelines.
+        """
+        tool = _tool()
+        mixed_topic_page = (
+            b"<html><body>"
+            b'<a href="/publications/i/item/9789240001503">'
+            b"WHO consolidated guidelines on tuberculosis: Module 1</a>"
+            b'<a href="/publications/i/item/9789240002906">'
+            b"WHO operational handbook on tuberculosis: Module 1</a>"
+            b"</body></html>"
+        )
+
+        with patch.object(
+            tool.session, "get", return_value=_response(html=mixed_topic_page)
+        ):
+            results = tool.run({"query": "tuberculosis", "limit": 5})
+
+        by_title = {r["title"][:30]: r["is_guideline"] for r in results}
+        assert by_title["WHO consolidated guidelines on"] is True
+        assert by_title["WHO operational handbook on tu"] is False
 
     def test_health_topic_hit_still_answers_and_says_so(self):
         tool = _tool()

@@ -18,9 +18,11 @@ the tool discarded it. Confirmed live against
 discarded, on the /search items.
 
 The replacement pointer is not in Monarch's payload; EBI OLS4 records it
-as ``term_replaced_by: MONDO_1010200`` for this term. Sibling tools in
-this repo already resolve and disclose obsolete identifiers this way
-(``chebi_tool.py``, ``hpo_tool.py``).
+as ``term_replaced_by: MONDO_1010200`` for this term. Disclosing an
+obsolete identifier rather than answering as if it were live follows
+``chebi_tool.py`` and ``hpo_tool.py``, though neither resolves a
+replacement -- both detect a silent upstream redirect by comparing the
+requested ID against the one in the returned record.
 """
 
 from unittest.mock import MagicMock, patch
@@ -34,7 +36,11 @@ pytestmark = pytest.mark.unit
 
 def _tool(endpoint):
     return MonarchV3Tool(
-        {"name": f"mondo_{endpoint}", "type": "MonarchV3Tool", "fields": {"endpoint": endpoint}}
+        {
+            "name": f"mondo_{endpoint}",
+            "type": "MonarchV3Tool",
+            "fields": {"endpoint": endpoint},
+        }
     )
 
 
@@ -124,7 +130,7 @@ class TestObsoleteDisclosure:
         assert "replaced_by" not in result["data"]
         assert "deprecation_note" not in result["metadata"]
         assert not any("ols4" in u for u in calls), (
-            "OLS4 consulted for a live term: " f"{calls}"
+            f"OLS4 consulted for a live term: {calls}"
         )
 
     def test_obsolete_term_still_discloses_when_no_replacement_is_recorded(self):
@@ -140,7 +146,9 @@ class TestObsoleteDisclosure:
 
         assert result["data"]["deprecated"] is True
         assert result["data"]["replaced_by"] is None
-        assert "No replacement term is recorded" in result["metadata"]["deprecation_note"]
+        assert (
+            "No replacement term is recorded" in result["metadata"]["deprecation_note"]
+        )
 
     def test_ols4_failure_does_not_lose_the_obsolescence_flag(self):
         tool = _tool("mondo_disease")
@@ -163,7 +171,10 @@ class TestObsoleteDisclosure:
         payload = {
             "total": 2,
             "items": [
-                {"id": "MONDO:1010200", "name": "oocyte/zygote/embryo maturation arrest 16"},
+                {
+                    "id": "MONDO:1010200",
+                    "name": "oocyte/zygote/embryo maturation arrest 16",
+                },
                 {
                     "id": "MONDO:0014978",
                     "name": "obsolete preimplantation embryonic lethality 2",

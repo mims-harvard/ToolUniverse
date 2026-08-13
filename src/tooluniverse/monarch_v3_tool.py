@@ -12,7 +12,7 @@ No authentication required. Free public access.
 """
 
 import re
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 import requests
 
@@ -35,16 +35,22 @@ def _is_deprecated(payload: Dict[str, Any]) -> bool:
     return bool(payload.get("deprecated"))
 
 
-def _replaced_by(curie: str, timeout: int) -> Any:
-    """Resolve the term an obsolete CURIE was replaced by, or None.
+def _replaced_by(curie: str, timeout: int) -> Optional[str]:
+    """Resolve the MONDO term an obsolete CURIE was replaced by, or None.
 
     Monarch keeps obsolete terms queryable but strips their content, so
     `Mondo_get_disease` on one returns an empty record that looks like a
     disease with no annotations. The replacement is recorded in the source
     ontology, which OLS4 exposes.
+
+    MONDO only: the OBO PURL built below is wrong by construction for the
+    other prefixes that reach `_normalize_curie` -- Orphanet lives at
+    `orpha.net/ORDO/` under the OLS4 ontology `ordo`, EFO at
+    `ebi.ac.uk/efo/`, and OMIM is not an OLS4 ontology at all -- so
+    querying for them would spend a request to learn nothing.
     """
     prefix, _, local = curie.partition(":")
-    if not local:
+    if not local or prefix.upper() != "MONDO":
         return None
     try:
         response = requests.get(
@@ -54,7 +60,7 @@ def _replaced_by(curie: str, timeout: int) -> Any:
             timeout=timeout,
         )
         response.raise_for_status()
-        terms = response.json().get("_embedded", {}).get("terms", []) or []
+        terms = response.json().get("_embedded", {}).get("terms") or []
     except Exception:
         return None
 
@@ -63,6 +69,7 @@ def _replaced_by(curie: str, timeout: int) -> Any:
         if replacement:
             return str(replacement).rsplit("/", 1)[-1].replace("_", ":", 1)
     return None
+
 
 # Biolink association categories are directed: the category name reads
 # "<subject>To<object>Association". Anchoring an entity on the wrong side is
@@ -491,19 +498,21 @@ class MonarchV3Tool(BaseTool):
         }
 
         if deprecated:
-            replacement = _replaced_by(disease_id, self.timeout)
+            # Capped independently of the Monarch timeout: the answer above is
+            # already complete, so a slow OLS4 must not stall it for 30s.
+            replacement = _replaced_by(disease_id, min(self.timeout, 10))
             result["data"]["replaced_by"] = replacement
+            next_step = (
+                f"Re-query {replacement} for the current term."
+                if replacement
+                else "No replacement term is recorded; search by name for the "
+                "current term."
+            )
             result["metadata"]["deprecation_note"] = (
                 f"{disease_id} is an obsolete Mondo term. Monarch strips the "
                 "annotations of obsolete terms, so the empty fields above mean "
                 "'not recorded here', not 'this disease has no known genes or "
-                "phenotypes'."
-                + (
-                    f" Re-query {replacement} for the current term."
-                    if replacement
-                    else " No replacement term is recorded; search by name for"
-                    " the current term."
-                )
+                f"phenotypes'. {next_step}"
             )
 
         return result

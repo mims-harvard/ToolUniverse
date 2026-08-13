@@ -276,10 +276,8 @@ class ClinVarRESTTool(BaseTool):
                 return {
                     "status": "success",
                     "data": data,
-                    # The URL as sent, query string included. Publishing the
-                    # pre-request `url` gave every variant the same bare
-                    # esummary.fcgi endpoint, which describes no request and
-                    # replays as an error.
+                    # response.url includes the query string that params=
+                    # adds; the pre-request url does not.
                     "url": response.url,
                     "content_type": response.headers.get(
                         "content-type", "application/xml"
