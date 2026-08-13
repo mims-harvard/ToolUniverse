@@ -104,6 +104,119 @@ _SIMILAR_STRENGTH_RATIO = 1.5
 # is 24 and would quietly move the threshold.
 _SMALL_CASE_COUNT_THRESHOLD = 25
 
+# openFDA report-level fields that the FAERS *count* tools accept as filters and
+# that no operation in this module implements.
+#
+# Fix-R48: every operation here read the two or three arguments it needed
+# straight out of `arguments` and never looked at the rest, so any other key was
+# accepted, dropped, and the unrestricted result returned as `status: success`.
+# Measured live 2026-08-13:
+#
+#   FAERS_calculate_disproportionality {"drug_name": "warfarin",
+#       "adverse_event": "Haemorrhage"}                      a = 4313
+#   ... the same call plus {"patientagegroup": "6",
+#       "concomitant_drug": "aspirin"}                       a = 4313
+#
+#   FAERS_filter_serious_events {"drug_name": "warfarin",
+#       "seriousness_type": "death"}          total_serious_events = 17327
+#   ... the same call plus {"patientsex": "1",
+#       "occurcountry": "US"}                 total_serious_events = 17327
+#
+# Byte-identical output, so a whole-database signal was returned to a caller who
+# had asked for an age-stratified or interaction-adjusted one and was told it
+# succeeded. Disproportionality is the worst place for this: `patientagegroup`
+# and `concomitant_drug` are exactly the restrictions an analyst adds when
+# probing confounding, and the unrestricted ROR is the number that confounding
+# would have moved.
+#
+# These names are not invented by callers -- they are what this tool family's
+# OWN sibling configs teach. `patientagegroup` appears 60 times in
+# fda_drug_adverse_event_tools.json, whose descriptions read "all other filters
+# (patientsex, patientagegroup, occurcountry, serious, seriousnessdeath) are
+# optional". A caller who learns the vocabulary from one FAERS tool and carries
+# it to another is following the documentation, so the names are listed here to
+# be answered specifically rather than lumped in with typos.
+_FAERS_RECORD_FILTERS = frozenset(
+    {
+        "patientagegroup",
+        "patientsex",
+        "patientweight",
+        "occurcountry",
+        "serious",
+        "seriousnessdeath",
+        "seriousnesshospitalization",
+        "seriousnessdisabling",
+        "seriousnesslifethreatening",
+        "reactionmeddraversepa",
+        "receivedate",
+        "concomitant_drug",
+        "drugcharacterization",
+    }
+)
+
+
+# Every argument name any operation in this module reads, including the aliases
+# run() normalises. The union across all six configs plus run()'s alias map.
+#
+# The guard consults this in ADDITION to the calling tool's declared schema
+# because a schema can be partial. Trusting `parameter.properties` alone as a
+# complete allow-list was the first version of Fix-R48 and it regressed a
+# sibling test: tests/unit/test_faers_rollup_pt_truncation.py builds this tool
+# from a stub declaring only `operation` and `drug_name`, so a perfectly valid
+# `stratify_by="country"` was refused. Rejecting an argument the module does
+# understand is a worse failure than ignoring one it does not -- it breaks a
+# working call rather than mis-scoping a number -- so the vocabulary is stated
+# here and a name in it is never refused.
+_KNOWN_ARGUMENTS = frozenset(
+    {
+        "operation",
+        "drug_name",
+        "drug",
+        "drug1",
+        "drug2",
+        "drugs",
+        "adverse_event",
+        "reaction",
+        "stratify_by",
+        "demographic",
+        "seriousness_type",
+        "event_type",
+    }
+)
+
+
+def _unsupported_arguments_error(
+    tool_name: str, unsupported: List[str], accepted: List[str]
+) -> Dict[str, Any]:
+    """Refuse arguments this operation cannot honour, rather than dropping them.
+
+    Silently ignoring them is the failure being prevented: the caller gets a
+    plausible number computed over a population they did not ask for, with no
+    field anywhere in the response recording that the restriction was skipped.
+    An error is recoverable; a wrong ROR presented as a success is not.
+
+    Restrictions that ARE available are named, because for the record filters
+    above the answer is usually "another tool in this family does that" rather
+    than "this cannot be done".
+    """
+    record_filters = sorted(set(unsupported) & _FAERS_RECORD_FILTERS)
+    message = (
+        f"{tool_name} does not support: {', '.join(sorted(unsupported))}. "
+        f"It accepts: {', '.join(sorted(accepted))}. "
+        "Passing it changes nothing about the population analysed, so it is "
+        "refused rather than ignored."
+    )
+    if record_filters:
+        message += (
+            f" Note that the FAERS_count_* tools DO filter on "
+            f"{', '.join(record_filters)}, which is where the spelling comes "
+            "from -- but this analysis is computed from whole-database counts "
+            "and cannot restrict them. For a breakdown by age, sex or country "
+            "use FAERS_stratify_by_demographics; for filtered report counts "
+            "use the FAERS_count_* tools."
+        )
+    return {"status": "error", "error": message}
+
 
 def _comparison_arm(name: str, result: Dict[str, Any]) -> Dict[str, Any]:
     """One drug's side of a comparison, built from its disproportionality run.
@@ -390,6 +503,15 @@ class FAERSAnalyticsTool(BaseTool):
         # Normalize stratify_by: 'age_group' → 'age'
         if arguments.get("stratify_by") == "age_group":
             arguments = dict(arguments, stratify_by="age")
+        # Checked AFTER alias normalisation so the aliases above (`reaction`,
+        # `drug`, `drugs`, ...) are judged by the schema that declares them, and
+        # BEFORE dispatch so no request is spent on a query that would answer a
+        # different question than the one asked. See
+        # _unsupported_arguments_error.
+        unsupported_error = self._unsupported_arguments(arguments)
+        if unsupported_error:
+            return unsupported_error
+
         operation = arguments.get("operation")
         # Auto-fill operation from tool config const if not provided by user
         if not operation:
@@ -414,6 +536,55 @@ class FAERSAnalyticsTool(BaseTool):
             return {"status": "error", "error": f"Unknown operation: {operation}"}
 
         return self._with_data_payload(operation_result)
+
+    def _unsupported_arguments(
+        self, arguments: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
+        """Error for arguments this tool's schema does not declare, else None.
+
+        An argument is refused only when the calling tool's schema does not
+        declare it AND it is not in `_KNOWN_ARGUMENTS`, the vocabulary every
+        operation in this module shares. Both checks are needed and neither is
+        sufficient alone:
+
+        * the schema alone is not enough, because it can be partial -- see
+          `_KNOWN_ARGUMENTS` for the sibling test that a schema-only version of
+          this guard broke;
+        * the vocabulary alone is not enough, because a config that declares an
+          argument this module does not otherwise know still means it.
+
+        The cost of the union is that an argument belonging to a DIFFERENT
+        operation in the family (`stratify_by` sent to disproportionality) is
+        still accepted and ignored. That is the same class of defect, left in
+        place deliberately: closing it needs a per-operation map that the
+        partial-schema case has just shown cannot be derived reliably from the
+        config, and a false rejection breaks a working call whereas this
+        mis-scopes an argument nobody supplied on purpose. The verified defect
+        -- openFDA record filters silently dropped -- is fully closed either
+        way, since none of those names appear in the vocabulary.
+
+        `None` values are skipped so that explicitly passing a null optional
+        stays equivalent to omitting it.
+        """
+        declared = self.parameter.get("properties") or {}
+        unsupported = [
+            key
+            for key, value in arguments.items()
+            if key not in declared
+            and key not in _KNOWN_ARGUMENTS
+            and value is not None
+        ]
+        if not unsupported:
+            return None
+        # The advertised list must be what the guard actually accepts, which is
+        # the union -- naming only the declared schema would omit arguments
+        # (e.g. `stratify_by` behind a partial config) that this call would in
+        # fact have honoured.
+        return _unsupported_arguments_error(
+            self.tool_config.get("name", type(self).__name__),
+            unsupported,
+            sorted(set(declared) | _KNOWN_ARGUMENTS),
+        )
 
     def _with_api_key(self, url: str) -> str:
         """Append FDA_API_KEY (if set) to an openFDA request URL -- reduces

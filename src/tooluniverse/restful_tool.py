@@ -79,24 +79,74 @@ def _limit_error(requested_limit):
     )
 
 
-def execute_RESTful_query(endpoint_url, variables=None):
-    response = requests.get(endpoint_url, params=variables)
+def _http_failure_reason(response, body):
+    """"HTTP <code>" plus as much of the body as is worth carrying."""
+    detail = f"HTTP {response.status_code}"
+    body = (body or "")[:2000].strip()
+    return f"{detail}: {body[:400]}" if body else detail
+
+
+def execute_RESTful_query_detailed(endpoint_url, variables=None):
+    """Run the request and return ``(result, failure_reason)``.
+
+    Fix-R48: the boolean-returning wrapper below collapses every failure mode
+    into ``False`` and prints the reason to stdout, where no caller can reach
+    it. Callers then had to describe a failure they could not see, and the
+    honest upstream answer was thrown away. Measured live 2026-08-13:
+
+        search_clinical_trials {"intervention": "[177Lu]Lu-PSMA-617"}
+          -> "No studies found for the given query parameters. Please examine
+              your input and try different parameters. This search excludes
+              phase-1-only, phase-NA, and observational studies by default..."
+
+    while ClinicalTrials.gov itself answers HTTP 400 with a precise diagnosis:
+
+        Error parsing query in Other terms: extraneous input '[' expecting ...
+
+    The bracketed form is standard EANM/IUPAC radiopharmaceutical nomenclature
+    and appears in trial titles the tool itself returns, so it is a natural
+    query rather than a malformed one. Dropping the brackets returns
+    total_count 46. A caller was told zero trials exist, and told to blame the
+    phase filter, for a query the API had refused to run at all.
+
+    ``raise_for_status`` is deliberately not called: ClinicalTrials.gov puts
+    its parse diagnostics in the body of the 400, so the status code alone is
+    strictly less informative than what is being returned here.
+    """
+    try:
+        response = requests.get(endpoint_url, params=variables)
+    except Exception as e:  # network-level: no response to inspect
+        return False, f"the request to {endpoint_url} failed: {e}"
+
+    # Parsed first on purpose. An API that puts a structured {"error": ...} in
+    # a 4xx body gives a better reason than its status line, and checking the
+    # status first would report the raw body instead -- and would touch
+    # `response.text` on every error response, which the JSON path never needs.
     try:
         result = response.json()
-
-        if "error" in result:
-            print("Invalid Query: ", result["error"])
-            return False
-        return result
     except requests.exceptions.JSONDecodeError:
-        print("JSONDecodeError: Could not decode the response as JSON")
-        return False
-    except requests.exceptions.HTTPError as e:
-        print(f"HTTP error occurred: {e}")
-        return False
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return False
+        if response.status_code >= 400:
+            return False, _http_failure_reason(response, response.text)
+        return False, "the response was not valid JSON"
+
+    if isinstance(result, dict) and "error" in result:
+        return False, f"the API reported: {result['error']}"
+    if response.status_code >= 400:
+        return False, _http_failure_reason(response, str(result))
+    return result, None
+
+
+def execute_RESTful_query(endpoint_url, variables=None):
+    """Backwards-compatible wrapper: the result, or ``False`` on any failure.
+
+    Kept exactly as it was for the many callers that only branch on
+    truthiness. New code that needs to tell failure modes apart should call
+    ``execute_RESTful_query_detailed``.
+    """
+    result, reason = execute_RESTful_query_detailed(endpoint_url, variables)
+    if reason is not None:
+        print(f"Query failed: {reason}")
+    return result
 
 
 @register_tool("RESTfulTool")

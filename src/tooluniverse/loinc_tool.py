@@ -41,6 +41,65 @@ class LOINCTool(BaseTool):
                 "endpoint": endpoint,
             }
 
+    # Fields the loinc_items/v3 index does NOT carry, probed field-by-field
+    # against the live API on 2026-08-13 with
+    # `search?terms=2823-3&df=<FIELD>`:
+    #
+    #   COMPONENT           -> "Potassium"
+    #   PROPERTY            -> "SCnc"
+    #   LONG_COMMON_NAME    -> "Potassium [Moles/volume] in Serum or Plasma"
+    #   SHORTNAME           -> "Potassium SerPl-sCnc"
+    #   SYSTEM, SCALE_TYP, CLASS, STATUS, TIME_ASPCT, METHOD_TYP,
+    #   COMMON_TEST_RANK  -> "" for every one
+    #
+    # (CLASSTYPE and ORDER_OBS are equally empty upstream but this module never
+    # requests them, so they are not listed below -- the tuple describes fields
+    # this tool actually asks for.)
+    #
+    # Fix-R48: these were requested anyway and emitted as empty strings, so
+    # LOINC 2823-3 -- serum potassium, about the most-ordered test there is --
+    # came back with SYSTEM "", SCALE_TYP "" and CLASS "". Those are exactly
+    # the fields that separate serum potassium from urine potassium or a
+    # potassium clearance, so a rule author choosing a code was shown a blank
+    # where the discriminating value should be, with nothing saying the index
+    # simply does not publish it. An unavailable field was presented as a valid
+    # empty answer.
+    _FIELDS_ABSENT_FROM_V3_INDEX = (
+        "SYSTEM",
+        "SCALE_TYP",
+        "METHOD_TYP",
+        "CLASS",
+        "STATUS",
+        "TIME_ASPCT",
+        "COMMON_TEST_RANK",
+    )
+
+    _UNAVAILABLE_FIELDS_NOTE = (
+        "The clinicaltables loinc_items/v3 index does not publish these "
+        "fields, so they are returned empty for every code and their "
+        "emptiness carries no information about this code: {fields}. Use the "
+        "full LOINC release or a FHIR terminology server if you need to "
+        "select a code on them."
+    )
+
+    # Added only when SYSTEM is among the absent fields, since it is the one
+    # whose absence changes which code a caller should pick.
+    _SPECIMEN_CAVEAT = (
+        " SYSTEM (specimen) in particular is unavailable, so this response "
+        "cannot distinguish e.g. a serum from a urine measurement."
+    )
+
+    @classmethod
+    def _unavailable_fields_disclosure(cls, fields: List[str]) -> Dict[str, Any]:
+        """Name the requested fields this index cannot answer, or {} if none."""
+        absent = [f for f in fields if f in cls._FIELDS_ABSENT_FROM_V3_INDEX]
+        if not absent:
+            return {}
+        note = cls._UNAVAILABLE_FIELDS_NOTE.format(fields=", ".join(absent))
+        if "SYSTEM" in absent:
+            note += cls._SPECIMEN_CAVEAT
+        return {"fields_unavailable": absent, "fields_unavailable_note": note}
+
     @staticmethod
     def _is_api_error(api_response: Any) -> bool:
         """Check if an API response is an error dict."""
@@ -69,7 +128,16 @@ class LOINCTool(BaseTool):
                     result_item[field_name] = value
             results.append(result_item)
 
-        return {"total_count": total_count, "count": len(results), "results": results}
+        parsed = {
+            "total_count": total_count,
+            "count": len(results),
+            "results": results,
+        }
+        # Attached here rather than per operation: every operation funnels
+        # through this method with the field list it requested, so all four are
+        # covered and none can be added later without the disclosure.
+        parsed.update(self._unavailable_fields_disclosure(fields))
+        return parsed
 
     def _search_loinc_items(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search LOINC lab tests and observations by name or keywords."""
@@ -120,7 +188,12 @@ class LOINCTool(BaseTool):
         fields = [
             "LOINC_NUM",
             "LONG_COMMON_NAME",
-            "SHORT_NAME",
+            # Fix-R48: this was "SHORT_NAME", which the v3 index does not
+            # recognise, so it answered "" for every code in existence. The
+            # index spells it SHORTNAME -- verified live, df=SHORT_NAME returns
+            # [1,["2823-3"],null,[[""]]] while df=SHORTNAME returns
+            # [1,["2823-3"],null,[["Potassium SerPl-sCnc"]]].
+            "SHORTNAME",
             "COMPONENT",
             "PROPERTY",
             "TIME_ASPCT",
@@ -154,6 +227,7 @@ class LOINCTool(BaseTool):
         # Return the first (and should be only) result
         result = parsed["results"][0] if parsed["results"] else {}
         result["loinc_code"] = loinc_code
+        result.update(self._unavailable_fields_disclosure(fields))
 
         return result
 

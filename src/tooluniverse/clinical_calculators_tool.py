@@ -12,7 +12,7 @@ clinical judgement.
 """
 
 import math
-from typing import Dict, Any, Callable
+from typing import Dict, Any, Callable, Optional
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -27,14 +27,51 @@ def _truthy(v: Any) -> bool:
     return str(v).strip().lower() in ("true", "yes", "y", "1", "present", "positive")
 
 
-def _req_number(args: Dict[str, Any], key: str) -> float:
+def _req_number(
+    args: Dict[str, Any], key: str, *, must_exceed: Optional[float] = None
+) -> float:
+    """A required numeric argument, optionally constrained to exceed a bound.
+
+    Fix-R48: `must_exceed` exists because a physiologically impossible value
+    was never rejected here, and each calculator then failed in its own way --
+    all of them badly, and none of them naming the parameter at fault:
+
+      * ClinicalCalc_ASCVD_risk with total_cholesterol=0 took math.log(0) and
+        answered the raw text "math domain error";
+      * ClinicalCalc_Child_Pugh with albumin=-1 scored the albumin component 3
+        (its worst band, since -1 < 2.8) and returned status success with
+        "Class B (score 7): significant functional compromise" -- an impossible
+        input presented as a confident severity class;
+      * ClinicalCalc_MELD_Na floors creatinine, bilirubin and INR at 1.0 per
+        the UNOS specification, so a negative value is absorbed into the floor
+        and contributes as though it were normal;
+      * ClinicalCalc_CHA2DS2_VASc with a negative age scores both age buckets 0
+        and reports a confident low-risk total.
+
+    This is the same class Fix-R46 closed for CKD-EPI, whose non-positive
+    creatinine produced a complex number and answered with "type complex
+    doesn't define __round__ method". That fix guarded one equation from
+    inside itself; the constraint belongs on the shared input helper instead,
+    so a calculator added later gets it by declaring the bound rather than by
+    remembering to re-derive it.
+
+    Bound is exclusive: these are quantities for which zero is as impossible as
+    a negative, so `must_exceed=0` is the common case rather than a minimum.
+    """
     val = args.get(key)
     if val is None or val == "":
         raise ValueError(f"'{key}' is required")
     try:
-        return float(val)
+        value = float(val)
     except (TypeError, ValueError):
         raise ValueError(f"'{key}' must be a number, got {val!r}")
+    if must_exceed is not None and value <= must_exceed:
+        raise ValueError(
+            f"'{key}' must be greater than {must_exceed:g}, got {value:g}. "
+            "This is not a physiologically possible value, so no score is "
+            "reported for it -- check the value and its units."
+        )
+    return value
 
 
 # Accepted string values for the `sex` parameter (case-insensitive).
@@ -114,7 +151,7 @@ def _ok(score, interpretation, components, **extra) -> Dict[str, Any]:
 # --------------------------------------------------------------------------- #
 def _cha2ds2_vasc(a: Dict[str, Any]) -> Dict[str, Any]:
     """CHA2DS2-VASc stroke risk in atrial fibrillation (Lip 2010)."""
-    age = _req_number(a, "age")
+    age = _req_number(a, "age", must_exceed=0)
     female, sex_note = _resolve_sex(a)
     comp = {
         "CHF": int(_truthy(a.get("chf"))),
@@ -149,7 +186,7 @@ def _has_bled(a: Dict[str, Any]) -> Dict[str, Any]:
         "Stroke": int(_truthy(a.get("stroke_history"))),
         "Bleeding_history": int(_truthy(a.get("bleeding_history"))),
         "Labile_INR": int(_truthy(a.get("labile_inr"))),
-        "Elderly_>65": 1 if _req_number(a, "age") > 65 else 0,
+        "Elderly_>65": 1 if _req_number(a, "age", must_exceed=0) > 65 else 0,
         "Drugs_antiplatelet_NSAID": int(_truthy(a.get("drugs"))),
         "Alcohol": int(_truthy(a.get("alcohol"))),
     }
@@ -169,7 +206,7 @@ def _curb_65(a: Dict[str, Any]) -> Dict[str, Any]:
         "Urea>7mmol/L": int(_truthy(a.get("elevated_urea"))),
         "RR>=30": int(_truthy(a.get("high_resp_rate"))),
         "Low_BP(SBP<90 or DBP<=60)": int(_truthy(a.get("low_bp"))),
-        "Age>=65": 1 if _req_number(a, "age") >= 65 else 0,
+        "Age>=65": 1 if _req_number(a, "age", must_exceed=0) >= 65 else 0,
     }
     score = sum(comp.values())
     if score <= 1:
@@ -199,9 +236,9 @@ def _qsofa(a: Dict[str, Any]) -> Dict[str, Any]:
 
 def _child_pugh(a: Dict[str, Any]) -> Dict[str, Any]:
     """Child-Pugh cirrhosis severity (Pugh 1973)."""
-    bili = _req_number(a, "bilirubin")  # mg/dL
-    alb = _req_number(a, "albumin")  # g/dL
-    inr = _req_number(a, "inr")
+    bili = _req_number(a, "bilirubin", must_exceed=0)  # mg/dL
+    alb = _req_number(a, "albumin", must_exceed=0)  # g/dL
+    inr = _req_number(a, "inr", must_exceed=0)
     ascites = str(a.get("ascites", "none")).strip().lower()
     enceph = str(a.get("encephalopathy", "none")).strip().lower()
 
@@ -324,10 +361,12 @@ def _wells_pe(a: Dict[str, Any]) -> Dict[str, Any]:
 # --------------------------------------------------------------------------- #
 def _meld_na(a: Dict[str, Any]) -> Dict[str, Any]:
     """MELD-Na for liver disease severity (UNOS/OPTN 2016)."""
-    creat = _req_number(a, "creatinine")  # mg/dL
-    bili = _req_number(a, "bilirubin")  # mg/dL
-    inr = _req_number(a, "inr")
-    na = _req_number(a, "sodium")  # mmol/L
+    # The UNOS floors below (max(x, 1.0)) would otherwise absorb a negative
+    # value and let it contribute as though it were normal.
+    creat = _req_number(a, "creatinine", must_exceed=0)  # mg/dL
+    bili = _req_number(a, "bilirubin", must_exceed=0)  # mg/dL
+    inr = _req_number(a, "inr", must_exceed=0)
+    na = _req_number(a, "sodium", must_exceed=0)  # mmol/L
     dialysis = _truthy(a.get("dialysis"))
 
     # Lower bounds of 1.0; creatinine capped at 4.0 (and set to 4.0 if dialysis).
@@ -365,27 +404,15 @@ def _meld_na(a: Dict[str, Any]) -> Dict[str, Any]:
 
 def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
     """eGFR by CKD-EPI 2021 creatinine equation, race-free (Inker 2021)."""
-    scr = _req_number(a, "creatinine")  # mg/dL
-    age = _req_number(a, "age")
-    # The equation raises scr/kappa to a fractional power, so a non-positive
-    # creatinine produced a complex number and the tool answered with the
-    # Python internals of that: "ckd_epi calculation error: type complex
-    # doesn't define __round__ method", which names neither the parameter nor
-    # the constraint.
-    if scr <= 0:
-        raise ValueError(
-            f"'creatinine' must be greater than 0 mg/dL, got {scr}. "
-            "CKD-EPI is undefined at or below zero."
-        )
-    # Same principle as the creatinine floor: an age that cannot exist must not
-    # produce a confident stage. age=-5 returned "eGFR 96.6 -- CKD stage G1
-    # (normal)" under a caveat about paediatrics, which is a category error for
-    # a negative number as well as the wrong answer.
-    if age <= 0:
-        raise ValueError(
-            f"'age' must be greater than 0 years, got {age}. "
-            "CKD-EPI's age term has no meaning at or below zero."
-        )
+    # Fix-R48: these two bounds were hand-written here by Fix-R46 (the equation
+    # raises scr/kappa to a fractional power, so a non-positive creatinine gave
+    # a complex number and the tool answered "type complex doesn't define
+    # __round__ method"; a negative age returned a confident "CKD stage G1
+    # (normal)"). They now come from the shared helper that enforces the same
+    # constraint for every other calculator, so the wording cannot drift
+    # between equations.
+    scr = _req_number(a, "creatinine", must_exceed=0)  # mg/dL
+    age = _req_number(a, "age", must_exceed=0)
     female, sex_note = _resolve_sex(a)
     kappa = 0.7 if female else 0.9
     alpha = -0.241 if female else -0.302
@@ -542,9 +569,11 @@ def _ascvd(a: Dict[str, Any]) -> Dict[str, Any]:
             "status": "error",
             "error": "ASCVD PCE is validated only for ages 40-79",
         }
-    tc = _req_number(a, "total_cholesterol")  # mg/dL
-    hdl = _req_number(a, "hdl_cholesterol")  # mg/dL
-    sbp = _req_number(a, "systolic_bp")  # mmHg
+    # All three enter the equation through math.log, so a non-positive value is
+    # a domain error rather than an extreme reading.
+    tc = _req_number(a, "total_cholesterol", must_exceed=0)  # mg/dL
+    hdl = _req_number(a, "hdl_cholesterol", must_exceed=0)  # mg/dL
+    sbp = _req_number(a, "systolic_bp", must_exceed=0)  # mmHg
     treated = _truthy(a.get("bp_treated"))
     smoker = _truthy(a.get("smoker"))
     diabetes = _truthy(a.get("diabetes"))

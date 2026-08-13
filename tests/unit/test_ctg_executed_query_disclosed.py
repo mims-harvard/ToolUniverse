@@ -102,18 +102,21 @@ def _run(arguments, studies=(), relaxed_total=RELAXED_TOTAL, probe_fails=False):
 
 
 def _run_search_tool(arguments, studies=(), relaxed_total=RELAXED_TOTAL):
-    """Same, for search_clinical_trials, which goes through execute_RESTful_query."""
+    """Same, for search_clinical_trials, via execute_RESTful_query_detailed."""
     calls = []
     studies = list(studies)
 
     def fake_query(endpoint_url, variables):
         calls.append(dict(variables))
+        # Fix-R48: (result, failure_reason); None means the request ran fine.
         if len(calls) == 1:
-            return {"studies": studies, "totalCount": len(studies)}
-        return {"studies": [], "totalCount": relaxed_total}
+            return {"studies": studies, "totalCount": len(studies)}, None
+        return {"studies": [], "totalCount": relaxed_total}, None
 
     tool = ClinicalTrialsSearchTool(_config("search_clinical_trials"))
-    with patch("tooluniverse.ctg_tool.execute_RESTful_query", side_effect=fake_query):
+    with patch(
+        "tooluniverse.ctg_tool.execute_RESTful_query_detailed", side_effect=fake_query
+    ):
         result = tool.run(dict(arguments))
     return calls, result
 

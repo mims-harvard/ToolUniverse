@@ -2,7 +2,11 @@ import re
 import time
 from copy import deepcopy
 from urllib.parse import urljoin
-from .restful_tool import RESTfulTool, execute_RESTful_query
+from .restful_tool import (
+    RESTfulTool,
+    execute_RESTful_query,
+    execute_RESTful_query_detailed,
+)
 from .tool_registry import register_tool
 
 _ESSIE_OPERATOR_RE = re.compile(r'"|[()\[\]]|\b(?:AND|OR|NOT|AREA)\b', re.IGNORECASE)
@@ -1243,7 +1247,11 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
         request, so the check fails the same way -- and mocks the same way -- as
         the search it is explaining.
         """
-        probe = execute_RESTful_query(
+        # Fix-R48: moved onto the detailed transport with the search itself.
+        # The invariant above is the point -- when the search switched and this
+        # did not, a test patching the search's transport left the probe
+        # reaching the live network and reading a real totalCount.
+        probe, _ = execute_RESTful_query_detailed(
             endpoint_url=self.endpoint_url, variables=probe_params
         )
         return (probe or {}).get("totalCount")
@@ -1331,9 +1339,25 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
 
         formatted_endpoint_url = self.endpoint_url
 
-        response = execute_RESTful_query(
+        response, failure_reason = execute_RESTful_query_detailed(
             endpoint_url=formatted_endpoint_url, variables=api_params
         )
+
+        # Fix-R48: returned here rather than after the success path, so none of
+        # the phase-filter/intervention notes below are computed to explain an
+        # empty result for a request that never ran. Reporting "no studies
+        # found" for a query the API refused told callers a false fact about
+        # the trial landscape and pointed them at the phase filter for it.
+        if failure_reason:
+            return {
+                "status": "error",
+                "error": (
+                    "The ClinicalTrials.gov query did not run, so no "
+                    "conclusion can be drawn about how many studies match: "
+                    f"{failure_reason}. This is an upstream request failure, "
+                    "not a report that zero studies exist."
+                ),
+            }
 
         # Feature-14C-02: this tool always applies a hardcoded phase>=2
         # filter (see default_params_not_shown above), which silently
@@ -1391,10 +1415,10 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
         )
 
         # Fix-Round3-002: a well-formed query that legitimately matches zero
-        # trials (empty `studies` list) is a success, not the error below --
-        # `execute_RESTful_query` already returns False for genuine failures
-        # (HTTP error, JSON decode error, API error field), so only that (or
-        # a response missing "studies" entirely) is a real error.
+        # trials (empty `studies` list) is a success, not the error below.
+        # Genuine request failures already returned above with the upstream
+        # reason (Fix-R48), so the only case left here is a 200 whose body has
+        # no "studies" key at all.
         # _simplify_output handles an empty list fine on its own.
         if response is not None and response and "studies" in response.keys():
             metadata = {"source": "ClinicalTrials.gov API v2"}

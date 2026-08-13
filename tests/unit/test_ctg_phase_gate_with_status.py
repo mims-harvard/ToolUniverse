@@ -40,9 +40,13 @@ def _captured_params(tool, arguments):
 
     def fake_query(endpoint_url, variables):
         captured.update(variables)
-        return {"studies": [{"protocolSection": {}}], "totalCount": 1}
+        # Fix-R48: the search path calls execute_RESTful_query_detailed, which
+        # returns (result, failure_reason); None means the request ran fine.
+        return {"studies": [{"protocolSection": {}}], "totalCount": 1}, None
 
-    with patch("tooluniverse.ctg_tool.execute_RESTful_query", side_effect=fake_query):
+    with patch(
+        "tooluniverse.ctg_tool.execute_RESTful_query_detailed", side_effect=fake_query
+    ):
         with patch.object(tool, "_simplify_output", side_effect=lambda r: r):
             tool.run(dict(arguments))
     return captured
