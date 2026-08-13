@@ -1095,12 +1095,26 @@ class WHOGuidelinesTool(BaseTool):
     """
     WHO (World Health Organization) Guidelines Search Tool.
     Searches WHO official guidelines from their publications website.
+
+    Two query-specific backends are used, in order:
+
+    1. ``who.int/health-topics/<slug>`` — WHO's curated topic pages. Only
+       exists for terms WHO treats as a health topic ("tuberculosis",
+       "trachoma"), so it misses drug names and most narrow terms.
+    2. WHO IRIS (``iris.who.int``), WHO's official institutional
+       repository, searched over its DSpace REST API.
+
+    Both answer the query that was asked. There is deliberately no
+    generic fallback listing: returning WHO's most recent publications
+    for a query they do not match presents unrelated documents as
+    search results.
     """
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
         self.base_url = "https://www.who.int"
-        self.guidelines_url = f"{self.base_url}/publications/who-guidelines"
+        self.iris_base_url = "https://iris.who.int"
+        self.iris_search_url = f"{self.iris_base_url}/server/api/discover/search/objects"
         self.session = requests.Session()
         self.session.headers.update(
             {
@@ -1184,60 +1198,85 @@ class WHOGuidelinesTool(BaseTool):
                             "organization": "World Health Organization",
                             "is_guideline": True,
                             "official": True,
+                            "matched_via": f"health_topic:{topic_slug}",
                         }
                     )
             return results
         except Exception:
             return []
 
+    def _search_iris(self, query, limit):
+        """Search WHO IRIS, WHO's official publication repository.
+
+        Used when no WHO health-topic page matches the query. Unlike the
+        topic pages this is a real text search, so a term WHO has no
+        documents for returns nothing rather than something unrelated.
+        """
+        response = self.session.get(
+            self.iris_search_url,
+            params={
+                "query": query,
+                "size": max(1, min(int(limit), 100)),
+                "dsoType": "item",
+            },
+            headers={"Accept": "application/json"},
+            timeout=30,
+        )
+        response.raise_for_status()
+        search_result = response.json().get("_embedded", {}).get("searchResult", {})
+        objects = search_result.get("_embedded", {}).get("objects", [])
+
+        results = []
+        for obj in objects[:limit]:
+            item = obj.get("_embedded", {}).get("indexableObject", {})
+            metadata = item.get("metadata", {})
+
+            def first(field):
+                values = metadata.get(field) or []
+                return values[0].get("value") if values else None
+
+            title = item.get("name") or first("dc.title")
+            if not title:
+                continue
+            handle = item.get("handle")
+            document_type = first("dc.type")
+            # IRIS has no "guideline" document type, so this is asserted
+            # only where the record itself says so rather than by default.
+            haystack = f"{title} {document_type or ''}".lower()
+            results.append(
+                {
+                    "title": title,
+                    "url": (
+                        f"{self.iris_base_url}/handle/{handle}"
+                        if handle
+                        else first("dc.identifier.uri")
+                    ),
+                    "description": first("dc.description.abstract"),
+                    "content": None,
+                    "source": "WHO",
+                    "organization": "World Health Organization",
+                    "is_guideline": "guideline" in haystack,
+                    "official": True,
+                    "document_type": document_type,
+                    "date_issued": first("dc.date.issued"),
+                    "matched_via": "iris_search",
+                }
+            )
+        return results
+
     def _search_who_guidelines(self, query, limit):
-        """Search WHO guidelines via WHO health-topics pages then general guidelines page."""
+        """Search WHO health-topic pages, then WHO IRIS."""
         try:
             time.sleep(0.5)
 
-            # Try WHO health-topics pages for this query (returns topic-specific publications)
-            guidelines = []
+            # WHO's curated topic pages, where the query names a health topic.
             for slug in self._topic_slug(query):
                 guidelines = self._scrape_topic_publications(slug)
                 if guidelines:
-                    break
+                    return guidelines[:limit]
 
-            # Fall back: scrape the general WHO guidelines page (recent guidelines)
-            if not guidelines:
-                response = self.session.get(self.guidelines_url, timeout=30)
-                response.raise_for_status()
-                soup = BeautifulSoup(response.content, "html.parser")
-                seen = set()
-                for a in soup.find_all("a", href=True):
-                    href = a["href"]
-                    text = a.get_text().strip()
-                    if (
-                        (
-                            "/publications/i/item/" in href
-                            or "/publications/m/item/" in href
-                        )
-                        and text
-                        and len(text) > 10
-                        and href not in seen
-                    ):
-                        seen.add(href)
-                        full_url = (
-                            href if href.startswith("http") else self.base_url + href
-                        )
-                        guidelines.append(
-                            {
-                                "title": text,
-                                "url": full_url,
-                                "description": None,
-                                "content": None,
-                                "source": "WHO",
-                                "organization": "World Health Organization",
-                                "is_guideline": True,
-                                "official": True,
-                            }
-                        )
-
-            return guidelines[:limit]
+            # Otherwise search the WHO IRIS repository for the query itself.
+            return self._search_iris(query, limit)
 
         except requests.exceptions.RequestException as e:
             return {

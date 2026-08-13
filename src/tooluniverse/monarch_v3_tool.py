@@ -21,7 +21,48 @@ from .tool_registry import register_tool
 
 MONARCH_BASE_URL = "https://api.monarchinitiative.org/v3/api"
 
+# OLS4 carries the `term replaced by` annotation that Monarch's own payload
+# omits, so an obsolete term can point at its replacement instead of being a
+# dead end. Only consulted for terms Monarch has already marked deprecated.
+_OLS4_TERMS_URL = "https://www.ebi.ac.uk/ols4/api/ontologies/{ontology}/terms"
+_OBO_IRI = "http://purl.obolibrary.org/obo/{term}"
+
 _UNDERSCORE_CURIE_RE = re.compile(r"^([A-Za-z]+)_(\d+)$")
+
+
+def _is_deprecated(payload: Dict[str, Any]) -> bool:
+    """Monarch reports live terms as `deprecated: None`, not `False`."""
+    return bool(payload.get("deprecated"))
+
+
+def _replaced_by(curie: str, timeout: int) -> Any:
+    """Resolve the term an obsolete CURIE was replaced by, or None.
+
+    Monarch keeps obsolete terms queryable but strips their content, so
+    `Mondo_get_disease` on one returns an empty record that looks like a
+    disease with no annotations. The replacement is recorded in the source
+    ontology, which OLS4 exposes.
+    """
+    prefix, _, local = curie.partition(":")
+    if not local:
+        return None
+    try:
+        response = requests.get(
+            _OLS4_TERMS_URL.format(ontology=prefix.lower()),
+            params={"iri": _OBO_IRI.format(term=f"{prefix.upper()}_{local}")},
+            headers={"Accept": "application/json"},
+            timeout=timeout,
+        )
+        response.raise_for_status()
+        terms = response.json().get("_embedded", {}).get("terms", []) or []
+    except Exception:
+        return None
+
+    for term in terms:
+        replacement = term.get("term_replaced_by")
+        if replacement:
+            return str(replacement).rsplit("/", 1)[-1].replace("_", ":", 1)
+    return None
 
 # Biolink association categories are directed: the category name reads
 # "<subject>To<object>Association". Anchoring an entity on the wrong side is
@@ -195,6 +236,7 @@ class MonarchV3Tool(BaseTool):
                 "taxon": data.get("in_taxon"),
                 "taxon_label": data.get("in_taxon_label"),
                 "provided_by": data.get("provided_by"),
+                "deprecated": _is_deprecated(data),
             },
             "metadata": {
                 "source": "Monarch Initiative V3",
@@ -301,6 +343,7 @@ class MonarchV3Tool(BaseTool):
                     "description": item.get("description"),
                     "taxon": item.get("in_taxon"),
                     "taxon_label": item.get("in_taxon_label"),
+                    "deprecated": _is_deprecated(item),
                 }
             )
 
@@ -347,6 +390,7 @@ class MonarchV3Tool(BaseTool):
                     "category": item.get("category"),
                     "description": item.get("description"),
                     "xref": item.get("xref", []),
+                    "deprecated": _is_deprecated(item),
                 }
             )
 
@@ -419,7 +463,12 @@ class MonarchV3Tool(BaseTool):
         else:
             inheritance = None
 
-        return {
+        # Monarch keeps obsolete terms queryable but strips their content, so
+        # without this an obsolete ID returns a fully populated-looking record
+        # whose every field is empty -- indistinguishable from a live disease
+        # that simply has no annotations yet.
+        deprecated = _is_deprecated(data)
+        result = {
             "status": "success",
             "data": {
                 "id": data.get("id"),
@@ -433,12 +482,31 @@ class MonarchV3Tool(BaseTool):
                 "causal_genes": causal_genes,
                 "inheritance": inheritance,
                 "association_counts": assoc_counts,
+                "deprecated": deprecated,
             },
             "metadata": {
                 "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
                 "disease_id": disease_id,
             },
         }
+
+        if deprecated:
+            replacement = _replaced_by(disease_id, self.timeout)
+            result["data"]["replaced_by"] = replacement
+            result["metadata"]["deprecation_note"] = (
+                f"{disease_id} is an obsolete Mondo term. Monarch strips the "
+                "annotations of obsolete terms, so the empty fields above mean "
+                "'not recorded here', not 'this disease has no known genes or "
+                "phenotypes'."
+                + (
+                    f" Re-query {replacement} for the current term."
+                    if replacement
+                    else " No replacement term is recorded; search by name for"
+                    " the current term."
+                )
+            )
+
+        return result
 
     def _mondo_get_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get HPO phenotypes associated with a Mondo disease."""

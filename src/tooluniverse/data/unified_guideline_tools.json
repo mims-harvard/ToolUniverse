@@ -216,7 +216,7 @@
   {
     "type": "WHOGuidelinesTool",
     "name": "WHO_Guidelines_Search",
-    "description": "Search WHO (World Health Organization) official clinical guidelines and health recommendations. Provides access to authoritative global health guidelines published by WHO.",
+    "description": "Search WHO (World Health Organization) official clinical guidelines and health recommendations. Provides access to authoritative global health guidelines published by WHO. Searches WHO's curated health-topic pages when the query names a WHO health topic, and otherwise searches the WHO IRIS institutional repository for the query term. Each result reports which of the two answered it in 'matched_via'; IRIS results also carry 'document_type', and their 'is_guideline' reflects the record rather than being assumed. A term WHO has no documents for returns an empty list.",
     "parameter": {
       "type": "object",
       "properties": {

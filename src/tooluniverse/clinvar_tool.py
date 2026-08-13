@@ -260,7 +260,7 @@ class ClinVarRESTTool(BaseTool):
                         return {
                             "status": "error",
                             "error": f"Rate limited after {max_retries} retries. Please wait before making more requests.",
-                            "url": url,
+                            "url": response.url,
                             "retry_after": retry_after,
                         }
 
@@ -276,7 +276,11 @@ class ClinVarRESTTool(BaseTool):
                 return {
                     "status": "success",
                     "data": data,
-                    "url": url,
+                    # The URL as sent, query string included. Publishing the
+                    # pre-request `url` gave every variant the same bare
+                    # esummary.fcgi endpoint, which describes no request and
+                    # replays as an error.
+                    "url": response.url,
                     "content_type": response.headers.get(
                         "content-type", "application/xml"
                     ),
