@@ -243,9 +243,9 @@ class TestTotalCountsTheQueryNotThePage:
         ):
             result = tool.run({"gene": "PAH"})
 
-        assert result["data_truncated"] is True
-        assert "817" not in result["data_truncation_note"]  # not a hardcoded number
-        assert "100" in result["data_truncation_note"]
+        assert result["truncated"] is True
+        assert "817" not in result["truncation_note"]  # not a hardcoded number
+        assert "100" in result["truncation_note"]
 
     def test_no_truncation_claim_when_everything_fits(self):
         tool = _tool()
@@ -257,9 +257,11 @@ class TestTotalCountsTheQueryNotThePage:
 
         assert result["total"] == 3
         assert result["returned"] == 3
-        assert "data_truncated" not in result
+        assert result["truncated"] is False
+        assert "truncation_note" not in result
 
     def test_filling_the_request_cap_marks_total_a_lower_bound(self):
+        """`hgvs` matches on substring, so a short fragment can fill the cap."""
         tool = _tool()
         with patch(
             "tooluniverse.clingen_tool.requests.get",
@@ -267,8 +269,8 @@ class TestTotalCountsTheQueryNotThePage:
         ):
             result = tool.run({"gene": "PAH"})
 
-        assert result["total_is_a_lower_bound"] is True
-        assert "lower bound" in result["total_note"]
+        assert result["truncated"] is True
+        assert "lower bound" in result["truncation_note"]
 
 
 class TestAbsentVariantIsNotBlamedOnTheGene:

@@ -61,15 +61,15 @@ class TestTotalAndRowsAreReconcilable:
     def test_the_cap_is_flagged_not_left_to_be_counted(self, operation):
         result = _run(operation, 3659)
 
-        assert result["data_truncated"] is True
-        assert "100" in result["data_truncation_note"]
+        assert result["truncated"] is True
+        assert "100" in result["truncation_note"]
 
     @pytest.mark.parametrize("operation", LISTINGS)
     def test_the_note_points_at_a_way_to_narrow(self, operation):
         """A truncation flag without a remedy just relocates the dead end."""
         result = _run(operation, 3659)
 
-        assert "`gene`" in result["data_truncation_note"]
+        assert "`gene`" in result["truncation_note"]
 
 
 class TestNoFalseTruncationClaim:
@@ -79,8 +79,8 @@ class TestNoFalseTruncationClaim:
 
         assert result["total"] == 7
         assert result["returned"] == 7
-        assert "data_truncated" not in result
-        assert "data_truncation_note" not in result
+        assert result["truncated"] is False
+        assert "truncation_note" not in result
 
     @pytest.mark.parametrize("operation", LISTINGS)
     def test_exactly_at_the_cap_is_not_flagged_truncated(self, operation):
@@ -89,7 +89,7 @@ class TestNoFalseTruncationClaim:
 
         assert result["total"] == 100
         assert result["returned"] == 100
-        assert "data_truncated" not in result
+        assert result["truncated"] is False
 
     @pytest.mark.parametrize("operation", LISTINGS)
     def test_one_past_the_cap_is_flagged(self, operation):
@@ -97,10 +97,10 @@ class TestNoFalseTruncationClaim:
 
         assert result["total"] == 101
         assert result["returned"] == 100
-        assert result["data_truncated"] is True
+        assert result["truncated"] is True
 
-    def test_narrowing_by_gene_clears_the_flag(self, ):
+    def test_narrowing_by_gene_clears_the_flag(self):
         result = _run("get_gene_validity", 3659, {"gene": "GENE7"})
 
         assert result["total"] == 1
-        assert "data_truncated" not in result
+        assert result["truncated"] is False

@@ -123,3 +123,75 @@ class TestBackwardCompatibleSingularField:
         data = result["data"]
         assert data["mapping"] == data["mappings"][0]
         assert data["mapping"]["target_gene_symbol"] == "Abcb1b"
+
+
+# `geneinfo` collapses the same way `matchortho` did -- found by sweeping the
+# file after fixing the ortholog path rather than by a separate report.
+# Confirmed live that gene_id "TP53,BRCA1" echoed both names back while
+# publishing only BRCA1's family PTHR13763; TP53's PTHR11447 was dropped.
+_GENEINFO_BRCA1 = {
+    "accession": "HUMAN|HGNC=1100|UniProtKB=P38398",
+    "gene_symbol": "BRCA1",
+    "family_id": "PTHR13763",
+    "sf_id": "PTHR13763:SF0",
+    "annotation_type_list": {
+        "annotation_data_type": {
+            "content": "ANNOT_TYPE_ID_PANTHER_GO_SLIM_MF",
+            "annotation_list": {
+                "annotation": {
+                    "id": "GO:0004842",
+                    "name": "ubiquitin-protein transferase activity",
+                }
+            },
+        }
+    },
+}
+_GENEINFO_TP53 = {
+    "accession": "HUMAN|HGNC=11998|UniProtKB=P04637",
+    "gene_symbol": "TP53",
+    "family_id": "PTHR11447",
+    "sf_id": "PTHR11447:SF6",
+    "annotation_type_list": {"annotation_data_type": []},
+}
+
+
+def _run_gene_info(gene_payload):
+    payload = {"search": {"mapped_genes": {"gene": gene_payload}}}
+    with patch(
+        "tooluniverse.panther_tool.requests.get", return_value=_resp(payload)
+    ):
+        return PANTHERTool({"fields": {"endpoint_type": "gene_info"}}).run(
+            {"gene_id": "TP53,BRCA1", "organism": 9606}
+        )
+
+
+class TestGeneInfoKeepsEveryMappedGene:
+    def test_second_gene_is_not_dropped(self):
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        data = result["data"]
+        assert data["total_genes"] == 2
+        assert [g["family_id"] for g in data["genes"]] == ["PTHR13763", "PTHR11447"]
+
+    def test_annotations_stay_attached_to_their_own_gene(self):
+        """Flattening them into one list would misattribute GO terms."""
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        brca1, tp53 = result["data"]["genes"]
+        assert brca1["annotations"][0]["terms"][0]["id"] == "GO:0004842"
+        assert tp53["annotations"] == []
+
+    def test_single_gene_dict_response_still_parses(self):
+        result = _run_gene_info(_GENEINFO_BRCA1)
+
+        data = result["data"]
+        assert data["total_genes"] == 1
+        assert data["family_id"] == "PTHR13763"
+        assert data["subfamily_id"] == "PTHR13763:SF0"
+
+    def test_legacy_top_level_fields_track_the_first_gene(self):
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        data = result["data"]
+        assert data["family_id"] == data["genes"][0]["family_id"]
+        assert data["annotations"] == data["genes"][0]["annotations"]

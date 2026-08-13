@@ -109,50 +109,30 @@ class PANTHERTool(BaseTool):
         mapped = search.get("mapped_genes", {})
         gene_data = mapped.get("gene", {})
 
-        # Handle both single gene (dict) and multiple genes (list)
-        if isinstance(gene_data, list):
-            gene_data = gene_data[0] if gene_data else {}
+        # `geneInputList` accepts several identifiers, and PANTHER answers with
+        # a bare object for one match and a list for several. Keeping only
+        # `gene_data[0]` published one gene's family and annotations under
+        # whatever was asked for -- confirmed live that gene_id "TP53,BRCA1"
+        # echoed both names while returning BRCA1's PTHR13763 alone, with
+        # nothing to show a gene had been dropped. Same collapse as `_ortholog`
+        # further down this file.
+        genes = [
+            self._parse_gene_entry(entry)
+            for entry in (gene_data if isinstance(gene_data, list) else [gene_data])
+            if entry
+        ]
 
-        family_id = gene_data.get("family_id", None)
-        sf_id = gene_data.get("sf_id", None)
-
-        # Extract annotations by category
-        annotations = []
-        ann_type_list = gene_data.get("annotation_type_list", {}).get(
-            "annotation_data_type", []
-        )
-        if isinstance(ann_type_list, dict):
-            ann_type_list = [ann_type_list]
-
-        for ann_type in ann_type_list:
-            category = ann_type.get("content", "")
-            ann_list = ann_type.get("annotation_list", {}).get("annotation", [])
-            if isinstance(ann_list, dict):
-                ann_list = [ann_list]
-
-            terms = []
-            for ann in ann_list:
-                terms.append(
-                    {
-                        "id": ann.get("id", ""),
-                        "name": ann.get("name", ""),
-                    }
-                )
-
-            if terms:
-                annotations.append(
-                    {
-                        "category": category,
-                        "terms": terms,
-                    }
-                )
-
+        first = genes[0] if genes else {}
         result = {
             "gene_id": gene_id,
             "organism": organism,
-            "family_id": family_id,
-            "subfamily_id": sf_id,
-            "annotations": annotations,
+            # These three predate `genes` and stay as the first match so
+            # existing callers keep working; they are not the whole answer.
+            "family_id": first.get("family_id"),
+            "subfamily_id": first.get("subfamily_id"),
+            "annotations": first.get("annotations", []),
+            "genes": genes,
+            "total_genes": len(genes),
         }
 
         return {
@@ -163,6 +143,38 @@ class PANTHERTool(BaseTool):
                 "query": gene_id,
                 "endpoint": "geneinfo",
             },
+        }
+
+    @staticmethod
+    def _parse_gene_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
+        """Pull one mapped gene's family and GO-slim annotations out of PANTHER."""
+        ann_type_list = entry.get("annotation_type_list", {}).get(
+            "annotation_data_type", []
+        )
+        if isinstance(ann_type_list, dict):
+            ann_type_list = [ann_type_list]
+
+        annotations = []
+        for ann_type in ann_type_list:
+            ann_list = ann_type.get("annotation_list", {}).get("annotation", [])
+            if isinstance(ann_list, dict):
+                ann_list = [ann_list]
+
+            terms = [
+                {"id": ann.get("id", ""), "name": ann.get("name", "")}
+                for ann in ann_list
+            ]
+            if terms:
+                annotations.append(
+                    {"category": ann_type.get("content", ""), "terms": terms}
+                )
+
+        return {
+            "accession": entry.get("accession"),
+            "gene_symbol": entry.get("gene_symbol"),
+            "family_id": entry.get("family_id"),
+            "subfamily_id": entry.get("sf_id"),
+            "annotations": annotations,
         }
 
     def _enrichment(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

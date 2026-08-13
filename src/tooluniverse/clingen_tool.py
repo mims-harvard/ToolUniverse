@@ -52,7 +52,9 @@ _EREPO_MATCH_LIMIT = 5000
 _MAX_PUBLISHED = 100
 
 
-def _published(rows: List[Dict[str, Any]], narrow_hint: str) -> Dict[str, Any]:
+def _published(
+    rows: List[Dict[str, Any]], narrow_hint: str, total_is_capped: bool = False
+) -> Dict[str, Any]:
     """Publish a capped slice of `rows` and state the cap beside the total.
 
     Every listing in this module caps `data` for payload size while reporting
@@ -60,6 +62,13 @@ def _published(rows: List[Dict[str, Any]], narrow_hint: str) -> Dict[str, Any]:
     disagrees with the rows printed beside it: ClinGen_get_gene_validity
     published `total: 3659` directly above exactly 100 rows, on a tool whose
     own description promises a "comprehensive list".
+
+    `truncated` / `truncation_note` follow the repo-wide disclosure convention
+    (see cbioportal_tool._truncation_fields and clinvar_tool.
+    _truncation_disclosure) so a caller reading truncation generically does not
+    need a spelling unique to this module. `total_is_capped` marks the case
+    where the upstream request itself filled `_EREPO_MATCH_LIMIT`, which makes
+    `total` a lower bound rather than a count.
     """
     published = rows[:_MAX_PUBLISHED]
     result: Dict[str, Any] = {
@@ -67,12 +76,21 @@ def _published(rows: List[Dict[str, Any]], narrow_hint: str) -> Dict[str, Any]:
         "total": len(rows),
         "returned": len(published),
     }
-    if len(published) < len(rows):
-        result["data_truncated"] = True
-        result["data_truncation_note"] = (
+    if total_is_capped:
+        result["truncated"] = True
+        result["truncation_note"] = (
+            f"The query filled the {_EREPO_MATCH_LIMIT}-row request cap, so "
+            f"`total` is a lower bound rather than the true count, and `data` "
+            f"carries the first {len(published)} rows. {narrow_hint}"
+        )
+    elif len(published) < len(rows):
+        result["truncated"] = True
+        result["truncation_note"] = (
             f"`total` is the full count for this query; `data` carries only the "
             f"first {len(published)} of them. {narrow_hint}"
         )
+    else:
+        result["truncated"] = False
     return result
 
 
@@ -501,7 +519,7 @@ class ClinGenTool(BaseTool):
 
     @staticmethod
     def _flatten_classification(item: Dict[str, Any]) -> Dict[str, Any]:
-        """Map one classifications?gene=/variant= JSON record to the tool's
+        """Map one `classifications` JSON record to the tool's
         declared 7-field return_schema (Variation, ClinVar Variation Id,
         HGNC Gene Symbol, Disease, Mondo Id, Assertion, Expert Panel)."""
         hgvs = item.get("hgvs") or []
@@ -531,18 +549,24 @@ class ClinGenTool(BaseTool):
         with no server-side filter and filters client-side -- confirmed live
         this routinely took 2-5+ minutes (and sometimes hung past a 300s
         client timeout) even for a gene with zero curated variants. The
-        classifications endpoint (no /all) supports real server-side filtering
-        and returns in ~1s -- confirmed live for both a curated gene (PAH) and
-        an uncurated one (empty result, still ~1s). Calling it with neither
-        gene nor variant set is just as unbounded as classifications/all
-        (confirmed live: also hangs past 30s with no params), so require at
-        least one.
+        classifications endpoint (no /all) supports real server-side filtering.
+        Calling it with neither gene nor variant set is just as unbounded as
+        classifications/all (confirmed live: also hangs past 30s with no
+        params), so require at least one.
 
         Every filter is applied by the server: `gene` directly, and `variant`
         via whichever of `caid`/`variationId`/`hgvs` matches the identifier
         supplied. See `_variant_query_param` and `_EREPO_MATCH_LIMIT` for why
         the tool must name the parameter the endpoint actually implements and
         must state its own page size.
+
+        Cost of stating the page size: asking for every row is what makes
+        `total` a count rather than a page size, and the endpoint reports no
+        total of its own, so there is no cheaper way to get it. Measured live,
+        gene queries go from 44 KB / 0.8s to 1.5 MB / ~5s (PAH) and 8.1 MB /
+        ~15s at the worst case in the repository (RUNX1, 1,648 rows). That sits
+        inside this tool's 120s timeout with roughly 8x headroom. Identifier
+        lookups are unaffected -- `caid` returns ~2 KB in ~0.6s either way.
         """
         gene = arguments.get("gene")
         variant = arguments.get("variant")
@@ -572,6 +596,11 @@ class ClinGenTool(BaseTool):
             payload = response.json()
             items = payload.get("variantInterpretations", [])
 
+            # Flattening every row and publishing 100 wastes ~0.6ms at the
+            # repository's worst case (RUNX1, 1,648 rows), against a ~15s round
+            # trip. Slicing first would make `total` count the slice instead of
+            # the query, which is the defect this whole change exists to fix,
+            # so the list stays whole.
             data = [self._flatten_classification(item) for item in items]
 
             result = {
@@ -580,15 +609,14 @@ class ClinGenTool(BaseTool):
                     data,
                     "Pass `variant` (a ClinGen CAID, a ClinVar VariationID or an "
                     "HGVS/protein-change string) to retrieve a specific row.",
+                    # No gene can fill the cap -- the largest is RUNX1 at 1,648
+                    # -- but `hgvs` matches on substring, so a short fragment
+                    # can sweep the repository. Reachable, and `total` would be
+                    # a floor rather than a count if it were reached.
+                    total_is_capped=len(data) >= _EREPO_MATCH_LIMIT,
                 ),
                 "source": "ClinGen Evidence Repository",
             }
-            if len(data) >= _EREPO_MATCH_LIMIT:
-                result["total_is_a_lower_bound"] = True
-                result["total_note"] = (
-                    f"The query filled the {_EREPO_MATCH_LIMIT}-row request cap, "
-                    "so `total` is a lower bound rather than the true count."
-                )
             if not data:
                 if gene:
                     result["note"] = (
@@ -597,7 +625,7 @@ class ClinGenTool(BaseTool):
                         "curated by Variant Curation Expert Panels (VCEPs), and "
                         "not all genes have an active VCEP. Try "
                         "ClinGen_get_gene_validity for gene-disease validity or "
-                        "clinvar_search_variants for ClinVar classifications."
+                        "ClinVar_search_variants for ClinVar classifications."
                     )
                 else:
                     result["note"] = (
@@ -607,7 +635,7 @@ class ClinGenTool(BaseTool):
                         "the variant is genuinely uncurated rather than merely "
                         "missing from a page of results. Supply `gene` to list "
                         "every curated variant for its gene, or use "
-                        "clinvar_search_variants for ClinVar classifications."
+                        "ClinVar_search_variants for ClinVar classifications."
                     )
             return result
         except requests.exceptions.Timeout:

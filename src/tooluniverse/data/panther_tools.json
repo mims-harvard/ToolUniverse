@@ -82,6 +82,67 @@
                   }
                 }
               }
+            },
+            "genes": {
+              "type": "array",
+              "description": "Every gene PANTHER mapped the query to. family_id, subfamily_id and annotations above describe genes[0] only.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "family_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subfamily_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "category": {
+                          "type": "string"
+                        },
+                        "terms": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "total_genes": {
+              "type": "integer"
             }
           }
         },
