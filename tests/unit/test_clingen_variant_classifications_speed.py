@@ -121,6 +121,32 @@ class TestRequiresGeneOrVariant:
         assert "gene" in result["error"]
         mock_get.assert_not_called()
 
+    @pytest.mark.parametrize("blank", ["   ", "", "\t\n", None])
+    def test_blank_filters_are_rejected_before_any_request(self, blank):
+        """Validation finding: a whitespace `variant` slipped past the guard.
+
+        `"   "` is truthy, so it satisfied "at least one filter" and then
+        resolved to an empty `hgvs=`, sending exactly the unfiltered request
+        the guard exists to prevent -- measured live at a full 120s timeout.
+        """
+        tool = _tool()
+        with patch("tooluniverse.clingen_tool.requests.get") as mock_get:
+            result = tool.run({"gene": blank, "variant": blank})
+
+        assert result["status"] == "error"
+        mock_get.assert_not_called()
+
+    def test_surrounding_whitespace_is_stripped_not_rejected(self):
+        tool = _tool()
+        with patch(
+            "tooluniverse.clingen_tool.requests.get",
+            return_value=_resp({"variantInterpretations": [_PAH_ITEM]}),
+        ) as mock_get:
+            result = tool.run({"gene": "  PAH  "})
+
+        assert result["status"] == "success"
+        assert mock_get.call_args.kwargs["params"]["gene"] == "PAH"
+
     def test_variant_only_is_accepted(self):
         tool = _tool()
         with patch(

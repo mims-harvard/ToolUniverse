@@ -312,7 +312,7 @@
         },
         "variant": {
           "type": "string",
-          "description": "Optional: Filter by variant (HGVS notation or protein change)"
+          "description": "Optional: filter to one variant. Accepts a ClinGen canonical allele ID ('CA16020993', with or without a 'CAR:' prefix), a ClinVar VariationID ('370074'), full HGVS ('NM_000277.3:c.1315+1G>T'), or a protein change ('p.Arg408Trp'). The form supplied selects the matching server-side filter. HGVS and protein-change strings match on substring, so a short fragment can return many rows -- combine with 'gene' to scope them."
         }
       },
       "required": []
@@ -338,7 +338,9 @@
     },
     "test_examples": [
       {"gene": "BRCA1"},
-      {"gene": "PAH"}
+      {"gene": "PAH"},
+      {"variant": "CA16020993"},
+      {"gene": "PAH", "variant": "p.Arg408Trp"}
     ]
   }
 ]

@@ -131,8 +131,9 @@ class TestBackwardCompatibleSingularField:
 # publishing only BRCA1's family PTHR13763; TP53's PTHR11447 was dropped.
 _GENEINFO_BRCA1 = {
     "accession": "HUMAN|HGNC=1100|UniProtKB=P38398",
-    "gene_symbol": "BRCA1",
+    "mapped_id_list": "BRCA1",
     "family_id": "PTHR13763",
+    "family_name": "BREAST CANCER TYPE 1 SUSCEPTIBILITY PROTEIN",
     "sf_id": "PTHR13763:SF0",
     "annotation_type_list": {
         "annotation_data_type": {
@@ -148,8 +149,9 @@ _GENEINFO_BRCA1 = {
 }
 _GENEINFO_TP53 = {
     "accession": "HUMAN|HGNC=11998|UniProtKB=P04637",
-    "gene_symbol": "TP53",
+    "mapped_id_list": "TP53",
     "family_id": "PTHR11447",
+    "family_name": "CELLULAR TUMOR ANTIGEN P53",
     "sf_id": "PTHR11447:SF6",
     "annotation_type_list": {"annotation_data_type": []},
 }
@@ -195,3 +197,29 @@ class TestGeneInfoKeepsEveryMappedGene:
         data = result["data"]
         assert data["family_id"] == data["genes"][0]["family_id"]
         assert data["annotations"] == data["genes"][0]["annotations"]
+
+    def test_each_row_names_the_input_it_answers_for(self):
+        """Validation finding: rows were unattributable.
+
+        The first version published `gene_symbol`, a key `geneinfo` entries do
+        not have, so it was null on every row. The identifier the caller typed
+        lives in `mapped_id_list`, and PANTHER does not return rows in input
+        order -- confirmed live that "TP53,BRCA1" comes back BRCA1 first --
+        so without it a multi-gene answer cannot be matched to its question
+        except by decoding "HUMAN|HGNC=1100|UniProtKB=P38398".
+        """
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        genes = result["data"]["genes"]
+        assert [g["input_id"] for g in genes] == ["BRCA1", "TP53"]
+        # Rows arrive in a different order than the query named them.
+        assert genes[0]["input_id"] != "TP53"
+
+    def test_family_name_is_published_so_rows_are_readable(self):
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        names = [g["family_name"] for g in result["data"]["genes"]]
+        assert names == [
+            "BREAST CANCER TYPE 1 SUSCEPTIBILITY PROTEIN",
+            "CELLULAR TUMOR ANTIGEN P53",
+        ]

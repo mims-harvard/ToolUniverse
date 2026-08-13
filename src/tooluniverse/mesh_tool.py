@@ -21,6 +21,13 @@ MESH_LOOKUP_URL = "https://id.nlm.nih.gov/mesh/lookup"
 MESH_BASE_URL = "https://id.nlm.nih.gov/mesh"
 
 
+# MeSH record classes that hang off a descriptor rather than standing alone.
+# Everything else NLM serves from this endpoint -- TopicalDescriptor,
+# PublicationType, GeographicalDescriptor, Qualifier -- carries its own tree
+# numbers and annotation.
+_ENTRY_TERM_TYPES = frozenset({"Term", "Concept"})
+
+
 def _value(field: Any) -> str:
     """Read a MeSH JSON-LD literal, which may be bare or an @value wrapper."""
     if isinstance(field, dict):
@@ -211,14 +218,30 @@ class MeSHTool(BaseTool):
         # The record type is already known here, so an identifier that resolves
         # to something other than a main heading should say so rather than
         # leave the caller to notice that `tree_numbers` came back empty.
+        #
+        # What may be said about it depends on the class. Only Term and Concept
+        # records are owned by a descriptor and genuinely carry no tree numbers
+        # or annotation. PublicationType, GeographicalDescriptor and Qualifier
+        # are indexed in their own right and do have both -- D016428
+        # (PublicationType) returns tree V02.600 and a full annotation, so a
+        # blanket "it has no tree numbers or annotation of its own" printed a
+        # falsehood directly above the populated fields that contradict it.
         if entry_type and entry_type != "TopicalDescriptor":
-            result["note"] = (
-                f"'{result['descriptor_id']}' is a MeSH {entry_type}, not a "
-                "topical descriptor, so it has no tree numbers or annotation "
-                "of its own. Entry terms belong to a descriptor -- use "
-                "mesh_get_subjects_by_subject_name with this record's label to "
-                "resolve the descriptor that owns it."
-            )
+            if entry_type in _ENTRY_TERM_TYPES:
+                result["note"] = (
+                    f"'{result['descriptor_id']}' is a MeSH {entry_type}, not a "
+                    "topical descriptor. Terms and concepts belong to a "
+                    "descriptor and carry no tree numbers or annotation of "
+                    "their own -- use mesh_get_subjects_by_subject_name with "
+                    "this record's label to resolve the descriptor that owns it."
+                )
+            else:
+                result["note"] = (
+                    f"'{result['descriptor_id']}' is a MeSH {entry_type}, not a "
+                    "topical descriptor. It is indexed in its own right, so the "
+                    "tree numbers and annotation above are its own, but it will "
+                    "not appear in searches that cover topical descriptors only."
+                )
 
         return {
             "status": "success",

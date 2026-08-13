@@ -94,6 +94,14 @@ def _published(
     return result
 
 
+def _clean(value: Any) -> Optional[str]:
+    """Normalise a filter argument to a non-blank string, or None."""
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text or None
+
+
 def _variant_query_param(variant: Any) -> tuple:
     """Map a variant identifier onto the erepo parameter that filters on it.
 
@@ -568,8 +576,13 @@ class ClinGenTool(BaseTool):
         inside this tool's 120s timeout with roughly 8x headroom. Identifier
         lookups are unaffected -- `caid` returns ~2 KB in ~0.6s either way.
         """
-        gene = arguments.get("gene")
-        variant = arguments.get("variant")
+        # Strip before the guard, not after. A whitespace-only `variant` is
+        # truthy, so it satisfied "at least one filter" and then resolved to an
+        # empty `hgvs=`, sending exactly the unfiltered request this guard
+        # exists to prevent -- measured live at a full 120s timeout, with the
+        # cost paid upstream as well as here.
+        gene = _clean(arguments.get("gene"))
+        variant = _clean(arguments.get("variant"))
         if not gene and not variant:
             return {
                 "status": "error",
@@ -630,12 +643,12 @@ class ClinGenTool(BaseTool):
                 else:
                     result["note"] = (
                         f"No variant classification found for variant '{variant}', "
-                        f"queried as `{variant_key}`. This was an exact "
-                        "server-side lookup over the whole Evidence Repository, so "
-                        "the variant is genuinely uncurated rather than merely "
-                        "missing from a page of results. Supply `gene` to list "
-                        "every curated variant for its gene, or use "
-                        "ClinVar_search_variants for ClinVar classifications."
+                        f"queried as `{variant_key}` server-side across the whole "
+                        "Evidence Repository, so the variant is genuinely "
+                        "uncurated rather than merely missing from a page of "
+                        "results. Supply `gene` to list every curated variant "
+                        "for its gene, or use ClinVar_search_variants for "
+                        "ClinVar classifications."
                     )
             return result
         except requests.exceptions.Timeout:

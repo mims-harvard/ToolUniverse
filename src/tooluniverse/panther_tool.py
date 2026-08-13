@@ -169,11 +169,26 @@ class PANTHERTool(BaseTool):
                     {"category": ann_type.get("content", ""), "terms": terms}
                 )
 
+        # `geneinfo` entries carry no `gene_symbol` -- their keys are
+        # accession, mapped_id_list, family_id/family_name, sf_id/sf_name and
+        # annotation_type_list. `mapped_id_list` holds the identifier the
+        # caller actually typed ("BRCA1"), which is the only field that says
+        # which input a row answers for; PANTHER does not preserve input order,
+        # so without it a multi-gene query is rows the caller cannot attribute
+        # without decoding "HUMAN|HGNC=1100|UniProtKB=P38398".
+        mapped_id = entry.get("mapped_id_list")
+        if isinstance(mapped_id, dict):
+            mapped_id = mapped_id.get("mapped_id")
+        if isinstance(mapped_id, list):
+            mapped_id = mapped_id[0] if mapped_id else None
+
         return {
+            "input_id": mapped_id,
             "accession": entry.get("accession"),
-            "gene_symbol": entry.get("gene_symbol"),
             "family_id": entry.get("family_id"),
+            "family_name": entry.get("family_name"),
             "subfamily_id": entry.get("sf_id"),
+            "subfamily_name": entry.get("sf_name"),
             "annotations": annotations,
         }
 

@@ -104,6 +104,50 @@ class TestTermRecordsKeepTheirName:
         assert "mesh_get_subjects_by_subject_name" in result["data"]["note"]
 
 
+# Validation finding: the first version of the note fired for every record
+# class that was not a TopicalDescriptor and asserted "no tree numbers or
+# annotation of its own". That is true only of Term and Concept. D016428
+# (PublicationType) returns tree V02.600 AND an annotation live, so the note
+# printed a falsehood directly above the populated fields contradicting it --
+# and the original test file only ever exercised Term, the one class for which
+# the claim happened to hold.
+_PUBLICATION_TYPE_D016428 = {
+    "@id": "http://id.nlm.nih.gov/mesh/D016428",
+    "@type": "http://id.nlm.nih.gov/mesh/vocab#PublicationType",
+    "identifier": "D016428",
+    "label": {"@language": "en", "@value": "Journal Article"},
+    "annotation": {
+        "@language": "en",
+        "@value": "This heading is used as a Publication Type.",
+    },
+    "treeNumber": ["http://id.nlm.nih.gov/mesh/V02.600"],
+}
+
+
+class TestSelfIndexedClassesAreNotMisdescribed:
+    def test_note_does_not_deny_tree_numbers_it_just_returned(self):
+        result = _run(_PUBLICATION_TYPE_D016428, "D016428")
+
+        data = result["data"]
+        assert data["tree_numbers"] == ["V02.600"]
+        assert data["annotation"]
+        # The assertion that bites: the old note said exactly this.
+        assert "no tree numbers or annotation of its own" not in data["note"]
+
+    def test_note_still_flags_it_as_not_a_topical_descriptor(self):
+        result = _run(_PUBLICATION_TYPE_D016428, "D016428")
+
+        note = result["data"]["note"]
+        assert "PublicationType" in note
+        assert "not a topical descriptor" in note
+
+    def test_entry_term_remedy_is_not_offered_to_a_self_indexed_record(self):
+        """A PublicationType is not owned by a descriptor, so that route is wrong."""
+        result = _run(_PUBLICATION_TYPE_D016428, "D016428")
+
+        assert "mesh_get_subjects_by_subject_name" not in result["data"]["note"]
+
+
 class TestDescriptorsAreUnaffected:
     def test_real_descriptor_still_parses(self):
         result = _run(_DESCRIPTOR_D003680, "D003680")
