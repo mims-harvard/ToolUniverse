@@ -822,8 +822,8 @@ class FDADrugAdverseEventTool(BaseTool):
         when the denominator is unavailable or zero (which also keeps a
         rate-limited call from spending a second retry).
 
-        Rides on `disclose_denominator` because it reuses that denominator as
-        its own numerator; every tool in this family sets the flag.
+        Rides on `disclose_denominator` because it measures its split against
+        that same denominator; every tool in this family sets the flag.
         """
         drug_value = arguments.get(self.DRUG_PARAMETER)
         fda_fields = self._drug_name_fields()
@@ -835,16 +835,23 @@ class FDADrugAdverseEventTool(BaseTool):
         named_total = self._fetch_query_total(
             arguments, drug_fields=[FAERS_REPORTED_NAME_FIELD]
         )
-        envelope["reports_naming_queried_drug"] = named_total
         if named_total is None:
+            # Measured and failed, which is not the same as "not applicable":
+            # the null says the split is unknown for this call.
+            envelope["reports_naming_queried_drug"] = None
             return
 
         matched_only = query_total - named_total
         if matched_only < 0:
-            # The reported-name set is a strict subset of the union, so this can
-            # only be the two probes landing either side of openFDA's daily
-            # refresh. Publish nothing rather than a figure that cannot be true.
+            # The reported-name set is a strict subset of the union, so a
+            # negative can only be the two probes landing either side of
+            # openFDA's daily refresh. Publish NEITHER figure: a
+            # reports_naming_queried_drug larger than
+            # total_reports_matching_query is a subset bigger than its
+            # superset, which is why this returns before either key is set
+            # rather than after.
             return
+        envelope["reports_naming_queried_drug"] = named_total
         envelope["reports_matched_by_name_resolution_only"] = matched_only
         if matched_only == 0:
             return
@@ -941,8 +948,14 @@ class FDADrugAdverseEventTool(BaseTool):
             # unrecognized argument (e.g. a stray 'limit') must NOT become a
             # bogus FDA filter like 'limit:2', which matches nothing and yields
             # a silent empty result.
-            if param_name == self.DRUG_PARAMETER and drug_fields is not None:
-                fda_fields = drug_fields
+            if param_name == self.DRUG_PARAMETER:
+                # Through the accessor, so the documented fallback is real on
+                # this path too. Reading self.search_fields directly here meant
+                # a config that forgot the map dropped the drug name from the
+                # FACET while the scope probe -- which keys off DRUG_PARAMETER,
+                # not off the map -- still applied it, producing a note that
+                # blamed SPL annotation for the entire corpus.
+                fda_fields = self._drug_name_fields(drug_fields)
             else:
                 fda_fields = self.search_fields.get(param_name)
             if not fda_fields:

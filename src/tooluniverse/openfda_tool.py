@@ -2979,8 +2979,10 @@ class FDADrugLabelGetDrugNamesByIndicationStats(FDADrugLabelTool):
 class OpenFDADrugEventsTool(BaseRESTTool):
     """OpenFDA drug adverse event search with convenience parameters.
 
-    Accepts either a raw Lucene 'search' string or the convenience parameters
-    'drug_name' and 'reaction' (which are assembled into a Lucene query).
+    Accepts a raw Lucene 'search' string, the convenience parameters
+    'drug_name' and 'reaction' (which are assembled into a Lucene query), or
+    ANY COMBINATION of the three: whichever are supplied are AND-ed together,
+    so a raw clause narrows a named drug rather than replacing it.
 
     Note: MedDRA terms in FAERS use British English spelling (e.g.
     'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma').

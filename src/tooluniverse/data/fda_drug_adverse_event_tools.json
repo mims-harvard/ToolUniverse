@@ -180,7 +180,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -396,7 +396,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -602,7 +602,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -808,7 +808,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -1017,7 +1017,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -1227,7 +1227,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -1462,7 +1462,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -1624,7 +1624,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -1786,7 +1786,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -2018,7 +2018,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -2229,7 +2229,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -2440,7 +2440,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -2654,7 +2654,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -2869,7 +2869,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -3109,7 +3109,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -3274,7 +3274,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -3446,7 +3446,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",
@@ -3620,7 +3620,7 @@
                 "integer",
                 "null"
               ],
-              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, or when the drug name searches a single field and so cannot widen."
+              "description": "Of 'total_reports_matching_query', how many named the drug you asked for in patient.drug.medicinalproduct -- measured by a separate openFDA request on the SAME search with only the drug name narrowed to that one field. Null when that request failed. Absent when no drug name was passed, when the drug name searches a single field and so cannot widen, when 'results' is empty, when 'total_reports_matching_query' is null or zero, or when the two measurements straddled an openFDA refresh and disagreed."
             },
             "reports_matched_by_name_resolution_only": {
               "type": "integer",

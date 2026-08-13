@@ -162,6 +162,55 @@ def test_a_failed_scope_probe_leaves_a_null_rather_than_breaking_the_call():
     assert result["total_reports_matching_query"] == MATCHED
 
 
+def test_a_probe_disagreement_publishes_neither_figure():
+    """The two probes are separate requests, so they can straddle openFDA's
+    daily refresh. The reported-name set is a strict SUBSET of the union, so a
+    larger `named` than `matched` cannot be true -- publishing it would ship a
+    subset bigger than its superset, and a reader dividing the two would get a
+    share above 100%."""
+    result, _ = _run({"medicinalproduct": "CYANOKIT"}, matched=4119, named=5000)
+
+    assert "reports_naming_queried_drug" not in result
+    assert "reports_matched_by_name_resolution_only" not in result
+    assert "drug_name_scope_note" not in result
+    # The denominator that WAS measured cleanly still stands.
+    assert result["total_reports_matching_query"] == 4119
+
+
+def test_a_config_missing_the_name_map_still_searches_the_union():
+    """`_drug_name_fields` promises a config that forgets the map asks the same
+    question as every other FAERS tool. That promise has to hold on the facet,
+    not just on the probe: when it did not, the facet searched NOTHING while the
+    probe still applied the name, and the note blamed SPL annotation for the
+    whole corpus."""
+    config = _config("FAERS_count_reactions_by_drug_event")
+    del config["fields"]["search_fields"]["medicinalproduct"]
+
+    urls = []
+
+    def fake_get(url, **_kwargs):
+        urls.append(url)
+        return _Response({"results": FACET})
+
+    def fake_total(_module, _method, url, **_kwargs):
+        urls.append(url)
+        return _Response({"meta": {"results": {"skip": 0, "limit": 0, "total": 10}}})
+
+    tool = FDADrugAdverseEventTool(config, api_key=None)
+    with (
+        patch("tooluniverse.openfda_adv_tool.requests.get", side_effect=fake_get),
+        patch(
+            "tooluniverse.openfda_adv_tool.request_with_retry", side_effect=fake_total
+        ),
+    ):
+        tool.run({"medicinalproduct": "CYANOKIT"})
+
+    facet_url = next(u for u in urls if "&count=" in u)
+    assert "CYANOKIT" in facet_url
+    for field in ("medicinalproduct", "openfda.generic_name", "openfda.brand_name"):
+        assert field in facet_url
+
+
 def test_no_scope_probe_at_all_when_no_drug_name_was_passed():
     """Costs nothing where it could not apply: two requests, not three."""
     result, urls = _run({"patientsex": "Female"})
