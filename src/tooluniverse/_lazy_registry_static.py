@@ -616,6 +616,7 @@ STATIC_LAZY_REGISTRY = {
     "SCExpressionAtlasTool": "scxa_tool",
     "DDBJTool": "ddbj_tool",
     "BioThingsGatewayTool": "biothings_gateway_tool",
+    "REBASETool": "rebase_tool",
     "EBIPairwiseAlignTool": "ebi_sequence_tools",
     "EBITranslateSequenceTool": "ebi_sequence_tools",
     "EBIPfamScanTool": "ebi_sequence_tools",
