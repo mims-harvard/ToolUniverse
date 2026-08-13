@@ -58,6 +58,27 @@ def _validation_error_detail(payload):
     return None
 
 
+def _tool_error(error):
+    """Wrap a ToolError in the dual-format envelope callers branch on."""
+    return {
+        "status": "error",
+        "error": str(error),
+        "error_details": error.to_dict(),
+    }
+
+
+def _limit_error(requested_limit):
+    return _tool_error(
+        ToolValidationError(
+            f"'limit' must be between 1 and {_MONARCH_MAX_LIMIT}; got "
+            f"{requested_limit}. This tool over-fetches to survive client-side "
+            "namespace filtering, so it cannot serve a larger page than the "
+            "upstream API allows. Page with 'offset' to go further.",
+            details={"requested_limit": requested_limit, "max": _MONARCH_MAX_LIMIT},
+        )
+    )
+
+
 def execute_RESTful_query(endpoint_url, variables=None):
     response = requests.get(endpoint_url, params=variables)
     try:
@@ -167,6 +188,16 @@ class MonarchTool(RESTfulTool):
             # caller as status:"success" quoting an "input" value of 501 that
             # the caller never supplied -- an internal over-fetch factor
             # leaking out as if it were the user's own argument.
+            #
+            # A limit this tool cannot satisfy is an error, not a short answer.
+            # Clamping alone made get_HPO_ID_by_phenotype return 490 of a
+            # requested 600 under status:"success" with no note, while its
+            # sibling Monarch_search_gene -- same class, no result_id_prefix,
+            # so no clamp -- errored on the same request. Two tools sharing one
+            # class must not answer the same over-limit call with opposite
+            # contracts.
+            if requested_limit > _MONARCH_MAX_LIMIT or requested_limit < 1:
+                return _limit_error(requested_limit)
             query_schema_runtime["limit"] = min(requested_limit * 3, _MONARCH_MAX_LIMIT)
         response = execute_RESTful_query(
             endpoint_url=formatted_endpoint_url, variables=query_schema_runtime
@@ -185,13 +216,17 @@ class MonarchTool(RESTfulTool):
         # config may declare `result_id_prefix` to restrict returned items
         # to IDs starting with that prefix, without hardcoding any ontology
         # into this shared class used by other Monarch tools. Combined with
-        # the over-fetch above, the returned count still matches what the
-        # caller asked for.
+        # the over-fetch above, the returned count usually matches what the
+        # caller asked for -- but when the over-fetch pool is itself capped at
+        # _MONARCH_MAX_LIMIT, filtering can leave fewer. Say so rather than
+        # letting a short page pass for a complete one.
+        short_note = None
         if (
             result_id_prefix
             and isinstance(response, dict)
             and isinstance(response.get("items"), list)
         ):
+            fetched = len(response["items"])
             filtered = [
                 item
                 for item in response["items"]
@@ -199,6 +234,16 @@ class MonarchTool(RESTfulTool):
                 and str(item.get("id", "")).startswith(result_id_prefix)
             ]
             if isinstance(requested_limit, int):
+                if len(
+                    filtered
+                ) < requested_limit and fetched >= query_schema_runtime.get("limit", 0):
+                    short_note = (
+                        f"Returned {len(filtered)} of the {requested_limit} "
+                        f"requested. This tool fetches a wider page and keeps "
+                        f"only '{result_id_prefix}' identifiers; the fetch hit "
+                        f"the upstream ceiling of {_MONARCH_MAX_LIMIT}, so more "
+                        "matches may exist. Page with 'offset' to see them."
+                    )
                 filtered = filtered[:requested_limit]
             response["items"] = filtered
         validation_detail = _validation_error_detail(response)
@@ -214,13 +259,12 @@ class MonarchTool(RESTfulTool):
                 # should come back to them as though they had.
                 details={"upstream_messages": validation_detail},
             )
-            return {
-                "status": "error",
-                "error": str(error),
-                "error_details": error.to_dict(),
-            }
+            return _tool_error(error)
         if isinstance(response, dict) and "status" not in response:
-            return {"status": "success", "data": response}
+            result = {"status": "success", "data": response}
+            if short_note:
+                result["note"] = short_note
+            return result
         return response
 
 
@@ -238,6 +282,14 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
         all_diseases = []
         uninformative_ids = []
         truncated_ids = []
+        running = None
+        # 'offset' skips entries in the returned differential. The per-leg
+        # pager below drives its own offset, so leaving the caller's value in
+        # the leg query made it a silent no-op: offset=0 and offset=1 returned
+        # byte-identical lists. Take it out of the leg query and apply it to
+        # the intersection, which is what the parameter documents.
+        result_offset = query_schema_runtime.pop("offset", 0)
+        result_offset = result_offset if isinstance(result_offset, int) else 0
         for HPOID in arguments["HPO_ID_list"]:
             each_query_schema_runtime = copy.deepcopy(query_schema_runtime)
             each_query_schema_runtime["object"] = HPOID
@@ -285,6 +337,13 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
             # veto every other (valid) phenotype in the panel.
             if each_output_names:
                 all_diseases.append(each_output_names)
+                # Once the running intersection is empty no later phenotype can
+                # refill it, and each extra leg costs up to _MONARCH_MAX_PAGES
+                # upstream requests. Stop paging phenotypes we cannot use.
+                names = set(each_output_names)
+                running = names if running is None else running & names
+                if not running:
+                    break
             else:
                 uninformative_ids.append(HPOID)
 
@@ -307,9 +366,9 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
             seen.add(name)
             intersection.append(name)
         matched_total = len(intersection)
-        limit = query_schema_runtime["limit"]
-        if isinstance(limit, int) and limit < matched_total:
-            intersection = intersection[:limit]
+        limit = query_schema_runtime.get("limit")
+        end = result_offset + limit if isinstance(limit, int) else None
+        intersection = intersection[result_offset:end]
 
         warnings = []
         if uninformative_ids:

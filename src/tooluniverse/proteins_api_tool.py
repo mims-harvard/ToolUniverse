@@ -58,7 +58,16 @@ def _entry_gene_names(entry: Any) -> set:
 
 
 def _has_exact_gene_match(entries: Any, query: str) -> bool:
-    """True when some entry's gene symbol is exactly ``query``."""
+    """True when some entry carries ``query`` as a gene label, exactly.
+
+    "Gene label" is deliberately wider than "gene symbol": it includes
+    synonyms and ORF/ordered-locus names, because the same gene is recorded
+    as a primary name on one species' entry and a synonym on another's. The
+    cost is that a query colliding with some organism's locus tag (say
+    'C54C6.2') also passes the gate -- acceptable, since the alternative for
+    such a query is a free-text protein-name search, which is exactly the
+    path that answered 'ben-1' with BANP_HUMAN.
+    """
     wanted = str(query or "").strip().upper()
     if not wanted or not isinstance(entries, list):
         return False

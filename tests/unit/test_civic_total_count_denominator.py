@@ -57,11 +57,20 @@ def _post(payload):
     return r
 
 
+# browseDiseases/browseTherapies report the size of the whole browse table
+# regardless of the name filter -- 653 therapies for "imatinib", for
+# "zzzzznotatherapy", and for no filter at all (verified live). A denominator
+# that ignores the query is worse than none, so these two select pageInfo only.
+_NO_FILTER_AWARE_TOTAL = {"civic_search_diseases", "civic_search_therapies"}
+
+
 class TestCivicQueriesRequestTotalCount(unittest.TestCase):
-    def test_every_connection_query_requests_the_denominator(self):
+    def test_every_filter_aware_connection_requests_the_denominator(self):
         """Config invariant: no CIViC connection may ship without totalCount."""
         missing = []
         for cfg in _load_configs():
+            if cfg["name"] in _NO_FILTER_AWARE_TOTAL:
+                continue
             query = (cfg.get("fields") or {}).get("query", "")
             if "nodes" in query and "totalCount" not in query:
                 missing.append(cfg["name"])
@@ -70,6 +79,23 @@ class TestCivicQueriesRequestTotalCount(unittest.TestCase):
             [],
             f"CIViC connection queries return a page with no denominator: {missing}",
         )
+
+    def test_browse_connections_do_not_publish_an_unfiltered_total(self):
+        """The exemption is asserted, not just commented.
+
+        Whoever adds totalCount back to these two must first confirm upstream
+        made them filter-aware -- otherwise a search matching nothing reports
+        653, under a description telling the caller to divide by it.
+        """
+        for cfg in _load_configs():
+            if cfg["name"] not in _NO_FILTER_AWARE_TOTAL:
+                continue
+            query = (cfg.get("fields") or {}).get("query", "")
+            self.assertNotIn("totalCount", query, cfg["name"])
+            self.assertIn("pageInfo", query, cfg["name"])
+            self.assertNotIn(
+                "totalCount", json.dumps(cfg.get("return_schema", {})), cfg["name"]
+            )
 
     def test_paginated_variants_query_actually_sent_requests_total_count(self):
         """The gene-variants path builds its query in Python, not in JSON.
@@ -104,7 +130,14 @@ class TestCivicQueriesRequestTotalCount(unittest.TestCase):
 
 
 class TestEvidenceItemsDenominator(unittest.TestCase):
-    def test_total_count_is_surfaced(self):
+    def test_query_sent_selects_the_denominator_and_it_is_passed_through(self):
+        """Asserts the query on the wire, not just the mocked response.
+
+        CIViCTool returns GraphQL `data` verbatim, so a fixture that already
+        contains totalCount proves nothing about the shipped query: strip
+        totalCount from civic_tools.json and a response-only assertion still
+        passes. The wire assertion is what discriminates.
+        """
         tool = _make_tool("civic_search_evidence_items")
         payload = {
             "data": {
@@ -115,20 +148,18 @@ class TestEvidenceItemsDenominator(unittest.TestCase):
                 }
             }
         }
-        with patch(
-            "tooluniverse.civic_tool.requests.post", return_value=_post(payload)
-        ):
+        post = MagicMock(return_value=_post(payload))
+        with patch("tooluniverse.civic_tool.requests.post", post):
             result = tool.run({"disease": "melanoma", "limit": 2})
+
+        sent = post.call_args.kwargs["json"]["query"]
+        self.assertRegex(sent, r"evidenceItems\([^)]*\)\s*\{\s*totalCount")
+        self.assertIn("pageInfo { hasNextPage }", sent)
 
         block = result["data"]["evidenceItems"]
         self.assertEqual(block["totalCount"], 218)
         self.assertTrue(block["pageInfo"]["hasNextPage"])
         self.assertEqual(len(block["nodes"]), 2)
-        self.assertLess(
-            len(block["nodes"]),
-            block["totalCount"],
-            "fixture must exercise the truncated case",
-        )
 
 
 class TestVariantsByGeneDenominator(unittest.TestCase):

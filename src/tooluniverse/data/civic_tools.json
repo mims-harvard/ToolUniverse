@@ -281,6 +281,40 @@
                 "name": {
                   "type": "string",
                   "description": "Variant name"
+                },
+                "molecularProfiles": {
+                  "type": "object",
+                  "description": "Molecular profiles this variant participates in.",
+                  "properties": {
+                    "totalCount": {
+                      "type": "integer",
+                      "description": "Total number of molecular profiles for this variant in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
+                    },
+                    "pageInfo": {
+                      "type": "object",
+                      "description": "Pagination state for this connection.",
+                      "properties": {
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "description": "True when more molecular profiles match than were returned; the returned nodes are an incomplete sample of totalCount."
+                        }
+                      }
+                    },
+                    "nodes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -952,7 +986,7 @@
       "required": []
     },
     "fields": {
-      "query": "query SearchDiseases($limit: Int, $name: String) { browseDiseases(first: $limit, name: $name) { totalCount pageInfo { hasNextPage } nodes { id name } } }",
+      "query": "query SearchDiseases($limit: Int, $name: String) { browseDiseases(first: $limit, name: $name) { pageInfo { hasNextPage } nodes { id name } } }",
       "operation_name": "SearchDiseases",
       "param_map": {
         "query": "name"
@@ -967,17 +1001,13 @@
             "browseDiseases": {
               "type": "object",
               "properties": {
-                "totalCount": {
-                  "type": "integer",
-                  "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
-                },
                 "pageInfo": {
                   "type": "object",
-                  "description": "Pagination state for this connection.",
+                  "description": "Pagination state for this connection. This connection reports no filter-aware total, so hasNextPage is the only completeness signal available.",
                   "properties": {
                     "hasNextPage": {
                       "type": "boolean",
-                      "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                      "description": "True when more records match than were returned. This connection publishes no filter-aware total, so this is the only completeness signal available."
                     }
                   }
                 },
@@ -1032,7 +1062,7 @@
       "required": []
     },
     "fields": {
-      "query": "query SearchTherapies($limit: Int, $name: String) { browseTherapies(first: $limit, name: $name) { totalCount pageInfo { hasNextPage } nodes { id name } } }",
+      "query": "query SearchTherapies($limit: Int, $name: String) { browseTherapies(first: $limit, name: $name) { pageInfo { hasNextPage } nodes { id name } } }",
       "operation_name": "SearchTherapies",
       "param_map": {
         "query": "name"
@@ -1047,17 +1077,13 @@
             "browseTherapies": {
               "type": "object",
               "properties": {
-                "totalCount": {
-                  "type": "integer",
-                  "description": "Total number of records matching the query in CIViC, independent of how many were returned in this page. Use this as the denominator; len(nodes) is only the page size."
-                },
                 "pageInfo": {
                   "type": "object",
-                  "description": "Pagination state for this connection.",
+                  "description": "Pagination state for this connection. This connection reports no filter-aware total, so hasNextPage is the only completeness signal available.",
                   "properties": {
                     "hasNextPage": {
                       "type": "boolean",
-                      "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                      "description": "True when more records match than were returned. This connection publishes no filter-aware total, so this is the only completeness signal available."
                     }
                   }
                 },

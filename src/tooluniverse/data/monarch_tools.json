@@ -69,19 +69,25 @@
         },
         {
           "type": "object",
-          "description": "Returned when one or more input HPO IDs matched zero diseases (e.g. an invalid/obsolete ID, or a genuinely unassociated phenotype). Those IDs are excluded from the intersection rather than collapsing the whole result to an empty list.",
+          "description": "Returned whenever the plain list would hide something: one or more input HPO IDs matched zero diseases, a phenotype's associations were truncated, or the intersection was larger than 'limit'. 'warning' is present only in the first two cases; 'total_matched' is always the full intersection size before 'limit'/'offset' were applied.",
           "properties": {
             "diseases": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "description": "The page of the intersection selected by 'limit' and 'offset', in the first phenotype's upstream relevance order."
+            },
+            "total_matched": {
+              "type": "integer",
+              "description": "Number of diseases carrying every usable input phenotype, before 'limit' and 'offset' were applied. Use this as the denominator; len(diseases) is only the page size."
             },
             "warning": {
-              "type": "string"
+              "type": "string",
+              "description": "Present only when a phenotype contributed no associations or its associations were truncated. Absent when the only reason for the object form is that the intersection exceeded 'limit'."
             }
           },
-          "required": ["diseases", "warning"]
+          "required": ["diseases", "total_matched"]
         }
       ]
     }

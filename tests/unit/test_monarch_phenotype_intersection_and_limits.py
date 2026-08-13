@@ -24,7 +24,7 @@ before the fix:
 import json
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -131,6 +131,82 @@ class TestJointDiseasesPagination(unittest.TestCase):
         self.assertIn("partial", result["warning"].lower())
 
 
+class TestJointDiseasesContract(unittest.TestCase):
+    """The object form must satisfy the tool's own declared return_schema."""
+
+    def _schema(self):
+        with open(CONFIG) as fh:
+            for cfg in json.load(fh):
+                if cfg["name"] == JOINT_TOOL:
+                    return cfg["return_schema"]
+        raise AssertionError("config missing")
+
+    def test_object_form_validates_against_return_schema(self):
+        import jsonschema
+
+        tool = _tool("MonarchDiseasesForMultiplePhenoTool", JOINT_TOOL)
+        ranked = ["disease %02d" % i for i in range(1, 12)]
+        with patch(
+            "tooluniverse.restful_tool.execute_RESTful_query",
+            return_value=_page(ranked, len(ranked)),
+        ):
+            # Truncated by limit, but nothing went wrong -> no 'warning'.
+            result = tool.run({"HPO_ID_list": ["HP:0001250"], "limit": 5})
+
+        self.assertNotIn("warning", result)
+        jsonschema.validate(result, self._schema())
+
+    def test_offset_selects_a_different_page_of_the_intersection(self):
+        """'offset' was overwritten by the pager and became a silent no-op."""
+        tool = _tool("MonarchDiseasesForMultiplePhenoTool", JOINT_TOOL)
+        ranked = ["disease %02d" % i for i in range(1, 12)]
+        pages = []
+        for off in (0, 1):
+            with patch(
+                "tooluniverse.restful_tool.execute_RESTful_query",
+                return_value=_page(ranked, len(ranked)),
+            ):
+                pages.append(
+                    tool.run(
+                        {"HPO_ID_list": ["HP:0001250"], "limit": 3, "offset": off}
+                    )["diseases"]
+                )
+        self.assertEqual(pages[0], ranked[0:3])
+        self.assertEqual(pages[1], ranked[1:4])
+        self.assertNotEqual(pages[0], pages[1])
+
+    def test_caller_offset_is_not_sent_as_the_pager_offset(self):
+        tool = _tool("MonarchDiseasesForMultiplePhenoTool", JOINT_TOOL)
+        seen = []
+
+        def fake(endpoint_url, variables=None):
+            seen.append(dict(variables or {}))
+            return _page(["a", "b"], 2)
+
+        with patch("tooluniverse.restful_tool.execute_RESTful_query", fake):
+            tool.run({"HPO_ID_list": ["HP:0001250"], "limit": 5, "offset": 7})
+
+        self.assertEqual(seen[0]["offset"], 0, "caller offset leaked into the leg")
+
+    def test_empty_running_intersection_stops_fetching_later_phenotypes(self):
+        """Each extra leg costs up to 20 upstream requests; none can refill it."""
+        tool = _tool("MonarchDiseasesForMultiplePhenoTool", JOINT_TOOL)
+        legs = [_page(["only-a"], 1), _page(["only-b"], 1)]
+        calls = {"n": 0}
+
+        def fake(endpoint_url, variables=None):
+            calls["n"] += 1
+            return legs[min(calls["n"] - 1, len(legs) - 1)]
+
+        with patch("tooluniverse.restful_tool.execute_RESTful_query", fake):
+            result = tool.run(
+                {"HPO_ID_list": ["HP:1", "HP:2", "HP:3", "HP:4"], "limit": 5}
+            )
+
+        self.assertEqual(result, [])
+        self.assertEqual(calls["n"], 2, "kept paging after the intersection emptied")
+
+
 class TestUpstreamValidationBodyIsNotSuccess(unittest.TestCase):
     def _search_tool(self):
         return _tool("MonarchTool", SEARCH_TOOL)
@@ -150,6 +226,71 @@ class TestUpstreamValidationBodyIsNotSuccess(unittest.TestCase):
             tool.run({"query": "seizure", "limit": 167})
 
         self.assertLessEqual(sent["limit"], _MONARCH_MAX_LIMIT)
+
+    def test_unsatisfiable_limit_errors_instead_of_returning_a_short_page(self):
+        """A limit this tool cannot serve must fail like its sibling does.
+
+        Clamping alone made get_HPO_ID_by_phenotype answer limit=600 with 490
+        items under status:"success" and no note, while Monarch_search_gene --
+        same class, no result_id_prefix, so no clamp -- errored on the same
+        request. Two tools on one class must not disagree about the contract.
+        """
+        from tooluniverse.restful_tool import _MONARCH_MAX_LIMIT
+
+        tool = self._search_tool()
+        called = []
+
+        def fake(endpoint_url, variables=None):
+            called.append(variables)
+            return {"items": [], "total": 0}
+
+        for bad in (_MONARCH_MAX_LIMIT + 1, 1000, 0, -5):
+            with patch("tooluniverse.restful_tool.execute_RESTful_query", fake):
+                result = tool.run({"query": "abnormality", "limit": bad})
+            self.assertEqual(result["status"], "error", f"limit={bad}")
+            self.assertIn("limit", result["error"])
+        self.assertEqual(called, [], "an unsatisfiable limit still hit the network")
+
+    def test_negative_limit_never_reaches_the_wire(self):
+        """limit=-5 used to put the inflated -15 upstream."""
+        tool = self._search_tool()
+        post = MagicMock(return_value={"items": [], "total": 0})
+        with patch("tooluniverse.restful_tool.execute_RESTful_query", post):
+            result = tool.run({"query": "seizure", "limit": -5})
+        self.assertEqual(result["status"], "error")
+        post.assert_not_called()
+        self.assertNotIn("-15", json.dumps(result))
+
+    def test_short_page_after_namespace_filtering_is_disclosed(self):
+        """490 of a requested 500 must not pass for a complete page."""
+        tool = self._search_tool()
+        # 500 fetched (the ceiling), only 490 survive the HP: filter.
+        items = [{"id": "HP:%07d" % i} for i in range(490)]
+        items += [{"id": "MP:%07d" % i} for i in range(10)]
+        with patch(
+            "tooluniverse.restful_tool.execute_RESTful_query",
+            return_value={"items": items, "total": 3959},
+        ):
+            result = tool.run({"query": "abnormality", "limit": 500})
+
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(len(result["data"]["items"]), 490)
+        self.assertIn("note", result)
+        self.assertIn("490", result["note"])
+        self.assertIn("500", result["note"])
+
+    def test_complete_page_carries_no_note(self):
+        tool = self._search_tool()
+        with patch(
+            "tooluniverse.restful_tool.execute_RESTful_query",
+            return_value={
+                "items": [{"id": "HP:%07d" % i} for i in range(60)],
+                "total": 60,
+            },
+        ):
+            result = tool.run({"query": "seizure", "limit": 20})
+        self.assertEqual(len(result["data"]["items"]), 20)
+        self.assertNotIn("note", result)
 
     def test_small_limits_still_over_fetch(self):
         tool = self._search_tool()
