@@ -46,9 +46,34 @@ EREPO_BASE_URL = "https://erepo.clinicalgenome.org/evrepo/api"
 # 13,084 rows, so this cap covers any gene-scoped query outright.
 _EREPO_MATCH_LIMIT = 5000
 
-# `data` stays capped so a gene query cannot return tens of MB; `total` now
-# reports the real count beside it and the gap is disclosed explicitly.
-_EREPO_MAX_PUBLISHED = 100
+# `data` stays capped so a listing cannot return tens of MB; `total` reports the
+# real count beside it and the gap is now disclosed rather than left to be
+# inferred from counting rows.
+_MAX_PUBLISHED = 100
+
+
+def _published(rows: List[Dict[str, Any]], narrow_hint: str) -> Dict[str, Any]:
+    """Publish a capped slice of `rows` and state the cap beside the total.
+
+    Every listing in this module caps `data` for payload size while reporting
+    the full `total` next to it. Undisclosed, that reads as a total which
+    disagrees with the rows printed beside it: ClinGen_get_gene_validity
+    published `total: 3659` directly above exactly 100 rows, on a tool whose
+    own description promises a "comprehensive list".
+    """
+    published = rows[:_MAX_PUBLISHED]
+    result: Dict[str, Any] = {
+        "data": published,
+        "total": len(rows),
+        "returned": len(published),
+    }
+    if len(published) < len(rows):
+        result["data_truncated"] = True
+        result["data_truncation_note"] = (
+            f"`total` is the full count for this query; `data` carries only the "
+            f"first {len(published)} of them. {narrow_hint}"
+        )
+    return result
 
 
 def _variant_query_param(variant: Any) -> tuple:
@@ -133,8 +158,11 @@ class ClinGenTool(BaseTool):
 
             return {
                 "status": "success",
-                "data": curations[:100],  # Limit to first 100 for performance
-                "total": len(curations),
+                **_published(
+                    curations,
+                    "Pass `gene` to narrow to one gene's curations, or use "
+                    "ClinGen_search_gene_validity, which returns every match.",
+                ),
                 "source": "ClinGen Gene-Disease Validity",
             }
         except requests.exceptions.Timeout:
@@ -226,8 +254,10 @@ class ClinGenTool(BaseTool):
 
             return {
                 "status": "success",
-                "data": curations[:100],  # Limit for performance
-                "total": len(curations),
+                **_published(
+                    curations,
+                    "Pass `gene` to narrow to one gene's dosage curations.",
+                ),
                 "include_regions": include_regions,
                 "source": "ClinGen Dosage Sensitivity",
             }
@@ -357,8 +387,10 @@ class ClinGenTool(BaseTool):
 
             return {
                 "status": "success",
-                "data": curations[:100],
-                "total": len(curations),
+                **_published(
+                    curations,
+                    "Pass `gene` to narrow to one gene's actionability curations.",
+                ),
                 "context": context,
                 "source": f"ClinGen Clinical Actionability ({context})",
             }
@@ -541,23 +573,16 @@ class ClinGenTool(BaseTool):
             items = payload.get("variantInterpretations", [])
 
             data = [self._flatten_classification(item) for item in items]
-            published = data[:_EREPO_MAX_PUBLISHED]
 
             result = {
                 "status": "success",
-                "data": published,
-                "total": len(data),
-                "returned": len(published),
+                **_published(
+                    data,
+                    "Pass `variant` (a ClinGen CAID, a ClinVar VariationID or an "
+                    "HGVS/protein-change string) to retrieve a specific row.",
+                ),
                 "source": "ClinGen Evidence Repository",
             }
-            if len(published) < len(data):
-                result["data_truncated"] = True
-                result["data_truncation_note"] = (
-                    f"`total` is the full count ClinGen returned for this query; "
-                    f"`data` carries only the first {len(published)} of them. "
-                    "Pass `variant` (a ClinGen CAID, a ClinVar VariationID or an "
-                    "HGVS/protein-change string) to retrieve a specific row."
-                )
             if len(data) >= _EREPO_MATCH_LIMIT:
                 result["total_is_a_lower_bound"] = True
                 result["total_note"] = (
