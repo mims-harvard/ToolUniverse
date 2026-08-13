@@ -13,11 +13,6 @@ Measured live against eutils esearch.fcgi on 2026-08-13:
       errorlist   {"phrasesnotfound": ["rs180056600"], "fieldsnotfound": []}
       warninglist null
 
-    term  "zzzqqqxyz toluene diisocyanate nonexistentterm12345"
-      count 1477
-      errorlist   {"phrasesnotfound": ["zzzqqqxyz", "nonexistentterm12345"]}
-      warninglist null
-
     term  '"a nonexistent quoted phrase xyzzy"'
       count 0
       errorlist   null
@@ -26,8 +21,15 @@ Measured live against eutils esearch.fcgi on 2026-08-13:
 
 An industrial hygienist asking for a named susceptibility variant received
 four papers that do not mention it, and a `metadata` block whose only keys were
-count, total, query and source. The second query is worse: 1,477 hits for a
-question two thirds of which was discarded.
+count, total, query and source.
+
+Fix-54A-1 moved the formatting into the shared
+`tooluniverse.ncbi_eutils_tool.esearch_query_disclosure`, where the formatter's
+own behaviour is now covered once, in
+`tests/unit/test_eutils_dropped_terms_disclosed.py`. What remains here is what
+is specific to PubMed: that its entry point still routes through that formatter
+and still labels the warning "PubMed", and the `quotedphrasesnotfound` fixture,
+which no other test in the suite exercises.
 
 These tests call the pure static formatter, so no request is made.
 """

@@ -118,7 +118,8 @@ def test_a_coded_value_is_quoted_without_changing_the_answer():
     Measured: serious:1 and serious:"1" both return 11,882,961; the same held
     for patientsex, agegroup, route 048, reactionoutcome, qualification,
     drugcharacterization, fulfillexpeditecriteria, occurcountry and a numeric
-    patientonsetage. Pinned so the range stays the ONLY exemption.
+    patientonsetage. Pinned so a range stays the only exemption among STRING
+    values -- non-strings are covered separately, just below.
     """
     assert _render_clause("serious", "1") == 'serious:"1"'
 

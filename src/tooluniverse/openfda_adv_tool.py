@@ -321,7 +321,9 @@ def _render_clause(fda_field_name, value):
     outnumbering its own components is the tell; the same held for
     metoprolol-hydrochlorothiazide (595,912) vs metoprolol alone (371,421).
 
-    Quoting is now the default and the range exemption is the only carve-out.
+    Quoting is now the default for STRING values, with a Lucene range as the
+    only carve-out among them; a non-string value (an int age, say) is still
+    rendered bare, since only a string can carry an operator character.
     The cost of widening it was measured over every other value shape these
     builders send -- single-token drug names, generic_name, brand_name, single
     and multi-word reaction terms, all eight HUMAN_TO_FDA_MAP coded values

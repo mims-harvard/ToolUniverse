@@ -65,6 +65,12 @@ def esearch_query_disclosure(
     ``errorlist: null`` when nothing was dropped, so this disclosure is silent
     on unaffected queries by construction.
 
+    A fifteenth probe, ``taxonomy`` with "Homo sapiens <2 nonsense>", was the
+    only one to end with zero hits, and it populated BOTH containers at once
+    (``errorlist.phrasesnotfound`` listing all four words, and ``warninglist``
+    with ``outputmessages: ["No items found."]``) -- so the two must not be
+    treated as mutually exclusive.
+
     Reading this costs no extra request: the containers are already present in
     the esearch response every caller here parses.
 
@@ -72,8 +78,11 @@ def esearch_query_disclosure(
     an unrecognised ``[field]`` tag is dropped, not honoured, so the results are
     not restricted the way the caller asked.
 
-    Returns an empty dict when NCBI reported nothing, so unaffected responses
-    keep their existing shape.
+    Returns an empty dict unless NCBI reported an actual alteration -- a
+    dropped phrase, an ignored phrase, a dropped term or an unrecognised field
+    -- so unaffected responses keep their existing shape. A zero-hit search is
+    NOT an alteration, however loudly NCBI announces it; see Fix-54A-2 at the
+    guard below.
     """
     if not isinstance(esearch_result, dict):
         return {}
@@ -91,7 +100,24 @@ def esearch_query_disclosure(
     terms_dropped = _as_list(error_list.get("phrasesnotfound"))
     fields_dropped = _as_list(error_list.get("fieldsnotfound"))
 
-    if not (not_found or ignored or messages or terms_dropped or fields_dropped):
+    # Fix-54A-2: `outputmessages` must NOT gate this on its own. NCBI emits
+    # `warninglist.outputmessages: ["No items found."]` on EVERY zero-hit
+    # search, including one it executed exactly as submitted -- measured live:
+    #
+    #     term "cystic fibrosis AND 1500[dp]"
+    #       -> count 0, errorlist null,
+    #          warninglist {"phrasesignored": [], "quotedphrasesnotfound": [],
+    #                       "outputmessages": ["No items found."]}
+    #
+    # Gating on it made every empty search claim
+    # `query_not_executed_as_submitted: True` with the warning "No items
+    # found.", which is the opposite of what that flag means: the query WAS
+    # run as asked, it simply matched nothing. Only an actual alteration --
+    # a dropped phrase, an ignored phrase, a dropped term or an unrecognised
+    # field -- is a disclosure. `outputmessages` is carried alongside one of
+    # those when present, but never creates the block by itself, which is what
+    # keeps a clean response's shape unchanged.
+    if not (not_found or ignored or terms_dropped or fields_dropped):
         return {}
 
     metadata: Dict[str, Any] = {}

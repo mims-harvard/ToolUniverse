@@ -506,7 +506,7 @@ class PubMedRESTTool(BaseRESTTool):
         """Surface NCBI's own report that it did not run the query as asked.
 
         Fix-54A-1: this parsing was PubMed-only, but every eutils database
-        behaves identically -- measured across fourteen of them -- and eleven
+        behaves identically -- measured across fourteen of them -- and twelve
         other modules here parse esearch responses without reading either
         disclosure container. The logic now lives in one place,
         :func:`~tooluniverse.ncbi_eutils_tool.esearch_query_disclosure`, which
@@ -516,10 +516,11 @@ class PubMedRESTTool(BaseRESTTool):
         ncbi_sra, ncbi_nucleotide, epigenomics' four GEO searches, and this
         one). Still unwired, all confirmed to parse ``esearchresult`` and build
         their own payload, all with a measured database in that table:
-        ``clinvar_tool``, ``dbsnp_tool``, ``pmc_tool``, ``geo_tool`` and
-        ``unified_guideline_tools``. ``pmc_tool`` and ``icite_tool`` return a
-        bare list with nowhere to put the disclosure, so wiring them is a
-        response-shape change rather than an additive one.
+        ``clinvar_tool``, ``dbsnp_tool``, ``pmc_tool``, ``geo_tool``,
+        ``unified_guideline_tools``, ``clinical_society_tools`` and
+        ``icite_tool``. ``pmc_tool`` and ``icite_tool`` return a bare list with
+        nowhere to put the disclosure, so wiring them is a response-shape
+        change rather than an additive one.
 
         Note this method splats its result flat into ``metadata`` while the six
         new sites nest it under a ``query_disclosure`` key. One helper, two

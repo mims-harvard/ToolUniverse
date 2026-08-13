@@ -23,6 +23,7 @@ ran and then putting the SUBMITTED query in it (CLI-verified before the fix):
 
     NCBI_search_nucleotide   data.search_term
       "BRCA1 zzzqqqxyz nonexistentterm12345"        count 66893
+                                            (= "BRCA1" alone, 66893)
     NCBI_SRA_search_runs     data.search_term
       "(RNA-seq zzzqqqxyz nonexistentterm12345)"    count 7209038
     SRA_search_experiments   data.query_used
@@ -39,7 +40,7 @@ pytestmark = pytest.mark.unit
 
 # Verbatim esearchresult fragments from the live responses above.
 _NUCCORE_TWO_DROPPED = {
-    "count": "7359",
+    "count": "66893",
     "idlist": ["2194972897"],
     "querytranslation": "BRCA1[All Fields]",
     "errorlist": {
@@ -50,11 +51,30 @@ _NUCCORE_TWO_DROPPED = {
 }
 
 _CLEAN = {
-    "count": "7359",
+    "count": "66893",
     "idlist": ["2194972897"],
     "querytranslation": "BRCA1[All Fields]",
     "errorlist": None,
     "warninglist": None,
+}
+
+# A zero-hit search that NCBI ran EXACTLY as submitted. It still populates
+# `outputmessages`, which is why that field must not gate the disclosure.
+# Verbatim from db=pubmed, term "cystic fibrosis AND 1500[dp]".
+_ZERO_HITS_NOTHING_DROPPED = {
+    "count": "0",
+    "idlist": [],
+    "querytranslation": (
+        '("cystic fibrosis"[MeSH Terms] OR ("cystic"[All Fields] AND '
+        '"fibrosis"[All Fields]) OR "cystic fibrosis"[All Fields]) AND '
+        "1500/01/01:1500/12/31[Date - Publication]"
+    ),
+    "errorlist": None,
+    "warninglist": {
+        "phrasesignored": [],
+        "quotedphrasesnotfound": [],
+        "outputmessages": ["No items found."],
+    },
 }
 
 # taxonomy, the one probe that came back with zero hits, populated BOTH
@@ -75,8 +95,29 @@ _ZERO_HIT_BOTH_CONTAINERS = {
 }
 
 
+def test_a_zero_hit_search_run_as_submitted_is_not_called_an_alteration():
+    """Fix-54A-2: `outputmessages` fires on EVERY zero-hit search.
+
+    NCBI answers a query it ran exactly as asked, which simply matched
+    nothing, with `warninglist.outputmessages: ["No items found."]` and no
+    errorlist. Gating the disclosure on that made every empty search claim
+    `query_not_executed_as_submitted: True` -- the precise opposite of the
+    truth, and the claim is loudest exactly where it is most wrong. Round 53
+    shipped this for PubMed; round 54 would have spread it to seven tools.
+    """
+    assert esearch_query_disclosure(_ZERO_HITS_NOTHING_DROPPED, source="PubMed") == {}
+
+
+def test_a_zero_hit_search_that_did_drop_a_term_still_reports_it():
+    """The guard must not silence the case that matters: zero hits AND a
+    dropped term is still an alteration worth disclosing."""
+    meta = esearch_query_disclosure(_ZERO_HIT_BOTH_CONTAINERS, source="taxonomy")
+    assert meta["query_not_executed_as_submitted"] is True
+    assert meta["ncbi_messages"] == ["No items found."]
+
+
 def test_terms_dropped_while_hits_remain_are_reported():
-    """The errorlist case: 7,359 nuccore records for a query two thirds gone."""
+    """The errorlist case: 66,893 nuccore records for a query two thirds gone."""
     meta = esearch_query_disclosure(_NUCCORE_TWO_DROPPED, source="nuccore")
     assert meta["terms_not_found"] == ["zzzqqqxyz", "nonexistentterm12345"]
     assert meta["query_not_executed_as_submitted"] is True
