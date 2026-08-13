@@ -367,6 +367,16 @@ def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
     """eGFR by CKD-EPI 2021 creatinine equation, race-free (Inker 2021)."""
     scr = _req_number(a, "creatinine")  # mg/dL
     age = _req_number(a, "age")
+    # The equation raises scr/kappa to a fractional power, so a non-positive
+    # creatinine produced a complex number and the tool answered with the
+    # Python internals of that: "ckd_epi calculation error: type complex
+    # doesn't define __round__ method", which names neither the parameter nor
+    # the constraint.
+    if scr <= 0:
+        raise ValueError(
+            f"'creatinine' must be greater than 0 mg/dL, got {scr}. "
+            "CKD-EPI is undefined at or below zero."
+        )
     female, sex_note = _resolve_sex(a)
     kappa = 0.7 if female else 0.9
     alpha = -0.241 if female else -0.302
@@ -378,7 +388,17 @@ def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
         * (1.012 if female else 1.0)
     )
     egfr = round(egfr, 1)
-    if egfr >= 90:
+    # A GFR above ~150 is not a human physiological value; it means the inputs
+    # are wrong, not that the kidneys are normal. Reporting "CKD stage G1
+    # (normal)" for an eGFR of 240 -- which creatinine 0.01 mg/dL produces --
+    # is affirmatively wrong rather than merely unqualified, so the band is
+    # named for what it is instead of being folded into G1.
+    if egfr > 150:
+        stage = (
+            "not stageable (above the physiological range; "
+            "check the creatinine value and units)"
+        )
+    elif egfr >= 90:
         stage = "G1 (normal, >=90)"
     elif egfr >= 60:
         stage = "G2 (mild, 60-89)"
@@ -394,6 +414,37 @@ def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
     extra = {"unit": "mL/min/1.73m^2"}
     if sex_note:
         extra["assumptions"] = [sex_note]
+    # Conditions under which the number is computable but should not be read as
+    # a measurement of this patient's kidney function. Each is silent today, and
+    # each pushes eGFR in the direction that causes renally-cleared drugs to be
+    # overdosed.
+    caveats = []
+    if age < 18:
+        caveats.append(
+            f"Age {age:g} is outside CKD-EPI's adult derivation population; the "
+            "equation is not valid in paediatrics -- use a paediatric estimate "
+            "(e.g. the CKiD/Schwartz bedside equation) instead."
+        )
+    elif age > 100:
+        caveats.append(
+            f"Age {age:g} is beyond the ages CKD-EPI 2021 was derived in; the "
+            "age term extrapolates and the result is not validated."
+        )
+    if scr < 0.2:
+        caveats.append(
+            f"Serum creatinine {scr:g} mg/dL is below the lower limit of "
+            "quantitation of routine assays; the result is driven by a value "
+            "no laboratory reports."
+        )
+    elif scr < 0.6 and age >= 65:
+        caveats.append(
+            "Creatinine-based eGFR overestimates true GFR when muscle mass is "
+            "low, which is common in the elderly, so this value is likely an "
+            "overestimate -- consider cystatin C before dosing renally-cleared "
+            "drugs."
+        )
+    if caveats:
+        extra["caveats"] = caveats
     return _ok(
         egfr,
         f"eGFR {egfr} mL/min/1.73m^2 — CKD stage {stage}",

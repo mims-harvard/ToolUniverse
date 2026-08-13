@@ -421,10 +421,10 @@
   },
   {
     "name": "ClinicalCalc_eGFR_CKD_EPI",
-    "description": "Estimated glomerular filtration rate (eGFR) by the CKD-EPI 2021 creatinine equation (race-free, Inker 2021), with CKD stage (G1-G5). Inputs: serum creatinine, age, sex. Reported in mL/min/1.73m^2.",
+    "description": "Estimated glomerular filtration rate (eGFR) by the CKD-EPI 2021 creatinine equation (race-free, Inker 2021), with CKD stage (G1-G5). Inputs: serum creatinine, age, sex. Reported in mL/min/1.73m^2. Results above 150 are reported as 'not stageable' rather than G1, and inputs outside the equation's validated range return a 'caveats' list - read it before using the value for renal dose adjustment.",
     "parameter": {"type": "object", "properties": {
-      "creatinine": {"type": "number", "description": "Serum creatinine in mg/dL"},
-      "age": {"type": "number", "description": "Age in years"},
+      "creatinine": {"type": "number", "description": "Serum creatinine in mg/dL. Must be greater than 0; a value below 0.2 is under the quantitation limit of routine assays and is returned with a caveat."},
+      "age": {"type": "number", "description": "Age in years. CKD-EPI 2021 was derived in adults; an age under 18 or over 100 still returns a value but carries a caveat saying the equation is not validated there."},
       "female": {"type": "boolean", "description": "Female sex (legacy boolean; equivalent to sex='female'). If both 'female' and 'sex' are given they must agree."},
       "sex": {"type": "string", "description": "Biological sex: 'female'/'f' or 'male'/'m' (case-insensitive). Preferred over 'female'. If neither 'sex' nor 'female' is supplied, male is assumed by default and the response's 'assumptions' field discloses this — this materially changes the eGFR value."}
     }, "required": ["creatinine", "age"]},
@@ -451,6 +451,13 @@
             },
             "unit": {
               "type": "string"
+            },
+            "caveats": {
+              "type": "array",
+              "description": "Present only when an input falls outside the equation's validated range or below an assay's reporting limit. Each entry names the condition and what to use instead; 'score' is still computed.",
+              "items": {
+                "type": "string"
+              }
             },
             "assumptions": {
               "type": "array",

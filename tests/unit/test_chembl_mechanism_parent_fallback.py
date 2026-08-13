@@ -10,7 +10,29 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from tooluniverse import chem_tool
 from tooluniverse.chem_tool import ChEMBLRESTTool
+
+
+@pytest.fixture(autouse=True)
+def _seed_chembl_filter_fields():
+    """Serve /mechanism's filter list locally so this file stays offline.
+
+    ChEMBLRESTTool.run checks its query against ChEMBL's published filter list
+    for the resource. These tests patch `request_with_retry`, which the schema
+    lookup also uses, but the lookup happens before the patched call is made --
+    seeding the cache keeps the check exercised without a live request. Values
+    verified against https://www.ebi.ac.uk/chembl/api/data/mechanism/schema.json
+    """
+    chem_tool._CHEMBL_FILTER_FIELDS["mechanism"] = {
+        "action_type",
+        "mechanism_of_action",
+        "molecule_chembl_id",
+        "parent_molecule_chembl_id",
+        "target_chembl_id",
+    }
+    yield
+    chem_tool._CHEMBL_FILTER_FIELDS.clear()
 
 
 def _tool():

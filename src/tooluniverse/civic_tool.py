@@ -248,8 +248,21 @@ class CIViCTool(BaseTool):
         cursor = None
         gene_meta: Dict[str, Any] = {}
         total_count: Optional[int] = None
+        # Page budget. The loop's only exits were "hasNextPage is false" and "no
+        # endCursor", both of which are the server's to give: a page carrying
+        # zero nodes with hasNextPage true never grows all_nodes, and a server
+        # repeating the same endCursor never advances, so either one spins this
+        # request forever inside a tool the harness itself calls. The budget is
+        # derived from the caller's own limit rather than fixed, so it cannot
+        # truncate a request that is making progress -- ceil(limit/PAGE_SIZE)
+        # full pages suffice by construction, and the spare page absorbs a
+        # short page from server-side filtering. Reaching it means the pages
+        # stopped advancing.
+        max_pages = -(-limit // PAGE_SIZE) + 1
         try:
-            while len(all_nodes) < limit:
+            for _ in range(max_pages):
+                if len(all_nodes) >= limit:
+                    break
                 fetch = min(PAGE_SIZE, limit - len(all_nodes))
                 variables: Dict[str, Any] = {
                     "gene_id": gene_id,
@@ -283,11 +296,12 @@ class CIViCTool(BaseTool):
                 nodes = variants_block.get("nodes", [])
                 all_nodes.extend(nodes)
                 page_info = variants_block.get("pageInfo", {})
-                if not page_info.get("hasNextPage"):
+                if not page_info.get("hasNextPage") or not nodes:
                     break
-                cursor = page_info.get("endCursor")
-                if not cursor:
+                next_cursor = page_info.get("endCursor")
+                if not next_cursor or next_cursor == cursor:
                     break
+                cursor = next_cursor
             # Feature-46B-01: deduplicate by variant ID (prevents pagination overlap artifacts)
             seen_ids: set = set()
             deduped: list = []
