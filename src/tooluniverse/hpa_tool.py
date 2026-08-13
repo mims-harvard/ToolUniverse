@@ -1784,7 +1784,8 @@ class HPAGetProteinInteractionsTool(HPASearchApiTool):
             "error": (
                 "HPA protein-protein interaction data (ppi column) is no longer available "
                 "via the HPA search API. Use EBIProteins_get_interactions with a UniProt "
-                "accession, or STRING_get_interactions with a gene symbol instead."
+                "accession, or STRING_get_protein_interactions with a gene symbol "
+                "in 'protein_ids' instead."
             ),
         }
 

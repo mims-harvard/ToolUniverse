@@ -1268,7 +1268,7 @@
       "properties": {
         "cluster_id": {
           "type": "string",
-          "description": "UniRef cluster ID (e.g., 'UniRef50_P04637', 'UniRef90_P04637', 'UniRef100_P04637'). Use UniProt_get_uniref_search to find cluster IDs."
+          "description": "UniRef cluster ID (e.g., 'UniRef50_P04637', 'UniRef90_P04637', 'UniRef100_P04637'). Use UniProt_search_uniref to find cluster IDs."
         }
       },
       "required": [

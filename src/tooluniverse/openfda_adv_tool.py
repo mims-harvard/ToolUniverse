@@ -261,6 +261,78 @@ def faers_drug_name_clause(drug_name, joiner="+OR+"):
     )
 
 
+def faers_meta_total(payload):
+    """openFDA's ``meta.results.total``, or None when it does not report one.
+
+    One home for an extraction that had drifted into three variants inside this
+    package on the day it was written: ``_fetch_query_total`` below omitted the
+    bool exclusion, and ``openfda_approval_tool`` defaulted to 0 -- and 0 is the
+    one value this must never invent, because "openFDA did not say" and "nothing
+    matched" are different answers.
+    """
+    total = ((payload or {}).get("meta") or {}).get("results", {}).get("total")
+    if isinstance(total, bool) or not isinstance(total, int):
+        return None
+    return total
+
+
+def faers_detail_envelope(reports, total, limit, skip):
+    """Wrap a page of FAERS case reports with the size of the set it came from.
+
+    Fix-R55B-1: the six ``FAERS_search_*`` detail tools returned the page as a
+    bare list and dropped openFDA's ``meta.results.total`` on the floor, so a
+    page was indistinguishable from the complete answer. Measured live against
+    api.fda.gov on 2026-08-13, co-occurrence searches at the default limit of
+    10::
+
+        rifampin + methadone      10 returned, meta.results.total = 35
+        clozapine + fluvoxamine   10 returned, meta.results.total = 736
+        warfarin + amiodarone     10 returned, meta.results.total = 5941
+
+    A pharmacovigilance reviewer asking "how often are warfarin and amiodarone
+    co-reported" received ten case reports with nothing to say the answer was
+    5941 -- an understatement of the signal by more than two orders of
+    magnitude, presented as a complete result.
+
+    The total costs no extra request: openFDA already returns it in the same
+    response body these tools were parsing for ``results``. It is deliberately
+    NOT written into the ``_query_total_memo`` shared with the ``count=``
+    aggregation tools, because those build a differently-shaped search string
+    for the same question and a total filed under a near-miss key is worse than
+    no cache hit.
+
+    Key names are the repo-wide disclosure vocabulary -- ``count``,
+    ``total_available``, ``truncated``, ``truncation_note`` -- as used by
+    ``BaseRESTTool._apply_pagination_disclosure`` and
+    ``CBioPortalRESTTool._truncation_fields``. That method cannot be called
+    here: it derives ``truncated`` as ``returned < total`` with no offset
+    concept, which would report the last ``skip`` page of a FAERS search as
+    partial.
+
+    ``total_available`` is None when openFDA omits ``meta.results.total``; None
+    means "not reported", never zero.
+    """
+    count = len(reports)
+    envelope = {
+        "status": "success",
+        "reports": reports,
+        "count": count,
+        "total_available": total,
+        "limit": limit,
+        "skip": skip,
+        "truncated": total is not None and skip + count < total,
+    }
+    if envelope["truncated"]:
+        envelope["truncation_note"] = (
+            f"Partial result: reports {skip + 1}-{skip + count} of "
+            f"{total} matching this search. Page through the rest with "
+            f"'skip' (limit is capped at 100 per request), or use the "
+            f"FAERS_count_* tools if you need aggregate counts rather than "
+            f"individual case narratives."
+        )
+    return envelope
+
+
 def _is_error_payload(payload):
     """True when ``_search`` returned an error sentinel rather than count rows."""
     return (
@@ -686,8 +758,8 @@ class FDADrugAdverseEventTool(BaseTool):
                 _memoize_report_total(memo_key, 0)
                 return 0
             response.raise_for_status()
-            total = response.json().get("meta", {}).get("results", {}).get("total")
-            if not isinstance(total, int):
+            total = faers_meta_total(response.json())
+            if total is None:
                 return None
             _memoize_report_total(memo_key, total)
             return total
@@ -1299,7 +1371,7 @@ class FDADrugAdverseEventDetailTool(BaseTool):
         # Validate enum parameters
         validation_error = self.validate_enum_arguments(arguments)
         if validation_error:
-            return [{"error": validation_error}]
+            return {"status": "error", "error": validation_error}
 
         response = self._search(arguments)
         return response
@@ -1313,18 +1385,14 @@ class FDADrugAdverseEventDetailTool(BaseTool):
                     return f"Invalid value '{value}' for parameter '{param_name}'. Allowed values are: {', '.join(allowed_values)}"
         return None
 
-    def _search(self, arguments):
-        # Extract limit and skip from arguments
-        limit = arguments.pop("limit", 10)
-        skip = arguments.pop("skip", 0)
+    def _build_search_query(self, arguments):
+        """Render the Lucene query for one detail search.
 
-        # Validate limit
-        if not isinstance(limit, int) or limit < 1 or limit > 100:
-            return [{"error": "limit must be an integer between 1 and 100"}]
-        if not isinstance(skip, int) or skip < 0:
-            return [{"error": "skip must be a non-negative integer"}]
-
-        # Build search query
+        Returns ``(error_message, query)``; subclasses asking a different
+        question override only this. ``arguments`` arrives with ``limit`` and
+        ``skip`` already removed, matching the contract
+        ``FDACountAdditiveReactionsTool`` already has with its own parent.
+        """
         search_parts = []
         for param_name, value in arguments.items():
             # Only forward parameters defined in the search-field map; an
@@ -1341,7 +1409,7 @@ class FDADrugAdverseEventDetailTool(BaseTool):
             # (for proper enum mapping)
             mapping_error, mapped_value = self._map_value(fda_field, value)
             if mapping_error:
-                return [{"error": mapping_error}]
+                return mapping_error, ""
             if mapped_value is None:
                 continue  # Skip this field if instructed
 
@@ -1350,7 +1418,25 @@ class FDADrugAdverseEventDetailTool(BaseTool):
             search_parts.append(_render_field_group(fda_fields, mapped_value))
 
         # Final search query - join different parameters with AND
-        search_query = "+AND+".join(search_parts)
+        return None, "+AND+".join(search_parts)
+
+    def _search(self, arguments):
+        # Extract limit and skip from arguments
+        limit = arguments.pop("limit", 10)
+        skip = arguments.pop("skip", 0)
+
+        # Validate limit
+        if not isinstance(limit, int) or limit < 1 or limit > 100:
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 100",
+            }
+        if not isinstance(skip, int) or skip < 0:
+            return {"status": "error", "error": "skip must be a non-negative integer"}
+
+        error, search_query = self._build_search_query(arguments)
+        if error:
+            return {"status": "error", "error": error}
         search_encoded = urllib.parse.quote(search_query, safe='+:"')
 
         # Build URL with limit and skip (not count)
@@ -1367,19 +1453,22 @@ class FDADrugAdverseEventDetailTool(BaseTool):
         # API request
         try:
             response = requests.get(url)
-            # Handle 404 as "no matches found" - return empty list instead of error
+            # 404 is openFDA's "no matches found", not a server error. It is a
+            # real, complete answer -- zero reports matched -- so it reports a
+            # total of 0 rather than the "not reported" None.
             if response.status_code == 404:
                 try:
                     error_data = response.json()
                     if "error" in error_data and "No matches found" in str(
                         error_data.get("error", {})
                     ):
-                        return []  # Return empty list for no matches
+                        return faers_detail_envelope([], 0, limit, skip)
                 except (ValueError, KeyError):
                     pass
             response.raise_for_status()
             response_data = response.json()
             results = response_data.get("results", [])
+            total = faers_meta_total(response_data)
 
             # If return_fields is specified, filter the results
             if self.return_fields:
@@ -1404,7 +1493,7 @@ class FDADrugAdverseEventDetailTool(BaseTool):
                             filtered_result[field] = value
                     if filtered_result:
                         filtered_results.append(filtered_result)
-                return filtered_results
+                return faers_detail_envelope(filtered_results, total, limit, skip)
 
             # Extract essential fields if configured
             extract_essential = self.tool_config.get("fields", {}).get(
@@ -1413,9 +1502,9 @@ class FDADrugAdverseEventDetailTool(BaseTool):
             if extract_essential:
                 results = [self._extract_essential_fields(r) for r in results]
 
-            return results
+            return faers_detail_envelope(results, total, limit, skip)
         except requests.exceptions.RequestException as e:
-            return [{"error": f"API request failed: {str(e)}"}]
+            return {"status": "error", "error": f"API request failed: {str(e)}"}
 
     def _extract_essential_fields(self, report):
         """
@@ -1593,77 +1682,32 @@ class FDADrugAdverseEventDetailTool(BaseTool):
 
 
 @register_tool("FDADrugInteractionDetailTool")
-class FDADrugInteractionDetailTool(BaseTool):
+class FDADrugInteractionDetailTool(FDADrugAdverseEventDetailTool):
+    """Detailed FAERS reports where several drugs co-occur on the SAME report.
+
+    Identical to its parent apart from the question it asks, so it overrides
+    only ``_build_search_query``. It used to be a sibling ``BaseTool`` holding
+    a byte-identical copy of ``__init__``, ``run``, ``validate_enum_arguments``,
+    ``_search``'s request/response handling and all five field-extraction
+    helpers -- 318 duplicated lines, which meant every fix to a FAERS detail
+    tool had to be made twice and could silently be made only once.
+    ``FDACountAdditiveReactionsTool`` already relates to its own parent this
+    way.
     """
-    Tool for retrieving detailed adverse event reports involving multiple drugs (drug interactions).
-    Uses limit/skip parameters instead of count aggregation.
-    """
 
-    def __init__(
-        self,
-        tool_config,
-        endpoint_url="https://api.fda.gov/drug/event.json",
-        api_key=None,
-    ):
-        super().__init__(tool_config)
-        self.tool_config = tool_config
-        self.endpoint_url = endpoint_url
-        self.api_key = api_key or os.getenv("FDA_API_KEY")
-        self.search_fields = tool_config.get("fields", {}).get("search_fields", {})
-        self.return_fields = tool_config.get("fields", {}).get("return_fields", [])
-
-        # Store allowed enum values
-        self.parameter_enums = {}
-        if "parameter" in tool_config and "properties" in tool_config["parameter"]:
-            for param_name, param_def in tool_config["parameter"]["properties"].items():
-                if "enum" in param_def:
-                    self.parameter_enums[param_name] = param_def["enum"]
-
-    def run(self, arguments):
-        arguments = copy.deepcopy(arguments)
-
-        # Validate enum parameters
-        validation_error = self.validate_enum_arguments(arguments)
-        if validation_error:
-            return [{"error": validation_error}]
-
-        response = self._search(arguments)
-        return response
-
-    def validate_enum_arguments(self, arguments):
-        """Validate that enum-based arguments match the allowed values"""
-        for param_name, value in arguments.items():
-            if param_name in self.parameter_enums and value is not None:
-                allowed_values = self.parameter_enums[param_name]
-                if value not in allowed_values:
-                    return f"Invalid value '{value}' for parameter '{param_name}'. Allowed values are: {', '.join(allowed_values)}"
-        return None
-
-    def _search(self, arguments):
-        # Extract limit and skip from arguments
-        limit = arguments.pop("limit", 10)
-        skip = arguments.pop("skip", 0)
-
-        # Validate limit
-        if not isinstance(limit, int) or limit < 1 or limit > 100:
-            return [{"error": "limit must be an integer between 1 and 100"}]
-        if not isinstance(skip, int) or skip < 0:
-            return [{"error": "skip must be a non-negative integer"}]
-
-        # Extract medicinalproducts list
+    def _build_search_query(self, arguments):
+        """AND the per-drug clauses: was every named drug on the same report?"""
         drugs = arguments.pop("medicinalproducts", [])
         if not drugs:
-            return [{"error": "medicinalproducts list is required"}]
+            return "medicinalproducts list is required", ""
         if not isinstance(drugs, list) or len(drugs) < 2:
-            return [
-                {"error": "medicinalproducts must be a list of at least 2 drug names"}
-            ]
+            return "medicinalproducts must be a list of at least 2 drug names", ""
 
         # Build AND clause for multiple drugs (all must be present). Routed
         # through the shared clause renderer so a multi-word name gets Lucene
         # quotes and is percent-encoded exactly once, on the finished query
-        # below -- encoding it here too widened each clause to the name's first
-        # token (see the matching note in
+        # in _search -- encoding it here too widened each clause to the name's
+        # first token (see the matching note in
         # FDACountAdditiveReactionsTool._build_search_query).
         #
         # Each drug searches the full FAERS_DRUG_NAME_FIELDS union, read from the
@@ -1674,276 +1718,17 @@ class FDADrugInteractionDetailTool(BaseTool):
         # co-occurrence question -- was every named drug on the SAME report), and
         # Lucene binds AND tighter than OR, so an unwrapped group would parse as
         # "a:X OR (b:X AND a:Y) OR b:Y" and answer "either drug" instead.
-        # _render_field_group does the wrapping; the query below reads
+        # _render_field_group does the wrapping; the query reads
         # (a:X+OR+b:X+OR+c:X)+AND+(a:Y+OR+b:Y+OR+c:Y), with a multi-word name
         # additionally Lucene-quoted.
-        fda_fields = self.search_fields.get("medicinalproducts") or (
+        drug_fields = self.search_fields.get("medicinalproducts") or (
             FAERS_DRUG_NAME_FIELDS
         )
-        drug_parts = [_render_field_group(fda_fields, drug) for drug in drugs]
+        drug_parts = [_render_field_group(drug_fields, drug) for drug in drugs]
 
-        # Build additional filters
-        filter_parts = []
-        for param_name, value in arguments.items():
-            # Skip unrecognized arguments rather than forwarding them as bogus
-            # FDA filters (which silently match nothing).
-            fda_fields = self.search_fields.get(param_name)
-            if not fda_fields:
-                continue
-            # Use the first field name for value mapping
-            fda_field = fda_fields[0]
-
-            # Apply value mapping using FDA field name
-            mapping_error, mapped_value = self._map_value(fda_field, value)
-            if mapping_error:
-                return [{"error": mapping_error}]
-            if mapped_value is None:
-                continue  # Skip this field if instructed
-
-            # Build filter parts through the shared renderer, so the quoting rule
-            # (a Lucene range stays unquoted) and the grouping rule (several
-            # fields for one parameter are OR-ed inside parens) have one home.
-            filter_parts.append(_render_field_group(fda_fields, mapped_value))
-
-        # Combine drug parts (AND) with additional filters (AND)
-        all_parts = drug_parts + filter_parts
-        search_query = "+AND+".join(all_parts)
-        search_encoded = urllib.parse.quote(search_query, safe='+:"')
-
-        # Build URL with limit and skip
-        if self.api_key:
-            url = (
-                f"{self.endpoint_url}?api_key={self.api_key}"
-                f"&search={search_encoded}&limit={limit}&skip={skip}"
-            )
-        else:
-            url = (
-                f"{self.endpoint_url}?search={search_encoded}&limit={limit}&skip={skip}"
-            )
-
-        # API request
-        try:
-            response = requests.get(url)
-            # Handle 404 as "no matches found" - return empty list instead of error
-            if response.status_code == 404:
-                try:
-                    error_data = response.json()
-                    if "error" in error_data and "No matches found" in str(
-                        error_data.get("error", {})
-                    ):
-                        return []  # Return empty list for no matches
-                except (ValueError, KeyError):
-                    pass
-            response.raise_for_status()
-            response_data = response.json()
-            results = response_data.get("results", [])
-
-            # If return_fields is specified, filter the results
-            if self.return_fields:
-                filtered_results = []
-                for result in results:
-                    filtered_result = {}
-                    for field in self.return_fields:
-                        # Handle nested fields (e.g., "patient.reaction.reactionmeddrapt")
-                        field_parts = field.split(".")
-                        value = result
-                        for part in field_parts:
-                            if isinstance(value, dict):
-                                value = value.get(part)
-                            elif isinstance(value, list) and part.isdigit():
-                                value = (
-                                    value[int(part)] if int(part) < len(value) else None
-                                )
-                            else:
-                                value = None
-                                break
-                        if value is not None:
-                            filtered_result[field] = value
-                    if filtered_result:
-                        filtered_results.append(filtered_result)
-                return filtered_results
-
-            # Extract essential fields if configured
-            extract_essential = self.tool_config.get("fields", {}).get(
-                "extract_essential", False
-            )
-            if extract_essential:
-                results = [self._extract_essential_fields(r) for r in results]
-
-            return results
-        except requests.exceptions.RequestException as e:
-            return [{"error": f"API request failed: {str(e)}"}]
-
-    def _extract_essential_fields(self, report):
-        """
-        Extract only essential fields from a FAERS report.
-        Removes verbose metadata like openfda to keep output concise.
-        Can be customized via tool_config['fields']['essential_fields'].
-        """
-        # Get custom essential fields from config, or use default
-        essential_fields_config = self.tool_config.get("fields", {}).get(
-            "essential_fields", None
-        )
-
-        if essential_fields_config:
-            # Use custom field extraction logic from config
-            return self._extract_custom_fields(report, essential_fields_config)
-
-        # Default essential fields extraction
-        essential = {
-            # Report identification
-            "safetyreportid": report.get("safetyreportid"),
-            "safetyreportversion": report.get("safetyreportversion"),
-            # Seriousness indicators
-            "serious": report.get("serious"),
-            "seriousnessdeath": report.get("seriousnessdeath"),
-            "seriousnesshospitalization": report.get("seriousnesshospitalization"),
-            "seriousnesslifethreatening": report.get("seriousnesslifethreatening"),
-            "seriousnessdisabling": report.get("seriousnessdisabling"),
-            # Location
-            "occurcountry": report.get("occurcountry"),
-            "primarysourcecountry": report.get("primarysourcecountry"),
-            # Dates
-            "transmissiondate": report.get("transmissiondate"),
-            "receivedate": report.get("receivedate"),
-        }
-
-        # Patient information (essential fields only)
-        patient = report.get("patient", {})
-        if patient:
-            essential_patient = {
-                "patientsex": patient.get("patientsex"),
-                "patientagegroup": patient.get("patientagegroup"),
-                "patientonsetage": patient.get("patientonsetage"),
-                "patientonsetageunit": patient.get("patientonsetageunit"),
-                "patientweight": patient.get("patientweight"),
-            }
-
-            # Drugs (essential fields only, no openfda metadata)
-            drugs = patient.get("drug", [])
-            if drugs:
-                essential_drugs = []
-                for drug in drugs:
-                    essential_drug = {
-                        "medicinalproduct": drug.get("medicinalproduct"),
-                        "drugindication": drug.get("drugindication"),
-                        "drugadministrationroute": drug.get("drugadministrationroute"),
-                        "drugdosagetext": drug.get("drugdosagetext"),
-                        "drugdosageform": drug.get("drugdosageform"),
-                        "drugstartdate": drug.get("drugstartdate"),
-                        "actiondrug": drug.get("actiondrug"),
-                    }
-                    # Only include non-empty fields
-                    essential_drug = {
-                        k: v for k, v in essential_drug.items() if v is not None
-                    }
-                    if essential_drug:
-                        essential_drugs.append(essential_drug)
-                if essential_drugs:
-                    essential_patient["drug"] = essential_drugs
-
-            # Reactions (all fields are essential)
-            reactions = patient.get("reaction", [])
-            if reactions:
-                essential_reactions = []
-                for reaction in reactions:
-                    essential_reaction = {
-                        "reactionmeddrapt": reaction.get("reactionmeddrapt"),
-                        "reactionmeddraversionpt": reaction.get(
-                            "reactionmeddraversionpt"
-                        ),
-                        "reactionoutcome": reaction.get("reactionoutcome"),
-                    }
-                    # Only include non-empty fields
-                    essential_reaction = {
-                        k: v for k, v in essential_reaction.items() if v is not None
-                    }
-                    if essential_reaction:
-                        essential_reactions.append(essential_reaction)
-                if essential_reactions:
-                    essential_patient["reaction"] = essential_reactions
-
-            # Summary if available
-            if "summary" in patient:
-                essential_patient["summary"] = patient["summary"]
-
-            essential["patient"] = essential_patient
-
-        # Remove None values
-        essential = {k: v for k, v in essential.items() if v is not None}
-        return essential
-
-    def _extract_custom_fields(self, report, field_config):
-        """
-        Extract fields based on custom configuration.
-        field_config can be a list of field paths or a dict with inclusion rules.
-        """
-        if isinstance(field_config, list):
-            # Simple list of field paths to include
-            result = {}
-            for field_path in field_config:
-                value = self._get_nested_value(report, field_path)
-                if value is not None:
-                    self._set_nested_value(result, field_path, value)
-            return result
-        else:
-            # Use default extraction
-            return self._extract_essential_fields(report)
-
-    def _get_nested_value(self, obj, path):
-        """Get value from nested dict using dot notation path"""
-        parts = path.split(".")
-        value = obj
-        for part in parts:
-            if isinstance(value, dict):
-                value = value.get(part)
-            elif isinstance(value, list) and part.isdigit():
-                value = value[int(part)] if int(part) < len(value) else None
-            else:
-                return None
-            if value is None:
-                return None
-        return value
-
-    def _set_nested_value(self, obj, path, value):
-        """Set value in nested dict using dot notation path"""
-        parts = path.split(".")
-        current = obj
-        for part in parts[:-1]:
-            if part not in current:
-                current[part] = {}
-            current = current[part]
-        current[parts[-1]] = value
-
-    def _map_value(self, param_name, value):
-        # Special handling for seriousness fields: if value is "No", skip this field
-        seriousness_fields = {
-            "seriousnessdeath",
-            "seriousnesshospitalization",
-            "seriousnessdisabling",
-            "seriousnesslifethreatening",
-            "seriousnessother",
-        }
-        if param_name in seriousness_fields:
-            if value == "No":
-                return None, None  # Signal to skip this field
-            # Feature-66B-005: also accept native openFDA integer 1 or string "1" as "Yes"
-            if value in ("Yes", 1, "1"):
-                return None, "1"
-            # If not Yes/No/1, error
-            return (
-                f"Invalid value '{value}' for '{param_name}'. Allowed values: ['Yes'] (omit to include all).",
-                None,
-            )
-
-        if param_name in HUMAN_TO_FDA_MAP:
-            value_map = HUMAN_TO_FDA_MAP[param_name]
-            if value not in value_map:
-                print("No mapping found for value:", value, "skipping")
-                allowed_values = list(value_map.keys())
-                return (
-                    f"Invalid value '{value}' for '{param_name}'. Allowed values: {allowed_values}",
-                    None,
-                )
-            return None, value_map[value]
-        return None, value
+        # The remaining filters are AND-ed on exactly as the parent does them.
+        error, filter_query = super()._build_search_query(arguments)
+        if error:
+            return error, ""
+        parts = drug_parts + ([filter_query] if filter_query else [])
+        return None, "+AND+".join(parts)

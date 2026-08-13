@@ -245,7 +245,7 @@ class PharmGKBTool(BaseTool):
         return self._error(
             "annotation_id is required (e.g., '1447954390'). "
             "Browse https://www.pharmgkb.org/clinicalAnnotation to find annotation IDs, "
-            "or use CPIC_get_guidelines for drug-gene dosing recommendations."
+            "or use CPIC_list_guidelines for drug-gene dosing recommendations."
         )
 
     def _get_dosing_guidelines(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

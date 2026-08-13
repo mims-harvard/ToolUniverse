@@ -271,7 +271,7 @@ class DisGeNETTool(BaseTool):
                 "matches the current HGNC-approved symbol only, not older "
                 "aliases -- if this might be a legacy/alias symbol, resolve "
                 "it to its current official symbol first (e.g. via "
-                "NCBIGene_search_genes or HGNC) and retry."
+                "NCBIGene_search or HGNC) and retry."
             )
         return {
             "status": "success",

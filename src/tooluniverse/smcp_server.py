@@ -231,13 +231,13 @@ Examples:
   tooluniverse-smcp-stdio --hook-config-file /path/to/hook_config.json
 
   # Start with categories but exclude specific tools
-  tooluniverse-smcp-stdio --categories uniprot ChEMBL --exclude-tools "ChEMBL_get_molecule_by_chembl_id"
+  tooluniverse-smcp-stdio --categories uniprot ChEMBL --exclude-tools "ChEMBL_get_molecule"
 
   # Start with all tools but exclude entire categories
   tooluniverse-smcp-stdio --exclude-categories mcp_auto_loader_boltz mcp_auto_loader_expert_feedback
 
   # Load only specific tools by name
-  tooluniverse-smcp-stdio --include-tools "UniProt_get_entry_by_accession" "ChEMBL_get_molecule_by_chembl_id"
+  tooluniverse-smcp-stdio --include-tools "UniProt_get_entry_by_accession" "ChEMBL_get_molecule"
 
   # Load tools from a file
   tooluniverse-smcp-stdio --tools-file "/path/to/tool_names.txt"
@@ -643,13 +643,13 @@ Examples:
   tooluniverse-smcp --categories uniprot ChEMBL opentarget --port 8000
 
   # Start with categories but exclude specific tools
-  tooluniverse-smcp --categories uniprot ChEMBL --exclude-tools "ChEMBL_get_molecule_by_chembl_id" --port 8000
+  tooluniverse-smcp --categories uniprot ChEMBL --exclude-tools "ChEMBL_get_molecule" --port 8000
 
   # Start with all tools but exclude entire categories
   tooluniverse-smcp --exclude-categories mcp_auto_loader_boltz mcp_auto_loader_expert_feedback --port 8000
 
   # Load only specific tools by name
-  tooluniverse-smcp --include-tools "UniProt_get_entry_by_accession" "ChEMBL_get_molecule_by_chembl_id" --port 8000
+  tooluniverse-smcp --include-tools "UniProt_get_entry_by_accession" "ChEMBL_get_molecule" --port 8000
 
   # Load tools from a file
   tooluniverse-smcp --tools-file "/path/to/tool_names.txt" --port 8000

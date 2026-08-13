@@ -23,7 +23,7 @@ def FAERS_search_serious_reports_by_drug(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
     Search and retrieve detailed FAERS case reports for a specific drug. Returns individual case repo...
 
@@ -58,7 +58,7 @@ def FAERS_search_serious_reports_by_drug(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

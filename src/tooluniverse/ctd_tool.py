@@ -55,7 +55,7 @@ _CHEMICAL_NAME_SUGGESTION = (
     "trade name or an informally worded synonym can miss even when the "
     "substance is covered. Retry with the MeSH descriptor/supplementary "
     "concept name, a MeSH chemical ID (e.g. 'D002857', optionally prefixed "
-    "'MESH:'), or a CAS Registry Number. ChEBI_get_compound_by_name or "
+    "'MESH:'), or a CAS Registry Number. ChEBI_search or "
     "PubChem name lookups can resolve a synonym to a canonical name first."
 )
 
