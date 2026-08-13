@@ -129,14 +129,17 @@ def test_valid_inputs_still_score(tool):
 
 def test_child_pugh_no_longer_stages_a_negative_albumin():
     """The specific wrong answer that motivated this: Class B from albumin -1."""
-    result = _run("ClinicalCalc_Child_Pugh", dict(VALID["ClinicalCalc_Child_Pugh"], albumin=-1))
+    result = _run(
+        "ClinicalCalc_Child_Pugh", dict(VALID["ClinicalCalc_Child_Pugh"], albumin=-1)
+    )
     assert result.get("status") == "error"
     assert "Class B" not in json.dumps(result)
 
 
 def test_ascvd_no_longer_leaks_a_bare_math_domain_error():
     result = _run(
-        "ClinicalCalc_ASCVD_risk", dict(VALID["ClinicalCalc_ASCVD_risk"], total_cholesterol=0)
+        "ClinicalCalc_ASCVD_risk",
+        dict(VALID["ClinicalCalc_ASCVD_risk"], total_cholesterol=0),
     )
     assert result.get("status") == "error"
     assert result.get("error") != "math domain error"

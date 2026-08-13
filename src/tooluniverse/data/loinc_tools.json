@@ -147,11 +147,22 @@
         "LONG_COMMON_NAME": {
           "type": "string"
         },
-        "SHORT_NAME": {
+        "SHORTNAME": {
           "type": "string"
         },
         "COMPONENT": {
           "type": "string"
+        },
+        "fields_unavailable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Requested fields the clinicaltables loinc_items/v3 index does not publish. They are returned as empty strings for every code, so their emptiness says nothing about this code."
+        },
+        "fields_unavailable_note": {
+          "type": "string",
+          "description": "Explains which requested fields are unavailable from this index and what to use instead."
         },
         "PROPERTY": {
           "type": "string"

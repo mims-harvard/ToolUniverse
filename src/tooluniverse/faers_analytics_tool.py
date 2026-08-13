@@ -147,12 +147,15 @@ _FAERS_RECORD_FILTERS = frozenset(
         "seriousnesshospitalization",
         "seriousnessdisabling",
         "seriousnesslifethreatening",
-        "reactionmeddraversepa",
         "receivedate",
-        "concomitant_drug",
         "drugcharacterization",
     }
 )
+# Every name above was checked to appear in a shipped config under data/ --
+# the message this list drives claims the FAERS_count_* tools filter on them,
+# and that claim has to be true. `concomitant_drug` and `reactionmeddraversepa`
+# were dropped for failing exactly that check: they appear in no config, so
+# they are refused with the generic message instead of a false referral.
 
 
 # Every argument name any operation in this module reads, including the aliases
@@ -570,20 +573,20 @@ class FAERSAnalyticsTool(BaseTool):
         unsupported = [
             key
             for key, value in arguments.items()
-            if key not in declared
-            and key not in _KNOWN_ARGUMENTS
-            and value is not None
+            if key not in declared and key not in _KNOWN_ARGUMENTS and value is not None
         ]
         if not unsupported:
             return None
-        # The advertised list must be what the guard actually accepts, which is
-        # the union -- naming only the declared schema would omit arguments
-        # (e.g. `stratify_by` behind a partial config) that this call would in
-        # fact have honoured.
+        # The advertised list is THIS operation's declared parameters, not the
+        # module vocabulary. Naming the union would list `drug1`, `drugs`,
+        # `stratify_by` and friends as accepted by disproportionality, where
+        # they are in fact accepted-and-ignored -- the error would advertise
+        # the very failure mode it exists to close. The vocabulary still widens
+        # what is *tolerated* (see the docstring), it just is not advertised.
         return _unsupported_arguments_error(
             self.tool_config.get("name", type(self).__name__),
             unsupported,
-            sorted(set(declared) | _KNOWN_ARGUMENTS),
+            sorted(declared) or sorted(_KNOWN_ARGUMENTS),
         )
 
     def _with_api_key(self, url: str) -> str:

@@ -68,9 +68,7 @@ class _Response:
 
 
 def _patch_get(monkeypatch, response):
-    monkeypatch.setattr(
-        restful_tool.requests, "get", lambda url, params=None: response
-    )
+    monkeypatch.setattr(restful_tool.requests, "get", lambda url, params=None: response)
 
 
 def test_http_400_body_is_returned_as_the_reason(monkeypatch):
@@ -105,15 +103,36 @@ def test_api_error_field_is_surfaced(monkeypatch):
     assert "bad field" in reason
 
 
-def test_network_exception_is_surfaced(monkeypatch):
+def test_network_exceptions_still_propagate(monkeypatch):
+    """`requests.get` has always raised out of this function; it still must.
+
+    Swallowing it into a (False, reason) pair would silently change what every
+    existing caller sees for a connection failure.
+    """
+
     def boom(url, params=None):
         raise OSError("connection reset")
 
     monkeypatch.setattr(restful_tool.requests, "get", boom)
-    result, reason = execute_RESTful_query_detailed("http://x")
+    with pytest.raises(OSError):
+        execute_RESTful_query_detailed("http://x")
 
-    assert result is False
-    assert "connection reset" in reason
+
+def test_a_4xx_carrying_a_json_body_is_still_handed_back(monkeypatch):
+    """The contract Monarch's 422 handling depends on.
+
+    `_validation_error_detail` turns a FastAPI 422 body into an actionable
+    "lower your limit" message, which requires receiving the body. An earlier
+    version of this fix returned False on any status >= 400 before that check
+    and crashed MonarchTool.run with "argument of type 'bool' is not
+    iterable". Both entry points must hand the body back.
+    """
+    body = {"detail": [{"msg": "ensure this value is less than or equal to 500"}]}
+    _patch_get(monkeypatch, _Response(status_code=422, payload=body))
+
+    result, reason = execute_RESTful_query_detailed("http://x")
+    assert result == body and reason is None
+    assert restful_tool.execute_RESTful_query("http://x") == body
 
 
 def test_boolean_wrapper_contract_is_unchanged(monkeypatch):
@@ -123,6 +142,10 @@ def test_boolean_wrapper_contract_is_unchanged(monkeypatch):
 
     _patch_get(monkeypatch, _Response(payload={"ok": 1}))
     assert restful_tool.execute_RESTful_query("http://x") == {"ok": 1}
+
+    # An {"error": ...} body is a failure at any status, as it always was.
+    _patch_get(monkeypatch, _Response(payload={"error": "study not found"}))
+    assert restful_tool.execute_RESTful_query("http://x") is False
 
 
 def test_search_reports_the_upstream_failure_rather_than_zero_studies(monkeypatch):

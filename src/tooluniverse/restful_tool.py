@@ -80,7 +80,7 @@ def _limit_error(requested_limit):
 
 
 def _http_failure_reason(response, body):
-    """"HTTP <code>" plus as much of the body as is worth carrying."""
+    """ "HTTP <code>" plus as much of the body as is worth carrying."""
     detail = f"HTTP {response.status_code}"
     body = (body or "")[:2000].strip()
     return f"{detail}: {body[:400]}" if body else detail
@@ -112,28 +112,34 @@ def execute_RESTful_query_detailed(endpoint_url, variables=None):
     ``raise_for_status`` is deliberately not called: ClinicalTrials.gov puts
     its parse diagnostics in the body of the 400, so the status code alone is
     strictly less informative than what is being returned here.
-    """
-    try:
-        response = requests.get(endpoint_url, params=variables)
-    except Exception as e:  # network-level: no response to inspect
-        return False, f"the request to {endpoint_url} failed: {e}"
 
-    # Parsed first on purpose. An API that puts a structured {"error": ...} in
-    # a 4xx body gives a better reason than its status line, and checking the
-    # status first would report the raw body instead -- and would touch
-    # `response.text` on every error response, which the JSON path never needs.
+    A decodable body is ALWAYS handed back, whatever the status code. That is
+    not an oversight: `_validation_error_detail` above turns a FastAPI 422
+    body into an actionable message, and Monarch's over-limit path depends on
+    receiving that body rather than a bare failure. The first version of this
+    function short-circuited on `status_code >= 400` before that check and
+    crashed `MonarchTool.run` with "argument of type 'bool' is not iterable";
+    a status-only rule is exactly the loss of information this function exists
+    to stop. The status code is therefore consulted only when there is no body
+    to read -- which is the ClinicalTrials.gov case above, whose 400 carries
+    plain text rather than JSON.
+
+    Network-level exceptions propagate, as they always have, so callers that
+    rely on `requests` raising keep doing so.
+    """
+    response = requests.get(endpoint_url, params=variables)
+
     try:
         result = response.json()
+        if "error" in result:
+            return False, f"the API reported: {result['error']}"
+        return result, None
     except requests.exceptions.JSONDecodeError:
         if response.status_code >= 400:
             return False, _http_failure_reason(response, response.text)
         return False, "the response was not valid JSON"
-
-    if isinstance(result, dict) and "error" in result:
-        return False, f"the API reported: {result['error']}"
-    if response.status_code >= 400:
-        return False, _http_failure_reason(response, str(result))
-    return result, None
+    except Exception as e:
+        return False, str(e)
 
 
 def execute_RESTful_query(endpoint_url, variables=None):

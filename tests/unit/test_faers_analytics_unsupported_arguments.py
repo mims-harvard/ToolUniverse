@@ -129,7 +129,10 @@ def test_declared_aliases_are_not_rejected():
     the documented short names.
     """
     tool = _make_tool("FAERS_calculate_disproportionality")
-    assert tool._unsupported_arguments({"drug": "warfarin", "reaction": "Haemorrhage"}) is None
+    assert (
+        tool._unsupported_arguments({"drug": "warfarin", "reaction": "Haemorrhage"})
+        is None
+    )
 
 
 def test_compare_drugs_list_alias_is_not_rejected():
@@ -147,7 +150,11 @@ def test_none_valued_unknown_argument_is_ignored():
     tool = _make_tool("FAERS_calculate_disproportionality")
     assert (
         tool._unsupported_arguments(
-            {"drug_name": "warfarin", "adverse_event": "Haemorrhage", "patientsex": None}
+            {
+                "drug_name": "warfarin",
+                "adverse_event": "Haemorrhage",
+                "patientsex": None,
+            }
         )
         is None
     )
@@ -216,5 +223,8 @@ def test_schema_less_stub_still_refuses_a_record_filter():
     tool = FAERSAnalyticsTool(
         {"name": "FAERS_stratify_by_demographics", "parameter": {}, "fields": {}}
     )
-    assert tool._unsupported_arguments({"drug": "ondansetron", "stratify_by": "age"}) is None
+    assert (
+        tool._unsupported_arguments({"drug": "ondansetron", "stratify_by": "age"})
+        is None
+    )
     assert tool._unsupported_arguments({"drug": "x", "patientsex": "1"}) is not None
