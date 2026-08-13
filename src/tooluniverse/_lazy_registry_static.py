@@ -615,6 +615,7 @@ STATIC_LAZY_REGISTRY = {
     "SAbDabTool": "sabdab_tool",
     "SCExpressionAtlasTool": "scxa_tool",
     "DDBJTool": "ddbj_tool",
+    "BioThingsGatewayTool": "biothings_gateway_tool",
     "BacDiveTool": "bacdive_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",

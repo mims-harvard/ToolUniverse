@@ -577,6 +577,10 @@ default_tool_files = {
     "glygen": os.path.join(current_dir, "data", "glygen_tools.json"),
     # MGnify Expanded - Metagenomics genome catalog, biomes, study details
     "mgnify_expanded": os.path.join(current_dir, "data", "mgnify_expanded_tools.json"),
+    # BioThings gateway - uniform access to ~50 BioThings-hosted biomedical APIs
+    "biothings_gateway": os.path.join(
+        current_dir, "data", "biothings_gateway_tools.json"
+    ),
     # DDBJ - DNA Data Bank of Japan, third INSDC member (BioProject/BioSample/DRA/JGA)
     "ddbj": os.path.join(current_dir, "data", "ddbj_tools.json"),
     # BacDive - DSMZ bacterial strain phenotype and growth conditions
