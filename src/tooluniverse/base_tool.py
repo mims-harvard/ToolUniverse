@@ -38,6 +38,34 @@ def resolve_configured_operation(tool_config: Any) -> Optional[str]:
     return operation if isinstance(operation, str) and operation else None
 
 
+def null_result_error(tool_name: Any) -> Dict[str, Any]:
+    """The response for a tool that returned ``None``.
+
+    Fix-47-4: there is no tool for which ``None`` is a valid answer, but the
+    dispatch wrappers used to fall back on a generic ``{"result": <value>}``
+    envelope, so a ``None`` became ``{"result": None}`` -- a dict carrying
+    neither ``status`` nor ``error``, which the CLI prints as
+    ``{"result": null}`` and exits 0 on. Every one of those was a failed call
+    presented as a successful empty answer: for the openFDA label family
+    (157 tools) ``{"result": null}`` in reply to a boxed-warning question
+    reads as "this drug has no boxed warning".
+
+    The openFDA path that produced most of them is fixed at source in
+    ``openfda_tool.search_openfda``, but a ``None`` from ANY tool reaches the
+    caller through these wrappers, so the invariant is stated once here and
+    applied by each of them rather than re-worded per call site.
+    """
+    return {
+        "status": "error",
+        "error": (
+            f"Tool '{tool_name}' returned no result. This is a failure of the "
+            "call, not an answer: it does not mean the query matched nothing, "
+            "and no conclusion may be drawn from it. Retry, and if it "
+            "persists report the tool name and arguments."
+        ),
+    }
+
+
 class BaseTool:
     STATIC_CACHE_VERSION = "1"
 

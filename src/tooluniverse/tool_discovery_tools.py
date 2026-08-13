@@ -33,7 +33,7 @@ Recommended Workflow:
 
 import json
 import re
-from .base_tool import BaseTool
+from .base_tool import BaseTool, null_result_error
 from .tool_registry import register_tool
 
 
@@ -993,6 +993,15 @@ class ExecuteToolTool(BaseTool):
         # Directly use tooluniverse.run_one_function - it handles everything
         function_call = {"name": tool_name, "arguments": parsed_args}
         result = self.tooluniverse.run_one_function(function_call)
+
+        # Fix-47-4: this is the wrapper `execute_tool` actually dispatches
+        # through (data/compact_mode_tools.json declares type "ExecuteTool"),
+        # and it is what the CLI and MCP callers reach. A `None` fell through
+        # to the generic `{"result": result}` envelope on the last line and
+        # was printed as `{"result": null}` with exit status 0 -- see
+        # null_result_error for why that is a failure reported as an answer.
+        if result is None:
+            return null_result_error(tool_name)
 
         # Convert result to dict if it's a JSON string
         if isinstance(result, str):

@@ -134,8 +134,15 @@ def _execute_opentargets_query(chembl_id):
 
         query = _get_drug_names_query()
         variables = {"chemblId": chembl_id}
+        # Fix-47-5: same missing-timeout defect as the openFDA calls below --
+        # this one is only reachable if graphql_tool fails to import, but an
+        # unbounded POST hangs the tool just as completely from a fallback
+        # path as from the main one. The primary path already passes
+        # timeout=30 (graphql_tool.execute_query), so this matches it.
         response = requests.post(
-            _OPENTARGETS_ENDPOINT, json={"query": query, "variables": variables}
+            _OPENTARGETS_ENDPOINT,
+            json={"query": query, "variables": variables},
+            timeout=30,
         )
         try:
             result = response.json()
@@ -526,6 +533,45 @@ def extract_sentences_with_keywords(text_list, keywords):
     return "......".join(sentences_with_keywords)
 
 
+# Fix-47-5: the calls into api.fda.gov were issued with no `timeout=` and
+# their bodies decoded with a bare `response.json()`. Both halves fail badly.
+# Without a timeout a stalled connection hangs the tool indefinitely, and
+# openFDA's CDN serves HTML (not JSON) error pages under load, so the decode
+# raised out of the tool and was reported to the caller as
+# "Validation error: Expecting value: line 1 column 1 (char 0)" with
+# `retriable: false` and the advice "Check parameter types and values" --
+# blaming a perfectly good query for the FDA being briefly unavailable, and
+# ruling out the one action that would have worked. Both are transport
+# failures and are reported as such, in openFDA's own error shape so they
+# flow through the same disclosure path as any other upstream error.
+_OPENFDA_TIMEOUT = 30
+
+
+def _openfda_get(url, timeout=_OPENFDA_TIMEOUT):
+    """GET an openFDA URL and decode it, as openFDA-shaped data or error."""
+    try:
+        response = requests.get(url, timeout=timeout)
+    except Exception as exc:
+        return {
+            "error": {
+                "code": "TRANSPORT_ERROR",
+                "message": f"Could not reach openFDA ({type(exc).__name__}: {exc})",
+            }
+        }
+    try:
+        return response.json()
+    except Exception:
+        return {
+            "error": {
+                "code": "BAD_JSON",
+                "message": (
+                    "openFDA returned a non-JSON response "
+                    f"(HTTP {getattr(response, 'status_code', 'unknown')})"
+                ),
+            }
+        }
+
+
 def search_openfda(
     params=None,
     endpoint_url=None,
@@ -864,10 +910,7 @@ def search_openfda(
         full_url += f"&api_key={api_key}"
         used_api_key = True
 
-    response = requests.get(full_url)
-
-    # Get the JSON response
-    response_data = response.json()
+    response_data = _openfda_get(full_url)
 
     # If an invalid API key was supplied, retry once without it.
     if (
@@ -876,8 +919,7 @@ def search_openfda(
         and isinstance(response_data.get("error"), dict)
         and response_data["error"].get("code") == "API_KEY_INVALID"
     ):
-        response = requests.get(f"{endpoint_url}?{query}")
-        response_data = response.json()
+        response_data = _openfda_get(f"{endpoint_url}?{query}")
 
     response_data = _guard_excipients(response_data)
 
@@ -1003,14 +1045,7 @@ def search_openfda(
         url = f"{endpoint_url}?{q}"
         if _is_valid_api_key(api_key):
             url += f"&api_key={api_key}"
-        resp = requests.get(url)
-        try:
-            return _guard_excipients(resp.json(), text_fields=text_fields)
-        except Exception:
-            return {
-                "status": "error",
-                "error": {"code": "BAD_JSON", "message": "Non-JSON response"},
-            }
+        return _guard_excipients(_openfda_get(url), text_fields=text_fields)
 
     # Only run fallbacks on NOT_FOUND
     if (
@@ -1513,20 +1548,46 @@ def search_openfda(
                 name_based=name_based,
                 searched_fields=sorted(orig_fields_flat),
             )
-            return {
-                "status": "error",
-                "error": err,
-                "suggestion": suggestion,
-                "meta": {
-                    "skip": params.get("skip", 0) or 0,
-                    "limit": params.get("limit", 0) or 0,
-                    "total": 0,
-                },
-                "results": [],
-                "result_count": 0,
-                "duplicates_removed": 0,
-            }
-        return None
+        # Fix-47-1: every openFDA error *other* than NOT_FOUND used to fall
+        # off the end of this branch as a bare `None`, which the CLI renders
+        # as `{"result": null}`. On the 157 tools that reach openFDA through
+        # this function that is not a harmless empty answer -- it is a
+        # clinical claim manufactured from a transport failure. Confirmed
+        # live against api.fda.gov/drug/label.json on 2026-08-13: adding one
+        # undeclared query parameter to an otherwise correct tramadol search
+        # is answered by openFDA with HTTP 400
+        # `{"error":{"code":"BAD_REQUEST","message":"Invalid parameter:
+        # section"}}`, and
+        # `FDA_get_boxed_warning_info_by_drug_name {"drug_name":"tramadol",
+        # "section":"boxed"}` returned `{"result": null}` -- indistinguishable
+        # from "tramadol has no boxed warning", for a drug whose label carries
+        # one. openFDA reports BAD_REQUEST, OVER_RATE_LIMIT (its anonymous
+        # tier is ~40 req/min, so a busy session hits this routinely),
+        # SERVER_ERROR and API_KEY_INVALID the same way, so all of them were
+        # being converted into the same false negative.
+        #
+        # The upstream error is reported instead, in the same shape the
+        # NOT_FOUND branch above already returns -- one shared envelope below,
+        # so the two cannot drift apart -- and callers that read
+        # `status`/`results`/`meta` keep working while a null section can no
+        # longer be confused with a failed request. `results` stays empty and
+        # `total` stays 0 rather than being omitted: a consumer that indexes
+        # into them gets an empty set, not a KeyError.
+        else:
+            suggestion = _build_request_error_suggestion(err)
+        return {
+            "status": "error",
+            "error": err,
+            "suggestion": suggestion,
+            "meta": {
+                "skip": params.get("skip", 0) or 0,
+                "limit": params.get("limit", 0) or 0,
+                "total": 0,
+            },
+            "results": [],
+            "result_count": 0,
+            "duplicates_removed": 0,
+        }
 
     # Extract meta information
     meta_info = response_data.get("meta", {})
@@ -1753,6 +1814,49 @@ def _tools_for_sections(sections):
         if tool and tool not in tools:
             tools.append(tool)
     return tools
+
+
+def _build_request_error_suggestion(err):
+    """Explain an openFDA failure that is not a NOT_FOUND, and say what to do.
+
+    The point of the message is to make it impossible to read the failure as
+    an answer about the drug, so each branch says explicitly that nothing was
+    learned about the drug, then names the concrete next step.
+    """
+    err = err if isinstance(err, dict) else {}
+    code = err.get("code")
+    message = err.get("message") or "openFDA returned an error."
+
+    if code == "BAD_REQUEST":
+        # openFDA already names the offending key verbatim in `message`
+        # ("Invalid parameter: section"), and that name is the whole
+        # diagnosis, so quoting it is enough. An earlier draft also listed the
+        # parameters that WERE accepted, which actively misled: by this point
+        # `params` holds openFDA's own transport keys (limit/skip/sort/count,
+        # supplied by the tool rather than by the caller), so the list named
+        # things the caller had never sent.
+        return (
+            f"openFDA rejected the request: {message}. An unrecognized query "
+            "parameter is sent to openFDA verbatim and fails the whole "
+            "request, so this is a problem with the call, NOT a statement "
+            "about the drug -- nothing was retrieved, and no conclusion about "
+            "the drug's label may be drawn from it. Re-run without the "
+            "rejected parameter."
+        )
+    if code == "OVER_RATE_LIMIT":
+        return (
+            f"openFDA rate-limited the request: {message}. openFDA's anonymous "
+            "tier allows roughly 40 requests/minute; this request was refused "
+            "before reaching the data, so nothing is known about the drug. "
+            "Retry after a pause, or set FDA_API_KEY (see "
+            "https://open.fda.gov/apis/authentication/) to raise the limit."
+        )
+    return (
+        f"openFDA returned an error ({code or 'unknown'}): {message}. The "
+        "request failed, so this result says nothing about the drug or the "
+        "label section requested. Retry; if it persists, check "
+        "https://open.fda.gov/ for service status."
+    )
 
 
 def _build_not_found_suggestion(
