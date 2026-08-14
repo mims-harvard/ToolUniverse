@@ -20,6 +20,7 @@ kind that keeps the sibling guideline tools deferred.
 from unittest.mock import MagicMock, patch
 
 import pytest
+import requests
 
 from tooluniverse.unified_guideline_tools import PubMedGuidelinesTool
 
@@ -126,10 +127,18 @@ class TestGuidelineTotal:
         assert result["status"] == "success"
         assert result["metadata"]["total"] == 0
 
-    def test_an_upstream_failure_still_returns_the_error_envelope(self):
-        """The helper now returns a tuple; the error path must survive it."""
+    @pytest.mark.parametrize(
+        "failure",
+        [
+            requests.exceptions.ConnectionError("ncbi unreachable"),
+            OSError("ncbi down"),
+        ],
+        ids=["request_exception", "unexpected_exception"],
+    )
+    def test_an_upstream_failure_still_returns_the_error_envelope(self, failure):
+        """Both handlers build their envelope after `total` is in scope."""
         tool = _tool()
-        with patch.object(tool.session, "get", side_effect=OSError("ncbi down")):
+        with patch.object(tool.session, "get", side_effect=failure):
             result = tool.run({"query": "anything"})
 
         assert result["status"] == "error"

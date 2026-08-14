@@ -110,9 +110,16 @@ class TestObsoleteDisclosure:
         assert result["status"] == "success"
         assert result["data"]["deprecated"] is True
         assert result["data"]["replaced_by"] == "MONDO:1010200"
-        note = result["metadata"]["deprecation_note"]
-        assert "obsolete" in note
-        assert "MONDO:1010200" in note
+        # Pinned verbatim: Fix-R57-4 moved this sentence into a helper shared
+        # with the row endpoints, and the wording drifted in the process
+        # because nothing here held it. The clause naming what is empty is
+        # the part that differs per caller, so it is the part worth pinning.
+        assert result["metadata"]["deprecation_note"] == (
+            "MONDO:0014978 is an obsolete Mondo term. Monarch strips the "
+            "annotations of obsolete terms, so the empty fields above mean "
+            "'not recorded here', not 'none exist'. Re-query MONDO:1010200 "
+            "for the current term."
+        )
 
     def test_live_term_is_not_flagged_and_costs_no_extra_request(self):
         """Monarch reports live terms as deprecated: None, not False."""

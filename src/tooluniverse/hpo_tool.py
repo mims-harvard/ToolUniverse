@@ -297,7 +297,9 @@ class HPOTool(BaseTool):
         # payload carries genes, diseases, assays and medicalActions together,
         # so a non-empty sibling array already proves the term resolves and the
         # probe is only worth paying for when all four are empty.
-        if not any(data.get(k) for k in ("genes", "diseases", "assays")):
+        if not any(
+            data.get(k) for k in ("genes", "diseases", "assays", "medicalActions")
+        ):
             metadata.update(self._merge_metadata(term_id))
 
         return {"status": "success", "data": {kind: trimmed}, "metadata": metadata}

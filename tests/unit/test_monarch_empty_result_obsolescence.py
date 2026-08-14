@@ -115,7 +115,15 @@ class TestEmptyResultDisclosesObsolescence:
         metadata = result["metadata"]
         assert metadata["deprecated"] is True
         assert metadata["replaced_by"] == "MONDO:1010200"
-        assert "MONDO:1010200" in metadata["deprecation_note"]
+        # The row endpoints get the "this empty result" clause, where
+        # Mondo_get_disease gets "the empty fields above"; both are pinned so
+        # the shared sentence cannot drift for one caller and not the other.
+        assert metadata["deprecation_note"] == (
+            "MONDO:0014978 is an obsolete Mondo term. Monarch strips the "
+            "annotations of obsolete terms, so this empty result means "
+            "'not recorded here', not 'none exist'. Re-query MONDO:1010200 "
+            "for the current term."
+        )
 
     @pytest.mark.parametrize("endpoint,arguments", EMPTY_ENDPOINTS)
     def test_empty_result_for_a_live_term_is_not_flagged(self, endpoint, arguments):
