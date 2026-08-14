@@ -16,6 +16,19 @@ import hashlib
 import inspect
 
 
+def request_url(sent: Any, endpoint: str) -> str:
+    """The URI actually sent, falling back to ``endpoint``.
+
+    A tool that puts its query in ``params=`` and then echoes the endpoint
+    constant publishes a URL identical for every call, which no caller can
+    replay -- so echo what the HTTP layer resolved instead. ``sent`` is a
+    Response or a PreparedRequest; both carry ``.url``. Stubbed responses in
+    tests carry a non-string there, which must never reach the payload.
+    """
+    resolved = getattr(sent, "url", None)
+    return resolved if isinstance(resolved, str) and resolved else endpoint
+
+
 def resolve_configured_operation(tool_config: Any) -> Optional[str]:
     """Return the ``operation`` a tool's own config implies, if any.
 

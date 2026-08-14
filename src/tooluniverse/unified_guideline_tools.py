@@ -269,28 +269,16 @@ class PubMedGuidelinesTool(BaseTool):
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
 
-        result, metadata = self._search_pubmed_guidelines(query, limit, api_key)
-        # Fix-R9E-1: _search_pubmed_guidelines returns either a bare list of
-        # results or an {"status": "error", ...} dict on failure. The
-        # bare-list success case was never wrapped in the standard
-        # {"status": "success", "data": [...]} envelope every sibling tool
-        # (e.g. PubMed_search_articles) uses -- independently reported by
-        # personas across 4 separate rounds, since callers writing generic
-        # status-checking code broke specifically on this tool.
-        if isinstance(result, list):
-            # esearch reports how many guidelines match; without it a caller
-            # reads `limit` rows as the whole corpus ("therapeutic plasma
-            # exchange" returns 3 of 94). The sibling PubMed_search_articles
-            # already publishes metadata.total from the same field.
-            return {
-                "status": "success",
-                "data": result,
-                "metadata": {**metadata, "returned": len(result)},
-            }
-        return result
+        return self._search_pubmed_guidelines(query, limit, api_key)
 
     def _search_pubmed_guidelines(self, query, limit, api_key):
-        """Search PubMed for guidelines; returns (results, envelope metadata)."""
+        """Search PubMed for guidelines, in the standard envelope.
+
+        Fix-R9E-1: the success case used to be returned as a bare list, unlike
+        every sibling tool (e.g. PubMed_search_articles) -- independently
+        reported by personas across 4 separate rounds, since callers writing
+        generic status-checking code broke specifically on this tool.
+        """
         try:
             # Add guideline publication type filter
             guideline_query = f"{query} AND (guideline[Publication Type] OR practice guideline[Publication Type])"
@@ -317,18 +305,28 @@ class PubMedGuidelinesTool(BaseTool):
                 total = int(esearch.get("count", 0))
             except (TypeError, ValueError):
                 total = 0
-            # `retrieved` is separate from `returned` because the rows below
-            # are filtered client-side against the query terms, so a smaller
-            # `returned` means this tool dropped rows, not that PubMed had
-            # fewer. Only `total > retrieved` is upstream truncation.
-            metadata = {
-                "total": total,
-                "retrieved": len(pmids),
-                "truncated": total > len(pmids),
-            }
+
+            # esearch reports how many guidelines match; without it a caller
+            # reads `limit` rows as the whole corpus ("therapeutic plasma
+            # exchange" returns 3 of 94). `retrieved` is separate from
+            # `returned` because the rows below are filtered client-side
+            # against the query terms, so a smaller `returned` means this tool
+            # dropped rows, not that PubMed had fewer -- only
+            # `total > retrieved` is upstream truncation.
+            def envelope(results):
+                return {
+                    "status": "success",
+                    "data": results,
+                    "metadata": {
+                        "total": total,
+                        "retrieved": len(pmids),
+                        "truncated": total > len(pmids),
+                        "returned": len(results),
+                    },
+                }
 
             if not pmids:
-                return [], metadata
+                return envelope([])
 
             # Get details for PMIDs
             time.sleep(0.5)  # Be respectful with API calls
@@ -445,20 +443,20 @@ class PubMedGuidelinesTool(BaseTool):
 
                     results.append(result)
 
-            return results, metadata
+            return envelope(results)
 
         except requests.exceptions.RequestException as e:
             return {
                 "status": "error",
                 "error": f"Failed to search PubMed: {str(e)}",
                 "source": "PubMed",
-            }, {}
+            }
         except Exception as e:
             return {
                 "status": "error",
                 "error": f"Error processing PubMed response: {str(e)}",
                 "source": "PubMed",
-            }, {}
+            }
 
 
 @register_tool()

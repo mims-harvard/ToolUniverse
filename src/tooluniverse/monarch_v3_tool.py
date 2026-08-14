@@ -71,18 +71,41 @@ def _replaced_by(curie: str, timeout: int) -> Optional[str]:
     return None
 
 
+def _deprecation_metadata(
+    curie: str, empty_clause: str, timeout: int
+) -> Dict[str, Any]:
+    """The `deprecated`/`replaced_by`/note trio for a known-obsolete CURIE.
+
+    `empty_clause` names whatever the caller is about to hand back empty, verb
+    included, so one wording serves both a stripped record ("the empty fields
+    above mean") and a stripped result set ("this empty result means").
+    Capped below the caller's timeout: the answer it accompanies is already
+    complete, so a slow OLS4 must not stall it.
+    """
+    replacement = _replaced_by(curie, min(timeout, 10))
+    next_step = (
+        f"Re-query {replacement} for the current term."
+        if replacement
+        else "No replacement term is recorded; search by name for the current term."
+    )
+    return {
+        "deprecated": True,
+        "replaced_by": replacement,
+        "deprecation_note": (
+            f"{curie} is an obsolete Mondo term. Monarch strips the annotations "
+            f"of obsolete terms, so {empty_clause} 'not recorded here', not "
+            f"'none exist'. {next_step}"
+        ),
+    }
+
+
 def _obsolescence_metadata(curie: str, timeout: int) -> Dict[str, Any]:
-    """Metadata explaining an empty result set when the CURIE is obsolete.
+    """Deprecation metadata for an empty result set, or {} if there is none.
 
-    `Mondo_get_disease` can read `deprecated` straight off its own payload,
-    but the association/histopheno/mappings endpoints return only rows -- an
-    obsolete term yields `[]`, identical to a live term nobody has annotated
-    yet. There is nothing in that response to shape, so obsolescence has to
-    be asked for separately, which is why this probes /entity rather than
-    reading the response already in hand.
-
-    Returns {} for live terms, for non-MONDO CURIEs and whenever the probe
-    fails, so an empty result is never made worse by this lookup.
+    `_mondo_get_disease` reads `deprecated` off the record it already has, but
+    these endpoints return rows and nothing else -- so obsolescence has to be
+    asked for separately, which is why this probes /entity. Silent for live
+    terms, non-MONDO CURIEs and probe failures.
     """
     if not curie.upper().startswith("MONDO:"):
         return {}
@@ -96,21 +119,7 @@ def _obsolescence_metadata(curie: str, timeout: int) -> Dict[str, Any]:
     except Exception:
         return {}
 
-    replacement = _replaced_by(curie, min(timeout, 10))
-    next_step = (
-        f"Re-query {replacement} for the current term."
-        if replacement
-        else "No replacement term is recorded; search by name for the current term."
-    )
-    return {
-        "deprecated": True,
-        "replaced_by": replacement,
-        "deprecation_note": (
-            f"{curie} is an obsolete Mondo term. Monarch strips the annotations "
-            "of obsolete terms, so this empty result means 'not recorded here', "
-            f"not 'none exist'. {next_step}"
-        ),
-    }
+    return _deprecation_metadata(curie, "this empty result means", timeout)
 
 
 # Biolink association categories are directed: the category name reads
@@ -235,6 +244,17 @@ class MonarchV3Tool(BaseTool):
                 "status": "error",
                 "error": f"Unexpected error querying Monarch: {str(e)}",
             }
+
+    def _rows(self, rows: list, metadata: Dict[str, Any], curie: str) -> Dict[str, Any]:
+        """Envelope a row-returning endpoint, disclosing an obsolete CURIE.
+
+        Nothing distinguishes "obsolete, so stripped" from "live, but nothing
+        recorded" in a bare empty list, so every such endpoint asks the same
+        question on the same condition.
+        """
+        if not rows:
+            metadata.update(_obsolescence_metadata(curie, self.timeout))
+        return {"status": "success", "data": rows, "metadata": metadata}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Monarch V3 endpoint."""
@@ -541,22 +561,13 @@ class MonarchV3Tool(BaseTool):
         }
 
         if deprecated:
-            # Capped independently of the Monarch timeout: the answer above is
-            # already complete, so a slow OLS4 must not stall it for 30s.
-            replacement = _replaced_by(disease_id, min(self.timeout, 10))
-            result["data"]["replaced_by"] = replacement
-            next_step = (
-                f"Re-query {replacement} for the current term."
-                if replacement
-                else "No replacement term is recorded; search by name for the "
-                "current term."
+            # `deprecated` is already known from the record above, so unlike the
+            # row endpoints this needs no /entity probe -- only the note.
+            disclosure = _deprecation_metadata(
+                disease_id, "the empty fields above mean", self.timeout
             )
-            result["metadata"]["deprecation_note"] = (
-                f"{disease_id} is an obsolete Mondo term. Monarch strips the "
-                "annotations of obsolete terms, so the empty fields above mean "
-                "'not recorded here', not 'this disease has no known genes or "
-                f"phenotypes'. {next_step}"
-            )
+            result["data"]["replaced_by"] = disclosure["replaced_by"]
+            result["metadata"]["deprecation_note"] = disclosure["deprecation_note"]
 
         return result
 
@@ -601,10 +612,7 @@ class MonarchV3Tool(BaseTool):
             "disease_id": disease_id,
             "total_phenotypes": data.get("total", len(phenotypes)),
         }
-        if not phenotypes:
-            metadata.update(_obsolescence_metadata(disease_id, self.timeout))
-
-        return {"status": "success", "data": phenotypes, "metadata": metadata}
+        return self._rows(rows=phenotypes, metadata=metadata, curie=disease_id)
 
     # --- Additional Monarch V3 endpoints ---
 
@@ -640,10 +648,7 @@ class MonarchV3Tool(BaseTool):
             "entity_id": data.get("id", entity_id),
             "total_systems_with_phenotypes": len(items),
         }
-        if not items:
-            metadata.update(_obsolescence_metadata(entity_id, self.timeout))
-
-        return {"status": "success", "data": items, "metadata": metadata}
+        return self._rows(rows=items, metadata=metadata, curie=entity_id)
 
     def _get_mappings(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get cross-ontology mappings for an entity."""
@@ -680,10 +685,7 @@ class MonarchV3Tool(BaseTool):
             "entity_id": entity_id,
             "total_mappings": data.get("total", len(mappings)),
         }
-        if not mappings:
-            metadata.update(_obsolescence_metadata(entity_id, self.timeout))
-
-        return {"status": "success", "data": mappings, "metadata": metadata}
+        return self._rows(rows=mappings, metadata=metadata, curie=entity_id)
 
     def _semsim_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for diseases matching a set of phenotypes using semantic similarity."""
