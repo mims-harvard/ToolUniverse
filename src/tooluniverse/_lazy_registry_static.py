@@ -619,6 +619,7 @@ STATIC_LAZY_REGISTRY = {
     "REBASETool": "rebase_tool",
     "SKEMPITool": "skempi_tool",
     "MCSATool": "mcsa_tool",
+    "CodonUsageTool": "codon_usage_tool",
     "OPMTool": "membrane_topology_tool",
     "TopDBTool": "membrane_topology_tool",
     "EBIPairwiseAlignTool": "ebi_sequence_tools",

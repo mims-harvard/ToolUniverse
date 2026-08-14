@@ -579,6 +579,8 @@ default_tool_files = {
     "mgnify_expanded": os.path.join(current_dir, "data", "mgnify_expanded_tools.json"),
     # EBI Job Dispatcher - pairwise alignment, translation, Pfam, Phobius, profile search
     "ebi_sequence": os.path.join(current_dir, "data", "ebi_sequence_tools.json"),
+    # Codon usage - species codon tables for codon optimization
+    "codon_usage": os.path.join(current_dir, "data", "codon_usage_tools.json"),
     # M-CSA - curated enzyme catalytic residues and mechanisms
     "mcsa": os.path.join(current_dir, "data", "mcsa_tools.json"),
     # OPM and TopDB - structure-derived and curated membrane protein topology
