@@ -168,6 +168,17 @@ def esearch_query_disclosure(
     return metadata
 
 
+def _request_url(sent, fallback: str) -> str:
+    """The URI actually sent, falling back to the endpoint when unavailable.
+
+    `sent` is a Response or PreparedRequest; both carry `.url`. Stubbed
+    responses in tests may carry a non-string there, so anything that is not
+    a string falls back rather than leaking a mock into the payload.
+    """
+    resolved = getattr(sent, "url", None)
+    return resolved if isinstance(resolved, str) else fallback
+
+
 class NCBIEUtilsTool(BaseTool):
     """Base class for NCBI E-utilities tools with rate limiting."""
 
@@ -211,7 +222,13 @@ class NCBIEUtilsTool(BaseTool):
                 return {
                     "status": "success",
                     "data": data,
-                    "url": url,
+                    # The query lives in `params`, so echoing the endpoint
+                    # constant published a URL identical for every call and an
+                    # error when replayed (esearch.fcgi with no db/term ->
+                    # "Empty term and query_key - nothing todo"). Report what
+                    # was actually sent. E-utilities takes no credentials here,
+                    # so the resolved URI carries nothing secret.
+                    "url": _request_url(response, url),
                     "content_type": response.headers.get(
                         "content-type", "application/json"
                     ),
@@ -230,7 +247,7 @@ class NCBIEUtilsTool(BaseTool):
                     return {
                         "status": "error",
                         "error": f"NCBI E-utilities API request failed: {str(e)}",
-                        "url": url,
+                        "url": _request_url(e.response, url),
                         "status_code": (
                             e.response.status_code if hasattr(e, "response") else None
                         ),
@@ -239,7 +256,7 @@ class NCBIEUtilsTool(BaseTool):
                 return {
                     "status": "error",
                     "error": f"NCBI E-utilities API request failed: {str(e)}",
-                    "url": url,
+                    "url": _request_url(e.request, url),
                 }
 
         return {

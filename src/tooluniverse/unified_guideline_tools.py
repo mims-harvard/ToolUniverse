@@ -269,7 +269,7 @@ class PubMedGuidelinesTool(BaseTool):
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
 
-        result = self._search_pubmed_guidelines(query, limit, api_key)
+        result, metadata = self._search_pubmed_guidelines(query, limit, api_key)
         # Fix-R9E-1: _search_pubmed_guidelines returns either a bare list of
         # results or an {"status": "error", ...} dict on failure. The
         # bare-list success case was never wrapped in the standard
@@ -278,11 +278,19 @@ class PubMedGuidelinesTool(BaseTool):
         # personas across 4 separate rounds, since callers writing generic
         # status-checking code broke specifically on this tool.
         if isinstance(result, list):
-            return {"status": "success", "data": result}
+            # esearch reports how many guidelines match; without it a caller
+            # reads `limit` rows as the whole corpus ("therapeutic plasma
+            # exchange" returns 3 of 94). The sibling PubMed_search_articles
+            # already publishes metadata.total from the same field.
+            return {
+                "status": "success",
+                "data": result,
+                "metadata": {**metadata, "returned": len(result)},
+            }
         return result
 
     def _search_pubmed_guidelines(self, query, limit, api_key):
-        """Search PubMed for guideline publications."""
+        """Search PubMed for guidelines; returns (results, envelope metadata)."""
         try:
             # Add guideline publication type filter
             guideline_query = f"{query} AND (guideline[Publication Type] OR practice guideline[Publication Type])"
@@ -303,11 +311,24 @@ class PubMedGuidelinesTool(BaseTool):
             search_response.raise_for_status()
             search_data = search_response.json()
 
-            pmids = search_data.get("esearchresult", {}).get("idlist", [])
-            search_data.get("esearchresult", {}).get("count", "0")
+            esearch = search_data.get("esearchresult", {})
+            pmids = esearch.get("idlist", [])
+            try:
+                total = int(esearch.get("count", 0))
+            except (TypeError, ValueError):
+                total = 0
+            # `retrieved` is separate from `returned` because the rows below
+            # are filtered client-side against the query terms, so a smaller
+            # `returned` means this tool dropped rows, not that PubMed had
+            # fewer. Only `total > retrieved` is upstream truncation.
+            metadata = {
+                "total": total,
+                "retrieved": len(pmids),
+                "truncated": total > len(pmids),
+            }
 
             if not pmids:
-                return []
+                return [], metadata
 
             # Get details for PMIDs
             time.sleep(0.5)  # Be respectful with API calls
@@ -424,20 +445,20 @@ class PubMedGuidelinesTool(BaseTool):
 
                     results.append(result)
 
-            return results
+            return results, metadata
 
         except requests.exceptions.RequestException as e:
             return {
                 "status": "error",
                 "error": f"Failed to search PubMed: {str(e)}",
                 "source": "PubMed",
-            }
+            }, {}
         except Exception as e:
             return {
                 "status": "error",
                 "error": f"Error processing PubMed response: {str(e)}",
                 "source": "PubMed",
-            }
+            }, {}
 
 
 @register_tool()

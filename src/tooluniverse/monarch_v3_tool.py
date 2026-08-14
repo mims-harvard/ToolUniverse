@@ -71,6 +71,48 @@ def _replaced_by(curie: str, timeout: int) -> Optional[str]:
     return None
 
 
+def _obsolescence_metadata(curie: str, timeout: int) -> Dict[str, Any]:
+    """Metadata explaining an empty result set when the CURIE is obsolete.
+
+    `Mondo_get_disease` can read `deprecated` straight off its own payload,
+    but the association/histopheno/mappings endpoints return only rows -- an
+    obsolete term yields `[]`, identical to a live term nobody has annotated
+    yet. There is nothing in that response to shape, so obsolescence has to
+    be asked for separately, which is why this probes /entity rather than
+    reading the response already in hand.
+
+    Returns {} for live terms, for non-MONDO CURIEs and whenever the probe
+    fails, so an empty result is never made worse by this lookup.
+    """
+    if not curie.upper().startswith("MONDO:"):
+        return {}
+    try:
+        response = requests.get(
+            f"{MONARCH_BASE_URL}/entity/{curie}", timeout=min(timeout, 10)
+        )
+        response.raise_for_status()
+        if not _is_deprecated(response.json()):
+            return {}
+    except Exception:
+        return {}
+
+    replacement = _replaced_by(curie, min(timeout, 10))
+    next_step = (
+        f"Re-query {replacement} for the current term."
+        if replacement
+        else "No replacement term is recorded; search by name for the current term."
+    )
+    return {
+        "deprecated": True,
+        "replaced_by": replacement,
+        "deprecation_note": (
+            f"{curie} is an obsolete Mondo term. Monarch strips the annotations "
+            "of obsolete terms, so this empty result means 'not recorded here', "
+            f"not 'none exist'. {next_step}"
+        ),
+    }
+
+
 # Biolink association categories are directed: the category name reads
 # "<subject>To<object>Association". Anchoring an entity on the wrong side is
 # silently valid at the API (it just matches nothing), so a caller asking
@@ -311,6 +353,7 @@ class MonarchV3Tool(BaseTool):
             hint = _direction_hint(category, subject, obj)
             if hint:
                 metadata["note"] = hint
+            metadata.update(_obsolescence_metadata(subject or obj, self.timeout))
 
         return {
             "status": "success",
@@ -553,15 +596,15 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
-        return {
-            "status": "success",
-            "data": phenotypes,
-            "metadata": {
-                "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
-                "disease_id": disease_id,
-                "total_phenotypes": data.get("total", len(phenotypes)),
-            },
+        metadata = {
+            "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
+            "disease_id": disease_id,
+            "total_phenotypes": data.get("total", len(phenotypes)),
         }
+        if not phenotypes:
+            metadata.update(_obsolescence_metadata(disease_id, self.timeout))
+
+        return {"status": "success", "data": phenotypes, "metadata": metadata}
 
     # --- Additional Monarch V3 endpoints ---
 
@@ -592,15 +635,15 @@ class MonarchV3Tool(BaseTool):
                 )
         items.sort(key=lambda x: x["phenotype_count"], reverse=True)
 
-        return {
-            "status": "success",
-            "data": items,
-            "metadata": {
-                "source": "Monarch Initiative V3 - Histopheno",
-                "entity_id": data.get("id", entity_id),
-                "total_systems_with_phenotypes": len(items),
-            },
+        metadata = {
+            "source": "Monarch Initiative V3 - Histopheno",
+            "entity_id": data.get("id", entity_id),
+            "total_systems_with_phenotypes": len(items),
         }
+        if not items:
+            metadata.update(_obsolescence_metadata(entity_id, self.timeout))
+
+        return {"status": "success", "data": items, "metadata": metadata}
 
     def _get_mappings(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get cross-ontology mappings for an entity."""
@@ -632,15 +675,15 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
-        return {
-            "status": "success",
-            "data": mappings,
-            "metadata": {
-                "source": "Monarch Initiative V3 - Mappings",
-                "entity_id": entity_id,
-                "total_mappings": data.get("total", len(mappings)),
-            },
+        metadata = {
+            "source": "Monarch Initiative V3 - Mappings",
+            "entity_id": entity_id,
+            "total_mappings": data.get("total", len(mappings)),
         }
+        if not mappings:
+            metadata.update(_obsolescence_metadata(entity_id, self.timeout))
+
+        return {"status": "success", "data": mappings, "metadata": metadata}
 
     def _semsim_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for diseases matching a set of phenotypes using semantic similarity."""

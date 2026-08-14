@@ -38,6 +38,18 @@ def _normalize_hpo_id(term_id: str) -> str:
     return "HP:" + tid.split(":", 1)[1] if ":" in tid else tid
 
 
+def _merge_note(requested_id: str, resolved_id: str) -> str:
+    """Explain that `requested_id` was merged into `resolved_id` upstream."""
+    return (
+        f"The requested term ID ({requested_id}) differs from the "
+        f"returned term's ID ({resolved_id}). This usually means "
+        f"{requested_id} is obsolete or was merged into {resolved_id} "
+        "upstream. Use get_phenotype_by_HPO_ID for an explicit "
+        "'deprecated' flag, or HPO_search_terms to find the "
+        "current preferred term."
+    )
+
+
 @register_tool("HPOTool")
 class HPOTool(BaseTool):
     """
@@ -260,17 +272,40 @@ class HPOTool(BaseTool):
                 entry["mondo_id"] = it.get("mondoId")
             trimmed.append(entry)
 
+        metadata = {
+            "source": "HPO (JAX Ontology) network annotation",
+            "term_id": term_id,
+            "total": total,
+            "offset": offset,
+            "returned": len(trimmed),
+            "has_more": offset + len(trimmed) < total,
+        }
+        # The annotation endpoint answers an obsolete/merged term with HTTP 200
+        # and empty arrays -- indistinguishable from a live term nothing is
+        # annotated to. `_get_term` already detects the merge by comparing the
+        # requested ID against the one the terms endpoint returns, so ask it
+        # here too, on the empty path only.
+        if not total:
+            metadata.update(self._merge_metadata(term_id))
+
+        return {"status": "success", "data": {kind: trimmed}, "metadata": metadata}
+
+    def _merge_metadata(self, term_id: str) -> Dict[str, Any]:
+        """Report the replacement term when `term_id` was merged, else {}."""
+        try:
+            response = requests.get(
+                f"{HPO_BASE_URL}/terms/{term_id}", timeout=self.timeout
+            )
+            response.raise_for_status()
+            resolved_id = response.json().get("id")
+        except Exception:
+            return {}
+        if not resolved_id or resolved_id == term_id:
+            return {}
         return {
-            "status": "success",
-            "data": {kind: trimmed},
-            "metadata": {
-                "source": "HPO (JAX Ontology) network annotation",
-                "term_id": term_id,
-                "total": total,
-                "offset": offset,
-                "returned": len(trimmed),
-                "has_more": offset + len(trimmed) < total,
-            },
+            "requested_id": term_id,
+            "resolved_id": resolved_id,
+            "note": _merge_note(term_id, resolved_id),
         }
 
     def _get_term(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -324,14 +359,7 @@ class HPOTool(BaseTool):
         if resolved_id and resolved_id != term_id:
             metadata["requested_id"] = term_id
             metadata["resolved_id"] = resolved_id
-            metadata["note"] = (
-                f"The requested term ID ({term_id}) differs from the "
-                f"returned term's ID ({resolved_id}). This usually means "
-                f"{term_id} is obsolete or was merged into {resolved_id} "
-                "upstream. Use get_phenotype_by_HPO_ID for an explicit "
-                "'deprecated' flag, or HPO_search_terms to find the "
-                "current preferred term."
-            )
+            metadata["note"] = _merge_note(term_id, resolved_id)
 
         return {
             "status": "success",
