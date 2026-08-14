@@ -497,6 +497,21 @@ query GeneConstraints(
       obs_syn
       oe_syn
     }
+    mitochondrial_constraint {
+      __typename
+      ... on ProteinMitochondrialGeneConstraint {
+        exp_lof
+        obs_lof
+        oe_lof
+        oe_lof_upper
+      }
+      ... on RNAMitochondrialGeneConstraint {
+        observed
+        expected
+        oe
+        oe_upper
+      }
+    }
   }
 }
 """
@@ -520,5 +535,29 @@ query GeneConstraints(
         # Add gene_symbol to result for reference
         if result.get("status") == "success":
             result["gene_symbol"] = gene_symbol
+            self._note_absent_constraints(result)
 
         return result
+
+    # gnomAD scores mtDNA genes under `mitochondrial_constraint`, never under
+    # `gnomad_constraint`/`exac_constraint`, which the query used to ask for
+    # alone. MT-ND4 came back `success` with both nuclear blocks null -- read
+    # as "unconstrained" when gnomAD in fact scores it oe_lof_upper 0.022,
+    # i.e. among the most LoF-intolerant genes there are. Now that all three
+    # are requested, say plainly when a gene genuinely has none of them so an
+    # empty answer is still distinguishable from an unasked question.
+    _CONSTRAINT_KEYS = ("gnomad_constraint", "exac_constraint", "mitochondrial_constraint")
+
+    @classmethod
+    def _note_absent_constraints(cls, result):
+        gene = (result.get("data") or {}).get("gene")
+        if not isinstance(gene, dict):
+            return
+        if any(gene.get(key) for key in cls._CONSTRAINT_KEYS):
+            return
+        result["note"] = (
+            f"gnomAD returned no constraint metrics for "
+            f"{result.get('gene_symbol')} under any of "
+            f"{', '.join(cls._CONSTRAINT_KEYS)}. This means gnomAD has not "
+            f"scored the gene, not that the gene is unconstrained."
+        )

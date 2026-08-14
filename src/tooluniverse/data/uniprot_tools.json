@@ -847,7 +847,8 @@
               "type": [
                 "integer",
                 "number"
-              ]
+              ],
+              "description": "Number of mapping rows in `results`. This is a page count, not the number of matches -- compare against `total_results`."
             },
             "results": {
               "type": "array",
@@ -875,7 +876,23 @@
               }
             },
             "failed_ids": {
-              "type": "array"
+              "type": "array",
+              "description": "Input identifiers UniProt could not map at all (its `failedIds`), e.g. a typo'd accession. Empty when every input mapped."
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ],
+              "description": "Total mappings UniProt holds for these inputs, from its x-total-results header. Null when UniProt did not report one."
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when `results` is only a page of `total_results`."
+            },
+            "truncation_note": {
+              "type": "string"
             }
           },
           "required": [

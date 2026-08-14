@@ -583,7 +583,18 @@ class BVBRCTool(BaseTool):
             "property",
             "source",
             "evidence",
+            # `organism` is the organism of BV-BRC's *reference annotation
+            # source*, not of the genome carrying the hit, and the two
+            # routinely disagree -- sp_gene row genome_id=550.1655 reports
+            # organism "Klebsiella pneumoniae" for a genome named
+            # "Enterobacter cloacae strain 1-RC-17-04409-1" (and its own
+            # taxon_id, 550, is E. cloacae). Selecting `organism` alone made
+            # the tool answer "which species carries this resistance gene"
+            # with the wrong species. `genome_name` is the carrying genome,
+            # which is what that question means; the sibling
+            # BVBRC_search_amr already selects it.
             "organism",
+            "genome_name",
             "source_id",
             "taxon_id",
             "genome_id",

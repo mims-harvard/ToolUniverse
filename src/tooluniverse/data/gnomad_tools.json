@@ -2,7 +2,7 @@
   {
     "type": "gnomADGetGeneConstraints",
     "name": "gnomad_get_gene_constraints",
-    "description": "Get gene constraint metrics from gnomAD for a gene symbol (GRCh38). Returns constraint fields under `exac_constraint` and `gnomad_constraint` (e.g., pLI, oe_lof/oe_mis/oe_syn, exp/obs counts). Note: does NOT include LOEUF, missense Z-score, or synonymous Z-score -- for the full constraint panel (pLI + LOEUF + mis_z + syn_z), use gnomad_get_constraint instead.",
+    "description": "Get gene constraint metrics from gnomAD for a gene symbol (GRCh38). Returns constraint fields under `exac_constraint` and `gnomad_constraint` (e.g., pLI, oe_lof/oe_mis/oe_syn, exp/obs counts). Mitochondrially-encoded genes (MT-*) are scored under `mitochondrial_constraint` instead -- their `gnomad_constraint` and `exac_constraint` are always null, which does not mean unconstrained. Note: does NOT include LOEUF, missense Z-score, or synonymous Z-score -- for the full constraint panel (pLI + LOEUF + mis_z + syn_z), use gnomad_get_constraint instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -27,7 +27,7 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query GeneConstraints($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id exac_constraint { exp_lof obs_lof pLI exp_mis obs_mis exp_syn obs_syn } gnomad_constraint { exp_lof obs_lof oe_lof pLI exp_mis obs_mis oe_mis exp_syn obs_syn oe_syn } } }"
+      "query_schema": "query GeneConstraints($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id exac_constraint { exp_lof obs_lof pLI exp_mis obs_mis exp_syn obs_syn } gnomad_constraint { exp_lof obs_lof oe_lof pLI exp_mis obs_mis oe_mis exp_syn obs_syn oe_syn } mitochondrial_constraint { __typename ... on ProteinMitochondrialGeneConstraint { exp_lof obs_lof oe_lof oe_lof_upper } ... on RNAMitochondrialGeneConstraint { observed expected oe oe_upper } } } }"
     },
     "return_schema": {
       "oneOf": [
@@ -50,7 +50,10 @@
                   ]
                 },
                 "gnomad_constraint": {
-                  "type": "object",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "exp_lof": {
                       "type": "number"
@@ -92,6 +95,13 @@
                       "type": "number"
                     }
                   }
+                },
+                "mitochondrial_constraint": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Constraint for mitochondrially-encoded genes, which gnomAD scores here and never under gnomad_constraint/exac_constraint. __typename is ProteinMitochondrialGeneConstraint (exp_lof, obs_lof, oe_lof, oe_lof_upper) for protein-coding mtDNA genes such as MT-ND4, or RNAMitochondrialGeneConstraint (observed, expected, oe, oe_upper) for mt-tRNA/mt-rRNA genes such as MT-TL1. Null for nuclear genes."
                 }
               }
             }

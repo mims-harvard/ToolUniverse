@@ -538,6 +538,22 @@ class UniProtRESTTool(BaseTool):
             results_url = f"https://rest.uniprot.org/idmapping/results/{job_id}"
 
             raw_results = None
+            # UniProt pages ID-mapping results, reports the unpaged total in
+            # the `x-total-results` header, and lists unmappable inputs under
+            # `failedIds`. All three were ignored here, so a 3-accession batch
+            # came back `mapped_count: 25, failed_ids: []` -- 25 being a page
+            # size, with one valid accession and one typo'd one silently
+            # absent (live: Q9F663+P0DTC2+NOTAREALACC99 -> x-total-results
+            # 2236, failedIds ['NOTAREALACC99']).
+            #
+            # Feature-26A-13 noted the status endpoint can 303-redirect
+            # straight to a results page; that page uses its own 25-record
+            # default rather than the size we ask for, so taking it as the
+            # answer is what truncated. Fix-R20A-1 already settled this for
+            # the sibling UniProtIDMappingTool: treat embedded results as
+            # merely "job done", then always re-fetch with an explicit size.
+            total_results = None
+            failed_ids = []
             start_time = time.time()
             while time.time() - start_time < max_wait_time:
                 status_resp = requests.get(status_url, timeout=self.timeout)
@@ -545,15 +561,22 @@ class UniProtRESTTool(BaseTool):
 
                 job_status = status_data.get("jobStatus") or status_data.get("status")
 
-                if job_status == "FINISHED":
-                    # Explicit FINISHED status — fetch results separately
-                    results_resp = requests.get(results_url, timeout=self.timeout)
-                    raw_results = results_resp.json().get("results", [])
-                    break
-                elif "results" in status_data:
-                    # Feature-26A-13: UniProt status endpoint redirected (303) to
-                    # results page; results are embedded directly in status_data.
-                    raw_results = status_data["results"]
+                if job_status == "FINISHED" or "results" in status_data:
+                    results_resp = requests.get(
+                        results_url, params={"size": 500}, timeout=self.timeout
+                    )
+                    results_payload = results_resp.json()
+                    if "results" in results_payload:
+                        source_resp, payload = results_resp, results_payload
+                    else:
+                        # Re-fetch gave us nothing usable; fall back to whatever
+                        # the status poll carried rather than losing the answer.
+                        source_resp, payload = status_resp, status_data
+                    raw_results = payload.get("results", [])
+                    failed_ids = payload.get("failedIds") or []
+                    total_results = self._total_results(
+                        source_resp, payload, raw_results
+                    )
                     break
                 elif job_status in ("FAILED", "ERROR"):
                     return {
@@ -601,8 +624,19 @@ class UniProtRESTTool(BaseTool):
             result_data = {
                 "mapped_count": len(formatted_results),
                 "results": formatted_results,
-                "failed_ids": [],
+                "failed_ids": failed_ids,
+                "total_results": total_results,
             }
+            if total_results is not None and len(formatted_results) < total_results:
+                result_data["truncated"] = True
+                result_data["truncation_note"] = (
+                    f"Returned {len(formatted_results)} of {total_results} mappings "
+                    f"UniProt holds for these IDs. `mapped_count` counts the rows "
+                    f"below, not the matches; an identifier absent here may still "
+                    f"map. Narrow the request to fewer input IDs to see the rest."
+                )
+            else:
+                result_data["truncated"] = False
             return {"status": "success", "data": result_data}
 
         except requests.exceptions.Timeout:
