@@ -771,13 +771,29 @@
               "type": [
                 "integer",
                 "number"
-              ]
+              ],
+              "description": "Number of recommendation rows in this response. Compare with 'total_count' -- they differ whenever 'limit' truncated the result."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "number"
+              ],
+              "description": "Total recommendation rows available for this guideline (or, when gene/phenotype filters are given, matching those filters) across all pages. 'limit' defaults to 50, so this is often larger than 'count'."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "number"
+              ],
+              "description": "Zero-based index of the first recommendation row in this response."
             },
             "note": {
               "type": [
                 "string",
                 "null"
-              ]
+              ],
+              "description": "Explains a truncated page, an empty filtered result, or a guideline that publishes no recommendation table."
             }
           },
           "required": [
@@ -823,7 +839,7 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (default 50)"
+          "description": "Maximum number of pairs to return. Omit to get every matching pair (CPIC publishes 635 in total, 96 at level A); there is no default cap, so 'count' equals the full match count unless you set this."
         },
         "gene_symbol": {
           "type": [
