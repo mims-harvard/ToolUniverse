@@ -90,6 +90,19 @@ GENERIC_LISTING_HTML = (
 )
 
 
+def _rows(result):
+    """The guideline rows a caller reads.
+
+    Fix-R58-4 wrapped WHO's answer in the {status, data, metadata} envelope
+    its sibling guideline searches now share, so the rows moved under `data`
+    and the tool reports WHO IRIS's match total alongside them. These guards
+    are about *which documents* WHO returns for a query, not about the
+    envelope, so they read the rows through here.
+    """
+    assert result["status"] == "success", result
+    return result["data"]
+
+
 class TestQuerySpecificResults:
     def test_topic_miss_searches_iris_not_the_generic_listing(self):
         """A query with no WHO health topic must not fall back to WHO's
@@ -104,8 +117,9 @@ class TestQuerySpecificResults:
             return _response(json_body=_iris_payload("Methadone for pain"))
 
         with patch.object(tool.session, "get", side_effect=fake_get):
-            results = tool.run({"query": "methadone", "limit": 3})
+            result = tool.run({"query": "methadone", "limit": 3})
 
+        results = _rows(result)
         urls = [u for u, _ in requested]
         assert not any("who-guidelines" in u for u in urls), (
             f"generic recent-guidelines listing was scraped again: {urls}"
@@ -135,9 +149,9 @@ class TestQuerySpecificResults:
             return _response(json_body=_iris_payload())
 
         with patch.object(tool.session, "get", side_effect=fake_get):
-            results = tool.run({"query": "zzqqxxwubble", "limit": 3})
+            result = tool.run({"query": "zzqqxxwubble", "limit": 3})
 
-        assert results == []
+        assert _rows(result) == []
 
     def test_distinct_queries_get_distinct_results(self):
         tool = _tool()
@@ -153,7 +167,7 @@ class TestQuerySpecificResults:
             first = tool.run({"query": "methadone", "limit": 3})
             second = tool.run({"query": "clozapine", "limit": 3})
 
-        assert first != second
+        assert _rows(first) != _rows(second)
 
     def test_iris_results_do_not_claim_to_be_guidelines_by_default(self):
         """IRIS has no 'guideline' document type, so the flag must come
@@ -171,7 +185,7 @@ class TestQuerySpecificResults:
             )
 
         with patch.object(tool.session, "get", side_effect=fake_get):
-            results = tool.run({"query": "methadone", "limit": 5})
+            results = _rows(tool.run({"query": "methadone", "limit": 5}))
 
         assert results[0]["is_guideline"] is False
         assert results[1]["is_guideline"] is True
@@ -196,7 +210,7 @@ class TestQuerySpecificResults:
         with patch.object(
             tool.session, "get", return_value=_response(html=mixed_topic_page)
         ):
-            results = tool.run({"query": "tuberculosis", "limit": 5})
+            results = _rows(tool.run({"query": "tuberculosis", "limit": 5}))
 
         by_title = {r["title"][:30]: r["is_guideline"] for r in results}
         assert by_title["WHO consolidated guidelines on"] is True
@@ -210,7 +224,7 @@ class TestQuerySpecificResults:
             return _response(html=TOPIC_HTML)
 
         with patch.object(tool.session, "get", side_effect=fake_get):
-            results = tool.run({"query": "tuberculosis", "limit": 3})
+            results = _rows(tool.run({"query": "tuberculosis", "limit": 3}))
 
         assert len(results) == 1
         assert results[0]["matched_via"] == "health_topic:tuberculosis"
@@ -225,6 +239,6 @@ class TestQuerySpecificResults:
             return _response(json_body=_iris_payload("a", "b", "c", "d", "e"))
 
         with patch.object(tool.session, "get", side_effect=fake_get):
-            results = tool.run({"query": "methadone", "limit": 2})
+            results = _rows(tool.run({"query": "methadone", "limit": 2}))
 
         assert len(results) == 2

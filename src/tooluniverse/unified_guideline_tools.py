@@ -15,6 +15,36 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
+def _guideline_envelope(results, *, total, retrieved=None, source=None):
+    """Wrap one guideline search's rows with what the caller needs to read them.
+
+    Every search tool here returned a bare list, so `limit` rows were
+    indistinguishable from the whole corpus -- and each of these backends
+    reports the real figure in a payload the tool already parsed and then
+    dropped on the floor with a bare expression statement (Europe PMC
+    `hitCount`, TRIP `<total>`, OpenAlex `meta.count`, WHO IRIS
+    `page.totalElements`, NICE `resultCount`). Confirmed live: NICE
+    "infection" is 1057 documents, of which the tool returned 15.
+
+    `retrieved` is separate from `returned` because several of these filter
+    rows client-side after fetching them: a smaller `returned` means this
+    tool dropped rows, so only `total > retrieved` is upstream truncation.
+    `total` is None where the backend genuinely publishes no total (a
+    scraped topic page), which is honest -- unlike reporting the page size,
+    which is the failure this envelope exists to end.
+    """
+    retrieved = len(results) if retrieved is None else retrieved
+    metadata = {
+        "total": total,
+        "retrieved": retrieved,
+        "truncated": total > retrieved if isinstance(total, int) else False,
+        "returned": len(results),
+    }
+    if source:
+        metadata["source"] = source
+    return {"status": "success", "data": results, "metadata": metadata}
+
+
 def _extract_meaningful_terms(query):
     """Return significant query terms for relevance filtering."""
     if not isinstance(query, str):
@@ -133,12 +163,16 @@ class NICEWebScrapingTool(BaseTool):
 
             try:
                 data = json.loads(script_tag.string)
-                documents = (
-                    data.get("props", {})
-                    .get("pageProps", {})
-                    .get("results", {})
-                    .get("documents", [])
+                search_results = (
+                    data.get("props", {}).get("pageProps", {}).get("results", {})
                 )
+                documents = search_results.get("documents", [])
+                # NICE pages its search at 15 and reports the match count in
+                # the same __NEXT_DATA__ blob this already parses, one key
+                # along from `documents` (live: q=infection -> resultCount
+                # 1057, pageSize 15). Without it `limit: 50` returning 15 rows
+                # reads as "NICE has 15 documents on infection".
+                total = search_results.get("resultCount")
             except (json.JSONDecodeError, KeyError) as e:
                 return {
                     "status": "error",
@@ -233,7 +267,9 @@ class NICEWebScrapingTool(BaseTool):
                     "suggestion": "Try different search terms or check if the NICE website is accessible",
                 }
 
-            return results
+            return _guideline_envelope(
+                results, total=total, retrieved=len(documents), source="NICE"
+            )
 
         except requests.exceptions.RequestException as e:
             return {
@@ -308,22 +344,11 @@ class PubMedGuidelinesTool(BaseTool):
 
             # esearch reports how many guidelines match; without it a caller
             # reads `limit` rows as the whole corpus ("therapeutic plasma
-            # exchange" returns 3 of 94). `retrieved` is separate from
-            # `returned` because the rows below are filtered client-side
-            # against the query terms, so a smaller `returned` means this tool
-            # dropped rows, not that PubMed had fewer -- only
-            # `total > retrieved` is upstream truncation.
+            # exchange" returns 3 of 94).
             def envelope(results):
-                return {
-                    "status": "success",
-                    "data": results,
-                    "metadata": {
-                        "total": total,
-                        "retrieved": len(pmids),
-                        "truncated": total > len(pmids),
-                        "returned": len(results),
-                    },
-                }
+                return _guideline_envelope(
+                    results, total=total, retrieved=len(pmids), source="PubMed"
+                )
 
             if not pmids:
                 return envelope([])
@@ -496,11 +521,13 @@ class EuropePMCGuidelinesTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
-            data.get("hitCount", 0)
+            hit_count = data.get("hitCount", 0)
             results_list = data.get("resultList", {}).get("result", [])
 
             if not results_list:
-                return []
+                return _guideline_envelope(
+                    [], total=hit_count, retrieved=0, source="Europe PMC"
+                )
 
             # Process results with stricter filtering
             results = []
@@ -583,7 +610,12 @@ class EuropePMCGuidelinesTool(BaseTool):
                     if len(results) >= limit:
                         break
 
-            return results
+            return _guideline_envelope(
+                results,
+                total=hit_count,
+                retrieved=len(results_list),
+                source="Europe PMC",
+            )
 
         except requests.exceptions.RequestException as e:
             return {
@@ -732,16 +764,19 @@ class TRIPDatabaseTool(BaseTool):
             # Parse XML response
             root = ET.fromstring(response.content)
 
-            total = root.find("total")
-            count = root.find("count")
-
-            int(total.text) if total is not None else 0
-            int(count.text) if count is not None else 0
+            total_elem = root.find("total")
+            # TRIP's <count> is the size of the page it chose to send, not a
+            # match count -- criteria=vancomycin&limit=3 answers <total>12638
+            # <count>20. Only <total> belongs in the envelope; <count> is
+            # covered by `retrieved`.
+            total = int(total_elem.text) if total_elem is not None else None
 
             documents = root.findall("document")
 
             if not documents:
-                return []
+                return _guideline_envelope(
+                    [], total=total, retrieved=0, source="TRIP Database"
+                )
 
             # Process results
             results = []
@@ -819,7 +854,12 @@ class TRIPDatabaseTool(BaseTool):
 
                 results.append(guideline_result)
 
-            return results
+            return _guideline_envelope(
+                results,
+                total=total,
+                retrieved=len(documents),
+                source="TRIP Database",
+            )
 
         except requests.exceptions.RequestException as e:
             return {
@@ -1276,6 +1316,9 @@ class WHOGuidelinesTool(BaseTool):
         response.raise_for_status()
         search_result = response.json().get("_embedded", {}).get("searchResult", {})
         objects = search_result.get("_embedded", {}).get("objects", [])
+        # IRIS is a DSpace repository and reports the match count in
+        # `page.totalElements` (live: query=tuberculosis&size=3 -> 28435).
+        total = search_result.get("page", {}).get("totalElements")
 
         results = []
         for obj in objects[:size]:
@@ -1299,7 +1342,9 @@ class WHOGuidelinesTool(BaseTool):
                     matched_via="iris_search",
                 )
             )
-        return results
+        return _guideline_envelope(
+            results, total=total, retrieved=len(objects), source="WHO IRIS"
+        )
 
     def _search_who_guidelines(self, query, limit):
         """Search WHO health-topic pages, then WHO IRIS."""
@@ -1312,7 +1357,15 @@ class WHOGuidelinesTool(BaseTool):
                     time.sleep(0.5)
                 guidelines = self._scrape_topic_publications(slug)
                 if guidelines:
-                    return guidelines[:limit]
+                    # A topic page is a curated list, not a search index: it
+                    # publishes no match count, so `total` stays None rather
+                    # than echoing the page size as if it were one.
+                    return _guideline_envelope(
+                        guidelines[:limit],
+                        total=None,
+                        retrieved=len(guidelines),
+                        source="WHO",
+                    )
 
             # Otherwise search the WHO IRIS repository for the query itself.
             return self._search_iris(query, limit)
@@ -1388,7 +1441,7 @@ class OpenAlexGuidelinesTool(BaseTool):
 
             data = response.json()
             results = data.get("results", [])
-            data.get("meta", {})
+            total = data.get("meta", {}).get("count")
 
             guidelines = []
             for work in results:
@@ -1510,7 +1563,9 @@ class OpenAlexGuidelinesTool(BaseTool):
                     if len(guidelines) >= limit:
                         break
 
-            return guidelines
+            return _guideline_envelope(
+                guidelines, total=total, retrieved=len(results), source="OpenAlex"
+            )
 
         except requests.exceptions.RequestException as e:
             return {
