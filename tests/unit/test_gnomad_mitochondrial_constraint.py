@@ -31,7 +31,10 @@ from pathlib import Path
 
 import pytest
 
-from tooluniverse.gnomad_tool import gnomADGetGeneConstraints
+from tooluniverse.gnomad_tool import (
+    _note_absent_constraints,
+    gnomADGetGeneConstraints,
+)
 
 pytestmark = pytest.mark.unit
 
@@ -94,9 +97,12 @@ def test_schema_admits_a_null_nuclear_constraint():
     ],
 )
 def test_note_fires_when_no_constraint_of_any_kind_is_present(gene_payload):
-    result = {"status": "success", "gene_symbol": gene_payload["symbol"],
-              "data": {"gene": gene_payload}}
-    gnomADGetGeneConstraints._note_absent_constraints(result)
+    result = {
+        "status": "success",
+        "gene_symbol": gene_payload["symbol"],
+        "data": {"gene": gene_payload},
+    }
+    _note_absent_constraints(result)
 
     assert "note" in result
     assert "not that the gene is unconstrained" in result["note"]
@@ -116,7 +122,7 @@ def test_note_is_absent_when_mitochondrial_constraint_was_returned():
             }
         },
     }
-    gnomADGetGeneConstraints._note_absent_constraints(result)
+    _note_absent_constraints(result)
 
     assert "note" not in result
 
@@ -127,6 +133,6 @@ def test_note_is_absent_for_a_scored_nuclear_gene():
         "gene_symbol": "OPA1",
         "data": {"gene": {"symbol": "OPA1", "gnomad_constraint": {"pLI": 0.962}}},
     }
-    gnomADGetGeneConstraints._note_absent_constraints(result)
+    _note_absent_constraints(result)
 
     assert "note" not in result

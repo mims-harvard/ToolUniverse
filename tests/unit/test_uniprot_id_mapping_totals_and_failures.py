@@ -78,10 +78,13 @@ def _run(status_body, status_headers, results_body, results_headers):
         return _resp(results_body, results_headers)
 
     tool = _tool()
-    with patch(
-        "tooluniverse.uniprot_tool.requests.post",
-        return_value=_resp({"jobId": "JOB1"}),
-    ), patch("tooluniverse.uniprot_tool.requests.get", side_effect=fake_get):
+    with (
+        patch(
+            "tooluniverse.uniprot_tool.requests.post",
+            return_value=_resp({"jobId": "JOB1"}),
+        ),
+        patch("tooluniverse.uniprot_tool.requests.get", side_effect=fake_get),
+    ):
         result = tool.run(
             {
                 "ids": ["Q9F663", "NOTAREALACC99", "P0DTC2"],

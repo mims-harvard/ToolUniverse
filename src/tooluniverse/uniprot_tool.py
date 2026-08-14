@@ -331,13 +331,22 @@ class UniProtRESTTool(BaseTool):
         2`` when the real total is 395446. Prefer the header, and keep the
         body/page-size fallbacks for any endpoint that does supply them.
         """
-        header = getattr(resp, "headers", {}).get("x-total-results")
+        header = UniProtRESTTool._header_total(resp)
         if header is not None:
-            try:
-                return int(header)
-            except (TypeError, ValueError):
-                pass
+            return header
         return data.get("resultsFound", len(results))
+
+    @staticmethod
+    def _header_total(resp):
+        """The ``x-total-results`` figure, or None when it is absent/unusable."""
+        try:
+            header = getattr(resp, "headers", {}).get("x-total-results")
+        except (AttributeError, TypeError):
+            return None
+        try:
+            return int(header)
+        except (TypeError, ValueError):
+            return None
 
     def _handle_search(self, arguments: Dict[str, Any]) -> Any:
         """Handle search queries with flexible parameters"""
@@ -540,18 +549,19 @@ class UniProtRESTTool(BaseTool):
             raw_results = None
             # UniProt pages ID-mapping results, reports the unpaged total in
             # the `x-total-results` header, and lists unmappable inputs under
-            # `failedIds`. All three were ignored here, so a 3-accession batch
-            # came back `mapped_count: 25, failed_ids: []` -- 25 being a page
-            # size, with one valid accession and one typo'd one silently
-            # absent (live: Q9F663+P0DTC2+NOTAREALACC99 -> x-total-results
-            # 2236, failedIds ['NOTAREALACC99']).
+            # `failedIds`. All three were ignored here, so P04637 -> PDB came
+            # back `mapped_count: 25, failed_ids: []` -- 25 being a page size
+            # against a real 295 -- and a typo'd accession vanished silently.
             #
-            # Feature-26A-13 noted the status endpoint can 303-redirect
-            # straight to a results page; that page uses its own 25-record
-            # default rather than the size we ask for, so taking it as the
-            # answer is what truncated. Fix-R20A-1 already settled this for
-            # the sibling UniProtIDMappingTool: treat embedded results as
-            # merely "job done", then always re-fetch with an explicit size.
+            # Feature-26A-13 noted the status endpoint 303-redirects to a
+            # results page once the job finishes. Both figures are already on
+            # that response, so only rows beyond its short default page need
+            # a second request. Re-fetch through the URL the redirect landed
+            # on rather than the generic one: for `to_db=UniProtKB` the
+            # redirect targets /idmapping/uniprotkb/results/, which streams
+            # full entries, while /idmapping/results/ returns bare accession
+            # strings -- fetching the latter silently replaced each
+            # {accession, id, gene_name} object with a plain string.
             total_results = None
             failed_ids = []
             start_time = time.time()
@@ -562,21 +572,21 @@ class UniProtRESTTool(BaseTool):
                 job_status = status_data.get("jobStatus") or status_data.get("status")
 
                 if job_status == "FINISHED" or "results" in status_data:
-                    results_resp = requests.get(
-                        results_url, params={"size": 500}, timeout=self.timeout
-                    )
-                    results_payload = results_resp.json()
-                    if "results" in results_payload:
-                        source_resp, payload = results_resp, results_payload
-                    else:
-                        # Re-fetch gave us nothing usable; fall back to whatever
-                        # the status poll carried rather than losing the answer.
-                        source_resp, payload = status_resp, status_data
+                    resp, payload = status_resp, status_data
+                    carried = status_data.get("results")
+                    total = self._header_total(status_resp)
+                    if carried is None or total is None or total > len(carried):
+                        landed = str(getattr(status_resp, "url", "") or "")
+                        fetch_url = landed if "/results/" in landed else results_url
+                        page = requests.get(
+                            fetch_url, params={"size": 500}, timeout=self.timeout
+                        )
+                        page_payload = page.json()
+                        if "results" in page_payload:
+                            resp, payload = page, page_payload
                     raw_results = payload.get("results", [])
                     failed_ids = payload.get("failedIds") or []
-                    total_results = self._total_results(
-                        source_resp, payload, raw_results
-                    )
+                    total_results = self._total_results(resp, payload, raw_results)
                     break
                 elif job_status in ("FAILED", "ERROR"):
                     return {

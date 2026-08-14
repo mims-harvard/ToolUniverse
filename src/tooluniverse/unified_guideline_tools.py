@@ -34,14 +34,25 @@ def _guideline_envelope(results, *, total, retrieved=None, source=None):
     which is the failure this envelope exists to end.
     """
     retrieved = len(results) if retrieved is None else retrieved
+    truncated = total > retrieved if isinstance(total, int) else False
     metadata = {
         "total": total,
         "retrieved": retrieved,
-        "truncated": total > retrieved if isinstance(total, int) else False,
+        "truncated": truncated,
         "returned": len(results),
     }
     if source:
         metadata["source"] = source
+    if truncated:
+        # Every other truncation discloser in the repo pairs the flag with a
+        # sentence saying what to do about it; a bare `truncated: true` states
+        # the fact and withholds the remedy.
+        metadata["truncation_note"] = (
+            f"Returned the top {len(results)} of {total} documents matching this "
+            f"query. This is a ranked slice, not the full result set -- a "
+            f"guideline absent here may still match. Raise `limit` or narrow the "
+            f"query to see more."
+        )
     return {"status": "success", "data": results, "metadata": metadata}
 
 
@@ -345,13 +356,10 @@ class PubMedGuidelinesTool(BaseTool):
             # esearch reports how many guidelines match; without it a caller
             # reads `limit` rows as the whole corpus ("therapeutic plasma
             # exchange" returns 3 of 94).
-            def envelope(results):
-                return _guideline_envelope(
-                    results, total=total, retrieved=len(pmids), source="PubMed"
-                )
-
             if not pmids:
-                return envelope([])
+                return _guideline_envelope(
+                    [], total=total, retrieved=0, source="PubMed"
+                )
 
             # Get details for PMIDs
             time.sleep(0.5)  # Be respectful with API calls
@@ -468,7 +476,9 @@ class PubMedGuidelinesTool(BaseTool):
 
                     results.append(result)
 
-            return envelope(results)
+            return _guideline_envelope(
+                results, total=total, retrieved=len(pmids), source="PubMed"
+            )
 
         except requests.exceptions.RequestException as e:
             return {
@@ -523,11 +533,6 @@ class EuropePMCGuidelinesTool(BaseTool):
 
             hit_count = data.get("hitCount", 0)
             results_list = data.get("resultList", {}).get("result", [])
-
-            if not results_list:
-                return _guideline_envelope(
-                    [], total=hit_count, retrieved=0, source="Europe PMC"
-                )
 
             # Process results with stricter filtering
             results = []
@@ -772,11 +777,6 @@ class TRIPDatabaseTool(BaseTool):
             total = int(total_elem.text) if total_elem is not None else None
 
             documents = root.findall("document")
-
-            if not documents:
-                return _guideline_envelope(
-                    [], total=total, retrieved=0, source="TRIP Database"
-                )
 
             # Process results
             results = []

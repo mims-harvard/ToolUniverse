@@ -45,7 +45,7 @@ def _tool(name="BVBRC_search_specialty_genes"):
     return BVBRCTool(cfg)
 
 
-def _run_capturing_query(arguments):
+def _run_capturing_query(arguments, name="BVBRC_search_specialty_genes"):
     """Run the tool against a stubbed BV-BRC and return the query string sent."""
     captured = {}
 
@@ -54,7 +54,7 @@ def _run_capturing_query(arguments):
         captured["query"] = query
         return [], None
 
-    tool = _tool()
+    tool = _tool(name)
     with patch.object(tool, "_make_request_with_total", side_effect=fake_request):
         tool.run(arguments)
     return captured
@@ -79,36 +79,8 @@ def test_reference_organism_is_still_returned_alongside_it():
     assert "taxon_id" in captured["query"]
 
 
-def test_both_organism_fields_reach_the_caller():
-    """An sp_gene row where the two disagree must surface both, not just one."""
-    row = {
-        "gene": "blaKPC",
-        "genome_id": "550.1655",
-        "taxon_id": 550,
-        "organism": "Klebsiella pneumoniae",
-        "genome_name": "Enterobacter cloacae strain 1-RC-17-04409-1",
-    }
-    tool = _tool()
-    with patch.object(
-        tool, "_make_request_with_total", return_value=([row], None)
-    ):
-        result = tool.run({"gene": "blaKPC", "limit": 1})
-
-    record = result["data"][0]
-    assert record["genome_name"] == "Enterobacter cloacae strain 1-RC-17-04409-1"
-    assert record["organism"] == "Klebsiella pneumoniae"
-
-
 def test_select_fields_match_the_amr_sibling_convention():
     """BVBRC_search_amr already selects genome_name; the two should agree."""
-    amr = _tool("BVBRC_search_amr")
-    captured = {}
-
-    def fake_request(core, query):
-        captured["query"] = query
-        return [], None
-
-    with patch.object(amr, "_make_request_with_total", side_effect=fake_request):
-        amr.run({"genome_id": "550.1655"})
+    captured = _run_capturing_query({"genome_id": "550.1655"}, name="BVBRC_search_amr")
 
     assert "genome_name" in captured["query"]

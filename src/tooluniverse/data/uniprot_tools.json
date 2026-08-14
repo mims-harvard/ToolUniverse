@@ -859,18 +859,26 @@
                     "type": "string"
                   },
                   "to": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
+                    "description": "A UniProtKB target yields an entry object; every other target database (PDB, Ensembl, ...) yields the bare identifier as a string. The schema declared only the object form, so simple mappings such as to_db=PDB never validated.",
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "accession": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "gene_name": {
+                            "type": "string"
+                          }
+                        }
                       },
-                      "id": {
-                        "type": "string"
-                      },
-                      "gene_name": {
+                      {
                         "type": "string"
                       }
-                    }
+                    ]
                   }
                 }
               }

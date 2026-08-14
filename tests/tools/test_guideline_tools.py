@@ -21,6 +21,20 @@ from tooluniverse.unified_guideline_tools import (
 
 
 @pytest.mark.integration
+def _rows(result):
+    """The guideline rows a caller reads.
+
+    Six of these searches return the {status, data, metadata} envelope
+    (Fix-R58-4) so they can report the upstream match count; the rest still
+    return a bare list. Unwrap before the row checks, or they silently stop
+    running against the enveloped ones.
+    """
+    if isinstance(result, dict) and result.get("status") == "success":
+        assert isinstance(result["metadata"]["total"], (int, type(None)))
+        return result["data"]
+    return result
+
+
 @pytest.mark.network
 class TestNICEGuidelinesTool:
     """Tests for NICE Clinical Guidelines Search tool."""
@@ -45,15 +59,7 @@ class TestNICEGuidelinesTool:
         result = tool.run({"query": "diabetes", "limit": 2})
         
         # Should return list or error dict
-        assert isinstance(result, (list, dict))
-
-        # Six of these searches now return the {status, data, metadata}
-        # envelope (Fix-R58-4) so they can report the upstream match
-        # count; the rest still return a bare list. Unwrap before the row
-        # checks, or they silently stop running against the enveloped ones.
-        if isinstance(result, dict) and result.get("status") == "success":
-            assert isinstance(result["metadata"]["total"], (int, type(None)))
-            result = result["data"]
+        result = _rows(result)
 
         if isinstance(result, list):
             assert len(result) <= 2
@@ -102,15 +108,7 @@ class TestPubMedGuidelinesTool:
         result = tool.run({"query": "diabetes", "limit": 3})
         
         # Should return list or error dict
-        assert isinstance(result, (list, dict))
-
-        # Six of these searches now return the {status, data, metadata}
-        # envelope (Fix-R58-4) so they can report the upstream match
-        # count; the rest still return a bare list. Unwrap before the row
-        # checks, or they silently stop running against the enveloped ones.
-        if isinstance(result, dict) and result.get("status") == "success":
-            assert isinstance(result["metadata"]["total"], (int, type(None)))
-            result = result["data"]
+        result = _rows(result)
 
         if isinstance(result, list):
             assert len(result) <= 3
@@ -182,15 +180,7 @@ class TestEuropePMCGuidelinesTool:
         result = tool.run({"query": "diabetes", "limit": 3})
         
         # Should return list or error dict
-        assert isinstance(result, (list, dict))
-
-        # Six of these searches now return the {status, data, metadata}
-        # envelope (Fix-R58-4) so they can report the upstream match
-        # count; the rest still return a bare list. Unwrap before the row
-        # checks, or they silently stop running against the enveloped ones.
-        if isinstance(result, dict) and result.get("status") == "success":
-            assert isinstance(result["metadata"]["total"], (int, type(None)))
-            result = result["data"]
+        result = _rows(result)
 
         if isinstance(result, list):
             assert len(result) <= 3
@@ -250,15 +240,7 @@ class TestTRIPDatabaseTool:
         result = tool.run({"query": "diabetes", "limit": 3})
         
         # Should return list or error dict
-        assert isinstance(result, (list, dict))
-
-        # Six of these searches now return the {status, data, metadata}
-        # envelope (Fix-R58-4) so they can report the upstream match
-        # count; the rest still return a bare list. Unwrap before the row
-        # checks, or they silently stop running against the enveloped ones.
-        if isinstance(result, dict) and result.get("status") == "success":
-            assert isinstance(result["metadata"]["total"], (int, type(None)))
-            result = result["data"]
+        result = _rows(result)
 
         if isinstance(result, list):
             assert len(result) <= 3
@@ -393,15 +375,7 @@ class TestWHOGuidelinesTool:
         result = tool.run({"query": "HIV", "limit": 3})
         
         # Should return list or error dict
-        assert isinstance(result, (list, dict))
-
-        # Six of these searches now return the {status, data, metadata}
-        # envelope (Fix-R58-4) so they can report the upstream match
-        # count; the rest still return a bare list. Unwrap before the row
-        # checks, or they silently stop running against the enveloped ones.
-        if isinstance(result, dict) and result.get("status") == "success":
-            assert isinstance(result["metadata"]["total"], (int, type(None)))
-            result = result["data"]
+        result = _rows(result)
 
         if isinstance(result, list):
             assert len(result) <= 3
@@ -460,15 +434,7 @@ class TestOpenAlexGuidelinesTool:
         result = tool.run({"query": "diabetes", "limit": 3})
         
         # Should return list or error dict
-        assert isinstance(result, (list, dict))
-
-        # Six of these searches now return the {status, data, metadata}
-        # envelope (Fix-R58-4) so they can report the upstream match
-        # count; the rest still return a bare list. Unwrap before the row
-        # checks, or they silently stop running against the enveloped ones.
-        if isinstance(result, dict) and result.get("status") == "success":
-            assert isinstance(result["metadata"]["total"], (int, type(None)))
-            result = result["data"]
+        result = _rows(result)
 
         if isinstance(result, list):
             assert len(result) <= 3

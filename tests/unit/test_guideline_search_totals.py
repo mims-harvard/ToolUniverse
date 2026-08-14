@@ -67,6 +67,21 @@ def _configs():
     return {c["name"]: c for c in json.loads(_CONFIG.read_text())}
 
 
+def test_every_search_tool_is_classified():
+    """A new guideline search must be put in one list or the other.
+
+    Both lists are hand-maintained, so without this a 13th search tool added
+    to the config lands in neither and is silently unguarded.
+    """
+    searches = {
+        name
+        for name in _configs()
+        if "Search" in name or "search" in name or "list" in name
+    }
+
+    assert searches == set(ENVELOPED) | set(BARE_LIST)
+
+
 @pytest.mark.parametrize("name", ENVELOPED)
 def test_declared_schema_admits_the_envelope_actually_returned(name):
     """PubMed's round-57 envelope validated against neither oneOf branch."""
@@ -113,25 +128,27 @@ def test_upstream_total_and_truncation_are_reported():
 
     assert env["status"] == "success"
     assert env["data"] == [{"t": 1}]
-    assert env["metadata"] == {
-        "total": 1057,
-        "retrieved": 15,
-        "truncated": True,
-        "returned": 1,
-        "source": "NICE",
-    }
+    meta = env["metadata"]
+    assert meta["total"] == 1057
+    assert meta["retrieved"] == 15
+    assert meta["returned"] == 1
+    assert meta["truncated"] is True
+    assert meta["source"] == "NICE"
+    # A bare `truncated: true` states the fact and withholds the remedy, so
+    # every sibling discloser in the repo pairs the flag with a sentence.
+    assert "1057" in meta["truncation_note"]
+    assert "Raise `limit`" in meta["truncation_note"]
 
 
 def test_client_side_filtering_is_not_mistaken_for_upstream_truncation():
     """returned < retrieved means this tool dropped rows, not that the source
     had fewer -- only total > retrieved is upstream truncation."""
-    env = _guideline_envelope(
-        [{"t": 1}], total=3, retrieved=3, source="Europe PMC"
-    )
+    env = _guideline_envelope([{"t": 1}], total=3, retrieved=3, source="Europe PMC")
 
     assert env["metadata"]["returned"] == 1
     assert env["metadata"]["retrieved"] == 3
     assert env["metadata"]["truncated"] is False
+    assert "truncation_note" not in env["metadata"]
 
 
 def test_absent_total_is_null_not_the_page_size():

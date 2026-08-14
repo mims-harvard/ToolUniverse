@@ -104,6 +104,10 @@
                   "description": "Constraint for mitochondrially-encoded genes, which gnomAD scores here and never under gnomad_constraint/exac_constraint. __typename is ProteinMitochondrialGeneConstraint (exp_lof, obs_lof, oe_lof, oe_lof_upper) for protein-coding mtDNA genes such as MT-ND4, or RNAMitochondrialGeneConstraint (observed, expected, oe, oe_upper) for mt-tRNA/mt-rRNA genes such as MT-TL1. Null for nuclear genes."
                 }
               }
+            },
+            "note": {
+              "type": "string",
+              "description": "Present only when gnomAD scored the gene under none of gnomad_constraint, exac_constraint or mitochondrial_constraint -- an absence of data rather than evidence that the gene is unconstrained."
             }
           },
           "required": [
