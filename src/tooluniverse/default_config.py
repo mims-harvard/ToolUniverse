@@ -1047,10 +1047,10 @@ default_tool_files = {
     "eva": os.path.join(current_dir, "data", "eva_tools.json"),
     # eQTL Catalogue - Expression quantitative trait loci associations
     "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
-    # OSDR - NASA Open Science Data Repository (space biology studies)
-    # Removed: API unreachable/down (see commit c70493c6); data file deleted,
-    # this entry was left behind and has been silently loading 0 tools since.
-    # "osdr": os.path.join(current_dir, "data", "osdr_tools.json"),
+    # OSDR - NASA Open Science Data Repository (space biology studies).
+    # Re-added: the domain from the prior attempt (genelab-data.ndc.nasa.gov)
+    # is dead, but OSDR has since migrated to osdr.nasa.gov, verified live.
+    "nasa_osdr": os.path.join(current_dir, "data", "nasa_osdr_tools.json"),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts
