@@ -595,6 +595,8 @@ default_tool_files = {
     "ncats_translator": os.path.join(
         current_dir, "data", "ncats_translator_tools.json"
     ),
+    # MediaDive - DSMZ cultivation media recipes, pairs with BacDive
+    "mediadive": os.path.join(current_dir, "data", "mediadive_tools.json"),
     # BioThings gateway - uniform access to ~50 BioThings-hosted biomedical APIs
     "biothings_gateway": os.path.join(
         current_dir, "data", "biothings_gateway_tools.json"

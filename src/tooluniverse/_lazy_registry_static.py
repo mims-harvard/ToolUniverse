@@ -629,6 +629,7 @@ STATIC_LAZY_REGISTRY = {
     "EBIPhobiusTool": "ebi_sequence_tools",
     "EBIProfileSearchTool": "ebi_sequence_tools",
     "BacDiveTool": "bacdive_tool",
+    "MediaDiveTool": "mediadive_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",
