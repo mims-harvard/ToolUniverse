@@ -281,6 +281,151 @@
   },
   {
     "type": "PackageTool",
+    "name": "get_marsilea_info",
+    "description": "Get comprehensive information about Marsilea \u2013 declarative creation of composable, multi-panel visualizations",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "include_examples": {
+          "type": "boolean",
+          "description": "Whether to include usage examples and quick start guide",
+          "default": true
+        }
+      },
+      "required": [
+        "include_examples"
+      ]
+    },
+    "package_name": "marsilea",
+    "local_info": {
+      "name": "Marsilea",
+      "description": "Declarative library for composable visualizations built on Matplotlib. You start from a main plot - a heatmap, dot matrix, bar chart or UpSet plot - and attach aligned panels (dendrograms, category strips, bar charts, labels) to any of its four sides. Covers figures that are otherwise hand-assembled with GridSpec: complex annotated heatmaps (the R ComplexHeatmap equivalent), oncoprints, UpSet plots, sequence logos and alignments, genome tracks, and single-cell panels. Also renders dot/bubble plots where size and color encode two different matrices, such as single-cell marker plots or GSEA enrichment plots.",
+      "category": "Data Visualization",
+      "import_name": "marsilea",
+      "popularity": 60,
+      "keywords": [
+        "composable visualization",
+        "annotated heatmap",
+        "oncoprint",
+        "upset plot",
+        "single-cell dot plot"
+      ],
+      "documentation": "https://marsilea.readthedocs.io",
+      "repository": "https://github.com/Marsilea-viz/marsilea",
+      "installation": {
+        "pip": "pip install marsilea",
+        "conda": "conda install -c conda-forge marsilea"
+      },
+      "usage_example": "import numpy as np\nimport marsilea as ma\nimport marsilea.plotter as mp\n\nrng = np.random.default_rng(0)\ndata = rng.normal(size=(12, 10))\ngenes = [f\"Gene{i}\" for i in range(12)]\ngroups = [\"A\"] * 6 + [\"B\"] * 6\n\n# Start from a main canvas, then attach aligned panels to its sides\nh = ma.Heatmap(data, label=\"expression\", width=4, height=4)\nh.add_left(mp.Labels(genes), pad=0.05)\nh.add_top(mp.Bar(data.mean(axis=0), color=\"#4C72B0\"), size=0.8, pad=0.1)\nh.add_right(mp.Colors(groups), size=0.2, pad=0.05)  # categorical annotation strip\nh.add_dendrogram(\"bottom\")  # cluster the columns\nh.group_rows(groups, order=[\"A\", \"B\"])  # split rows into labelled chunks\nh.add_title(top=\"Composable heatmap\")\nh.add_legends()\nh.render()\nh.save(\"figure.png\")",
+      "quick_start": [
+        "Install: pip install marsilea",
+        "Import: import marsilea as ma; import marsilea.plotter as mp",
+        "Pick a canvas: ma.Heatmap, ma.SizedHeatmap (dot/bubble), ma.CatHeatmap, ma.Upset",
+        "Attach panels: h.add_left/add_right/add_top/add_bottom(plotter, size=, pad=)",
+        "Cluster and group: h.add_dendrogram(side), h.group_rows(labels)",
+        "Finish: h.add_legends(); h.render(); h.save('figure.png')",
+        "Specialized figures: oncoprinter.OncoPrint, mp.SeqLogo, mp.Arc",
+        "Machine-readable API summary: https://marsilea.readthedocs.io/llms.txt"
+      ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
+  },
+  {
+    "type": "PackageTool",
     "name": "get_opencv_info",
     "description": "Get comprehensive information about OpenCV-Python \u2013 computer vision library",
     "parameter": {
