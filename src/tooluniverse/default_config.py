@@ -591,6 +591,10 @@ default_tool_files = {
     "skempi": os.path.join(current_dir, "data", "skempi_tools.json"),
     # REBASE - full restriction enzyme catalogue (~6000 enzymes)
     "rebase": os.path.join(current_dir, "data", "rebase_tools.json"),
+    # NCATS Translator - cross-source biolink reasoning via the Aragorn TRAPI reasoner
+    "ncats_translator": os.path.join(
+        current_dir, "data", "ncats_translator_tools.json"
+    ),
     # BioThings gateway - uniform access to ~50 BioThings-hosted biomedical APIs
     "biothings_gateway": os.path.join(
         current_dir, "data", "biothings_gateway_tools.json"

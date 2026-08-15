@@ -622,6 +622,7 @@ STATIC_LAZY_REGISTRY = {
     "CodonUsageTool": "codon_usage_tool",
     "OPMTool": "membrane_topology_tool",
     "TopDBTool": "membrane_topology_tool",
+    "NCATSTranslatorTool": "ncats_translator_tool",
     "EBIPairwiseAlignTool": "ebi_sequence_tools",
     "EBITranslateSequenceTool": "ebi_sequence_tools",
     "EBIPfamScanTool": "ebi_sequence_tools",
