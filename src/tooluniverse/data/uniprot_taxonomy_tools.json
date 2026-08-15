@@ -1,7 +1,7 @@
 [
   {
     "name": "UniProtTaxonomy_get_taxon",
-    "description": "Get detailed taxonomy information for a species by NCBI taxonomy ID from UniProt. Returns scientific name, common name, taxonomic rank, mnemonic code, full lineage (up to 30 levels), and protein statistics (reviewed/unreviewed counts). Essential for cross-referencing species in protein databases and understanding taxonomic relationships. Example: taxon 9606 returns Homo sapiens (Human), rank=species, mnemonic=HUMAN, 20,432 reviewed proteins (Swiss-Prot), 184,812 unreviewed (TrEMBL), with lineage from cellular organisms through Eumetazoa to Primates.",
+    "description": "Get detailed taxonomy information for a species by NCBI taxonomy ID from UniProt. Returns scientific name, common name, taxonomic rank, mnemonic code, full lineage (up to 30 levels), and protein statistics (reviewed/unreviewed counts). Essential for cross-referencing species in protein databases and understanding taxonomic relationships. Example: taxon 9606 returns Homo sapiens (Human), rank=species, mnemonic=HUMAN, 20,432 reviewed proteins (Swiss-Prot), 184,812 unreviewed (TrEMBL), with lineage from cellular organisms through Eumetazoa to Primates. Obsolete identifiers are answered with the current record, not an error: UniProt redirects a merged (retired) taxon to the node it was merged into, so always compare 'taxon_id' in the response against 'query_taxon_id'. When they differ the response also carries 'merged_from' and a metadata note -- e.g. taxon 46170 (Staphylococcus aureus subsp. aureus, the subspecies node many older MRSA records are filed under) resolves to 1280 (Staphylococcus aureus), whose protein counts cover the whole species rather than the subspecies asked for.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -31,11 +31,27 @@
         {
           "type": "object",
           "properties": {
+            "query_taxon_id": {
+              "type": [
+                "integer",
+                "number",
+                "string"
+              ],
+              "description": "The taxon id that was requested. Compare with 'taxon_id': if they differ, the identifier you supplied is obsolete and UniProt redirected the lookup."
+            },
             "taxon_id": {
               "type": [
                 "integer",
                 "number"
-              ]
+              ],
+              "description": "The taxon id of the record actually returned."
+            },
+            "merged_from": {
+              "type": [
+                "integer",
+                "number"
+              ],
+              "description": "Present only when the requested taxon was merged into another node; carries the obsolete id that was requested. A metadata note explains the substitution."
             },
             "scientific_name": {
               "type": "string"
