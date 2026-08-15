@@ -40,8 +40,9 @@ CONFIG = {
 
 
 class _FakeResponse:
-    def __init__(self, payload):
+    def __init__(self, payload, url="https://rest.uniprot.org/taxonomy/9606"):
         self._payload = payload
+        self.url = url
 
     def json(self):
         return self._payload
@@ -67,12 +68,16 @@ def _body(taxon_id, name, **extra):
     return body
 
 
-def _run(monkeypatch, arguments, payload):
+def _run(monkeypatch, arguments, payload, url="https://rest.uniprot.org/taxonomy/9606"):
     monkeypatch.setattr(
         "tooluniverse.uniprot_taxonomy_tool.requests.get",
-        lambda *a, **k: _FakeResponse(payload),
+        lambda *a, **k: _FakeResponse(payload, url),
     )
     return _tool().run(arguments)
+
+
+# The URL requests lands on after following UniProt's 303 for a retired taxon.
+_REDIRECTED = "https://rest.uniprot.org/taxonomy/1280?from=46170"
 
 
 # ---------------------------------------------------------------------------
@@ -80,11 +85,13 @@ def _run(monkeypatch, arguments, payload):
 # ---------------------------------------------------------------------------
 
 
-def test_merged_taxon_is_disclosed(monkeypatch):
+def test_merged_taxon_is_disclosed_from_the_redirect_url(monkeypatch):
+    """The live path: requests follows the 303 and lands on ...?from=46170."""
     result = _run(
         monkeypatch,
         {"taxon_id": "46170"},
         _body(1280, "Staphylococcus aureus"),
+        url=_REDIRECTED,
     )
     data = result["data"]
     assert result["status"] == "success"
@@ -95,34 +102,8 @@ def test_merged_taxon_is_disclosed(monkeypatch):
     assert "merged" in note.lower()
 
 
-def test_requested_id_is_always_echoed(monkeypatch):
-    """Even on the happy path the caller can join request to response."""
-    result = _run(monkeypatch, {"taxon_id": 1280}, _body(1280, "Staphylococcus aureus"))
-    assert result["data"]["query_taxon_id"] == 1280
-
-
-def test_active_taxon_gets_no_merge_note(monkeypatch):
-    result = _run(monkeypatch, {"taxon_id": "9606"}, _body(9606, "Homo sapiens"))
-    assert "merged_from" not in result["data"]
-    assert "note" not in result["metadata"]
-
-
-def test_integer_and_string_taxon_ids_compare_equal(monkeypatch):
-    """'9606' and 9606 are the same taxon -- never report that as a merge."""
-    for taxon_id in ("9606", 9606, " 9606 "):
-        result = _run(monkeypatch, {"taxon_id": taxon_id}, _body(9606, "Homo sapiens"))
-        assert "merged_from" not in result["data"], f"false merge for {taxon_id!r}"
-
-
-def test_non_numeric_taxon_id_does_not_crash(monkeypatch):
-    """A junk id must not raise; it simply cannot be compared."""
-    result = _run(monkeypatch, {"taxon_id": "not-a-taxon"}, _body(1280, "S. aureus"))
-    assert result["status"] == "success"
-    assert result["data"]["query_taxon_id"] == "not-a-taxon"
-
-
-def test_inactive_reason_is_surfaced_when_upstream_sends_it(monkeypatch):
-    """If UniProt returns the inactive stub itself, say why rather than 404."""
+def test_inactive_reason_is_read_when_upstream_sends_it(monkeypatch):
+    """UniProt's own words win over an id comparison: quote the reason type."""
     result = _run(
         monkeypatch,
         {"taxon_id": "46170"},
@@ -133,7 +114,61 @@ def test_inactive_reason_is_surfaced_when_upstream_sends_it(monkeypatch):
         ),
     )
     assert result["data"]["merged_from"] == 46170
-    assert "merged" in result["metadata"]["note"].lower()
+    note = result["metadata"]["note"]
+    assert "reports it as merged into" in note, note
+
+
+def test_id_mismatch_alone_is_worded_more_cautiously(monkeypatch):
+    """No ?from=, no inactiveReason -- disclose, but do not assert a mechanism.
+
+    The response is still evidence that a substitution happened, so it must be
+    reported; it is not evidence of *why*, so the note must not claim one.
+    """
+    result = _run(
+        monkeypatch,
+        {"taxon_id": "46170"},
+        _body(1280, "Staphylococcus aureus"),
+    )
+    assert result["data"]["merged_from"] == 46170
+    note = result["metadata"]["note"]
+    assert "did not state why" in note
+    assert "has merged it into" not in note
+
+
+def test_requested_id_is_echoed_and_normalized(monkeypatch):
+    """query_taxon_id is comparable to taxon_id without the caller coercing."""
+    for taxon_id in ("1280", 1280, " 1280 "):
+        result = _run(
+            monkeypatch, {"taxon_id": taxon_id}, _body(1280, "Staphylococcus aureus")
+        )
+        assert result["data"]["query_taxon_id"] == 1280
+
+
+def test_active_taxon_gets_no_merge_disclosure(monkeypatch):
+    """'9606' and 9606 are the same taxon -- never report that as a merge."""
+    for taxon_id in ("9606", 9606, " 9606 "):
+        result = _run(monkeypatch, {"taxon_id": taxon_id}, _body(9606, "Homo sapiens"))
+        assert "merged_from" not in result["data"], f"false merge for {taxon_id!r}"
+        assert "note" not in result["metadata"], f"false note for {taxon_id!r}"
+
+
+def test_active_taxon_is_not_flagged_by_a_stale_from_param(monkeypatch):
+    """A ?from= naming the taxon actually returned is not a substitution."""
+    result = _run(
+        monkeypatch,
+        {"taxon_id": 9606},
+        _body(9606, "Homo sapiens"),
+        url="https://rest.uniprot.org/taxonomy/9606?from=9606",
+    )
+    assert "merged_from" not in result["data"]
+    assert "note" not in result["metadata"]
+
+
+def test_non_numeric_taxon_id_does_not_crash(monkeypatch):
+    """A junk id must not raise; it simply cannot be compared."""
+    result = _run(monkeypatch, {"taxon_id": "not-a-taxon"}, _body(1280, "S. aureus"))
+    assert result["status"] == "success"
+    assert result["data"]["query_taxon_id"] == "not-a-taxon"
 
 
 # ---------------------------------------------------------------------------

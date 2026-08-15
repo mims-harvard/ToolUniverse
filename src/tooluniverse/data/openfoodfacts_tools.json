@@ -14,7 +14,8 @@
             "integer",
             "null"
           ],
-          "description": "Number of results per page (1-100). Omit it and Open Food Facts applies its own default of 50 for this endpoint -- this tool sets no default of its own, so an unparameterised call returns 50 products, not 10. (The sibling OpenFoodFacts_filter_products_by_tags runs against a different endpoint whose default really is 20.)"
+          "description": "Number of results per page (1-100). Defaults to 50, which is what an unparameterised call has always returned from this endpoint -- pass a smaller number for a lighter response.",
+          "default": 50
         },
         "page": {
           "type": [

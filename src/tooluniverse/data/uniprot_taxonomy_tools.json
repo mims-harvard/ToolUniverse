@@ -57,7 +57,11 @@
               "type": "string"
             },
             "common_name": {
-              "type": "string"
+              "type": [
+                "null",
+                "string"
+              ],
+              "description": "UniProt publishes no common name for many taxa (including 1280, Staphylococcus aureus), so this is null rather than absent. Matches the sibling UniProtTaxonomy_search schema."
             },
             "mnemonic": {
               "type": "string"

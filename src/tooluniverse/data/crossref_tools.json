@@ -2,7 +2,7 @@
   {
     "type": "CrossrefRESTTool",
     "name": "Crossref_search_works",
-    "description": "Search Crossref Works API for scholarly articles, publications, and research outputs by keyword. Returns metadata including title, abstract, journal, authors, publication year, DOI, URL, citations, and publisher. Supports filtering by publication type (journal article, conference paper, etc.) and date range. Use this to discover academic literature, verify citations, or build bibliographies. Find DOIs to use with Crossref_get_work for complete metadata. The response reports 'count' (works in this page) alongside 'total_count' (works matching the query in all of Crossref) -- these differ on almost every real search, since 'limit' defaults to 10 and caps at 100, so treat 'count' as a page size and never as the size of the literature. When they differ a 'note' gives the 'offset' for the next page. Note: Crossref's own API weakens keyword relevance-matching whenever a non-default 'sort' query param is combined with 'query' (e.g. sort=is-referenced-by-count), returning globally top-cited works largely unrelated to the search term -- omit 'sort' (the default relevance ranking) unless you have separately verified the combination for your query.",
+    "description": "Search Crossref Works API for scholarly articles, publications, and research outputs by keyword. Returns metadata including title, abstract, journal, authors, publication year, DOI, URL, citations, and publisher. Supports filtering by publication type (journal article, conference paper, etc.) and date range. Use this to discover academic literature, verify citations, or build bibliographies. Find DOIs to use with Crossref_get_work for complete metadata. The response reports 'count' (works in this page) alongside 'total_count' (works matching the query in all of Crossref) -- these differ on almost every real search, since 'limit' defaults to 10 and caps at 100, so treat 'count' as a page size and never as the size of the literature. When they differ, 'truncated' is true and 'truncation_note' gives the 'offset' for the next page. Note: Crossref's own API weakens keyword relevance-matching whenever a non-default 'sort' query param is combined with 'query' (e.g. sort=is-referenced-by-count), returning globally top-cited works largely unrelated to the search term -- omit 'sort' (the default relevance ranking) unless you have separately verified the combination for your query.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,12 +13,14 @@
         "limit": {
           "type": "integer",
           "description": "Number of articles to return in this page. This sets the maximum number of articles retrieved from Crossref. Max 100 per request. It does not change 'total_count', which always reports how many works match the query.",
-          "default": 10
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
         },
         "offset": {
           "type": "integer",
           "minimum": 0,
-          "description": "Skip this many matching works before returning results. Use with 'limit' to page through a result set larger than 100; the response 'note' gives the offset for the next page."
+          "description": "Skip this many matching works before returning results. Use with 'limit' to page through a result set larger than 100; the response 'truncation_note' gives the offset for the next page."
         },
         "filter": {
           "type": "string",
@@ -221,7 +223,7 @@
   {
     "type": "CrossrefRESTTool",
     "name": "Crossref_list_funders",
-    "description": "Search and list research funding organizations in the Crossref database. Returns funder details including funder ID, name, location, DOI count, and alternative names. Use this to discover funder identifiers for filtering publications by funding source, or to explore research funding patterns. Essential for grant analysis, funding compliance, or finding publications funded by specific organizations (e.g., NIH, NSF, ERC). The response reports 'count' (funders in this page) alongside 'total_count' (funders matching the query in all of Crossref); 'limit' defaults to 20, so treat 'count' as a page size. When they differ a 'note' gives the 'offset' for the next page.",
+    "description": "Search and list research funding organizations in the Crossref database. Returns funder details including funder ID, name, location, DOI count, and alternative names. Use this to discover funder identifiers for filtering publications by funding source, or to explore research funding patterns. Essential for grant analysis, funding compliance, or finding publications funded by specific organizations (e.g., NIH, NSF, ERC). The response reports 'count' (funders in this page) alongside 'total_count' (funders matching the query in all of Crossref); 'limit' defaults to 20, so treat 'count' as a page size. When they differ, 'truncated' is true and 'truncation_note' gives the 'offset' for the next page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -239,7 +241,7 @@
         "offset": {
           "type": "integer",
           "minimum": 0,
-          "description": "Skip this many matching funders before returning results. Use with 'limit' to page through the full result set; the response 'note' gives the offset for the next page."
+          "description": "Skip this many matching funders before returning results. Use with 'limit' to page through the full result set; the response 'truncation_note' gives the offset for the next page."
         }
       }
     },
@@ -379,7 +381,7 @@
   {
     "type": "CrossrefRESTTool",
     "name": "Crossref_search_members",
-    "description": "Search Crossref members (publishers / depositing organizations) by name. Returns each member's numeric Crossref member id, primary name, location, and DOI-coverage analytics: counts of current, backfile, and total DOIs, plus per-year DOI breakdowns and prefixes. Use this to find a publisher's member id (for Crossref_get_member), compare publisher output, or analyze DOI/journal coverage. Example: query 'plos' -> member id 340 'Public Library of Science (PLoS)'. The response reports 'count' (members in this page) alongside 'total_count' (members matching the query in all of Crossref) -- e.g. query 'university' matches 4032, far more than the default 'limit' of 20 returns -- so treat 'count' as a page size. When they differ a 'note' gives the 'offset' for the next page.",
+    "description": "Search Crossref members (publishers / depositing organizations) by name. Returns each member's numeric Crossref member id, primary name, location, and DOI-coverage analytics: counts of current, backfile, and total DOIs, plus per-year DOI breakdowns and prefixes. Use this to find a publisher's member id (for Crossref_get_member), compare publisher output, or analyze DOI/journal coverage. Example: query 'plos' -> member id 340 'Public Library of Science (PLoS)'. The response reports 'count' (members in this page) alongside 'total_count' (members matching the query in all of Crossref) -- e.g. query 'university' matches 4032, far more than the default 'limit' of 20 returns -- so treat 'count' as a page size. When they differ, 'truncated' is true and 'truncation_note' gives the 'offset' for the next page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -397,7 +399,7 @@
         "offset": {
           "type": "integer",
           "minimum": 0,
-          "description": "Skip this many matching members before returning results. Use with 'limit' to page through the full result set; the response 'note' gives the offset for the next page."
+          "description": "Skip this many matching members before returning results. Use with 'limit' to page through the full result set; the response 'truncation_note' gives the offset for the next page."
         }
       },
       "required": [

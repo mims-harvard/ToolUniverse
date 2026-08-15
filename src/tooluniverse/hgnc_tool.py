@@ -33,14 +33,14 @@ _RELATION_LABEL = {
     "alias_symbol": "alias symbol",
 }
 
-
-def _with_article(label: str) -> str:
-    """``label`` prefixed with the right indefinite article.
-
-    The resolution note is built as "a {relation}", which reads "a alias
-    symbol" for every alias hit -- the more common of the two relations.
-    """
-    return f"{'an' if label[:1].lower() in 'aeiou' else 'a'} {label}"
+# The indefinite article each label takes. The resolution note used to be
+# templated as "a {relation}", which reads "a alias symbol" for every alias
+# hit -- the more common of the two relations. A table rather than a general
+# a/an rule, because the input is these two fixed labels and nothing else.
+_RELATION_ARTICLE = {
+    "prev_symbol": "a",
+    "alias_symbol": "an",
+}
 
 
 @register_tool("HGNCTool")
@@ -263,8 +263,8 @@ class HGNCTool(BaseTool):
                     "resolution_relation": field,
                     "symbol_resolution_note": (
                         f"'{requested}' is not a current HGNC gene symbol. It "
-                        f"is listed as {_with_article(relation)} of "
-                        f"'{current}', whose record is returned here."
+                        f"is listed as {_RELATION_ARTICLE[field]} {relation} "
+                        f"of '{current}', whose record is returned here."
                     ),
                 },
             }

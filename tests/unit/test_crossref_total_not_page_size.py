@@ -48,12 +48,10 @@ def _tool(name="Crossref_search_works"):
     return CrossrefRESTTool(dict(CONFIGS[name]))
 
 
-def _list_payload(n_items, total, extra=None):
+def _list_payload(n_items, total):
     message = {"items": [{"DOI": f"10.0/{i}"} for i in range(n_items)]}
     if total is not None:
         message["total-results"] = total
-    if extra:
-        message.update(extra)
     return {"message": message}
 
 
@@ -74,9 +72,23 @@ def test_total_count_is_independent_of_page_size(limit):
 def test_truncation_note_names_the_total_and_the_next_offset():
     response = _FakeResponse(_list_payload(3, 1037333))
     result = _tool()._process_response(response, "https://api.crossref.org/works")
-    note = result["note"]
+    note = result["truncation_note"]
     assert "1037333" in note
     assert "offset=3" in note
+
+
+def test_truncated_is_machine_readable():
+    """A caller must never have to string-match prose to learn it got a page."""
+    partial = _tool()._process_response(
+        _FakeResponse(_list_payload(3, 1037333)), "https://api.crossref.org/works"
+    )
+    assert partial["truncated"] is True
+
+    whole = _tool()._process_response(
+        _FakeResponse(_list_payload(30, 30)), "https://api.crossref.org/works"
+    )
+    assert whole["truncated"] is False
+    assert "truncation_note" not in whole
 
 
 def test_no_note_when_the_page_is_the_whole_result_set():
@@ -89,7 +101,7 @@ def test_no_note_when_the_page_is_the_whole_result_set():
     )
     assert result["total_count"] == 30
     assert result["count"] == 30
-    assert "note" not in result
+    assert "truncation_note" not in result
 
 
 def test_no_note_on_the_last_page():
@@ -100,7 +112,7 @@ def test_no_note_on_the_last_page():
         response, "https://api.crossref.org/funders"
     )
     assert result["total_count"] == 12
-    assert "note" not in result
+    assert "truncation_note" not in result
 
 
 def test_offset_is_read_from_the_requested_url():
@@ -111,8 +123,8 @@ def test_offset_is_read_from_the_requested_url():
     result = _tool("Crossref_list_funders")._process_response(
         response, "https://api.crossref.org/funders"
     )
-    assert "7-9 of 746" in result["note"]
-    assert "offset=9" in result["note"]
+    assert "7-9 of 746" in result["truncation_note"]
+    assert "offset=9" in result["truncation_note"]
 
 
 def test_offset_defaults_to_zero_when_absent_or_unparseable():
@@ -121,7 +133,26 @@ def test_offset_defaults_to_zero_when_absent_or_unparseable():
         "https://api.crossref.org/works?offset=not-a-number",
     ):
         result = _tool()._process_response(_FakeResponse(_list_payload(3, 99), url), url)
-        assert "1-3 of 99" in result["note"]
+        assert "1-3 of 99" in result["truncation_note"]
+
+
+def test_mock_response_without_a_string_url_still_succeeds():
+    """A stubbed response's `url` is a Mock, not a str -- urlparse rejects it.
+
+    tests/unit/test_scientometrics_depth.py drives this tool through a
+    MagicMock response; parsing its `url` unguarded turned the whole call into
+    a status: error.
+    """
+    from unittest.mock import MagicMock
+
+    response = MagicMock()
+    response.json.return_value = _list_payload(2, 500)
+    result = _tool("Crossref_search_members")._process_response(
+        response, "https://api.crossref.org/members"
+    )
+    assert result["status"] == "success"
+    assert result["total_count"] == 500
+    assert "1-2 of 500" in result["truncation_note"]
 
 
 def test_missing_total_results_leaves_the_response_as_it_was():
@@ -129,7 +160,7 @@ def test_missing_total_results_leaves_the_response_as_it_was():
     response = _FakeResponse(_list_payload(3, None))
     result = _tool()._process_response(response, "https://api.crossref.org/works")
     assert "total_count" not in result
-    assert "note" not in result
+    assert "truncation_note" not in result
     assert result["count"] == 3
 
 
@@ -144,7 +175,7 @@ def test_empty_result_set_reports_zero_and_no_note():
     result = _tool()._process_response(response, "https://api.crossref.org/works")
     assert result["count"] == 0
     assert result["total_count"] == 0
-    assert "note" not in result
+    assert "truncation_note" not in result
 
 
 # ---------------------------------------------------------------------------
