@@ -633,6 +633,7 @@ STATIC_LAZY_REGISTRY = {
     "NASAOSDRTool": "nasa_osdr_tool",
     "EWASCatalogTool": "ewas_catalog_tool",
     "NIHDSLDTool": "nih_dsld_tool",
+    "DANDITool": "dandi_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",
