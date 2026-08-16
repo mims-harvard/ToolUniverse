@@ -1066,6 +1066,11 @@ default_tool_files = {
     # NIH RePORTER - funded research project database, a funding-landscape
     # layer ToolUniverse had no equivalent of
     "nih_reporter": os.path.join(current_dir, "data", "nih_reporter_tools.json"),
+    # SciCrunch RRID resolver - any RRID prefix beyond the existing
+    # antibody-specific AntibodyRegistry tool
+    "scicrunch_rrid": os.path.join(
+        current_dir, "data", "scicrunch_rrid_tools.json"
+    ),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts

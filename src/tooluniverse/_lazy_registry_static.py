@@ -637,6 +637,7 @@ STATIC_LAZY_REGISTRY = {
     "PDBTMTool": "pdbtm_tool",
     "GoaTTool": "goat_tool",
     "NIHReporterTool": "nih_reporter_tool",
+    "SciCrunchRRIDTool": "scicrunch_rrid_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",
