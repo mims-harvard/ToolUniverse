@@ -1053,6 +1053,9 @@ default_tool_files = {
     "nasa_osdr": os.path.join(current_dir, "data", "nasa_osdr_tools.json"),
     # EWAS Catalog - epigenome-wide association study results (MRC-IEU)
     "ewas_catalog": os.path.join(current_dir, "data", "ewas_catalog_tools.json"),
+    # NIH DSLD - Dietary Supplement Label Database, a regulatory category
+    # separate from FDA drug labels with no prior coverage
+    "nih_dsld": os.path.join(current_dir, "data", "nih_dsld_tools.json"),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts
