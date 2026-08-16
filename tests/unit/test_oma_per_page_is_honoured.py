@@ -1,18 +1,20 @@
 """Regression tests: OMA's declared paging parameters must do what they say.
 
-``oma_tools.json`` declares every paging parameter as ``["integer", "null"]``,
-and ``OMATool`` then compared the value against a bound with ``min(value, 100)``.
-``null`` is therefore a legal argument that raised ``TypeError: '<' not supported
-between instances of 'int' and 'NoneType'``, reaching the caller as an opaque
-"Unexpected error querying OMA" that named neither the parameter nor the cause.
-Confirmed live on all three nullable sites: ``OMA_get_orthologs``,
-``OMA_resolve_xref`` and ``OMA_get_genome_pair_orthologs``.
+``OMA_get_orthologs`` forwarded ``per_page`` to ``/protein/{id}/orthologs/``,
+which accepts it, returns HTTP 200 and ignores it. Measured against P04637:
+``per_page`` of 3, 20 and 100 each returned all 157 orthologs, and no Link,
+X-Total-Count or content-range header came back to page with. A caller asking
+for 3 received 157 while the schema promised 20 -- confirmed through
+``run_one_function``, so this was reachable exactly as a user would hit it.
 
-Separately, ``OMA_get_orthologs`` forwarded ``per_page`` to
-``/protein/{id}/orthologs/``, which accepts it, returns HTTP 200 and ignores it.
-Measured against P04637: ``per_page`` of 3, 20 and 100 each returned all 157
-orthologs, and no Link, X-Total-Count or content-range header came back to page
-with. A caller asking for 3 received 157 while the schema promised 20.
+The null-argument tests below are hardening rather than a user-facing fix, and
+should not be read as evidence of a bug users met. ``oma_tools.json`` declares
+every paging parameter ``["integer", "null"]`` and the call sites compared the
+value against a bound, so ``null`` raised ``TypeError: '<' not supported between
+instances of 'int' and 'NoneType'`` -- but only when the class is constructed
+directly, as these tests do. ``execute_function.py`` strips ``None`` arguments
+before dispatch, so ``run_one_function`` never delivered one; verified against
+the pre-fix code, where all three tools returned success through that path.
 
 The sibling endpoint ``/pairs/{g1}/{g2}/`` *does* honour ``per_page`` (measured:
 3 -> 3 rows, 20 -> 20 rows, each with a Link header), so the defect is one
@@ -84,6 +86,7 @@ def _orthologs(n):
     ],
 )
 def test_null_paging_parameter_is_not_an_error(name, endpoint, args):
+    """Direct class use only -- run_one_function strips None before dispatch."""
     assert (
         "null"
         in CONFIGS[name]["parameter"]["properties"][

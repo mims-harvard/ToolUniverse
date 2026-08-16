@@ -23,11 +23,19 @@ def _page_size(value: Any, default: int, maximum: Any = 100) -> int:
     """Normalize a caller-supplied page size.
 
     Every paging parameter in oma_tools.json is declared ``["integer", "null"]``,
-    so ``null`` is a legal argument, but the callers of this helper all went on to
-    compare the value against a bound. That raised ``TypeError: '<' not supported
-    between instances of 'int' and 'NoneType'``, which surfaced to the user as an
-    opaque "Unexpected error querying OMA" with nothing naming the parameter at
-    fault. Absent and null both mean "use the default".
+    and the call sites went on to compare the value against a bound, so ``null``
+    raised ``TypeError: '<' not supported between instances of 'int' and
+    'NoneType'``, reported as an opaque "Unexpected error querying OMA".
+
+    That was never reachable through ``run_one_function``: execute_function.py
+    strips ``None`` arguments before dispatch on the grounds that "None means not
+    provided". This helper is therefore hardening for the paths that do not go
+    through it -- importing the class directly, as this repo's own unit tests do
+    -- and not a fix for something users were hitting. It is kept because a tool
+    that accepts its own declared argument only via one entry point is a trap for
+    the next caller, and because "absent" and "null" genuinely mean the same
+    thing here. The user-visible defect in this module was `per_page` being
+    declared and then ignored; see ``_get_orthologs``.
     """
     if value is None:
         return default
