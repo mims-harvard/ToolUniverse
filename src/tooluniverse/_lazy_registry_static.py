@@ -635,6 +635,7 @@ STATIC_LAZY_REGISTRY = {
     "NIHDSLDTool": "nih_dsld_tool",
     "DANDITool": "dandi_tool",
     "PDBTMTool": "pdbtm_tool",
+    "GoaTTool": "goat_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",

@@ -1061,6 +1061,8 @@ default_tool_files = {
     # PDBTM - structure-derived per-chain TM classification, third view
     # alongside existing OPM (geometry) and TopDB (curated evidence)
     "pdbtm": os.path.join(current_dir, "data", "pdbtm_tools.json"),
+    # GoaT - genome sequencing status across Earth BioGenome, DToL, VGP, ERGA
+    "goat": os.path.join(current_dir, "data", "goat_tools.json"),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts

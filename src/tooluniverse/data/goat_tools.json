@@ -1,0 +1,59 @@
+[
+  {
+    "name": "GoaT_get_species",
+    "type": "GoaTTool",
+    "description": "Look up genome sequencing status via GoaT (Genomes on a Tree), which indexes the Earth BioGenome Project, Darwin Tree of Life, Vertebrate Genomes Project, and ERGA against the full NCBI taxonomy. Returns assembly level, genome size, chromosome number, and ploidy. Example: taxon='Panthera leo' (African lion) returns a chromosome-level assembly with 38 chromosomes. Accepts a scientific name or NCBI taxon id; set include_descendants for genus- or family-level coverage.",
+    "fields": {
+      "operation": "get_species"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["taxon"],
+      "properties": {
+        "taxon": {
+          "type": "string",
+          "description": "Scientific name (e.g. 'Panthera leo') or NCBI taxon id (e.g. '9689')."
+        },
+        "include_descendants": {
+          "type": ["boolean", "null"],
+          "description": "If true and taxon is a numeric id, include all descendant taxa (e.g. every species in a genus). Default false."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max taxa to return, 1-50. Default 10."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "taxon_id": {"type": ["string", "null"]},
+              "scientific_name": {"type": ["string", "null"]},
+              "taxon_rank": {"type": ["string", "null"]},
+              "common_name": {"type": ["string", "null"]},
+              "tolid_prefix": {"type": ["string", "null"]},
+              "assembly_level": {"type": ["string", "null"]},
+              "assembly_span_bp": {"type": ["number", "null"]},
+              "genome_size_bp": {"type": ["number", "null"]},
+              "chromosome_number": {"type": ["number", "null"]},
+              "ploidy": {"type": ["number", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"taxon": "Panthera leo"},
+      {"taxon": "9689"}
+    ]
+  }
+]
