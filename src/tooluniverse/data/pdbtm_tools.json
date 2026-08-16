@@ -1,0 +1,53 @@
+[
+  {
+    "name": "PDBTM_get_topology",
+    "type": "PDBTMTool",
+    "description": "Retrieve structure-derived transmembrane classification for one PDB entry from PDBTM: per-chain type (alpha-helical, beta-barrel, or not membrane-embedded) and transmembrane segment count, computed directly from coordinates. Example: pdb_id='2por' (porin) returns a 16-strand beta-barrel; pdb_id='1prc' (photosynthetic reaction centre) shows 5 TM helices each in the L and M subunits and 1 in H. Complements OPM_search_structures (geometry/energetics) and TopDB_get_topology (curated evidence).",
+    "fields": {
+      "operation": "get_topology"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["pdb_id"],
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "4-character PDB identifier, e.g. '2por', '1prc'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "pdb_id": {"type": ["string", "null"]},
+            "release_date": {"type": ["string", "null"]},
+            "chains": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chain_label": {"type": ["string", "null"]},
+                  "tm_type": {"type": ["string", "null"]},
+                  "num_tm_segments": {"type": ["integer", "null"]},
+                  "is_membrane_embedded": {"type": "boolean"}
+                }
+              }
+            },
+            "membrane_radius_angstrom": {"type": ["number", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"pdb_id": "2por"},
+      {"pdb_id": "1prc"}
+    ]
+  }
+]
