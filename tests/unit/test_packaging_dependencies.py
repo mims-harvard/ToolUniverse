@@ -54,6 +54,17 @@ KNOWN_MCPB_OMISSIONS = {
     "openpyxl",
 }
 
+# Dependencies the bundle declares on purpose that the root list leaves to an
+# extra. The bundle is a sealed Claude Desktop runtime: the end user cannot
+# install an extra into it, so anything optional upstream must be unconditional
+# here or the feature is simply unreachable in Desktop.
+KNOWN_MCPB_ADDITIONS = {
+    # Optional root extras `openai` / `gemini` (see issue #526). They stay
+    # unconditional in the bundle so the OpenAI and Gemini clients keep working.
+    "openai",
+    "google-genai",
+}
+
 
 def _load_pyproject(pyproject_path):
     with open(pyproject_path, "rb") as fh:
@@ -127,10 +138,31 @@ def test_mcpb_dependencies_mirror_root():
         f"KNOWN_MCPB_OMISSIONS with a reason."
     )
 
-    extra = mcpb - root
+    extra = mcpb - root - KNOWN_MCPB_ADDITIONS
     assert not extra, (
         f"mcpb/pyproject.toml declares dependencies absent from the root "
-        f"pyproject.toml: {sorted(extra)}."
+        f"pyproject.toml: {sorted(extra)}. Add them to the root list, or record "
+        f"them in KNOWN_MCPB_ADDITIONS with a reason."
+    )
+
+    # A bundle-only dependency must still track the constraint of the root
+    # extra it mirrors, so the two cannot drift apart silently.
+    root_extra_requirements = {
+        _distribution_name(requirement): requirement
+        for requirements in _load_pyproject(ROOT_PYPROJECT)[
+            "optional-dependencies"
+        ].values()
+        for requirement in requirements
+    }
+    drifted = {
+        name: (root_extra_requirements[name], mcpb_requirements[name])
+        for name in KNOWN_MCPB_ADDITIONS & mcpb
+        if name in root_extra_requirements
+        and root_extra_requirements[name] != mcpb_requirements[name]
+    }
+    assert not drifted, (
+        "mcpb/pyproject.toml pins a bundle-only dependency differently from the "
+        f"root extra that declares it: {drifted}."
     )
 
     mismatched = {
