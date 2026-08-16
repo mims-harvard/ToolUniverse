@@ -631,6 +631,7 @@ STATIC_LAZY_REGISTRY = {
     "BacDiveTool": "bacdive_tool",
     "MediaDiveTool": "mediadive_tool",
     "NASAOSDRTool": "nasa_osdr_tool",
+    "EWASCatalogTool": "ewas_catalog_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",

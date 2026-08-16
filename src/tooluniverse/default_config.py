@@ -1051,6 +1051,8 @@ default_tool_files = {
     # Re-added: the domain from the prior attempt (genelab-data.ndc.nasa.gov)
     # is dead, but OSDR has since migrated to osdr.nasa.gov, verified live.
     "nasa_osdr": os.path.join(current_dir, "data", "nasa_osdr_tools.json"),
+    # EWAS Catalog - epigenome-wide association study results (MRC-IEU)
+    "ewas_catalog": os.path.join(current_dir, "data", "ewas_catalog_tools.json"),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts
