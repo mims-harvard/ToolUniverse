@@ -640,6 +640,7 @@ STATIC_LAZY_REGISTRY = {
     "SciCrunchRRIDTool": "scicrunch_rrid_tool",
     "CMSOpenPaymentsTool": "cms_open_payments_tool",
     "DHSProgramTool": "dhs_program_tool",
+    "MDDBTool": "mddb_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",

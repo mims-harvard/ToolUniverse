@@ -1079,6 +1079,8 @@ default_tool_files = {
     # DHS Program - household health survey data across ~90 LMIC countries,
     # correcting the LMIC skew in existing population-health coverage
     "dhs_program": os.path.join(current_dir, "data", "dhs_program_tools.json"),
+    # MDDB - molecular dynamics trajectory database (MoDEL, BioExcel, DESRES)
+    "mddb": os.path.join(current_dir, "data", "mddb_tools.json"),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts
