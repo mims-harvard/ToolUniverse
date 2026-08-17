@@ -639,6 +639,7 @@ STATIC_LAZY_REGISTRY = {
     "NIHReporterTool": "nih_reporter_tool",
     "SciCrunchRRIDTool": "scicrunch_rrid_tool",
     "CMSOpenPaymentsTool": "cms_open_payments_tool",
+    "DHSProgramTool": "dhs_program_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",
