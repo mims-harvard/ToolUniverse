@@ -779,6 +779,7 @@ class DNATool(BaseTool):
             "gibson_design": self._gibson_design,
             "golden_gate_design": self._golden_gate_design,
             "golden_gate_assemble": self._golden_gate_assemble,
+            "crispr_guide_design": self._crispr_guide_design,
         }
 
         handler = operation_handlers.get(operation)
@@ -2064,6 +2065,153 @@ class DNATool(BaseTool):
                 "forward_primer": best_fwd,
                 "reverse_primer": best_rev,
                 "product_size": product_size,
+            },
+        }
+
+    def _crispr_guide_design(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Find candidate SpCas9 (NGG PAM) guide RNAs in a target sequence.
+
+        Scores are a transparent rule-based heuristic (GC content, PAM-
+        proximal G, Pol III terminator avoidance, homopolymer runs) — not a
+        trained on-target efficiency model like Doench 2016/Azimuth, and
+        this performs no off-target search against any genome. Use CRISPOR
+        or the Broad GPP sgRNA designer for validated efficiency and
+        off-target scores before ordering a guide.
+        """
+        sequence = arguments.get("sequence", "")
+        if not sequence:
+            return {"status": "error", "error": "sequence is required"}
+
+        sequence = sequence.upper().replace(" ", "").replace("\n", "").replace("\t", "")
+        error = self._validate_dna_sequence(sequence)
+        if error:
+            return {"status": "error", "error": error}
+        if "N" in sequence:
+            return {
+                "status": "error",
+                "error": "sequence must not contain N: Cas9 target sites "
+                "cannot be reliably scored against ambiguous bases.",
+            }
+        if len(sequence) < 23:
+            return {
+                "status": "error",
+                "error": "sequence must be at least 23 bp (20 bp protospacer "
+                "+ 3 bp NGG PAM).",
+            }
+
+        _limit_raw = arguments.get("limit")
+        limit = int(_limit_raw) if _limit_raw is not None else 10
+        if limit <= 0:
+            return {"status": "error", "error": "limit must be a positive integer."}
+        limit = min(limit, 100)
+
+        gc_min_pct = (
+            float(arguments["gc_min"]) if arguments.get("gc_min") is not None else 30.0
+        )
+        gc_max_pct = (
+            float(arguments["gc_max"]) if arguments.get("gc_max") is not None else 70.0
+        )
+        if not (0 <= gc_min_pct <= 100) or not (0 <= gc_max_pct <= 100):
+            return {
+                "status": "error",
+                "error": f"gc_min ({gc_min_pct}) and gc_max ({gc_max_pct}) must "
+                "be in [0, 100] (percentage units).",
+            }
+        if gc_min_pct > gc_max_pct:
+            return {
+                "status": "error",
+                "error": f"gc_min ({gc_min_pct}) must be <= gc_max ({gc_max_pct}).",
+            }
+
+        def gc_content(seq: str) -> float:
+            gc = sum(1 for b in seq if b in "GC")
+            return gc / len(seq) * 100 if len(seq) > 0 else 0
+
+        def has_homopolymer(protospacer: str, run_length: int = 4) -> bool:
+            for base in "ACGT":
+                if base * run_length in protospacer:
+                    return True
+            return False
+
+        def score_guide(protospacer: str) -> float:
+            gc = gc_content(protospacer)
+            # Peak score at 50% GC, tapering to 0 at the caller's bounds.
+            midpoint = (gc_min_pct + gc_max_pct) / 2
+            half_range = max((gc_max_pct - gc_min_pct) / 2, 1.0)
+            gc_score = max(0.0, 1.0 - abs(gc - midpoint) / half_range)
+            score = gc_score
+            if protospacer[-1] == "G":
+                # A PAM-proximal G is a widely used, mild efficiency heuristic
+                # (matches the U6 promoter's preferred +1 transcription start).
+                score += 0.15
+            if "TTTT" in protospacer:
+                # Four or more T's is a Pol III transcription terminator.
+                score -= 0.5
+            if has_homopolymer(protospacer):
+                score -= 0.15
+            return round(score, 4)
+
+        candidates = []
+        strands = {
+            "+": sequence,
+            "-": _reverse_complement(sequence),
+        }
+        seq_len = len(sequence)
+        for strand, strand_seq in strands.items():
+            for i in range(20, len(strand_seq) - 2):
+                if strand_seq[i + 1 : i + 3] != "GG":
+                    continue
+                protospacer = strand_seq[i - 20 : i]
+                if "N" in protospacer:
+                    continue
+                pam = strand_seq[i : i + 3]
+                if strand == "+":
+                    genomic_start = i - 20
+                else:
+                    # Map the minus-strand coordinate back to the original
+                    # (plus-strand) sequence.
+                    genomic_start = seq_len - i - 3
+                candidates.append(
+                    {
+                        "protospacer": protospacer,
+                        "pam": pam,
+                        "strand": strand,
+                        "start": genomic_start,
+                        "end": genomic_start + 23,
+                        "gc_content_percent": round(gc_content(protospacer), 2),
+                        "has_pol3_terminator": "TTTT" in protospacer,
+                        "has_homopolymer_run": has_homopolymer(protospacer),
+                        "heuristic_score": score_guide(protospacer),
+                    }
+                )
+
+        if not candidates:
+            return {
+                "status": "error",
+                "error": "No NGG PAM sites found with a full 20 bp "
+                "protospacer available on either strand.",
+            }
+
+        in_gc_range = [
+            c for c in candidates if gc_min_pct <= c["gc_content_percent"] <= gc_max_pct
+        ]
+        pool = in_gc_range if in_gc_range else candidates
+        pool.sort(key=lambda c: c["heuristic_score"], reverse=True)
+
+        return {
+            "status": "success",
+            "data": pool[:limit],
+            "metadata": {
+                "sequence_length": seq_len,
+                "candidates_found": len(candidates),
+                "candidates_in_gc_range": len(in_gc_range),
+                "returned": len(pool[:limit]),
+                "note": "heuristic_score is a transparent rule-based score "
+                "(GC content, PAM-proximal G, terminator/homopolymer "
+                "avoidance), not a trained on-target efficiency model, and "
+                "no off-target search against any genome was performed. "
+                "Verify with CRISPOR or the Broad GPP sgRNA designer before "
+                "ordering.",
             },
         }
 
