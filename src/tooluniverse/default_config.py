@@ -1071,6 +1071,11 @@ default_tool_files = {
     "scicrunch_rrid": os.path.join(
         current_dir, "data", "scicrunch_rrid_tools.json"
     ),
+    # CMS Open Payments - drug/device manufacturer payments to physicians,
+    # a health-economics/conflict-of-interest layer with no prior coverage
+    "cms_open_payments": os.path.join(
+        current_dir, "data", "cms_open_payments_tools.json"
+    ),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts

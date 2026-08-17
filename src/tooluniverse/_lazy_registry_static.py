@@ -638,6 +638,7 @@ STATIC_LAZY_REGISTRY = {
     "GoaTTool": "goat_tool",
     "NIHReporterTool": "nih_reporter_tool",
     "SciCrunchRRIDTool": "scicrunch_rrid_tool",
+    "CMSOpenPaymentsTool": "cms_open_payments_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",
