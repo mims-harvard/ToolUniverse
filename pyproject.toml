@@ -185,6 +185,11 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 tooluniverse = ["data/*", "data/packages/*"]
+"tooluniverse.remote.uspto_downloader" = [
+    "README.md",
+    "requirements.txt",
+    "*.json",
+]
 
 [dependency-groups]
 dev = [

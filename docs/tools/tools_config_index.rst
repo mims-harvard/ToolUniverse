@@ -748,7 +748,6 @@ Remote Tools
    Immune Compass Tools <immune_compass_tools>
    Pinnacle Tools <pinnacle_tools>
    Transcriptformer Tools <transcriptformer_tools>
-   Uspto Downloader Tools <uspto_downloader_tools>
 
 
 Tools by Type
@@ -2296,18 +2295,15 @@ Tools by Type
 *Local Tools:*
   * RegulomeDB_query_variant (from :doc:`regulomedb_tools`)
 
-**RemoteTool** (14 tools)
+**RemoteTool** (11 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Remote Tools:*
   * boltz2_docking (from :doc:`boltz_tools`)
   * compute_depmap24q2_gene_correlations (from :doc:`depmap_tools`)
   * consult_human_expert (from :doc:`expert_feedback_tools`)
-  * get_abstract_from_patent_app_number (from :doc:`uspto_downloader_tools`)
-  * get_claims_from_patent_app_number (from :doc:`uspto_downloader_tools`)
   * get_expert_response (from :doc:`expert_feedback_tools`)
   * get_expert_status (from :doc:`expert_feedback_tools`)
-  * get_full_text_from_patent_app_number (from :doc:`uspto_downloader_tools`)
   * list_pending_expert_requests (from :doc:`expert_feedback_tools`)
   * mcp_auto_loader_human_expert (from :doc:`expert_feedback_tools`)
   * run_compass_prediction (from :doc:`immune_compass_tools`)
@@ -2590,4 +2586,3 @@ Use your browser's search function (Ctrl+F / Cmd+F) to quickly find:
 
 .. note::
    Each configuration file has its own dedicated page with detailed tool information and collapsible sections.
-

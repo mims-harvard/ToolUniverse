@@ -1,8 +1,11 @@
 from fastmcp import FastMCP
-import sys
-import os
-from .uspto_downloader_tool import USPTOPatentDocumentDownloader
 import json
+import os
+import sys
+
+from tooluniverse.remote.uspto_downloader.uspto_downloader_tool import (
+    USPTOPatentDocumentDownloader,
+)
 
 # Read the tool config dicts from the JSON file
 try:
@@ -28,56 +31,48 @@ def _optional_token_auth():
     token = os.getenv("TOOLUNIVERSE_API_TOKEN")
     if not token:
         return None
-    try:
-        from fastmcp.server.auth import StaticTokenVerifier
+    from fastmcp.server.auth import StaticTokenVerifier
 
-        return StaticTokenVerifier(
-            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
-        )
-    except Exception:
-        return None
+    return StaticTokenVerifier(
+        tokens={token: {"client_id": "tooluniverse", "scopes": []}}
+    )
 
 
-server = FastMCP("Your MCP Server", auth=_optional_token_auth())
+server = FastMCP("USPTO Patent Document Downloader", auth=_optional_token_auth())
 agents = {}
 for tool_config in uspto_downloader_tools:
     agents[tool_config["name"]] = USPTOPatentDocumentDownloader(tool_config=tool_config)
 
 
 @server.tool()
-def download_abst(query: dict):
-    """Retrieve the abstract of a patent application by its application number.
-    Args:
-        "query" dict: A dictionary containing the application number under the key "applicationNumberText".
-    Returns
-        dict: A dictionary containing the abstract text under the 'result' key or an error message under the 'error' key if the document could not be retrieved.
-    """
-    return agents["get_abstract_from_patent_app_number"].run(query)
+def get_abstract_from_patent_app_number(applicationNumberText: str):
+    """Retrieve a patent application's abstract by application number."""
+    return agents["get_abstract_from_patent_app_number"].run(
+        {"applicationNumberText": applicationNumberText}
+    )
 
 
 @server.tool()
-def download_claims(query: dict):
-    """Retrieve the claims of a patent application by its application number.
-    Args:
-        "query" dict: A dictionary containing the application number under the key "applicationNumberText".
-    Returns
-        dict: A dictionary containing the claims text under the 'result' key or an error message under the 'error' key if the document could not be retrieved.
-    """
-    return agents["get_claims_from_patent_app_number"].run(query)
+def get_claims_from_patent_app_number(applicationNumberText: str):
+    """Retrieve a patent application's claims by application number."""
+    return agents["get_claims_from_patent_app_number"].run(
+        {"applicationNumberText": applicationNumberText}
+    )
 
 
 @server.tool()
-def download_full_text(query: dict):
-    """Retrieve the full text of a patent application by its application number.
-    Args:
-        "query" dict: A dictionary containing the application number under the key "applicationNumberText".
-    Returns
-        dict: A dictionary containing the full text under the 'result' key or an error message under the 'error' key if the document could not be retrieved.
-    """
-    return agents["get_full_text_from_patent_app_number"].run(query)
+def get_full_text_from_patent_app_number(applicationNumberText: str):
+    """Retrieve a patent application's full text by application number."""
+    return agents["get_full_text_from_patent_app_number"].run(
+        {"applicationNumberText": applicationNumberText}
+    )
 
 
-if __name__ == "__main__":
+def main():
     server.run(
         transport="streamable-http", host="0.0.0.0", port=8081, stateless_http=True
     )
+
+
+if __name__ == "__main__":
+    main()
