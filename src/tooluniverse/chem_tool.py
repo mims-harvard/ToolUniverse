@@ -388,7 +388,9 @@ class ChEMBLRESTTool(BaseTool):
         base = f"{self.base_url}/molecule/{chembl_id}.json"
         headers = {"Accept": "application/json", "User-Agent": "ToolUniverse/1.0"}
         try:
-            resp = requests.get(base, headers=headers, timeout=20)
+            resp = request_with_retry(
+                self.session, "GET", base, headers=headers, timeout=20
+            )
             resp.raise_for_status()
             parent = self._extract_parent_chembl_id(resp.json())
             return parent if parent and parent != chembl_id else None
@@ -410,8 +412,13 @@ class ChEMBLRESTTool(BaseTool):
             {"pref_name__iexact": drug_name, "format": "json", "limit": 5},
         ):
             try:
-                resp = requests.get(
-                    base, params=lookup_params, headers=headers, timeout=20
+                resp = request_with_retry(
+                    self.session,
+                    "GET",
+                    base,
+                    params=lookup_params,
+                    headers=headers,
+                    timeout=20,
                 )
                 resp.raise_for_status()
                 molecules = resp.json().get("molecules", [])
@@ -761,6 +768,11 @@ class ChEMBLTool(BaseTool):
         super().__init__(tool_config)
         self.base_url = base_url
         self.indigo = Indigo()
+        # Match ChEMBLRESTTool: a pooled session and an explicit timeout, so no
+        # request can hang indefinitely when the upstream service stops
+        # responding rather than returning an error.
+        self.session = requests.Session()
+        self.timeout = 30
 
     def run(self, arguments):
         query = arguments.get("query")
@@ -778,7 +790,13 @@ class ChEMBLTool(BaseTool):
         headers = {"Accept": "application/json"}
         search_url = f"{self.base_url}/molecule/search.json?q={quote(compound_name)}"
         print(search_url)
-        response = requests.get(search_url, headers=headers)
+        response = request_with_retry(
+            self.session,
+            "GET",
+            search_url,
+            headers=headers,
+            timeout=self.timeout,
+        )
         response.raise_for_status()
         results = response.json().get("molecules", [])
         if not results or not isinstance(results, list):
@@ -811,7 +829,13 @@ class ChEMBLTool(BaseTool):
         headers = {"Accept": "application/json"}
         if query.upper().startswith("CHEMBL"):
             molecule_url = f"{self.base_url}/molecule/{quote(query)}.json"
-            response = requests.get(molecule_url, headers=headers)
+            response = request_with_retry(
+                self.session,
+                "GET",
+                molecule_url,
+                headers=headers,
+                timeout=self.timeout,
+            )
             response.raise_for_status()
             molecule = response.json()
             if not molecule or not isinstance(molecule, dict):
@@ -842,7 +866,13 @@ class ChEMBLTool(BaseTool):
         """
         headers = {"Accept": "application/json"}
         search_url = f"{self.base_url}/molecule/search.json?q={quote(compound_name)}"
-        response = requests.get(search_url, headers=headers)
+        response = request_with_retry(
+            self.session,
+            "GET",
+            search_url,
+            headers=headers,
+            timeout=self.timeout,
+        )
         response.raise_for_status()
         results = response.json().get("molecules", [])
         if not results or not isinstance(results, list):
@@ -970,7 +1000,13 @@ class ChEMBLTool(BaseTool):
                 headers = {"Accept": "application/json"}
                 search_url = f"{self.base_url}/molecule/search.json?q={quote(query)}"
                 try:
-                    response = requests.get(search_url, headers=headers)
+                    response = request_with_retry(
+                        self.session,
+                        "GET",
+                        search_url,
+                        headers=headers,
+                        timeout=self.timeout,
+                    )
                     response.raise_for_status()
                     results = response.json().get("molecules", [])
                     if results and len(results) > 0:
@@ -1025,7 +1061,13 @@ class ChEMBLTool(BaseTool):
 
             encoded_smiles = quote(smiles)
             similarity_url = f"{self.base_url}/similarity/{encoded_smiles}/{similarity_threshold}.json?limit={max_results}"
-            sim_response = requests.get(similarity_url, headers=headers)
+            sim_response = request_with_retry(
+                self.session,
+                "GET",
+                similarity_url,
+                headers=headers,
+                timeout=self.timeout,
+            )
             sim_response.raise_for_status()
             sim_results = sim_response.json().get("molecules", [])
             similar_molecules = []
