@@ -415,6 +415,10 @@ class ToolUniverse:
         self.tool_category_dicts: Dict[str, List[Dict[str, Any]]] = {}
         # Maps tool name → missing required API key names (for better "not found" errors)
         self._excluded_api_key_tools: Dict[str, List[str]] = {}
+        # Keep the corresponding configurations for discovery-only consumers such as
+        # ``tu find``.  Gated tools must stay out of ``all_tool_dict`` so agents cannot
+        # execute them, but dropping their metadata made real tools undiscoverable.
+        self._excluded_api_key_tool_configs: Dict[str, Dict[str, Any]] = {}
         self.tool_finder = None
         if tool_files is None:
             tool_files = default_tool_files
@@ -470,13 +474,23 @@ class ToolUniverse:
             in _TRUTHY_VALUES
         )
 
-        cache_path = os.getenv("TOOLUNIVERSE_CACHE_PATH")
+        configured_cache_path = os.getenv("TOOLUNIVERSE_CACHE_PATH")
+        configured_cache_dir = os.getenv("TOOLUNIVERSE_CACHE_DIR")
+        cache_path = configured_cache_path
         if not cache_path and persistence_enabled:
-            base_dir = os.getenv("TOOLUNIVERSE_CACHE_DIR")
+            base_dir = configured_cache_dir
             if not base_dir:
                 base_dir = os.path.join(str(Path.home()), ".tooluniverse")
-            os.makedirs(base_dir, exist_ok=True)
-            cache_path = os.path.join(base_dir, "cache.sqlite")
+            try:
+                os.makedirs(base_dir, exist_ok=True)
+                cache_path = os.path.join(base_dir, "cache.sqlite")
+            except OSError:
+                # A read-only home is common in containers and hosted runners. The default cache
+                # is an optimization, so continue with the memory layer. Explicit user paths still
+                # surface a warning below because they represent requested configuration.
+                if configured_cache_dir:
+                    raise
+                cache_path = None
 
         self.cache_manager = ResultCacheManager(
             memory_size=memory_size,
@@ -485,6 +499,9 @@ class ToolUniverse:
             persistence_enabled=persistence_enabled,
             singleflight=singleflight_enabled,
             default_ttl=default_ttl,
+            warn_on_persistence_error=bool(
+                configured_cache_path or configured_cache_dir
+            ),
         )
 
         self._strict_validation = (
@@ -1033,6 +1050,7 @@ class ToolUniverse:
             self.all_tool_dict = {}
             self.tool_category_dicts = {}
             self._excluded_api_key_tools = {}
+            self._excluded_api_key_tool_configs = {}
 
         # Handle tools_file parameter (alternative to include_tools)
         if tools_file:
@@ -1387,10 +1405,15 @@ class ToolUniverse:
                 if not all_keys_available:
                     all_missing_keys.update(missing_keys)
                     self._excluded_api_key_tools[tool_name] = list(missing_keys)
+                    self._excluded_api_key_tool_configs[tool_name] = copy.deepcopy(each)
                     self.logger.debug(
                         f"Skipping tool '{tool_name}' due to missing API keys: {', '.join(missing_keys)}"
                     )
                     continue
+                # A partial reload after the operator supplied the key should not
+                # leave stale discovery metadata saying that the tool is gated.
+                self._excluded_api_key_tools.pop(tool_name, None)
+                self._excluded_api_key_tool_configs.pop(tool_name, None)
 
             # Check API key requirements for AgenticTool type
             if each.get("type") == "AgenticTool":
@@ -4819,6 +4842,7 @@ class ToolUniverse:
         self.all_tool_dict = {}
         self.tool_category_dicts = {}
         self._excluded_api_key_tools = {}
+        self._excluded_api_key_tool_configs = {}
         self.callable_functions = {}
 
         # Load tools from external sources declared in the Profile

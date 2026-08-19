@@ -1,0 +1,4 @@
+interface:
+  display_name: "Host and share a remote tool"
+  short_description: "Host and share a private model or MCP endpoint."
+  default_prompt: "Set up, validate, and privately share my own model, Python function, or MCP endpoint through ToolUniverse Platform."
