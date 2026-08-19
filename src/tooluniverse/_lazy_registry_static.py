@@ -642,6 +642,7 @@ STATIC_LAZY_REGISTRY = {
     "DHSProgramTool": "dhs_program_tool",
     "MDDBTool": "mddb_tool",
     "SmartAPITool": "smartapi_tool",
+    "NCIEVSTool": "nci_evs_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",
