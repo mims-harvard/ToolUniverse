@@ -1,9 +1,11 @@
 import os
+import logging
 import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from tooluniverse.cache.result_cache_manager import ResultCacheManager
+from tooluniverse.cache import result_cache_manager
 
 
 def test_memory_cache_roundtrip(memory_cache_manager):
@@ -43,3 +45,41 @@ def test_persistent_cache_survives_restart(tmp_path):
     persisted = manager2.get(namespace="tool", version="v1", cache_key="persist")
     assert persisted == {"foo": "bar"}
     manager2.close()
+
+
+def test_default_persistence_failure_falls_back_without_warning(monkeypatch, caplog):
+    monkeypatch.setattr(
+        result_cache_manager,
+        "PersistentCache",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(OSError("read only")),
+    )
+    caplog.set_level(logging.WARNING)
+
+    manager = ResultCacheManager(
+        persistent_path="/default/cache.sqlite",
+        warn_on_persistence_error=False,
+    )
+    try:
+        assert manager.persistent is None
+        assert "Failed to initialize persistent cache" not in caplog.text
+    finally:
+        manager.close()
+
+
+def test_explicit_persistence_failure_remains_actionable(monkeypatch, caplog):
+    monkeypatch.setattr(
+        result_cache_manager,
+        "PersistentCache",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(OSError("read only")),
+    )
+    caplog.set_level(logging.WARNING)
+
+    manager = ResultCacheManager(
+        persistent_path="/configured/cache.sqlite",
+        warn_on_persistence_error=True,
+    )
+    try:
+        assert manager.persistent is None
+        assert "using memory only" in caplog.text
+    finally:
+        manager.close()

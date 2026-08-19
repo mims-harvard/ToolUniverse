@@ -92,6 +92,7 @@ AI Agent Interface:
 """
 
 import asyncio
+import copy
 import functools
 import json
 import os
@@ -123,17 +124,26 @@ def _save_full_response(serialized: str) -> str:
     return path
 
 
-def _truncate_response(result: Any, serialized: str, max_chars: int) -> str:
+def _truncate_response(
+    result: Any,
+    serialized: str,
+    max_chars: int,
+    *,
+    persist_full_result: bool = True,
+) -> str:
     """Truncate oversized tool responses to fit LLM context windows.
 
-    Saves the full response to a temp file, then tries to intelligently
-    truncate lists within the result before falling back to raw string
-    truncation. The temp file path is included in the truncated response.
+    When ``persist_full_result`` is enabled, saves the full response to a temp
+    file and includes that path. Remote providers disable persistence because
+    a server-local path is unusable to callers and can retain sensitive data.
+    Lists are truncated intelligently before falling back to raw text.
     """
-    try:
-        full_path = _save_full_response(serialized)
-    except Exception:
-        full_path = None
+    full_path = None
+    if persist_full_result:
+        try:
+            full_path = _save_full_response(serialized)
+        except Exception:
+            full_path = None
 
     truncation_meta = (
         {
@@ -404,6 +414,8 @@ class SMCP(FastMCP):
         hook_config: Optional[Dict[str, Any]] = None,
         hook_type: Optional[str] = None,
         compact_mode: bool = False,
+        persist_oversized_results: bool = True,
+        strict_input_schemas: bool = False,
         **kwargs,
     ):
         if not FASTMCP_AVAILABLE:
@@ -469,6 +481,12 @@ class SMCP(FastMCP):
         self.exclude_tool_types = exclude_tool_types or []
         self.profile = profile
         self.compact_mode = compact_mode
+        if not isinstance(persist_oversized_results, bool):
+            raise TypeError("persist_oversized_results must be a boolean")
+        self.persist_oversized_results = persist_oversized_results
+        if not isinstance(strict_input_schemas, bool):
+            raise TypeError("strict_input_schemas must be a boolean")
+        self.strict_input_schemas = strict_input_schemas
         # In compact mode, don't auto-expose all tools
         self.auto_expose_tools = False if compact_mode else auto_expose_tools
         self.search_enabled = search_enabled
@@ -944,7 +962,12 @@ class SMCP(FastMCP):
             # Guard against oversized responses
             max_chars = 100_000
             if len(serialized) > max_chars:
-                serialized = _truncate_response(result, serialized, max_chars)
+                serialized = _truncate_response(
+                    result,
+                    serialized,
+                    max_chars,
+                    persist_full_result=self.persist_oversized_results,
+                )
             return serialized
 
         except Exception as e:
@@ -1561,7 +1584,9 @@ class SMCP(FastMCP):
     }
 
     @staticmethod
-    def _resolve_oneof_type(param_info: Dict[str, Any]) -> tuple:
+    def _resolve_oneof_type(
+        param_info: Dict[str, Any], *, strict: bool = False
+    ) -> tuple:
         """Convert a JSON Schema oneOf spec to (python_type, field_kwargs_update).
 
         Returns:
@@ -1573,7 +1598,12 @@ class SMCP(FastMCP):
         for item in param_info["oneOf"]:
             item_type = item.get("type")
             if item_type == "string":
-                one_of_types.append(str)
+                if strict:
+                    from pydantic import StrictStr
+
+                    one_of_types.append(StrictStr)
+                else:
+                    one_of_types.append(str)
                 one_of_schemas.append({"type": "string"})
             elif item_type == "array":
                 items = item.get("items", {})
@@ -1586,13 +1616,28 @@ class SMCP(FastMCP):
                     one_of_types.append(list)
                     one_of_schemas.append({"type": "array", "items": items})
             elif item_type == "integer":
-                one_of_types.append(int)
+                if strict:
+                    from pydantic import StrictInt
+
+                    one_of_types.append(StrictInt)
+                else:
+                    one_of_types.append(int)
                 one_of_schemas.append({"type": "integer"})
             elif item_type == "number":
-                one_of_types.append(float)
+                if strict:
+                    from pydantic import StrictFloat
+
+                    one_of_types.append(StrictFloat)
+                else:
+                    one_of_types.append(float)
                 one_of_schemas.append({"type": "number"})
             elif item_type == "boolean":
-                one_of_types.append(bool)
+                if strict:
+                    from pydantic import StrictBool
+
+                    one_of_types.append(StrictBool)
+                else:
+                    one_of_types.append(bool)
                 one_of_schemas.append({"type": "boolean"})
             elif item_type == "object":
                 one_of_types.append(dict)
@@ -1611,12 +1656,91 @@ class SMCP(FastMCP):
         return python_type, {"json_schema_extra": {"oneOf": one_of_schemas}}
 
     @classmethod
-    def _resolve_param_type(cls, param_info: Dict[str, Any]) -> tuple:
+    def _strict_param_type(cls, param_info: Dict[str, Any]):
+        """Build a non-coercing Python type from one JSON Schema property."""
+        from pydantic import StrictBool, StrictFloat, StrictInt, StrictStr
+
+        enum = param_info.get("enum")
+        if isinstance(enum, list) and enum:
+            return Literal[tuple(enum)]
+
+        alternatives = param_info.get("oneOf") or param_info.get("anyOf")
+        if isinstance(alternatives, list) and alternatives:
+            types = [
+                cls._strict_param_type(option)
+                for option in alternatives
+                if isinstance(option, dict)
+            ]
+            return Union[tuple(types)] if len(types) > 1 else (types[0] if types else Any)
+
+        param_type = param_info.get("type", "string")
+        if isinstance(param_type, list):
+            types = [
+                type(None)
+                if item == "null"
+                else cls._strict_param_type({**param_info, "type": item})
+                for item in param_type
+            ]
+            return Union[tuple(types)] if len(types) > 1 else types[0]
+        if param_type == "string":
+            return StrictStr
+        if param_type == "integer":
+            return StrictInt
+        if param_type == "number":
+            return StrictFloat
+        if param_type == "boolean":
+            return StrictBool
+        if param_type == "array":
+            return list[cls._strict_param_type(param_info.get("items", {}))]
+        if param_type == "object":
+            return dict
+        if param_type == "null":
+            return type(None)
+        return Any
+
+    @staticmethod
+    def _strict_field_constraints(param_info: Dict[str, Any]) -> Dict[str, Any]:
+        """Translate common JSON Schema limits into Pydantic Field limits."""
+        constraints: Dict[str, Any] = {}
+        param_type = param_info.get("type")
+        if param_type == "string":
+            mapping = {
+                "minLength": "min_length",
+                "maxLength": "max_length",
+                "pattern": "pattern",
+            }
+        elif param_type in {"integer", "number"}:
+            mapping = {
+                "minimum": "ge",
+                "maximum": "le",
+                "exclusiveMinimum": "gt",
+                "exclusiveMaximum": "lt",
+                "multipleOf": "multiple_of",
+            }
+        elif param_type == "array":
+            mapping = {"minItems": "min_length", "maxItems": "max_length"}
+        else:
+            mapping = {}
+        for schema_name, field_name in mapping.items():
+            if schema_name in param_info:
+                constraints[field_name] = param_info[schema_name]
+        return constraints
+
+    @classmethod
+    def _resolve_param_type(
+        cls, param_info: Dict[str, Any], *, strict: bool = False
+    ) -> tuple:
         """Map a single JSON Schema parameter to (python_type, extra_field_kwargs).
 
         Handles oneOf, simple types, array items cleanup, and nested object cleanup.
         """
         extra: Dict[str, Any] = {}
+
+        if strict:
+            return cls._strict_param_type(param_info), {
+                "json_schema_extra": copy.deepcopy(param_info),
+                **cls._strict_field_constraints(param_info),
+            }
 
         # oneOf takes priority
         if "oneOf" in param_info:
@@ -1771,7 +1895,9 @@ class SMCP(FastMCP):
                         continue
 
                     # Resolve Python type and optional json_schema_extra
-                    python_type, extra_kwargs = self._resolve_param_type(param_info)
+                    python_type, extra_kwargs = self._resolve_param_type(
+                        param_info, strict=self.strict_input_schemas
+                    )
                     field_kwargs = {"description": param_description, **extra_kwargs}
                     pydantic_field = Field(**field_kwargs)
 
@@ -1788,15 +1914,22 @@ class SMCP(FastMCP):
                         )
                     else:
                         # Optional parameter with description, schema info and default value
-                        annotated_type = Annotated[
-                            Union[python_type, type(None)], pydantic_field
-                        ]
+                        optional_type = (
+                            python_type
+                            if self.strict_input_schemas
+                            else Union[python_type, type(None)]
+                        )
+                        annotated_type = Annotated[optional_type, pydantic_field]
                         param_annotations[safe_name] = annotated_type
                         func_params.append(
                             inspect.Parameter(
                                 safe_name,
                                 inspect.Parameter.POSITIONAL_OR_KEYWORD,
-                                default=None,
+                                default=(
+                                    param_info.get("default")
+                                    if self.strict_input_schemas
+                                    else None
+                                ),
                                 annotation=annotated_type,
                             )
                         )
@@ -1996,7 +2129,12 @@ class SMCP(FastMCP):
                     # Guard against oversized responses that overflow LLM context
                     max_chars = 100_000
                     if len(serialized) > max_chars:
-                        serialized = _truncate_response(result, serialized, max_chars)
+                        serialized = _truncate_response(
+                            result,
+                            serialized,
+                            max_chars,
+                            persist_full_result=self.persist_oversized_results,
+                        )
                     return serialized
 
                 except Exception as e:
@@ -2046,9 +2184,40 @@ Returns:
             )
 
             # Register with FastMCP using exposed_name for MCP, but tool execution uses original tool_name
-            self.tool(description=description, annotations=tool_annotations)(
+            registered_tool = self.tool(
+                description=description, annotations=tool_annotations
+            )(
                 dynamic_tool_function
             )
+            if self.strict_input_schemas:
+                # FastMCP derives discovery metadata from the Python signature.
+                # Preserve the reviewed provider contract verbatim so omitted
+                # optional fields are not incorrectly advertised as nullable
+                # and bounds/enums remain visible to TOU clients.
+                # FunctionTool is a Pydantic model whose normal assignment path
+                # re-normalizes the schema and reintroduces nullable/default
+                # metadata. Bypass that normalization after construction; the
+                # callable's strict signature remains the runtime validator.
+                strict_parameters = copy.deepcopy(parameters)
+                object.__setattr__(
+                    registered_tool, "parameters", strict_parameters
+                )
+                # FastMCP 3 stores a validated copy in its local provider.
+                # Update that copy as well; get_tool()/tools/list read it.
+                local_provider = getattr(self, "_local_provider", None)
+                components = getattr(local_provider, "_components", {})
+                stored_tools = [
+                    component
+                    for component in components.values()
+                    if getattr(component, "name", None) == exposed_name
+                    and hasattr(component, "parameters")
+                ]
+                for stored_tool in stored_tools:
+                    object.__setattr__(
+                        stored_tool,
+                        "parameters",
+                        copy.deepcopy(strict_parameters),
+                    )
 
         except Exception as e:
             self.logger.error(f"Error creating MCP tool from config: {e}")

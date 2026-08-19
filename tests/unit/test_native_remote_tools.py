@@ -278,6 +278,67 @@ def test_remote_tool_infers_schema_and_remains_callable():
     assert info["description"] == "Score one sequence."
 
 
+def test_registered_remote_class_uses_closed_schema_and_safe_worker_default():
+    @registry.register_mcp_tool(
+        tool_type_name="bounded_analysis",
+        config={
+            "description": "Run one bounded analysis.",
+            "parameter_schema": {
+                "type": "object",
+                "properties": {"value": {"type": "integer"}},
+                "required": ["value"],
+            },
+        },
+        mcp_config={"port": 9124},
+    )
+    class BoundedAnalysis:
+        def run(self, arguments):
+            return arguments
+
+    info = registry._mcp_tool_registry["bounded_analysis"]
+    assert info["parameter_schema"]["additionalProperties"] is False
+    assert info["server_config"]["max_workers"] == 1
+
+
+def test_strict_smcp_preserves_remote_schema_and_rejects_coercion(tmp_path, monkeypatch):
+    from tooluniverse.smcp import SMCP
+
+    monkeypatch.setenv("TOOLUNIVERSE_CACHE_DIR", str(tmp_path / "cache"))
+    schema = {
+        "type": "object",
+        "properties": {
+            "enabled": {"type": "boolean"},
+            "count": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3,
+                "default": 2,
+            },
+        },
+        "required": ["enabled"],
+        "additionalProperties": False,
+    }
+    server = SMCP(
+        name="strict remote schema",
+        tooluniverse_config={},
+        auto_expose_tools=False,
+        search_enabled=False,
+        strict_input_schemas=True,
+    )
+    server._create_mcp_tool_from_tooluniverse(
+        {"name": "strict_tool", "description": "strict", "parameter": schema}
+    )
+    tool = asyncio.run(server.get_tool("strict_tool"))
+
+    assert tool.parameters == schema
+    with pytest.raises(Exception, match="validation error"):
+        asyncio.run(tool.run({"enabled": "true"}))
+    with pytest.raises(Exception, match="validation error"):
+        asyncio.run(tool.run({"enabled": True, "count": 4}))
+    with pytest.raises(Exception, match="validation error"):
+        asyncio.run(tool.run({"enabled": True, "unknown": 1}))
+
+
 def test_remote_tool_rejects_variadic_signatures():
     with pytest.raises(TypeError, match=r"\*args, or \*\*kwargs"):
 

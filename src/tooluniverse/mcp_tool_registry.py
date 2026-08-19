@@ -48,6 +48,7 @@ result = tu.run_tool("my_analysis_tool", {"data": "input"})
 """
 
 import asyncio
+import copy
 import inspect
 import json
 import types
@@ -143,12 +144,17 @@ def register_mcp_tool(tool_type_name=None, config=None, mcp_config=None):
         )
 
         # Create default parameter schema if not provided
-        tool_schema = tool_config.get("parameter_schema") or {
+        tool_schema = copy.deepcopy(tool_config.get("parameter_schema")) or {
             "type": "object",
             "properties": {
                 "arguments": {"type": "object", "description": "Tool arguments"}
             },
         }
+        if tool_schema.get("type") == "object":
+            # Remote scientific operations have a fixed public contract. Reject
+            # misspelled or stale fields instead of silently running a broader,
+            # defaulted analysis than the caller intended.
+            tool_schema.setdefault("additionalProperties", False)
 
         # Default MCP server configuration
         default_mcp_config = {
@@ -157,7 +163,10 @@ def register_mcp_tool(tool_type_name=None, config=None, mcp_config=None):
             "port": 8000,
             "transport": "http",
             "auto_start": False,
-            "max_workers": 5,
+            # Scientific model and analysis calls are commonly GPU/RAM heavy.
+            # Start fail-safe and let providers raise this only after measuring
+            # load, cancellation, and recovery for the specific operation.
+            "max_workers": 1,
         }
 
         # Merge with provided mcp_config
@@ -626,7 +635,13 @@ def _start_server_for_port(port: int, **kwargs):
         tooluniverse_config=tu,  # Pass pre-configured ToolUniverse
         auto_expose_tools=True,  # Auto-expose since tools are in ToolUniverse
         search_enabled=False,  # Disable search for remote tool servers
-        max_workers=config.get("max_workers", 5),
+        max_workers=config.get("max_workers", 1),
+        # A server-local temp-file path is unusable to a remote caller and can
+        # retain sensitive scientific output. Remote providers return bounded
+        # inline results only.
+        persist_oversized_results=False,
+        # Preserve the reviewed JSON Schema exactly and reject scalar coercion.
+        strict_input_schemas=True,
         **kwargs,
     )
 
