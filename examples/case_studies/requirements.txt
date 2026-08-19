@@ -1,0 +1,13 @@
+# Extra dependencies for the case-study reproductions.
+# Install ToolUniverse itself first:
+#     pip install 'tooluniverse[ml]'
+
+# Case 1 and Case 2: ADMET-AI property and toxicity models.
+# Equivalent to the `ml` extra; listed here so this file stands alone.
+admet-ai
+
+# Case 3: statistics on the BCG-CORONA trial tables.
+# Works on pandas 2 and 3; verified to give identical results on both.
+pandas
+scipy
+statsmodels
