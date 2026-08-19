@@ -98,5 +98,200 @@
       {"device_name": "pacemaker", "limit": 5},
       {"device_name": "insulin pump", "limit": 5}
     ]
+  },
+  {
+    "name": "OpenFDADevice_search_udi",
+    "type": "OpenFDADeviceTool",
+    "description": "Search openFDA's Unique Device Identifier (UDI) database by brand name, company, or free text. Returns each device's brand name, company, description, primary device identifier (DI), GMDN terms, and regulatory device class. The UDI is the device-world equivalent of a drug's NDC code. Example: query='pacemaker' returns real UDI records from Medtronic, Cardinal Health, and others.",
+    "fields": {
+      "operation": "search_udi"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Brand name, company name, or free text, e.g. 'pacemaker'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max UDI records to return, 1-100. Default 20."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "brand_name": {"type": ["string", "null"]},
+              "company_name": {"type": ["string", "null"]},
+              "device_description": {"type": ["string", "null"]},
+              "primary_di": {"type": ["string", "null"]},
+              "gmdn_terms": {"type": "array", "items": {"type": "string"}},
+              "device_class": {"type": ["string", "null"]},
+              "commercial_distribution_status": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "pacemaker", "limit": 5}
+    ]
+  },
+  {
+    "name": "OpenFDADevice_get_classification",
+    "type": "OpenFDADeviceTool",
+    "description": "Look up a medical device's US regulatory classification by device name. Returns device class (1 = general controls, 2 = special controls, 3 = premarket approval required), FDA product code, review panel, and CFR regulation number. Example: device_name='pacemaker' returns multiple pacemaker-related device types spanning Class 1 (test magnets) to Class 3 (implantable leads).",
+    "fields": {
+      "operation": "get_classification"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["device_name"],
+      "properties": {
+        "device_name": {
+          "type": "string",
+          "description": "Device type name, e.g. 'pacemaker', 'insulin pump'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max classifications to return, 1-100. Default 20."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "device_name": {"type": ["string", "null"]},
+              "product_code": {"type": ["string", "null"]},
+              "device_class": {"type": ["string", "null"]},
+              "review_panel": {"type": ["string", "null"]},
+              "medical_specialty_description": {"type": ["string", "null"]},
+              "regulation_number": {"type": ["string", "null"]},
+              "third_party_flag": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"device_name": "pacemaker", "limit": 5}
+    ]
+  },
+  {
+    "name": "OpenFDADevice_search_510k",
+    "type": "OpenFDADeviceTool",
+    "description": "Search openFDA's 510(k) premarket notification database by device name -- the pathway most medical devices use to reach market by demonstrating substantial equivalence to an existing device. Returns each clearance's K number, applicant, decision date and outcome, and clearance type. Example: device_name='pacemaker' returns clearances back to the 1980s-90s including K913805.",
+    "fields": {
+      "operation": "search_510k"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["device_name"],
+      "properties": {
+        "device_name": {
+          "type": "string",
+          "description": "Device name, e.g. 'pacemaker'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max clearances to return, 1-100. Default 20."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "k_number": {"type": ["string", "null"]},
+              "device_name": {"type": ["string", "null"]},
+              "applicant": {"type": ["string", "null"]},
+              "decision_date": {"type": ["string", "null"]},
+              "decision_description": {"type": ["string", "null"]},
+              "clearance_type": {"type": ["string", "null"]},
+              "advisory_committee_description": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"device_name": "pacemaker", "limit": 5}
+    ]
+  },
+  {
+    "name": "OpenFDADevice_search_pma",
+    "type": "OpenFDADeviceTool",
+    "description": "Search openFDA's Premarket Approval (PMA) database by trade name -- the pathway required for higher-risk (Class 3) devices, requiring clinical evidence of safety and effectiveness. Returns each application's PMA number, applicant, trade name, decision date, and approval-order summary. Example: device_name='pacemaker' returns Guidant/Boston Scientific cardiac resynchronization therapy pacemaker approvals.",
+    "fields": {
+      "operation": "search_pma"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["device_name"],
+      "properties": {
+        "device_name": {
+          "type": "string",
+          "description": "Device trade name, e.g. 'pacemaker', 'defibrillator'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max PMA records to return, 1-100. Default 20."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pma_number": {"type": ["string", "null"]},
+              "trade_name": {"type": ["string", "null"]},
+              "applicant": {"type": ["string", "null"]},
+              "decision_date": {"type": ["string", "null"]},
+              "ao_statement": {"type": ["string", "null"]},
+              "advisory_committee_description": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"device_name": "pacemaker", "limit": 5}
+    ]
   }
 ]

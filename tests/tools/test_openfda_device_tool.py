@@ -94,6 +94,60 @@ class TestSearchAdverseEvents:
         assert result["status"] == "error"
 
 
+class TestSearchUdi:
+    def test_finds_pacemaker_udi_records(self, tu):
+        rows = data_of(tu.tools.OpenFDADevice_search_udi(query="pacemaker", limit=5))
+        assert rows
+        assert all(r["brand_name"] and r["company_name"] for r in rows)
+
+    def test_missing_query(self, tu):
+        assert tu.tools.OpenFDADevice_search_udi(query="")["status"] == "error"
+
+
+class TestGetClassification:
+    def test_pacemaker_spans_multiple_device_classes(self, tu):
+        rows = data_of(
+            tu.tools.OpenFDADevice_get_classification(
+                device_name="pacemaker", limit=20
+            )
+        )
+        assert rows
+        classes = {r["device_class"] for r in rows}
+        # Pacemaker-family devices span from Class 1 (test equipment) to
+        # Class 3 (implantable leads); a real, known regulatory fact.
+        assert len(classes) > 1
+
+    def test_missing_device_name(self, tu):
+        result = tu.tools.OpenFDADevice_get_classification(device_name="")
+        assert result["status"] == "error"
+
+
+class TestSearch510k:
+    def test_finds_known_clearance(self, tu):
+        rows = data_of(
+            tu.tools.OpenFDADevice_search_510k(device_name="pacemaker", limit=10)
+        )
+        assert rows
+        assert any(r["k_number"] == "K913805" for r in rows)
+
+    def test_missing_device_name(self, tu):
+        result = tu.tools.OpenFDADevice_search_510k(device_name="")
+        assert result["status"] == "error"
+
+
+class TestSearchPma:
+    def test_finds_known_approval(self, tu):
+        rows = data_of(
+            tu.tools.OpenFDADevice_search_pma(device_name="pacemaker", limit=10)
+        )
+        assert rows
+        assert any(r["pma_number"] == "P030005" for r in rows)
+
+    def test_missing_device_name(self, tu):
+        result = tu.tools.OpenFDADevice_search_pma(device_name="")
+        assert result["status"] == "error"
+
+
 class TestErrorHandling:
     @pytest.mark.parametrize(
         "tool_name,kwargs",
@@ -101,6 +155,10 @@ class TestErrorHandling:
             ("OpenFDADevice_search_recalls", {"query": ""}),
             ("OpenFDADevice_search_recalls", {"query": "zzzznotarealdevice12345"}),
             ("OpenFDADevice_search_adverse_events", {"device_name": ""}),
+            ("OpenFDADevice_search_udi", {"query": ""}),
+            ("OpenFDADevice_get_classification", {"device_name": ""}),
+            ("OpenFDADevice_search_510k", {"device_name": ""}),
+            ("OpenFDADevice_search_pma", {"device_name": ""}),
         ],
     )
     def test_returns_error_dict_not_exception(self, tu, tool_name, kwargs):
