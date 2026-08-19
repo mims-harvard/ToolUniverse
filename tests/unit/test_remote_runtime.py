@@ -152,6 +152,23 @@ def test_environment_check_parses_final_json_line_and_never_discloses_secret(
     assert result["secret_values_disclosed"] is False
 
 
+def test_environment_check_does_not_report_unknown_probe_values_as_failed(
+    monkeypatch,
+):
+    deployment = RemoteDeployment("test", "example.provider", 1234, ("operation",))
+    completed = subprocess.CompletedProcess(
+        [sys.executable], 1, "not-json\n", "private provider details"
+    )
+    monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: completed)
+
+    result = check_environment(deployment, python=sys.executable)
+
+    assert result["ok"] is False
+    assert result["python_supported_3_12"] is None
+    assert result["provider"]["module_available"] is None
+    assert "private provider details" not in json.dumps(result)
+
+
 def test_uspto_preflight_rejects_provider_key_before_launch_without_disclosing_it(
     monkeypatch,
 ):

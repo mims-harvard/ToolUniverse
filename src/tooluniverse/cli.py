@@ -2333,8 +2333,18 @@ def _print_remote_check(result: dict, *, as_json: bool) -> None:
     provider = result.get("provider") or {}
     if provider.get("error"):
         print(f"  provider error: {provider['error']}")
-    print(f"  Python 3.12: {'yes' if result.get('python_supported_3_12') else 'no'}")
-    print(f"  provider module: {'yes' if provider.get('module_available') else 'no'}")
+    python_supported = result.get("python_supported_3_12")
+    python_label = (
+        "unknown" if python_supported is None else ("yes" if python_supported else "no")
+    )
+    print(f"  Python 3.12: {python_label}")
+    module_available = provider.get("module_available")
+    module_label = (
+        "unknown"
+        if module_available is None
+        else ("yes" if module_available else "no")
+    )
+    print(f"  provider module: {module_label}")
     for command, available in (provider.get("commands") or {}).items():
         print(f"  command {command}: {'yes' if available else 'no'}")
     for variable in result.get("provider_environment") or []:
