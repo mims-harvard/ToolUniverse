@@ -51,9 +51,10 @@ class RemoteSetupPreflightTests(unittest.TestCase):
     def test_cli_install_hint_explains_private_distribution_prerequisite(self):
         hint = _remote_tool_install_hint()
         self.assertIn("not published on PyPI", hint)
-        self.assertIn("immutable GitHub revision", hint)
-        self.assertIn("git+https://github.com", hint)
-        self.assertIn("6da7a8d8ee13423a27787642ccad6987f04a0786", hint)
+        self.assertIn("public wheel", hint)
+        self.assertIn("connect.aiscientist.tools/downloads", hint)
+        self.assertIn("3fad5eee5ecf7887a693d93ccd1aa112dc0955617a885d1fc3daded0030f9ae0", hint)
+        self.assertNotIn("github.com", hint)
 
 
 if __name__ == "__main__":

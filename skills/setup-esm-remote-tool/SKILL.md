@@ -111,10 +111,10 @@ Confirm discovery contains esm_embed_sequence; stop on empty, duplicate, or sche
 
 ## Connect to ToolUniverse Connect
 
-The pinned `tuplatform-connect` relay is not yet published on PyPI. Install the reviewed immutable GitHub revision below. Interactive sharing uses browser device authorization; no key copy/paste or private-repository access is required.
+The `tuplatform-connect` relay is not yet published on PyPI. Install the reviewed public wheel below; its SHA-256 is pinned. Interactive sharing uses browser device authorization, so no key copy/paste or GitHub access is required.
 
 ~~~bash
-python -m pip install fastmcp pyyaml "tuplatform-connect @ git+https://github.com/tooluniverse/tuplatform.git@6da7a8d8ee13423a27787642ccad6987f04a0786#subdirectory=sdk/tuplatform-connect"
+python -m pip install fastmcp pyyaml "tuplatform-connect @ https://connect.aiscientist.tools/downloads/tuplatform_connect-0.3.0-py3-none-any.whl#sha256=3fad5eee5ecf7887a693d93ccd1aa112dc0955617a885d1fc3daded0030f9ae0"
 tu doctor --forward http://127.0.0.1:8008/mcp --json
 tu serve --share --forward http://127.0.0.1:8008/mcp --name validation-esm --workers 1
 ~~~

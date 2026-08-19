@@ -1703,11 +1703,12 @@ def cmd_build(args: argparse.Namespace) -> None:
 def _remote_tool_install_hint() -> str:
     return (
         "tuplatform-connect is not published on PyPI; install its reviewed "
-        "immutable GitHub revision:\n  "
+        "public wheel with the pinned SHA-256:\n  "
         'pip install "tuplatform-connect @ '
-        "git+https://github.com/tooluniverse/tuplatform.git"
-        "@6da7a8d8ee13423a27787642ccad6987f04a0786"
-        '#subdirectory=sdk/tuplatform-connect"'
+        "https://connect.aiscientist.tools/downloads/"
+        "tuplatform_connect-0.3.0-py3-none-any.whl"
+        "#sha256=3fad5eee5ecf7887a693d93ccd1aa112dc0955617a885d1fc3daded0030f9ae0"
+        '"'
     )
 
 
