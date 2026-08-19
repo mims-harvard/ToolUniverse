@@ -29,7 +29,10 @@ dependencies = [
     "huggingface_hub>=0.34.0",
     "jsonpath-ng>=1.6.0",
     "rcsb-api>=1.4.0",
-    "fitz>=0.0.1.dev2",
+    # Do not depend on the unrelated ``fitz`` package from PyPI.  The optional
+    # PDF backend imports the ``fitz`` module provided by PyMuPDF and already
+    # falls back cleanly when it is unavailable.
+    "scipy>=1.7.0",
     "pandas>=2.2.3",
     "openpyxl>=3.1.0", # Read .xlsx bulk downloads (CellMarker, dataset tools)
     "setuptools>=70.0.0", # Fix pkg_resources deprecation warnings
